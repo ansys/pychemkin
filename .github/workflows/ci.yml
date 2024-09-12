@@ -84,7 +84,7 @@ jobs:
           ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER) }}
         with:
           python-version: ${{ matrix.python-version }}
-          requires-xvfb: true
+          requires-xvfb: false
 
       - uses: codecov/codecov-action@v3
         name: 'Upload coverage to CodeCov'
