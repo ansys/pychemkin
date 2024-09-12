@@ -14,7 +14,7 @@ env:
   MAIN_PYTHON_VERSION: '3.10'
   PACKAGE_NAME: 'ansys-chemkin'
   PACKAGE_NAMESPACE: 'ansys.chemkin'
-  ANSYS251_DIR: 'C:/Program Files/ANSYS Inc/v251/'
+  ANSYS251_DIR: 'C:\Program Files\ANSYS Inc\v251\'
   CHEMKIN_IMAGE: 'ghcr.io/ansys/chemkin'
   POETRY_VIRTUALENVS_CREATE: 'false'
 
@@ -85,7 +85,7 @@ jobs:
         env:
           ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER) }}
           POETRY_VIRTUALENVS_CREATE: 'false'
-          ANSYS251_DIR: 'C:/Program Files/ANSYS Inc/v251/'
+          ANSYS251_DIR: 'C:\Program Files\ANSYS Inc\v251\'
         with:
           python-version: ${{ matrix.python-version }}
           requires-xvfb: false
