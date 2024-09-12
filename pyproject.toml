@@ -43,6 +43,10 @@ pytest-cov = "*"
 [tool.poetry.group.tests]
 optional = true
 
+[tool.poetry.group.tests.dependencies]
+pytest = "*"
+pytest-cov = "*"
+
 [doc.poetry.dependencies]
 nbsphinx= ">=0.9.3"
 notebook= ">=7.0.5"
