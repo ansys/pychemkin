@@ -60,23 +60,26 @@ jobs:
           operating-system: ${{ matrix.os }}
           python-version: ${{ matrix.python-version }}
 
-
-
   tests:
     name: "Test ${{ matrix.python-version }} with ${{ matrix.os }}"
     needs: [smoke-tests]
     runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest]
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-    container:
-      image: ghcr.io/ansys/chemkin
-      credentials:
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-      env:
-        ANSYS251_DIR: 'C:\Program Files\ANSYS Inc\v251\'
-      ports:
-        - 80
-        - 1055
+      - name: docker
+        run: docker pull ${{ env.CHEMKIN_IMAGE }}
+
       - name: Run pytest
         uses: ansys/actions/tests-pytest@v4
         env:
