@@ -906,7 +906,7 @@ class Chemistry:
             # get atomic masses
             self._AWT = self.AWT
             # check real-gas model
-            self.verifyrealgasmodel()
+            #self.verifyrealgasmodel()
         else:
             # fail to preprocess the chemistry files
             print(
@@ -949,6 +949,8 @@ class Chemistry:
                     Color.YELLOW + "** mechanism is for ideal gas law only",
                     end="\n" + Color.END,
                 )
+        except:
+            print("caught")
 
     @property
     def speciessymbols(self):

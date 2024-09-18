@@ -9,6 +9,7 @@ import inspect
 import os
 
 import yaml
+import platform
 
 # import kinetics
 from . import chemkin_wrapper as ck_wrapper
@@ -31,8 +32,16 @@ print(
 )
 # get ansys installation location
 ansys_dir = ck_wrapper._ansys_dir
+
+_chemkin_platform = None
+if platform.system() == "Windows":
+    _chemkin_platform = "win64"
+else:
+    _chemkin_platform = "linuxx8664"
+
 # get chemkin installation location
-_chemkin_root = ansys_dir + r"\reaction\chemkin.win64"
+_chemkin_root = os.path.join(ansys_dir, "reaction", "chemkin" + _chemkin_platform)
+
 # set default units to cgs
 unit_code = c_int(1)
 iError = ck_wrapper.chemkin.KINSetUnitSystem(unit_code)
@@ -44,7 +53,7 @@ if frm is not None:
         inspect.getfile(frm)
     )  # chemkin module home directory
 _ChemkinHelpFile = (
-    r"\ChemkinKeywordTips.yaml"  # Chemkin keyword help data file in YAML format
+    os.sep + "ChemkinKeywordTips.yaml"  # Chemkin keyword help data file in YAML format
 )
 _helploaded = False
 # == end of global parameters

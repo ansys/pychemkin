@@ -8,13 +8,13 @@ print("current working directory: " + current_dir)
 # set verbose mode
 ck.setverbose(True)
 # set mechanism directory (the default chemkin mechanism data directory)
-data_dir = ck.ansys_dir + r"\reaction\data"
+data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # set mechanism input files
 # inclusion of the full file path is recommended
-chemfile = mechanism_dir + r"\grimech30_chem.inp"
-thermfile = mechanism_dir + r"\grimech30_thermo.dat"
-tranfile = mechanism_dir + r"\grimech30_transport.dat"
+chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
+thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
+tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
 # create a chemistry set based on GRI 3.0
 MyGasMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="GRI 3.0")
 # preprocess the mechanism files
@@ -60,7 +60,7 @@ My2ndMech = ck.Chemistry(label="C2 NOx")
 # set mechanism input files individually
 # this mechanism file contains all the necessary thermodynamic and transport data
 # therefore no need to specify the therm and the tran data files
-My2ndMech.chemfile = mechanism_dir + "\\C2_NOx_SRK.inp"
+My2ndMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
 # instruct the preprocessor to include the transport properties
 # only when the mechanism file contains all the transport data
 My2ndMech.preprocesstransportdata()

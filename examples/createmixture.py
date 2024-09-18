@@ -12,13 +12,13 @@ print("current working directory: " + current_dir)
 # set verbose mode
 ck.setverbose(True)
 # set mechanism directory (the default chemkin mechanism data directory)
-data_dir = ck.ansys_dir + r"\reaction\data"
+data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # create a chemistry set based on the C2 NOx mechanism
 MyGasMech = ck.Chemistry(label="C2 NOx")
 # set mechanism input files
 # inclusion of the full file path is recommended
-MyGasMech.chemfile = mechanism_dir + r"\C2_NOx_SRK.inp"
+MyGasMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
 # this mechanism file contains all the necessary thermodynamic and transport data
 # therefore no need to specify the therm and the tran data files
 # instruct the preprocessor to include the transport properties (when the tran data file is not provided)

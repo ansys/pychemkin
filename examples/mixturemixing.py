@@ -8,14 +8,14 @@ print("current working directory: " + current_dir)
 # set verbose mode
 ck.setverbose(True)
 # set mechanism directory (the default chemkin mechanism data directory)
-data_dir = ck.ansys_dir + r"\reaction\data"
+data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # create a chemistry set based on GRI 3.0
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # inclusion of the full file path is recommended
-MyGasMech.chemfile = mechanism_dir + r"\grimech30_chem.inp"
-MyGasMech.thermfile = mechanism_dir + r"\grimech30_thermo.dat"
+MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
+MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 # transport data not needed
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
