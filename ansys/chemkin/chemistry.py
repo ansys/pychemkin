@@ -949,8 +949,6 @@ class Chemistry:
                     Color.YELLOW + "** mechanism is for ideal gas law only",
                     end="\n" + Color.END,
                 )
-        except:
-            print("caught")
 
     @property
     def speciessymbols(self):
