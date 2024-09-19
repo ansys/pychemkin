@@ -70,9 +70,12 @@ jobs:
         name: 'Upload coverage to CodeCov'
 
   build-library:
-    name: "Build library"
+    name: "Build library on ${{ matrix.os }}"
     needs: [tests]
-    runs-on: [windows-latest,ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest,ubuntu-latest]
     steps:
       - uses: ansys/actions/build-library@v4
         with:
