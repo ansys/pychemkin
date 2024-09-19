@@ -48,11 +48,10 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/ansys/chemkin
-      options: --user apprunner
       credentials:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
-      options: --cpus 1
+      options: --cpus 1 --user apprunner
     steps:
       - name: Run pytest
         uses: ansys/actions/tests-pytest@v4
