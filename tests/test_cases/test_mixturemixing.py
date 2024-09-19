@@ -1,8 +1,8 @@
 import os
 
-#import pytest
-
 import chemkin as ck  # Chemkin
+
+# import pytest
 
 
 # @pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")
@@ -24,6 +24,7 @@ def test_mixturemixing():
     # transport data not needed
     # preprocess the mechanism files
     iError = MyGasMech.preprocess()
+    assert iError == 0
     # create the fuel mixture
     # note: mixture pressures are not specified because pressure is not required for the calculations here
     # the mixing process is assumed to take place at fixed pressure; i.e., the mixtures are at the same pressure

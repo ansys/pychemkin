@@ -25,6 +25,7 @@ def test_detonation():
     MyMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
     # preprocess the 2nd mechanism files
     iError = MyMech.preprocess()
+    assert iError == 0
     # create the fuel mixture
     fuel = ck.Mixture(MyMech)
     # set mole fraction

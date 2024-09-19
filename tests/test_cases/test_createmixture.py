@@ -3,9 +3,10 @@ import os
 
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
-#import pytest
 
 import chemkin as ck  # Chemkin
+
+# import pytest
 
 
 # @pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")
@@ -29,8 +30,10 @@ def test_createmixture():
     MyGasMech.preprocesstransportdata()
     # preprocess the mechanism files
     iError = MyGasMech.preprocess()
+    assert iError == 0
     # get species molecular masses as numpy 1D double array
     WT = MyGasMech.WT
+    print(WT)
     # create a mixture called premixed based on the MyGasMech chemistry set
     premixed = ck.Mixture(MyGasMech)
     # set mixture pressure [dynes/cm2]

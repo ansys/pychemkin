@@ -3,13 +3,14 @@ import time
 
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
-#import pytest
 
 import chemkin as ck  # Chemkin
 from chemkin import Color
 
 # chemkin batch reactor models (transient)
 from chemkin.batchreactor import GivenPressureBatchReactor_EnergyConservation
+
+# import pytest
 
 
 # @pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")

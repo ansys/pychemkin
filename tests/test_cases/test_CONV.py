@@ -2,13 +2,14 @@ import os
 
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
-#import pytest
 
 import chemkin as ck  # Chemkin
 from chemkin import Color
 
 # chemkin batch reactor models (transient)
 from chemkin.batchreactor import GivenVolumeBatchReactor_EnergyConservation
+
+# import pytest
 
 
 # @pytest.mark.skip(reason="Causes segfault")
@@ -133,8 +134,8 @@ def test_CONV():
     # get the number of solution time points
     solutionpoints = MyCONV.getnumbersolutionpoints()
     print(f"number of solution points = {solutionpoints}")
-    mix1 = MyCONV.getsolutionmixture(0.03)
-    mix2 = MyCONV.getsolutionmixture(0.05)
+    # mix1 = MyCONV.getsolutionmixture(0.03)
+    # mix2 = MyCONV.getsolutionmixture(0.05)
     # get the time profile
     timeprofile = MyCONV.getsolutionvariableprofile("time")
     # get the temperature profile
@@ -148,7 +149,7 @@ def test_CONV():
     # create arrays for CH4 ROP and mixture viscosity
     CH4ROPprofile = np.zeros_like(timeprofile, dtype=np.double)
     viscprofile = np.zeros_like(timeprofile, dtype=np.double)
-    CurrentROP = np.zeros(MyGasMech.KK, dtype=np.double)
+    # CurrentROP = np.zeros(MyGasMech.KK, dtype=np.double)
     # find co species index
     CH4_index = MyGasMech.getspecindex("CH4")
     # loop over all solution time points
@@ -158,7 +159,7 @@ def test_CONV():
         # get CH4 mole fraction profile
         CH4profile[i] = solutionmixture.X[CH4_index]
         # get CH4 ROP profile
-        currentROP = solutionmixture.ROP()
+        # currentROP = solutionmixture.ROP()
         CH4ROPprofile[i] = currentROP[CH4_index]
         # get mixture vicosity profile
         viscprofile[i] = solutionmixture.mixtureviscosity()

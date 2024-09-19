@@ -2,9 +2,10 @@ import os
 
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
-#import pytest
 
 import chemkin as ck  # Chemkin
+
+# import pytest
 
 
 # @pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")
@@ -26,6 +27,7 @@ def test_speciesproperties():
     MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
     # preprocess the mechanism files
     iError = MyGasMech.preprocess()
+    assert iError == 0
     # extract element symbols as a list
     elelist = MyGasMech.elementsymbols
     # extract gas species symbols as a list

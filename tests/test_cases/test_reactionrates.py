@@ -2,9 +2,10 @@ import os
 
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
-#import pytest
 
 import chemkin as ck  # Chemkin
+
+# import pytest
 
 
 # @pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")
@@ -26,6 +27,7 @@ def test_reactionrates():
     MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
     # preprocess the mechanism files
     iError = MyGasMech.preprocess()
+    assert iError == 0
     # create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
     # create the fuel mixture
     fuelmixture = ck.Mixture(MyGasMech)
@@ -61,6 +63,7 @@ def test_reactionrates():
     premixed.temperature = 1600.0
     # get the net species molar rates of production [mole/cm3-sec]
     rop = premixed.ROP()
+    print("ROP count: " + len(rop))
     # list the nonzero rates in descending order
     print()
     specrate_order, species_rates = premixed.listROP()

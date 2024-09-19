@@ -26,6 +26,7 @@ def test_equilibriumcomposition():
     # transport data not needed
     # preprocess the mechanism files
     iError = MyGasMech.preprocess()
+    assert iError == 0
     # create the fuel mixture
     fuel = ck.Mixture(MyGasMech)
     # set mole fraction
