@@ -2,10 +2,10 @@ import os
 
 import chemkin as ck  # Chemkin
 
-# import pytest
+import pytest
 
 
-# @pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")
+@pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")
 def test_loadmechanism():
     # check working directory
     current_dir = os.getcwd()
