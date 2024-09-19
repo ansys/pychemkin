@@ -1,8 +1,11 @@
 import os
-import pytest
+
+#import pytest
+
 import chemkin as ck  # Chemkin
 
-#@pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")
+
+# @pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")
 def test_mixturemixing():
     # check working directory
     current_dir = os.getcwd()
@@ -58,6 +61,7 @@ def test_mixturemixing():
     print(f"the diluted mixture temperature is  {diluted.temperature:f} [K]")
     print(f"the ar mixture temperature is       {ar.temperature:f} [K]")
     print(f"the premixed mixture temperature is {premixed.temperature:f} [K]")
+
 
 if __name__ == "__main__":
     test_mixturemixing()

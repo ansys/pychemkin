@@ -1,10 +1,11 @@
 import os
 
-import pytest
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
+import pytest
 
 import chemkin as ck  # Chemkin
+
 
 @pytest.mark.skip(reason="Temporarily disabled")
 def test_detonation():
@@ -106,6 +107,7 @@ def test_detonation():
     plt.ylabel("Detonation wave speed [m/sec]")
     plt.savefig("detonation.png", bbox_inches="tight")
     # plt.show()
+
 
 if __name__ == "__main__":
     test_detonation()

@@ -1,10 +1,11 @@
 import os
 
-import pytest
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
+import pytest
 
 import chemkin as ck  # Chemkin
+
 
 @pytest.mark.skip(reason="Causes segfault")
 def test_adiabaticflametemperature():
@@ -58,7 +59,12 @@ def test_adiabaticflametemperature():
     for i in range(points):
         equiv_current = equiv_ini
         iError = mixture.XbyEquivalenceRatio(
-            MyGasMech, fuel.X, oxid.X, add_frac, products, equivalenceratio=equiv_current
+            MyGasMech,
+            fuel.X,
+            oxid.X,
+            add_frac,
+            products,
+            equivalenceratio=equiv_current,
         )
         if iError != 0:
             raise RuntimeError
@@ -73,6 +79,7 @@ def test_adiabaticflametemperature():
     plt.ylabel("Temperature [K]")
     plt.savefig("flametemperatures.png", bbox_inches="tight")
     # plt.show()
+
 
 if __name__ == "__main__":
     test_adiabaticflametemperature()

@@ -1,7 +1,8 @@
 import os
-import pytest
+
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
+#import pytest
 
 import chemkin as ck  # Chemkin
 from chemkin import Color
@@ -9,9 +10,9 @@ from chemkin import Color
 # chemkin batch reactor models (transient)
 from chemkin.batchreactor import GivenVolumeBatchReactor_EnergyConservation
 
-#@pytest.mark.skip(reason="Causes segfault")
-def test_CONV():
 
+# @pytest.mark.skip(reason="Causes segfault")
+def test_CONV():
     # check working directory
     current_dir = os.getcwd()
     print("current working directory: " + current_dir)
@@ -180,6 +181,7 @@ def test_CONV():
     # display the plots
     plt.savefig("CONV_solution.png", bbox_inches="tight")
     # plt.show()
+
 
 if __name__ == "__main__":
     test_CONV()

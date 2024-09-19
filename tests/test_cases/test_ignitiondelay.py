@@ -1,8 +1,9 @@
 import os
 import time
-import pytest
+
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
+#import pytest
 
 import chemkin as ck  # Chemkin
 from chemkin import Color
@@ -10,7 +11,8 @@ from chemkin import Color
 # chemkin batch reactor models (transient)
 from chemkin.batchreactor import GivenPressureBatchReactor_EnergyConservation
 
-#@pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")
+
+# @pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")
 def test_ignitiondelay():
     # check working directory
     current_dir = os.getcwd()
@@ -126,6 +128,7 @@ def test_ignitiondelay():
     plt.ylabel("Ignition delay time [msec]")
     plt.savefig("ignitiondelays.png", bbox_inches="tight")
     # plt.show()
+
 
 if __name__ == "__main__":
     test_ignitiondelay()

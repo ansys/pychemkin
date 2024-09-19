@@ -1,8 +1,11 @@
 import os
-import pytest
+
+#import pytest
+
 import chemkin as ck  # Chemkin
 
-#@pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")
+
+# @pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")
 def test_loadmechanism():
     # check working directory
     current_dir = os.getcwd()
@@ -18,7 +21,9 @@ def test_loadmechanism():
     thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
     tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
     # create a chemistry set based on GRI 3.0
-    MyGasMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="GRI 3.0")
+    MyGasMech = ck.Chemistry(
+        chem=chemfile, therm=thermfile, tran=tranfile, label="GRI 3.0"
+    )
     # preprocess the mechanism files
     iError = MyGasMech.preprocess()
     print()
@@ -99,6 +104,7 @@ def test_loadmechanism():
     for k in range(len(specieslist)):
         print(f"species # {k+1:3d}: {specieslist[k]:16} mass = {WT[k]:f}")
     print("=" * 50)
+
 
 if __name__ == "__main__":
     test_loadmechanism()

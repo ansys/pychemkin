@@ -1,9 +1,11 @@
 import os
-import pytest
+
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
+import pytest
 
 import chemkin as ck  # Chemkin
+
 
 @pytest.mark.skip(reason="Causes segfault")
 def test_equilibriumcomposition():
@@ -69,6 +71,7 @@ def test_equilibriumcomposition():
     plt.ylabel("NO [ppm]")
     plt.savefig("NO_equilibrium.png", bbox_inches="tight")
     # plt.show()
+
 
 if __name__ == "__main__":
     test_equilibriumcomposition()

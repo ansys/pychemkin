@@ -1,11 +1,13 @@
 import os
-import pytest
+
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
+#import pytest
 
 import chemkin as ck  # Chemkin
 
-#@pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")
+
+# @pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")
 def test_speciesproperties():
     # check working directory
     current_dir = os.getcwd()
@@ -113,6 +115,7 @@ def test_speciesproperties():
     # display the plots
     plt.savefig("speciesproperties.png", bbox_inches="tight")
     # plt.show()
+
 
 if __name__ == "__main__":
     test_speciesproperties()
