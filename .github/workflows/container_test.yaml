@@ -48,6 +48,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/ansys/chemkin
+      volumes:
+        - /test
       credentials:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
