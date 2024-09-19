@@ -88,21 +88,16 @@ jobs:
 
   doc:
     name: "Doc build"
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ansys/chemkin
+      credentials:
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+      options: --cpus 1 --user root
     needs: doc-style
     steps:
       - uses: actions/checkout@v4
-
-      - name: Login in Github Container registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ansys-bot
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Docker pull
-        run: docker pull ${{ env.CHEMKIN_IMAGE }}
-
       - name: Run Ansys documentation building action
         uses: ansys/actions/doc-build@v4
         env:
