@@ -29,16 +29,19 @@ tests = [
     "docker>=6.1.0",
     "usd-core>=24.8",
     "pygltflib>=1.16.2",
+    "matplotlib>=3.6.0",
 ]
 
 [tool.poetry.dependencies]
 python = ">=3.9"
 numpy= ">=1.14.0"
 pyyaml = ">=6.0"
+matplotlib = ">=3.6.0"
 
 [tool.poetry.group.test.dependencies]
 pytest = "*"
 pytest-cov = "*"
+matplotlib = ">=3.6.0"
 
 [tool.poetry.group.tests]
 optional = true
@@ -52,6 +55,7 @@ nbsphinx= ">=0.9.3"
 notebook= ">=7.0.5"
 sphinx= ">=7.2.5"
 sphinx-autoapi= ">=3.0.0"
+matplotlib = ">=3.6.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
