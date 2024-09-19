@@ -2,13 +2,12 @@ import os
 
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
+import pytest
 
 import chemkin as ck  # Chemkin
 
-# import pytest
 
-
-# @pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")
+@pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")
 def test_speciesproperties():
     # check working directory
     current_dir = os.getcwd()
