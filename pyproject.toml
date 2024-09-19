@@ -65,16 +65,7 @@ optional = true
 Sphinx = "8.0.2"
 numpydoc = "1.5.0"
 ansys-sphinx-theme = "1.0.3"
-sphinx-copybutton = "0.5.2"
-sphinx-gallery = "0.13.0"
-sphinxcontrib-mermaid = "0.9.2"
-matplotlib = "3.9.1.post1"
-requests = ">=2.28.2"
-sphinxcontrib.jquery = "4.1"
-coverage-badge = "1.1.0"
-sphinxcontrib-openapi = "0.8.1"
-sphinxcontrib-video = "0.2.0"
-usd-core = ">=24.8"
+matplotlib = ">=3.9.0"
 
 [tool.poetry.group.tests]
 optional = true
@@ -82,26 +73,6 @@ optional = true
 [tool.poetry.group.tests.dependencies]
 pytest = "*"
 pytest-cov = "*"
-
-[doc.poetry.dependencies]
-nbsphinx= ">=0.9.3"
-notebook= ">=7.0.5"
-#sphinx= ">=7.2.5"
-sphinx-autoapi= ">=3.0.0"
-#matplotlib = ">=3.6.0"
-Sphinx = "8.0.2"
-numpydoc = "1.5.0"
-ansys-sphinx-theme = "1.0.3"
-sphinx-copybutton = "0.5.2"
-sphinx-gallery = "0.13.0"
-sphinxcontrib-mermaid = "0.9.2"
-matplotlib = "3.9.1.post1"
-requests = ">=2.28.2"
-sphinxcontrib.jquery = "4.1"
-coverage-badge = "1.1.0"
-sphinxcontrib-openapi = "0.8.1"
-sphinxcontrib-video = "0.2.0"
-usd-core = ">=24.8"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
