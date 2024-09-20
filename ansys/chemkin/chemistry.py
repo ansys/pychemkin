@@ -425,14 +425,14 @@ def calculatestoichiometrics(chemistryset, fuel_molefrac, oxid_molefrac, prod_in
     """
     calculate the stoichiometric coefficients of the complete combustion reaction of the given fuel and oxidizer mixtures.
     Consider the complete combustion of the fuel + oxidizer mixture:
-        (fuel species) + alpha*(oxidizer species) <=> nu(1)*prod(1) + ... + nu(numb_prod)*prod(numb_prod)
+    (fuel species) + alpha*(oxidizer species) <=> nu(1)*prod(1) + ... + nu(numb_prod)*prod(numb_prod)
     The number of unknowns is equal to the number of elements that make of all the fuel and oxidizer species. And the
     number of product species must be one less than the number of unknowns.
     The unknowns are:
-       alpha is the stoichiometric coefficient multiplier of the oxidizer species
-       nu(1), ... nu(numb_prod) are the stoichiometric coefficients of the product species
+    alpha is the stoichiometric coefficient multiplier of the oxidizer species
+    nu(1), ... nu(numb_prod) are the stoichiometric coefficients of the product species
     The conservation of elements yields a set of linear algebraic equations:
-          A x = b
+    A x = b
     in which x = [ -alpha | nu(1), ...., nu(numb_prod) ]  (a vector of size numb_elem ) can be obtained.
     :param chemistryset: the Chemistry object used to create the fuel and the oxidizer mixtures (Chemistry object)
     :param fuel_molefrac: mole fractions of the fuel mixture (1D double array)
@@ -646,7 +646,6 @@ class Chemistry:
     def chemfile(self):
         """
         Get gas-phase mechanism file name of this chemistry set
-        :return: gas-phase mechanism filename (string)
         """
         return self._gas_file.value.decode()
 
@@ -655,7 +654,6 @@ class Chemistry:
         """
         Assign the gas-phase mechanism filename
         :param filename: name of the gas-phase mechanism file with the full path
-        :return: None
         """
         self._gas_file = ctypes.c_char_p(filename.encode())
 
@@ -663,7 +661,6 @@ class Chemistry:
     def thermfile(self):
         """
         Get thermodynamic data filename of this chemistry set
-        :return: thermodynamic data filename (string)
         """
         return self._therm_file.value.decode()
 
@@ -672,7 +669,6 @@ class Chemistry:
         """
         Assign the thermodynamic data filename
         :param filename: name of the thermodynamic data file with the full path
-        :return: None
         """
         self._therm_file = ctypes.c_char_p(filename.encode())
 
@@ -680,7 +676,6 @@ class Chemistry:
     def tranfile(self):
         """
         Get transport data filename of this chemistry set
-        :return: transport data filename (string)
         """
         return self._tran_file.value.decode()
 
@@ -689,7 +684,6 @@ class Chemistry:
         """
         Assign the transport data filename
         :param filename: name of the transport data file with the full path
-        :return: None
         """
         self._tran_file = ctypes.c_char_p(filename.encode())
         if os.path.isfile(self._tran_file.value):
@@ -704,7 +698,6 @@ class Chemistry:
     def summaryfile(self):
         """
         Get the name of the summary file from the preprocessor
-        :return: preprocess summary file name (string)
         """
         return self._summary_out.value.decode()
 
@@ -736,7 +729,6 @@ class Chemistry:
     def surffile(self):
         """
         Get surface mechanism filename of this chemistry set
-        :return: surface mechanism filename (string)
         """
         return self._surf_file.value.decode()
 
@@ -745,7 +737,6 @@ class Chemistry:
         """
         Assign the surface mechanism filename
         :param filename: name of the surface mechanism file with the full path
-        :return: None
         """
         self._surf_file = ctypes.c_char_p(filename.encode())
         if os.path.isfile(self._surf_file.value):
@@ -953,8 +944,7 @@ class Chemistry:
     @property
     def speciessymbols(self):
         """
-        Get list of gas species symbols
-        :return: list of gas species (string list)
+        Get list of gas species symbols (string list)
         """
         if self._KSYMdone == 0:
             # recycle existing data
@@ -988,8 +978,7 @@ class Chemistry:
     @property
     def elementsymbols(self):
         """
-        Get the list of element symbols
-        :return: list of elements (string list)
+        Get the list of element symbols (string list)
         """
         buff = (LP_c_char * self._num_elements.value)()
         for i in range(0, self._num_elements.value):
@@ -1017,8 +1006,7 @@ class Chemistry:
 
     def getspecindex(self, specname=None):
         """
-        Get index of the gas species
-        :return: species index (integer scalar)
+        Get index of the gas species (integer scalar)
         """
         nn = ctypes.c_char_p(specname.encode())
         specindex = self._gas_species.get(nn.value, -1)
@@ -1027,8 +1015,7 @@ class Chemistry:
     @property
     def chemID(self):
         """
-        Get chemistry set index
-        :return: chemistry set index (integer scalar)
+        Get chemistry set index (integer scalar)
         """
         if self._chemset_index.value >= 0:
             return self._chemset_index.value
@@ -1041,39 +1028,34 @@ class Chemistry:
         Get surface chemistry status
         0 = this chemistry set does NOT include a surface chemistry
         1 = this chemistry set includes a  surface chemistry
-        :return: status flag of the surface chemistry
         """
         return self._index_surf.value
 
     @property
     def KK(self):
         """
-        Get number of gas species
-        :return: number of gas species in the chemistry set (integer scalar)
+        Get number of gas species (integer scalar)
         """
         return self._num_gas_species.value
 
     @property
     def MM(self):
         """
-        Get number of elements
-        :return: number of elements in the chemistry set (integer scalar)
+        Get number of elements in the chemistry set (integer scalar)
         """
         return self._num_elements.value
 
     @property
     def IIGas(self):
         """
-        Get number of gas-phase reactions
-        :return: number of gas-phase reactions in the chemistry set (integer scalar)
+        Get number of gas-phase reactions (integer scalar)
         """
         return self._num_gas_reactions.value
 
     @property
     def AWT(self):
         """
-        compute atomic masses
-        :return: atomic masses [gm/mol] (1D double array)
+        compute atomic masses [gm/mol] (1D double array)
         """
         if self._AWTdone == 1:
             return self._AWT
@@ -1092,8 +1074,7 @@ class Chemistry:
     @property
     def WT(self):
         """
-        compute gas species molecular masses
-        :return: species molecular masses [gm/mol] (1D double array)
+        compute gas species molecular masses [gm/mol] (1D double array)
         """
         if self._WTdone == 1:
             return self._WT
@@ -1342,8 +1323,7 @@ class Chemistry:
     @property
     def EOS(self):
         """
-        Get the available real-gas EOS model
-        :return: number of the EOS model that is provided in the mechanism (integer scalar)
+        Get the available real-gas EOS model (integer scalar)
         """
         return self._EOS.value
 

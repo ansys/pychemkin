@@ -289,7 +289,7 @@ def calculatemixturetemperaturefromenthalpy(mixture, mixtureH, guesstemperature=
 def interpolatemixtures(mixtureleft, mixtureright, ratio):
     """
     Create a new mixture object by interpolating the two mixture objects with a specific weight ratio
-        mixture_new = (1 - ratio) * mixtureleft + ratio * mixtureright
+    mixture_new = (1 - ratio) * mixtureleft + ratio * mixtureright
     :param mixtureleft: a Mixture object
     :param mixtureright: a Mixture object
     :param ratio: the weight parameters for interpolation, 0 <= ratio <= 1 (double scalar)
@@ -368,22 +368,22 @@ def calculateequilibrium(
     :param mode_in: flag indicates the frac array is 'mass' or 'mole' fractions
     :param mode_out: flag to indicate the returning composition is in 'mole' or 'mass' fraction
     :param EQOption: equilibrium type (integer scalar) see below
-                1.  SPECIFIED T AND P
-                2.  SPECIFIED T AND V
-                3.  SPECIFIED T AND S
-                4.  SPECIFIED P AND V
-                5.  SPECIFIED P AND H
-                6.  SPECIFIED P AND S
-                7.  SPECIFIED V AND U
-                8.  SPECIFIED V AND H
-                9.  SPECIFIED V AND S
-                10. CHAPMAN-JOUGUET DETONATION (H, S, V, T CONTAIN THE UNBURNED STATE, AND TE IS THE BURNED ESTIMATE)
+    1.  SPECIFIED T AND P
+    2.  SPECIFIED T AND V
+    3.  SPECIFIED T AND S
+    4.  SPECIFIED P AND V
+    5.  SPECIFIED P AND H
+    6.  SPECIFIED P AND S
+    7.  SPECIFIED V AND U
+    8.  SPECIFIED V AND H
+    9.  SPECIFIED V AND S
+    10. CHAPMAN-JOUGUET DETONATION (H, S, V, T CONTAIN THE UNBURNED STATE, AND TE IS THE BURNED ESTIMATE)
     :param useRealGas: option to turned ON/OFF (1/0) the real-gas cubic EOS if available (integer scalar)
     :return: list of state variables at equilibrium , equilibrium composition given in fractions assigned by mode_out
-            (list of double scalars, 1D double array)
-            the state variable list consists of
-            equilibrium pressure [dynes/cm2], equilibrium temperature [K], and, if Chapmen-Jouguet option is used,
-            speed of sound at equilibrium [cm/sec], detonation wave speed [cm/sec]
+    (list of double scalars, 1D double array)
+    the state variable list consists of
+    equilibrium pressure [dynes/cm2], equilibrium temperature [K], and, if Chapmen-Jouguet option is used,
+    speed of sound at equilibrium [cm/sec], detonation wave speed [cm/sec]
     """
     # find the equilibrium composition at the mixture pressure and temperature
     # check inputs
@@ -532,17 +532,17 @@ def equilibrium(mixture, opt=None):
     Find the equilibrium state mixture corresponding to the given mixture
     :param mixture: initial gas mixture (Mixture object)
     :param opt: equilibrium type (integer scalar) see below
-                1.  SPECIFIED T AND P
-                2.  SPECIFIED T AND V
-                *3.  SPECIFIED T AND S
-                4.  SPECIFIED P AND V
-                5.  SPECIFIED P AND H
-                *6.  SPECIFIED P AND S
-                7.  SPECIFIED V AND U
-                8.  SPECIFIED V AND H
-                *9.  SPECIFIED V AND S
-                *10. CHAPMAN-JOUGUET DETONATION (H, S, V, T CONTAIN THE UNBURNED STATE, AND TE IS THE BURNED ESTIMATE)
-                * indicates the options are not available
+    1.  SPECIFIED T AND P
+    2.  SPECIFIED T AND V
+    *3.  SPECIFIED T AND S
+    4.  SPECIFIED P AND V
+    5.  SPECIFIED P AND H
+    *6.  SPECIFIED P AND S
+    7.  SPECIFIED V AND U
+    8.  SPECIFIED V AND H
+    *9.  SPECIFIED V AND S
+    *10. CHAPMAN-JOUGUET DETONATION (H, S, V, T CONTAIN THE UNBURNED STATE, AND TE IS THE BURNED ESTIMATE)
+    * indicates the options are not available
     :return: gas mixture at the equilibrium state (Mixture object)
     """
     # check argument
@@ -597,8 +597,8 @@ def detonation(mixture):
     Find the Chapman-Jouguet state mixture and detonation wave speed corresponding to the given mixture
     :param mixture: initial gas mixture (Mixture object)
     :return: list of speeds (list of double scalars), gas mixture at the equilibrium state (Mixture object)
-            the speed list consists of
-            speed of sound [cm/sec], detonation wave speed [cm/sec]
+    the speed list consists of
+    speed of sound [cm/sec], detonation wave speed [cm/sec]
     """
     # check argument
     if not isinstance(mixture, Mixture):
@@ -678,16 +678,14 @@ class Mixture:
     @property
     def chemID(self):
         """
-        Get chemistry set index
-        :return: chemistry set index (integer scalar)
+        Get chemistry set index (integer scalar)
         """
         return self._chemset_index.value
 
     @property
     def pressure(self):
         """
-        Get gas mixture pressure
-        :return: pressure [dynes/cm2] (double scalar)
+        Get gas mixture pressure [dynes/cm2] (double scalar)
         """
         if self._Pset == 1:
             return self._press
@@ -703,7 +701,6 @@ class Mixture:
         """
         Set gas mixture pressure
         :param p: pressure [dynes/cm2] (double scalar)
-        :return: None
         """
         if p <= 0.0:
             print(Color.RED + "** invalid pressure value", end="\n" + Color.END)
@@ -715,8 +712,7 @@ class Mixture:
     @property
     def temperature(self):
         """
-        Get gas mixture temperature
-        :return: temperature [K] (double scalar)
+        Get gas mixture temperature [K] (double scalar)
         """
         if self._Tset == 1:
             return self._temp
@@ -732,7 +728,6 @@ class Mixture:
         """
         Set gas mixture temperature
         :param t: temperature [K] (double scalar)
-        :return: None
         """
         if t <= 10.0:
             print(Color.RED + "** invalid temperature value", end="\n" + Color.END)
@@ -760,8 +755,7 @@ class Mixture:
     @property
     def X(self):
         """
-        Get mixture mole fraction
-        :return: mixture mole fraction (double array)
+        Get mixture mole fraction (double array)
         """
         if self._Xset == 1:
             iErr, x = Mixture.normalize(self._molefrac)
@@ -783,7 +777,6 @@ class Mixture:
         """
         Set mixture molar composition
         :param recipe: mixture composition a list of [('species_symbol', mole_fraction), ('species_symbol', mole_fraction), ...]
-        :return: None
         """
         if self._Xset == 1:
             # reset the mole fraction array
@@ -831,8 +824,7 @@ class Mixture:
     @property
     def Y(self):
         """
-        Get mixture mass fraction
-        :return: mixture mass fraction (double array)
+        Get mixture mass fraction (double array)
         """
         if self._Yset == 1:
             iErr, y = Mixture.normalize(self._massfrac)
@@ -854,7 +846,6 @@ class Mixture:
         """
         Set mixture mass composition
         :param recipe: mixture composition a list of [('species_symbol', mass_fraction), ('species_symbol', mass_fraction), ...]
-        :return: None
         """
         if self._Yset == 1:
             # reset the mass fraction array
@@ -902,8 +893,7 @@ class Mixture:
     @property
     def concentration(self):
         """
-        Get mixture molar concentrations
-        :return: species molar concentrations [mole/cm3] (1D double array)
+        Get mixture molar concentrations [mole/cm3] (1D double array)
         """
         if self._Xset == 1:
             # mole fractions are given
@@ -940,8 +930,7 @@ class Mixture:
     @property
     def EOS(self):
         """
-        Get the available real-gas EOS model
-        :return: number of the EOS model that is provided in the mechanism (integer scalar)
+        Get the available real-gas EOS model that is provided in the mechanism (integer scalar)
         """
         return self._EOS.value
 
@@ -976,16 +965,14 @@ class Mixture:
     @property
     def WT(self):
         """
-        Get species molecular masses
-        :return: molecular masses [gm/mole] (1D double array)
+        Get species molecular masses [gm/mole] (1D double array)
         """
         return self._WT
 
     @property
     def WTM(self):
         """
-        Get mean molar mass of the gas mixture
-        :return: mean molar mass [gm/mol] (double scalar)
+        Get mean molar mass of the gas mixture [gm/mol] (double scalar)
         """
         mwt = 0.0e0
         if self._Xset == 1:
@@ -1372,8 +1359,7 @@ class Mixture:
     @property
     def RHO(self):
         """
-        Get mixture mass density
-        :return: density [gm/cm3] (double scalar)
+        Get mixture mass density [gm/cm3] (double scalar)
         """
         # initialization
         den = 0.0e0

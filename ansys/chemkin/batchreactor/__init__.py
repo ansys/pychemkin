@@ -50,8 +50,7 @@ class BatchReactors(reactor):
     @property
     def volume(self):
         """
-        Get reactor volume (required)
-        :return: reactor volume [cm3] (float scalar)
+        Get reactor volume (required) [cm3] (float scalar)
         """
         return self._volume.value
 
@@ -61,7 +60,6 @@ class BatchReactors(reactor):
         Set reactor volume (required)
         default value = 0.0 cm3
         :param value: reactor volume [cm3] (float scalar)
-        :return: None
         """
         if value > 0.0e0:
             # set reactor volume
@@ -76,8 +74,7 @@ class BatchReactors(reactor):
     @property
     def area(self):
         """
-        Get reactive surface area (optional)
-        :return: surface area [cm2] (float scalar)
+        Get reactive surface area (optional) [cm2] (float scalar)
         """
         return self._reactivearea.value
 
@@ -87,7 +84,6 @@ class BatchReactors(reactor):
         Set reactive surface area (optional)
         default value = 0.0 cm2
         :param value: surface area [cm2] (float scalar)
-        :return: None
         """
         if value < 0.0e0:
             print(
@@ -100,8 +96,7 @@ class BatchReactors(reactor):
     @property
     def tolerances(self):
         """
-        Get solver tolerances
-        :return: absolute tolerance, relative tolerance (float scalar, float scalar)
+        Get solver tolerances, absolute tolerance, relative tolerance (float scalar, float scalar)
         """
         return self._absolutetolerance, self._relativetolerance
 
@@ -110,7 +105,6 @@ class BatchReactors(reactor):
         Set solver tolerances
         :param absolute_tolerance: absolute tolerance (float scalar)
         :param relative_tolerance: relative tolerance (float scalar)
-        :return: None
         """
         # set absolute tolerance
         if absolute_tolerance is not None:
@@ -126,8 +120,7 @@ class BatchReactors(reactor):
     @property
     def forcenonnegative(self):
         """
-        Get the status of the forcing non-negative option of the transient solver
-        :return: option status (boolean scalar)
+        Get the status of the forcing non-negative option of the transient solver (boolean scalar)
         """
         if "NNEG" in self._keyword_index:
             # defined: find index
@@ -142,7 +135,6 @@ class BatchReactors(reactor):
         """
         Set the forcing non-negative solution option
         :param mode: True/False (turn the option ON/OFF) (boolean scalar)
-        :return: None
         """
         # set keyword
         self.setkeyword(key="NNEG", value=mode)
@@ -150,8 +142,7 @@ class BatchReactors(reactor):
     @property
     def timestepforsavingsolution(self):
         """
-        Get the timestep size between saving the solution data
-        :return: time step size per solution saving [sec] (float scalar)
+        Get the timestep size between saving the solution data [sec] (float scalar)
         """
         if "DTSV" in self._keyword_index:
             # defined: find index
@@ -175,7 +166,6 @@ class BatchReactors(reactor):
         """
         Set the timestep size between saving the solution data
         :param delta_time: timestep size between saving solution data [sec] (float scalar)
-        :return: None
         """
         if delta_time > 0.0e0:
             self.setkeyword(key="DTSV", value=delta_time)
@@ -188,8 +178,7 @@ class BatchReactors(reactor):
     @property
     def timestepforprintingsolution(self):
         """
-        Get the timestep size between printing the solution data to the text output file
-        :return: timestep size between printing solution data [sec] (float scalar)
+        Get the timestep size between printing the solution data to the text output file [sec] (float scalar)
         """
         if "DELT" in self._keyword_index:
             # defined: find index
@@ -213,7 +202,6 @@ class BatchReactors(reactor):
         """
         Set the timestep size between printing the solution data to the text output file
         :param delta_time: timestep size between printing solution data [sec] (float scalar)
-        :return: None
         """
         if delta_time > 0.0e0:
             self.setkeyword(key="DELT", value=delta_time)
@@ -1132,8 +1120,7 @@ class GivenPressureBatchReactor_FixedTemperature(BatchReactors):
     @property
     def time(self):
         """
-        Get simulation end time (required)
-        :return: simulation end time [sec] (float scalar)
+        Get simulation end time (required) [sec] (float scalar)
         """
         return self._endtime.value
 
@@ -1143,7 +1130,6 @@ class GivenPressureBatchReactor_FixedTemperature(BatchReactors):
         Set simulation end time (required)
         default value = 0.0 sec
         :param value: simulation end time [sec] (float scalar)
-        :return: None
         """
         if value <= 0.0e0:
             print(
@@ -1229,8 +1215,7 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
     @property
     def time(self):
         """
-        Get simulation end time (required)
-        :return: simulation end time [sec] (float scalar)
+        Get simulation end time (required) [sec] (float scalar)
         """
         return self._endtime.value
 
@@ -1240,7 +1225,6 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
         Set simulation end time (required)
         default value = 0.0 sec
         :param value: simulation end time [sec] (float scalar)
-        :return: None
         """
         if value <= 0.0e0:
             print(
@@ -1254,9 +1238,8 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
     @property
     def heatlossrate(self):
         """
-        Get heat loss rate from the reactor to the surroundings
+        Get heat loss rate from the reactor to the surroundings [cal/sec] (float scalar)
         default value = 0.0 cal/sec
-        :return: heat loss rate [cal/sec] (float scalar)
         """
         return self._heatlossrate.value
 
@@ -1266,7 +1249,6 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
         Set the heat loss rate from the reactor to the surroundings (required)
         default value = 0.0 cal/sec
         :param value: heat loss rate [cal/sec] (float scalar)
-        :return: None
         """
         self._heatlossrate = c_double(value)
         if not Keyword.noFullKeyword:
@@ -1275,9 +1257,8 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
     @property
     def heattransfercoefficient(self):
         """
-        Get heat transfer coefficient between the reactor and the surroundings
+        Get heat transfer coefficient between the reactor and the surroundings [cal/cm2-K-sec] (float scalar)
         default value = 0.0 cal/cm2-K-sec
-        :return: heat transfer coefficient [cal/cm2-K-sec] (float scalar)
         """
         return self._heattransfercoefficient
 
@@ -1287,7 +1268,6 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
         Set heat transfer coefficient between the reactor and the surroundings (optional)
         default value = 0.0 cal/cm2-K-sec
         :param value: heat transfer coefficient [cal/cm2-K-sec] (float scalar)
-        :return: None
         """
         if value < 0.0e0:
             print(
@@ -1302,9 +1282,8 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
     @property
     def ambienttemperature(self):
         """
-        Get ambient temperature (optional)
+        Get ambient temperature (optional) [K] (float scalar)
         default value = 300 K
-        :return: ambient temperature [K] (float scalar)
         """
         return self._ambienttemperature
 
@@ -1314,7 +1293,6 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
         Set ambient temperature (optional)
         default value = 300 K
         :param value: ambient temperature [K] (float scalar)
-        :return: None
         """
         if value <= 0.0e0:
             print(
@@ -1329,9 +1307,8 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
     @property
     def heattransferarea(self):
         """
-        Get heat transfer area between the reactor and the surroundings (optional)
+        Get heat transfer area between the reactor and the surroundings (optional) [cm2] (float scalar)
         default value = 0.0 cm2
-        :return: heat transfer area [cm2] (float scalar)
         """
         return self._heattransferarea
 
@@ -1341,7 +1318,6 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
         Set heat transfer area between the reactor and the surroundings (optional)
         default value = 0.0 cm2
         :param value: heat transfer area [cm2] (float scalar)
-        :return: None
         """
         if value < 0.0e0:
             print(
@@ -1451,8 +1427,7 @@ class GivenVolumeBatchReactor_FixedTemperature(BatchReactors):
     @property
     def time(self):
         """
-        Get simulation end time (required)
-        :return: simulation end time [sec] (float scalar)
+        Get simulation end time (required) [sec] (float scalar)
         """
         return self._endtime.value
 
@@ -1462,7 +1437,6 @@ class GivenVolumeBatchReactor_FixedTemperature(BatchReactors):
         Set simulation end time (required)
         default value = 0.0 sec
         :param value: simulation end time [sec] (float scalar)
-        :return: None
         """
         if value <= 0.0e0:
             print(
@@ -1548,8 +1522,7 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
     @property
     def time(self):
         """
-        Get simulation end time (required)
-        :return: simulation end time [sec] (float scalar)
+        Get simulation end time (required) [sec] (float scalar)
         """
         return self._endtime.value
 
@@ -1559,7 +1532,6 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
         Set simulation end time (required)
         default value = 0.0 sec
         :param value: simulation end time [sec] (float scalar)
-        :return: None
         """
         if value <= 0.0e0:
             print(
@@ -1573,9 +1545,8 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
     @property
     def heatlossrate(self):
         """
-        Get heat loss rate from the reactor to the surroundings
+        Get heat loss rate from the reactor to the surroundings [cal/sec] (float scalar)
         default value = 0.0 cal/sec
-        :return: heat loss rate [cal/sec] (float scalar)
         """
         return self._heatlossrate.value
 
@@ -1585,7 +1556,6 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
         Set the heat loss rate from the reactor to the surroundings (required)
         default value = 0.0 cal/sec
         :param value: heat loss rate [cal/sec] (float scalar)
-        :return: None
         """
         self._heatlossrate = c_double(value)
         if not Keyword.noFullKeyword:
@@ -1594,9 +1564,8 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
     @property
     def heattransfercoefficient(self):
         """
-        Get heat transfer coefficient between the reactor and the surroundings
+        Get heat transfer coefficient between the reactor and the surroundings [cal/cm2-K-sec] (float scalar)
         default value = 0.0 cal/cm2-K-sec
-        :return: heat transfer coefficient [cal/cm2-K-sec] (float scalar)
         """
         return self._heattransfercoefficient
 
@@ -1606,7 +1575,6 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
         Set heat transfer coefficient between the reactor and the surroundings (optional)
         default value = 0.0 cal/cm2-K-sec
         :param value: heat transfer coefficient [cal/cm2-K-sec] (float scalar)
-        :return: None
         """
         if value < 0.0e0:
             print(
@@ -1621,9 +1589,8 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
     @property
     def ambienttemperature(self):
         """
-        Get ambient temperature (optional)
+        Get ambient temperature (optional) [K] (float scalar)
         default value = 300 K
-        :return: ambient temperature [K] (float scalar)
         """
         return self._ambienttemperature
 
@@ -1633,7 +1600,6 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
         Set ambient temperature (optional)
         default value = 300 K
         :param value: ambient temperature [K] (float scalar)
-        :return: None
         """
         if value <= 0.0e0:
             print(
@@ -1648,9 +1614,8 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
     @property
     def heattransferarea(self):
         """
-        Get heat transfer area between the reactor and the surroundings (optional)
+        Get heat transfer area between the reactor and the surroundings (optional) [cm2] (float scalar)
         default value = 0.0 cm2
-        :return: heat transfer area [cm2] (float scalar)
         """
         return self._heattransferarea
 
@@ -1660,7 +1625,6 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
         Set heat transfer area between the reactor and the surroundings (optional)
         default value = 0.0 cm2
         :param value: heat transfer area [cm2] (float scalar)
-        :return: None
         """
         if value < 0.0e0:
             print(
