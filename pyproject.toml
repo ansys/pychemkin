@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ansys-chemkin"
-version = "0.25.dev10"
+version = "0.25.dev11"
 description = "PyChemkin provides Pythonic interface to Ansys chemkin utilities and reactor models"
 license = "MIT"
 authors = ["ANSYS, Inc. <ansys.support@ansys.com>"]
