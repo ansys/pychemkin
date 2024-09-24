@@ -2,12 +2,12 @@ name: Github CI
 
 on:
   workflow_dispatch:
-#  pull_request:
-#  push:
-#    tags:
-#      - "*"
-#    branches:
-#      - main
+  pull_request:
+  push:
+    tags:
+      - "*"
+    branches:
+      - main
 
 env:
   DOCUMENTATION_CNAME: 'chemkin.docs.pyansys.com'
