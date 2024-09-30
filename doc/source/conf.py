@@ -34,6 +34,6 @@ autoapi_ignore = ["*wrapper*", "*reactormodel*", "*color*"]
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 # html_theme = 'alabaster'
-html_theme = "furo"
-# html_theme = "ansys_sphinx_theme"
+# html_theme = "furo"
+html_theme = "ansys_sphinx_theme"
 html_static_path = ["_static"]
