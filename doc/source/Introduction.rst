@@ -10,7 +10,7 @@ What is **PyChemkin**? **PyChemkin**, in its core, inherites all Chemkin functio
 
    The figure below is a schematic of **PyChemkin**'s *Mixture*-centric concept showing the basic types of operations applicable to the *Mixture* object in **PyChemkin**: create (by inheriting all properties of a *Chemistry Set*), combine/mix (with constraint), equilibrize (with constraints), and process (by a reactor model)
 
-   .. image:: Tutorials/mixture_concept.png
+   .. image:: tutorials/mixture_concept.png
       :width: 600
       :alt: Mixture-centric Concept in PyChemkin
 

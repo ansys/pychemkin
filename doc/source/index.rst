@@ -14,7 +14,7 @@
    Prerequisites
    Introduction
    Getting Started <Get_Start>
-.. Tutorials
+   Tutorials
    License
 
 .. warning::
