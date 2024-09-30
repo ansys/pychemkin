@@ -17,7 +17,7 @@ Tutorials
    - `Jupyter Notebook`_ documentation
 
 
-.. note:: 
+.. note::
    Source codes (\*.py) of the tutorials are provided in the `examples` directory of the `PyChemkin GitHub repository`_
 
 
@@ -25,7 +25,7 @@ Tutorials
 .. _PyChemkin GitHub repository: https://test.pypi.org/manage/project/ansys-chemkin/releases/
 
 .. _Jupyter Notebook: https://jupyter-notebook.readthedocs.io/en/latest/
- 
+
 .. _Load Mechanisms: tutorials/tutorial_loadmechanism.ipynb
 
 .. _Getting Species Properties: tutorials/tutorial_speciesproperties.ipynb

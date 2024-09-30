@@ -39,7 +39,7 @@ mymixture1.temperature = 1000.0
 mymixture1.pressure = ck.Patm
 # set molar compositions
 mymixture1.X = [("CH4", 0.1), ("O2", 0.21), ("N2", 0.79)]
-# compute the constrainted H-P equilibrium state 
+# compute the constrained H-P equilibrium state
 ck.help("equilibrium")
 equil_mix1_HP = ck.equilibrium(mymixture1, opt=5)
 print(f"equilibrium temperature of mymixture1 : {equil_mix1_HP.temperature} [K]")
@@ -76,17 +76,17 @@ mymixture2 = ck.Mixture(My2ndMech)
 # set mixture temperature [K]
 mymixture2.temperature = 500.0
 # set mixture pressure [dynes/cm2]
-mymixture2.pressure = 2.0 * ck.Patm 
+mymixture2.pressure = 2.0 * ck.Patm
 # set mixture molar composition
 mymixture2.X = [("H2", 0.02), ("O2", 0.2), ("N2", 0.8)]
 # compute detonation wave speed with mymixture2
 speeds_mix2, CJ_mix2 = ck.detonation(mymixture2)
-print(f"detonation mymixture2 temperature: {CJ_mix2.temperature} [K]") 
+print(f"detonation mymixture2 temperature: {CJ_mix2.temperature} [K]")
 print(f"detonation wave speed = {speeds_mix2[1]/100.0} [m/sec]")
 #
 # re-activate My1stMech
 My1stMech.activate()
 # compute detonation wave speed with mymixture1
 speeds_mix1, CJ_mix1 = ck.detonation(mymixture1)
-print(f"detonation mymixture1 temperature: {CJ_mix1.temperature} [K]") 
+print(f"detonation mymixture1 temperature: {CJ_mix1.temperature} [K]")
 print(f"detonation wave speed = {speeds_mix1[1]/100.0} [m/sec]")
