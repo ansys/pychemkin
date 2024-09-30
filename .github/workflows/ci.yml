@@ -92,7 +92,7 @@ jobs:
     needs: doc-style
     steps:
       - uses: actions/checkout@v4
-      - uses: docker://pandoc/core:2.9
+      - uses: pandoc/actions/setup@v1
       - name: Run Ansys documentation building action
         uses: ansys/actions/doc-build@v4
         env:
