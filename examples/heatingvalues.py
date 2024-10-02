@@ -124,5 +124,3 @@ del HHV, LHV
 del fuel, oxid, unburned, burned
 # delete the local mechanism file just created
 os.remove(mymechfile)
-
-
