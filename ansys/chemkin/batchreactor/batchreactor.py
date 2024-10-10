@@ -6,17 +6,16 @@ import numpy as np
 
 from .. import chemkin_wrapper
 from ..chemistry import (
+    Patm,
     checkchemistryset,
     chemistrysetinitialized,
     findinterpolateparameters,
-    Patm,
     setverbose,
     showignitiondefinition,
 )
 from ..color import Color as Color
 from ..mixture import interpolatemixtures
 from ..reactormodel import Keyword
-from ..reactormodel import Profile
 from ..reactormodel import ReactorModel as reactor
 
 logger = logging.getLogger(__name__)
@@ -26,6 +25,7 @@ class BatchReactors(reactor):
     """
     Generic model of Chemkin 0D transient closed homogeneous reactor models
     """
+
     # set possible types in batch reactors
     ReactorTypes = {"Batch": 1, "PSR": 2, "PFR": 3, "HCCI": 4, "SI": 5, "DI": 6}
     SolverTypes = {"Transient": 1, "SteadyState": 2}
@@ -385,10 +385,11 @@ class BatchReactors(reactor):
             else:
                 # convert ignition  delay time from [sec] to [msec]
                 return ignitiondelaytime.value * 1.0e3
-        elif self._reactortype.value in [self.ReactorTypes.get("HCCI"), 
-                                         self.ReactorTypes.get("SI"), 
-                                         self.ReactorTypes.get("DI"),
-                                         ]:
+        elif self._reactortype.value in [
+            self.ReactorTypes.get("HCCI"),
+            self.ReactorTypes.get("SI"),
+            self.ReactorTypes.get("DI"),
+        ]:
             # engine models
             print(Color.YELLOW + "** mean ignition delay time in CA", end=Color.END)
             return ignitiondelaytime.value
@@ -536,9 +537,7 @@ class BatchReactors(reactor):
         self.setkeyword(key="TIME", value=self._endtime.value)
         # initial mole fraction
         nspecieslines, species_lines = self.createspeciesinputlines(
-            self._solvertype.value,
-            threshold=1.0e-12,
-            molefrac=self.reactormixture.X
+            self._solvertype.value, threshold=1.0e-12, molefrac=self.reactormixture.X
         )
         for line in species_lines:
             self.setkeyword(key=line, value=True)
@@ -622,9 +621,7 @@ class BatchReactors(reactor):
         self.setkeyword(key="END", value=True)
         # create input lines from additional user-specified keywords
         iErr, nlines = self.createkeywordinputlines()
-        print(
-            Color.YELLOW + f"** {nlines} input lines are created", end=Color.END
-        )
+        print(Color.YELLOW + f"** {nlines} input lines are created", end=Color.END)
 
         return iErr
 

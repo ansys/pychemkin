@@ -63,7 +63,13 @@ EGRratio = 0.3
 add_frac = fresh.getEGRmolefraction(EGRratio, threshold=1.0e-8)
 # recreate the initial mixture with EGR
 iError = fresh.XbyEquivalenceRatio(
-    MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=equiv, threshold=1.0e-8
+    MyGasMech,
+    fuelmixture.X,
+    air.X,
+    add_frac,
+    products,
+    equivalenceratio=equiv,
+    threshold=1.0e-8,
 )
 # list the composition of the fuel+air+EGR mixture
 fresh.listcomposition(mode="mole", bound=1.0e-8)
@@ -95,7 +101,7 @@ print(f"engine displacement volume {MyEngine.getdisplacementvolume()} [cm3]")
 print(f"engine clearance volume {MyEngine.getclearancevolume()} [cm3]")
 print(f"number of zone(s) = {MyEngine.getnumberofzones()}")
 # wall heat transfer model
-# set model parameters 
+# set model parameters
 # "dimensionless": [<a> <b> <c> <Twall>]
 # "dimensional": [<a> <b> <c> <Twall>]
 # "hohenburg": [<a> <b> <c> <d> <e> <Twall>]
@@ -182,7 +188,7 @@ for i in range(solutionpoints):
     # get gas density [g/cm3]
     denprofile[i] = solutionmixture.RHO
     # get mixture specific heat capacity profile [erg/mole-K]
-    Cpprofile[i] = solutionmixture.CPBL()  / ck.ergsperjoule * 1.0e-3
+    Cpprofile[i] = solutionmixture.CPBL() / ck.ergsperjoule * 1.0e-3
 # plot the profiles
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))
 plt.subplot(221)

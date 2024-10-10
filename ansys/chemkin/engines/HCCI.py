@@ -1,27 +1,23 @@
 import copy
-import numpy as np
 from ctypes import c_double, c_int
 import logging
+import numpy as np
 
 from .. import chemkin_wrapper
 from ..chemistry import (
+    Patm,
     checkchemistryset,
     chemistrysetinitialized,
-    findinterpolateparameters,
-    Patm,
     setverbose,
 )
 from ..color import Color as Color
-from ..mixture import Mixture
-from ..reactormodel import Keyword, Profile, ReactorModel
-
+from ..reactormodel import Keyword
 from .engine import Engine
 
 logger = logging.getLogger(__name__)
 
 
 class HCCIengine(Engine):
-
     def __init__(self, reactor_condition, label=None, nzones=None):
         """
         Single or multi- zone homogeneous charge compression ignition (HCCI) engine
@@ -36,7 +32,7 @@ class HCCIengine(Engine):
                 label = "HCCI"
             else:
                 label = "Multi-Zone HCCI"
-        
+
         # use the first zone to initialize the engine model
         super().__init__(reactor_condition, label)
         # set reactor type
@@ -65,7 +61,7 @@ class HCCIengine(Engine):
         # zonal wall heat transfer area fraction
         self.zoneHTarea = []
         # zonal gas compositions in mole fraction (for zonalsetupmode =1)
-        self.zonemolefrac = [] # list of mole fraction arrays
+        self.zonemolefrac = []  # list of mole fraction arrays
         # zonal equivalence ratios (for zonalsetupmode =2)
         self.zoneequivalenceratio = []
         # fuel composition for all zones
@@ -99,7 +95,8 @@ class HCCIengine(Engine):
             iErr *= 10
         if iErr != 0:
             print(
-                Color.RED + f"** error initializing the HCCI engine model: {self.label:s}"
+                Color.RED
+                + f"** error initializing the HCCI engine model: {self.label:s}"
             )
             print(f"   error code = {iErr:d}", end=Color.END)
             exit()
@@ -117,14 +114,15 @@ class HCCIengine(Engine):
         """
         nzones = self._nzones.value
         if len(zonetemp) != nzones:
-            print(Color.PURPLE +
-                  f"** zonal temperature must be a list double/float of size {nzones}",
-                  end=Color.END
-                  )
+            print(
+                Color.PURPLE
+                + f"** zonal temperature must be a list double/float of size {nzones}",
+                end=Color.END,
+            )
             exit()
-        
+
         if len(self.zonetemperature) > 0:
-            print(Color.YELLOW + "** zonal temperatures will be reset",end=Color.END)
+            print(Color.YELLOW + "** zonal temperatures will be reset", end=Color.END)
         self.zonetemperature = []
         # set zonal temperatures
         for t in zonetemp:
@@ -137,19 +135,22 @@ class HCCIengine(Engine):
         """
         nzones = self._nzones.value
         if len(zonevol) != nzones:
-            print(Color.PURPLE +
-                  f"** zonal volume fraction must be a list of double/float of size {nzones}",
-                  end=Color.END
-                  )
+            print(
+                Color.PURPLE
+                + f"** zonal volume fraction must be a list of double/float of size {nzones}",
+                end=Color.END,
+            )
             exit()
-        
+
         if len(self.zonevolume) > 0:
-            print(Color.YELLOW + "** zonal volume farctions will be reset",end=Color.END)
+            print(
+                Color.YELLOW + "** zonal volume farctions will be reset", end=Color.END
+            )
         self.zonevolume = []
         # set zonal volume fractions (will be normalized)
         for v in zonevol:
             self.zonevolume.append(v)
-    
+
     def setzonalheattransferarea(self, zonearea):
         """
         set zonal wall heat transfer area fractions for muti-zone HCCI engine simulation
@@ -157,19 +158,20 @@ class HCCIengine(Engine):
         """
         nzones = self._nzones.value
         if len(zonearea) != nzones:
-            print(Color.PURPLE +
-                  f"** zonal area fraction must be a list of double/float of size {nzones}",
-                  end=Color.END
-                  )
+            print(
+                Color.PURPLE
+                + f"** zonal area fraction must be a list of double/float of size {nzones}",
+                end=Color.END,
+            )
             exit()
-        
+
         if len(self.zoneHTarea) > 0:
-            print(Color.YELLOW + "** zonal area farctions will be reset",end=Color.END)
+            print(Color.YELLOW + "** zonal area farctions will be reset", end=Color.END)
         self.zoneHTarea = []
         # set zonal wall heat transfer area fractions (will be normalized)
         for a in zonearea:
             self.zoneHTarea.append(a)
-    
+
     def setzonalmolefractions(self, zonemolefrac):
         """
         set zonal gas mole fractions for muti-zone HCCI engine simulation
@@ -177,20 +179,28 @@ class HCCIengine(Engine):
         """
         nzones = self._nzones.value
         if len(zonemolefrac) != nzones:
-            print(Color.PURPLE +
-                  f"** zonal gas mole fraction must be a list of "
-                  + " {nzones} double/float mole fraction arrays",
-                  end=Color.END
-                  )
+            print(
+                Color.PURPLE
+                + f"** zonal gas mole fraction must be a list of "
+                + f" {nzones} double/float mole fraction arrays",
+                end=Color.END,
+            )
             exit()
         
         if self._zonalsetupmode == 2:
-            print(Color.YELLOW + "** raw gas composition will replace equivalence ratio"
-                  + " to set up the zonal gas compositions",end=Color.END)
+            print(
+                Color.YELLOW
+                + "** raw gas composition will replace equivalence ratio"
+                + " to set up the zonal gas compositions",
+                end=Color.END,
+            )
             self._zonalsetupmode = 1
-        
+
         if len(self.zonemolefrac) > 0:
-            print(Color.YELLOW + "** zonal gas mole farctions will be reset",end=Color.END)
+            print(
+                Color.YELLOW + "** zonal gas mole farctions will be reset",
+                end=Color.END,
+            )
         self.zonemolefrac = []
         # set zonal gas mole fractions
         for x in zonemolefrac:
@@ -203,7 +213,10 @@ class HCCIengine(Engine):
         :param recipe: list of tuples for (species, mole fraction) pairs
         """
         if len(self.definefuel) > 0:
-            print(Color.YELLOW + "** previous fuel definition will be reset",end=Color.END)
+            print(
+                Color.YELLOW + "** previous fuel definition will be reset",
+                end=Color.END,
+            )
         self.definefuel = []
         self.definefuel = copy.deepcopy(recipe)
 
@@ -213,7 +226,10 @@ class HCCIengine(Engine):
         :param recipe: list of tuples for (species, mole fraction) pairs
         """
         if len(self.defineoxid) > 0:
-            print(Color.YELLOW + "** previous oxidizer definition will be reset",end=Color.END)
+            print(
+                Color.YELLOW + "** previous oxidizer definition will be reset",
+                end=Color.END,
+            )
         self.defineoxid = []
         self.defineoxid = copy.deepcopy(recipe)
 
@@ -223,7 +239,10 @@ class HCCIengine(Engine):
         :param products: list of product species symbols
         """
         if len(self.defineproduct) > 0:
-            print(Color.YELLOW + "** previous product definition will be reset",end=Color.END)
+            print(
+                Color.YELLOW + "** previous product definition will be reset",
+                end=Color.END,
+            )
         self.defineproduct = []
         self.defineoxid = copy.deepcopy(products)
 
@@ -234,15 +253,19 @@ class HCCIengine(Engine):
         """
         nzones = self._nzones.value
         if len(addfrac) != nzones:
-            print(Color.PURPLE +
-                  f"** zonal additive gas mole fraction must be a list of "
-                  + " {nzones} double/float mole fraction arrays",
-                  end=Color.END
-                  )
+            print(
+                Color.PURPLE
+                + f"** zonal additive gas mole fraction must be a list of "
+                + f" {nzones} double/float mole fraction arrays",
+                end=Color.END,
+            )
             exit()
-        
+
         if len(self.zoneaddmolefrac) > 0:
-            print(Color.YELLOW + "** zonal additive gas mole farctions will be reset",end=Color.END)
+            print(
+                Color.YELLOW + "** zonal additive gas mole farctions will be reset",
+                end=Color.END,
+            )
         self.zoneaddmolefrac = []
         # set zonal gas mole fractions
         for x in addfrac:
@@ -256,24 +279,32 @@ class HCCIengine(Engine):
         """
         nzones = self._nzones.value
         if len(zonephi) != nzones:
-            print(Color.PURPLE +
-                  f"** zonal equivalence ratio must be a list of double/float of size {nzones}",
-                  end=Color.END
-                  )
+            print(
+                Color.PURPLE
+                + f"** zonal equivalence ratio must be a list of double/float of size {nzones}",
+                end=Color.END,
+            )
             exit()
 
         if self._zonalsetupmode == 1:
-            print(Color.YELLOW + "** equivalence ratio will replace raw gas mole fractions"
-                  + " to set up the zonal gas compositions",end=Color.END)
+            print(
+                Color.YELLOW
+                + "** equivalence ratio will replace raw gas mole fractions"
+                + " to set up the zonal gas compositions",
+                end=Color.END,
+            )
             self._zonalsetupmode = 2
-        
+
         if len(self.zoneequivalenceratio) > 0:
-            print(Color.YELLOW + "** previous zonal equivalence ratio will be reset",end=Color.END)
+            print(
+                Color.YELLOW + "** previous zonal equivalence ratio will be reset",
+                end=Color.END,
+            )
         self.zoneequivalenceratio = []
         # set zonal equivalence ratio
         for p in zonephi:
             self.zoneequivalenceratio.append(p)
-    
+
     def setzonalEGRratio(self, zoneegr):
         """
         set zonal exhaust gas recirculation (EGR) ratios for setting up zonal gas composition by zonal equivalence ratio
@@ -281,14 +312,18 @@ class HCCIengine(Engine):
         """
         nzones = self._nzones.value
         if len(zoneegr) != nzones:
-            print(Color.PURPLE +
-                  f"** zonal EGR ratio must be a list of double/float of size {nzones}",
-                  end=Color.END
-                  )
+            print(
+                Color.PURPLE
+                + f"** zonal EGR ratio must be a list of double/float of size {nzones}",
+                end=Color.END,
+            )
             exit()
-        
+
         if len(self.zoneEGRR) > 0:
-            print(Color.YELLOW + "** previous zonal EGR ratio will be reset",end=Color.END)
+            print(
+                Color.YELLOW + "** previous zonal EGR ratio will be reset",
+                end=Color.END,
+            )
         self.zoneEGRR = []
         # set zonal EGR ratio
         for r in zoneegr:
@@ -302,15 +337,16 @@ class HCCIengine(Engine):
         """
         if self._nzones.value == 1:
             # single zone is not allowed here
-            print(Color.YELLOW +
-                  "** single-zone should not use this method to set up zonal conditions",
-                  end=Color.END
-                  )
+            print(
+                Color.YELLOW
+                + "** single-zone should not use this method to set up zonal conditions",
+                end=Color.END,
+            )
             return
-        
+
         # set zonal pressure (same for all zones)
         self.setkeyword(key="PRES", value=self._pressure / Patm)
-        
+
         if self._zonalsetupmode == 0:
             # set zonal setup mode to 'zonal species mole fraction'
             self._zonalsetupmode = 1
@@ -345,13 +381,13 @@ class HCCIengine(Engine):
                     + addon
                 )
                 self.setkeyword(key=keyline, value=True)
-        
+
             # initial mole fraction
             nspecieslines, species_lines = self.createspeciesinputlineswithaddon(
                 "XEST",
                 threshold=1.0e-12,
                 molefrac=self.zonemolefrac[izone],
-                addon=addon
+                addon=addon,
             )
             for line in species_lines:
                 self.setkeyword(key=line, value=True)
@@ -364,15 +400,16 @@ class HCCIengine(Engine):
         """
         if self._nzones.value == 1:
             # single zone is not allowed here
-            print(Color.YELLOW +
-                  "** single-zone should not use this method to set up zonal conditions",
-                  end=Color.END
-                  )
+            print(
+                Color.YELLOW
+                + "** single-zone should not use this method to set up zonal conditions",
+                end=Color.END,
+            )
             return
-        
+
         # set zonal pressure (same for all zones)
         self.setkeyword(key="PRES", value=self._pressure / Patm)
-        
+
         if self._zonalsetupmode == 0:
             # set zonal setup mode to 'zonal equivalence ratio'
             self._zonalsetupmode = 2
@@ -407,7 +444,7 @@ class HCCIengine(Engine):
                     + addon
                 )
                 self.setkeyword(key=keyline, value=True)
-        
+
             # set zonal equivalence ratio
             keyline = (
                 "EQUI"
@@ -432,30 +469,18 @@ class HCCIengine(Engine):
                 # set fuel composition by using recipe
                 for s, x in self.definefuel:
                     keyline = (
-                        "FUEL"
-                        + Keyword.fourspaces
-                        + s
-                        + Keyword.fourspaces
-                        + str(x)
+                        "FUEL" + Keyword.fourspaces + s + Keyword.fourspaces + str(x)
                     )
                     self.setkeyword(key=keyline, value=True)
-                #set oxiizer composition by using recipe
+                # set oxidizer composition by using recipe
                 for s, x in self.defineoxid:
                     keyline = (
-                        "OXID"
-                        + Keyword.fourspaces
-                        + s
-                        + Keyword.fourspaces
-                        + str(x)
+                        "OXID" + Keyword.fourspaces + s + Keyword.fourspaces + str(x)
                     )
                     self.setkeyword(key=keyline, value=True)
-                # defin complete combustion products by using species symbol list
+                # define complete combustion products by using species symbol list
                 for s in self.defineproduct:
-                    keyline = (
-                        "CPROD"
-                        + Keyword.fourspaces
-                        + s
-                    )
+                    keyline = "CPROD" + Keyword.fourspaces + s
                     self.setkeyword(key=keyline, value=True)
 
             # zonal additive mole fraction
@@ -463,7 +488,7 @@ class HCCIengine(Engine):
                 "ADD",
                 threshold=1.0e-12,
                 molefrac=self.zoneaddmolefrac[izone],
-                addon=addon
+                addon=addon,
             )
             for line in species_lines:
                 self.setkeyword(key=line, value=True)
@@ -487,7 +512,7 @@ class HCCIengine(Engine):
         # initial mass fraction
         Y_init = self.reactormixture.Y
         # connecting rod length to crank radius ratio
-        LOLR = c_double(self.connectingrod/self.crankradius)
+        LOLR = c_double(self.connectingrod / self.crankradius)
         # set reactor initial conditions and geometry parameters
         if self._reactortype.value == self.ReactorTypes.get("HCCI"):
             iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupHCCIInputs(
@@ -547,9 +572,7 @@ class HCCIengine(Engine):
         self.setkeyword(key="END", value=True)
         # create input lines from additional user-specified keywords
         iErr, nlines = self.createkeywordinputlines()
-        print(
-            Color.YELLOW + f"** {nlines} input lines are created", end=Color.END
-        )
+        print(Color.YELLOW + f"** {nlines} input lines are created", end=Color.END)
 
         return iErr
 
@@ -576,7 +599,7 @@ class HCCIengine(Engine):
         )
 
         return iErr
-      
+
     def __process_keywords(self):
         """
         Process input keywords for the reactor model
@@ -599,7 +622,7 @@ class HCCIengine(Engine):
         # initial mass fraction
         Y_init = self.reactormixture.Y
         # connecting rod length to crank radius ratio
-        LOLR = c_double(self.connectingrod/self.crankradius)
+        LOLR = c_double(self.connectingrod / self.crankradius)
         # set reactor initial conditions and geometry parameters
         if self._reactortype.value == self.ReactorTypes.get("HCCI"):
             iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupHCCIInputs(

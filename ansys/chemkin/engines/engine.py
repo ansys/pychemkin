@@ -1,25 +1,16 @@
-import numpy as np
-from ctypes import *
-import ctypes
 import copy
+from ctypes import c_double
+
+import numpy as np
 
 from .. import chemkin_wrapper
-from ..chemistry import (
-    checkchemistryset,
-    chemistrysetinitialized,
-    findinterpolateparameters,
-    Patm,
-    setverbose,
-)
-from ..color import Color as Color
-from ..mixture import Mixture
-from ..reactormodel import Keyword
-from ..reactormodel import Profile
-from ..reactormodel import ReactorModel
 from ..batchreactors.batchreactor import BatchReactors
+from ..chemistry import Patm
+from ..color import Color as Color
+from ..reactormodel import Keyword
+
 
 class Engine(BatchReactors):
-
     def __init__(self, reactor_condition, label=None):
         """
         Common engine cylinder parameters used by Chemkin engine models
@@ -58,7 +49,7 @@ class Engine(BatchReactors):
         self.IVCCA = -180.0
         # EVO CA (end of engine simulation when the cylinder becomes an open system because the exhaust valve is opened)
         self.EVOCA = 180.0
-        # defaul duration = 1 engine revolution
+        # default duration = 1 engine revolution
         self.rundurationCA = 360.0
         # engine wall heat transfer models
         # ICHX: dimensionless correlation "ICHX <a> <b> <c> <Twall>"
@@ -69,27 +60,28 @@ class Engine(BatchReactors):
         self.numbHTmodelparameters = [3, 3, 5]
         self.heattransfermodel = None
         self.heattransferparameters = None
-        self.cylinderwalltemperature = None # [K]
+        self.cylinderwalltemperature = None  # [K]
         # incylinder gas speed correlations
         # velocity correlation parameters
         # Woschni "GVEL <C11> <C12> <C2> <swirling ratio>"
         self.gasvelocity = None
         # Woschni+Huber IMEP "HIMP <IMEP>"
-        self.HuberIMEP = None # [atm]
+        self.HuberIMEP = None  # [atm]
         # flag for wall heat transfer, default = adiabatic
         self._wallheattransfer = False
         # check required inputs
         # number of required parameters:
         # starting CA, ending CA, engine speed, compression ratio, bore, stroke, connecting rod length
         self._numb_requiredinput = 7
-        self._requiredlist = ["DEG0",
-                              "DEGE",
-                              "RPM",
-                              "CMPR",
-                              "BORE",
-                              "STRK",
-                              "CRLEN",
-                              ]
+        self._requiredlist = [
+            "DEG0",
+            "DEGE",
+            "RPM",
+            "CMPR",
+            "BORE",
+            "STRK",
+            "CRLEN",
+        ]
         # add engine specific keywords
         Keyword._protectedkeywords.extend(self._requiredlist)
 
@@ -108,8 +100,11 @@ class Engine(BatchReactors):
         #
         time = (CA - startCA) / RPM / 6.0e0
         if time < 0.0:
-            print(Color.PURPLE + "** given CA is less than the starting CA @ IVC", end=Color.END)
-            return 0.0 
+            print(
+                Color.PURPLE + "** given CA is less than the starting CA @ IVC",
+                end=Color.END,
+            )
+            return 0.0
         else:
             return time
 
@@ -144,7 +139,7 @@ class Engine(BatchReactors):
         :return: engine crank angle [degree] (double scalar)
         """
         return self.IVCCA + time * self.degpersec
-    
+
     @property
     def startingCA(self):
         """
@@ -152,7 +147,7 @@ class Engine(BatchReactors):
         usually the starting CA ~ the intake valve close (IVC) timing
         """
         return self.IVCCA
-    
+
     @startingCA.setter
     def startingCA(self, startCA):
         """
@@ -174,7 +169,7 @@ class Engine(BatchReactors):
         usually the ending CA ~ the exhaust valve open (EVO) timing
         """
         return self.EVOCA
-    
+
     @endingCA.setter
     def endingCA(self, endCA):
         """
@@ -184,7 +179,10 @@ class Engine(BatchReactors):
         """
         # check EVO timing value
         if endCA <= self.startingCA:
-            print(Color.PURPLE + f"** ending CA must > starting CA = {self.startingCA}", end=Color.END)
+            print(
+                Color.PURPLE + f"** ending CA must > starting CA = {self.startingCA}",
+                end=Color.END,
+            )
             return
         # set EVO timing in CA
         self.EVOCA = endCA
@@ -198,7 +196,7 @@ class Engine(BatchReactors):
         Get the simulation duration in number of crank angles [degree]
         """
         return self.rundurationCA
-    
+
     @durationCA.setter
     def durationCA(self, CA):
         """
@@ -207,7 +205,7 @@ class Engine(BatchReactors):
         """
         # check EVO timing value
         if CA <= 0.0:
-            print(Color.PURPLE + f"** duration CA must > 0", end=Color.END)
+            print(Color.PURPLE + "** duration CA must > 0", end=Color.END)
             return
         # set EVO timing in CA
         self.rundurationCA = CA
@@ -235,7 +233,7 @@ class Engine(BatchReactors):
             # set keyword
             self._inputcheck.append("BORE")
         else:
-            print(Color.PURPLE + f"** bore diameter must > 0", end=Color.END)
+            print(Color.PURPLE + "** bore diameter must > 0", end=Color.END)
 
     @property
     def stroke(self):
@@ -253,12 +251,12 @@ class Engine(BatchReactors):
         """
         if s > 0.0:
             self.enginestroke = s
-            self.crankradius = s/2.0e0
+            self.crankradius = s / 2.0e0
             # set keyword
             self._inputcheck.append("STRK")
         else:
-            print(Color.PURPLE + f"** stroke must > 0", end=Color.END)
-    
+            print(Color.PURPLE + "** stroke must > 0", end=Color.END)
+
     @property
     def connectingrod(self):
         """
@@ -268,17 +266,17 @@ class Engine(BatchReactors):
         return self.connectrodlength
 
     @connectingrod.setter
-    def connectingrod(self, l):
+    def connectingrod(self, s):
         """
         Set the engine connecting rod length
-        :param l: lemgth [cm] (double scalar)
+        :param s: lemgth [cm] (double scalar)
         """
-        if l > 0.0:
-            self.connectrodlength = l
+        if s > 0.0:
+            self.connectrodlength = s
             # set keyword
             self._inputcheck.append("CRLEN")
         else:
-            print(Color.PURPLE + f"** connecting rod length must > 0", end=Color.END)
+            print(Color.PURPLE + "** connecting rod length must > 0", end=Color.END)
 
     @property
     def compressionratio(self):
@@ -299,7 +297,7 @@ class Engine(BatchReactors):
             # set keyword
             self._inputcheck.append("CMPR")
         else:
-            print(Color.PURPLE + f"** compression ratio must > 1", end=Color.END)
+            print(Color.PURPLE + "** compression ratio must > 1", end=Color.END)
 
     @property
     def RPM(self):
@@ -318,11 +316,11 @@ class Engine(BatchReactors):
         if speed > 0.0:
             self.enginespeed = speed
             self.degpersec = speed * 6.0e0
-            self.radpersec = self.degpersec *np.pi / 180.0e0
+            self.radpersec = self.degpersec * np.pi / 180.0e0
             # set keyword
             self._inputcheck.append("RPM")
         else:
-            print(Color.PURPLE + f"** RPM must > 0", end=Color.END)
+            print(Color.PURPLE + "** RPM must > 0", end=Color.END)
 
     def setcylinderheadarea(self, area):
         """
@@ -334,11 +332,11 @@ class Engine(BatchReactors):
             self.headareas = area + self.pistonheadarea
             # set keyword
             if "BORE" in self._inputcheck:
-                self.setkeyword(key="CYBAR", value=area/self.borearea)
+                self.setkeyword(key="CYBAR", value=area / self.borearea)
             else:
                 print(Color.PURPLE + "** please set BORE diameter first", end=Color.END)
         else:
-            print(Color.PURPLE + f"** surface area must > 0", end=Color.END)
+            print(Color.PURPLE + "** surface area must > 0", end=Color.END)
 
     def setpistonheadarea(self, area):
         """
@@ -350,11 +348,11 @@ class Engine(BatchReactors):
             self.headareas = area + self.cylinderheadarea
             # set keyword
             if "BORE" in self._inputcheck:
-                self.setkeyword(key="PSBAR", value=area/self.borearea)
+                self.setkeyword(key="PSBAR", value=area / self.borearea)
             else:
                 print(Color.PURPLE + "** please set BORE diameter first", end=Color.END)
         else:
-            print(Color.PURPLE + f"** surface area must > 0", end=Color.END)
+            print(Color.PURPLE + "** surface area must > 0", end=Color.END)
 
     def setpistonpinoffset(self, offset):
         """
@@ -366,8 +364,11 @@ class Engine(BatchReactors):
             # set keyword
             self.setkeyword(key="POLEN", value=offset)
         else:
-            print(Color.PURPLE + f"** piston pin offset distance must < crank radius {self.crankradius}",
-                  end=Color.END)
+            print(
+                Color.PURPLE
+                + f"** piston pin offset distance must < crank radius {self.crankradius}",
+                end=Color.END,
+            )
 
     def getclearancevolume(self):
         """
@@ -376,7 +377,7 @@ class Engine(BatchReactors):
         """
         if "CMPR" in self._inputcheck:
             dvolume = self.getdisplacementvolume()
-            cvolume = dvolume / (self.compressratio-1.0e0)
+            cvolume = dvolume / (self.compressratio - 1.0e0)
         else:
             print(Color.PURPLE + "** please set RPM first", end=Color.END)
             cvolume = 0.0
@@ -437,7 +438,8 @@ class Engine(BatchReactors):
             self.setkeyword(key="DEGSAVE", value=delta_CA)
         else:
             print(
-                Color.PURPLE + "** solution saving number of crank angles value must > 0",
+                Color.PURPLE
+                + "** solution saving number of crank angles value must > 0",
                 end=Color.END,
             )
 
@@ -491,8 +493,10 @@ class Engine(BatchReactors):
         """
         # check existing heat transfer set up
         if self.heattransfermodel is not None:
-            print(Color.YELLOW + "** previous heat transfer model will be overwritten",
-                  end=Color.END)
+            print(
+                Color.YELLOW + "** previous heat transfer model will be overwritten",
+                end=Color.END,
+            )
         #
         mymodel = model.lower()
         # check model
@@ -503,15 +507,22 @@ class Engine(BatchReactors):
         elif mymodel.rstrip() == "hohenburg":
             self.heattransfermodel = 2
         else:
-            print(Color.PURPLE + f"** engine wall heat transfer model {model.rstrip()} is not available")
-            print("** the valid model options are 'dimensional', 'dimesionless', and 'hohenburg'",
-                  end=Color.END)
+            print(
+                Color.PURPLE
+                + f"** engine wall heat transfer model {model.rstrip()} is not available"
+            )
+            print(
+                "** the valid model options are 'dimensional', 'dimesionless', and 'hohenburg'",
+                end=Color.END,
+            )
             exit()
         # check number of parameters
         if len(HTparameters) != self.numbHTmodelparameters[self.heattransfermodel]:
-            print(Color.PURPLE + f"** incorrect number of parameters")
-            print(f"** {model} requires {self.numbHTmodelparameters[self.heattransfermodel]} parameters")
-            print("** check Chemkin Input manual for more information",end=Color.END)
+            print(Color.PURPLE + "** incorrect number of parameters")
+            print(
+                f"** {model} requires {self.numbHTmodelparameters[self.heattransfermodel]} parameters"
+            )
+            print("** check Chemkin Input manual for more information", end=Color.END)
             exit()
         self.heattransferparameters = []
         # set model parameters
@@ -523,7 +534,7 @@ class Engine(BatchReactors):
 
     def setgasvelocitycorrelation(self, gasvelparameters, IMEP=None):
         """
-        Set the cylinder gas velocity correlation parmeters
+        Set the cylinder gas velocity correlation parameters
         Woschni: "GVEL <C11> <C12> <C2> <swirling ratio>"
         Huber: IMEP "HIMP <IMEP>"
         :param gasvelparameters: cylinder gas velocity correlation parameters (list of double)
@@ -531,29 +542,33 @@ class Engine(BatchReactors):
         """
         # check existing heat transfer set up
         if self.heattransfermodel is None:
-            print(Color.YELLOW + f"** please specify the wall heat transfer model first",
-                  end=Color.END)
+            print(
+                Color.YELLOW + "** please specify the wall heat transfer model first",
+                end=Color.END,
+            )
             return
         # check existing gas velocity correlation parameter
         if self.gasvelocity is not None:
-            print(Color.YELLOW + "** previous gas velocity correlation will be overwritten",
-                  end=Color.END)
+            print(
+                Color.YELLOW + "** previous gas velocity correlation will be overwritten",
+                end=Color.END,
+            )
         # check number of parameters
         if len(gasvelparameters) != 4:
-            print(Color.PURPLE + f"** incorrect number of parameters")
-            print(f"** gas velocity correlation requires 4 parameters")
+            print(Color.PURPLE + "** incorrect number of parameters")
+            print("** gas velocity correlation requires 4 parameters")
             print("** <C11> <C12> <C2> <swirl ratio>")
-            print("** check Chemkin Input manual for more information",end=Color.END)
+            print("** check Chemkin Input manual for more information", end=Color.END)
             exit()
         self.gasvelocity = []
         # set model parameters
         self.gasvelocity = copy.copy(gasvelparameters)
         # IEMP for the Huber correlation
-        self.HuberIMEP = IMEP # [atm]
+        self.HuberIMEP = IMEP  # [atm]
 
     def setheattransferkeywords(self):
         """
-        Set the engine wall heat transer related keywords
+        Set the engine wall heat transfer related keywords
         """
         # check if the wall heat transfer model is set up
         if not self._wallheattransfer:
@@ -603,9 +618,7 @@ class Engine(BatchReactors):
         self.setkeyword(key="TEMP", value=self._temperature.value)
         # initial mole fraction
         nspecieslines, species_lines = self.createspeciesinputlines(
-            self._solvertype.value,
-            threshold=1.0e-12,
-            molefrac=self.reactormixture.X
+            self._solvertype.value, threshold=1.0e-12, molefrac=self.reactormixture.X
         )
         for line in species_lines:
             self.setkeyword(key=line, value=True)
@@ -617,9 +630,9 @@ class Engine(BatchReactors):
         # heat loss rate per CA [erg/degree] sized = 1 + number of surface materials
         QLossRateCA = np.zeros(1, dtype=np.double)
         # apparent heat release rate per CA [erg/degree]
-        AHRR =c_double(0.0)
+        AHRR = c_double(0.0)
         # apparent heat release rate per CA from PV-ConGamma [erg/degree]
-        AHRRP =c_double(0.0)
+        AHRRP = c_double(0.0)
         # Crank rotation angle for 10% of total heat release
         HR10 = c_double(self.IVCCA)
         # Crank rotation angle for 50% of total heat release
@@ -629,6 +642,12 @@ class Engine(BatchReactors):
         # get heat release rate information from the solution
         iErr = chemkin_wrapper.chemkin.KINAll0D_GetEngineHeatRelease(
             QLossRateCA, AHRR, AHRRP, HR10, HR50, HR90
-            )
+        )
+        if iErr != 0:
+            # reset the angles to 0 when error is encountered 
+            HR10 = c_double(0.0)
+            HR50 = c_double(0.0)
+            HR90 = c_double(0.0)
+
         return HR10.value, HR50.value, HR90.value
     
