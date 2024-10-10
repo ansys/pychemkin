@@ -8,7 +8,9 @@ import chemkin as ck  # Chemkin
 from chemkin import Color
 
 # chemkin batch reactor models (transient)
-from chemkin.batchreactor import GivenPressureBatchReactor_EnergyConservation
+from chemkin.batchreactors.batchreactor import (
+    GivenPressureBatchReactor_EnergyConservation,
+)
 
 # import pytest
 
@@ -118,7 +120,7 @@ def test_ignitiondelay():
             print(f"ignition delay time = {delaytime[i]} [msec]")
         else:
             # if get this, most likely the END time is too short
-            print(Color.RED + ">>> RUN FAILED <<<", end="\n" + Color.END)
+            print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
         init_temp += delta_temp
     # compute the total runtime
     runtime = time.time() - start_time

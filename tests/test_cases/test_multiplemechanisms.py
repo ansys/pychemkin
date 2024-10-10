@@ -3,6 +3,7 @@ import os
 import pytest
 
 import chemkin as ck  # Chemkin
+from chemkin import Color
 
 
 @pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")
@@ -32,7 +33,7 @@ def test_multiplemechanisms():
         print(f"see the summary file {My1stMech.summaryfile} for details")
         exit()
     else:
-        print(ck.Color.GREEN + "PreProcess success!!", end="\n" + ck.Color.END)
+        print(Color.GREEN + "PreProcess success!!", end=Color.END)
         print("mechanism information:")
         print(f"number of elements = {My1stMech.MM:d}")
         print(f"number of gas species = {My1stMech.KK:d}")
@@ -70,7 +71,7 @@ def test_multiplemechanisms():
         print(f"see the summary file {My2ndMech.summaryfile} for details")
         exit()
     else:
-        print(ck.Color.GREEN + "PreProcess success!!", end="\n" + ck.Color.END)
+        print(Color.GREEN + "PreProcess success!!", end=Color.END)
         print("mechanism information:")
         print(f"number of elements = {My2ndMech.MM:d}")
         print(f"number of gas species = {My2ndMech.KK:d}")

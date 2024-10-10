@@ -7,7 +7,9 @@ import chemkin as ck  # Chemkin
 from chemkin import Color
 
 # chemkin batch reactor models (transient)
-from chemkin.batchreactor import GivenVolumeBatchReactor_EnergyConservation
+from chemkin.batchreactors.batchreactor import (
+    GivenVolumeBatchReactor_EnergyConservation,
+)
 
 # import pytest
 
@@ -122,10 +124,10 @@ def test_CONV():
     # check run status
     if runstatus != 0:
         # run failed!
-        print(Color.RED + ">>> RUN FAILED <<<", end="\n" + Color.END)
+        print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
         exit()
     # run success!
-    print(Color.GREEN + ">>> RUN COMPLETED <<<", end="\n" + Color.END)
+    print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
     # get ignition delay time
     delaytime = MyCONV.getignitiondelay()
     print(f"ignition delay time = {delaytime} [msec]")
