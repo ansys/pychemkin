@@ -52,7 +52,7 @@ def test_watercondensation():
     bottle.volume = 10.0  # cm3
     bottle.time = 0.5  # sec
     # turn on real-gas cubic equation of state
-    bottle.userealgasEOS(mode=True)
+    bottle.userealgasEOS(mode=False)
     # output controls
     # set timestep between saving solution
     bottle.timestepforsavingsolution = 0.01
