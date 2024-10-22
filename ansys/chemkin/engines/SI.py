@@ -95,7 +95,8 @@ class SIengine(Engine):
         if n <= 0.0 or b <= 0.0:
             print(
                 Color.PURPLE + "** Wiebe function parameters n and b must > 0",
-                end=Color.END)
+                end=Color.END,
+            )
             exit()
         #
         if self._burnmode > 0:
@@ -195,7 +196,7 @@ class SIengine(Engine):
             )
             iError = 2
         return iError
-    
+
     def setcombustionefficiency(self, efficiency):
         """
         Set the overall combustion efficiency

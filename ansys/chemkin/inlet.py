@@ -344,6 +344,6 @@ class Inlet(Mixture):
                 Color.RED + "** invalid inlet radial velocity spreading rate value",
                 end=Color.END,
             )
-            return 
+            return
         # set velocity gradient
         self._velgrad = velgrad

@@ -166,7 +166,7 @@ class steadystatesolver:
         set of guessed solution before start the actual steady-state solution search
         :param initsteps: number of initial pseudo time steps (integer scalar)
         """
-        if initsteps >=1 :
+        if initsteps >= 1:
             self.SSsolverkeywords["ISTP"] = initsteps
             self.numbinitialpseudosteps = initsteps
         else:
