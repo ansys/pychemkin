@@ -2,10 +2,8 @@ import copy
 from ctypes import c_double, c_int
 import logging
 
-import numpy as np
-
 from .. import chemkin_wrapper
-from ..chemistry import Patm, checkchemistryset, chemistrysetinitialized, setverbose
+from ..chemistry import checkchemistryset, chemistrysetinitialized, setverbose
 from ..color import Color as Color
 from ..reactormodel import Keyword
 from .engine import Engine
@@ -81,8 +79,7 @@ class SIengine(Engine):
             iErr *= 10
         if iErr != 0:
             print(
-                Color.RED
-                + f"** error initializing the SI engine model: {self.label:s}"
+                Color.RED + f"** error initializing the SI engine model: {self.label:s}"
             )
             print(f"   error code = {iErr:d}", end=Color.END)
             exit()
@@ -96,15 +93,16 @@ class SIengine(Engine):
         """
         # check input values
         if n <= 0.0 or b <= 0.0:
-            print(Color.PURPLE + "** Wiebe function parameters n and b must > 0",
-                  end=Color.END)
+            print(
+                Color.PURPLE + "** Wiebe function parameters n and b must > 0",
+                end=Color.END)
             exit()
         #
         if self._burnmode > 0:
             print(
                 Color.YELLOW
                 + "** previous burned mass profile setup will be overwritten",
-                end=Color.END
+                end=Color.END,
             )
         #
         self._burnmode = 1
@@ -121,12 +119,11 @@ class SIengine(Engine):
             print(
                 Color.PURPLE
                 + f"** start of combustion CA must > start of simulation CA {self.IVCCA}",
-                end=Color.END
+                end=Color.END,
             )
             exit()
         if duration <= 0.0:
-            print(Color.PURPLE + "** ass burn duration must > 0",
-                  end=Color.END)
+            print(Color.PURPLE + "** ass burn duration must > 0", end=Color.END)
             exit()
         #
         self.sparktiming = SOC
@@ -140,18 +137,22 @@ class SIengine(Engine):
         :param CA90: crank angle of 90% mass burned [degree] (double scalar)
         """
         if CA10 > CA50:
-            print(Color.PURPLE + "** the anchor points must in ascending order",
-                  end=Color.END)
+            print(
+                Color.PURPLE + "** the anchor points must in ascending order",
+                end=Color.END,
+            )
             exit()
         if CA90 < CA50:
-            print(Color.PURPLE + "** the anchor points must in ascending order",
-                  end=Color.END)
+            print(
+                Color.PURPLE + "** the anchor points must in ascending order",
+                end=Color.END,
+            )
             exit()
         if CA10 <= self.IVCCA:
             print(
                 Color.PURPLE
                 + f"** anchor point CA must > start of simulation CA {self.IVCCA}",
-                end=Color.END
+                end=Color.END,
             )
             exit()
         #
@@ -159,7 +160,7 @@ class SIengine(Engine):
             print(
                 Color.YELLOW
                 + "** previous burned mass profile setup will be overwritten",
-                end=Color.END
+                end=Color.END,
             )
         #
         self._burnmode = 2
@@ -176,18 +177,22 @@ class SIengine(Engine):
         :return: error code (integer scalar)
         """
         # set the mass burned profile
-        keyword = "BFP"
         iError = 0
         self.MBpoints = len(crankangles)
         if len(fractions) != self.MBpoints:
-            print(Color.PURPLE + "** data arrays must have the same size", end=Color.END)
+            print(
+                Color.PURPLE + "** data arrays must have the same size", end=Color.END
+            )
             iError = 1
         elif self.MBpoints > 1:
             self.MBangles = copy.deepcopy(crankangles)
             self.MBfractions = copy.deepcopy(fractions)
             self._burnmode = 3
         else:
-            print(Color.PURPLE + "** profile must have more than 1 data pair", end=Color.END)
+            print(
+                Color.PURPLE + "** profile must have more than 1 data pair",
+                end=Color.END,
+            )
             iError = 2
         return iError
     
@@ -233,8 +238,10 @@ class SIengine(Engine):
             # set Wiebe parameter n
             self.setkeyword(key="WBFN", value=self.wieben)
         else:
-            print(Color.PURPLE + "** incorrect burned mass profile setup option",
-                  end=Color.END)
+            print(
+                Color.PURPLE + "** incorrect burned mass profile setup option",
+                end=Color.END,
+            )
             iError = 10
         return iError
 
@@ -252,8 +259,10 @@ class SIengine(Engine):
             # set 90% mass burned crank angle
             self.setkeyword(key="CAEC", value=self.massburnedCA90)
         else:
-            print(Color.PURPLE + "** incorrect burned mass profile setup option",
-                  end=Color.END)
+            print(
+                Color.PURPLE + "** incorrect burned mass profile setup option",
+                end=Color.END,
+            )
             iError = 11
         return iError
 
@@ -278,12 +287,14 @@ class SIengine(Engine):
                     + Keyword.fourspaces
                     + str(self.MBangles[i])
                     + Keyword.fourspaces
-                    + str(self.MBfractions[i]) 
+                    + str(self.MBfractions[i])
                 )
                 self.setkeyword(key=keyline, value=True)
         else:
-            print(Color.PURPLE + "** incorrect burned mass profile setup option",
-                  end=Color.END)
+            print(
+                Color.PURPLE + "** incorrect burned mass profile setup option",
+                end=Color.END,
+            )
             iError = 12
 
         return iError
@@ -345,8 +356,10 @@ class SIengine(Engine):
                 iErrc = self.setburnprofilekeywords()
                 iErr += iErrc
             else:
-                print(Color.RED
-                      + "** burned mass rate is not set up for the SI engine simulation")
+                print(
+                    Color.RED
+                    + "** burned mass rate is not set up for the SI engine simulation"
+                )
                 print("  Chemkin SI engine model provides three methods:")
                 print("  1. Wiebe function")
                 print("  2. anchor points")
@@ -488,4 +501,3 @@ class SIengine(Engine):
         logger.debug("Running model complete, status = " + str(retVal))
 
         return retVal
-

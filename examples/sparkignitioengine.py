@@ -188,7 +188,7 @@ burnedzone = 2
 zonestrings = ["Unburned Zone", "Burned Zone"]
 thiszone = burnedzone
 MyEngine.processenginesolution(zoneID=thiszone)
-plottitle = zonestrings[thiszone-1] + " Solution"
+plottitle = zonestrings[thiszone - 1] + " Solution"
 # post-process cylinder-averged solution profiles
 # MyMZEngine.processaverageenginesolution()
 # plottitle = "Cylinder Averaged Solution"

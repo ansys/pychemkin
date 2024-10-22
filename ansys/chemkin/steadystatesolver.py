@@ -1,11 +1,8 @@
 # Steady-State Solver Control Parameters
 #
 import numpy as np
-from ctypes import c_int, c_double
-import copy
 
 from .color import Color
-from .reactormodel import Keyword
 
 
 class steadystatesolver:
@@ -31,7 +28,7 @@ class steadystatesolver:
         self.speciesfloor = -1.0e-14
         # reset negative gas species fraction to the given value in intermediate solution
         self.speciespositive = None
-        # use legacy steady-state solver algorthim
+        # use legacy steady-state solver algorithm
         self.uselegacytechnique = None
         # use damping in search: 0 = OFF; 1 = ON
         self.SSdamping = 1
@@ -84,7 +81,7 @@ class steadystatesolver:
         relative tolerance for the steady-state solution
         """
         return self.SSrelativetolerance
-    
+
     def settolerances(self, atol, rtol):
         """
         set the absolute and the relative tolerances for the steady-state solution
@@ -135,7 +132,7 @@ class steadystatesolver:
         in an attempt to find the steady-state solution
         :param maxtime: max number of pseudo transient calls/attempts (integer scalar)
         """
-        if maxtime >=1:
+        if maxtime >= 1:
             self.SSsolverkeywords["MAXTIME"] = maxtime
             self.maxpseudotransient = maxtime
         else:
@@ -146,7 +143,7 @@ class steadystatesolver:
         set the maximum number of iterations per time step when performing the pseudo transient algorithm
         :param maxtime: max number of iterations per pseudo time step (integer scalar)
         """
-        if maxiteration >=1:
+        if maxiteration >= 1:
             self.SSsolverkeywords["TRMAXITER"] = maxiteration
             self.TRmaxiteration = maxiteration
         else:
@@ -157,7 +154,7 @@ class steadystatesolver:
         set the maximum number of iterations per search when performing the steady-state search algorithm
         :param maxtime: max number of iterations per steady-state search (integer scalar)
         """
-        if maxiteration >=1:
+        if maxiteration >= 1:
             self.SSsolverkeywords["SSMAXITER"] = maxiteration
             self.SSmaxiteration = maxiteration
         else:
@@ -169,7 +166,7 @@ class steadystatesolver:
         set of guessed solution before start the actual steady-state solution search
         :param initsteps: number of initial pseudo time steps (integer scalar)
         """
-        if initsteps >=1:
+        if initsteps >=1 :
             self.SSsolverkeywords["ISTP"] = initsteps
             self.numbinitialpseudosteps = initsteps
         else:
