@@ -6,12 +6,10 @@ import numpy as np  # number crunching
 
 import chemkin as ck  # Chemkin
 from chemkin import Color
-from chemkin.inlet import Inlet
 
 # chemkin batch reactor models (transient)
-from chemkin.flowreactors.PFR import (
-    PlugFlowReactor_GivenTemperature,
-)
+from chemkin.flowreactors.PFR import PlugFlowReactor_GivenTemperature
+from chemkin.inlet import Inlet
 
 # check working directory
 current_dir = os.getcwd()
@@ -35,16 +33,17 @@ feedstock.temperature = 1444.48
 # set inlet/PFR pressure [atm]
 feedstock.pressure = 0.83 * ck.Patm
 # set inlet composition
-feedstock.X = [("AR", 0.8433),
-               ("CO", 0.0043),
-               ("CO2", 0.0429),
-               ("H2O", 0.0956),
-               ("N2", 0.0031),
-               ("NH3", 0.0021),
-               ("NO", 0.0012),
-               ("O2", 0.0074),
-               ("OH", 4.6476e-5),
-               ]
+feedstock.X = [
+    ("AR", 0.8433),
+    ("CO", 0.0043),
+    ("CO2", 0.0429),
+    ("H2O", 0.0956),
+    ("N2", 0.0031),
+    ("NH3", 0.0021),
+    ("NO", 0.0012),
+    ("O2", 0.0074),
+    ("OH", 4.6476e-5),
+]
 # set inlet velocity [cm/sec]
 feedstock.velocity = 26.815
 print(type(feedstock))

@@ -1,16 +1,12 @@
 import copy
-from ctypes import c_int, c_double
+from ctypes import c_double, c_int
 import logging
 
 import numpy as np
 
 from chemkin import chemkin_wrapper
 from chemkin.batchreactors.batchreactor import BatchReactors
-from chemkin.chemistry import (
-    checkchemistryset,
-    chemistrysetinitialized,
-    setverbose,
-)
+from chemkin.chemistry import checkchemistryset, chemistrysetinitialized, setverbose
 from chemkin.color import Color as Color
 from chemkin.inlet import Inlet
 from chemkin.reactormodel import Keyword
@@ -22,13 +18,14 @@ class PlugFlowReactor(BatchReactors):
     """
     Generic Plug Flow Reactor (PFR) model with energy equation
     """
+
     def __init__(self, inlet, label=None):
         # set default label
         if label is None:
             label = "PFR"
         # check Inlet
         if isinstance(inlet, Inlet):
-            # initialzation
+            # initialization
             super().__init__(inlet, label)
         else:
             # wrong argument type
@@ -106,7 +103,7 @@ class PlugFlowReactor(BatchReactors):
     @length.setter
     def length(self, length=0.0e0):
         """
-        Set reactor lengt (required)
+        Set reactor length (required)
         default value = 0.0 cm
         :param length: reactor length [cm] (float scalar)
         """
@@ -175,10 +172,10 @@ class PlugFlowReactor(BatchReactors):
             )
             return 10
         else:
+            keyword = "DPRO"
             iErr = self.setprofile(key=keyword, x=x, y=diam)
             if iErr == 0:
                 self._inputcheck.append("AREAF")
-                keyword = "DPRO"
                 # set flow area at the inlet
                 self.reactordiameter = c_double(diam[0])
                 self.reactormixture._haveflowarea = True
@@ -193,7 +190,7 @@ class PlugFlowReactor(BatchReactors):
         Cross-sectional flow area of the PFR [cm2]
         """
         return self.reactorflowarea
-    
+
     @flowarea.setter
     def flowarea(self, area):
         """
@@ -276,7 +273,7 @@ class PlugFlowReactor(BatchReactors):
     def setpseudosurfacevelocity(self, vel):
         """
         Set the pseudo surface velocity at the reactive surface
-        to improve convergance due to surface chemistry stiffness
+        to improve convergence due to surface chemistry stiffness
         Note: set this parameter only when having convergence issue with surface chemistry
         :param vel: surface velocity [cm/sec]
         """
@@ -312,7 +309,7 @@ class PlugFlowReactor(BatchReactors):
     @property
     def sccm(self):
         """
-        Get plug flow reactor inlet volumetric flow rate in SCCM [standar cm3/min]
+        Get plug flow reactor inlet volumetric flow rate in SCCM [standard cm3/min]
         """
         return self.reactormixture.sccm
 
@@ -338,7 +335,6 @@ class PlugFlowReactor(BatchReactors):
         # get inlet mass flow rate
         self._massflowrate = c_double(self.massflowrate)
         # inlet mass fraction
-        #Y_init = np.zeros(self.reactormixture._KK, dtype=np.double)
         Y_init = self.reactormixture.Y
         # surface sites (not applicable)
         Site_init = np.zeros(1, dtype=np.double)
@@ -362,8 +358,7 @@ class PlugFlowReactor(BatchReactors):
             iErr += iErrc
             # turn OFF the momentum equation when pressure profile is set
             if self._numbprofiles > 0:
-                if ("PPRO" in self._profiles_list or
-                    "VELPRO" in self._profiles_list):
+                if "PPRO" in self._profiles_list or "VELPRO" in self._profiles_list:
                     self.setkeyword(key="MOMEN", value="OFF")
             # heat transfer (use additional keywords)
             # solver parameters (use additional keywords)
@@ -507,7 +502,7 @@ class PlugFlowReactor_EngeryEquation(PlugFlowReactor):
             label = "PFR"
         # check Inlet
         if isinstance(inlet, Inlet):
-            # initialzation
+            # initialization
             super().__init__(inlet, label)
         else:
             # wrong argument type
@@ -705,13 +700,14 @@ class PlugFlowReactor_GivenTemperature(PlugFlowReactor):
     """
     Plug Flow Reactor (PFR) model with given temperature
     """
+
     def __init__(self, inlet, label=None):
         # set default label
         if label is None:
             label = "PFR"
         # check Inlet
         if isinstance(inlet, Inlet):
-            # initialzation
+            # initialization
             super().__init__(inlet, label)
         else:
             # wrong argument type

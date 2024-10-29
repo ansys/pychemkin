@@ -22,7 +22,7 @@ extensions = [
 ]
 
 templates_path = ["_templates"]
-exclude_patterns = []
+# exclude_patterns = []
 nbsphinx_execute = "never"
 autoapi_dirs = ["../../ansys/chemkin"]
 # autoapi_options = [ 'members', 'imported-members', 'inherited-members', 'undoc-memebers', #
