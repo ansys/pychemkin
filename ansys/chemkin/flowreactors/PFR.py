@@ -232,7 +232,7 @@ class PlugFlowReactor(BatchReactors):
             iErr = self.setprofile(key=keyword, x=x, y=area)
             if iErr == 0:
                 self._inputcheck.append("AREAF")
-                self.setkeyword(key=keyword, value=area[0])
+                self.setkeyword(key="AREAF", value=area[0])
                 # set flow area at the inlet
                 diam = np.sqrt(4.0 * area[0] / np.pi)
                 self.reactordiameter = c_double(diam)
