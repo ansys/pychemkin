@@ -1,7 +1,7 @@
 Introduction
 ============
 
-What is **PyChemkin**? **PyChemkin**, in its core, inherites all Chemkin functionalities. However, in addition to providing a collection of Pythonic interfaces to Chemkin utilities and reactor models, **PyChemkin** adopts a few new concepts to deliver enhanced user experiences within the Python framework.
+What is **PyChemkin**? **PyChemkin**, in its core, inherits all Chemkin functionalities. However, in addition to providing a collection of Pythonic interfaces to Chemkin utilities and reactor models, **PyChemkin** adopts a few new concepts to deliver enhanced user experiences within the Python framework.
 
 **PyChemkin** introduces a hierarchy of three key objects:
    1. the *Chemistry Set* object: collection of utilities that handle chemistry and species properties.
