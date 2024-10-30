@@ -1,4 +1,4 @@
-License and Acknowledgments
+License and acknowledgments
 ---------------------------
 Ansys-chemkin is licensed under the MIT license.
 

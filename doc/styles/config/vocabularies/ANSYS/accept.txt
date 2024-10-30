@@ -64,7 +64,9 @@ Jeong
 journaling
 kurt
 Knupp
+linenos
 lpart
+matplotlib
 mech_dir
 Michard
 Minmax
