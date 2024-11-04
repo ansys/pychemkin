@@ -12,10 +12,11 @@ class Inlet(Mixture):
     define an inlet based on the gas species in the given chemistry set for open reactor models
     """
 
-    def __init__(self, chem):
+    def __init__(self, chem, label=None):
         """
         set up an inlet with a given chemistry set for open reactor models
         :param chem: Chemistry object
+        :param label: inlet name (string)
         """
         super().__init__(chem)
         # 0=mass flow rate/1=volumetric flow rate/2=velocity/3=SCCM
@@ -33,6 +34,11 @@ class Inlet(Mixture):
         self._haveflowarea = False
         # cross-sectional flow area [cm2]
         self._flowarea = 1.0
+        # set inlet label
+        if label is not None:
+            self.label = label
+        else:
+            self.label = None
 
     def converttomassflowrate(self):
         """

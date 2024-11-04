@@ -73,6 +73,7 @@ class PlugFlowReactor(BatchReactors):
             # no given in the inlet
             print(Color.PURPLE + "** inlet flow rate is not set")
             print("   specify flow rate of the 'Inlet' object", end=Color.END)
+            exit()
         else:
             self.inletflowratemode = inlet._flowratemode
             self._flowrate = inlet._inletflowrate[inlet._flowratemode]
@@ -80,6 +81,7 @@ class PlugFlowReactor(BatchReactors):
             if self._flowrate <= 0.0:
                 print(Color.PURPLE + "** inlet flow rate is not set correctly")
                 print("   specify flow rate of the 'Inlet' object", end=Color.END)
+                exit()
         # solver parameters
         self._absolutetolerance = 1.0e-12
         self._relativetolerance = 1.0e-6
@@ -329,6 +331,26 @@ class PlugFlowReactor(BatchReactors):
                 end=Color.END,
             )
             return iErr
+        # re-size work arrays if profile is used
+        if self._numbprofiles > 0:
+            # find total profile data points
+            numbprofilepoints = 0
+            for p in self._profiles_list:
+                numbprofilepoints += p.size
+            if numbprofilepoints != self._profilesize:
+                # re-size work arrays
+                self._profilesize = numbprofilepoints
+                ipoints = c_int(numbprofilepoints)
+                iErrc = chemkin_wrapper.chemkin.KINAll0D_SetProfilePoints(ipoints)
+                # setup reactor model working arrays
+                if iErrc == 0:
+                    iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
+                        self._myLOUT, self._chemset_index
+                    )
+                iErr += iErrc
+        if iErr != 0:
+            print(Color.PURPLE + "** profile data setup error", end=Color.END)
+            return iErr
         # prepare inlet conditions
         # get inlet mass flow rate
         self._massflowrate = c_double(self.massflowrate)
@@ -365,8 +387,9 @@ class PlugFlowReactor(BatchReactors):
             # sensitivity (use additional keywords)
             # ignition delay (use additional keywords)
             # solve integrated heat release rate due to chemical reactions
-            iErrc = chemkin_wrapper.chemkin.KINAll0D_IntegrateHeatRelease()
-            iErr += iErrc
+            if self.EnergyTypes.get("ENERGY") == self._energytype.value:
+                iErrc = chemkin_wrapper.chemkin.KINAll0D_IntegrateHeatRelease()
+                iErr += iErrc
         else:
             pass
         if iErr == 0 and self._numbprofiles > 0:
@@ -489,7 +512,7 @@ class PlugFlowReactor(BatchReactors):
         return retVal
 
 
-class PlugFlowReactor_EngeryEquation(PlugFlowReactor):
+class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
     """
     Plug Flow Reactor (PFR) model with energy equation
     """
@@ -518,7 +541,7 @@ class PlugFlowReactor_EngeryEquation(PlugFlowReactor):
         self._ambienttemperature = 3.0e2
         # external heat transfer area per reactor length [cm2/cm]
         self._heattransferarea = 0.0e0
-        # set up basic batch reactor parameters
+        # set up basic PFR parameters
         iErr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,
             self._reactortype,
@@ -694,7 +717,7 @@ class PlugFlowReactor_EngeryEquation(PlugFlowReactor):
             return iErr
 
 
-class PlugFlowReactor_GivenTemperature(PlugFlowReactor):
+class PlugFlowReactor_FixedTemperature(PlugFlowReactor):
     """
     Plug Flow Reactor (PFR) model with given temperature
     """

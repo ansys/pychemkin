@@ -1,18 +1,58 @@
-# Steady-State Solver Control Parameters
-#
+from ctypes import c_double, c_int
+
 import numpy as np
 
-from .color import Color
+from chemkin.color import Color as Color
+from chemkin.inlet import Inlet
+from chemkin.mixture import Mixture
+from chemkin.reactormodel import Keyword, ReactorModel
 
 
-class steadystatesolver:
+class openreactor(ReactorModel):
     """
-    Common steady-state solver controlling parameters
+    Generic open reactor unit
     """
 
-    def __init__(self):
-        # steady-state solver control parameter class
-        # mostly just keyword processing
+    def __init__(self, guessedmixture, label=None):
+        """
+        Create a steady-state flow reactor
+        :param guessedmixture: guessed/estimate reactor condition (Mixture object)
+        :param label: inlet name (string)
+        """
+        # check Inlet
+        if isinstance(guessedmixture, Mixture):
+            # initialization
+            super().__init__(guessedmixture, label)
+        else:
+            # wrong argument type
+            print(
+                Color.RED + "** the first argument must be a Mixture object",
+                end=Color.END,
+            )
+            raise TypeError
+        if label is None:
+            self.label = "Reactor"
+        else:
+            self.label = label
+        # use API mode for steady-state open reactor/flame simulations
+        Keyword.noFullKeyword = True
+        # FORTRAN file unit of the text output file
+        self._myLOUT = c_int(158)
+        # inlet inforamtion
+        # number of external inlets
+        self.numbexternalinlets = 0
+        # dict of external inlet objects {inlet label: inlet object}
+        self.externalinlets = {}
+        # total mass flow rate into this reactor [g/sec]
+        self.totalmassflowrate = 0.0
+        #
+        self.SolverTypes = {"Transient": 1, "SteadyState": 2}
+        self.EnergyTypes = {"ENERGY": 1, "GivenT": 2}
+        # specify "reactor residence time" = "CONP" or
+        # specify "reactor volume" = "CONV"
+        self.ProblemTypes = {"CONP": 1, "CONV": 2}
+        #
+        # initialize the steady-state solver control parameter with the detault setting
         # >>> steady-state search algorithm:
         # absolute tolerance for the steady-state solution
         self.SSabsolutetolerance = 1.0e-9
@@ -72,6 +112,86 @@ class steadystatesolver:
         # steady-state solver keywords
         self.SSsolverkeywords = {}
 
+    def setinlet(self, extinlet):
+        """
+        Add an external inlet to the reactor
+        :param extinlet: external inlet (Inlet object)
+        """
+        # check Inlet
+        if not isinstance(extinlet, Inlet):
+            # wrong argument type
+            print(
+                Color.RED + "** the argument must be an Inlet object",
+                end=Color.END,
+            )
+            raise TypeError
+        # current external inlet count
+        count = self.numbexternalinlets + 1
+        if extinlet.label is None:
+            inletname = self.label + "_inlet_" + str(count)
+        else:
+            # inlet has label
+            inletname = self.label + "_" + extinlet.label
+        # check inlet name uniqueness
+        if inletname in self.externalinlets:
+            print(Color.YELLOW + f"** inlet {inletname} already connected")
+            print("   will append '_dup' to the original name", end=Color.END)
+            inletname += "_dup"
+        # check inlet flow rate
+        if extinlet._flowratemode < 0:
+            # no given in the inlet
+            print(Color.PURPLE + "** inlet flow rate is not set")
+            print("   specify flow rate of the 'Inlet' object", end=Color.END)
+            exit()
+        else:
+            flowrate = extinlet.massflowrate
+            if flowrate <= 0.0:
+                print(Color.PURPLE + "** inlet flow rate is not set correctly")
+                print("   specify flow rate of the 'Inlet' object", end=Color.END)
+                exit()
+        # add the inlet object to the inlet dict of the reactor
+        self.externalinlets[inletname] = extinlet
+        self.numbexternalinlets = count
+        self.totalmassflowrate += flowrate
+        print(Color.YELLOW + f"** new inlet {inletname} is added", end=Color.END)
+
+    def removeinlet(self, name):
+        """
+        Delete an existing external inlet from the reactor by the inlet name
+        :param name: external inlet name (string)
+        """
+        # check input
+        if not isinstance(name, str):
+            print(Color.PURPLE + "** the argument must be a string", end=Color.END)
+            exit()
+        # delete the named inlet from the externalinlets dict
+        missed = False
+        if name in self.externalinlets:
+            # existing inlet
+            extinlet = self.externalinlets.pop(name, None)
+            if extinlet is None:
+                missed = True
+            elif not isinstance(extinlet, Inlet):
+                # some internal messed up
+                missed = True
+                print(Color.RED + "** failed to found the inlet data", end=Color.END)
+                raise TypeError
+            else:
+                # decrease the external inlet count by 1
+                self.numbexternalinlets -= 1
+                # take out the mass flow rate contribution
+                self.totalmassflowrate -= extinlet.massflowrate
+                print(Color.YELLOW
+                      + f"** inlet {name} is removed from reactor {self.label}",
+                      end=Color.END)
+        else:
+            # not in the external inlet dict
+            missed = True
+        if missed:
+            print(Color.PURPLE + f"** inlet {name} not found", end=Color.END)
+
+    #
+    # solver parameters keyword processing
     @property
     def absolutetolerance(self):
         """

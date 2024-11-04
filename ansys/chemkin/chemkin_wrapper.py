@@ -625,6 +625,8 @@ chemkin.KINAll0D_SetHeatTransfer.argtypes = [
 chemkin.KINAll0D_SetHeatTransferArea.restype = ctypes.c_int
 chemkin.KINAll0D_SetHeatTransferArea.argtypes = [ctypes.POINTER(ctypes.c_double)]
 # profile
+chemkin.KINAll0D_SetProfilePoints.restype = ctypes.c_int
+chemkin.KINAll0D_SetProfilePoints.argtypes = [ctypes.POINTER(ctypes.c_int)]
 chemkin.KINAll0D_SetProfileParameter.restype = ctypes.c_int
 chemkin.KINAll0D_SetProfileParameter.argtypes = [
     ctypes.POINTER(ctypes.c_char),

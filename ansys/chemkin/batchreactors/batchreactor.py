@@ -51,6 +51,16 @@ class BatchReactors(reactor):
         self._inputcheck = []
         # default number of reactors
         self._nreactors = 1
+        self._npsrs = c_int(1)
+        self._ninlets = c_int(0)
+        self._nzones = c_int(0)
+        # default energy type
+        self._reactortype = c_int(self.ReactorTypes.get("Batch"))
+        self._solvertype = c_int(self.SolverTypes.get("Transient"))
+        self._problemtype = c_int(self.ProblemTypes.get("CONP"))
+        self._energytype = c_int(self.EnergyTypes.get("ENERGY"))
+        # profile points
+        self._profilesize = 0
 
     @property
     def volume(self):
@@ -594,6 +604,26 @@ class BatchReactors(reactor):
                 end=Color.END,
             )
             return iErr
+        # re-size work arrays if profile is used
+        if self._numbprofiles > 0:
+            # find total profile data points
+            numbprofilepoints = 0
+            for p in self._profiles_list:
+                numbprofilepoints += p.size
+            if numbprofilepoints != self._profilesize:
+                # re-size work arrays
+                self._profilesize = numbprofilepoints
+                ipoints = c_int(numbprofilepoints)
+                iErrc = chemkin_wrapper.chemkin.KINAll0D_SetProfilePoints(ipoints)
+                # setup reactor model working arrays
+                if iErrc == 0:
+                    iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
+                        self._myLOUT, self._chemset_index
+                    )
+                iErr += iErrc
+        if iErr != 0:
+            print(Color.PURPLE + "** profile data setup error", end=Color.END)
+            return iErr
         # prepare initial conditions
         # initial mass fraction
         Y_init = self.reactormixture.Y
@@ -631,7 +661,8 @@ class BatchReactors(reactor):
                     for line in p:
                         self.setkeyword(key=line, value=True)
         # solve integrated heat release rate due to chemical reactions
-        self.setkeyword(key="QRGEQ", value=True)
+        if self.EnergyTypes.get("ENERGY") == self._energytype.value:
+            self.setkeyword(key="QRGEQ", value=True)
         # add the END keyword
         self.setkeyword(key="END", value=True)
         # create input lines from additional user-specified keywords
@@ -682,6 +713,26 @@ class BatchReactors(reactor):
                 end=Color.END,
             )
             return iErr
+        # re-size work arrays if profile is used
+        if self._numbprofiles > 0:
+            # find total profile data points
+            numbprofilepoints = 0
+            for p in self._profiles_list:
+                numbprofilepoints += p.size
+            if numbprofilepoints != self._profilesize:
+                # re-size work arrays
+                self._profilesize = numbprofilepoints
+                ipoints = c_int(numbprofilepoints)
+                iErrc = chemkin_wrapper.chemkin.KINAll0D_SetProfilePoints(ipoints)
+                # setup reactor model working arrays
+                if iErrc == 0:
+                    iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
+                        self._myLOUT, self._chemset_index
+                    )
+                iErr += iErrc
+        if iErr != 0:
+            print(Color.PURPLE + "** profile data setup error", end=Color.END)
+            return iErr
         # prepare initial conditions
         # initial mass fraction
         Y_init = self.reactormixture.Y
@@ -711,8 +762,9 @@ class BatchReactors(reactor):
             # sensitivity (use additional keywords)
             # ignition delay (use additional keywords)
             # solve integrated heat release rate due to chemical reactions
-            iErrc = chemkin_wrapper.chemkin.KINAll0D_IntegrateHeatRelease()
-            iErr += iErrc
+            if self.EnergyTypes.get("ENERGY") == self._energytype.value:
+                iErrc = chemkin_wrapper.chemkin.KINAll0D_IntegrateHeatRelease()
+                iErr += iErrc
         else:
             pass
         if iErr == 0 and self._numbprofiles > 0:

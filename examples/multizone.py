@@ -195,7 +195,7 @@ print(f"50% heat release CA = {HR50} [degree]")
 print(f"90% heat release CA = {HR90} [degree]\n")
 #
 # post-process the solution profiles in selected zone
-thiszone = 5
+thiszone = 1
 MyMZEngine.processenginesolution(zoneID=thiszone)
 plottitle = "Zone " + str(thiszone) + " Solution"
 # post-process cylinder-averged solution profiles

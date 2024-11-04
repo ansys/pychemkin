@@ -1107,6 +1107,17 @@ class ReactorModel:
         """
         # turn ON/OFF the real gas EOS
         self.setkeyword(key="RLGAS", value=mode)
+        # reset the real gas flag
+        if not mode:
+            # switch to the ideal gas law
+            iErr = chemkin_wrapper.chemkin.KINRealGas_UseIdealGasLaw(
+                self._chemset_index, c_int(0)
+            )
+            if iErr != 0:
+                print(
+                    Color.PURPLE + "** failed to turn off the real-gas model",
+                    end=Color.END,
+                )
 
     def setrealgasmixingmodel(self, model):
         """

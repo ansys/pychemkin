@@ -92,7 +92,7 @@ for i in range(points):
     pres += dpres
     premixed.pressure = pres
 # create plot for real gas results
-plt.plot(P, Det, "r^-", label="real-gas EOS", markersize=5, fillstyle="none")
+plt.plot(P, Det, "r^-", label="real gas", markersize=5, fillstyle="none")
 # plot data
 P_data = [44.1, 50.6, 67.2, 80.8]
 Det_data = [1950.0, 1970.0, 2000.0, 2020.0]
@@ -101,4 +101,5 @@ plt.plot(P_data, Det_data, "gD:", label="data", markersize=4)
 plt.legend(loc="upper left")
 plt.xlabel("Pressure [atm]")
 plt.ylabel("Detonation wave speed [m/sec]")
+plt.suptitle("Natural Gas/Air Detonation", fontsize=16)
 plt.show()

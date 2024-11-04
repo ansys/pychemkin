@@ -7,8 +7,8 @@ import numpy as np  # number crunching
 import chemkin as ck  # Chemkin
 from chemkin import Color
 
-# chemkin batch reactor models (transient)
-from chemkin.flowreactors.PFR import PlugFlowReactor_GivenTemperature
+# chemkin plug flow reactor model
+from chemkin.flowreactors.PFR import PlugFlowReactor_FixedTemperature
 from chemkin.inlet import Inlet
 
 # check working directory
@@ -49,7 +49,7 @@ feedstock.velocity = 26.815
 print(type(feedstock))
 #
 # create a plug flow reactor instance
-tubereactor = PlugFlowReactor_GivenTemperature(feedstock)
+tubereactor = PlugFlowReactor_FixedTemperature(feedstock)
 # set PFR diameter [cm]
 tubereactor.diameter = 5.8431
 # set PFR length [cm]
@@ -130,6 +130,7 @@ for i in range(solutionpoints):
     NO2profile[i] = solutionmixture.X[NO2_index]
 # plot the profiles
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))
+plt.suptitle("Constant Temperature Plug-Flow Reactor", fontsize=16)
 plt.subplot(221)
 plt.plot(xprofile, tempprofile, "r-")
 plt.ylabel("Temperature [K]")
