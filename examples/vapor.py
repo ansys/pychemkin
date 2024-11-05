@@ -80,7 +80,7 @@ if runstatus != 0:
     exit()
 # run success!
 print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
-    
+
 # post-process the solutions
 tank.processsolution()
 # get the number of solution time points
@@ -142,7 +142,7 @@ for i in range(solutionpoints):
 # plot the profiles
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))
 thispres = str(mist.pressure / ck.Patm)
-thistitle = "Cooling Vapor + Air at " + thispres + " atm" 
+thistitle = "Cooling Vapor + Air at " + thispres + " atm"
 plt.suptitle(thistitle, fontsize=16)
 plt.subplot(221)
 plt.plot(timeprofile, tempprofile, "r-")

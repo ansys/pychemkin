@@ -1,4 +1,4 @@
-from ctypes import c_double, c_int
+from ctypes import c_int
 
 import numpy as np
 
@@ -17,9 +17,9 @@ class openreactor(ReactorModel):
         """
         Create a steady-state flow reactor
         :param guessedmixture: guessed/estimate reactor condition (Mixture object)
-        :param label: inlet name (string)
+        :param label: reactor name (string)
         """
-        # check Inlet
+        # check reactor Mixture object
         if isinstance(guessedmixture, Mixture):
             # initialization
             super().__init__(guessedmixture, label)
@@ -38,7 +38,7 @@ class openreactor(ReactorModel):
         Keyword.noFullKeyword = True
         # FORTRAN file unit of the text output file
         self._myLOUT = c_int(158)
-        # inlet inforamtion
+        # inlet information
         # number of external inlets
         self.numbexternalinlets = 0
         # dict of external inlet objects {inlet label: inlet object}
@@ -52,7 +52,7 @@ class openreactor(ReactorModel):
         # specify "reactor volume" = "CONV"
         self.ProblemTypes = {"CONP": 1, "CONV": 2}
         #
-        # initialize the steady-state solver control parameter with the detault setting
+        # initialize the steady-state solver control parameter with the default setting
         # >>> steady-state search algorithm:
         # absolute tolerance for the steady-state solution
         self.SSabsolutetolerance = 1.0e-9
@@ -181,9 +181,11 @@ class openreactor(ReactorModel):
                 self.numbexternalinlets -= 1
                 # take out the mass flow rate contribution
                 self.totalmassflowrate -= extinlet.massflowrate
-                print(Color.YELLOW
-                      + f"** inlet {name} is removed from reactor {self.label}",
-                      end=Color.END)
+                print(
+                    Color.YELLOW
+                    + f"** inlet {name} is removed from reactor {self.label}",
+                    end=Color.END,
+                )
         else:
             # not in the external inlet dict
             missed = True

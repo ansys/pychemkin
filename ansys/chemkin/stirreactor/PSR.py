@@ -6,10 +6,8 @@ import numpy as np
 from chemkin import chemkin_wrapper
 from chemkin.chemistry import checkchemistryset, chemistrysetinitialized, setverbose
 from chemkin.color import Color as Color
-from chemkin.inlet import Inlet
-from chemkin.mixture import Mixture
 from chemkin.reactormodel import Keyword
-from .openreactor import openreactor
+from chemkin.stirreactor.openreactor import openreactor
 
 logger = logging.getLogger(__name__)
 
@@ -100,7 +98,7 @@ class perfectlystirredreactor(openreactor):
         iErr = 0
         # loop over all external inlets into the reactor
         iInlet = 0
-        flowrate_sum = 0.0 
+        flowrate_sum = 0.0
         #
         for key, inlet in self.externalinlets.items():
             # get inlet mass flow rate
@@ -112,7 +110,9 @@ class perfectlystirredreactor(openreactor):
             Y_inlet = inlet.Y
             #
             if np.isclose(0.0, flowrate, atol=1.0e-6):
-                print(Color.PURPLE + f"** inlet {key} has zero flow rate", end=Color.END)
+                print(
+                    Color.PURPLE + f"** inlet {key} has zero flow rate", end=Color.END
+                )
                 iErrc = 100 + iInlet + 1
             else:
                 iInlet += 1
