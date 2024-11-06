@@ -68,7 +68,7 @@ def __setwindows():
     # set load dll paths
     for _lib_path in _lib_paths:
         os.add_dll_directory(_lib_path)
-    # set KINetics shared object
+    # set Chemkin-CFD-API shared object
     _target_lib = os.path.join(_ansys_dir, "reaction", _ckbin, "bin", "KINeticsdll.dll")
     return 0
 
@@ -174,7 +174,7 @@ def __setlinux():
         os.environ["PATH"] = combined_path
     else:
         os.environ["PATH"] = os.environ["PATH"] + ":" + combined_path
-    # set KINetics shared object
+    # set Chemkin-CFD-API shared object
     _target_lib = os.path.join(_ansys_dir, "reaction", _ckbin, "bin", "libKINetics.so")
     return 0
 
@@ -193,7 +193,7 @@ else:
 # check set up status
 if status != 0:
     exit()
-# load KINetics shared object
+# load Chemkin-CFD-API shared object
 try:
     chemkin = cdll.LoadLibrary(str(_target_lib))
 except OSError:
@@ -207,8 +207,8 @@ except OSError:
     )
     print("** or check for a valid Ansys-chemkin license")
     exit()
-# KINetics APIs
-# document: KINetics API Reference Guide (Ansys Help portal)
+# Chemkin-CFD-API
+# document: Chemkin-CFD-API Reference Guide (Ansys Help portal)
 #
 # syntax:
 # Specify the return type of the function

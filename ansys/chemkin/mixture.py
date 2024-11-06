@@ -456,11 +456,11 @@ def calculateequilibrium(
     soundspeed_eq = c_double(0.0e0)
     # perform gas-phase equilibrium calculationk
     if not checkchemistryset(_chemset_index.value):
-        # need to initialize KINetics
+        # need to initialize Chemkin-CFD-API
         print(Color.YELLOW + "** initializing chemkin...", end=Color.END)
         iErr = ck_wrapper.chemkin.KINInitialize(_chemset_index, c_int(0))
         if iErr != 0:
-            print(Color.RED + "** fail to initialize KINetics", end=Color.END)
+            print(Color.RED + "** fail to initialize Chemkin-CFD-API", end=Color.END)
             statevars = [p, t, 0.0, 0.0]
             return statevars, frac
         else:

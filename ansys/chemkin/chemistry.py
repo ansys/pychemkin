@@ -38,7 +38,7 @@ _chemsetidentifiers: List = (
 
 _chemkinverbose = True  # verbose mode to turn ON/OFF the print statements that do not have the leading '**' characters
 _CKdict: Dict = {}  # chemkin hints
-_CKInitialized: Dict = {}  # KINetics initialization flag for every Chemistry Set
+_CKInitialized: Dict = {}  # Chemkin-CFD-API initialization flag for every Chemistry Set
 # == end of global parameters
 
 
@@ -50,7 +50,7 @@ def verbose() -> bool:
     return the global verbose mode indicating the status (ON/OFF) of printing statements that do not have the leading '**' characters
     :return: status of the verbose mode (logical scalar)
     """
-    global _chemkinverbose
+    # global _chemkinverbose
     return _chemkinverbose
 
 
@@ -177,7 +177,7 @@ def interpolatearray(x, xarray, yarray):
 
 def checkchemistryset(chemID):
     """
-    check whether the Chemistry Set is initialized in KINetics
+    check whether the Chemistry Set is initialized in Chemkin-CFD-API
     :param chemID: chemistry set index associated with the Chemistry Set
     """
     global _CKInitialized
@@ -930,7 +930,7 @@ class Chemistry:
             self._AWT = self.AWT
             # check real-gas model
             self.verifyrealgasmodel()
-            # create a new KINetics initialization flag for this Chemistry Set
+            # create a new Chemkin-CFD-API initialization flag for this Chemistry Set
             chemistrysetnew(self._chemset_index.value)
             # save the chemkin work spaces for later use (by using active())
             self.save()
@@ -1181,13 +1181,14 @@ class Chemistry:
 
         return Cp
 
-    def SpeciesCv(self, temp=0.0):
+    def SpeciesCv(self, temp=0.0, pres=None):
         """
         Get species specific heat capacity at constant volume (ideal gas only)
         :param temp: Temperature [K]
+        :param pres: Pressure [dynes/cm2]
         :return: species specific heat capacities at constant volume [ergs/mol-K] (1D double array)
         """
-        Cv = self.SpeciesCp(temp)
+        Cv = self.SpeciesCp(temp, pres)
         R = RGas
         # for k in range(len(Cp)):
         #    Cv[k] = Cp[k] - R
@@ -1195,16 +1196,33 @@ class Chemistry:
 
         return Cv
 
-    def SpeciesH(self, temp=0.0):
+    def SpeciesH(self, temp=0.0, pres=None):
         """
         Get species enthalpy
         :param temp: Temperature [K]
+        :param pres: Pressure [dynes/cm2]
         :return: species enthalpy [ergs/mol] (1D double array)
         """
         if self._chemset_index.value < 0:
             raise "Please preprocess the chemistry set"
         if temp <= 1.0e0:
             raise ValueError("Temperature value too low")
+        # check real-gas
+        if checkrealgasstatus(self.chemID):
+            if pres is None:
+                # pressure is not assigned
+                print(
+                    Color.PURPLE
+                    + "** must provide pressure to evaluate real-gas species properties"
+                )
+                print(
+                    "   Usage: self.SpeciesH(temperature, pressure)",
+                    end=Color.END,
+                )
+                return [0.0e0]
+            else:
+                # set current pressure for the real-gas
+                setcurrentpressure(self.chemID, pres)
         TT = c_double(temp)
         H = np.zeros(self._num_gas_species.value, dtype=np.double)
         iErr = ck_wrapper.chemkin.KINGetGasSpeciesEnthalpy(self._chemset_index, TT, H)
@@ -1222,16 +1240,33 @@ class Chemistry:
 
         return H
 
-    def SpeciesU(self, temp=0.0):
+    def SpeciesU(self, temp=0.0, pres=None):
         """
         Get species internal energy
         :param temp: Temperature [K]
+        :param pres: Pressure [dynes/cm2]
         :return: species internal energy [ergs/mol] (1D double array)
         """
         if self._chemset_index.value < 0:
             raise "Please preprocess the chemistry set"
         if temp <= 1.0e0:
             raise ValueError("Temperature value too low")
+        # check real-gas
+        if checkrealgasstatus(self.chemID):
+            if pres is None:
+                # pressure is not assigned
+                print(
+                    Color.PURPLE
+                    + "** must provide pressure to evaluate real-gas species properties"
+                )
+                print(
+                    "   Usage: self.SpeciesU(temperature, pressure)",
+                    end=Color.END,
+                )
+                return [0.0e0]
+            else:
+                # set current pressure for the real-gas
+                setcurrentpressure(self.chemID, pres)
         TT = c_double(temp)
         U = np.zeros(self._num_gas_species.value, dtype=np.double)
         iErr = ck_wrapper.chemkin.KINGetGasSpeciesInternalEnergy(
@@ -1464,7 +1499,7 @@ class Chemistry:
         # convert the reaction parameters
         ireac = c_int(-reaction_index)  # negative index to "put" A-factor value
         iErr = ck_wrapper.chemkin.KINSetAFactorForAReaction(
-            self._chemset_index, ireac, AFactor
+            self._chemset_index, ireac, c_double(AFactor)
         )
         if iErr != 0:
             print(
@@ -1476,7 +1511,7 @@ class Chemistry:
 
     def getreactionAFactor(self, reaction_index):
         # initialization
-        AFactor = 0.0e0
+        AFactor = c_double(0.0e0)
         # check inputs
         if reaction_index > self.IIGas or reaction_index < 1:
             print(
@@ -1497,7 +1532,7 @@ class Chemistry:
                 end=Color.END,
             )
             return 0.0e0
-        return AFactor
+        return AFactor.value
 
     def getgasreactionstring(self, reaction_index):
         """

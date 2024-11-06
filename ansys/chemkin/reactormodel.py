@@ -539,15 +539,17 @@ class ReactorModel:
         self._solution_mixturearray = []
         # initialize output buffer
         self.output = {}
-        # initialize KINetics
+        # initialize Chemkin-CFD-API
         if not checkchemistryset(self._chemset_index.value):
-            # need to initialize KINetics
+            # need to initialize Chemkin-CFD-API
             print(Color.YELLOW + "** initializing chemkin...", end=Color.END)
             iErr = chemkin_wrapper.chemkin.KINInitialize(self._chemset_index, c_int(0))
             if iErr == 0:
                 chemistrysetinitialized(self._chemset_index.value)
             else:
-                print(Color.RED + "** fail to initialize KINetics", end=Color.END)
+                print(
+                    Color.RED + "** fail to initialize Chemkin-CFD-API", end=Color.END
+                )
 
     def usefullkeywords(self, mode):
         """

@@ -11,7 +11,7 @@ import platform
 
 import yaml
 
-# import kinetics
+# import Chemkin-CFD-API
 from . import chemkin_wrapper as ck_wrapper
 from .chemistry import *
 from .color import Color

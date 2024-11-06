@@ -3,7 +3,7 @@ from ctypes import c_double, c_int
 import logging
 
 from chemkin import chemkin_wrapper
-from chemkin.chemistry import checkchemistryset, chemistrysetinitialized, setverbose
+from chemkin.chemistry import checkchemistryset, chemistrysetinitialized
 from chemkin.color import Color as Color
 from chemkin.engines.engine import Engine
 from chemkin.reactormodel import Keyword
@@ -310,7 +310,7 @@ class SIengine(Engine):
         iErrc = 0
         iErrKey = 0
         iErrInputs = 0
-        setverbose(True)
+        # setverbose(True)
         # verify required inputs
         iErr = self.inputvalidation()
         if iErr != 0:
@@ -465,7 +465,7 @@ class SIengine(Engine):
             end=Color.END,
         )
         if not checkchemistryset(self._chemset_index.value):
-            # KINetics is not initialized: reinitialize KINetics
+            # Chemkin-CFD-API is not initialized: reinitialize Chemkin-CFD-API
             print(Color.YELLOW + "** initializing chemkin...", end=Color.END)
             retVal = chemkin_wrapper.chemkin.KINInitialize(
                 self._chemset_index, c_int(0)
@@ -475,7 +475,7 @@ class SIengine(Engine):
                     Color.RED + f"** error processing the keywords (code = {retVal:d})",
                     end=Color.END,
                 )
-                logger.debug(f"Initializing KINetics failed (code={retVal})")
+                logger.debug(f"Initializing Chemkin-CFD-API failed (code={retVal})")
                 return retVal
             else:
                 chemistrysetinitialized(self._chemset_index.value)

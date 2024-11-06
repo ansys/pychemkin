@@ -17,6 +17,8 @@ casemapped
 CHEMKIN
 Chemkin
 chemkin
+Chemkin-CFD
+Chemkin-CFD-API
 circumsphere
 cmdlang
 colorby_rgb
