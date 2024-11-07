@@ -1,4 +1,5 @@
 import os
+import time
 
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
@@ -60,17 +61,18 @@ if iError != 0:
 if ck.verbose():
     mixture.listcomposition(mode="mole")
 # get the original rate parameters
-Afactors = np.zeros(MyGasMech.IIGas, dtype=np.double)
-Beta = np.zeros_like(Afactors, dtype=np.double)
-ActiveEnergy = np.zeros_like(Afactors, dtype=np.double)
-Afactors, Beta, ActiveEnergy = MyGasMech.getreactionparameters()
+Afactor, Beta, ActiveEnergy = MyGasMech.getreactionparameters()
 if ck.verbose():
     for i in range(MyGasMech.IIGas):
         print(f"reaction: {i + 1}")
-        print(f"A = {Afactors[i]}")
+        print(f"A  = {Afactor[i]}")
+        print(f"B  = {Beta[i]}")
         print(f"Ea = {ActiveEnergy[i]}\n")
-# compute the ignition delay time
+        if np.isclose(0.0, Afactor[i], atol=1.0e-15):
+            print("reaction pre-exponential factor = 0")
+            exit()
 #
+# compute the ignition delay time
 # create a constant pressure batch reactor (with energy equation)
 #
 MyCONP = GivenPressureBatchReactor_EnergyConservation(mixture, label="CONP")
@@ -88,6 +90,8 @@ MyCONP.settolerances(absolute_tolerance=1.0e-10, relative_tolerance=1.0e-8)
 # set ignition delay
 # ck.showignitiondefinition()
 MyCONP.setignitiondelay(method="T_inflection")
+# set the start wall time
+start_time = time.time()
 # run the nominal case
 runstatus = MyCONP.run()
 #
@@ -100,14 +104,19 @@ else:
     print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
     print("failed to find the ignition delay time of the nominal case")
     exit()
-# brute force A factor sensitivities of ignition delay time
-IGsen = np.zeros_like(Afactors, dtype=np.double)
+#
+# brute force A factor sensitivity coefficients of ignition delay time
+# create sensitivity coefficient array
+IGsen = np.zeros(MyGasMech.IIGas, dtype=np.double)
+# set perturbation magnitude
 perturb = 0.001  # increase by 0.1%
+perturbplus1 = 1.0 + perturb
 # loop over all reactions
 for i in range(MyGasMech.IIGas):
-    Anew = Afactors[i] * (1.0 + perturb)
-    # update the A factor
+    Anew = Afactor[i] * perturbplus1
+    # actual reaction index
     ireac = i + 1
+    # update the A factor
     MyGasMech.setreactionAFactor(ireac, Anew)
     # run the reactor model
     runstatus = MyCONP.run()
@@ -116,24 +125,29 @@ for i in range(MyGasMech.IIGas):
         # get ignition delay time
         delaytime = MyCONP.getignitiondelay()
         print(f"ignition delay time = {delaytime} [msec]")
-        # compute the normalized sensitivity coefficient
-        IGsen[i] = (delaytime - delaytime_org) / perturb
+        # compute d(delaytime)
+        IGsen[i] = delaytime - delaytime_org
         # restore the A factor
-        MyGasMech.setreactionAFactor(ireac, Afactors[i])
+        MyGasMech.setreactionAFactor(ireac, Afactor[i])
     else:
         # if get this, most likely the END time is too short
         print(f"trouble finding ignition delay time for raection {ireac}")
         print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
         exit()
 
-# print top ignition delay time sensitivity coefficients
+# compute the total runtime
+runtime = time.time() - start_time
+print(f"\ntotal simulation time: {runtime} [sec] over {MyGasMech.IIGas + 1} runs")
+# normalized sensitivity coefficient = d(delaytime) * A[i] / d(A[i])
+IGsen /= perturb
+# print top n positive and negative ignition delay time sensitivity coefficients
 top = 5
 # rank the positive coefficients
 posindex = np.argpartition(IGsen, -top)[-top:]
 poscoeffs = IGsen[posindex]
 
 # rank the negative coefficients
-NegIGsen = -1.0 * IGsen
+NegIGsen = np.negative(IGsen)
 negindex = np.argpartition(NegIGsen, -top)[-top:]
 negcoeffs = IGsen[negindex]
 # print the top sensitivity coefficients
@@ -147,7 +161,7 @@ if ck.verbose():
         print(f"reaction {negindex[i] + 1}: coefficient = {negcoeffs[i]}")
 #
 # create a rate plot
-plt.rcParams.update({"figure.autolayout": True})
+plt.rcParams.update({"figure.autolayout": True, "ytick.color": "blue"})
 plt.subplots(2, 1, sharex="col", figsize=(10, 5))
 # convert reaction # from integers to strings
 rxnstring = []
@@ -157,6 +171,7 @@ for i in range(len(posindex)):
 # use horizontal bar chart
 plt.subplot(211)
 plt.barh(rxnstring, poscoeffs, color="orange", height=0.4)
+plt.axvline(x=0, c="gray", lw=1)
 #
 # convert reaction # from integers to strings
 rxnstring.clear()
@@ -167,6 +182,8 @@ for i in range(len(negindex)):
     rxnstring.append(MyGasMech.getgasreactionstring(fnegindex[i] + 1))
 plt.subplot(212)
 plt.barh(rxnstring, fnegcoeffs, color="orange", height=0.4)
+plt.axvline(x=0, c="gray", lw=1)
 plt.xlabel("Sensitivity Coefficients")
+plt.suptitle("Ignition Delay Time Sensitivity", fontsize=16)
 #
 plt.show()
