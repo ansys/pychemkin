@@ -1,9 +1,6 @@
 import os
 import time
 
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
-
 import chemkin as ck  # Chemkin
 from chemkin import Color
 
@@ -11,6 +8,8 @@ from chemkin import Color
 from chemkin.batchreactors.batchreactor import (
     GivenPressureBatchReactor_EnergyConservation,
 )
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
 
 # import pytest
 

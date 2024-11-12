@@ -1,9 +1,8 @@
 import os
 
-import pytest
-
 import chemkin as ck  # Chemkin
 from chemkin import Color
+import pytest
 
 
 @pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")

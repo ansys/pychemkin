@@ -1,10 +1,9 @@
 import os
 
+import chemkin as ck  # Chemkin
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 import pytest
-
-import chemkin as ck  # Chemkin
 
 
 @pytest.mark.skip(reason="Causes segfault")

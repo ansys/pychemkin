@@ -1,13 +1,12 @@
 import copy
 from ctypes import c_double, c_int
 
-import numpy as np
-
 from chemkin import chemkin_wrapper
 from chemkin.batchreactors.batchreactor import BatchReactors
 from chemkin.chemistry import Patm
 from chemkin.color import Color as Color
 from chemkin.reactormodel import Keyword
+import numpy as np
 
 
 class Engine(BatchReactors):

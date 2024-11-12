@@ -1,9 +1,8 @@
 import os
 
+import chemkin as ck  # Chemkin
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
-
-import chemkin as ck  # Chemkin
 
 # check working directory
 current_dir = os.getcwd()

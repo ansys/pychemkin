@@ -1,15 +1,14 @@
 import os
 import time
 
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
-
 import chemkin as ck  # Chemkin
 from chemkin import Color
 
 # chemkin batch reactor models (transient)
 from chemkin.flowreactors.PFR import PlugFlowReactor_GivenTemperature
 from chemkin.inlet import Inlet
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()

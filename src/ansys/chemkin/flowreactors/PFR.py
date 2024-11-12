@@ -2,14 +2,13 @@ import copy
 from ctypes import c_double, c_int
 import logging
 
-import numpy as np
-
 from chemkin import chemkin_wrapper
 from chemkin.batchreactors.batchreactor import BatchReactors
 from chemkin.chemistry import checkchemistryset, chemistrysetinitialized, setverbose
 from chemkin.color import Color as Color
 from chemkin.inlet import Inlet
 from chemkin.reactormodel import Keyword
+import numpy as np
 
 logger = logging.getLogger(__name__)
 

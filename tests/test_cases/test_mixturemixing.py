@@ -1,8 +1,7 @@
 import os
 
-import pytest
-
 import chemkin as ck  # Chemkin
+import pytest
 
 
 @pytest.mark.skip(reason="Temporarily disabled for demonstration purposes")

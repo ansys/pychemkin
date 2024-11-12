@@ -2,8 +2,6 @@ import copy
 from ctypes import c_double, c_int
 import logging
 
-import numpy as np
-
 from chemkin import chemkin_wrapper
 from chemkin.chemistry import (
     Patm,
@@ -14,6 +12,7 @@ from chemkin.chemistry import (
 from chemkin.color import Color as Color
 from chemkin.engines.engine import Engine
 from chemkin.reactormodel import Keyword
+import numpy as np
 
 logger = logging.getLogger(__name__)
 

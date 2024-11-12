@@ -1,9 +1,8 @@
 import os
 
-import numpy as np  # number crunching
-
 import chemkin as ck
 from chemkin import Color
+import numpy as np  # number crunching
 
 # import pytest
 

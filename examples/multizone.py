@@ -1,13 +1,12 @@
 import os
 
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
-
 import chemkin as ck  # Chemkin
 from chemkin import Color
 
 # chemkin homonegeous charge compression ignition (HCCI) engine model (transient)
 from chemkin.engines.HCCI import HCCIengine
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()

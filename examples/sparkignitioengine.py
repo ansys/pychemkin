@@ -1,14 +1,13 @@
 import os
 import time
 
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
-
 import chemkin as ck  # Chemkin
 from chemkin import Color
 
 # chemkin spark ignition (SI) engine model (transient)
 from chemkin.engines.SI import SIengine
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()
