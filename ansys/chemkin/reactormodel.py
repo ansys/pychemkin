@@ -350,7 +350,6 @@ class Profile:
             print(f"   number of positions = {xsize:d}")
             print(f"   number of values    = {ysize:d}", end=Color.END)
             self._status = -2
-            return
 
     @property
     def size(self):
