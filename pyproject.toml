@@ -62,6 +62,16 @@ doc = [
     "sphinx-notfound-page==1.0.4"
 ]
 
+[project.urls]
+Source = "https://github.com/ansys/pychemkin"
+Issues = "https://github.com/ansys/pychemkin/issues"
+Discussions = "https://github.com/ansys/pychemkin/discussions"
+Documentation = "https://chemkin.docs.pyansys.com/"
+Releases = "https://github.com/ansys/pychemkin/releases/"
+
+[tool.flit.module]
+name = "ansys.chemkin"
+
 [tool.black]
 line-length = 88
 
