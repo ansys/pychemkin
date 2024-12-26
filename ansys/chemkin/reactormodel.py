@@ -6,7 +6,7 @@ import logging
 import numpy as np
 
 from . import chemkin_wrapper
-from .chemistry import verbose
+from .chemistry import Patm, checkchemistryset, chemistrysetinitialized, verbose
 from .color import Color
 from .mixture import Mixture
 
@@ -73,7 +73,9 @@ class Keyword:
         "FPRO",
         "SCCMPRO",
         "VDOTPRO",
+        "VELPRO",
         "TINPRO",
+        "AFLO",
     ]
     fourspaces = "    "
     # Under the default API-call mode, important keywords (the _protectedkeywords) are set by direct API calls,
@@ -96,13 +98,13 @@ class Keyword:
             # the declared data type is not supported
             print(
                 Color.PURPLE + f"** unsupported data type specified {data_type}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             if not isinstance(value, (bool, int, float, str)):
                 # value does not match the declared data type
                 print(
                     Color.PURPLE + f"** variable has different data type {type(value)}",
-                    end="\n" + Color.END,
+                    end=Color.END,
                 )
             iErr = 1
         # block the protected keywords
@@ -114,7 +116,7 @@ class Keyword:
                 )
                 print(
                     "   for example, to set the reactor volume use: 'MyBatchReactor.volume = 100'",
-                    end="\n" + Color.END,
+                    end=Color.END,
                 )
                 iErr = 2
         if iErr > 0:
@@ -186,7 +188,7 @@ class Keyword:
             )
             print(
                 f"   data type expected by keyword {self._key:s} is {self._data_type:s}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
 
     def parametertype(self):
@@ -295,7 +297,7 @@ class StringKeyword(Keyword):
         :param value: parameter value (string)
         """
         if len(value) <= 0:
-            print(Color.PURPLE + "** no string parameter given", end="\n" + Color.END)
+            print(Color.PURPLE + "** no string parameter given", end=Color.END)
             return
         super().__init__(phrase, value, "str")
 
@@ -321,7 +323,7 @@ class Profile:
         else:
             print(
                 Color.PURPLE + "** profile is not available under the reactor model",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             self._status = -1
             return
@@ -346,7 +348,7 @@ class Profile:
                 + "** the number of positions does not match the number of values"
             )
             print(f"   number of positions = {xsize:d}")
-            print(f"   number of values    = {ysize:d}", end="\n" + Color.END)
+            print(f"   number of values    = {ysize:d}", end=Color.END)
             self._status = -2
             return
 
@@ -465,15 +467,13 @@ class ReactorModel:
         if not isinstance(reactor_condition, Mixture):
             print(
                 Color.RED + "** the first argument must be a Mixture object",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             raise TypeError
         iErr = reactor_condition.validate()
         if iErr != 0:
-            print(
-                Color.YELLOW + "** mixture is not fully defined", end="\n" + Color.END
-            )
-            raise
+            print(Color.YELLOW + "** mixture is not fully defined", end=Color.END)
+            raise TypeError
         # initialization
         self.label = label
         # chemistry set index
@@ -494,7 +494,7 @@ class ReactorModel:
         # write text output file
         self._TextOut = True
         # FORTRAN file unit of the text output file
-        self._myLOUT = c_int(54)
+        self._myLOUT = c_int(154)
         # write XML solution file
         self._XMLOut = True
         # number of keywords used
@@ -539,14 +539,15 @@ class ReactorModel:
         self._solution_mixturearray = []
         # initialize output buffer
         self.output = {}
-        self._CKinitialized = False
         # initialize KINetics
-        print(Color.YELLOW + "** initializing chemkin...", end="\n" + Color.END)
-        iErr = chemkin_wrapper.chemkin.KINInitialize(self._chemset_index, c_int(0))
-        if iErr == 0:
-            self._CKinitialized = True
-        else:
-            print(Color.RED + "** fail to initialize KINetics", end="\n" + Color.END)
+        if not checkchemistryset(self._chemset_index.value):
+            # need to initialize KINetics
+            print(Color.YELLOW + "** initializing chemkin...", end=Color.END)
+            iErr = chemkin_wrapper.chemkin.KINInitialize(self._chemset_index, c_int(0))
+            if iErr == 0:
+                chemistrysetinitialized(self._chemset_index.value)
+            else:
+                print(Color.RED + "** fail to initialize KINetics", end=Color.END)
 
     def usefullkeywords(self, mode):
         """
@@ -559,7 +560,7 @@ class ReactorModel:
             print(
                 Color.YELLOW
                 + f"** reactor {self.label} will be run with full keyword input mode",
-                end="\n" + Color.END,
+                end=Color.END,
             )
 
     def __findkeywordslot(self, key):
@@ -614,7 +615,7 @@ class ReactorModel:
             else:
                 print(
                     Color.PURPLE + "** invalid keyword value data type",
-                    end="\n" + Color.END,
+                    end=Color.END,
                 )
                 return
             self._numbkeywords += 1
@@ -627,7 +628,7 @@ class ReactorModel:
             else:
                 print(
                     Color.PURPLE + "** invalid keyword value data type",
-                    end="\n" + Color.END,
+                    end=Color.END,
                 )
                 return
 
@@ -710,7 +711,7 @@ class ReactorModel:
                 self._numbprofiles += 1
             else:
                 print(Color.PURPLE + "** fail to create the profile '{key}'")
-                print(f"   error code = {status:d}", end="\n" + Color.END)
+                print(f"   error code = {status:d}", end=Color.END)
                 iErr = status
         else:
             # an existing keyword, just update its value
@@ -724,7 +725,7 @@ class ReactorModel:
                     + "** the number of positions does not match the number of values"
                 )
                 print(f"   number of positions = {xsize:d}")
-                print(f"   number of values    = {ysize:d}", end="\n" + Color.END)
+                print(f"   number of values    = {ysize:d}", end=Color.END)
                 iErr = 1
         return iErr
 
@@ -757,26 +758,68 @@ class ReactorModel:
         iErr = numbprofiles - self._numbprofiles
         return iErr, numblines, keyword_lines
 
-    def createspeciesinputlines(self, solvertype):
+    def createspeciesinputlines(self, solvertype, threshold=1.0e-12, molefrac=None):
         """
         Create keyword input lines for initial/estimated species mole fraction inside the batch reactor
         :param solvertype: solver type of the reactor model (integer scalar)
+        :param threshold: minimum species mole fraction value to be included in the species keyword (double scalar)
+        :param molefrac: species composition in mole fractions (1-D double array)
         :return: Number of keyword lines, list of keyword line strings (integer scalar, list of strings)
         """
         # initial(transient)/estimate(steady-state) composition keyword depends on the solver type
         key = Keyword.gasspecieskeywords[solvertype - 1]
-        molefrac = self.reactormixture.X
         KSYM = self._specieslist
         lines = []
         numb_lines = 0
         for i in range(len(molefrac)):
-            if molefrac[i] > 1.0e-12:
+            if molefrac[i] > threshold:
                 thisline = (
                     key
                     + Keyword.fourspaces
                     + KSYM[i].rstrip()
                     + Keyword.fourspaces
                     + str(molefrac[i])
+                )
+                lines.append(thisline)
+                numb_lines += 1
+        return numb_lines, lines
+
+    def createspeciesinputlineswithaddon(
+        self, key="XEST", threshold=1.0e-12, molefrac=None, addon=""
+    ):
+        """
+        Create keyword input lines for initial/estimated species mole fraction inside the batch reactor
+        :param key: keyword for species value (string)
+        :param threshold: minimum species mole fraction value to be included in the species keyword (double scalar)
+        :param molefrac: species composition in mole fractions (1-D double array)
+        :param addon: add-on string to the species input, usually the reactor/zone number (string)
+        :return: Number of keyword lines, list of keyword line strings (integer scalar, list of strings)
+        """
+        # must use estimate composition keyword 'XEST'
+        # (the 'REAC' keyword does not accept reactor/zone number)
+        KSYM = self._specieslist
+        ksize = len(molefrac)
+        if ksize != len(KSYM):
+            print(
+                Color.PURPLE
+                + f"** species mole fraction array has size {ksize}"
+                + f" but {len(KSYM)} is expected",
+                end=Color.END,
+            )
+            exit()
+
+        lines = []
+        numb_lines = 0
+        for i in range(ksize):
+            if molefrac[i] > threshold:
+                thisline = (
+                    key.rstrip()
+                    + Keyword.fourspaces
+                    + KSYM[i].rstrip()
+                    + Keyword.fourspaces
+                    + str(molefrac[i])
+                    + Keyword.fourspaces
+                    + addon.rstrip()
                 )
                 lines.append(thisline)
                 numb_lines += 1
@@ -805,7 +848,7 @@ class ReactorModel:
         :return: None
         """
         if t <= 1.0e1:
-            print(Color.PURPLE + "** invalid temperature value", end="\n" + Color.END)
+            print(Color.PURPLE + "** invalid temperature value", end=Color.END)
             pass
         self._temperature = c_double(t)
         self.reactormixture.temperature = t
@@ -826,7 +869,7 @@ class ReactorModel:
         :return: None
         """
         if p <= 0.0e0:
-            print(Color.PURPLE + "** invalid pressure value", end="\n" + Color.END)
+            print(Color.PURPLE + "** invalid pressure value", end=Color.END)
             pass
         self._pressure = c_double(p)
         self.reactormixture.pressure = p
@@ -902,7 +945,7 @@ class ReactorModel:
         if value < 0.0:
             print(
                 Color.PURPLE + "** reaction rate multiplier must be >= 0",
-                end="\n" + Color.END,
+                end=Color.END,
             )
         else:
             self._gasratemultiplier = value
@@ -1076,7 +1119,7 @@ class ReactorModel:
         if model in [0, 1]:
             print(
                 Color.YELLOW + f"** the {_mixingmodels[model]:s} mixing model is used",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             self.setkeyword(key="RLMIX", value=model)
         else:
@@ -1084,7 +1127,7 @@ class ReactorModel:
             print(f"    set model = 0 to use the {_mixingmodels[0]} mixing model")
             print(
                 f"    set model = 1 to use the {_mixingmodels[1]} mixing model",
-                end="\n" + Color.END,
+                end=Color.END,
             )
 
     def setrunstatus(self, code):
@@ -1165,7 +1208,7 @@ class ReactorModel:
             print(
                 Color.PURPLE
                 + "** species fraction mode not found, use 'mass' or 'mole'",
-                end="\n" + Color.END,
+                end=Color.END,
             )
 
     def getrawsolutionstatus(self):

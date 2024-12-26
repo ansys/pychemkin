@@ -28,10 +28,10 @@ from .reactormodel import *
 # show ansys (chemkin) version number
 print(
     Color.YELLOW + f"chemkin version number = {ck_wrapper._ansys_ver:d}",
-    end="\n" + Color.END,
+    end=Color.END,
 )
 # get ansys installation location
-ansys_dir = ck_wrapper._ansys_dir
+ansys_dir = str(ck_wrapper._ansys_dir)
 
 _chemkin_platform = None
 if platform.system() == "Windows":
@@ -73,6 +73,7 @@ def keywordhints(mykey):
     :return: None
     """
     # look up the keyword
+    global _CKdict
     key = _CKdict.get(mykey.upper())
     if key is not None:
         # fetch the information about the keyword
@@ -81,9 +82,9 @@ def keywordhints(mykey):
         print(Color.YELLOW + f"** tips about keyword '{mykey}'")
         print(f"     Description: {description}")
         print(f"     Default Value: {default}")
-        print(f"     Units: {unit}", end="\n" + Color.END)
+        print(f"     Units: {unit}", end=Color.END)
     else:
-        print(Color.RED + f"** keyword '{mykey}' is not found", end="\n" + Color.END)
+        print(Color.RED + f"** keyword '{mykey}' is not found", end=Color.END)
 
 
 def phrasehints(phrase):
@@ -94,6 +95,7 @@ def phrasehints(phrase):
     """
     # initialization
     keys = []
+    global _CKdict
     # search to find keyword descriptions that contain the phrase
     for s in _CKdict.values():
         if phrase.lower() in s.get("Description"):
@@ -109,5 +111,5 @@ def phrasehints(phrase):
         print(
             Color.RED
             + f"** no keyword description containing the phrase '{phrase}' is found",
-            end="\n" + Color.END,
+            end=Color.END,
         )

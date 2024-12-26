@@ -22,16 +22,18 @@ extensions = [
 ]
 
 templates_path = ["_templates"]
-exclude_patterns = []
+# exclude_patterns = []
+nbsphinx_execute = "never"
 autoapi_dirs = ["../../ansys/chemkin"]
 # autoapi_options = [ 'members', 'imported-members', 'inherited-members', 'undoc-memebers', #
 #                   'special-members', 'private-members', 'show-inheritance', 'show-module-summary', ]
-autoapi_ignore = ["*wrapper*", "*reactormodel*"]
+autoapi_ignore = ["*wrapper*", "*reactormodel*", "*color*"]
 
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 # html_theme = 'alabaster'
-html_theme = "furo"
+# html_theme = "furo"
+html_theme = "ansys_sphinx_theme"
 html_static_path = ["_static"]

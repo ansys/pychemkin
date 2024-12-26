@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ansys-chemkin"
-version = "0.25.dev10"
+version = "0.25.dev11"
 description = "PyChemkin provides Pythonic interface to Ansys chemkin utilities and reactor models"
 license = "MIT"
 authors = ["ANSYS, Inc. <ansys.support@ansys.com>"]
@@ -33,7 +33,7 @@ tests = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.9"
+python = ">=3.9,<4"
 numpy= ">=1.14.0"
 pyyaml = ">=6.0"
 matplotlib = ">=3.6.0"
@@ -43,19 +43,35 @@ pytest = "*"
 pytest-cov = "*"
 matplotlib = ">=3.6.0"
 
+[tool.poetry.group.doc]
+optional = true
+
+[tool.poetry.group.doc.dependencies]
+sphinx-autoapi = "3.3.1"
+ansys-sphinx-theme = ">=1.0.3"
+matplotlib = ">=3.6.0"
+jupytext = "1.16.4"
+notebook = "7.2.2"
+nbsphinx = "0.9.5"
+numpydoc = "1.8.0"
+pandas = "2.2.2"
+pandoc = ">=2.4.0"
+Pillow = ">=9.0"
+PyGitHub = "2.4.0"
+pyvista = "0.44.1"
+requests = "2.32.3"
+sphinx-copybutton = "0.5.2"
+sphinx-design = "0.6.1"
+sphinx-gallery = "0.17.1"
+sphinx-jinja = "2.0.2"
+sphinx-notfound-page = "1.0.4"
+
 [tool.poetry.group.tests]
 optional = true
 
 [tool.poetry.group.tests.dependencies]
 pytest = "*"
 pytest-cov = "*"
-
-[doc.poetry.dependencies]
-nbsphinx= ">=0.9.3"
-notebook= ">=7.0.5"
-sphinx= ">=7.2.5"
-sphinx-autoapi= ">=3.0.0"
-matplotlib = ">=3.6.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -17,40 +17,33 @@ chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
 # create a chemistry set based on GRI 3.0
-MyGasMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="GRI 3.0")
+My1stMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="GRI 3.0")
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+iError = My1stMech.preprocess()
 print()
 if iError != 0:
     print(f"PreProcess: error encountered...code = {iError:d}")
-    print(f"see the summary file {MyGasMech.summaryfile} for details")
+    print(f"see the summary file {My1stMech.summaryfile} for details")
     exit()
 else:
     print(Color.GREEN + "PreProcess success!!", end=Color.END)
     print("mechanism information:")
-    print(f"number of elements = {MyGasMech.MM:d}")
-    print(f"number of gas species = {MyGasMech.KK:d}")
-    print(f"number of gas reactions = {MyGasMech.IIGas:d}")
+    print(f"number of elements = {My1stMech.MM:d}")
+    print(f"number of gas species = {My1stMech.KK:d}")
+    print(f"number of gas reactions = {My1stMech.IIGas:d}")
 
-print(f"\nelement and species information of mechanism {MyGasMech.label}")
-print("=" * 50)
-# extract element symbols as a list
-elelist = MyGasMech.elementsymbols
-# get atomic masses as numpy 1D double array
-AWT = MyGasMech.AWT
-# print element information
-for k in range(len(elelist)):
-    print(f"element # {k+1:3d}: {elelist[k]:16} mass = {AWT[k]:f}")
-
-print("=" * 50)
-# extract gas species symbols as a list
-specieslist = MyGasMech.speciessymbols
-# get species molecular masses as numpy 1D double array
-WT = MyGasMech.WT
-# print gas species information
-for k in range(len(specieslist)):
-    print(f"species # {k+1:3d}: {specieslist[k]:16} mass = {WT[k]:f}")
-print("=" * 50)
+# create a mixture with My1stMech
+mymixture1 = ck.Mixture(My1stMech)
+# set mixture temperature [K]
+mymixture1.temperature = 1000.0
+# set mixture pressure [dynes/cm2]
+mymixture1.pressure = ck.Patm
+# set molar compositions
+mymixture1.X = [("CH4", 0.1), ("O2", 0.21), ("N2", 0.79)]
+# compute the constrained H-P equilibrium state
+ck.help("equilibrium")
+equil_mix1_HP = ck.equilibrium(mymixture1, opt=5)
+print(f"equilibrium temperature of mymixture1 : {equil_mix1_HP.temperature} [K]")
 #
 # load the second mechanism
 #
@@ -79,22 +72,22 @@ else:
     print(f"number of gas species = {My2ndMech.KK:d}")
     print(f"number of gas reactions = {My2ndMech.IIGas:d}")
 
-print(f"\nelement and species information of mechanism {My2ndMech.label}")
-print("=" * 50)
-# extract element symbols as a list
-elelist = My2ndMech.elementsymbols
-# get atomic masses as numpy 1D double array
-AWT = My2ndMech.AWT
-# print element information
-for k in range(len(elelist)):
-    print(f"element # {k+1:3d}: {elelist[k]:16} mass = {AWT[k]:f}")
-
-print("=" * 50)
-# extract gas species symbols as a list
-specieslist = My2ndMech.speciessymbols
-# get species molecular masses as numpy 1D double array
-WT = My2ndMech.WT
-# print gas species information
-for k in range(len(specieslist)):
-    print(f"species # {k+1:3d}: {specieslist[k]:16} mass = {WT[k]:f}")
-print("=" * 50)
+# create the 2nd mixture with the My2ndMech
+mymixture2 = ck.Mixture(My2ndMech)
+# set mixture temperature [K]
+mymixture2.temperature = 500.0
+# set mixture pressure [dynes/cm2]
+mymixture2.pressure = 2.0 * ck.Patm
+# set mixture molar composition
+mymixture2.X = [("H2", 0.02), ("O2", 0.2), ("N2", 0.8)]
+# compute detonation wave speed with mymixture2
+speeds_mix2, CJ_mix2 = ck.detonation(mymixture2)
+print(f"detonation mymixture2 temperature: {CJ_mix2.temperature} [K]")
+print(f"detonation wave speed = {speeds_mix2[1]/100.0} [m/sec]")
+#
+# re-activate My1stMech
+My1stMech.activate()
+# compute detonation wave speed with mymixture1
+speeds_mix1, CJ_mix1 = ck.detonation(mymixture1)
+print(f"detonation mymixture1 temperature: {CJ_mix1.temperature} [K]")
+print(f"detonation wave speed = {speeds_mix1[1]/100.0} [m/sec]")

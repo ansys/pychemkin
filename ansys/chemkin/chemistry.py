@@ -38,6 +38,7 @@ _chemsetidentifiers: List = (
 
 _chemkinverbose = True  # verbose mode to turn ON/OFF the print statements that do not have the leading '**' characters
 _CKdict: Dict = {}  # chemkin hints
+_CKInitialized: Dict = {}  # KINetics initialization flag for every Chemistry Set
 # == end of global parameters
 
 
@@ -145,7 +146,7 @@ def findinterpolateparameters(x, xarray):
             + (
                 f"** Error: the target value x={x} does not fall between {xarray[0]} and {xarray[iarraysize-1]}"
             ),
-            end="\n" + Color.END,
+            end=Color.END,
         )
         raise ValueError
     # bisect method
@@ -174,6 +175,34 @@ def interpolatearray(x, xarray, yarray):
     return y
 
 
+def checkchemistryset(chemID):
+    """
+    check whether the Chemistry Set is initialized in KINetics
+    :param chemID: chemistry set index associated with the Chemistry Set
+    """
+    global _CKInitialized
+    status = _CKInitialized.get(chemID, False)
+    return status
+
+
+def chemistrysetnew(chemID):
+    """
+    Create a new Chemistry Set initialization flag and set the value to False
+    :param chemID: chemistry set index associated with the Chemistry Set
+    """
+    global _CKInitialized
+    _CKInitialized[chemID] = False
+
+
+def chemistrysetinitialized(chemID):
+    """
+    Set the Chemistry Set Initialization flag to True
+    :param chemID: chemistry set index associated with the Chemistry Set
+    """
+    global _CKInitialized
+    _CKInitialized[chemID] = True
+
+
 def checkrealgasstatus(chemID):
     """
     Check whether the real-gas cubic EOS is active
@@ -192,6 +221,11 @@ def checkrealgasstatus(chemID):
 
 
 def setcurrentpressure(chemID, pressure):
+    """
+    Set gas mixture pressure for real-gas EOS calculations
+    :param chemID: Chemistry set index (integer scalar)
+    :param pressure: gas pressure [dynes/cm2] (double scalar)
+    """
     # convert variables
     chemset_index = c_int(chemID)
     p = c_double(pressure)
@@ -226,7 +260,7 @@ def help(topic=None):
         )
         print(
             "   For batch reactors ignition delay time definitions, use 'chemkin.help('ignition')'.",
-            end="\n" + Color.END,
+            end=Color.END,
         )
     elif topic.lower() in "manual manuals":
         # information about chemkin manuals
@@ -239,7 +273,7 @@ def help(topic=None):
         print("      * for Chemkin keywords: check out the Input manual.")
         print(
             "      * for Chemkin reactor models: check out the Theory manual.",
-            end="\n" + Color.END,
+            end=Color.END,
         )
         manuals()
     elif topic.lower() in "keyword keywords":
@@ -249,7 +283,7 @@ def help(topic=None):
         print("      ex: chemkin.keyhints('HTC')")
         print("   For information about keywords related to a phrase")
         print("      use 'chemkin.phrasehints('<phrase>')'.")
-        print("      ex: chemkin.phrasehints('tolerance')", end="\n" + Color.END)
+        print("      ex: chemkin.phrasehints('tolerance')", end=Color.END)
     elif topic.lower() in "ignition":
         # ignition definition options
         showignitiondefinition()
@@ -266,7 +300,7 @@ def help(topic=None):
         )
         print(
             "'manual', 'keyword', 'ignition', 'real gas', and 'equilibrium'",
-            end="\n" + Color.END,
+            end=Color.END,
         )
 
 
@@ -300,7 +334,7 @@ def showrealgasusage():
     print("              <mixture_object>.useidealgaslaw()")
     print("     > using the real-gas EOS with reactor models:")
     print("       see reactor model keywords: 'RLGAS' and 'RLMIX'")
-    print("              ex: chemkin.keywordhints('RLGA'", end="\n" + Color.END)
+    print("              ex: chemkin.keywordhints('RLGA'", end=Color.END)
 
 
 def showequilibriumoption():
@@ -326,7 +360,7 @@ def showequilibriumoption():
     print("      speed_list is a list consists of two speed values at the C-J state: ")
     print(
         "           [sound_speed, detonation_wave_speed] in cm/sec",
-        end="\n" + Color.END,
+        end=Color.END,
     )
 
 
@@ -341,7 +375,7 @@ def showignitiondefinition():
     print("    1: 'T_inflection'")
     print("    2: 'T_rise', <val>")
     print("    3: 'T_ignition', <val>")
-    print("    4: 'Species_peak', '<target species>'", end="\n" + Color.END)
+    print("    4: 'Species_peak', '<target species>'", end=Color.END)
 
 
 def manuals():
@@ -373,7 +407,7 @@ def createmixturerecipefromfractions(chemistryset, frac):
     if not isinstance(chemistryset, Chemistry):
         print(
             Color.RED + "** the first argument must be a Chemistry object",
-            end="\n" + Color.END,
+            end=Color.END,
         )
         # print('\033[39m')
         return count, recipe
@@ -384,7 +418,7 @@ def createmixturerecipefromfractions(chemistryset, frac):
             Color.RED
             + "** the size of the fractions array does not match the number of species in the chemistry set."
         )
-        print(f"the fraction array size should be {numb_species}", end="\n" + Color.END)
+        print(f"the fraction array size should be {numb_species}", end=Color.END)
         return count, recipe
     # build the recipe from frac array
     for k in range(numb_species):
@@ -425,14 +459,14 @@ def calculatestoichiometrics(chemistryset, fuel_molefrac, oxid_molefrac, prod_in
     """
     calculate the stoichiometric coefficients of the complete combustion reaction of the given fuel and oxidizer mixtures.
     Consider the complete combustion of the fuel + oxidizer mixture:
-        (fuel species) + alpha*(oxidizer species) <=> nu(1)*prod(1) + ... + nu(numb_prod)*prod(numb_prod)
+    (fuel species) + alpha*(oxidizer species) <=> nu(1)*prod(1) + ... + nu(numb_prod)*prod(numb_prod)
     The number of unknowns is equal to the number of elements that make of all the fuel and oxidizer species. And the
     number of product species must be one less than the number of unknowns.
     The unknowns are:
-       alpha is the stoichiometric coefficient multiplier of the oxidizer species
-       nu(1), ... nu(numb_prod) are the stoichiometric coefficients of the product species
+    alpha is the stoichiometric coefficient multiplier of the oxidizer species
+    nu(1), ... nu(numb_prod) are the stoichiometric coefficients of the product species
     The conservation of elements yields a set of linear algebraic equations:
-          A x = b
+    A x = b
     in which x = [ -alpha | nu(1), ...., nu(numb_prod) ]  (a vector of size numb_elem ) can be obtained.
     :param chemistryset: the Chemistry object used to create the fuel and the oxidizer mixtures (Chemistry object)
     :param fuel_molefrac: mole fractions of the fuel mixture (1D double array)
@@ -445,7 +479,7 @@ def calculatestoichiometrics(chemistryset, fuel_molefrac, oxid_molefrac, prod_in
     if not isinstance(chemistryset, Chemistry):
         print(
             Color.RED + "** the first argument must be a Chemistry object",
-            end="\n" + Color.END,
+            end=Color.END,
         )
         return 0.0, np.zeros_like(prod_index)
     # get the number of elements and the number of gas species from the chemistry set
@@ -459,7 +493,7 @@ def calculatestoichiometrics(chemistryset, fuel_molefrac, oxid_molefrac, prod_in
     if numb_species != kfuel:
         print(
             Color.PURPLE + f"** the fuel species array size must be {numb_species:d}",
-            end="\n" + Color.END,
+            end=Color.END,
         )
         return 0.0e0, np.zeros_like(prod_index)
     # check oxidizer composition array
@@ -467,7 +501,7 @@ def calculatestoichiometrics(chemistryset, fuel_molefrac, oxid_molefrac, prod_in
         print(
             Color.PURPLE
             + f"** the oxidizer species array size must be {numb_species:d}",
-            end="\n" + Color.END,
+            end=Color.END,
         )
         return 0.0, np.zeros_like(prod_index)
     # find number of product species
@@ -484,7 +518,7 @@ def calculatestoichiometrics(chemistryset, fuel_molefrac, oxid_molefrac, prod_in
             print(
                 Color.PURPLE
                 + f"** species {chemistryset.KSymbol[i]} cannot be in both the fuel and the oxidizer mixtures",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             iErr += 1
     if iErr > 0:
@@ -509,7 +543,7 @@ def calculatestoichiometrics(chemistryset, fuel_molefrac, oxid_molefrac, prod_in
         print(
             Color.PURPLE
             + f"** the number of product species must be {numb_coreelem - 1:3}",
-            end="\n" + Color.END,
+            end=Color.END,
         )
         return 0.0, np.zeros_like(prod_index)
     else:
@@ -533,7 +567,7 @@ def calculatestoichiometrics(chemistryset, fuel_molefrac, oxid_molefrac, prod_in
                     print(
                         Color.PURPLE
                         + f"** element {elname:s} in products is not in fuel or oxidizer mixtures",
-                        end="\n" + Color.END,
+                        end=Color.END,
                     )
                     return 0.0, np.zeros_like(prod_index)
         else:
@@ -544,7 +578,7 @@ def calculatestoichiometrics(chemistryset, fuel_molefrac, oxid_molefrac, prod_in
             print(f"   the number of elements in products: {numb_prodelem}")
             print(
                 f"   the number of elements in the fuel and the oxidizer: {numb_coreelem}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 0.0, np.zeros_like(prod_index)
     # create arrays of the linear algebraic system
@@ -646,7 +680,6 @@ class Chemistry:
     def chemfile(self):
         """
         Get gas-phase mechanism file name of this chemistry set
-        :return: gas-phase mechanism filename (string)
         """
         return self._gas_file.value.decode()
 
@@ -655,7 +688,6 @@ class Chemistry:
         """
         Assign the gas-phase mechanism filename
         :param filename: name of the gas-phase mechanism file with the full path
-        :return: None
         """
         self._gas_file = ctypes.c_char_p(filename.encode())
 
@@ -663,7 +695,6 @@ class Chemistry:
     def thermfile(self):
         """
         Get thermodynamic data filename of this chemistry set
-        :return: thermodynamic data filename (string)
         """
         return self._therm_file.value.decode()
 
@@ -672,7 +703,6 @@ class Chemistry:
         """
         Assign the thermodynamic data filename
         :param filename: name of the thermodynamic data file with the full path
-        :return: None
         """
         self._therm_file = ctypes.c_char_p(filename.encode())
 
@@ -680,7 +710,6 @@ class Chemistry:
     def tranfile(self):
         """
         Get transport data filename of this chemistry set
-        :return: transport data filename (string)
         """
         return self._tran_file.value.decode()
 
@@ -689,7 +718,6 @@ class Chemistry:
         """
         Assign the transport data filename
         :param filename: name of the transport data file with the full path
-        :return: None
         """
         self._tran_file = ctypes.c_char_p(filename.encode())
         if os.path.isfile(self._tran_file.value):
@@ -704,7 +732,6 @@ class Chemistry:
     def summaryfile(self):
         """
         Get the name of the summary file from the preprocessor
-        :return: preprocess summary file name (string)
         """
         return self._summary_out.value.decode()
 
@@ -714,7 +741,7 @@ class Chemistry:
             print(
                 Color.PURPLE
                 + '** make sure the gas mechanism contains the "TRANSPORT ALL" block',
-                end="\n" + Color.END,
+                end=Color.END,
             )
             self._index_tran = ctypes.c_int(1)
         else:
@@ -723,20 +750,19 @@ class Chemistry:
                 print(
                     Color.YELLOW
                     + f'** transport data in file: "{self._tran_file.value.decode()}" will be processed',
-                    end="\n" + Color.END,
+                    end=Color.END,
                 )
             else:
                 print(
                     Color.YELLOW
                     + f'** transport data in file: "{self._gas_file.value.decode()}" will be processed',
-                    end="\n" + Color.END,
+                    end=Color.END,
                 )
 
     @property
     def surffile(self):
         """
         Get surface mechanism filename of this chemistry set
-        :return: surface mechanism filename (string)
         """
         return self._surf_file.value.decode()
 
@@ -745,7 +771,6 @@ class Chemistry:
         """
         Assign the surface mechanism filename
         :param filename: name of the surface mechanism file with the full path
-        :return: None
         """
         self._surf_file = ctypes.c_char_p(filename.encode())
         if os.path.isfile(self._surf_file.value):
@@ -803,14 +828,14 @@ class Chemistry:
             print(
                 Color.RED
                 + f"gas mechanism file {self._gas_file.value.decode():s} not found",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             raise OSError
         if not os.path.isfile(self._therm_file.value):
             print(Color.YELLOW + "** thermodynamic data file not found/specified")
             print(
                 f"   make sure the mechanism file {self._gas_file.value.decode()} contains the 'THERM ALL' keyword",
-                end="\n" + Color.END,
+                end=Color.END,
             )
 
         # verify chemistry set
@@ -826,7 +851,7 @@ class Chemistry:
             # existing chemistry set
             print(Color.YELLOW + "** chemistry set is already processed")
             myindex = _chemsetidentifiers.index(identifier)
-            print(f"** the chemistry set index is: {myindex:d}", end="\n" + Color.END)
+            print(f"** the chemistry set index is: {myindex:d}", end=Color.END)
         else:
             # new chemistry set
             # add the identifier to the chemistry identifiers list
@@ -876,7 +901,7 @@ class Chemistry:
                 # failed to find mechanism sizes
                 print(
                     Color.RED + "** failed to find chemistry parameters",
-                    end="\n" + Color.END,
+                    end=Color.END,
                 )
                 return iErr
 
@@ -890,9 +915,7 @@ class Chemistry:
             iErr = ck_wrapper.chemkin.KINGetGasSpeciesNames(self._chemset_index, pp)
             if iErr != 0:
                 # failed to get species symbols
-                print(
-                    Color.RED + "** failed to get species symbols", end="\n" + Color.END
-                )
+                print(Color.RED + "** failed to get species symbols", end=Color.END)
                 return iErr
 
             for index in range(0, len(buff)):
@@ -906,7 +929,11 @@ class Chemistry:
             # get atomic masses
             self._AWT = self.AWT
             # check real-gas model
-            # self.verifyrealgasmodel()
+            self.verifyrealgasmodel()
+            # create a new KINetics initialization flag for this Chemistry Set
+            chemistrysetnew(self._chemset_index.value)
+            # save the chemkin work spaces for later use (by using active())
+            self.save()
         else:
             # fail to preprocess the chemistry files
             print(
@@ -915,7 +942,7 @@ class Chemistry:
             )
             print(
                 f"** the chemistry set index is: {self._chemset_index.value:d}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
 
         return self._error_code
@@ -923,7 +950,6 @@ class Chemistry:
     def verifyrealgasmodel(self):
         """
         Verify the availability of real-gas data in the mechanism
-        :return: None
         """
         EOSModel = ctypes.create_string_buffer(MAX_SPECIES_LENGTH)
         try:
@@ -931,30 +957,37 @@ class Chemistry:
             iErr = ck_wrapper.chemkin.KINRealGas_GetEOSMode(
                 self._chemset_index, self._EOS, EOSModel
             )
-            print(
-                Color.YELLOW
-                + f"** real-gas cubic EOS '{EOSModel.value.decode()}' is available",
-                end="\n" + Color.END,
-            )
-            if iErr != 0:
-                print(
-                    Color.RED + f"** Warning: method returned '{iErr}' error code",
-                    end="\n" + Color.END,
-                )
+            if iErr == 0:
+                if self._EOS.value > 0 and self._EOS.value <= 5:
+                    print(
+                        Color.YELLOW
+                        + f"** real-gas cubic EOS '{EOSModel.value.decode()}' is available",
+                        end=Color.END,
+                    )
+                    del EOSModel
+                    return
+
+            self._EOS = c_int(0)
         except OSError:
             # mechanism contains no real-gas data
             self._EOS = c_int(0)
             if verbose():
                 print(
-                    Color.YELLOW + "** mechanism is for ideal gas law only",
-                    end="\n" + Color.END,
+                    Color.PURPLE + "** error accessing the real gas information",
+                    end=Color.END,
                 )
+
+        del EOSModel
+        if verbose():
+            print(
+                Color.YELLOW + "** mechanism is for ideal gas law only",
+                end=Color.END,
+            )
 
     @property
     def speciessymbols(self):
         """
-        Get list of gas species symbols
-        :return: list of gas species (string list)
+        Get list of gas species symbols (string list)
         """
         if self._KSYMdone == 0:
             # recycle existing data
@@ -971,9 +1004,7 @@ class Chemistry:
                     self._KSYMdone == 1
             else:
                 # failed to get species symbols
-                print(
-                    Color.RED + "** failed to get species symbols", end="\n" + Color.END
-                )
+                print(Color.RED + "** failed to get species symbols", end=Color.END)
                 return [""]
             del buff
 
@@ -988,8 +1019,7 @@ class Chemistry:
     @property
     def elementsymbols(self):
         """
-        Get the list of element symbols
-        :return: list of elements (string list)
+        Get the list of element symbols (string list)
         """
         buff = (LP_c_char * self._num_elements.value)()
         for i in range(0, self._num_elements.value):
@@ -1003,7 +1033,7 @@ class Chemistry:
                 self._elements[strVal] = index
         else:
             # failed to get element symbols
-            print(Color.RED + "** failed to get element symbols", end="\n" + Color.END)
+            print(Color.RED + "** failed to get element symbols", end=Color.END)
             return [""]
 
         del buff
@@ -1017,18 +1047,22 @@ class Chemistry:
 
     def getspecindex(self, specname=None):
         """
-        Get index of the gas species
-        :return: species index (integer scalar)
+        Get index of the gas species (integer scalar)
         """
         nn = ctypes.c_char_p(specname.encode())
         specindex = self._gas_species.get(nn.value, -1)
+        if specindex <= 0:
+            print(
+                Color.RED + f"** species symbol not found: {specname:s}",
+                end=Color.END,
+            )
+            exit()
         return specindex
 
     @property
     def chemID(self):
         """
-        Get chemistry set index
-        :return: chemistry set index (integer scalar)
+        Get chemistry set index (integer scalar)
         """
         if self._chemset_index.value >= 0:
             return self._chemset_index.value
@@ -1041,39 +1075,34 @@ class Chemistry:
         Get surface chemistry status
         0 = this chemistry set does NOT include a surface chemistry
         1 = this chemistry set includes a  surface chemistry
-        :return: status flag of the surface chemistry
         """
         return self._index_surf.value
 
     @property
     def KK(self):
         """
-        Get number of gas species
-        :return: number of gas species in the chemistry set (integer scalar)
+        Get number of gas species (integer scalar)
         """
         return self._num_gas_species.value
 
     @property
     def MM(self):
         """
-        Get number of elements
-        :return: number of elements in the chemistry set (integer scalar)
+        Get number of elements in the chemistry set (integer scalar)
         """
         return self._num_elements.value
 
     @property
     def IIGas(self):
         """
-        Get number of gas-phase reactions
-        :return: number of gas-phase reactions in the chemistry set (integer scalar)
+        Get number of gas-phase reactions (integer scalar)
         """
         return self._num_gas_reactions.value
 
     @property
     def AWT(self):
         """
-        compute atomic masses
-        :return: atomic masses [gm/mol] (1D double array)
+        compute atomic masses [gm/mol] (1D double array)
         """
         if self._AWTdone == 1:
             return self._AWT
@@ -1086,14 +1115,13 @@ class Chemistry:
             self._AWTdone = 1
         else:
             # failed to find atomic masses
-            print(Color.RED + "** failed to get atomic masses", end="\n" + Color.END)
+            print(Color.RED + "** failed to get atomic masses", end=Color.END)
         return self._AWT
 
     @property
     def WT(self):
         """
-        compute gas species molecular masses
-        :return: species molecular masses [gm/mol] (1D double array)
+        compute gas species molecular masses [gm/mol] (1D double array)
         """
         if self._WTdone == 1:
             return self._WT
@@ -1108,7 +1136,7 @@ class Chemistry:
             self._WTdone = 1
         else:
             # failed to find molecular masses
-            print(Color.RED + "** failed to get molecular masses", end="\n" + Color.END)
+            print(Color.RED + "** failed to get molecular masses", end=Color.END)
         return self._WT
 
     def SpeciesCp(self, temp=0.0, pres=None):
@@ -1132,7 +1160,7 @@ class Chemistry:
                 )
                 print(
                     "   Usage: self.SpeciesCp(temperature, pressure)",
-                    end="\n" + Color.END,
+                    end=Color.END,
                 )
                 return [0.0e0]
             else:
@@ -1149,9 +1177,7 @@ class Chemistry:
             Cp *= self._WT
         else:
             # failed to compute specific heats
-            print(
-                Color.RED + "** failed to compute specific heats", end="\n" + Color.END
-            )
+            print(Color.RED + "** failed to compute specific heats", end=Color.END)
 
         return Cp
 
@@ -1191,7 +1217,7 @@ class Chemistry:
             # failed to compute enthalpies
             print(
                 Color.RED + "** failed to compute species enthalpies",
-                end="\n" + Color.END,
+                end=Color.END,
             )
 
         return H
@@ -1220,7 +1246,7 @@ class Chemistry:
             # failed to compute internal energies
             print(
                 Color.RED + "** failed to compute species internal energies",
-                end="\n" + Color.END,
+                end=Color.END,
             )
 
         return U
@@ -1242,7 +1268,7 @@ class Chemistry:
             # failed to compute viscosity
             print(
                 Color.RED + "** failed to compute species viscosity",
-                end="\n" + Color.END,
+                end=Color.END,
             )
 
         return visc
@@ -1264,7 +1290,7 @@ class Chemistry:
             # failed to compute conductivities
             print(
                 Color.RED + "** failed to compute species conductivity",
-                end="\n" + Color.END,
+                end=Color.END,
             )
 
         return cond
@@ -1293,7 +1319,7 @@ class Chemistry:
             # failed to compute diffusion coefficients
             print(
                 Color.RED + "** failed to compute species diffusion coefficients",
-                end="\n" + Color.END,
+                end=Color.END,
             )
 
         return diffusioncoeffs
@@ -1316,7 +1342,7 @@ class Chemistry:
             if iErr != 0:
                 print(
                     Color.RED + "** failed to compute elemental compositions",
-                    end="\n" + Color.END,
+                    end=Color.END,
                 )
                 return 0
             else:
@@ -1324,17 +1350,17 @@ class Chemistry:
 
         # check element index
         if elemindex < 0:
-            print(Color.RED + "** element not found", end="\n" + Color.END)
+            print(Color.RED + "** element not found", end=Color.END)
             raise ValueError
         elif elemindex >= self._num_elements.value:
-            print(Color.PURPLE + "** element index out of bound", end="\n" + Color.END)
+            print(Color.PURPLE + "** element index out of bound", end=Color.END)
             return 0
         # check species index
         if specindex < 0:
-            print(Color.RED + "** species not found", end="\n" + Color.END)
+            print(Color.RED + "** species not found", end=Color.END)
             raise ValueError
         elif elemindex >= self._num_gas_species.value:
-            print(Color.PURPLE + "** species index out of bound", end="\n" + Color.END)
+            print(Color.PURPLE + "** species index out of bound", end=Color.END)
             return 0
 
         return self.elementalcomp[elemindex][specindex]
@@ -1342,8 +1368,7 @@ class Chemistry:
     @property
     def EOS(self):
         """
-        Get the available real-gas EOS model
-        :return: number of the EOS model that is provided in the mechanism (integer scalar)
+        Get the available real-gas EOS model (integer scalar)
         """
         return self._EOS.value
 
@@ -1356,7 +1381,7 @@ class Chemistry:
             # no real gas EOS data in the mechanism
             print(
                 Color.YELLOW + "** mechanism is for ideal gas law only",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return
         # check real-gas EOS status
@@ -1365,13 +1390,13 @@ class Chemistry:
         if iErr != 0:
             print(
                 Color.RED + f"** Warning: method returned '{iErr}' error code",
-                end="\n" + Color.END,
+                end=Color.END,
             )
         if iFlag.value == 0:
             print(
                 Color.YELLOW
                 + f"** real-gas cubic EOS model {Chemistry.realgas_CuEOS[self._EOS.value]} is turned ON",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             self.userealgas = True
         else:
@@ -1386,7 +1411,7 @@ class Chemistry:
             # no real gas EOS data in the mechanism
             print(
                 Color.YELLOW + "** mechanism is for ideal gas law only",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             self.userealgas = False
             return
@@ -1396,10 +1421,10 @@ class Chemistry:
         if iErr != 0:
             print(
                 Color.RED + f"** Warning: method returned '{iErr}' error code",
-                end="\n" + Color.END,
+                end=Color.END,
             )
         if iFlag.value == 0:
-            print(Color.YELLOW + "** ideal gas law is turned ON", end="\n" + Color.END)
+            print(Color.YELLOW + "** ideal gas law is turned ON", end=Color.END)
             self.userealgas = False
 
     def getreactionparameters(self):
@@ -1430,11 +1455,11 @@ class Chemistry:
             print(
                 Color.PURPLE
                 + f"** reaction index is out of bound, range = [1 ~ {self.IIGas}]",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 1
         if AFactor < 0.0e0:
-            print(Color.PURPLE + "** A-factor must >= 0", end="\n" + Color.END)
+            print(Color.PURPLE + "** A-factor must >= 0", end=Color.END)
             return 2
         # convert the reaction parameters
         ireac = c_int(-reaction_index)  # negative index to "put" A-factor value
@@ -1444,7 +1469,7 @@ class Chemistry:
         if iErr != 0:
             print(
                 Color.PURPLE + f"** error encountered, code = {iErr}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return iErr
         return 0
@@ -1457,7 +1482,7 @@ class Chemistry:
             print(
                 Color.PURPLE
                 + f"** reaction index is out of bound, range = [1 ~ {self.IIGas}]",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return AFactor
         # convert the reaction parameters
@@ -1469,7 +1494,7 @@ class Chemistry:
         if iErr != 0:
             print(
                 Color.PURPLE + f"** error encountered, code = {iErr}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 0.0e0
         return AFactor
@@ -1486,11 +1511,11 @@ class Chemistry:
             print(
                 Color.PURPLE
                 + f"** reaction index must be < {self._num_gas_reactions.value}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return reactionstring
         elif reaction_index <= 0:
-            print(Color.PURPLE + "** reaction index must > 0", end="\n" + Color.END)
+            print(Color.PURPLE + "** reaction index must > 0", end=Color.END)
             return reactionstring
         # convert the reaction parameters
         ireac = c_int(reaction_index)
@@ -1503,10 +1528,45 @@ class Chemistry:
         if iErr != 0:
             print(
                 Color.RED + f"** Warning: method returned '{iErr}' error code",
-                end="\n" + Color.END,
+                end=Color.END,
             )
         # convert C string back to string
         # print(rstring.decode()[0:iStringSize.value])              # check
         reactionstring = rstring.decode()[0 : iStringSize.value]
         del rstring
         return reactionstring
+
+    def save(self):
+        """
+        Store the work spaces of the current Chemistry Set
+        if new Chemistry Set will be created later in the same project
+        """
+        iErr = ck_wrapper.chemkin.KINUpdateChemistrySet(self._chemset_index)
+        if iErr == 0:
+            print(
+                Color.YELLOW + f"** Work spaces saved for Chemistry Set {self.label}",
+                end=Color.END,
+            )
+        else:
+            print(
+                Color.PURPLE + "** error saving the Chemistry Set work spaces",
+                end=Color.END,
+            )
+
+    def activate(self):
+        """
+        Switch to (re-activate) the work spaces of the current Chemistry Set
+        when there are multiple Chemistry Sets in the same project
+        """
+        iErr = ck_wrapper.chemkin.KINSwitchChemistrySet(self._chemset_index)
+        if iErr == 0:
+            print(
+                Color.YELLOW
+                + f"** Work spaces for Chemistry Set {self.label} activated",
+                end=Color.END,
+            )
+        else:
+            print(
+                Color.PURPLE + "** error reactivating the Chemistry Set work spaces",
+                end=Color.END,
+            )

@@ -80,7 +80,7 @@ pres = fuel.pressure
 P[:] = 0.0e0
 Det[:] = 0.0e0
 # set verbose mode to false to turn OFF extra printouts
-ck.verbose = False
+ck.setverbose(False)
 # start of pressure loop
 for i in range(points):
     # compute the C-J state corresponding to the initial mixture

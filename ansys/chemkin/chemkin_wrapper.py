@@ -3,7 +3,6 @@ from ctypes import cdll
 import logging
 import os
 import platform
-import sys
 
 import numpy as np
 
@@ -14,66 +13,154 @@ logger = logging.getLogger(__name__)
 
 # set ansys version number
 _min_version = 251
-_valid_versions = [252, 251, 242]
+_valid_versions = [251, 242]
 _ansys_ver = _min_version
+_ansys_dir = None
+_ckbin = None
+status = 0
+_target_lib = None
+_lib_paths = []
 
-# check platform
-if platform.system() == "Windows" or platform.system() == "Linux":
+
+def __setwindows():
+    """
+    Set up PyChemkin environment on Windows platforms
+    """
+    global _ansys_ver
+    global _ansys_dir
+    global _ckbin
+    global _lib_paths
+    global _min_version
+    global _target_lib
+    global _valid_versions
     # set ansys installation directory (Windows)
     for v in _valid_versions:
         _ansys_ver = v
         if v >= _min_version:
             _ansys_installation = "ANSYS" + str(_ansys_ver) + "_DIR"
             _ansys_home = os.environ.get(_ansys_installation, "NA")
-            print(_ansys_installation + ": " + _ansys_home)
             if _ansys_home != "NA":
                 _ansys_dir = os.path.dirname(_ansys_home)
                 break
         else:
             break
-else:
-    print(f"** unsupported platform {platform.system()}")
-    print("** PyChemkin does not support the current os")
-    exit()
 
-if _ansys_ver >= _min_version:
-    if not os.path.isdir(_ansys_dir):
-        print(f"** PyChemkin cannot find the specific Ansys installation: {_ansys_dir}")
-        exit()
-    else:
-        plat = "winx64"
-        i64 = "/intel64"
-        if platform.system() == "Windows":
-            plat = "linx64/lib/intel64"
-            _lib_paths = [
-                os.path.join(_ansys_dir, "tp", "IntelCompiler", "2023.1.0", "win64"),
-                os.path.join(_ansys_dir, "tp", "IntelMKL", "2023.1.0", "win64"),
-                os.path.join(_ansys_dir, "tp", "zlib", "1.2.13", "win64"),
-            ]
+    if _ansys_ver >= _min_version:
+        if not os.path.isdir(_ansys_dir):
+            # no local Ansys installation
+            print(
+                f"** PyChemkin cannot find the specific Ansys installation: {_ansys_dir}"
+            )
+            return 1
         else:
+            plat = "winx64"
+            _ckbin = "chemkin.win64"
+            # required third-party shared objects
             _lib_paths = [
-                os.path.join(
-                    _ansys_dir,
-                    "tp",
-                    "IntelCompiler",
-                    "2023.1.0",
-                    "linx64",
-                    "lib",
-                    "intel64",
-                ),
-                os.path.join(
-                    _ansys_dir, "tp", "IntelMKL", "2023.1.0", "linx64", "lib", "intel64"
-                ),
-                os.path.join(_ansys_dir, "tp", "zlib", "1.2.13", "linx64", "lib"),
+                os.path.join(_ansys_dir, "reaction", _ckbin, "bin"),
+                os.path.join(_ansys_dir, "tp", "IntelCompiler", "2023.1.0", plat),
+                os.path.join(_ansys_dir, "tp", "IntelMKL", "2023.1.0", plat),
+                os.path.join(_ansys_dir, "tp", "zlib", "1.2.13", plat),
             ]
-else:
-    print("** PyChemkin does not support Chemkin versions older than 2025R1")
-    exit()
-
-if sys.platform == "win32":
+    else:
+        print("** PyChemkin does not support Chemkin versions older than 2025R1")
+        return 2
+    # set load dll paths
     for _lib_path in _lib_paths:
         os.add_dll_directory(_lib_path)
-else:
+    # set KINetics shared object
+    _target_lib = os.path.join(_ansys_dir, "reaction", _ckbin, "bin", "KINeticsdll.dll")
+    return 0
+
+
+def __setlinux():
+    """
+    Set up PyChemkin environment on Linux platforms
+    """
+    global _ansys_ver
+    global _ansys_dir
+    global _ckbin
+    global _lib_paths
+    global _min_version
+    global _target_lib
+    global _valid_versions
+    iErr = 0
+    # set ansys installation directory (Linux)
+    for v in _valid_versions:
+        _ansys_ver = v
+        if v >= _min_version:
+            _ansys_installation = "ANSYS" + str(_ansys_ver) + "_DIR"
+            _ansys_home = os.environ.get(_ansys_installation, "NA")
+            if _ansys_home != "NA":
+                _ansys_dir = os.path.dirname(_ansys_home)
+                break
+        else:
+            break
+    # try using a different method
+    if _ansys_home == "NA":
+        # environment variable ANSYSxxx_DIR is NOT defined
+        # check local Ansys installation
+        _userhome = os.environ.get("HOME", "NA")
+        if _userhome != "NA":
+            _ansys_home = os.path.join(_userhome, "ansys_inc")
+            foundhome = False
+            if os.path.isdir(_ansys_home):
+                # find all local Ansys installations
+                localversions = [f.name for f in os.scandir(_ansys_home) if f.is_dir()]
+                for v in _valid_versions:
+                    _ansys_ver = v
+                    if v >= _min_version:
+                        thisversion = "v" + str(v)
+                        if thisversion in localversions:
+                            _ansys_dir = os.path.join(_ansys_home, thisversion)
+                            foundhome = True
+                            break
+                    else:
+                        iErr = 2
+                        break
+                if not foundhome:
+                    iErr = 1
+            else:
+                # no local Ansys installation
+                iErr = 1
+        else:
+            iErr = 1
+    # check Ansys version
+    if _ansys_ver < _min_version:
+        iErr = 2
+
+    # check Ansys installation error
+    if iErr == 1:
+        print("** error finding local Ansys chemkin installation")
+        print("** please make sure Ansys v251 or newer is installed locally")
+        print("** otherwise, please set the environment variable")
+        print("         ANSYSxxx_DIR")
+        print('with value = "<full path to local Ansys installation>/ANSYS"')
+        print("for example, ANSYS251_DIR = ")
+        print('             "$HOME/ansys_inc/v251/ANSYS"')
+        return 1
+    elif iErr == 2:
+        print("** PyChemkin does not support Chemkin versions older than 2025R1")
+        return 2
+
+    # required third-party shared objects
+    plat = "linx64"
+    _ckbin = "chemkin.linuxx8664"
+    _lib_paths = [
+        os.path.join(_ansys_dir, "reaction", _ckbin, "bin"),
+        os.path.join(
+            _ansys_dir,
+            "tp",
+            "IntelCompiler",
+            "2023.1.0",
+            plat,
+            "lib",
+            "intel64",
+        ),
+        os.path.join(_ansys_dir, "tp", "IntelMKL", "2023.1.0", plat, "lib", "intel64"),
+        os.path.join(_ansys_dir, "tp", "zlib", "1.2.13", plat, "lib"),
+    ]
+    # set load dll paths
     combined_path = ":".join(_lib_paths)
     if "LD_LIBRARY_PATH" not in os.environ.keys():
         # if os.environ["LD_LIBRARY_PATH"] is None:
@@ -82,35 +169,47 @@ else:
         os.environ["LD_LIBRARY_PATH"] = (
             os.environ["LD_LIBRARY_PATH"] + ":" + combined_path
         )
+
     if "PATH" not in os.environ.keys():
         os.environ["PATH"] = combined_path
     else:
         os.environ["PATH"] = os.environ["PATH"] + ":" + combined_path
+    # set KINetics shared object
+    _target_lib = os.path.join(_ansys_dir, "reaction", _ckbin, "bin", "libKINetics.so")
+    return 0
 
-# load KINetics package/module
+
+# check platform
+if platform.system() == "Windows":
+    # set ansys installation directory (Windows)
+    status = __setwindows()
+elif platform.system() == "Linux":
+    # set ansys installation directory (Linux)
+    status = __setlinux()
+else:
+    print(f"** unsupported platform {platform.system()}")
+    print("** PyChemkin does not support the current os")
+    exit()
+# check set up status
+if status != 0:
+    exit()
+# load KINetics shared object
 try:
-    target_path = None
-    if sys.platform == "win32":
-        target_lib = os.path.join(
-            _ansys_dir, "reaction", "chemkin.win64", "bin", "KINeticsdll.dll"
-        )
-    else:
-        target_lib = os.path.join(
-            _ansys_dir, "reaction", "chemkin.linuxx8664", "bin", "libKINetics.so"
-        )
-    chemkin = cdll.LoadLibrary(target_lib)
+    chemkin = cdll.LoadLibrary(str(_target_lib))
 except OSError:
-    inst_dir = os.path.join(_ansys_dir, "reaction", "chemkin.win64", "bin")
+    inst_dir = os.path.join(str(_ansys_dir), "reaction", str(_ckbin), "bin")
     print("** error initializing ansys-chemkin")
-    print("** please check Chemkin installation at " + inst_dir)
+    print("** please verify local Chemkin installation at ")
+    print("   " + inst_dir)
+    print(
+        "** run the chemkin set up script"
+        + " 'source chemkin_setup.ksh' in the directory"
+    )
     print("** or check for a valid Ansys-chemkin license")
     exit()
-except AttributeError:
-    inst_dir = os.path.join(_ansys_dir, "reaction", "chemkin.win64", "bin")
-    print("** error initializing ansys-chemkin")
-    print("** please check Chemkin installation at " + inst_dir)
-    print("** or check for a valid Ansys-chemkin license")
-    exit()
+# KINetics APIs
+# document: KINetics API Reference Guide (Ansys Help portal)
+#
 # syntax:
 # Specify the return type of the function
 # Specify the argument types for the functions
@@ -140,7 +239,14 @@ chemkin.KINInitialize.argtypes = [
 ]
 chemkin.KINFinish.restype = None
 chemkin.KINFinish.argtypes = []
-
+chemkin.KINUpdateChemistrySet.restype = ctypes.c_int
+chemkin.KINUpdateChemistrySet.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+]
+chemkin.KINSwitchChemistrySet.restype = ctypes.c_int
+chemkin.KINSwitchChemistrySet.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+]
 # size, index, symbols
 chemkin.KINGetChemistrySizes.restype = ctypes.c_int
 chemkin.KINGetChemistrySizes.argtypes = [
@@ -574,6 +680,47 @@ chemkin.KINAll0D_GetIgnitionDelay.argtypes = [ctypes.POINTER(ctypes.c_double)]
 chemkin.KINAll0D_GetHeatRelease.restype = ctypes.c_int
 chemkin.KINAll0D_GetHeatRelease.argtypes = [
     ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+]
+chemkin.KINAll0D_GetEngineHeatRelease.restype = ctypes.c_int
+chemkin.KINAll0D_GetEngineHeatRelease.argtypes = [
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+]
+# Premix interfaces
+chemkin.KINPremix_SetParameter.restype = ctypes.c_int
+chemkin.KINPremix_SetParameter.argtypes = [
+    ctypes.POINTER(ctypes.c_char),
+    ctypes.POINTER(ctypes.c_double),
+]
+chemkin.KINPremix_CalculateFlame.restype = ctypes.c_int
+chemkin.KINPremix_CalculateFlame.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+]
+chemkin.KINPremix_GetSolution.restype = ctypes.c_int
+chemkin.KINPremix_GetSolution.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_int),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="F_CONTIGUOUS"),
+]
+chemkin.KINPremix_GetSolutionGridPoints.restype = ctypes.c_int
+chemkin.KINPremix_GetSolutionGridPoints.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+]
+chemkin.KINPremix_GetFlameMassFlux.restype = ctypes.c_int
+chemkin.KINPremix_GetFlameMassFlux.argtypes = [
     ctypes.POINTER(ctypes.c_double),
 ]
 # Oppdif interfaces

@@ -8,7 +8,9 @@ from . import chemkin_wrapper as ck_wrapper
 from .chemistry import (
     Chemistry,
     calculatestoichiometrics,
+    checkchemistryset,
     checkrealgasstatus,
+    chemistrysetinitialized,
     setcurrentpressure,
     verbose,
     whereelementinarray1D,
@@ -33,7 +35,7 @@ def isothermalmixing(recipe, mode, finaltemperature):
     finalmixture = copy.deepcopy(recipe[0][0])
     if numb_mixture == 0:
         # noting there
-        print(Color.RED + "** the mixing recipe is empty", end="\n" + Color.END)
+        print(Color.RED + "** the mixing recipe is empty", end=Color.END)
         return
     # check types
     if isinstance(recipe[0][0], Mixture):
@@ -129,7 +131,7 @@ def adiabaticmixing(recipe, mode):
     finalmixture = copy.deepcopy(recipe[0][0])
     if numb_mixture == 0:
         # noting there
-        print(Color.RED + "** the mixing recipe is empty", end="\n" + Color.END)
+        print(Color.RED + "** the mixing recipe is empty", end=Color.END)
         return
     # check types
     if isinstance(recipe[0][0], Mixture):
@@ -213,7 +215,7 @@ def adiabaticmixing(recipe, mode):
     if iErr != 0:
         print(
             Color.RED + f"** Warning: method returned error code {iErr}",
-            end="\n" + Color.END,
+            end=Color.END,
         )
     if verbose():
         print(f"final mixture temperature = {finalmixture.temperature:f} [K]")
@@ -258,7 +260,7 @@ def calculatemixturetemperaturefromenthalpy(mixture, mixtureH, guesstemperature=
             # diverge
             print(
                 Color.PURPLE + "** failed to find mixture temperature: search diverges",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             iErr = 1
             break
@@ -276,7 +278,7 @@ def calculatemixturetemperaturefromenthalpy(mixture, mixtureH, guesstemperature=
             Color.PURPLE
             + f"** cannot find mixture temperature within {maxcount:d} iterations"
         )
-        print(f"** final tolerance = {abs(dt):f} [K]", end="\n" + Color.END)
+        print(f"** final tolerance = {abs(dt):f} [K]", end=Color.END)
         iErr = 2
     # update temperature
     if iErr != 1:
@@ -289,7 +291,7 @@ def calculatemixturetemperaturefromenthalpy(mixture, mixtureH, guesstemperature=
 def interpolatemixtures(mixtureleft, mixtureright, ratio):
     """
     Create a new mixture object by interpolating the two mixture objects with a specific weight ratio
-        mixture_new = (1 - ratio) * mixtureleft + ratio * mixtureright
+    mixture_new = (1 - ratio) * mixtureleft + ratio * mixtureright
     :param mixtureleft: a Mixture object
     :param mixtureright: a Mixture object
     :param ratio: the weight parameters for interpolation, 0 <= ratio <= 1 (double scalar)
@@ -299,35 +301,35 @@ def interpolatemixtures(mixtureleft, mixtureright, ratio):
     if not isinstance(mixtureleft, Mixture):
         print(
             Color.RED + "** the first argument must be a Mixture object",
-            end="\n" + Color.END,
+            end=Color.END,
         )
         raise TypeError
     iErr = mixtureleft.validate()
     if iErr != 0:
         print(
             Color.YELLOW + "** the first mixture is not fully defined",
-            end="\n" + Color.END,
+            end=Color.END,
         )
         raise
     #
     if not isinstance(mixtureright, Mixture):
         print(
             Color.RED + "** the second argument must be a Mixture object",
-            end="\n" + Color.END,
+            end=Color.END,
         )
         raise TypeError
     iErr = mixtureright.validate()
     if iErr != 0:
         print(
             Color.YELLOW + "** the second mixture is not fully defined",
-            end="\n" + Color.END,
+            end=Color.END,
         )
         raise
     # check ratio
     if ratio < 0.0e0 or ratio > 1.0e0:
         print(
             Color.RED + "** error: the weight parameter must be 0 <= and <= 1",
-            end="\n" + Color.END,
+            end=Color.END,
         )
         raise ValueError
     ratiom = 1.0e0 - ratio
@@ -368,33 +370,33 @@ def calculateequilibrium(
     :param mode_in: flag indicates the frac array is 'mass' or 'mole' fractions
     :param mode_out: flag to indicate the returning composition is in 'mole' or 'mass' fraction
     :param EQOption: equilibrium type (integer scalar) see below
-                1.  SPECIFIED T AND P
-                2.  SPECIFIED T AND V
-                3.  SPECIFIED T AND S
-                4.  SPECIFIED P AND V
-                5.  SPECIFIED P AND H
-                6.  SPECIFIED P AND S
-                7.  SPECIFIED V AND U
-                8.  SPECIFIED V AND H
-                9.  SPECIFIED V AND S
-                10. CHAPMAN-JOUGUET DETONATION (H, S, V, T CONTAIN THE UNBURNED STATE, AND TE IS THE BURNED ESTIMATE)
+    1.  SPECIFIED T AND P
+    2.  SPECIFIED T AND V
+    3.  SPECIFIED T AND S
+    4.  SPECIFIED P AND V
+    5.  SPECIFIED P AND H
+    6.  SPECIFIED P AND S
+    7.  SPECIFIED V AND U
+    8.  SPECIFIED V AND H
+    9.  SPECIFIED V AND S
+    10. CHAPMAN-JOUGUET DETONATION (H, S, V, T CONTAIN THE UNBURNED STATE, AND TE IS THE BURNED ESTIMATE)
     :param useRealGas: option to turned ON/OFF (1/0) the real-gas cubic EOS if available (integer scalar)
     :return: list of state variables at equilibrium , equilibrium composition given in fractions assigned by mode_out
-            (list of double scalars, 1D double array)
-            the state variable list consists of
-            equilibrium pressure [dynes/cm2], equilibrium temperature [K], and, if Chapmen-Jouguet option is used,
-            speed of sound at equilibrium [cm/sec], detonation wave speed [cm/sec]
+    (list of double scalars, 1D double array)
+    the state variable list consists of
+    equilibrium pressure [dynes/cm2], equilibrium temperature [K], and, if Chapmen-Jouguet option is used,
+    speed of sound at equilibrium [cm/sec], detonation wave speed [cm/sec]
     """
     # find the equilibrium composition at the mixture pressure and temperature
     # check inputs
     if chemID < 0:
-        print(Color.RED + "** invalid chemistry", end="\n" + Color.END)
+        print(Color.RED + "** invalid chemistry", end=Color.END)
         return [p, t, 0.0, 0.0], [0.0e0]
 
     if p <= 0.0 or (p * t) <= 0.0:
         print(
             Color.RED + "** invalid pressure and/or temperature value(s)",
-            end="\n" + Color.END,
+            end=Color.END,
         )
         return [p, t], [0.0e0]
 
@@ -404,7 +406,7 @@ def calculateequilibrium(
         print(
             Color.RED
             + f"** fraction and molar mass arrays must have the same size: {kgas:d}",
-            end="\n" + Color.END,
+            end=Color.END,
         )
         return [p, t, 0.0, 0.0], [0.0e0]
 
@@ -425,7 +427,7 @@ def calculateequilibrium(
         # fraction type not given or incorrect
         print(
             Color.PURPLE + '** must specify "mole" or "mass" fractions given',
-            end="\n" + Color.END,
+            end=Color.END,
         )
         return [p, t, 0.0, 0.0], xx_eq
     # check equilibrium calculation option
@@ -433,6 +435,7 @@ def calculateequilibrium(
         pass
     else:
         eq_option = c_int(EQOption)
+
     # check real gas option
     if useRealGas is None:
         pass
@@ -451,42 +454,33 @@ def calculateequilibrium(
     tt_eq = c_double(t)
     detonationwavespeed = c_double(0.0e0)
     soundspeed_eq = c_double(0.0e0)
-    # perform gas-phase equilibrium calculation
-    try:
-        iErr = ck_wrapper.chemkin.KINCalculateEqGasWithOption(
-            _chemset_index,
-            eq_option,
-            iRealGas,
-            pp,
-            tt,
-            xx,
-            pp_eq,
-            tt_eq,
-            soundspeed_eq,
-            detonationwavespeed,
-            xx_eq,
-        )
-    except OSError:
+    # perform gas-phase equilibrium calculationk
+    if not checkchemistryset(_chemset_index.value):
         # need to initialize KINetics
-        print(Color.YELLOW + "** initializing chemkin...", end="\n" + Color.END)
+        print(Color.YELLOW + "** initializing chemkin...", end=Color.END)
         iErr = ck_wrapper.chemkin.KINInitialize(_chemset_index, c_int(0))
         if iErr != 0:
-            print(Color.RED + "** fail to initialize KINetics", end="\n" + Color.END)
+            print(Color.RED + "** fail to initialize KINetics", end=Color.END)
             statevars = [p, t, 0.0, 0.0]
             return statevars, frac
-        iErr = ck_wrapper.chemkin.KINCalculateEqGasWithOption(
-            _chemset_index,
-            eq_option,
-            iRealGas,
-            pp,
-            tt,
-            xx,
-            pp_eq,
-            tt_eq,
-            soundspeed_eq,
-            detonationwavespeed,
-            xx_eq,
-        )
+        else:
+            chemistrysetinitialized(_chemset_index.value)
+    else:
+        iErr = 0
+
+    iErr = ck_wrapper.chemkin.KINCalculateEqGasWithOption(
+        _chemset_index,
+        eq_option,
+        iRealGas,
+        pp,
+        tt,
+        xx,
+        pp_eq,
+        tt_eq,
+        soundspeed_eq,
+        detonationwavespeed,
+        xx_eq,
+    )
 
     if iErr == 0:
         # process solution
@@ -522,7 +516,7 @@ def calculateequilibrium(
             return statevars, x_eq
 
     else:
-        print(Color.RED + "** fail to find the equilibrium state", end="\n" + Color.END)
+        print(Color.RED + "** fail to find the equilibrium state", end=Color.END)
         statevars = [p, t, 0.0, 0.0]
         return statevars, xx
 
@@ -532,24 +526,24 @@ def equilibrium(mixture, opt=None):
     Find the equilibrium state mixture corresponding to the given mixture
     :param mixture: initial gas mixture (Mixture object)
     :param opt: equilibrium type (integer scalar) see below
-                1.  SPECIFIED T AND P
-                2.  SPECIFIED T AND V
-                *3.  SPECIFIED T AND S
-                4.  SPECIFIED P AND V
-                5.  SPECIFIED P AND H
-                *6.  SPECIFIED P AND S
-                7.  SPECIFIED V AND U
-                8.  SPECIFIED V AND H
-                *9.  SPECIFIED V AND S
-                *10. CHAPMAN-JOUGUET DETONATION (H, S, V, T CONTAIN THE UNBURNED STATE, AND TE IS THE BURNED ESTIMATE)
-                * indicates the options are not available
+    1.  SPECIFIED T AND P
+    2.  SPECIFIED T AND V
+    *3.  SPECIFIED T AND S
+    4.  SPECIFIED P AND V
+    5.  SPECIFIED P AND H
+    *6.  SPECIFIED P AND S
+    7.  SPECIFIED V AND U
+    8.  SPECIFIED V AND H
+    *9.  SPECIFIED V AND S
+    *10. CHAPMAN-JOUGUET DETONATION (H, S, V, T CONTAIN THE UNBURNED STATE, AND TE IS THE BURNED ESTIMATE)
+    * indicates the options are not available
     :return: gas mixture at the equilibrium state (Mixture object)
     """
     # check argument
     if not isinstance(mixture, Mixture):
         raise RuntimeError("** the argument must be a Chemkin Mixture object")
     # initialization a Mixture object by duplication
-    EQState: Mixture = copy.deepcopy(mixture)
+    EQState = copy.deepcopy(mixture)
     # reset mass/mole fractions
     EQState._Xset = 0
     EQState._molefrac[:] = 0.0e0
@@ -563,7 +557,7 @@ def equilibrium(mixture, opt=None):
         if opt in [3, 6, 9, 10]:
             print(
                 Color.PURPLE + f"** equilibrium option {opt:d} is not available",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return mixture
         else:
@@ -597,14 +591,14 @@ def detonation(mixture):
     Find the Chapman-Jouguet state mixture and detonation wave speed corresponding to the given mixture
     :param mixture: initial gas mixture (Mixture object)
     :return: list of speeds (list of double scalars), gas mixture at the equilibrium state (Mixture object)
-            the speed list consists of
-            speed of sound [cm/sec], detonation wave speed [cm/sec]
+    the speed list consists of
+    speed of sound [cm/sec], detonation wave speed [cm/sec]
     """
     # check argument
     if not isinstance(mixture, Mixture):
         raise RuntimeError("** the argument must be a Chemkin Mixture object")
     # initialization a Mixture object by duplication
-    EQState: Mixture = copy.deepcopy(mixture)
+    EQState = copy.deepcopy(mixture)
     # reset mass/mole fractions
     EQState._Xset = 0
     EQState._molefrac[:] = 0.0e0
@@ -678,23 +672,21 @@ class Mixture:
     @property
     def chemID(self):
         """
-        Get chemistry set index
-        :return: chemistry set index (integer scalar)
+        Get chemistry set index (integer scalar)
         """
         return self._chemset_index.value
 
     @property
     def pressure(self):
         """
-        Get gas mixture pressure
-        :return: pressure [dynes/cm2] (double scalar)
+        Get gas mixture pressure [dynes/cm2] (double scalar)
         """
         if self._Pset == 1:
             return self._press
         else:
             print(
                 Color.PURPLE + "** mixture pressure is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 0.0e0
 
@@ -703,10 +695,9 @@ class Mixture:
         """
         Set gas mixture pressure
         :param p: pressure [dynes/cm2] (double scalar)
-        :return: None
         """
         if p <= 0.0:
-            print(Color.RED + "** invalid pressure value", end="\n" + Color.END)
+            print(Color.RED + "** invalid pressure value", end=Color.END)
             return
 
         self._press = p
@@ -715,15 +706,14 @@ class Mixture:
     @property
     def temperature(self):
         """
-        Get gas mixture temperature
-        :return: temperature [K] (double scalar)
+        Get gas mixture temperature [K] (double scalar)
         """
         if self._Tset == 1:
             return self._temp
         else:
             print(
                 Color.PURPLE + "** mixture temperature is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 0.0e0
 
@@ -732,10 +722,9 @@ class Mixture:
         """
         Set gas mixture temperature
         :param t: temperature [K] (double scalar)
-        :return: None
         """
         if t <= 10.0:
-            print(Color.RED + "** invalid temperature value", end="\n" + Color.END)
+            print(Color.RED + "** invalid temperature value", end=Color.END)
             return
         self._temp = t
         self._Tset = 1
@@ -745,23 +734,20 @@ class Mixture:
         if self._vol > 0.0e0:
             return self._vol
         else:
-            print(
-                Color.PURPLE + "** mixture volume is not provided", end="\n" + Color.END
-            )
+            print(Color.PURPLE + "** mixture volume is not provided", end=Color.END)
             return 0.0e0
 
     @volume.setter
     def volume(self, vol):
         if vol <= 0.0e0:
-            print(Color.RED + "** invalid volume value", end="\n" + Color.END)
+            print(Color.RED + "** invalid volume value", end=Color.END)
             return
         self._vol = vol
 
     @property
     def X(self):
         """
-        Get mixture mole fraction
-        :return: mixture mole fraction (double array)
+        Get mixture mole fraction (double array)
         """
         if self._Xset == 1:
             iErr, x = Mixture.normalize(self._molefrac)
@@ -769,12 +755,10 @@ class Mixture:
         elif self._Yset == 1:
             iErr, x = self.__YtoX()
             if iErr != 0:
-                print(Color.RED + "** error encountered", end="\n" + Color.END)
+                print(Color.RED + "** error encountered", end=Color.END)
             return x
         else:
-            print(
-                Color.RED + "** mixture composition not defined", end="\n" + Color.END
-            )
+            print(Color.RED + "** mixture composition not defined", end=Color.END)
             iErr, x = Mixture.normalize(self._molefrac)
             return x
 
@@ -783,7 +767,6 @@ class Mixture:
         """
         Set mixture molar composition
         :param recipe: mixture composition a list of [('species_symbol', mole_fraction), ('species_symbol', mole_fraction), ...]
-        :return: None
         """
         if self._Xset == 1:
             # reset the mole fraction array
@@ -795,12 +778,12 @@ class Mixture:
                 else:
                     print(
                         Color.RED + f"** not a gas species: {sp:s}",
-                        end="\n" + Color.END,
+                        end=Color.END,
                     )
-                    return
+                    exit()
                 if x < 0.0:
-                    print(Color.RED + "** negative mole fraction", end="\n" + Color.END)
-                    return
+                    print(Color.RED + "** negative mole fraction", end=Color.END)
+                    exit()
                 # set mole fraction
                 self._molefrac[index] = x
         elif isinstance(recipe[0], (float, np.double)):
@@ -812,7 +795,7 @@ class Mixture:
                 print(
                     Color.RED
                     + f"** size of the mole fraction array must equal to the number of species: {self._KK:d}",
-                    end="\n" + Color.END,
+                    end=Color.END,
                 )
                 return
         else:
@@ -820,7 +803,7 @@ class Mixture:
             print("   (1) a list of tuple : for example, ('O2', 0.21) or")
             print(
                 "   (2) a mole fraction array of size = number_of_species",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return
         # reset mass fraction
@@ -831,8 +814,7 @@ class Mixture:
     @property
     def Y(self):
         """
-        Get mixture mass fraction
-        :return: mixture mass fraction (double array)
+        Get mixture mass fraction (double array)
         """
         if self._Yset == 1:
             iErr, y = Mixture.normalize(self._massfrac)
@@ -840,12 +822,10 @@ class Mixture:
         elif self._Xset == 1:
             iErr, y = self.__XtoY()
             if iErr != 0:
-                print(Color.RED + "** error encountered", end="\n" + Color.END)
+                print(Color.RED + "** error encountered", end=Color.END)
             return y
         else:
-            print(
-                Color.RED + "** mixture composition not defined", end="\n" + Color.END
-            )
+            print(Color.RED + "** mixture composition not defined", end=Color.END)
             iErr, y = Mixture.normalize(self._massfrac)
             return y
 
@@ -854,7 +834,6 @@ class Mixture:
         """
         Set mixture mass composition
         :param recipe: mixture composition a list of [('species_symbol', mass_fraction), ('species_symbol', mass_fraction), ...]
-        :return: None
         """
         if self._Yset == 1:
             # reset the mass fraction array
@@ -866,12 +845,12 @@ class Mixture:
                 else:
                     print(
                         Color.RED + f"** not a gas species: {sp:s}",
-                        end="\n" + Color.END,
+                        end=Color.END,
                     )
-                    return
+                    exit()
                 if y < 0.0:
-                    print(Color.RED + "** negative mass fraction", end="\n" + Color.END)
-                    return
+                    print(Color.RED + "** negative mass fraction", end=Color.END)
+                    exit()
                 # set mass fraction
                 self._massfrac[index] = y
         elif isinstance(recipe[0], (float, np.double)):
@@ -883,7 +862,7 @@ class Mixture:
                 print(
                     Color.RED
                     + f"** size of the mass fraction array must equal to the number of species: {self._KK:d}",
-                    end="\n" + Color.END,
+                    end=Color.END,
                 )
                 return
         else:
@@ -891,7 +870,7 @@ class Mixture:
             print("   (1) a list of tuple : for example, ('O2', 0.23) or")
             print(
                 "   (2) a mass fraction array of size = number_of_species",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return
         # reset mole fraction
@@ -902,8 +881,7 @@ class Mixture:
     @property
     def concentration(self):
         """
-        Get mixture molar concentrations
-        :return: species molar concentrations [mole/cm3] (1D double array)
+        Get mixture molar concentrations [mole/cm3] (1D double array)
         """
         if self._Xset == 1:
             # mole fractions are given
@@ -933,15 +911,14 @@ class Mixture:
         else:
             print(
                 Color.PURPLE + "** mixture composition is not defined",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return [0.0]
 
     @property
     def EOS(self):
         """
-        Get the available real-gas EOS model
-        :return: number of the EOS model that is provided in the mechanism (integer scalar)
+        Get the available real-gas EOS model that is provided in the mechanism (integer scalar)
         """
         return self._EOS.value
 
@@ -970,22 +947,20 @@ class Mixture:
             return 0, localfrac
         else:
             # fractions summed to zero
-            print(Color.PURPLE + "** fractions summed to zero", end="\n" + Color.END)
+            print(Color.PURPLE + "** fractions summed to zero", end=Color.END)
             return 1, frac
 
     @property
     def WT(self):
         """
-        Get species molecular masses
-        :return: molecular masses [gm/mole] (1D double array)
+        Get species molecular masses [gm/mole] (1D double array)
         """
         return self._WT
 
     @property
     def WTM(self):
         """
-        Get mean molar mass of the gas mixture
-        :return: mean molar mass [gm/mol] (double scalar)
+        Get mean molar mass of the gas mixture [gm/mol] (double scalar)
         """
         mwt = 0.0e0
         if self._Xset == 1:
@@ -1020,7 +995,7 @@ class Mixture:
             # no fractions given
             print(
                 Color.PURPLE + "** mixture composition is not defined",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return mwt
 
@@ -1085,7 +1060,7 @@ class Mixture:
             print(
                 Color.RED
                 + f"** {mode} fraction and molar mass arrays must have the same size: {kgas:d}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return mwt
         if mode.lower() == "mole":
@@ -1117,7 +1092,7 @@ class Mixture:
             # fractions summed to zero
             print(
                 Color.PURPLE + "** mixture composition is not defined",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return mwt
 
@@ -1137,7 +1112,7 @@ class Mixture:
             print(
                 Color.RED
                 + f"** mole fraction and molar mass arrays must have the same size: {kgas:d}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return molefrac
         # compute mean molar mass
@@ -1170,7 +1145,7 @@ class Mixture:
             print(
                 Color.RED
                 + f"** mass fraction and molar mass arrays must have the same size: {kgas:d}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return massfrac
         # compute mean molar mass
@@ -1206,7 +1181,7 @@ class Mixture:
             print(
                 Color.RED
                 + f"** mass fraction and molar mass arrays must have the same size: {kgas:d}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return massfrac
         # compute density
@@ -1241,7 +1216,7 @@ class Mixture:
             print(
                 Color.RED
                 + f"** mole fraction and molar mass arrays must have the same size: {kgas:d}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return molefrac
         # compute mean molar mass
@@ -1283,7 +1258,7 @@ class Mixture:
             else:
                 print(
                     Color.PURPLE + f"** unknown fraction mode: {mode}",
-                    end="\n" + Color.END,
+                    end=Color.END,
                 )
         else:
             # list no-zero components
@@ -1300,7 +1275,7 @@ class Mixture:
             else:
                 print(
                     Color.PURPLE + f"** unknown fraction mode: {mode}",
-                    end="\n" + Color.END,
+                    end=Color.END,
                 )
 
     @staticmethod
@@ -1317,13 +1292,13 @@ class Mixture:
         """
         # check inputs
         if chemID < 0:
-            print(Color.RED + "** invalid chemistry", end="\n" + Color.END)
+            print(Color.RED + "** invalid chemistry", end=Color.END)
             return 0.0e0
 
         if p <= 0.0 or (p * t) <= 0.0:
             print(
                 Color.RED + "** invalid pressure and/or temperature value(s)",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 0.0e0
 
@@ -1333,7 +1308,7 @@ class Mixture:
             print(
                 Color.RED
                 + f"** fraction and molar mass arrays must have the same size: {kgas:d}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 0.0e0
 
@@ -1349,7 +1324,7 @@ class Mixture:
             # fraction type not given or incorrect
             print(
                 Color.PURPLE + '** must specify "mole" or "mass" fractions given',
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 0.0e0
 
@@ -1364,16 +1339,13 @@ class Mixture:
             return den_C.value
         else:
             # failed to compute mixture density
-            print(
-                Color.RED + "** failed to compute mixture density", end="\n" + Color.END
-            )
+            print(Color.RED + "** failed to compute mixture density", end=Color.END)
             return 0.0e0
 
     @property
     def RHO(self):
         """
-        Get mixture mass density
-        :return: density [gm/cm3] (double scalar)
+        Get mixture mass density [gm/cm3] (double scalar)
         """
         # initialization
         den = 0.0e0
@@ -1381,14 +1353,14 @@ class Mixture:
         if self._Pset == 0:
             print(
                 Color.PURPLE + "** mixture pressure [dynes/cm2] is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return den
         # check temperature
         if self._Tset == 0:
             print(
                 Color.PURPLE + "** mixture temperature [K] is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return den
         #
@@ -1418,7 +1390,7 @@ class Mixture:
             # mixture composition is not provided
             print(
                 Color.PURPLE + "** mixture composition is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return den
 
@@ -1436,11 +1408,11 @@ class Mixture:
         """
         # check inputs
         if chemID < 0:
-            print(Color.RED + "** invalid chemistry", end="\n" + Color.END)
+            print(Color.RED + "** invalid chemistry", end=Color.END)
             return 0.0e0
 
         if t <= 10.0:
-            print(Color.RED + "** invalid temperature value", end="\n" + Color.END)
+            print(Color.RED + "** invalid temperature value", end=Color.END)
             return 0.0e0
 
         # number species
@@ -1449,7 +1421,7 @@ class Mixture:
             print(
                 Color.RED
                 + f"** fraction and molar mass arrays must have the same size: {kgas:d}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 0.0e0
 
@@ -1465,7 +1437,7 @@ class Mixture:
             # fraction type not given or incorrect
             print(
                 Color.PURPLE + '** must specify "mole" or "mass" fractions given',
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 0.0e0
         # convert parameters to c pointers
@@ -1475,8 +1447,7 @@ class Mixture:
         # real-gas
         if checkrealgasstatus(chemID):
             # real-gas cubic EOS is active, set current pressure that is required by the chemkin real-gas module
-            pp = c_double(p)
-            setcurrentpressure(chemID, pp)
+            setcurrentpressure(chemID, p)
         # compute mass density from mass fraction
         iErr = ck_wrapper.chemkin.KINGetGasMixtureSpecificHeat(
             chemset_index, tt, yy, CpB_C
@@ -1489,7 +1460,7 @@ class Mixture:
             # failed to compute mixture specific heat
             print(
                 Color.RED + "** failed to compute mixture specific heat",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 0.0e0
 
@@ -1507,11 +1478,11 @@ class Mixture:
         """
         # check inputs
         if chemID < 0:
-            print(Color.RED + "** invalid chemistry", end="\n" + Color.END)
+            print(Color.RED + "** invalid chemistry", end=Color.END)
             return 0.0e0
 
         if t <= 10.0:
-            print(Color.RED + "** invalid temperature value", end="\n" + Color.END)
+            print(Color.RED + "** invalid temperature value", end=Color.END)
             return 0.0e0
 
         # number species
@@ -1520,7 +1491,7 @@ class Mixture:
             print(
                 Color.RED
                 + f"** fraction and molar mass arrays must have the same size: {kgas:d}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 0.0e0
 
@@ -1536,7 +1507,7 @@ class Mixture:
             # fraction type not given or incorrect
             print(
                 Color.PURPLE + '** must specify "mole" or "mass" fractions given',
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 0.0e0
         # convert parameters to c pointers
@@ -1546,8 +1517,7 @@ class Mixture:
         # real-gas
         if checkrealgasstatus(chemID):
             # real-gas cubic EOS is active, set current pressure that is required by the chemkin real-gas module
-            pp = c_double(p)
-            setcurrentpressure(chemID, pp)
+            setcurrentpressure(chemID, p)
         # compute enthalpy from mass fraction
         iErr = ck_wrapper.chemkin.KINGetGasMixtureEnthalpy(chemset_index, tt, yy, H_C)
         # compute mean molar mass
@@ -1558,7 +1528,7 @@ class Mixture:
             # failed to compute mixture enthalpy
             print(
                 Color.RED + "** failed to compute mixture enthalpy",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 0.0e0
 
@@ -1576,13 +1546,13 @@ class Mixture:
         """
         # check inputs
         if chemID < 0:
-            print(Color.RED + "** invalid chemistry", end="\n" + Color.END)
+            print(Color.RED + "** invalid chemistry", end=Color.END)
             return [0.0e0]
 
         if p <= 0.0 or (p * t) <= 0.0:
             print(
                 Color.RED + "** invalid pressure and/or temperature value(s)",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return [0.0e0]
 
@@ -1592,7 +1562,7 @@ class Mixture:
             print(
                 Color.RED
                 + f"** fraction and molar mass arrays must have the same size: {kgas:d}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return [0.0e0]
 
@@ -1608,7 +1578,7 @@ class Mixture:
             # fraction type not given or incorrect
             print(
                 Color.PURPLE + '** must specify "mole" or "mass" fractions given',
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return ROP
 
@@ -1625,7 +1595,7 @@ class Mixture:
             # failed to compute species molar rates of production
             print(
                 Color.RED + "** failed to compute species molar rates of production",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return [0.0e0]
 
@@ -1644,13 +1614,13 @@ class Mixture:
         """
         # check inputs
         if chemID < 0:
-            print(Color.RED + "** invalid chemistry", end="\n" + Color.END)
+            print(Color.RED + "** invalid chemistry", end=Color.END)
             return [0.0e0], [0.0e0]
 
         if p <= 0.0 or (p * t) <= 0.0:
             print(
                 Color.RED + "** invalid pressure and/or temperature value(s)",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return [0.0e0], [0.0e0]
 
@@ -1660,7 +1630,7 @@ class Mixture:
             print(
                 Color.RED
                 + f"** fraction and molar mass arrays must have the same size: {kgas:d}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return [0.0e0], [0.0e0]
 
@@ -1677,7 +1647,7 @@ class Mixture:
             # fraction type not given or incorrect
             print(
                 Color.PURPLE + '** must specify "mole" or "mass" fractions given',
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return Kforward, Kreverse
 
@@ -1694,9 +1664,7 @@ class Mixture:
             return Kforward, Kreverse
         else:
             # failed to compute reaction rates
-            print(
-                Color.RED + "** failed to compute reaction rates", end="\n" + Color.END
-            )
+            print(Color.RED + "** failed to compute reaction rates", end=Color.END)
             return [0.0e0], [0.0e0]
 
     def FindEquilibrium(self):
@@ -1705,14 +1673,14 @@ class Mixture:
         :return: gas mixture at the equilibrium state (Mixture object)
         """
         # initialization a Mixture object by duplication
-        EQState: Mixture = copy.deepcopy(self)
+        EQState = copy.deepcopy(self)
         # reset mass/mole fractions
         EQState._Xset = 0
         EQState._molefrac[:] = 0.0e0
         EQState._Yset = 0
         EQState._massfrac[:] = 0.0e0
         # compute the equilibrium state (mass fraction for now)
-        EQState._massfrac = calculateequilibrium(
+        eqvars, EQState._massfrac = calculateequilibrium(
             self._chemset_index.value,
             p=EQState.pressure,
             t=EQState.temperature,
@@ -1736,7 +1704,7 @@ class Mixture:
         if self._Tset == 0:
             print(
                 Color.PURPLE + "** mixture temperature [K] is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return hml
 
@@ -1766,7 +1734,7 @@ class Mixture:
             # mixture composition is not provided
             print(
                 Color.PURPLE + "** mixture composition is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return hml
 
@@ -1781,7 +1749,7 @@ class Mixture:
         if self._Tset == 0:
             print(
                 Color.PURPLE + "** mixture temperature [K] is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return cpbl
         #
@@ -1811,7 +1779,7 @@ class Mixture:
             # mixture composition is not provided
             print(
                 Color.PURPLE + "** mixture composition is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return cpbl
 
@@ -1824,14 +1792,14 @@ class Mixture:
         if self._Tset == 0:
             print(
                 Color.PURPLE + "** mixture temperature [K] is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return [0.0e0]
         # check pressure
         if self._Pset == 0:
             print(
                 Color.PURPLE + "** mixture pressure [dynes/cm2] is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return [0.0e0]
         #
@@ -1861,7 +1829,7 @@ class Mixture:
             # mixture composition is not provided
             print(
                 Color.PURPLE + "** mixture composition is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return [0.0e0]
 
@@ -1874,14 +1842,14 @@ class Mixture:
         if self._Tset == 0:
             print(
                 Color.PURPLE + "** mixture temperature [K] is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return [0.0e0]
         # check pressure
         if self._Pset == 0:
             print(
                 Color.PURPLE + "** mixture pressure [dynes/cm2] is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return [0.0e0], [0.0e0]
         # initialization
@@ -1916,7 +1884,7 @@ class Mixture:
             # mixture composition is not provided
             print(
                 Color.PURPLE + "** mixture composition is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return [0.0e0], [0.0e0]
 
@@ -1933,9 +1901,7 @@ class Mixture:
             Cp *= self._WT
         else:
             # failed to compute specific heats
-            print(
-                Color.RED + "** failed to compute specific heats", end="\n" + Color.END
-            )
+            print(Color.RED + "** failed to compute specific heats", end=Color.END)
         return Cp
 
     def speciesH(self):
@@ -1953,7 +1919,7 @@ class Mixture:
             # failed to compute enthalpies
             print(
                 Color.RED + "** failed to compute species enthalpies",
-                end="\n" + Color.END,
+                end=Color.END,
             )
         return H
 
@@ -1969,7 +1935,7 @@ class Mixture:
             # failed to compute viscosities
             print(
                 Color.RED + "** failed to compute species viscosity",
-                end="\n" + Color.END,
+                end=Color.END,
             )
         return visc
 
@@ -1985,7 +1951,7 @@ class Mixture:
             # failed to compute conductivities
             print(
                 Color.RED + "** failed to compute species conductivity",
-                end="\n" + Color.END,
+                end=Color.END,
             )
         return cond
 
@@ -2005,7 +1971,7 @@ class Mixture:
             # failed to compute diffusion coefficients
             print(
                 Color.RED + "** failed to compute species diffusion coefficients",
-                end="\n" + Color.END,
+                end=Color.END,
             )
         return diffusioncoeffs
 
@@ -2020,7 +1986,7 @@ class Mixture:
         if self._Tset == 0:
             print(
                 Color.PURPLE + "** mixture temperature [K] is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return visc.value
         # get mixture viscosity
@@ -2032,7 +1998,7 @@ class Mixture:
             # error message
             print(
                 Color.PURPLE + "** failed to compute mixture viscosity",
-                end="\n" + Color.END,
+                end=Color.END,
             )
         # mixture viscosity in gm/cm-sec
         return visc.value
@@ -2048,7 +2014,7 @@ class Mixture:
         if self._Tset == 0:
             print(
                 Color.PURPLE + "** mixture temperature [K] is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return cond.value
         # get mixture viscosity
@@ -2060,7 +2026,7 @@ class Mixture:
             # error message
             print(
                 Color.PURPLE + "** failed to compute mixture conductivity",
-                end="\n" + Color.END,
+                end=Color.END,
             )
         # mixture conductivity in ergs/cm-K-sec
         return cond.value
@@ -2076,14 +2042,14 @@ class Mixture:
         if self._Tset == 0:
             print(
                 Color.PURPLE + "** mixture temperature [K] is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return diffusioncoeffs
         # check pressure
         if self._Pset == 0:
             print(
                 Color.PURPLE + "** mixture pressure [dynes/cm2] is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return diffusioncoeffs
         # get mixture viscosity
@@ -2097,7 +2063,7 @@ class Mixture:
             print(
                 Color.PURPLE
                 + "** failed to compute mixture-averaged diffusion coefficients",
-                end="\n" + Color.END,
+                end=Color.END,
             )
         # mixture-averaged diffusion coefficients in cm2/sec
         return diffusioncoeffs
@@ -2114,14 +2080,14 @@ class Mixture:
         if self._Tset == 0:
             print(
                 Color.PURPLE + "** mixture temperature [K] is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return binarydiffusioncoeffs
         # check pressure
         if self._Pset == 0:
             print(
                 Color.PURPLE + "** mixture pressure [dynes/cm2] is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return binarydiffusioncoeffs
         # get mixture viscosity
@@ -2135,7 +2101,7 @@ class Mixture:
             print(
                 Color.PURPLE
                 + "** failed to compute multi-component binary diffusion coefficients",
-                end="\n" + Color.END,
+                end=Color.END,
             )
         # mixture multi-component binary diffusion coefficients in cm2/sec
         return binarydiffusioncoeffs
@@ -2152,14 +2118,14 @@ class Mixture:
         if self._Tset == 0:
             print(
                 Color.PURPLE + "** mixture temperature [K] is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return thermaldiffusioncoeffs
         # check pressure
         if self._Pset == 0:
             print(
                 Color.PURPLE + "** mixture pressure [dynes/cm2] is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return thermaldiffusioncoeffs
         # get mixture viscosity
@@ -2173,7 +2139,7 @@ class Mixture:
             print(
                 Color.PURPLE
                 + "** failed to compute mixture thermal diffusion coefficients",
-                end="\n" + Color.END,
+                end=Color.END,
             )
         # mixture thermal diffusion coefficients in gm/cm-sec
         return thermaldiffusioncoeffs
@@ -2343,6 +2309,7 @@ class Mixture:
         add_molefrac,
         products,
         equivalenceratio,
+        threshold=1.0e-10,
     ):
         """
         Specify the mixture molar composition by providing the equivalence ratio, the mole fractions of the fuel mixture,
@@ -2359,7 +2326,7 @@ class Mixture:
         if not isinstance(chemistryset, Chemistry):
             print(
                 Color.RED + "** the first argument must be a Chemistry object",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 1
         # number of gas species in the mechanism
@@ -2376,21 +2343,21 @@ class Mixture:
             print(
                 Color.RED
                 + f"** the fuel mole fraction array must have size {kspecies:d}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             iErr += 1
         if kspecies != koxid:
             print(
                 Color.RED
                 + f"** the oxidizer mole fraction array must have size {kspecies:d}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             iErr += 1
         if kspecies != kadd:
             print(
                 Color.RED
                 + f"** the additives mole fraction array must have size {kspecies:d}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             iErr += 1
         if iErr > 0:
@@ -2399,7 +2366,7 @@ class Mixture:
         if equivalenceratio <= 0.0e0:
             print(
                 Color.RED + "** the equivalence ratio must be > 0",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 3
         # check product species
@@ -2407,12 +2374,17 @@ class Mixture:
         if kprod == 0:
             print(
                 Color.RED + "** no complete combustion product species given",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 4
         # find sum of additives fraction
         suma = 0.0e0
         if kadd > 0:
+            # remove tiny mole fraction values
+            for i in range(len(add_molefrac)):
+                if add_molefrac[i] < threshold:
+                    add_molefrac[i] = 0.0e0
+
             suma = np.sum(add_molefrac)
         # find product species index
         prod_index = np.zeros(kprod, dtype=np.int32)
@@ -2427,7 +2399,7 @@ class Mixture:
         if alpha <= 0.0e0 or nu[0] == 0:
             print(
                 Color.RED + "** failed to find the stoichiometric coefficients",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 5
         # find the fuel-oxidizer mixture molar composition
@@ -2449,7 +2421,7 @@ class Mixture:
         else:
             print(
                 Color.RED + "** failed to find the stoichiometric coefficients",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 6
 
@@ -2461,6 +2433,7 @@ class Mixture:
         add_massfrac,
         products,
         equivalenceratio,
+        threshold=1.0e-10,
     ):
         """
         Specify the mixture molar composition by providing the equivalence ratio, the mole fractions of the fuel mixture,
@@ -2477,7 +2450,7 @@ class Mixture:
         if not isinstance(chemistryset, Chemistry):
             print(
                 Color.RED + "** the first argument must be a Chemistry object",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return 1
         # convert mass fractions to mole fractions
@@ -2498,8 +2471,24 @@ class Mixture:
             add_molefrac,
             products,
             equivalenceratio,
+            threshold,
         )
         return iErr
+
+    def getEGRmolefraction(self, EGRratio, threshold=1.0e-8):
+        """
+        Compute the EGR composition in mole fraction corresponding to this mixture
+        """
+        # create burned mixture
+        burned = self.FindEquilibrium()
+        # compute the EGR stream mole fractions
+        klength = len(burned.X)
+        EGR_molefrac = np.zeros(klength, dtype=np.double)
+        for i in range(klength):
+            if burned.X[i] > threshold:
+                EGR_molefrac[i] = EGRratio * burned.X[i]
+        del burned
+        return EGR_molefrac
 
     def validate(self):
         """
@@ -2511,19 +2500,19 @@ class Mixture:
         if self._Tset == 0:
             print(
                 Color.YELLOW + "** mixture temperature is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             iErr = 1
         if self._Pset == 0:
             print(
                 Color.YELLOW + "** mixture pressure is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             iErr = 1
         if self._Xset == 0 and self._Yset == 0:
             print(
                 Color.YELLOW + "** mixture composition is not provided",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             iErr = 1
         return iErr
@@ -2537,7 +2526,7 @@ class Mixture:
             # no real gas EOS data in the mechanism
             print(
                 Color.YELLOW + "** mechanism is for ideal gas law only",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return
         # check real-gas EOS status
@@ -2546,13 +2535,13 @@ class Mixture:
         if iErr != 0:
             print(
                 Color.RED + f"** Warning: method returned error code {iErr}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
         if iFlag.value == 0:
             print(
                 Color.YELLOW
                 + f"** real-gas cubic EOS model {Chemistry.realgas_CuEOS[self._EOS.value]} is turned ON",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             # set default mixing rule to Van der Waals
             mixingrule = 0
@@ -2571,7 +2560,7 @@ class Mixture:
             # no real gas EOS data in the mechanism
             print(
                 Color.YELLOW + "** mechanism is for ideal gas law only",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             self.userealgas = False
             return
@@ -2581,10 +2570,10 @@ class Mixture:
         if iErr != 0:
             print(
                 Color.RED + f"** Warning: method returned error code {iErr}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
         if iFlag.value == 0:
-            print(Color.YELLOW + "** ideal gas law is turned ON", end="\n" + Color.END)
+            print(Color.YELLOW + "** ideal gas law is turned ON", end=Color.END)
             self.userealgas = False
 
     def setrealgasmixingrule(self, rule=0):
@@ -2597,7 +2586,7 @@ class Mixture:
             # no real gas EOS data in the mechanism
             print(
                 Color.YELLOW + "** mechanism is for ideal gas law only",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             return
         # set default mixing rule to Van der Waals
@@ -2609,22 +2598,22 @@ class Mixture:
         if iErr != 0:
             print(
                 Color.RED + f"** Warning: method returned error code {iErr}",
-                end="\n" + Color.END,
+                end=Color.END,
             )
         if iFlag.value == 2:
             # real-gas cubic EOS is turned OFF
-            print(Color.YELLOW + "** the ideal gas law is used", end="\n" + Color.END)
+            print(Color.YELLOW + "** the ideal gas law is used", end=Color.END)
             self.userealgas = False
         elif iFlag.value != 0:
             print(
                 Color.PURPLE
                 + f"** error setting up real-gas cubic EOS (code = {iFlag.value})",
-                end="\n" + Color.END,
+                end=Color.END,
             )
         else:
             print(
                 Color.YELLOW
                 + f"** the cubic EOS is used, set mixing rule to '{Chemistry.realgas_mixingrules[rule]}'",
-                end="\n" + Color.END,
+                end=Color.END,
             )
             self.userealgas = True

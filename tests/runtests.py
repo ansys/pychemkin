@@ -179,30 +179,33 @@ if __name__ == "__main__":
     failedtests = []
     # go through the examples one by one
     for pyfile in os.listdir(MyTest.sourcedir):
-        fname = os.path.basename(pyfile).split(".")[0]
-        fext = os.path.basename(pyfile).split(".")[1]
-        if fext.lower() == "py":
-            # run py files only
-            fcount += 1
-            print(f"test {fcount:d}: {pyfile}")
-            # create a test folder under the target folder
-            MyTest.testfolder = os.path.join(MyTest.targetdir, fname)
-            error = createfolder(MyTest.testfolder)
-            if error != 0:
-                print(f"Error: creating a test folder for test {pyfile}")
-                exit()
-            #
-            error = 0
-            # run the test
-            error = MyTest.runtest(fname)
-            if error != 0:
-                print(f"error code = {error}")
-            if error != 0:
-                failed += 1
-                failedtests.append(pyfile)
-        else:
-            # skip non python files
-            pass
+        fullpyfile = os.path.join(MyTest.sourcedir, pyfile)
+        if os.path.isfile(fullpyfile):
+            fname = os.path.basename(pyfile).split(".")[0]
+            fext = os.path.basename(pyfile).split(".")[1]
+            if fext.lower() == "py":
+                # run py files only
+                fcount += 1
+                print(f"test {fcount:d}: {pyfile}")
+                # create a test folder under the target folder
+                MyTest.testfolder = os.path.join(MyTest.targetdir, fname)
+                error = createfolder(MyTest.testfolder)
+                if error != 0:
+                    print(f"Error: creating a test folder for test {pyfile}")
+                    exit()
+                #
+                error = 0
+                # run the test
+                error = MyTest.runtest(fname)
+                if error != 0:
+                    print(f"error code = {error}")
+                if error != 0:
+                    failed += 1
+                    failedtests.append(pyfile)
+            else:
+                # skip non python files
+                pass
+
     print(f"... finish running tests in {MyTest.sourcedir}")
     print(f"... completed tests: {fcount}")
     if failed > 0:

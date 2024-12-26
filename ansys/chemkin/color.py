@@ -8,4 +8,4 @@ class Color:
     YELLOW = "\033[93m"
     BOLD = "\033[1m"
     ULINE = "\033[4m"
-    END = "\033[0m"
+    END = "\n \033[0m"
