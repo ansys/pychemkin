@@ -9,7 +9,6 @@
 project = "PyChemkin"
 copyright = "2024, Ansys Inc"
 author = "ANSYS, Inc. <ansys.support@ansys.com>"
-name = "PyChemkin"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
