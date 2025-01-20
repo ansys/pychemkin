@@ -1,3 +1,6 @@
+[project]
+name = "PyChemkin"
+
 [tool.poetry]
 name = "ansys-chemkin"
 version = "0.25.dev11"
