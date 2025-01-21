@@ -1,13 +1,37 @@
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 import os
 
 import chemkin as ck
 from chemkin import Color
+from chemkin.logger import logger
 import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()
+logger.debug("working directory: " + current_dir)
 # set mechanism directory (the default chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+logger.debug("data directory: " + data_dir)
 # set pressure & temperature condition
 thispressure = ck.Patm
 thistemperature = 298.15
@@ -125,7 +149,7 @@ unburned = ck.Mixture(MyGasMech)
 unburned.pressure = thispressure
 unburned.temperature = thistemperature
 # find the index for water vapor
-watervaporID = MyGasMech.getspecindex("h2o")
+watervaporID = MyGasMech.get_specindex("h2o")
 # water heat of vaporization [erg/g-water] at 298.15 [K]
 # either call this method before creating the current Chemistry Set
 # or use the activate method to switch back to the current Chemistry Set after the call
@@ -150,7 +174,7 @@ oxid.X = [("o2", 1.0)]
 oxid.pressure = thispressure
 oxid.temperature = thistemperature
 # get o2 index
-oxyID = MyGasMech.getspecindex("o2")
+oxyID = MyGasMech.get_specindex("o2")
 # specify the complete combustion product species
 products = ["co2", "h2o"]
 # no added species
@@ -165,7 +189,7 @@ for f in fuels:
     # re-set the fuel composition (mole/volume fractions)
     fuel.X = f
     # create a soichiometric fuel-oxygen mixture
-    iError = unburned.XbyEquivalenceRatio(
+    iError = unburned.X_by_Equivalence_Ratio(
         MyGasMech, fuel.X, oxid.X, add_frac, products, equivalenceratio=1.0
     )
     # get the mixture enthalpy of the initial mixture [erg/g]
@@ -173,7 +197,7 @@ for f in fuels:
     # compute the complete combustion state (fixed temperature and pressure)
     # this step mimics the complete burning of the initial fuel-oxygen mixture at constant pressure
     # and the subsequent cooling of the combustion prodcts back to the original temperature
-    burned = unburned.FindEquilibrium()
+    burned = unburned.Find_Equilibrium()
     # get the mixture enthalpy of the final mixture [erg/g]
     Hburned = burned.HML() / burned.WTM
     # get total fuel mass fraction
@@ -198,8 +222,8 @@ for f in fuels:
 print(f"Fuel Heating Values at {thistemperature} [K] and {thispressure*1.0e-6} [bar]\n")
 for i in range(len(fuels)):
     print(f"fuel composition:  {fuels[i]}")
-    print(f" LHV [kJ/g-fuel]:  {LHV[i] / ck.ergsperjoule / 1.0e3}")
-    print(f" HHV [kJ/g-fuel]:  {HHV[i] / ck.ergsperjoule / 1.0e3}\n")
+    print(f" LHV [kJ/g-fuel]:  {LHV[i] / ck.ergs_per_joule / 1.0e3}")
+    print(f" HHV [kJ/g-fuel]:  {HHV[i] / ck.ergs_per_joule / 1.0e3}\n")
 
 del HHV, LHV
 del fuel, oxid, unburned, burned

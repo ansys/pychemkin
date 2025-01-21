@@ -83,8 +83,8 @@ class perfectlystirredreactor(openreactor):
         self._heat_loss_rate = c_double(0.0e0)
         # check required inputs
         self._numb_requiredinput = 0
-        self._requiredlist = []
-        self._inputcheck = []
+        self._requiredlist: list[str] = []
+        self._inputcheck: list[str] = []
         # default number of reactors
         self._nreactors = 1
         self._npsrs = c_int(1)
@@ -233,7 +233,7 @@ class perfectlystirredreactor(openreactor):
                     c_double(T_inlet),
                     Y_inlet,
                 )
-            iErr += iErrc 
+            iErr += iErrc
         # check number of external inlet
         if iInlet == 0:
             msg = [Color.PURPLE, "PSR has no external inlet.", Color.END]
@@ -354,7 +354,11 @@ class perfectlystirredreactor(openreactor):
         if self.numbexternalinlets <= 0 or self.totalmassflowrate <= 0.0:
             # no external inlet for an open reactor
             iErr = 100
-            msg = [Color.PURPLE, "missing external inlet for an open reactor.", Color.END]
+            msg = [
+                Color.PURPLE,
+                "missing external inlet for an open reactor.",
+                Color.END,
+            ]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
             return iErr
@@ -525,7 +529,7 @@ class perfectlystirredreactor(openreactor):
         if iErr != 0:
             msg = [
                 Color.PURPLE,
-                "failed to initialze the perfectly-stirred reactor model",
+                "failed to initialize the perfectly-stirred reactor model",
                 self.label,
                 "\n",
                 Color.SPACEx6,
@@ -593,7 +597,11 @@ class perfectlystirredreactor(openreactor):
             )  # each reactor model subclass to perform its own keyword processing
         else:
             # use full keywords
-            msg = [Color.RED, "full keyword option not available for PSR models.", Color.END]
+            msg = [
+                Color.RED,
+                "full keyword option not available for PSR models.",
+                Color.END,
+            ]
             this_msg = Color.SPACE.join(msg)
             logger.critical(this_msg)
             retVal = 100
@@ -1011,7 +1019,7 @@ class PSR_SetResTime_FixedTemperature(perfectlystirredreactor):
     so the reactor volume and density are varying in this case.
     """
 
-    def __init__(self, guessedmixture: Inlet, label:str | None = None):
+    def __init__(self, guessedmixture: Inlet, label: str | None = None):
         """
         Create a steady-state constant pressure perfectly-stirred reactor (PSR)
 

@@ -1,18 +1,46 @@
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 import os
 import time
 
 import chemkin as ck  # Chemkin
 from chemkin import Color
 
-# chemkin batch reactor models (transient)
-from chemkin.flowreactors.PFR import PlugFlowReactor_GivenTemperature
+# chemkin plug flow reactor model
+from chemkin.flowreactors.PFR import PlugFlowReactor_FixedTemperature
 from chemkin.inlet import Inlet
+from chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()
-print("current working directory: " + current_dir)
+logger.debug("working directory: " + current_dir)
+# set interactive mode for plotting the results
+# interactive = True: display plot
+# interactive = False: save plot as a png file
+global interactive
+interactive = False
+
 # set mechanism directory (the default chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
@@ -45,23 +73,22 @@ feedstock.X = [
 ]
 # set inlet velocity [cm/sec]
 feedstock.velocity = 26.815
-print(type(feedstock))
 #
 # create a plug flow reactor instance
-tubereactor = PlugFlowReactor_GivenTemperature(feedstock)
+tubereactor = PlugFlowReactor_FixedTemperature(feedstock)
 # set PFR diameter [cm]
 tubereactor.diameter = 5.8431
 # set PFR length [cm]
 tubereactor.length = 5.0
-print(f"PFR inlet mass flow rate {tubereactor.massflowrate} [g/sec]")
+print(f"PFR inlet mass flow rate {tubereactor.mass_flowrate} [g/sec]")
 print(f"PFR inlet velocity {tubereactor.velocity} [cm/sec]")
 # show inlet gas composition of the PFR
 print("PFR inlet gas compsition")
-tubereactor.listcomposition(mode="mole", bound=1.0e-8)
+tubereactor.list_composition(mode="mole", bound=1.0e-8)
 # set distance between saving solution
-tubereactor.timestepforsavingsolution = 0.0005
+tubereactor.timestep_for_saving_solution = 0.0005
 # turn ON adaptive solution saving
-tubereactor.adaptivesolutionsaving(mode=True, steps=100)
+tubereactor.adaptive_solution_saving(mode=True, steps=100)
 # show the additional keywords given by user
 tubereactor.showkeywordinputlines()
 # set the start wall time
@@ -80,16 +107,16 @@ print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
 print(f"total simulation duration: {runtime * 1.0e3} [msec]")
 #
 # post-process the solution profiles
-tubereactor.processsolution()
+tubereactor.process_solution()
 # get the number of solution time points
 solutionpoints = tubereactor.getnumbersolutionpoints()
 print(f"number of solution points = {solutionpoints}")
 # get the grid profile [cm]
-xprofile = tubereactor.getsolutionvariableprofile("time")
+xprofile = tubereactor.get_solution_variable_profile("time")
 # get the temperature profile [K]
-tempprofile = tubereactor.getsolutionvariableprofile("temperature")
+tempprofile = tubereactor.get_solution_variable_profile("temperature")
 # get the NO mass fraction profile
-YNOprofile = tubereactor.getsolutionvariableprofile("NO")
+YNOprofile = tubereactor.get_solution_variable_profile("NO")
 # outlet grid index
 xout_index = solutionpoints - 1
 print(f"At the reactor outlet: x = {xprofile[xout_index]} [cm]")
@@ -103,20 +130,20 @@ NH3profile = np.zeros_like(xprofile, dtype=np.double)
 NO2profile = np.zeros_like(xprofile, dtype=np.double)
 velocityprofile = np.zeros_like(xprofile, dtype=np.double)
 # find species index
-CO_index = MyGasMech.getspecindex("CO2")
-NH3_index = MyGasMech.getspecindex("NH3")
-NO2_index = MyGasMech.getspecindex("NO2")
+CO_index = MyGasMech.get_specindex("CO2")
+NH3_index = MyGasMech.get_specindex("NH3")
+NO2_index = MyGasMech.get_specindex("NO2")
 # reactor mass flow rate (constant) [g/sec]
-massflowrate = tubereactor.massflowrate
+massflowrate = tubereactor.mass_flowrate
 # reactor cross-section area [cm2]
 areaflow = tubereactor.flowarea
-print(f"mass flow {massflowrate} area {areaflow}")
+print(f"mass flow rate: {massflowrate} [g/sec]\nflow area: {areaflow} [cm2]")
 # ratio
 ratio = massflowrate / areaflow
 # loop over all solution time points
 for i in range(solutionpoints):
     # get the mixture at the time point
-    solutionmixture = tubereactor.getsolutionmixtureatindex(solution_index=i)
+    solutionmixture = tubereactor.get_solution_mixture_at_index(solution_index=i)
     # get gas density [g/cm3]
     den = solutionmixture.RHO
     # gas velocity [g]
@@ -129,6 +156,7 @@ for i in range(solutionpoints):
     NO2profile[i] = solutionmixture.X[NO2_index]
 # plot the profiles
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))
+plt.suptitle("Constant Temperature Plug-Flow Reactor", fontsize=16)
 plt.subplot(221)
 plt.plot(xprofile, tempprofile, "r-")
 plt.ylabel("Temperature [K]")
@@ -143,5 +171,8 @@ plt.subplot(224)
 plt.plot(xprofile, velocityprofile, "m-")
 plt.xlabel("distance [cm]")
 plt.ylabel("Gas Velocity [cm/sec]")
-# display the plots
-plt.show()
+# plot results
+if interactive:
+    plt.show()
+else:
+    plt.savefig("plug_flow_reactor.png", bbox_inches="tight")

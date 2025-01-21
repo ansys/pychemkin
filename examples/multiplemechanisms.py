@@ -1,13 +1,35 @@
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 import os
 
 import chemkin as ck  # Chemkin
 from chemkin import Color
+from chemkin.logger import logger
 
 # check working directory
 current_dir = os.getcwd()
-print("current working directory: " + current_dir)
+logger.debug("working directory: " + current_dir)
 # set verbose mode
-ck.setverbose(True)
+ck.set_verbose(True)
 # set mechanism directory (the default chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
@@ -18,6 +40,7 @@ thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
 # create a chemistry set based on GRI 3.0
 My1stMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="GRI 3.0")
+
 # preprocess the mechanism files
 iError = My1stMech.preprocess()
 print()
@@ -57,7 +80,7 @@ My2ndMech = ck.Chemistry(label="C2 NOx")
 My2ndMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
 # instruct the preprocessor to include the transport properties
 # only when the mechanism file contains all the transport data
-My2ndMech.preprocesstransportdata()
+My2ndMech.preprocess_transportdata()
 # preprocess the 2nd mechanism files
 iError = My2ndMech.preprocess()
 print()

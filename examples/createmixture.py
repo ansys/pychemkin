@@ -1,15 +1,43 @@
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 import copy
 import os
 
 import chemkin as ck  # Chemkin
+from chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()
-print("current working directory: " + current_dir)
+logger.debug("working directory: " + current_dir)
 # set verbose mode
-ck.setverbose(True)
+ck.set_verbose(True)
+# set interactive mode for plotting the results
+# interactive = True: display plot
+# interactive = False: save plot as a png file
+global interactive
+interactive = False
+
 # set mechanism directory (the default chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
@@ -21,7 +49,7 @@ MyGasMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
 # this mechanism file contains all the necessary thermodynamic and transport data
 # therefore no need to specify the therm and the tran data files
 # instruct the preprocessor to include the transport properties (when the tran data file is not provided)
-MyGasMech.preprocesstransportdata()
+MyGasMech.preprocess_transportdata()
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
 # get species molecular masses as numpy 1D double array
@@ -49,12 +77,12 @@ print("\nmixture mole fractions (raw data):")
 print(str(premixed.X))
 print("\nformatted mixture composition output:")
 print("=" * 40)
-premixed.listcomposition(mode="mole")
+premixed.list_composition(mode="mole")
 print("=" * 40)
 # create a 'hard' copy of the premixed mixture ('soft' copying, i.e., anotherpremixed = premixed, works, too)
 anotherpremixed = copy.deepcopy(premixed)
 print("\nformatted mixture composition of the copied mixture:")
-anotherpremixed.listcomposition(mode="mole")
+anotherpremixed.list_composition(mode="mole")
 print("=" * 40)
 #
 # test mixture properties
@@ -76,7 +104,7 @@ visc = np.zeros_like(rho, dtype=np.double)
 # mixture averaged diffusion coefficient of CH4
 diff_CH4 = np.zeros_like(rho, dtype=np.double)
 # species index of CH4
-CH4_index = MyGasMech.getspecindex("CH4")
+CH4_index = MyGasMech.get_specindex("CH4")
 # temperature data
 T = np.zeros_like(rho, dtype=np.double)
 # start of the plotting loop #1
@@ -94,11 +122,11 @@ for j in range(len(press)):
         # get mixture density [gm/cm3]
         rho[i] = premixed.RHO
         # get mixture enthalpy [ergs/mol] and convert it to [kJ/mol]
-        enthalpy[i] = premixed.HML() * 1.0e-3 / ck.ergsperjoule
+        enthalpy[i] = premixed.HML() * 1.0e-3 / ck.ergs_per_joule
         # get mixture viscosity [gm/cm-sec]
-        visc[i] = premixed.mixtureviscosity()
+        visc[i] = premixed.mixture_viscosity()
         # get mixture-averaged diffusion coefficient of CH4 [cm2/sec]
-        diffcoeffs = premixed.mixturediffusioncoeffs()
+        diffcoeffs = premixed.mixture_diffusion_coeffs()
         diff_CH4[i] = diffcoeffs[CH4_index]
         T[i] = temp
         temp += dTemp
@@ -128,5 +156,8 @@ for j in range(len(press)):
     k += 1
 # plot legends
 plt.legend(("1 atm", "5 atm", "10 atm"), loc="upper left")
-# display the plots
-plt.show()
+# plot results
+if interactive:
+    plt.show()
+else:
+    plt.savefig("create_mixture.png", bbox_inches="tight")

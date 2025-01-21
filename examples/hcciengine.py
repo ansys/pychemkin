@@ -1,3 +1,24 @@
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 import os
 
 import chemkin as ck  # Chemkin
@@ -5,14 +26,21 @@ from chemkin import Color
 
 # chemkin homonegeous charge compression ignition (HCCI) engine model (transient)
 from chemkin.engines.HCCI import HCCIengine
+from chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()
-print("current working directory: " + current_dir)
+logger.debug("working directory: " + current_dir)
 # set verbose mode
-ck.setverbose(True)
+ck.set_verbose(True)
+# set interactive mode for plotting the results
+# interactive = True: display plot
+# interactive = False: save plot as a png file
+global interactive
+interactive = False
+
 # set mechanism directory (the default chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
@@ -25,6 +53,11 @@ MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
+if iError != 0:
+    msg = "preprocess failed"
+    logger.critical("msg")
+    Color.ckprint("critical", [msg, "!!!"])
+    exit()
 # create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
 # create the fuel mixture
 fuelmixture = ck.Mixture(MyGasMech)
@@ -47,22 +80,24 @@ products = ["CO2", "H2O", "N2"]
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
 # mean equivalence ratio
 equiv = 0.8
-iError = fresh.XbyEquivalenceRatio(
+iError = fresh.X_by_Equivalence_Ratio(
     MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=equiv
 )
 if iError != 0:
+    msg = "mixture creation failed"
+    logger.critical(msg)
     raise RuntimeError
 # list the composition of the unburned fuel-air mixture
-fresh.listcomposition(mode="mole")
+fresh.list_composition(mode="mole")
 # set mixture temperature and pressure (equivalent to setting the initial temperature and pressure of the reactor)
 fresh.temperature = 447.0
 fresh.pressure = 1.065 * ck.Patm
 # set exhaust gas recirculation (EGR) ratio with volume fraction
 EGRratio = 0.3
 # compute the EGR stream composition in mole fractions
-add_frac = fresh.getEGRmolefraction(EGRratio, threshold=1.0e-8)
+add_frac = fresh.get_EGR_mole_fraction(EGRratio, threshold=1.0e-8)
 # recreate the initial mixture with EGR
-iError = fresh.XbyEquivalenceRatio(
+iError = fresh.X_by_Equivalence_Ratio(
     MyGasMech,
     fuelmixture.X,
     air.X,
@@ -72,12 +107,12 @@ iError = fresh.XbyEquivalenceRatio(
     threshold=1.0e-8,
 )
 # list the composition of the fuel+air+EGR mixture
-fresh.listcomposition(mode="mole", bound=1.0e-8)
+fresh.list_composition(mode="mole", bound=1.0e-8)
 # HCCI engine
 # create a single-zone HCCI engine object
 MyEngine = HCCIengine(reactor_condition=fresh, nzones=1)
 # show initial gas composition inside the reactor
-MyEngine.listcomposition(mode="mole", bound=1.0e-8)
+MyEngine.list_composition(mode="mole", bound=1.0e-8)
 #
 # set engine parameters
 # cylinder bore diameter [cm]
@@ -85,23 +120,23 @@ MyEngine.bore = 12.065
 # engine stroke [cm]
 MyEngine.stroke = 14.005
 # connecting rod length [cm]
-MyEngine.connectingrod = 26.0093
+MyEngine.connecting_rod_length = 26.0093
 # compression ratio [-]
-MyEngine.compressionratio = 16.5
+MyEngine.compression_ratio = 16.5
 # engine speed [RPM]
 MyEngine.RPM = 1000
 # set piston pin offset distance [cm]
-MyEngine.setpistonpinoffset(offset=-0.5)
+MyEngine.set_piston_pin_offset(offset=-0.5)
 # set other parameters
 # simulation start CA [degree]
-MyEngine.startingCA = -142.0
+MyEngine.starting_CA = -142.0
 # simulation end CA [degree]
-MyEngine.endingCA = 116.0
+MyEngine.ending_CA = 116.0
 # list the engine parameters
-MyEngine.listengineparameters()
-print(f"engine displacement volume {MyEngine.getdisplacementvolume()} [cm3]")
-print(f"engine clearance volume {MyEngine.getclearancevolume()} [cm3]")
-print(f"number of zone(s) = {MyEngine.getnumberofzones()}")
+MyEngine.list_engine_parameters()
+print(f"engine displacement volume {MyEngine.get_displacement_volume()} [cm3]")
+print(f"engine clearance volume {MyEngine.get_clearance_volume()} [cm3]")
+print(f"number of zone(s) = {MyEngine.get_number_of_zones()}")
 # wall heat transfer model
 # set model parameters
 # "dimensionless": [<a> <b> <c> <Twall>]
@@ -110,42 +145,44 @@ print(f"number of zone(s) = {MyEngine.getnumberofzones()}")
 heattransferparameters = [0.035, 0.71, 0.0]
 # set cylinder wall temperature [K]
 Twall = 400.0
-MyEngine.setwallheatransfer("dimensionless", heattransferparameters, Twall)
+MyEngine.set_wall_heat_transfer("dimensionless", heattransferparameters, Twall)
 # incylinder gas velocity correlation parameter (Woschni)
 # [<C11> <C12> <C2> <swirl ratio>]
 GVparameters = [2.28, 0.308, 3.24, 0.0]
-MyEngine.setgasvelocitycorrelation(GVparameters)
+MyEngine.set_gas_velocity_correlation(GVparameters)
 # set piston head top surface area [cm2]
-MyEngine.setpistonheadarea(area=124.75)
+MyEngine.set_piston_head_area(area=124.75)
 # set cylinder clearance surface area [cm2]
-MyEngine.setcylinderheadarea(area=123.5)
+MyEngine.set_cylinder_head_area(area=123.5)
 # output controls
 # set the number of crank angles between saving solution
-MyEngine.CAstepforsavingsolution = 0.5
+MyEngine.CAstep_for_saving_solution = 0.5
 # set the number of crank angles between printing solution
-MyEngine.CAstepforprintingsolution = 10.0
+MyEngine.CAstep_for_printing_solution = 10.0
 # turn ON adaptive solution saving
-MyEngine.adaptivesolutionsaving(mode=True, steps=20)
+MyEngine.adaptive_solution_saving(mode=True, steps=20)
 # turn OFF adaptive solution saving
-# MyEngine.adaptivesolutionsaving(mode=False)
-# set tolerance
-MyEngine.settolerances(absolute_tolerance=1.0e-12, relative_tolerance=1.0e-10)
+# MyEngine.adaptive_solution_saving(mode=False)
+# set tolerances in tuple: (absolute tolerance, relative tolerance)
+MyEngine.tolerances = (1.0e-12, 1.0e-10)
 # get solver parameters
 ATOL, RTOL = MyEngine.tolerances
 print(f"default absolute tolerance = {ATOL}")
 print(f"default relative tolerance = {RTOL}")
 # turn on the force non-negative solutions option in the solver
-MyEngine.forcenonnegative = True
+MyEngine.force_nonnegative = True
 # specify the ignition definitions
-# ck.showignitiondefinition()
-MyEngine.setignitiondelay(method="T_inflection")
+# ck.show_ignition_definitions()
+MyEngine.set_ignition_delay(method="T_inflection")
 # stop the simulation when ignition is detected
-# MyEngine.stopafterignition()
+# MyEngine.stop_after_ignition()
 # show solver option
 # show the number of crank angles between printng solution
-print(f"crank angles between solution printing: {MyEngine.CAstepforprintingsolution}")
+print(
+    f"crank angles between solution printing: {MyEngine.CAstep_for_printing_solution}"
+)
 # show other transient solver setup
-print(f"forced non-negative solution values: {MyEngine.forcenonnegative}")
+print(f"forced non-negative solution values: {MyEngine.force_nonnegative}")
 # show the additional keywords given by user
 MyEngine.showkeywordinputlines()
 # run the single-zone HCCI engine model
@@ -154,47 +191,49 @@ runstatus = MyEngine.run()
 if runstatus != 0:
     # run failed!
     print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+    logger.error("run failed")
     exit()
 # run success!
 print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
+logger.info("run completed")
 # get ignition delay "time"
-delayCA = MyEngine.getignitiondelay()
+delayCA = MyEngine.get_ignition_delay()
 print(f"ignition delay CA = {delayCA} [degree]")
 # get heat release information
-HR10, HR50, HR90 = MyEngine.getengineheatrelease()
+HR10, HR50, HR90 = MyEngine.get_engine_heat_release_CAs()
 print("Engine Heat Release Information")
 print(f"10% heat release CA = {HR10} [degree]")
 print(f"50% heat release CA = {HR50} [degree]")
 print(f"90% heat release CA = {HR90} [degree]\n")
 # post-process the solutions
-MyEngine.processenginesolution()
+MyEngine.process_engine_solution()
 # get the number of solution time points
 solutionpoints = MyEngine.getnumbersolutionpoints()
 print(f"number of solution points = {solutionpoints}")
 # get the time profile
-timeprofile = MyEngine.getsolutionvariableprofile("time")
+timeprofile = MyEngine.get_solution_variable_profile("time")
 # convert time to crank angle
 CAprofile = np.zeros_like(timeprofile, dtype=np.double)
 count = 0
 for t in timeprofile:
-    CAprofile[count] = MyEngine.toCA(timeprofile[count])
+    CAprofile[count] = MyEngine.get_CA(timeprofile[count])
     count += 1
 # get the cylinder pressure profile
-presprofile = MyEngine.getsolutionvariableprofile("pressure")
+presprofile = MyEngine.get_solution_variable_profile("pressure")
 presprofile *= 1.0e-6
 # get the volume profile
-volprofile = MyEngine.getsolutionvariableprofile("volume")
+volprofile = MyEngine.get_solution_variable_profile("volume")
 # create arrays for mixture density, NO mole fraction, and mixture specific heat capacity
 denprofile = np.zeros_like(timeprofile, dtype=np.double)
 Cpprofile = np.zeros_like(timeprofile, dtype=np.double)
 # loop over all solution time points
 for i in range(solutionpoints):
     # get the mixture at the time point
-    solutionmixture = MyEngine.getsolutionmixtureatindex(solution_index=i)
+    solutionmixture = MyEngine.get_solution_mixture_at_index(solution_index=i)
     # get gas density [g/cm3]
     denprofile[i] = solutionmixture.RHO
     # get mixture specific heat capacity profile [erg/mole-K]
-    Cpprofile[i] = solutionmixture.CPBL() / ck.ergsperjoule * 1.0e-3
+    Cpprofile[i] = solutionmixture.CPBL() / ck.ergs_per_joule * 1.0e-3
 # plot the profiles
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))
 plt.subplot(221)
@@ -211,5 +250,8 @@ plt.subplot(224)
 plt.plot(CAprofile, Cpprofile, "m-")
 plt.xlabel("Crank Angle [degree]")
 plt.ylabel("Mixture Cp [kJ/mole]")
-# display the plots
-plt.show()
+# plot results
+if interactive:
+    plt.show()
+else:
+    plt.savefig("HCCI_engine.png", bbox_inches="tight")

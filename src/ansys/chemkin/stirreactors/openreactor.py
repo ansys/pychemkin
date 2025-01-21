@@ -30,8 +30,8 @@ from chemkin.color import Color as Color
 from chemkin.inlet import Inlet
 from chemkin.logger import logger
 from chemkin.mixture import Mixture
-from chemkin.steadystatesolver import SteadyStateSolver
 from chemkin.reactormodel import Keyword, ReactorModel
+from chemkin.steadystatesolver import SteadyStateSolver
 
 
 class openreactor(ReactorModel, SteadyStateSolver):
@@ -39,7 +39,7 @@ class openreactor(ReactorModel, SteadyStateSolver):
     Generic open reactor model
     """
 
-    def __init__(self, guessedmixture: Inlet, label: str | None= None):
+    def __init__(self, guessedmixture: Inlet, label: str | None = None):
         """
         Create a steady-state flow reactor object
 
@@ -52,18 +52,20 @@ class openreactor(ReactorModel, SteadyStateSolver):
         """
         # check reactor Mixture object
         if isinstance(guessedmixture, (Inlet, Mixture)):
+            if label is None:
+                self.label = "Reactor"
+            else:
+                self.label = label
             # initialization
-            ReactorModel.__init__(self, reactor_condition=guessedmixture, label=label)
+            ReactorModel.__init__(
+                self, reactor_condition=guessedmixture, label=self.label
+            )
         else:
             # wrong argument type
             msg = [Color.RED, "the first argument must be a Mixture object.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.critical(this_msg)
             exit()
-        if label is None:
-            self.label = "Reactor"
-        else:
-            self.label = label
         # initialize steady-state solver
         SteadyStateSolver.__init__(self)
         # use API mode for steady-state open reactor/flame simulations
@@ -74,7 +76,7 @@ class openreactor(ReactorModel, SteadyStateSolver):
         # number of external inlets
         self.numbexternalinlets = 0
         # dict of external inlet objects {inlet label: inlet object}
-        self.externalinlets = {}
+        self.externalinlets: dict[str, Inlet] = {}
         # total mass flow rate into this reactor [g/sec]
         self.totalmassflowrate = 0.0
         #
@@ -109,7 +111,7 @@ class openreactor(ReactorModel, SteadyStateSolver):
             inletname = self.label + "_" + extinlet.label
         # check inlet name uniqueness
         if inletname in self.externalinlets:
-            # append '_dup' to the given inlet name when 
+            # append '_dup' to the given inlet name when
             inletname += "_dup"
             msg = [
                 Color.YELLOW,
@@ -238,11 +240,10 @@ class openreactor(ReactorModel, SteadyStateSolver):
                 net/total external volumetric flow rate into the reactor [cm3/sec]
         """
         vrate = 0.0e0
-        inletlist = []
-        inletlist = self.externalinlets.values()
+        inletlist = list(self.externalinlets.keys())
         for inl in inletlist:
             # get inlet volumetric flow rate
-            vrate += inl.vol_flowrate
+            vrate += self.externalinlets[inl].vol_flowrate
         del inletlist
         return vrate
 
@@ -256,4 +257,4 @@ class openreactor(ReactorModel, SteadyStateSolver):
             ninlet: integer
                 total number of external inlets to the reactor
         """
-        return self.numberexternalinlets
+        return self.numbexternalinlets

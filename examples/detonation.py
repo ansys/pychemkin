@@ -1,14 +1,42 @@
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 import os
 
 import chemkin as ck  # Chemkin
+from chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()
-print("current working directory: " + current_dir)
+logger.debug("working directory: " + current_dir)
 # set verbose mode
-ck.setverbose(True)
+ck.set_verbose(True)
+# set interactive mode for plotting the results
+# interactive = True: display plot
+# interactive = False: save plot as a png file
+global interactive
+interactive = False
+
 # set mechanism directory (the default chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
@@ -39,13 +67,13 @@ premixed = ck.Mixture(MyMech)
 products = ["CO2", "H2O", "N2"]
 # species mole fractions of added/inert mixture. can also create an additives mixture here
 add_frac = np.zeros(MyMech.KK, dtype=np.double)  # no additives: all zeros
-iError = premixed.XbyEquivalenceRatio(
+iError = premixed.X_by_Equivalence_Ratio(
     MyMech, fuel.X, air.X, add_frac, products, equivalenceratio=1.0
 )
 if iError != 0:
     raise RuntimeError
 # list the composition of the premixed mixture
-premixed.listcomposition(mode="mole")
+premixed.list_composition(mode="mole")
 # set up parameter study of detonation wave speed with respect to pressure
 points = 5
 dpres = 10.0 * ck.Patm
@@ -70,16 +98,16 @@ for i in range(points):
 plt.plot(P, Det, "bo--", label="ideal gas", markersize=5, fillstyle="none")
 #
 # turn on real-gas cubic equation of state
-premixed.userealgascubicEOS()
+premixed.use_realgas_cubicEOS()
 # set mixture mixing rule to Van der Waals (default)
-# premixed.setrealgasmixingrule(rule=0)
+# premixed.set_realgas_mixing_rule(rule=0)
 # restart the calculation with real-gas EOS
 premixed.pressure = fuel.pressure
 pres = fuel.pressure
 P[:] = 0.0e0
 Det[:] = 0.0e0
 # set verbose mode to false to turn OFF extra printouts
-ck.setverbose(False)
+ck.set_verbose(False)
 # start of pressure loop
 for i in range(points):
     # compute the C-J state corresponding to the initial mixture
@@ -90,8 +118,10 @@ for i in range(points):
     # update pressure value
     pres += dpres
     premixed.pressure = pres
+# stop Chemkin
+ck.done()
 # create plot for real gas results
-plt.plot(P, Det, "r^-", label="real-gas EOS", markersize=5, fillstyle="none")
+plt.plot(P, Det, "r^-", label="real gas", markersize=5, fillstyle="none")
 # plot data
 P_data = [44.1, 50.6, 67.2, 80.8]
 Det_data = [1950.0, 1970.0, 2000.0, 2020.0]
@@ -100,4 +130,9 @@ plt.plot(P_data, Det_data, "gD:", label="data", markersize=4)
 plt.legend(loc="upper left")
 plt.xlabel("Pressure [atm]")
 plt.ylabel("Detonation wave speed [m/sec]")
-plt.show()
+plt.suptitle("Natural Gas/Air Detonation", fontsize=16)
+# plot results
+if interactive:
+    plt.show()
+else:
+    plt.savefig("detonation.png", bbox_inches="tight")

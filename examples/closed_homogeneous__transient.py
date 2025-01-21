@@ -23,11 +23,8 @@ import os
 
 import chemkin as ck  # Chemkin
 from chemkin import Color
-
 # chemkin batch reactor models (transient)
-from chemkin.batchreactors.batchreactor import (
-    GivenVolumeBatchReactor_EnergyConservation,
-)
+from chemkin.batchreactors.batchreactor import GivenPressureBatchReactor_EnergyConservation
 from chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
@@ -39,7 +36,7 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(True)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file
+# interactive = False: save plot as a png file 
 global interactive
 interactive = False
 
@@ -52,73 +49,64 @@ MyGasMech = ck.Chemistry(label="GRI 3.0")
 # inclusion of the full file path is recommended
 MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+#MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
-# create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
 # create the fuel mixture
 fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition
-fuelmixture.X = [("CH4", 1.0)]
+fuelmixture.X = [("H2", 2.0),("N2",3.76),("O2", 1.0)]
 # setting pressure and temperature is not required in this case
-fuelmixture.pressure = 5.0 * ck.Patm
-fuelmixture.temperature = 1500.0
-# create the oxidizer mixture: air
-air = ck.Mixture(MyGasMech)
-air.X = [("O2", 0.21), ("N2", 0.79)]
-# setting pressure and temperature is not required in this case
-air.pressure = 5.0 * ck.Patm
-air.temperature = 1500.0
-# create the premixed mixture to be defined
-premixed = ck.Mixture(MyGasMech)
+fuelmixture.pressure = ck.Patm
+fuelmixture.temperature = 1000
 # products from the complete combustion of the fuel mixture and air
-products = ["CO2", "H2O", "N2"]
+products = ["H2O", "N2"]
 # species mole fractions of added/inert mixture. can also create an additives mixture here
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
-iError = premixed.X_by_Equivalence_Ratio(
-    MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=0.7
-)
-if iError != 0:
-    raise RuntimeError
+# add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
+# iError = premixed.X_by_Equivalence_Ratio(
+#     MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=0.7
+# )
+# if iError != 0:
+#     raise RuntimeError
 # list the composition of the premixed mixture
-premixed.list_composition(mode="mole")
+fuelmixture.list_composition(mode="mole")
 # set mixture temperature and pressure (equivalent to setting the initial temperature and pressure of the reactor)
-premixed.temperature = 800.0
-premixed.pressure = 3.0 * ck.Patm
+
 # Rapid Compression Machine
 # create a constant volume batch reactor (with energy equation)
 #
-MyCONV = GivenVolumeBatchReactor_EnergyConservation(premixed, label="RCM")
+MyCONV = GivenPressureBatchReactor_EnergyConservation(fuelmixture, label="tran")
 # set the initial reactor temperature (see the warning message in the run output)
 # MyCONV.temperature = 800.0  # K
 # show initial gas composition inside the reactor
 MyCONV.list_composition(mode="mole")
 # set other reactor properties
 # reactor volume [cm3]
-MyCONV.volume = 10.0
+MyCONV.volume = 1
+MyCONV.temperature = 1000
 # simulation end time [sec]
-MyCONV.time = 0.1
+MyCONV.time = 0.0005
 # set RCM volume profile (overriding the volume value set earlier)
-# number of profile data points
-npoints = 3
-# position array of the profile data
-x = np.zeros(npoints, dtype=np.double)
-# value array of the profile data
-volprofile = np.zeros_like(x, dtype=np.double)
-# set reactor volume data points
-x = [0.0, 0.01, 2.0]  # [sec]
-volprofile = [10.0, 4.0, 4.0]  # [cm3]
+# # number of profile data points
+# npoints = 3
+# # position array of the profile data
+# x = np.zeros(npoints, dtype=np.double)
+# # value array of the profile data
+# volprofile = np.zeros_like(x, dtype=np.double)
+# # set reactor volume data points
+# x = [0.0, 0.01, 2.0]  # [sec]
+# volprofile = [10.0, 4.0, 4.0]  # [cm3]
 # set the volume profile
-MyCONV.set_volume_profile(x, volprofile)
+# MyCONV.set_volume_profile(x, volprofile)
 # output controls
 # set timestep between saving solution
-MyCONV.timestep_for_saving_solution = 0.01
+#MyCONV.timestep_for_saving_solution = 0.01
 # turn ON adaptive solution saving
-MyCONV.adaptive_solution_saving(mode=True, value_change=100, target="TEMPERATURE")
+MyCONV.adaptive_solution_saving(mode=True, steps=20)
 # turn OFF adaptive solution saving
 # MyCONV.adaptive_solution_saving(mode=False)
 # set tolerances in tuple: (absolute tolerance, relative tolerance)
-MyCONV.tolerances = (1.0e-10, 1.0e-8)
+MyCONV.tolerances = (1.0e-20, 1.0e-8)
 # get solver parameters
 ATOL, RTOL = MyCONV.tolerances
 print(f"default absolute tolerance = {ATOL}")
@@ -126,8 +114,8 @@ print(f"default relative tolerance = {RTOL}")
 # turn on the force non-negative solutions option in the solver
 MyCONV.force_nonnegative = True
 # specify the ignition definitions
-# ck.show_ignition_definitions()
-MyCONV.set_ignition_delay(method="T_inflection")
+ck.show_ignition_definitions()
+MyCONV.set_ignition_delay(method="T_rise",val=400)
 # stop the simulation when ignition is detected
 # MyCONV.stop_after_ignition()
 # show solver option
@@ -141,13 +129,13 @@ runstatus = MyCONV.run()
 # check run status
 if runstatus != 0:
     # run failed!
-    print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+    print(Color.RED + ">>> RUN FAILED <<<", end="\n" + Color.END)
     exit()
 # run success!
-print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
-# get ignition delay time (need to deduct the initial compression time = 0.01 [sec])
-delaytime = MyCONV.get_ignition_delay() - 0.01 * 1.0e3
-print(f"ignition delay time = {delaytime} [msec]")
+print(Color.GREEN + ">>> RUN COMPLETED <<<", end="\n" + Color.END)
+#get ignition delay time (need to deduct the initial compression time = 0.01 [sec])
+# delaytime = MyCONV.get_ignition_delay()
+# print(f"ignition delay time = {delaytime} [msec]")
 # post-process the solutions
 MyCONV.process_solution()
 # get the number of solution time points
@@ -157,62 +145,58 @@ print(f"number of solution points = {solutionpoints}")
 timeprofile = MyCONV.get_solution_variable_profile("time")
 # get the temperature profile
 tempprofile = MyCONV.get_solution_variable_profile("temperature")
-# get the volume profile
-volprofile = MyCONV.get_solution_variable_profile("volume")
-# get CH4 mass fraction profile
-# CH4massfraction = MyCONV.get_solution_variable_profile("CH4")
-#
-# more involving post-processing by using Mixtures
-#
-# mass
+# # get the volume profile
+# volprofile = MyCONV.get_solution_variable_profile("volume")
+#get CH4 mass fraction profile
+CH4massfraction = MyCONV.get_solution_variable_profile("H2O")
+#more involving post-processing by using Mixtures
+#mass
 massprofile = np.zeros_like(timeprofile, dtype=np.double)
 # create arrays for CH4 mole fraction, CH4 ROP, and mixture viscosity
-CH4profile = np.zeros_like(timeprofile, dtype=np.double)
-CH4ROPprofile = np.zeros_like(timeprofile, dtype=np.double)
-viscprofile = np.zeros_like(timeprofile, dtype=np.double)
+H2Oprofile = np.zeros_like(timeprofile, dtype=np.double)
+H2OROPprofile = np.zeros_like(timeprofile, dtype=np.double)
+denprofile = np.zeros_like(timeprofile, dtype=np.double)
 CurrentROP = np.zeros(MyGasMech.KK, dtype=np.double)
 # find CH4 species index
-CH4_index = MyGasMech.get_specindex("CH4")
+H2O_index = MyGasMech.get_specindex("H2O")
 # loop over all solution time points
 for i in range(solutionpoints):
     # get the mixture at the time point
     solutionmixture = MyCONV.get_solution_mixture_at_index(solution_index=i)
     # get gas density [g/cm3]
-    den = solutionmixture.RHO
+    denprofile[i] = solutionmixture.RHO
     # reactor mass [g]
-    massprofile[i] = den * volprofile[i]
     # get CH4 mole fraction profile
-    CH4profile[i] = solutionmixture.X[CH4_index]
+    H2Oprofile[i] = solutionmixture.X[H2O_index]
     # get CH4 ROP profile
     currentROP = solutionmixture.ROP()
-    CH4ROPprofile[i] = currentROP[CH4_index]
-    # get mixture vicosity profile
-    viscprofile[i] = solutionmixture.mixture_viscosity()
+    H2OROPprofile[i] = currentROP[H2O_index]
+#print(str(tempprofile))
+#exit()
 # validation
-del_mass = np.zeros_like(timeprofile, dtype=np.double)
-mass0 = massprofile[0]
-for i in range(solutionpoints):
-    del_mass[i] = abs(massprofile[i] - mass0)
-#
-print(f">>> maximum magnitude of reactor mass deviation = {np.max(del_mass)} [g]")
+# del_mass = np.zeros_like(timeprofile, dtype=np.double)
+# mass0 = massprofile[0]
+# for i in range(solutionpoints):
+#     del_mass[i] = abs(massprofile[i] - mass0)
+# print(f">>> maximum magnitude of reactor mass deviation = {np.max(del_mass)} [g]")
 # plot the profiles
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))
 plt.subplot(221)
 plt.plot(timeprofile, tempprofile, "r-")
 plt.ylabel("Temperature [K]")
 plt.subplot(222)
-plt.plot(timeprofile, CH4profile, "b-")
-plt.ylabel("CH4 Mole Fraction")
+plt.plot(timeprofile, H2Oprofile, "b-")
+plt.ylabel("H2O Mole Fraction")
 plt.subplot(223)
-plt.plot(timeprofile, CH4ROPprofile, "g-")
+plt.plot(timeprofile, H2OROPprofile, "g-")
 plt.xlabel("time [sec]")
-plt.ylabel("CH4 Production Rate [mol/cm3-sec]")
+plt.ylabel("H2O Production Rate [mol/cm3-sec]")
 plt.subplot(224)
-plt.plot(timeprofile, viscprofile, "m-")
+plt.plot(timeprofile, denprofile, "m-")
 plt.xlabel("time [sec]")
-plt.ylabel("Mixture Viscosity [g/cm-sec]")
+plt.ylabel("Mixture Density [g/cm3]")
 # plot results
 if interactive:
     plt.show()
 else:
-    plt.savefig("CONV_solution.png", bbox_inches="tight")
+    plt.savefig("close_homogeneous.png", bbox_inches="tight")

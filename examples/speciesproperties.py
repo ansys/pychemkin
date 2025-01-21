@@ -1,14 +1,42 @@
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 import os
 
 import chemkin as ck  # Chemkin
+from chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()
-print("current working directory: " + current_dir)
+logger.debug("working directory: " + current_dir)
 # set verbose mode
-ck.setverbose(True)
+ck.set_verbose(True)
+# set interactive mode for plotting the results
+# interactive = True: display plot
+# interactive = False: save plot as a png file
+global interactive
+interactive = False
+
 # set mechanism directory (the default chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
@@ -22,15 +50,15 @@ MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
 # extract element symbols as a list
-elelist = MyGasMech.elementsymbols
+elelist = MyGasMech.element_symbols
 # extract gas species symbols as a list
-specieslist = MyGasMech.speciessymbols
+specieslist = MyGasMech.species_symbols
 # list of gas species interested
 plotspeclist = ["CH4", "O2", "N2"]
 # find elemental compositions of selected species
 print(" ")
 for s in plotspeclist:
-    speciesID = MyGasMech.getspecindex(s)
+    speciesID = MyGasMech.get_specindex(s)
     print("species " + specieslist[speciesID])
     print("elemental composition")
     for elemID in range(MyGasMech.MM):
@@ -62,10 +90,10 @@ for s in plotspeclist:
     # loop over temperature data points
     for i in range(points):
         HeatCapacity = MyGasMech.SpeciesCv(Temp)
-        ID = MyGasMech.getspecindex(s)
+        ID = MyGasMech.get_specindex(s)
         T[i] = Temp
         # convert ergs to joules
-        Cv[i] = HeatCapacity[ID] / ck.ergsperjoule
+        Cv[i] = HeatCapacity[ID] / ck.ergs_per_joule
         Temp += dTemp
     plt.subplot(121)
     plt.plot(T, Cv, curvelist[k])
@@ -86,10 +114,10 @@ for s in plotspeclist:
     # loop over temperature data points
     for i in range(points):
         conductivity = MyGasMech.SpeciesCond(Temp)
-        ID = MyGasMech.getspecindex(s)
+        ID = MyGasMech.get_specindex(s)
         T[i] = Temp
         # convert ergs to joules
-        kappa[i] = conductivity[ID] / ck.ergsperjoule
+        kappa[i] = conductivity[ID] / ck.ergs_per_joule
         Temp += dTemp
     plt.subplot(122)
     plt.plot(T, kappa, curvelist[k])
@@ -101,11 +129,14 @@ plt.legend(plotspeclist, loc="upper left")
 # calculate species binary diffusion coefficients
 # at 2 atm and 500K
 diffcoef = MyGasMech.SpeciesDiffusionCoeffs(2.0 * ck.Patm, 500.0)
-ID1 = MyGasMech.getspecindex(plotspeclist[0])
-ID2 = MyGasMech.getspecindex(plotspeclist[1])
+ID1 = MyGasMech.get_specindex(plotspeclist[0])
+ID2 = MyGasMech.get_specindex(plotspeclist[1])
 c = diffcoef[ID1][ID2]
 print(
-    f"diffusion coefficient for {plotspeclist[0]} against {plotspeclist[1]} is {c:e} cm2/sec"
+    f"diffusion coefficient for {plotspeclist[0]} against {plotspeclist[1]} is {c:e} [cm2/sec]"
 )
-# display the plots
-plt.show()
+# plot results
+if interactive:
+    plt.show()
+else:
+    plt.savefig("species_properties.png", bbox_inches="tight")

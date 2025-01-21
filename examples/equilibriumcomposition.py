@@ -1,14 +1,42 @@
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 import os
 
 import chemkin as ck  # Chemkin
+from chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()
-print("current working directory: " + current_dir)
+logger.debug("working directory: " + current_dir)
 # set verbose mode
-ck.setverbose(True)
+ck.set_verbose(True)
+# set interactive mode for plotting the results
+# interactive = True: display plot
+# interactive = False: save plot as a png file
+global interactive
+interactive = False
+
 # set mechanism directory (the default chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
@@ -36,13 +64,13 @@ air.pressure = ck.Patm  # 1 atm
 # mix the fuel and the air with an air-fuel ratio of 17.19 (almost stoichiometric?)
 mixture_recipe = [(fuel, 1.0), (air, 17.19)]
 # create the new mixture (the air-fuel ratio is by mass)
-premixed = ck.isothermalmixing(
+premixed = ck.isothermal_mixing(
     recipe=mixture_recipe, mode="mass", finaltemperature=300.0
 )
 # find the equilibrium composition at different temperature
 # and create a NO mole fraction versus temperature plot
 # NO species index
-NO_index = MyGasMech.getspecindex("NO")
+NO_index = MyGasMech.get_specindex("NO")
 # set up plotting temperatures
 Temp = 500.0
 dTemp = 20.0
@@ -64,4 +92,8 @@ for k in range(points):
 plt.plot(T, NO, "bs--", markersize=3, markevery=4)
 plt.xlabel("Temperature [K]")
 plt.ylabel("NO [ppm]")
-plt.show()
+# plot results
+if interactive:
+    plt.show()
+else:
+    plt.savefig("equilibrium_composition.png", bbox_inches="tight")

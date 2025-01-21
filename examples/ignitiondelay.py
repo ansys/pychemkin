@@ -1,3 +1,24 @@
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 import os
 import time
 
@@ -8,14 +29,21 @@ from chemkin import Color
 from chemkin.batchreactors.batchreactor import (
     GivenPressureBatchReactor_EnergyConservation,
 )
+from chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()
-print("current working directory: " + current_dir)
+logger.debug("working directory: " + current_dir)
 # set verbose mode
-ck.setverbose(True)
+ck.set_verbose(False)
+# set interactive mode for plotting the results
+# interactive = True: display plot
+# interactive = False: save plot as a png file
+global interactive
+interactive = False
+
 # set mechanism directory (the default chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
@@ -46,13 +74,13 @@ premixed = ck.Mixture(gasoline)
 products = ["co2", "h2o", "n2"]
 # species mole fractions of added/inert mixture. can also create an additives mixture here
 add_frac = np.zeros(gasoline.KK, dtype=np.double)  # no additives: all zeros
-iError = premixed.XbyEquivalenceRatio(
+iError = premixed.X_by_Equivalence_Ratio(
     gasoline, fuelmixture.X, air.X, add_frac, products, equivalenceratio=1.0
 )
 if iError != 0:
     raise RuntimeError
 # list the composition of the premixed mixture
-premixed.listcomposition(mode="mole")
+premixed.list_composition(mode="mole")
 # set mixture temperature and pressure (equivalent to setting the initial temperature and pressure of the reactor)
 premixed.pressure = 40.0 * ck.Patm
 premixed.temperature = 700.0
@@ -61,7 +89,7 @@ premixed.temperature = 700.0
 #
 MyCONP = GivenPressureBatchReactor_EnergyConservation(premixed, label="CONP")
 # show initial gas composition inside the reactor
-MyCONP.listcomposition(mode="mole")
+MyCONP.list_composition(mode="mole")
 # set other reactor parameters
 # reactor volume [cm3]
 MyCONP.volume = 10.0
@@ -69,22 +97,22 @@ MyCONP.volume = 10.0
 MyCONP.time = 1.0
 # output controls
 # set timestep between saving solution
-MyCONP.timestepforsavingsolution = 0.001
+MyCONP.timestep_for_saving_solution = 0.001
 # change timestep between saving solution
-MyCONP.timestepforsavingsolution = 0.01
+MyCONP.timestep_for_saving_solution = 0.01
 # turn ON adaptive solution saving
-MyCONP.adaptivesolutionsaving(mode=True, value_change=100, target="TEMPERATURE")
-# set tolerance
-MyCONP.settolerances(absolute_tolerance=1.0e-10, relative_tolerance=1.0e-8)
+MyCONP.adaptive_solution_saving(mode=True, value_change=100, target="TEMPERATURE")
+# set tolerances in tuple: (absolute tolerance, relative tolerance)
+MyCONP.tolerances = (1.0e-10, 1.0e-8)
 # set ignition delay
-# ck.showignitiondefinition()
-MyCONP.setignitiondelay(method="T_inflection")
+# ck.show_ignition_definitions()
+MyCONP.set_ignition_delay(method="T_inflection")
 # stop after ignition is detected (not recommended for ignition delay time calculations)
-# MyCONP.stopafterignition()
+# MyCONP.stop_after_ignition()
 # show solver option
-print(f"timestep between solution printing: {MyCONP.timestepforprintingsolution}")
+print(f"timestep between solution printing: {MyCONP.timestep_for_printing_solution}")
 # show timestep between printing solution
-print(f"forced non-negative solution values: {MyCONP.forcenonnegative}")
+print(f"forced non-negative solution values: {MyCONP.force_nonnegative}")
 #
 # loop over initial reactor temperature to create an ignition delay time plot
 #
@@ -108,7 +136,7 @@ for i in range(npoints):
         # plot 1/T instead of T
         temp_inv[i] = 1.0e0 / init_temp
         # get ignition delay time
-        delaytime[i] = MyCONP.getignitiondelay()
+        delaytime[i] = MyCONP.get_ignition_delay()
         print(f"ignition delay time = {delaytime[i]} [msec]")
     else:
         # if get this, most likely the END time is too short
@@ -139,4 +167,8 @@ def one_over(x):
 inverse = one_over
 ax2 = ax1.secondary_xaxis("top", functions=(one_over, inverse))
 ax2.set_xlabel("T [K]")
-plt.show()
+# plot results
+if interactive:
+    plt.show()
+else:
+    plt.savefig("ignition_delay.png", bbox_inches="tight")
