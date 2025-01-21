@@ -26,12 +26,13 @@
 import datetime
 import logging
 from pathlib import Path
+from typing import Dict
 
 
 class SingletonType(type):
     """Provides the singleton helper class for the logger."""
 
-    _instances = {}
+    _instances: Dict[type, type] = {}
 
     def __call__(cls, *args, **kwargs):
         """Call to redirect new instances to the singleton instance."""
@@ -50,8 +51,6 @@ class ChemkinLogger(object, metaclass=SingletonType):
 
     """
 
-    _logger = None
-
     def __init__(self, level: int = logging.ERROR, logger_name: str = "PyChemkin"):
         """Initialize the logger."""
         self._logger = logging.getLogger(logger_name)
@@ -60,7 +59,7 @@ class ChemkinLogger(object, metaclass=SingletonType):
             "%(asctime)s \t [%(levelname)s | %(filename)s:%(lineno)s] > %(message)s"
         )
 
-    def get_logger(self):
+    def get_logger(self) -> logging.Logger:
         """Get the logger.
 
         Returns
@@ -71,7 +70,7 @@ class ChemkinLogger(object, metaclass=SingletonType):
         """
         return self._logger
 
-    def set_level(self, level: int):
+    def set_level(self, level: int) -> None:
         """Set the logger output level.
 
         Parameters
@@ -114,8 +113,8 @@ class ChemkinLogger(object, metaclass=SingletonType):
 
         """
         now = datetime.datetime.now()
-        if not Path.isdir(logs_dir):
-            Path.mkdir(logs_dir)
+        if not Path.is_dir(Path(logs_dir)):
+            Path.mkdir(Path(logs_dir))
         file_handler = logging.FileHandler(
             logs_dir + "/log_" + now.strftime("%Y-%m-%d") + ".log"
         )

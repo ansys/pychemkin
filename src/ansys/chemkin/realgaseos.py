@@ -41,7 +41,7 @@ def check_realgas_status(chem_index: int) -> bool:
     Returns
     -------
         status: boolean
-            the activation status of the Chemkin real-gas model 
+            the activation status of the Chemkin real-gas model
     """
     # initialization assuming the real-gas EOS is not ON
     status = False

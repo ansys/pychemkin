@@ -27,11 +27,10 @@ Chemkin keywords
 import importlib.resources
 import os
 import webbrowser
-import yaml
 
 from chemkin.color import Color
 from chemkin.logger import logger
-
+import yaml
 
 CKdict = {}  # chemkin hints
 _help_loaded = False
@@ -122,6 +121,7 @@ def phrase_hints(phrase: str):
         ]
         this_msg = Color.SPACE.join(msg)
         logger.error(this_msg)
+
 
 def help(topic: str | None = None):
     """
