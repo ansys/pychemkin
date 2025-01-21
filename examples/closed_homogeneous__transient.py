@@ -58,7 +58,7 @@ iError = MyGasMech.preprocess()
 # create the fuel mixture
 fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition
-fuelmixture.X = [("H2", 2.0), ("N2",3.76), ("O2", 1.0)]
+fuelmixture.X = [("H2", 2.0), ("N2", 3.76), ("O2", 1.0)]
 # setting pressure and temperature is not required in this case
 fuelmixture.pressure = ck.Patm
 fuelmixture.temperature = 1000
