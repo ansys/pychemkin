@@ -1,14 +1,44 @@
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+"""
+    Spark Ignition (SI) engine model.
+"""
+
 import copy
 from ctypes import c_double, c_int
-import logging
 
 from chemkin import chemkin_wrapper
-from chemkin.chemistry import checkchemistryset, chemistrysetinitialized, setverbose
+from chemkin.chemistry import (
+    check_chemistryset,
+    chemistryset_initialized,
+    force_activate_chemistryset,
+    verbose,
+)
 from chemkin.color import Color as Color
 from chemkin.engines.engine import Engine
+from chemkin.inlet import Inlet
+from chemkin.logger import logger
 from chemkin.reactormodel import Keyword
-
-logger = logging.getLogger(__name__)
 
 
 class SIengine(Engine):
@@ -16,7 +46,17 @@ class SIengine(Engine):
     Spark Ignition (SI) engine model
     """
 
-    def __init__(self, reactor_condition, label=None):
+    def __init__(self, reactor_condition: Inlet, label: str | None = None):
+        """
+        Initialize a spark-ignition Engine object
+
+        Parameters
+        ----------
+            reactor_condition: Mixture object
+                a mixture representing the initial gas properties inside the engine cylinder/zone
+            label: string, optional
+                engine reactor name
+        """
         # set default number of zone(s)
         # 2 zones: the unburned and the burned zones
         nzones = 2
@@ -27,10 +67,10 @@ class SIengine(Engine):
         # use the first zone to initialize the engine model
         super().__init__(reactor_condition, label)
         # set reactor type
-        self._reactortype = c_int(self.ReactorTypes.get("SI"))
-        self._solvertype = c_int(self.SolverTypes.get("Transient"))
-        self._problemtype = c_int(self.ProblemTypes.get("ICEN"))
-        self._energytype = c_int(self.EnergyTypes.get("ENERGY"))
+        self._reactortype = c_int(self.ReactorTypes.get("SI", 5))
+        self._solvertype = c_int(self.SolverTypes.get("Transient", 1))
+        self._problemtype = c_int(self.ProblemTypes.get("ICEN", 3))
+        self._energytype = c_int(self.EnergyTypes.get("ENERGY", 1))
         # defaults for all closed homogeneous reactor models
         # 2 zones: the unburned and the burned zones
         self._nreactors = nzones
@@ -47,8 +87,8 @@ class SIengine(Engine):
         # 1: Wiebe function with n, b, SOI, burn duration
         # 2: anchor points 10%, 50%, and 90% mass burned CAs
         # 3: burned mass fraction profile, SOI, burn duration
-        self._burnmode = 0
-        self.sparktiming = -180
+        self._burnmode: int = 0
+        self.sparktiming = -180.0
         self.burnduration = 0.0
         self.wieben = 2.0
         self.Wiebeb = 5.0
@@ -59,8 +99,8 @@ class SIengine(Engine):
         self.burnefficiency = 1.0
         # numbwer of points in the mass burned fraction profile
         self.MBpoints = 0
-        self.MBangles = None
-        self.MBfractions = None
+        self.MBangles: list[float] = []
+        self.MBfractions: list[float] = []
         # set up basic SI engine model parameters
         iErr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,
@@ -79,155 +119,225 @@ class SIengine(Engine):
             )
             iErr *= 10
         if iErr != 0:
-            print(
-                Color.RED + f"** error initializing the SI engine model: {self.label:s}"
-            )
-            print(f"   error code = {iErr:d}", end=Color.END)
+            msg = [
+                Color.RED,
+                "failed to initialize the SI engine model",
+                self.label,
+                "\n",
+                Color.SPACEx6,
+                "error code =",
+                str(iErr),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.critical(this_msg)
             exit()
 
-    def wiebeparameters(self, n, b):
+    def wiebe_parameters(self, n: float, b: float):
         """
         Set Wiebe function parameters
-        Wiebe = 1 - exp{-b[(CA-SOC)/duration]^(n+1)]}
-        :param n: exponent (double scalar)
-        :param b: multiplier
+
+        .. math::
+
+            Wiebe = 1 - exp^{-b[(CA-SOC)/duration]^(n+1)]}
+
+        Parameters
+        ----------
+            n: double
+                exponent parameter of the Wiebe function [-]
+            b: double
+                multiplier parameter of the Wiebe function [-]
         """
         # check input values
         if n <= 0.0 or b <= 0.0:
-            print(
-                Color.PURPLE + "** Wiebe function parameters n and b must > 0",
-                end=Color.END,
-            )
+            msg = [
+                Color.PURPLE,
+                "Wiebe function parameters n and b must > 0.0.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
             exit()
         #
         if self._burnmode > 0:
-            print(
-                Color.YELLOW
-                + "** previous burned mass profile setup will be overwritten",
-                end=Color.END,
-            )
+            msg = [
+                Color.YELLOW,
+                "previous burned mass profile setup will be overridden.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
         #
         self._burnmode = 1
         self.wieben = n
         self.wiebeb = b
 
-    def setburntiming(self, SOC, duration):
+    def set_burn_timing(self, SOC: float, duration: float = 0.0):
         """
-        Set SI engine burn timing
-        :param SOC: start of combustion in crank angle [degree] (double scalar)
-        :param duration: burn duration in crank angles [degree] (double scalar)
+        Set SI engine start of combustion (SOC) timing
+
+        Parameters
+        ----------
+            SOC: double
+                start of combustion in crank angle [degree]
+            duration: double
+                burn duration in crank angles [degree]
         """
         if SOC <= self.IVCCA:
-            print(
-                Color.PURPLE
-                + f"** start of combustion CA must > start of simulation CA {self.IVCCA}",
-                end=Color.END,
-            )
+            msg = [
+                Color.PURPLE,
+                "start of combustion CA must > start of simulation CA",
+                str(self.IVCCA),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
             exit()
         if duration <= 0.0:
-            print(Color.PURPLE + "** ass burn duration must > 0", end=Color.END)
+            msg = [Color.PURPLE, "mass burned duration must > 0.0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
             exit()
         #
         self.sparktiming = SOC
         self.burnduration = duration
 
-    def setanchorpoints(self, CA10, CA50, CA90):
+    def set_burn_anchor_points(self, CA10: float, CA50: float, CA90: float):
         """
         Set the SI mass burned profile using the anchor points
-        :param CA10: crank angle of 10% mass burned [degree] (double scalar)
-        :param CA50: crank angle of 50% mass burned [degree] (double scalar)
-        :param CA90: crank angle of 90% mass burned [degree] (double scalar)
+
+        Parameters
+        ----------
+            CA10: double
+                crank angle of 10% mass burned [degree]
+            CA50: double
+                crank angle of 50% mass burned [degree]
+            CA90: double
+                crank angle of 90% mass burned [degree]
         """
         if CA10 > CA50:
-            print(
-                Color.PURPLE + "** the anchor points must in ascending order",
-                end=Color.END,
-            )
+            msg = [
+                Color.PURPLE,
+                "the anchor points must be given in ascending order.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
             exit()
         if CA90 < CA50:
-            print(
-                Color.PURPLE + "** the anchor points must in ascending order",
-                end=Color.END,
-            )
+            msg = [
+                Color.PURPLE,
+                "the anchor points must be given in ascending order.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
             exit()
         if CA10 <= self.IVCCA:
-            print(
-                Color.PURPLE
-                + f"** anchor point CA must > start of simulation CA {self.IVCCA}",
-                end=Color.END,
-            )
+            msg = [
+                Color.PURPLE,
+                "anchor point CAs must > start of simulation CA",
+                str(self.IVCCA),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
             exit()
         #
         if self._burnmode > 0:
-            print(
-                Color.YELLOW
-                + "** previous burned mass profile setup will be overwritten",
-                end=Color.END,
-            )
+            msg = [
+                Color.YELLOW,
+                "previous burned mass profile setup will be overridden.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
         #
         self._burnmode = 2
         self.massburnedCA10 = CA10
         self.massburnedCA50 = CA50
         self.massburnedCA90 = CA90
 
-    def setmassburnedprofile(self, crankangles, fractions):
+    def set_mass_burned_profile(self, crankangles, fractions) -> int:
         """
         Specify SI engine mass burned fraction profile
-        :param crankangles: normalized crank angles of the profile data [degree]
-        the crank angles must 0 <= and <= 1 (double array)
-        :param fractions: mass burned fraction of the profile data [-] (double array)
-        :return: error code (integer scalar)
+
+        Parameters
+        ----------
+            crankangles: 1-D double array
+                normalized crank angles of the profile data [degree]
+                the crank angles must 0 <= and <= 1
+            fractions: 1-D double array
+                mass burned fraction of the profile data [-]
+
+        Returns
+        -------
+            error code: integer
         """
         # set the mass burned profile
         iError = 0
         self.MBpoints = len(crankangles)
         if len(fractions) != self.MBpoints:
-            print(
-                Color.PURPLE + "** data arrays must have the same size", end=Color.END
-            )
+            msg = [Color.PURPLE, "data arrays must have the same size.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
             iError = 1
         elif self.MBpoints > 1:
             self.MBangles = copy.deepcopy(crankangles)
             self.MBfractions = copy.deepcopy(fractions)
             self._burnmode = 3
         else:
-            print(
-                Color.PURPLE + "** profile must have more than 1 data pair",
-                end=Color.END,
-            )
+            msg = [Color.PURPLE, "profile must have more than 1 data pair.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
             iError = 2
         return iError
 
-    def setcombustionefficiency(self, efficiency):
+    def set_combustion_efficiency(self, efficiency: float):
         """
         Set the overall combustion efficiency
-        :param efficiency: combustion efficiency (double scalar)
+
+        Parameters
+        ----------
+            efficiency: double, default = 1.0
+                combustion efficiency [-]
         """
         # check value
         if efficiency < 0.0 or efficiency > 1.0:
-            print(Color.PURPLE + "** efficiency must 0.0 <= and <= 1.0", end=Color.END)
+            msg = [Color.PURPLE, "efficiency must > 0.0 and <= 1.0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
             exit()
         # set keyword
         self.burnefficiency = efficiency
         self.setkeyword(key="BEFF", value=efficiency)
 
-    def setburnedproductminfraction(self, bound):
+    def set_burned_products_minimum_mole_fraction(self, bound: float):
         """
         Set the minimum gas species mole fraction value from the flame sheet
         to be injected to the burned zone
-        :param bound: minimum species mole fraction value (double scalar)
+
+        Parameters
+        ----------
+            bound: double
+                minimum species mole fraction value [-]
         """
         if bound > 0.0:
             # set keyword
             self.setkeyword(key="EQMN", value=bound)
         else:
-            print(Color.PURPLE + "** species fraction value must > 0.0", end=Color.END)
+            msg = [Color.PURPLE, "species fraction value must > 0.0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
             exit()
 
-    def setwiebekeywords(self):
+    def set_Wiebe_keywords(self) -> int:
         """
         Set the Wiebe function parameters keywords for the SI engine model
-        :return: error code (integer scalar)
+
+        Returns
+        -------
+            error code: integer
         """
         iError = 0
         if self._burnmode == 1:
@@ -240,17 +350,24 @@ class SIengine(Engine):
             # set Wiebe parameter n
             self.setkeyword(key="WBFN", value=self.wieben)
         else:
-            print(
-                Color.PURPLE + "** incorrect burned mass profile setup option",
-                end=Color.END,
-            )
+            msg = [
+                Color.PURPLE,
+                "incorrect burned mass profile set up,",
+                "error code = 10",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
             iError = 10
         return iError
 
-    def setanchorpointskeywords(self):
+    def set_burn_anchor_points_keywords(self) -> int:
         """
         Set the mass burned porfile anchor points keywords for the SI engine model
-        :return: error code (integer scalar)
+
+        Returns
+        -------
+            error code: integer
         """
         iError = 0
         if self._burnmode == 2:
@@ -261,17 +378,24 @@ class SIengine(Engine):
             # set 90% mass burned crank angle
             self.setkeyword(key="CAEC", value=self.massburnedCA90)
         else:
-            print(
-                Color.PURPLE + "** incorrect burned mass profile setup option",
-                end=Color.END,
-            )
+            msg = [
+                Color.PURPLE,
+                "incorrect burned mass profile set up,",
+                "error code = 11",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
             iError = 11
         return iError
 
-    def setburnprofilekeywords(self):
+    def set_burn_profile_keywords(self) -> int:
         """
         Set the mass burned fraction profile keywords for the SI engine model
-        :return: error code (integer scalar)
+
+        Returns
+        -------
+            error code: integer
         """
         iError = 0
         if self._burnmode == 3 and self.MBpoints > 0:
@@ -293,39 +417,90 @@ class SIengine(Engine):
                 )
                 self.setkeyword(key=keyline, value=True)
         else:
-            print(
-                Color.PURPLE + "** incorrect burned mass profile setup option",
-                end=Color.END,
-            )
+            msg = [
+                Color.PURPLE,
+                "incorrect burned mass profile set up,",
+                "error code = 12",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
             iError = 12
 
         return iError
 
-    def __process_keywords(self):
+    def __process_keywords(self) -> int:
         """
-        Process input keywords for the reactor model
-        :return: Error code (integer scalar)
+        Process input keywords for the SI engine model
+
+        Returns
+        -------
+            error code: integer
         """
         iErr = 0
         iErrc = 0
         iErrKey = 0
         iErrInputs = 0
-        setverbose(True)
+        iErrProf = 0
+        # set_verbose(True)
         # verify required inputs
-        iErr = self.inputvalidation()
+        iErr = self.validate_inputs()
+        # check start of combustion CA and burn duration
+        if self._burnmode != 2:
+            if self.sparktiming <= self.IVCCA:
+                msg = [
+                    Color.PURPLE,
+                    "missing 'start of combustion' parameter",
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+                iErr += 1
+            if self.burnduration <= 0.0:
+                msg = [Color.PURPLE, "missing 'burn duration' parameter", Color.END]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+                iErr += 1
         if iErr != 0:
-            print(
-                Color.PURPLE + "** missing required input variable",
-                end=Color.END,
-            )
+            msg = [Color.PURPLE, "missing required input keywords", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            return iErr
+        # re-size work arrays if profile is used
+        if self._numbprofiles > 0:
+            # find total profile data points
+            numbprofilepoints = 0
+            for p in self._profiles_list:
+                numbprofilepoints += p.size
+            if numbprofilepoints != self._profilesize:
+                # re-size work arrays
+                self._profilesize = numbprofilepoints
+                ipoints = c_int(numbprofilepoints)
+                iErrc = chemkin_wrapper.chemkin.KINAll0D_SetProfilePoints(ipoints)
+                # setup reactor model working arrays
+                if iErrc == 0:
+                    iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
+                        self._myLOUT, self._chemset_index
+                    )
+                iErr += iErrc
+        if iErr != 0:
+            msg = [
+                Color.PURPLE,
+                "failed to set up profile keywords,",
+                "error code =",
+                str(iErrProf),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
             return iErr
         # prepare initial conditions
         # initial mass fraction
         Y_init = self.reactormixture.Y
         # connecting rod length to crank radius ratio
-        LOLR = c_double(self.connectingrod / self.crankradius)
+        LOLR = c_double(self.connectrodlength / self.crankradius)
         # set reactor initial conditions and geometry parameters
-        if self._reactortype.value == self.ReactorTypes.get("SI"):
+        if self._reactortype.value == self.ReactorTypes.get("SI", 5):
             # insert the ICEN keywords
             self.setkeyword(key="ICEN", value=True)
             #
@@ -340,33 +515,71 @@ class SIengine(Engine):
                 LOLR,
                 self._temperature,
                 self._pressure,
-                self._heatlossrate,
+                self._heat_loss_rate,
                 Y_init,
             )
             iErr += iErrc
+            if iErrc != 0:
+                msg = [
+                    Color.PURPLE,
+                    "failed to set up basic reactor keywords,",
+                    "error code =",
+                    str(iErrc),
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+                return iErrc
             # set SI engine parameter
             if self._burnmode == 1:
                 # use Wiebe function to specify the mass burned profile
-                iErrc = self.setwiebekeywords()
+                iErrc = self.set_Wiebe_keywords()
                 iErr += iErrc
+                if iErrc != 0:
+                    msg = [Color.PURPLE, "setting Wiebe function keywords.", Color.END]
+                    this_msg = Color.SPACE.join(msg)
+                    logger.error(this_msg)
             elif self._burnmode == 2:
                 # use anchor points to specify the mass burned profile
-                iErrc = self.setanchorpointskeywords()
+                iErrc = self.set_burn_anchor_points_keywords()
                 iErr += iErrc
+                if iErrc != 0:
+                    msg = [Color.PURPLE, "setting anchor point keywords.", Color.END]
+                    this_msg = Color.SPACE.join(msg)
+                    logger.error(this_msg)
             elif self._burnmode == 3:
                 # use normalized profile to specify the mass burned profile
-                iErrc = self.setburnprofilekeywords()
+                iErrc = self.set_burn_profile_keywords()
                 iErr += iErrc
+                if iErrc != 0:
+                    msg = [
+                        Color.PURPLE,
+                        "setting burned mass profile keywords.",
+                        Color.END,
+                    ]
+                    this_msg = Color.SPACE.join(msg)
+                    logger.error(this_msg)
             else:
-                print(
-                    Color.RED
-                    + "** burned mass rate is not set up for the SI engine simulation"
-                )
-                print("  Chemkin SI engine model provides three methods:")
-                print("  1. Wiebe function")
-                print("  2. anchor points")
-                print("  3. piece-wise linear normalized CA-burned fraction profile")
-                print("  please see Chemkin Theory manual for details", end=Color.END)
+                msg = [
+                    Color.RED,
+                    "burned mass rate is not defined for the SI engine simulation.\n",
+                    Color.SPACEx6,
+                    "Chemkin SI engine model provides three methods:\n",
+                    Color.SPACEx6,
+                    Color.SPACE,
+                    "1. Wiebe function\n",
+                    Color.SPACEx6,
+                    Color.SPACE,
+                    "2. anchor points\n",
+                    Color.SPACEx6,
+                    Color.SPACE,
+                    "3. piece-wise linear normalized CA-burned fraction profile\n",
+                    Color.SPACEx6,
+                    "please see Chemkin Theory manual for details.",
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.critical(this_msg)
                 exit()
 
             # heat transfer (use additional keywords)
@@ -378,11 +591,22 @@ class SIengine(Engine):
             # solve integrated heat release rate due to chemical reactions
             iErrc = chemkin_wrapper.chemkin.KINAll0D_IntegrateHeatRelease()
             iErr += iErrc
+            if iErrc != 0:
+                msg = [
+                    Color.PURPLE,
+                    "failed to set up heat release keyword,",
+                    "error code =",
+                    str(iErrc),
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+                return iErrc
         else:
             pass
         # check if the wall heat transfer model is set up
         if iErr == 0 and self._wallheattransfer:
-            self.setheattransferkeywords()
+            self.set_heat_transfer_keywords()
         #
         if iErr == 0 and self._numbprofiles > 0:
             for p in self._profiles_list:
@@ -394,14 +618,21 @@ class SIengine(Engine):
                     key, npoints, x, y
                 )
                 iErr += iErrProf
+            if iErrProf != 0:
+                msg = [
+                    Color.PURPLE,
+                    "failed to set up profile keywords,",
+                    "error code =",
+                    str(iErrProf),
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+                return iErrProf
         if iErr == 0:
             # set additional keywords
             # create input lines from additional user-specified keywords
             iErrInputs, nlines = self.createkeywordinputlines()
-            print(
-                Color.YELLOW + f"** {nlines} additional keywords are created",
-                end=Color.END,
-            )
             if iErrInputs == 0:
                 # process additional keywords in _keyword_index and _keyword_lines
                 for s in self._keyword_lines:
@@ -409,67 +640,106 @@ class SIengine(Engine):
                     line = bytes(s, "utf-8")
                     # set additional keyword one by one
                     iErrKey = chemkin_wrapper.chemkin.KINAll0D_SetUserKeyword(line)
+                if iErrInputs == 0:
+                    if verbose():
+                        msg = [
+                            Color.YELLOW,
+                            str(nlines),
+                            "additional input lines are added.",
+                            Color.END,
+                        ]
+                        this_msg = Color.SPACE.join(msg)
+                        logger.info(this_msg)
+                else:
+                    msg = [
+                        Color.PURPLE,
+                        "failed to create additional input lines,",
+                        "error code =",
+                        str(iErrInputs),
+                        Color.END,
+                    ]
+                    this_msg = Color.SPACE.join(msg)
+                    logger.error(this_msg)
             else:
-                print(
-                    Color.RED
-                    + "** error processing additional keywords. error code = {iErrInputs}",
-                    end=Color.END,
-                )
+                msg = [
+                    Color.PURPLE,
+                    "failed to process additional keywords, error code =",
+                    str(iErrInputs),
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
         #
         iErr = iErr + iErrInputs + iErrKey
 
         return iErr
 
-    def __run_model(self, **kwargs):
+    def __run_model(self) -> int:
         """
-        Run the reactor model after the keywords are processed
-        :param kwargs: command arguments
-        :return: error code (integer scalar)
+        Run the SI engine model after the keywords are processed
+
+        Returns
+        -------
+            error code: integer
         """
         # run the simulation without keyword inputs
         iErr = chemkin_wrapper.chemkin.KINAll0D_Calculate(self._chemset_index)
         return iErr
 
-    def run(self, **kwargs):
+    def run(self) -> int:
         """
-        Generic Chemkin run reactor model method
-        :param kwargs: arguments from the run command
-        :return: Error code (integer scalar)
+        Generic Chemkin run SI engine model method
+
+        Returns
+        -------
+            error code: integer
         """
-        logger.debug("Running " + str(self.__class__.__name__) + " " + self.label)
-        print(
-            Color.YELLOW + f"** running model {self.__class__.__name__} {self.label}..."
-        )
-        print(
-            f"   initialization = {checkchemistryset(self._chemset_index.value)}",
-            end=Color.END,
-        )
-        if not checkchemistryset(self._chemset_index.value):
-            # KINetics is not initialized: reinitialize KINetics
-            print(Color.YELLOW + "** initializing chemkin...", end=Color.END)
+        # activate the Chemistry set associated with the Reactor instance
+        force_activate_chemistryset(self._chemset_index.value)
+        #
+        msg = [
+            Color.YELLOW,
+            "running model",
+            self.__class__.__name__,
+            self.label,
+            "...\n",
+            Color.SPACEx6,
+            "initialization =",
+            str(check_chemistryset(self._chemset_index.value)),
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.info(this_msg)
+        if not check_chemistryset(self._chemset_index.value):
+            # Chemkin-CFD-API is not initialized: reinitialize Chemkin-CFD-API
+            msg = [Color.YELLOW, "initializing Chemkin ...", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
             retVal = chemkin_wrapper.chemkin.KINInitialize(
                 self._chemset_index, c_int(0)
             )
             if retVal != 0:
-                print(
-                    Color.RED + f"** error processing the keywords (code = {retVal:d})",
-                    end=Color.END,
-                )
-                logger.debug(f"Initializing KINetics failed (code={retVal})")
-                return retVal
+                msg = [
+                    Color.RED,
+                    "Chemkin-CFD-API initialization failed;",
+                    "code =",
+                    str(retVal),
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.critical(this_msg)
+                exit()
             else:
-                chemistrysetinitialized(self._chemset_index.value)
-
-        for kw in kwargs:
-            logger.debug("Reactor model argument " + kw + " = " + str(kwargs[kw]))
+                chemistryset_initialized(self._chemset_index.value)
 
         # output initialization
         logger.debug("Clearing output")
         self.output = {}
 
         # keyword processing
-        logger.debug("Processing keywords")
-        print(Color.YELLOW + "** processing keywords", end=Color.END)
+        msg = [Color.YELLOW, "processing and generating keyword inputs ...", Color.END]
+        this_msg = Color.SPACE.join(msg)
+        logger.info(this_msg)
         #
         if Keyword.noFullKeyword:
             # use API calls
@@ -480,26 +750,38 @@ class SIengine(Engine):
             # use full keywords
             retVal = -1
         if retVal != 0:
-            print(
-                Color.RED + f"** error processing the keywords (code = {retVal:d})",
-                end=Color.END,
-            )
-            logger.debug(f"Processing keywords failed (code={retVal})")
+            msg = [
+                Color.RED,
+                "generating the keyword inputs,",
+                "error code =",
+                str(retVal),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.critical(this_msg)
             return retVal
         logger.debug("Processing keywords complete")
 
         # run reactor model
-        logger.debug("Running model")
-        print(Color.YELLOW + "** running model", end=Color.END)
+        msg = [Color.YELLOW, "running SI engine simulation ...", Color.END]
+        this_msg = Color.SPACE.join(msg)
+        logger.info(this_msg)
         if Keyword.noFullKeyword:
             # use API calls
-            retVal = self.__run_model(**kwargs)
+            retVal = self.__run_model()
         else:
             # use full keywords
-            retVal = self.__run_model_withFullInputs(**kwargs)
+            retVal = self.__run_model_withFullInputs()
         # update run status
         self.setrunstatus(code=retVal)
-
-        logger.debug("Running model complete, status = " + str(retVal))
+        msg = ["simulation completed,", "status =", str(retVal), Color.END]
+        if retVal == 0:
+            msg.insert(0, Color.GREEN)
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
+        else:
+            msg.insert(0, Color.RED)
+            this_msg = Color.SPACE.join(msg)
+            logger.critical(this_msg)
 
         return retVal

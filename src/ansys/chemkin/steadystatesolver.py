@@ -1,11 +1,35 @@
-# Steady-State Solver Control Parameters
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
 #
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+"""
+    Chemkin steady-state solver controlling parameters.
+"""
+
+from chemkin.color import Color
+from chemkin.logger import logger
 import numpy as np
 
-from .color import Color
 
-
-class steadystatesolver:
+class SteadyStateSolver:
     """
     Common steady-state solver controlling parameters
     """
@@ -15,9 +39,9 @@ class steadystatesolver:
         # mostly just keyword processing
         # >>> steady-state search algorithm:
         # absolute tolerance for the steady-state solution
-        self.SSabsolutetolerance = 1.0e-9
+        self.SSabsolute_tolerance = 1.0e-9
         # relative tolerance for the steady-state solution
-        self.SSrelativetolerance = 1.0e-4
+        self.SSrelative_tolerance = 1.0e-4
         # max number of iterations per steady state search
         self.SSmaxiteration = 100
         # number of steady-state searches before evaluating new Jacobian matrix
@@ -42,9 +66,9 @@ class steadystatesolver:
         self.relativeperturbation = None
         # >>> pseudo trasient (time stepping) algorithm:
         # absolute tolerance for the time stepping solution
-        self.TRabsolutetolerance = 1.0e-9
+        self.TRabsolute_tolerance = 1.0e-9
         # relative tolerance for the time stepping solution
-        self.TRrelativetolerance = 1.0e-4
+        self.TRrelative_tolerance = 1.0e-4
         # max number of iterations per pseudo time step before cutting the time step size
         self.TRmaxiteration = 25
         # max number of pseudo time steps before increasing the time step size
@@ -73,202 +97,314 @@ class steadystatesolver:
         self.SSsolverkeywords = {}
 
     @property
-    def absolutetolerance(self):
+    def steady_state_tolerances(self):
         """
-        absolute tolerance for the steady-state solution
+        Get tolerance for the steady-state search algorithm
+
+        Returns
+        -------
+            tuple, [absolute_tolerance, relative_tolerance]
+                absolute_tolerance: double
+                    absolute tolerance
+                relative_tolerance: double
+                    relative tolerance
         """
-        return self.SSabsolutetolerance
+        return (self.SSabsolute_tolerance, self.SSrelative_tolerance)
+
+    @steady_state_tolerances.setter
+    def steady_state_tolerances(self, tolerances: tuple[float, float]):
+        """
+        set the absolute and the relative tolerances
+        for the steady-state solution search algorithm
+
+        Parameters
+        ----------
+            tolerances: tuple, [absolute_tolerance, relative_tolerance]
+                absolute_tolerance: double
+                    absolute tolerance for steady-state search algorithm
+                relative_tolerance: double
+                    relative tolerance for steady-state search algorithm
+        """
+        iErr = 0
+        if tolerances[0] > 0.0:
+            self.SSsolverkeywords["ATOL"] = tolerances[0]
+            self.SSabsolute_tolerance = tolerances[0]
+        else:
+            iErr = 1
+
+        if tolerances[1] > 0.0:
+            self.SSsolverkeywords["RTOL"] = tolerances[1]
+            self.SSrelative_tolerance = tolerances[1]
+        else:
+            iErr = 1
+
+        if iErr > 0:
+            msg = [Color.PURPLE, "tolerance must > 0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
 
     @property
-    def relativetolerance(self):
+    def time_stepping_tolerances(self) -> tuple:
         """
-        relative tolerance for the steady-state solution
-        """
-        return self.SSrelativetolerance
+        Get tolerance for the pseudo time stepping solution algorithm
 
-    def settolerances(self, atol, rtol):
+        Returns
+        -------
+            tuple, [absolute_tolerance, relative_tolerance]
+                absolute_tolerance: double
+                    absolute tolerance for time stepping algorithm
+                relative_tolerance: double
+                    relative tolerance for time stepping algorithm
         """
-        set the absolute and the relative tolerances for the steady-state solution
-        :param atol: absolutie tolerance (double scalar)
-        "param rtol: relative tolerance (double scalar)
+        return (self.TRabsolute_tolerance, self.TRrelative_tolerance)
+
+    @time_stepping_tolerances.setter
+    def time_stepping_tolerances(self, tolerances: tuple[float, float]):
+        """
+        set the absolute and the relative tolerances
+        for the pseudo time stepping solution algorithm
+
+        Parameters
+        ----------
+            tolerances: tuple, [absolute_tolerance, relative_tolerance]
+                absolute_tolerance: double
+                    absolutie tolerance for the pseudo time stepping
+                relative_tolerance: double
+                    relative tolerance for the pseudo time stepping
         """
         iErr = 0
-        if atol > 0.0:
-            self.SSsolverkeywords["ATOL"] = atol
-            self.SSabsolutetolerance = atol
+        if tolerances[0] > 0.0:
+            self.SSsolverkeywords["ATIM"] = tolerances[0]
+            self.TRabsolute_tolerance = tolerances[0]
         else:
             iErr = 1
 
-        if rtol > 0.0:
-            self.SSsolverkeywords["RTOL"] = rtol
-            self.SSrelativetolerance = rtol
+        if tolerances[1] > 0.0:
+            self.SSsolverkeywords["RTIM"] = tolerances[1]
+            self.TRrelative_tolerance = tolerances[1]
         else:
             iErr = 1
 
         if iErr > 0:
-            print(Color.PURPLE + "** tolerance must > 0", end=Color.END)
+            msg = [Color.PURPLE, "tolerance must > 0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
 
-    def settimesteppingtolerances(self, atol, rtol):
-        """
-        set the absolute and the relative tolerances for the pseudo time stepping solution
-        :param atol: absolutie tolerance (double scalar)
-        "param rtol: relative tolerance (double scalar)
-        """
-        iErr = 0
-        if atol > 0.0:
-            self.SSsolverkeywords["ATIM"] = atol
-            self.TRabsolutetolerance = atol
-        else:
-            iErr = 1
-
-        if rtol > 0.0:
-            self.SSsolverkeywords["RTIM"] = rtol
-            self.TRrelativetolerance = rtol
-        else:
-            iErr = 1
-
-        if iErr > 0:
-            print(Color.PURPLE + "** tolerance must > 0", end=Color.END)
-
-    def setmaxpseudotransientcall(self, maxtime):
+    def set_max_pseudo_transient_call(self, maxtime: int):
         """
         set the maximum number of call to the pseudo transient algorithm
         in an attempt to find the steady-state solution
-        :param maxtime: max number of pseudo transient calls/attempts (integer scalar)
+
+        Parameters
+        ----------
+            maxtime: integer
+                max number of pseudo transient calls/attempts
         """
         if maxtime >= 1:
             self.SSsolverkeywords["MAXTIME"] = maxtime
             self.maxpseudotransient = maxtime
         else:
-            print(Color.PURPLE + "** parameter must > 0", end=Color.END)
+            msg = [Color.PURPLE, "parameter must >= 1.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
 
-    def setmaxnumbtimestepiteration(self, maxiteration):
+    def set_max_timestep_iteration(self, maxiteration: int):
         """
         set the maximum number of iterations per time step when performing the pseudo transient algorithm
-        :param maxtime: max number of iterations per pseudo time step (integer scalar)
+
+        Parameters
+        ----------
+            maxtime: integer
+                max number of iterations per pseudo time step
         """
         if maxiteration >= 1:
             self.SSsolverkeywords["TRMAXITER"] = maxiteration
             self.TRmaxiteration = maxiteration
         else:
-            print(Color.PURPLE + "** parameter must > 0", end=Color.END)
+            msg = [Color.PURPLE, "parameter must >= 1.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
 
-    def setmaxnumbsearchiteration(self, maxiteration):
+    def set_max_search_iteration(self, maxiteration: int):
         """
         set the maximum number of iterations per search when performing the steady-state search algorithm
-        :param maxtime: max number of iterations per steady-state search (integer scalar)
+
+        Parameters
+        ----------
+            maxtime: integer
+                max number of iterations per steady-state search
         """
         if maxiteration >= 1:
             self.SSsolverkeywords["SSMAXITER"] = maxiteration
             self.SSmaxiteration = maxiteration
         else:
-            print(Color.PURPLE + "** parameter must > 0", end=Color.END)
+            msg = [Color.PURPLE, "parameter must >= 1.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
 
-    def setinitialtimesteps(self, initsteps):
+    def set_initial_timesteps(self, initsteps: int):
         """
         set the number of pseudo time steps to be performed to establish a "better"
         set of guessed solution before start the actual steady-state solution search
-        :param initsteps: number of initial pseudo time steps (integer scalar)
+
+        Parameters
+        ----------
+            initsteps: integer
+                number of initial pseudo time steps
         """
         if initsteps >= 1:
             self.SSsolverkeywords["ISTP"] = initsteps
             self.numbinitialpseudosteps = initsteps
         else:
-            print(Color.PURPLE + "** parameter must > 0", end=Color.END)
+            msg = [Color.PURPLE, "parameter must >= 1.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
 
-    def setspeciesfloor(self, floorvalue):
+    def set_species_floor(self, floorvalue: float):
         """
         set the minimum species fraction value allowed during steady-state solution search
-        :param floorvalue: minimum species fraction value (double scalar)
+
+        Parameters
+        ----------
+            floorvalue: double
+                minimum species fraction value
         """
         if np.abs(floorvalue) < 1.0:
             self.SSsolverkeywords["SFLR"] = floorvalue
             self.speciesfloor = floorvalue
         else:
-            print(Color.PURPLE + "** species floor value must < 1", end=Color.END)
+            msg = [Color.PURPLE, "species floor value must < 1.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
 
-    def settemperatureceiling(self, ceilingvalue):
+    def set_temperature_ceiling(self, ceilingvalue: float):
         """
         set the maximum temperature value allowed during steady-state solution search
-        :param ceilingvalue: maximum temperature value (double scalar)
+
+        Parameters
+        ----------
+            ceilingvalue: double
+                maximum temperature value
         """
         if ceilingvalue > 300.0:
             self.SSsolverkeywords["TBND"] = ceilingvalue
             self.maxTbound = ceilingvalue
         else:
-            print(Color.PURPLE + "** temperature value must > 300", end=Color.END)
+            msg = [Color.PURPLE, "temperature value must > 300.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
 
-    def setspeciesresetvalue(self, resetvalue):
+    def set_species_reset_value(self, resetvalue: float):
         """
         set the positive value to reset any negative species fraction in
         intermediate solutions during iterations
-        :param resetvalue: positive value to reset negative species fraction (double scalar)
+
+        Parameters
+        ----------
+            resetvalue: double
+                positive value to reset negative species fraction
         """
         if resetvalue >= 0.0:
             self.SSsolverkeywords["SPOS"] = resetvalue
             self.speciespositive = resetvalue
         else:
-            print(Color.PURPLE + "** species fraction value must >= 0", end=Color.END)
+            msg = [Color.PURPLE, "species fraction value must >= 0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
 
-    def setmaxpseudotimestepsize(self, dtmax):
+    def set_max_pseudo_timestep_size(self, dtmax: float):
         """
         set the maximum time step sizes allowed by the pseudo time stepping solution
-        :param dtmax: maximum time step size allowed (double scalar)
+
+        Parameters
+        ----------
+            dtmax: double
+                maximum time step size allowed
         """
         if dtmax > 0.0:
             self.SSsolverkeywords["DTMX"] = dtmax
             self.TRmaxstepsize = dtmax
         else:
-            print(Color.PURPLE + "** time step size must > 0", end=Color.END)
+            msg = [Color.PURPLE, "time step size must > 0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
 
-    def setminpseudotimestepsize(self, dtmin):
+    def set_min_pseudo_timestep_size(self, dtmin: float):
         """
         set the minimum time step size allowed by the pseudo time stepping solution
-        "param dtmin: minimum time step size allowed (double scalar)
+
+        Parameters
+        ----------
+            dtmin: double
+                minimum time step size allowed
         """
         if dtmin > 0.0:
             self.SSsolverkeywords["DTMN"] = dtmin
             self.TRminstepsize = dtmin
         else:
-            print(Color.PURPLE + "** time step size must > 0", end=Color.END)
+            msg = [Color.PURPLE, "time step size must > 0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
 
-    def setpseudotimestepage(self, age):
+    def set_pseudo_timestep_age(self, age: int):
         """
         set the minimum number of time steps taken before allowing time step size increase
-        "param age: min age of the pseudo time step size (integer scalar)
+
+        Parameters
+        ----------
+            age: integer
+                min age of the pseudo time step size
         """
         if age > 0:
             self.SSsolverkeywords["IRET"] = age
             self.timestepsizeage = age
         else:
-            print(Color.PURPLE + "** number of time step must > 0", end=Color.END)
+            msg = [Color.PURPLE, "number of time step must > 0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
 
-    def setJacobianage(self, age):
+    def set_Jacobian_age(self, age: int):
         """
         set the number of steady-state searches before re-evaluate the Jacobian matrix
-        "param age: age of the steady-state Jacobian matrix (integer scalar)
+
+        Parameters
+        ----------
+            age: integer
+                age of the steady-state Jacobian matrix
         """
         if age > 0:
             self.SSsolverkeywords["NJAC"] = age
             self.SSJacobianage = age
         else:
-            print(Color.PURPLE + "** number of time step must > 0", end=Color.END)
+            msg = [Color.PURPLE, "number of time step must > 0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
 
-    def setpseudoJacobianage(self, age):
+    def set_pseudo_Jacobian_age(self, age: int):
         """
         set the number of time steps taken before re-evaluate the Jacobian matrix
-        "param age: age of the pseudo time step Jacobian matrix (integer scalar)
+
+        Parameters
+        ----------
+            age: integer
+                age of the pseudo time step Jacobian matrix
         """
         if age > 0:
             self.SSsolverkeywords["TJAC"] = age
             self.TRJacobianage = age
         else:
-            print(Color.PURPLE + "** number of time step must > 0", end=Color.END)
+            msg = [Color.PURPLE, "number of time step must > 0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
 
-    def setdampingoption(self, ON):
+    def set_damping_option(self, ON: bool):
         """
         turn ON (True) or OFF (False) the damping option of the steady-state solver
-        :param ON: turn On the damping option (boolean scalar)
+
+        Parameters
+        ----------
+            ON: boolean
+                turn On the damping option
         """
         if type(ON) == bool:
             if ON:
@@ -277,28 +413,42 @@ class steadystatesolver:
                 self.SSdamping = 0
             self.SSsolverkeywords["TWOPNT_DAMPING_OPTIN"] = self.SSdamping
         else:
-            print(Color.PURPLE + "** parameter must be True or False", end=Color.END)
+            msg = [Color.PURPLE, "parameter must be either True or False.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
 
-    def setlegacyoption(self, ON):
+    def set_legacy_option(self, ON: bool):
         """
         turn ON (True) or OFF (False) the legacy steady-state solver
-        :param ON: turn On the legacy solver (boolean scalar)
+
+        Parameters
+        ----------
+            ON: boolean
+                turn On the legacy solver
         """
         if type(ON) == bool:
             self.uselegacytechnique = ON
             if ON:
                 self.SSsolverkeywords["USE_LEGACY_TECHNIQUE"] = "4X"
         else:
-            print(Color.PURPLE + "** parameter must be True or False", end=Color.END)
+            msg = [Color.PURPLE, "parameter must be either True or False.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
 
-    def setprintlevel(self, level):
+    def set_print_level(self, level: int):
         """
         set the level of information to be provided by the steady-state solver
         to the text output
-        :param level: solver message details level (0 ~ 2) (integer scalar)
+
+        Parameters
+        ----------
+            level: integer, {0, 1, 2}
+                solver message details level (0 ~ 2)
         """
         if level in [0, 1, 2]:
             self.SSsolverkeywords["PRNT"] = level
             self.printlevel = level
         else:
-            print(Color.PURPLE + "** print level must be 0, 1, or 2", end=Color.END)
+            msg = [Color.PURPLE, "print level must be either 0, 1, or 2.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)

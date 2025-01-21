@@ -1,16 +1,45 @@
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+"""
+    Plug Flow Reactor (PFR) model.
+"""
+
 import copy
 from ctypes import c_double, c_int
-import logging
 
 from chemkin import chemkin_wrapper
 from chemkin.batchreactors.batchreactor import BatchReactors
-from chemkin.chemistry import checkchemistryset, chemistrysetinitialized, setverbose
+from chemkin.chemistry import (
+    check_chemistryset,
+    chemistryset_initialized,
+    force_activate_chemistryset,
+    verbose,
+)
 from chemkin.color import Color as Color
 from chemkin.inlet import Inlet
+from chemkin.logger import logger
 from chemkin.reactormodel import Keyword
 import numpy as np
-
-logger = logging.getLogger(__name__)
 
 
 class PlugFlowReactor(BatchReactors):
@@ -18,27 +47,33 @@ class PlugFlowReactor(BatchReactors):
     Generic Plug Flow Reactor (PFR) model with energy equation
     """
 
-    def __init__(self, inlet, label=None):
-        # set default label
-        if label is None:
-            label = "PFR"
+    def __init__(self, inlet: Inlet, label: str = "PFR"):
+        """
+        Initialize a generic PFR object
+
+        Parameters
+        ----------
+            inlet: Inlet object
+                an inlet stream representing the gas properties and the flow rate at the PFR entrance
+            label: string, optional
+                reactor name
+        """
         # check Inlet
         if isinstance(inlet, Inlet):
             # initialization
             super().__init__(inlet, label)
         else:
             # wrong argument type
-            print(
-                Color.RED + "** the first argument must be an Inlet object",
-                end=Color.END,
-            )
-            raise TypeError
+            msg = [Color.RED, "the first argument must be an Inlet object.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.critical(this_msg)
+            exit()
 
         # set reactor type
-        self._reactortype = c_int(self.ReactorTypes.get("PFR"))
-        self._solvertype = c_int(self.SolverTypes.get("Transient"))
-        self._problemtype = c_int(self.ProblemTypes.get("CONP"))
-        self._energytype = c_int(self.EnergyTypes.get("ENERGY"))
+        self._reactortype = c_int(self.ReactorTypes.get("PFR", 3))
+        self._solvertype = c_int(self.SolverTypes.get("Transient", 1))
+        self._problemtype = c_int(self.ProblemTypes.get("CONP", 1))
+        self._energytype = c_int(self.EnergyTypes.get("ENERGY", 1))
         # defaults for all plug flow reactor models
         self._nreactors = 1
         self._npsrs = c_int(self._nreactors)
@@ -64,24 +99,42 @@ class PlugFlowReactor(BatchReactors):
             # compute reactor diameter from the flow area
             self.reactordiameter = c_double(np.sqrt(4.0 * self.reactorflowarea / np.pi))
             if self.reactorflowarea <= 0.0:
-                print(Color.YELLOW + "** inlet flow area is not set", end=Color.END)
+                msg = [Color.YELLOW, "inlet flow area is not set.", Color.END]
+                this_msg = Color.SPACE.join(msg)
+                logger.info(this_msg)
         # inlet mass flow rate [g/sec]
         self._massflowrate = c_double(0.0)
         self._flowrate = 0.0
         if inlet._flowratemode < 0:
             # no given in the inlet
-            print(Color.PURPLE + "** inlet flow rate is not set")
-            print("   specify flow rate of the 'Inlet' object", end=Color.END)
+            msg = [
+                Color.PURPLE,
+                "inlet flow rate is not set.\n",
+                Color.SPACEx6,
+                "please specify the flow rate of the 'Inlet' object.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         else:
             self.inletflowratemode = inlet._flowratemode
             self._flowrate = inlet._inletflowrate[inlet._flowratemode]
             self.inletflowrate = copy.deepcopy(inlet._inletflowrate)
             if self._flowrate <= 0.0:
-                print(Color.PURPLE + "** inlet flow rate is not set correctly")
-                print("   specify flow rate of the 'Inlet' object", end=Color.END)
+                msg = [
+                    Color.PURPLE,
+                    "inlet flow rate is not set correctly.\n",
+                    Color.SPACEx6,
+                    "please specify the flow rate of the 'Inlet' object.",
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+                exit()
         # solver parameters
-        self._absolutetolerance = 1.0e-12
-        self._relativetolerance = 1.0e-6
+        self._absolute_tolerance = 1.0e-12
+        self._relative_tolerance = 1.0e-6
         # required inputs: (1) reactor length (2) flow area
         self._numb_requiredinput = 2
         self._requiredlist = ["XEND", "AREAF"]
@@ -93,60 +146,86 @@ class PlugFlowReactor(BatchReactors):
         self.setkeyword(key="MOMEN", value="ON")
 
     @property
-    def length(self):
+    def length(self) -> float:
         """
-        Get reactor length (required) [cm] (float scalar)
+        Get reactor length
+
+        Returns
+        -------
+            length: double
+                reactor length [cm]
         """
         return self.reactorlength.value
 
     @length.setter
-    def length(self, length=0.0e0):
+    def length(self, length: float = 0.0e0):
         """
-        Set reactor length (required)
-        default value = 0.0 cm
-        :param length: reactor length [cm] (float scalar)
+        Set reactor length
+
+        Parameters
+        ----------
+            length: double
+                reactor length [cm]
         """
         if length <= 0.0e0:
-            print(
-                Color.PURPLE + "** flow reactor length must be > 0",
-                end=Color.END,
-            )
+            msg = [Color.PURPLE, "reactor length must > 0.0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         else:
             self._inputcheck.append("XEND")
             self.reactorlength = c_double(length)
 
-    def setstartposition(self, x0):
+    def set_start_position(self, x0: float):
         """
         Set the PFR simulation starting position
-        reactor inlet: x0 = 0.0
-        :param x0: starting position [cm] (double scalar)
+        default reactor inlet: x0 = 0.0
+
+        Parameters
+        ----------
+            x0: double, default = 0.0
+                starting position
         """
         if x0 >= self.reactorlength.value:
-            print(
-                Color.PURPLE + "** starting position must < reactor length",
-                end=Color.END,
-            )
+            msg = [Color.PURPLE, "starting position must < reactor length.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        elif x0 <= 0.0:
+            msg = [Color.PURPLE, "reactor diameter must > 0.0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         else:
             self.startposition = c_double(x0)
 
     @property
-    def diameter(self):
+    def diameter(self) -> float:
         """
-        Reactor diameter [cm]
+        Get reactor diameter
+
+        Returns
+        -------
+            diam: double
+                Reactor diameter [cm]
         """
         return self.reactordiameter.value
 
     @diameter.setter
-    def diameter(self, diam):
+    def diameter(self, diam: float):
         """
         Set the PFR diameter
-        :param diam: reactor diameter [cm] (double scalar)
+
+        Parameters
+        ----------
+            diam: double
+                reactor diameter [cm]
         """
         if diam <= 0.0:
-            print(
-                Color.PURPLE + "** reactor diameter must > 0",
-                end=Color.END,
-            )
+            msg = [Color.PURPLE, "reactor diameter must > 0.0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         else:
             self._inputcheck.append("AREAF")
             self.reactordiameter = c_double(diam)
@@ -156,51 +235,60 @@ class PlugFlowReactor(BatchReactors):
             self.reactormixture._flowarea = area
             self.reactorflowarea = area
 
-    def setdiameterprofile(self, x, diam):
+    def set_diameter_profile(self, x, diam) -> int:
         """
         Specify plug-flow reactor diameter profile
-        :param x: position value of the profile data [cm] (double array)
-        :param diam: PFR diameter value of the profile data [cm] (double array)
-        :return: error code (integer scalar)
+
+        Parameters
+        ----------
+            x: 1-D double array
+                position value of the profile data [cm]
+            diam: 1-D double array
+                PFR diameter value of the profile data [cm]
+
+        Returns
+        -------
+            error code: integer
         """
-        if BatchReactors.ReactorTypes.get(self._reactortype.value) != "PFR":
-            print(
-                Color.PURPLE
-                + "** cannot specify reactor diameter of a non plug-flow reactor",
-                end=Color.END,
-            )
-            return 10
-        else:
-            keyword = "DPRO"
-            iErr = self.setprofile(key=keyword, x=x, y=diam)
-            if iErr == 0:
-                self._inputcheck.append("AREAF")
-                # set flow area at the inlet
-                self.reactordiameter = c_double(diam[0])
-                self.reactormixture._haveflowarea = True
-                area = np.pi * diam * diam / 4.0
-                self.reactormixture._flowarea = area
-                self.reactorflowarea = area
-            return iErr
+        keyword = "DPRO"
+        iErr = self.setprofile(key=keyword, x=x, y=diam)
+        if iErr == 0:
+            self._inputcheck.append("AREAF")
+            # set flow area at the inlet
+            self.reactordiameter = c_double(diam[0])
+            self.reactormixture._haveflowarea = True
+            area = np.pi * diam * diam / 4.0
+            self.reactormixture._flowarea = area
+            self.reactorflowarea = area
+        return iErr
 
     @property
-    def flowarea(self):
+    def flowarea(self) -> float:
         """
         Cross-sectional flow area of the PFR [cm2]
+
+        Returns
+        -------
+            area: double
+                cross-sectional flow rate [cm2]
         """
         return self.reactorflowarea
 
     @flowarea.setter
-    def flowarea(self, area):
+    def flowarea(self, area: float):
         """
         Set the cross-sectional flow area of the PFR
-        :param area: flow area [cm2] (double scalar)
+
+        Parameters
+        ----------
+            area: double
+                cross-sectional flow area [cm2]
         """
         if area <= 0.0:
-            print(
-                Color.PURPLE + "** flow area must > 0",
-                end=Color.END,
-            )
+            msg = [Color.PURPLE, "cross-sectional flow area must > 0.0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         else:
             # set the flow area keyword
             self._inputcheck.append("AREAF")
@@ -212,125 +300,186 @@ class PlugFlowReactor(BatchReactors):
             self.reactormixture._haveflowarea = True
             self.reactormixture._flowarea = area
 
-    def setflowareaprofile(self, x, area):
+    def set_flowarea_profile(self, x, area) -> int:
         """
         Specify plug-flow reactor cross-sectional flow area profile
-        :param x: position value of the profile data [cm] (double array)
-        :param area: PFR flow area value of the profile data [cm2] (double array)
-        :return: error code (integer scalar)
-        """
-        if BatchReactors.ReactorTypes.get(self._reactortype.value) != "PFR":
-            print(
-                Color.PURPLE
-                + "** cannot specify reactor flow area of a non plug-flow reactor",
-                end=Color.END,
-            )
-            return 10
-        else:
-            keyword = "AFLO"
-            iErr = self.setprofile(key=keyword, x=x, y=area)
-            if iErr == 0:
-                self._inputcheck.append("AREAF")
-                self.setkeyword(key="AREAF", value=area[0])
-                # set flow area at the inlet
-                diam = np.sqrt(4.0 * area[0] / np.pi)
-                self.reactordiameter = c_double(diam)
-                self.reactormixture._haveflowarea = True
-                self.reactormixture._flowarea = area[0]
-                self.reactorflowarea = area[0]
-            return iErr
 
-    def setinletviscosity(self, visc):
+        Parameters
+        ----------
+            x: 1-D double array
+                position value of the profile data [cm]
+            area: 1-D double array
+                PFR cross-sectional flow area value of the profile data [cm2]
+
+        Returns
+        -------
+            error code: integer
+        """
+        keyword = "AFLO"
+        iErr = self.setprofile(key=keyword, x=x, y=area)
+        if iErr == 0:
+            self._inputcheck.append("AREAF")
+            self.setkeyword(key="AREAF", value=area[0])
+            # set flow area at the inlet
+            diam = np.sqrt(4.0 * area[0] / np.pi)
+            self.reactordiameter = c_double(diam)
+            self.reactormixture._haveflowarea = True
+            self.reactormixture._flowarea = area[0]
+            self.reactorflowarea = area[0]
+        return iErr
+
+    def set_inlet_viscosity(self, visc: float):
         """
         Set the gas mixture viscocity at the PFR inlet
-        :param visc: mixture viscosity [g/cm-sec] or [Poise] (double scalar)
+
+        Parameters
+        ----------
+            visc: double, default = 0.0
+                mixture viscosity [g/cm-sec] or [Poise]
         """
         if visc <= 0.0:
-            print(
-                Color.PURPLE + "** gas mixture viscosity must > 0",
-                end=Color.END,
-            )
+            msg = [Color.PURPLE, "gas mixture viscosity must > 0.0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         else:
             # set the mixture viscosity keyword
             self.setkeyword(key="VISC", value=visc)
 
-    def setsolvermaxtimestepsize(self, size):
+    def set_solver_max_timestep_size(self, size: float):
         """
-        Set the maximum time step size allowed by the solver
-        :param size: step size [cm]
+        Set the maximum time step size allowed by the transient solver
+
+        Parameters
+        ----------
+            size: double
+                maximum solver step size [cm]
         """
         if size > 0.0e0:
             self.setkeyword(key="DXMX", value=size)
         else:
-            print(
-                Color.PURPLE + "** solver timestep size must > 0",
-                end=Color.END,
-            )
+            msg = [Color.PURPLE, "solver timestep size must > 0.0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
 
-    def setpseudosurfacevelocity(self, vel):
+    def set_pseudo_surface_velocity(self, vel: float):
         """
         Set the pseudo surface velocity at the reactive surface
         to improve convergence due to surface chemistry stiffness
         Note: set this parameter only when having convergence issue with surface chemistry
-        :param vel: surface velocity [cm/sec]
+
+        Parameters
+        ----------
+            vel: double, default = 0.0
+                pseudo surface velocity [cm/sec]
         """
         if vel > 0.0e0:
             self.setkeyword(key="PSV", value=vel)
         else:
-            print(
-                Color.PURPLE + "** pseudo velocity must > 0",
-                end=Color.END,
-            )
+            msg = [Color.PURPLE, "pseudo velocity must > 0.0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
 
     @property
-    def massflowrate(self):
+    def mass_flowrate(self) -> float:
         """
         Get plug flow reactor inlet mass flow rate [g/sec]
+
+        Returns
+        -------
+            massflowrate: double
+                mass flow rate [g/sec]
         """
-        return self.reactormixture.massflowrate
+        return self.reactormixture.mass_flowrate
 
     @property
-    def velocity(self):
+    def velocity(self) -> float:
         """
         Get plug flow reactor inlet velocity [cm/sec]
+
+        Returns
+        -------
+            vel: double
+                inlet velocity [cm/sec]
         """
         return self.reactormixture.velocity
 
     @property
-    def volflowrate(self):
+    def vol_flowrate(self) -> float:
         """
         Get plug flow reactor inlet volumetric flow rate [cm3/sec]
+
+        Returns
+        -------
+            volflowrate: double
+                volumetric flow rate [cm3/sec]
         """
-        return self.reactormixture.volflowrate
+        return self.reactormixture.vol_flowrate
 
     @property
-    def sccm(self):
+    def sccm(self) -> float:
         """
         Get plug flow reactor inlet volumetric flow rate in SCCM [standard cm3/min]
+
+        Returns
+        -------
+            volflowrate: double
+                volumetric flow rate in SCCM [standard cm3/min]
         """
         return self.reactormixture.sccm
 
-    def __process_keywords(self):
+    def __process_keywords(self) -> int:
         """
-        Process input keywords for the reactor model
-        :return: Error code (integer scalar)
+        Process input keywords for the PFR model
+
+        Returns
+        -------
+            error code: integer
         """
         iErr = 0
         iErrc = 0
         iErrKey = 0
         iErrInputs = 0
-        setverbose(True)
+        # set_verbose(True)
         # verify required inputs
-        iErr = self.inputvalidation()
+        iErr = self.validate_inputs()
         if iErr != 0:
-            print(
-                Color.PURPLE + "** missing required input variable",
-                end=Color.END,
-            )
+            msg = [Color.PURPLE, "missing required input keywords.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            return iErr
+        # re-size work arrays if profile is used
+        if self._numbprofiles > 0:
+            # find total profile data points
+            numbprofilepoints = 0
+            for p in self._profiles_list:
+                numbprofilepoints += p.size
+            if numbprofilepoints != self._profilesize:
+                # re-size work arrays
+                self._profilesize = numbprofilepoints
+                ipoints = c_int(numbprofilepoints)
+                iErrc = chemkin_wrapper.chemkin.KINAll0D_SetProfilePoints(ipoints)
+                # setup reactor model working arrays
+                if iErrc == 0:
+                    iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
+                        self._myLOUT, self._chemset_index
+                    )
+                iErr += iErrc
+        if iErr != 0:
+            msg = [
+                Color.PURPLE,
+                "profile data generation error, error code =",
+                str(iErr),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
             return iErr
         # prepare inlet conditions
         # get inlet mass flow rate
-        self._massflowrate = c_double(self.massflowrate)
+        self._massflowrate = c_double(self.mass_flowrate)
         # inlet mass fraction
         Y_init = self.reactormixture.Y
         # surface sites (not applicable)
@@ -338,14 +487,14 @@ class PlugFlowReactor(BatchReactors):
         # bulk activities (not applicable)
         Bulk_init = np.zeros_like(Site_init, dtype=np.double)
         # set reactor inlet conditions and geometry parameters
-        if self._reactortype.value == self.ReactorTypes.get("PFR"):
+        if self._reactortype.value == self.ReactorTypes.get("PFR", 3):
             iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupPFRInputs(
                 self._chemset_index,
                 self.startposition,
                 self.reactorlength,
                 self._temperature,
                 self._pressure,
-                self._heatlossrate,
+                self._heat_loss_rate,
                 self.reactordiameter,
                 Site_init,
                 Bulk_init,
@@ -353,6 +502,17 @@ class PlugFlowReactor(BatchReactors):
                 Y_init,
             )
             iErr += iErrc
+            if iErrc != 0:
+                msg = [
+                    Color.PURPLE,
+                    "failed to set up basic reactor keywords,",
+                    "error code =",
+                    str(iErrc),
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+                return iErrc
             # turn OFF the momentum equation when pressure profile is set
             if self._numbprofiles > 0:
                 if "PPRO" in self._profiles_list or "VELPRO" in self._profiles_list:
@@ -364,8 +524,20 @@ class PlugFlowReactor(BatchReactors):
             # sensitivity (use additional keywords)
             # ignition delay (use additional keywords)
             # solve integrated heat release rate due to chemical reactions
-            iErrc = chemkin_wrapper.chemkin.KINAll0D_IntegrateHeatRelease()
-            iErr += iErrc
+            if self.EnergyTypes.get("ENERGY") == self._energytype.value:
+                iErrc = chemkin_wrapper.chemkin.KINAll0D_IntegrateHeatRelease()
+                iErr += iErrc
+                if iErrc != 0:
+                    msg = [
+                        Color.PURPLE,
+                        "failed to set up heat release keyword,",
+                        "error code =",
+                        str(iErrc),
+                        Color.END,
+                    ]
+                    this_msg = Color.SPACE.join(msg)
+                    logger.error(this_msg)
+                    return iErrc
         else:
             pass
         if iErr == 0 and self._numbprofiles > 0:
@@ -378,14 +550,21 @@ class PlugFlowReactor(BatchReactors):
                     key, npoints, x, y
                 )
                 iErr += iErrProf
+            if iErrProf != 0:
+                msg = [
+                    Color.PURPLE,
+                    "failed to set up profile keywords,",
+                    "error code =",
+                    str(iErrProf),
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+                return iErrProf
         if iErr == 0:
             # set additional keywords
             # create input lines from additional user-specified keywords
             iErrInputs, nlines = self.createkeywordinputlines()
-            print(
-                Color.YELLOW + f"** {nlines} additional keywords are created",
-                end=Color.END,
-            )
             if iErrInputs == 0:
                 # process additional keywords in _keyword_index and _keyword_lines
                 for s in self._keyword_lines:
@@ -393,67 +572,110 @@ class PlugFlowReactor(BatchReactors):
                     line = bytes(s, "utf-8")
                     # set additional keyword one by one
                     iErrKey = chemkin_wrapper.chemkin.KINAll0D_SetUserKeyword(line)
+                if iErrInputs == 0:
+                    if verbose():
+                        msg = [
+                            Color.YELLOW,
+                            str(nlines),
+                            "additional input lines are added.",
+                            Color.END,
+                        ]
+                        this_msg = Color.SPACE.join(msg)
+                        logger.info(this_msg)
+                else:
+                    msg = [
+                        Color.PURPLE,
+                        "failed to create additional input lines,",
+                        "error code =",
+                        str(iErrInputs),
+                        Color.END,
+                    ]
+                    this_msg = Color.SPACE.join(msg)
+                    logger.error(this_msg)
             else:
-                print(
-                    Color.RED
-                    + "** error processing additional keywords. error code = {iErrInputs}",
-                    end=Color.END,
-                )
+                msg = [
+                    Color.PURPLE,
+                    "failed to process additional keywords, error code =",
+                    str(iErrInputs),
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
         #
         iErr = iErr + iErrInputs + iErrKey
 
         return iErr
 
-    def __run_model(self, **kwargs):
+    def __run_model(self) -> int:
         """
-        Run the reactor model after the keywords are processed
-        :param kwargs: command arguments
-        :return: error code (integer scalar)
+        Run the PFR model after the keywords are processed
+
+        Returns
+        -------
+            error code: integer
         """
         # run the simulation without keyword inputs
         iErr = chemkin_wrapper.chemkin.KINAll0D_Calculate(self._chemset_index)
         return iErr
 
-    def run(self, **kwargs):
+    def run(self) -> int:
         """
-        Generic Chemkin run reactor model method
-        :param kwargs: arguments from the run command
-        :return: Error code (integer scalar)
+        Generic Chemkin run PFR model method
+
+        Returns
+        -------
+            error code: integer
         """
-        logger.debug("Running " + str(self.__class__.__name__) + " " + self.label)
-        print(
-            Color.YELLOW + f"** running model {self.__class__.__name__} {self.label}..."
-        )
-        print(
-            f"   initialization = {checkchemistryset(self._chemset_index.value)}",
-            end=Color.END,
-        )
-        if not checkchemistryset(self._chemset_index.value):
-            # KINetics is not initialized: reinitialize KINetics
-            print(Color.YELLOW + "** initializing chemkin...", end=Color.END)
+        # activate the Chemistry set associated with the Reactor instance
+        force_activate_chemistryset(self._chemset_index.value)
+        #
+        msg = [
+            Color.YELLOW,
+            "running model",
+            self.__class__.__name__,
+            self.label,
+            "...\n",
+            Color.SPACEx6,
+            "initialization =",
+            str(check_chemistryset(self._chemset_index.value)),
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.info(this_msg)
+        if not check_chemistryset(self._chemset_index.value):
+            # Chemkin-CFD-API is not initialized: reinitialize Chemkin-CFD-API
+            msg = [Color.YELLOW, "initializing Chemkin ...", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
             retVal = chemkin_wrapper.chemkin.KINInitialize(
                 self._chemset_index, c_int(0)
             )
             if retVal != 0:
-                print(
-                    Color.RED + f"** error processing the keywords (code = {retVal:d})",
-                    end=Color.END,
-                )
-                logger.debug(f"Initializing KINetics failed (code={retVal})")
-                return retVal
+                msg = [
+                    Color.RED,
+                    "Chemkin-CFD-API initialization failed;",
+                    "code =",
+                    str(retVal),
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.critical(this_msg)
+                exit()
             else:
-                chemistrysetinitialized(self._chemset_index.value)
-
-        for kw in kwargs:
-            logger.debug("Reactor model argument " + kw + " = " + str(kwargs[kw]))
+                chemistryset_initialized(self._chemset_index.value)
 
         # output initialization
-        logger.debug("Clearing output")
+        logger.debug("clearing output ...")
         self.output = {}
 
         # keyword processing
-        logger.debug("Processing keywords")
-        print(Color.YELLOW + "** processing keywords", end=Color.END)
+        msg = [
+            Color.YELLOW,
+            "processing and generating keyword inputs ...",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.info(this_msg)
         if Keyword.noFullKeyword:
             # use API calls
             retVal = (
@@ -463,61 +685,79 @@ class PlugFlowReactor(BatchReactors):
             # use full keywords
             retVal = self.__process_keywords_withFullInputs()
         if retVal != 0:
-            print(
-                Color.RED + f"** error processing the keywords (code = {retVal:d})",
-                end=Color.END,
-            )
-            logger.debug(f"Processing keywords failed (code={retVal})")
+            msg = [
+                Color.RED,
+                "generating the keyword inputs,",
+                "error code =",
+                str(retVal),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.critical(this_msg)
             return retVal
         logger.debug("Processing keywords complete")
 
         # run reactor model
-        logger.debug("Running model")
-        print(Color.YELLOW + "** running model", end=Color.END)
+        msg = [Color.YELLOW, "running reactor simulation ...", Color.END]
+        this_msg = Color.SPACE.join(msg)
+        logger.info(this_msg)
         if Keyword.noFullKeyword:
             # use API calls
-            retVal = self.__run_model(**kwargs)
+            retVal = self.__run_model()
         else:
             # use full keywords
-            retVal = self.__run_model_withFullInputs(**kwargs)
+            retVal = self.__run_model_withFullInputs()
         # update run status
         self.setrunstatus(code=retVal)
-
-        logger.debug("Running model complete, status = " + str(retVal))
+        msg = ["simulation completed,", "status =", str(retVal), Color.END]
+        if retVal == 0:
+            msg.insert(0, Color.GREEN)
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
+        else:
+            msg.insert(0, Color.RED)
+            this_msg = Color.SPACE.join(msg)
+            logger.critical(this_msg)
 
         return retVal
 
 
-class PlugFlowReactor_EngeryEquation(PlugFlowReactor):
+class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
     """
     Plug Flow Reactor (PFR) model with energy equation
     """
 
-    def __init__(self, inlet, label=None):
-        # set default label
-        if label is None:
-            label = "PFR"
+    def __init__(self, inlet, label: str = "PFR"):
+        """
+        Initialize a PFR object that solves the Energy Equation
+
+        Parameters
+        ----------
+            inlet: Inlet object
+                an inlet stream representing the gas properties and the flow rate at the PFR entrance
+            label: string, optional
+                reactor name
+        """
         # check Inlet
         if isinstance(inlet, Inlet):
             # initialization
             super().__init__(inlet, label)
         else:
             # wrong argument type
-            print(
-                Color.RED + "** the first argument must be an Inlet object",
-                end=Color.END,
-            )
-            raise TypeError
+            msg = [Color.RED, "the first argument must be an Inlet object.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.critical(this_msg)
+            exit()
 
         # set reactor type
-        self._energytype = c_int(self.EnergyTypes.get("ENERGY"))
+        self._energytype = c_int(self.EnergyTypes.get("ENERGY", 1))
         # heat transfer parameters
-        self._heatlossrate = c_double(0.0e0)
-        self._heattransfercoefficient = 0.0e0
-        self._ambienttemperature = 3.0e2
+        self._heat_loss_rate = c_double(0.0e0)
+        self._heat_transfer_coefficient = 0.0e0
+        self._ambient_temperature = 3.0e2
         # external heat transfer area per reactor length [cm2/cm]
-        self._heattransferarea = 0.0e0
-        # set up basic batch reactor parameters
+        self._heat_transfer_area = 0.0e0
+        # set up basic PFR parameters
         iErr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,
             self._reactortype,
@@ -535,187 +775,233 @@ class PlugFlowReactor_EngeryEquation(PlugFlowReactor):
             )
             iErr *= 10
         if iErr != 0:
-            print(
-                Color.RED + f"** error initializing the reactor model: {self.label:s}"
-            )
-            print(f"   error code = {iErr:d}", end=Color.END)
+            msg = [
+                Color.RED,
+                "failed to initialize the plug-flow reactor model",
+                self.label,
+                "\n",
+                Color.SPACEx6,
+                "error code =",
+                str(iErr),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.critical(this_msg)
             exit()
 
     @property
-    def heatlossrate(self):
+    def heat_loss_rate(self) -> float:
         """
-        Get heat loss rate from the reactor to the surroundings [cal/sec] (float scalar)
-        default value = 0.0 cal/sec
-        """
-        return self._heatlossrate.value
+        Get heat loss rate from the reactor to the surroundings
 
-    @heatlossrate.setter
-    def heatlossrate(self, value):
+        Returns
+        -------
+            Qloss: double
+                heat loss rate [cal/sec-cm]
+        """
+        return self._heat_loss_rate.value
+
+    @heat_loss_rate.setter
+    def heat_loss_rate(self, value: float):
         """
         Set the heat loss rate per length from the reactor to the surroundings (required)
-        default value = 0.0 cal/sec-cm
-        :param value: heat loss rate [cal/sec-cm] (float scalar)
+
+        Parameters
+        ----------
+            value: double, default = 0.0
+                heat loss rate [cal/sec-cm]
         """
-        self._heatlossrate = c_double(value)
+        self._heat_loss_rate = c_double(value)
         if not Keyword.noFullKeyword:
             self.setkeyword(key="QLOS", value=value)
 
     @property
-    def heattransfercoefficient(self):
+    def heat_transfer_coefficient(self) -> float:
         """
-        Get heat transfer coefficient between the reactor and the surroundings [cal/cm2-K-sec] (float scalar)
-        default value = 0.0 cal/cm2-K-sec
-        """
-        return self._heattransfercoefficient
+        Get heat transfer coefficient between the reactor and the surroundings
 
-    @heattransfercoefficient.setter
-    def heattransfercoefficient(self, value=0.0e0):
+        Returns
+        -------
+            heat_transfer_coefficient: double
+                heat transfer coefficient [cal/cm2-K-sec]
         """
-        Set heat transfer coefficient between the reactor and the surroundings (optional)
-        default value = 0.0 cal/cm2-K-sec
-        :param value: heat transfer coefficient [cal/cm2-K-sec] (float scalar)
+        return self._heat_transfer_coefficient
+
+    @heat_transfer_coefficient.setter
+    def heat_transfer_coefficient(self, value: float = 0.0e0):
+        """
+        Set heat transfer coefficient between the reactor and the surroundings
+
+        Parameters
+        ----------
+            value: double, default = 0.0
+                heat transfer coefficient [cal/cm2-K-sec]
         """
         if value < 0.0e0:
-            print(
-                Color.PURPLE + "** simulation end time must be >= 0",
-                end=Color.END,
-            )
+            msg = [Color.PURPLE, "heat transfer coefficient must >= 0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         else:
-            self._heattransfercoefficient = value
+            self._heat_transfer_coefficient = value
             # set the corresponding keyword
             self.setkeyword(key="HTC", value=value)
 
     @property
-    def ambienttemperature(self):
+    def ambient_temperature(self) -> float:
         """
-        Get ambient temperature (optional) [K] (float scalar)
-        default value = 300 K
-        """
-        return self._ambienttemperature
+        Get ambient temperature
 
-    @ambienttemperature.setter
-    def ambienttemperature(self, value=0.0e0):
+        Returns
+        -------
+            ambient_temperature: double
+                ambient temperature [K]
         """
-        Set ambient temperature (optional)
-        default value = 300 K
-        :param value: ambient temperature [K] (float scalar)
+        return self._ambient_temperature
+
+    @ambient_temperature.setter
+    def ambient_temperature(self, value: float = 0.0e0):
+        """
+        Set ambient temperature
+
+        Parameters
+        ----------
+            value: double, default = 300.0
+                ambient temperature [K]
         """
         if value <= 0.0e0:
-            print(
-                Color.PURPLE + "** ambient temperature must be > 0",
-                end=Color.END,
-            )
+            msg = [Color.PURPLE, "ambient temperature must > 0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         else:
-            self._ambienttemperature = value
+            self._ambient_temperature = value
             # set the corresponding keyword
             self.setkeyword(key="TAMB", value=value)
 
     @property
-    def heattransferarea(self):
+    def heat_transfer_area(self) -> float:
         """
-        Get heat transfer area per length between the reactor and the surroundings (optional) [cm2/cm] (float scalar)
-        default value = 0.0 cm2/cm
-        """
-        return self._heattransferarea
+        Get heat transfer area per length between the reactor and the surroundings
 
-    @heattransferarea.setter
-    def heattransferarea(self, value=0.0e0):
+        Returns
+        -------
+            heat_transfer_area: double
+                heat transfer area [cm2/cm]
         """
-        Set heat transfer area per length between the reactor and the surroundings (optional)
-        default value = 0.0 cm2
-        :param value: heat transfer area [cm2/cm] (float scalar)
+        return self._heat_transfer_area
+
+    @heat_transfer_area.setter
+    def heat_transfer_area(self, value: float = 0.0e0):
+        """
+        Set heat transfer area per length between the reactor and the surroundings
+
+        Parameters
+        ----------
+            value: double, default = 0.0
+                heat transfer area [cm2/cm]
         """
         if value < 0.0e0:
-            print(
-                Color.PURPLE + "** heat transfer area must be >= 0",
-                end=Color.END,
-            )
+            msg = [Color.PURPLE, "heat transfer area must >= 0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         else:
-            self._heattransferarea = value
+            self._heat_transfer_area = value
             # set the corresponding keyword
             self.setkeyword(key="AREAQ", value=value)
 
-    def setheattransferareaprofile(self, x, area):
+    def set_heat_transfer_area_profile(self, x, area) -> int:
         """
         Specify reactor heat transfer area per reactor length profile
-        :param x: position value of the profile data [cm or sec] (double array)
-        :param area: heat transfer area value of the profile data [cm2/cm] (double array)
-        :return: error code (integer scalar)
-        """
-        if BatchReactors.EnergyTypes.get(self._energytype.value) == "GivenT":
-            print(
-                Color.PURPLE
-                + "** cannot specify heat transfer area of a fixed temperature flow reactor",
-                end=Color.END,
-            )
-            return 10
-        else:
-            keyword = "AEXT"
-            iErr = self.setprofile(key=keyword, x=x, y=area)
-            return iErr
 
-    def setheatlossprofile(self, x, Qloss):
+        Parameters
+        ----------
+            x: 1-D double array
+                position value of the profile data [cm]
+            area: 1-D double array
+                heat transfer area value of the profile data [cm2/cm]
+
+        Returns
+        -------
+            error code: integer
+        """
+        keyword = "AEXT"
+        iErr = self.setprofile(key=keyword, x=x, y=area)
+        return iErr
+
+    def set_heat_loss_profile(self, x, Qloss) -> int:
         """
         Specify reactor heat loss rate per length profile
-        :param x: position value of the profile data [cm or sec] (double array)
-        :param Qloss: heat loss rate value of the profile data [cal/sec-cm] (double array)
-        :return: error code (integer scalar)
-        """
-        if BatchReactors.EnergyTypes.get(self._energytype.value) == "GivenT":
-            print(
-                Color.PURPLE
-                + "** cannot specify heat loss rate of a fixed temperature flow reactor",
-                end=Color.END,
-            )
-            return 10
-        else:
-            keyword = "QPRO"
-            iErr = self.setprofile(key=keyword, x=x, y=Qloss)
-            return iErr
 
-    def setvelocityprofile(self, x, vel):
+        Parameters
+        ----------
+            x: 1-D double array
+                position value of the profile data [cm]
+            Qloss: 1-D double array
+                heat loss rate value of the profile data [cal/sec-cm]
+
+        Returns
+        -------
+            error code: integer
+        """
+        keyword = "QPRO"
+        iErr = self.setprofile(key=keyword, x=x, y=Qloss)
+        return iErr
+
+    def set_velocity_profile(self, x, vel) -> int:
         """
         Specify axial velocity profile along the plug-flow reactor
-        :param x: position value of the profile data [cm] (double array)
-        :param vel: axial velocity value of the profile data [cm/sec] (double array)
-        :return: error code (integer scalar)
+
+        Parameters
+        ----------
+            x: 1-D double array
+                position value of the profile data [cm]
+            vel: 1-D double array
+                axial velocity value of the profile data [cm/sec]
+
+        Returns
+        -------
+            error code: integer
         """
-        if BatchReactors.ReactorTypes.get(self._reactortype.value) != "PFR":
-            print(
-                Color.PURPLE
-                + "** cannot specify axial velocity of a non plug-flow reactor",
-                end=Color.END,
-            )
-            return 10
-        else:
-            keyword = "VELPRO"
-            iErr = self.setprofile(key=keyword, x=x, y=vel)
-            return iErr
+        keyword = "VELPRO"
+        iErr = self.setprofile(key=keyword, x=x, y=vel)
+        return iErr
 
 
-class PlugFlowReactor_GivenTemperature(PlugFlowReactor):
+class PlugFlowReactor_FixedTemperature(PlugFlowReactor):
     """
     Plug Flow Reactor (PFR) model with given temperature
     """
 
-    def __init__(self, inlet, label=None):
-        # set default label
-        if label is None:
-            label = "PFR"
+    def __init__(self, inlet, label: str = "PFR"):
+        """
+        Initialize a PFR object with given temperature profile along the length pf the reactor
+
+        Parameters
+        ----------
+            inlet: Inlet object
+                an inlet stream representing the gas properties and the flow rate at the PFR entrance
+            label: string, optional
+                reactor name
+        """
         # check Inlet
         if isinstance(inlet, Inlet):
             # initialization
             super().__init__(inlet, label)
         else:
             # wrong argument type
-            print(
-                Color.RED + "** the first argument must be an Inlet object",
-                end=Color.END,
-            )
-            raise TypeError
+            msg = [
+                Color.PURPLE,
+                "the first argument must be an Inlet object",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
 
         # set reactor type
-        self._energytype = c_int(self.EnergyTypes.get("GivenT"))
+        self._energytype = c_int(self.EnergyTypes.get("GivenT", 2))
         # set up basic batch reactor parameters
         iErr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,
@@ -734,18 +1020,34 @@ class PlugFlowReactor_GivenTemperature(PlugFlowReactor):
             )
             iErr *= 10
         if iErr != 0:
-            print(
-                Color.RED + f"** error initializing the reactor model: {self.label:s}"
-            )
-            print(f"   error code = {iErr:d}", end=Color.END)
+            msg = [
+                Color.RED,
+                "failed to initialize the plug-flow reactor model",
+                self.label,
+                "\n",
+                Color.SPACEx6,
+                "error code =",
+                str(iErr),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.critical(this_msg)
             exit()
 
-    def settemperatureprofile(self, x, temp):
+    def set_temperature_profile(self, x, temp) -> int:
         """
         Specify reactor temperature profile
-        :param x: position value of the profile data [cm or sec] (double array)
-        :param temp: temperature value of the profile data [K] (double array)
-        :return: error code (integer scalar)
+
+        Parameters
+        ----------
+            x: 1-D double array
+                position value of the profile data [cm]
+            temp: 1-D double array
+                temperature value of the profile data [K]
+
+        Returns
+        -------
+            error code: integer
         """
         keyword = "TPRO"
         iErr = self.setprofile(key=keyword, x=x, y=temp)

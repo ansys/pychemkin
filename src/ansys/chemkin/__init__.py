@@ -1,35 +1,83 @@
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """
-Chemkin module for python
+Chemkin module for Python
 core
 """
 
-# import numpy as np
 from ctypes import c_int
 import inspect
 import os
 import platform
 
-import yaml
-
-# import kinetics
-from . import chemkin_wrapper as ck_wrapper
-from .chemistry import *
-from .color import Color
-from .mixture import *
-from .reactormodel import *
-
-# try:
-#    import importlib.metadata as importlib_metadata
-# except ModuleNotFoundError:
-#    import importlib_metadata
-
-# __version__ = importlib_metadata.version(__name__.replace(".", "-"))
+# import Chemkin-CFD-API
+# import all commonly used constants and methods
+# so the users can have easy access to these resources
+from chemkin import chemkin_wrapper as ck_wrapper
+from chemkin.chemistry import Chemistry, done, set_verbose, verbose
+from chemkin.color import Color
+from chemkin.constants import (
+    Patm,
+    RGas,
+    RGas_Cal,
+    avogadro,
+    boltzmann,
+    ergs_per_calorie,
+    ergs_per_joule,
+    joules_per_calorie,
+)
+from chemkin.info import (
+    help,
+    keyword_hints,
+    manuals,
+    phrase_hints,
+    setup_hints,
+    show_equilibrium_options,
+    show_ignition_definitions,
+    show_realgas_usage,
+)
+from chemkin.logger import logger
+from chemkin.mixture import (
+    Mixture,
+    adiabatic_mixing,
+    calculate_equilibrium,
+    calculate_mixture_temperature_from_enthalpy,
+    detonation,
+    equilibrium,
+    interpolate_mixtures,
+    isothermal_mixing,
+)
+from chemkin.realgaseos import check_realgas_status, set_current_pressure
 
 # show ansys (chemkin) version number
-print(
-    Color.YELLOW + f"chemkin version number = {ck_wrapper._ansys_ver:d}",
-    end=Color.END,
-)
+msg = [
+    Color.YELLOW,
+    "Chemkin version number =",
+    str(ck_wrapper._ansys_ver),
+    Color.END,
+]
+this_msg = Color.SPACE.join(msg)
+logger.info(this_msg)
 # get ansys installation location
 ansys_dir = str(ck_wrapper._ansys_dir)
 
@@ -46,70 +94,9 @@ _chemkin_root = os.path.join(ansys_dir, "reaction", "chemkin" + _chemkin_platfor
 unit_code = c_int(1)
 iError = ck_wrapper.chemkin.KINSetUnitSystem(unit_code)
 
-# == Chemkin module global parameters -- DO NOT MODIFY without asking Chemkin development team members
+# chemkin module home directory
 frm = inspect.currentframe()
 if frm is not None:
-    _chemkinmodule_path = os.path.dirname(
-        inspect.getfile(frm)
-    )  # chemkin module home directory
-_ChemkinHelpFile = (
-    os.sep + "ChemkinKeywordTips.yaml"  # Chemkin keyword help data file in YAML format
-)
-_helploaded = False
-# == end of global parameters
-# print(_chemkinmodule_path + _ChemkinHelpFile)
-# Chemkin keyword hints
-if not _helploaded:
-    # load Chemkin keyword dictionary from the YAML file
-    with open(_chemkinmodule_path + _ChemkinHelpFile, "r") as hints:
-        _CKdict = yaml.safe_load(hints)
-        _helploaded = True
-
-
-def keywordhints(mykey):
-    """
-    Get hints about the Chemkin keyword
-    :param mykey: keyword (upper-case string)
-    :return: None
-    """
-    # look up the keyword
-    global _CKdict
-    key = _CKdict.get(mykey.upper())
-    if key is not None:
-        # fetch the information about the keyword
-        description, default, unit = key.values()
-        # show the result
-        print(Color.YELLOW + f"** tips about keyword '{mykey}'")
-        print(f"     Description: {description}")
-        print(f"     Default Value: {default}")
-        print(f"     Units: {unit}", end=Color.END)
-    else:
-        print(Color.RED + f"** keyword '{mykey}' is not found", end=Color.END)
-
-
-def phrasehints(phrase):
-    """
-    Get keyword hints by using key phrase in the description
-    :param phrase: lower-case search string (string)
-    :return: None
-    """
-    # initialization
-    keys = []
-    global _CKdict
-    # search to find keyword descriptions that contain the phrase
-    for s in _CKdict.values():
-        if phrase.lower() in s.get("Description"):
-            # get the dictionary index
-            k = list(_CKdict.values()).index(s)
-            # put the corresponding keywords into a candidate list
-            keys.append(list(_CKdict.keys())[k])
-    # show the hints for all candidate keywords
-    if len(keys) > 0:
-        for k in keys:
-            keywordhints(k)
-    else:
-        print(
-            Color.RED
-            + f"** no keyword description containing the phrase '{phrase}' is found",
-            end=Color.END,
-        )
+    _chemkin_module_path = os.path.dirname(inspect.getfile(frm))
+# set up Chemkin keyword help data
+setup_hints()

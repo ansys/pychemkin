@@ -1,21 +1,54 @@
-# The "Inlet" class is an extension of the "Mixture" class
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
 #
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+"""
+    Chemkin reactor inlet utilities.
+"""
+
 import copy
 
-from .chemistry import Patm
-from .color import Color
-from .mixture import Mixture
+from chemkin.color import Color
+from chemkin.constants import Patm
+from chemkin.logger import logger
+from chemkin.mixture import Mixture
 
 
 class Inlet(Mixture):
     """
-    define an inlet based on the gas species in the given chemistry set for open reactor models
+    Generic inlet stream consists of the gas species defined in the given chemistry set
+    for Chemkin open reactor models
     """
 
-    def __init__(self, chem):
+    # The "Inlet" class is an extension of the "Mixture" class
+
+    def __init__(self, chem, label: str | None = None):
         """
-        set up an inlet with a given chemistry set for open reactor models
-        :param chem: Chemistry object
+        Initialize an inlet object with a given chemistry set for open reactor models
+
+        Parameters
+        ----------
+            chem: Chemistry object
+            label: string, optional
+                inlet name
         """
         super().__init__(chem)
         # 0=mass flow rate/1=volumetric flow rate/2=velocity/3=SCCM
@@ -33,11 +66,19 @@ class Inlet(Mixture):
         self._haveflowarea = False
         # cross-sectional flow area [cm2]
         self._flowarea = 1.0
+        # set inlet label
+        if label is None:
+            label = "inlet"
+        self.label = label
 
-    def converttomassflowrate(self):
+    def convert_to_mass_flowrate(self) -> float:
         """
         convert different types of flow rate value to mass flow rate
-        :return: mass flow rate [g/sec] (double scalar)
+
+        Returns
+        -------
+            mrate: double
+                mass flow rate [g/sec]
         """
         #
         if self._flowratemode == 1:
@@ -52,11 +93,14 @@ class Inlet(Mixture):
                 return mrate
             else:
                 # no flow area
-                print(
-                    Color.PURPLE + "** flow area value is not given for this inlet",
-                    end=Color.END,
-                )
-                return 0.0
+                msg = [
+                    Color.PURPLE,
+                    "flow area is not given for this inlet.",
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+                exit()
 
         elif self._flowratemode == 3:
             # SCCM
@@ -74,13 +118,19 @@ class Inlet(Mixture):
             del frac
             return mrate
         else:
-            print(Color.PURPLE + "** unknown flow rate units", end=Color.END)
-            return 0.0
+            msg = [Color.PURPLE, "unknown flow rate units.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
 
-    def converttovolflowrate(self):
+    def convert_to_vol_flowrate(self) -> float:
         """
         convert different types of flow rate value to volumetric flow rate
-        :return: volmetric flow rate [cm3/sec] (double scalar)
+
+        Returns
+        -------
+            vrate: double
+                volmetric flow rate [cm3/sec]
         """
         #
         if self._flowratemode == 0:
@@ -95,11 +145,14 @@ class Inlet(Mixture):
                 return vrate
             else:
                 # no flow area
-                print(
-                    Color.PURPLE + "** flow area value is not given for this inlet",
-                    end=Color.END,
-                )
-                return 0.0
+                msg = [
+                    Color.PURPLE,
+                    "flow area is not given for this inlet.",
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+                exit()
 
         elif self._flowratemode == 3:
             # SCCM
@@ -118,13 +171,19 @@ class Inlet(Mixture):
             del frac
             return vrate
         else:
-            print(Color.PURPLE + "** unknown flow rate units", end=Color.END)
-            return 0.0
+            msg = [Color.PURPLE, "unknown flow rate units.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
 
-    def converttoSCCM(self):
+    def convert_to_SCCM(self) -> float:
         """
         convert different types of flow rate value to SCCM
-        :return: SCCM [standard cm3/min] (double scalar)
+
+        Returns
+        -------
+            sccm: double
+                volumetric flow rate in SCCM [standard cm3/min]
         """
         #
         chemID = self._chemset_index.value
@@ -157,63 +216,86 @@ class Inlet(Mixture):
                 return sccm
             else:
                 # no flow area
-                print(
-                    Color.PURPLE + "** flow area value is not given for this inlet",
-                    end=Color.END,
-                )
-                return 0.0
+                msg = [
+                    Color.PURPLE,
+                    "flow area is not given for this inlet.",
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+                exit()
         else:
-            print(Color.PURPLE + "** unknown flow rate units", end=Color.END)
-            return 0.0
+            msg = [Color.PURPLE, "unknown flow rate units.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
 
     @property
-    def flowarea(self):
+    def flowarea(self) -> float:
         """
         Get inlet flow area
-        :return: flow cross-sectional area [cm2] (double scalar)
+
+        Returns
+        -------
+            flowarea: double
+                cross-sectional flow area [cm2]
         """
         if self._haveflowarea:
             return self._flowarea
         else:
-            print(
-                Color.PURPLE + "** flow area value is not given for this inlet",
-                end=Color.END,
-            )
-            return self._flowarea
+            msg = [Color.PURPLE, "flow area is not given for this inlet.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
 
     @flowarea.setter
-    def flowarea(self, farea):
+    def flowarea(self, farea: float):
         """
         Set inlet cross-sectional flow area
-        :param farea: flow area [cm2] (double scalar)
-        :return: None
+
+        Parameters
+        ----------
+            farea: double
+                cross-sectional flow area [cm2]
         """
         if farea <= 0.0:
-            print(Color.RED + "** invalid flow area value", end=Color.END)
-            return
+            msg = [Color.PURPLE, "invalid flow area value.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         self._haveflowarea = True
         self._flowarea = farea
 
     @property
-    def massflowrate(self):
+    def mass_flowrate(self) -> float:
         """
         Get inlet mass flow rate
-        :return: mass flow rate [g/sec] (double scalar)
+
+        Returns
+        -------
+            mflowrate: double
+                mass flow rate [g/sec]
         """
         if self._flowratemode == 0:
             return self._massflowrate
         else:
-            return self.converttomassflowrate()
+            return self.convert_to_mass_flowrate()
 
-    @massflowrate.setter
-    def massflowrate(self, mflowrate):
+    @mass_flowrate.setter
+    def mass_flowrate(self, mflowrate: float):
         """
         Set inlet mass flow rate
-        :param mflowrate: mass flow rate [g/sec] (double scalar)
+
+        Parameters
+        ----------
+            mflowrate: double
+                mass flow rate [g/sec]
         """
         if mflowrate <= 0.0:
-            print(Color.RED + "** invalid mass flow rate value", end=Color.END)
-            return
+            msg = [Color.PURPLE, "invalid mass flow rate value.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         # reset the flow rates
         self._volflowrate = 0.0
         self._velocity = 0.0
@@ -224,25 +306,35 @@ class Inlet(Mixture):
         self._massflowrate = mflowrate
 
     @property
-    def volflowrate(self):
+    def vol_flowrate(self) -> float:
         """
         Get inlet volumetric flow rate
-        :return: mass flow rate [cm3/sec] (double scalar)
+
+        Returns
+        -------
+            vflowrate: double
+                volumetric flow rate [cm3/sec]
         """
         if self._flowratemode == 1:
             return self._volflowrate
         else:
-            return self.converttovolflowrate()
+            return self.convert_to_vol_flowrate()
 
-    @volflowrate.setter
-    def volflowrate(self, vflowrate):
+    @vol_flowrate.setter
+    def vol_flowrate(self, vflowrate: float):
         """
         Set inlet volumetric flow rate
-        :param vflowrate: volumetric flow rate [cm3/sec] (double scalar)
+
+        Parameters
+        ----------
+            vflowrate: double
+                volumetric flow rate [cm3/sec]
         """
         if vflowrate <= 0.0:
-            print(Color.RED + "** invalid volumetric flow rate value", end=Color.END)
-            return
+            msg = [Color.PURPLE, "invalid volumetric flow rate value.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         # reset the flow rates
         self._massflowrate = 0.0
         self._velocity = 0.0
@@ -253,28 +345,35 @@ class Inlet(Mixture):
         self._volflowrate = vflowrate
 
     @property
-    def sccm(self):
+    def sccm(self) -> float:
         """
         Get inlet SCCM volumetric flow rate
-        :return: SCCM volumetric flow rate [standard cm3/min] (double scalar)
+
+        Returns
+        -------
+            vflowrate: double
+                SCCM volumetric flow rate [standard cm3/min]
         """
         if self._flowratemode == 3:
             return self._SCCM
         else:
-            return self.converttoSCCM()
+            return self.convert_to_SCCM()
 
     @sccm.setter
-    def sccm(self, vflowrate):
+    def sccm(self, vflowrate: float):
         """
         Set inlet volumetric flow rate in SCCM
-        :param vflowrate: SCCM volumetric flow rate [standard cm3/min] (double scalar)
-        :return: None
+
+        Parameters
+        ----------
+            vflowrate: double
+                SCCM volumetric flow rate [standard cm3/min]
         """
         if vflowrate <= 0.0:
-            print(
-                Color.RED + "** invalid SCCM volumetric flow rate value", end=Color.END
-            )
-            return
+            msg = [Color.PURPLE, "invalid SCCM volumetric flow rate value.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         # reset the flow rates
         self._massflowrate = 0.0
         self._volflowrate = 0.0
@@ -285,10 +384,14 @@ class Inlet(Mixture):
         self._SCCM = vflowrate
 
     @property
-    def velocity(self):
+    def velocity(self) -> float:
         """
         Get inlet gas velocity
-        :return: velocity [cm/sec] (double scalar)
+
+        Returns
+        -------
+            vel: double
+                velocity [cm/sec]
         """
         if self._flowratemode == 2:
             return self._velocity
@@ -298,27 +401,34 @@ class Inlet(Mixture):
                 if self._flowratemode == 1:
                     vrate = self._volflowrate
                 else:
-                    vrate = self.converttovolflowrate()
+                    vrate = self.convert_to_vol_flowrate()
                 # convert volumetric flow rate to velocity
                 return vrate / self._flowarea
             else:
                 # flow area not defined
-                print(
-                    Color.PURPLE + "** flow area value is not given for this inlet",
-                    end=Color.END,
-                )
-                return 0.0
+                msg = [
+                    Color.PURPLE,
+                    "flow area is not given for this inlet.",
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+                exit()
 
     @velocity.setter
-    def velocity(self, vel):
+    def velocity(self, vel: float):
         """
         Set inlet velocity
-        :param vel: velocity [cm/sec] (double scalar)
-        :return: None
+
+        Parameters
+        ----------
+            vel: velocity [cm/sec]
         """
         if vel <= 0.0:
-            print(Color.RED + "** invalid inlet velocity value", end=Color.END)
-            return
+            msg = [Color.PURPLE, "invalid inlet velocity value.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         # reset the flow rates
         self._massflowrate = 0.0
         self._volflowrate = 0.0
@@ -329,26 +439,37 @@ class Inlet(Mixture):
         self._velocity = vel
 
     @property
-    def velocitygradient(self):
+    def velocity_gradient(self) -> float:
         """
         Get inlet gas axial velocity gradient (for premixed, oppdif, and spin)
         or radial velocity spreading rate (v_r/r) at the inlet.
-        :return: velocity gradient [1/sec] (double scalar)
+
+        Returns
+        -------
+            velgrad: double
+                velocity gradient [1/sec]
         """
         return self._velgrad
 
-    @velocitygradient.setter
-    def velocitygradient(self, velgrad):
+    @velocity_gradient.setter
+    def velocity_gradient(self, velgrad: float):
         """
         Set inlet axial velocity gradient
-        :param velgrad: axial velocity gradient [1/sec] (double scalar)
+
+        Parameters
+        ----------
+            velgrad: double
+                axial velocity gradient [1/sec]
         :return: None
         """
         if velgrad <= 0.0:
-            print(
-                Color.RED + "** invalid inlet radial velocity spreading rate value",
-                end=Color.END,
-            )
-            return
+            msg = [
+                Color.PURPLE,
+                "invalid inlet radial velocity spreading rate value.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         # set velocity gradient
         self._velgrad = velgrad

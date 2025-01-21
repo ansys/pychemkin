@@ -1,25 +1,55 @@
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+"""
+    Chemkin-CFD-API python interfaces.
+"""
+
 import ctypes
 from ctypes import cdll
-import logging
 import os
 import platform
 
 import numpy as np
 
-logger = logging.getLogger(__name__)
-
-# current_dir = os.getcwd()
-# logger.debug("Current working directory =", current_dir)
+from .color import Color
+from .logger import logger
 
 # set ansys version number
 _min_version = 251
-_valid_versions = [251, 242]
+_valid_versions = [262, 261, 252, 251, 242]
 _ansys_ver = _min_version
 _ansys_dir = None
 _ckbin = None
 status = 0
 _target_lib = None
 _lib_paths = []
+# create log
+msg = ["minimum version =", str(_min_version)]
+this_msg = Color.SPACE.join(msg)
+logger.debug(this_msg)
+msg = ["latest version = ", str(_valid_versions[0])]
+this_msg = Color.SPACE.join(msg)
+logger.debug(this_msg)
 
 
 def __setwindows():
@@ -48,9 +78,14 @@ def __setwindows():
     if _ansys_ver >= _min_version:
         if not os.path.isdir(_ansys_dir):
             # no local Ansys installation
-            print(
-                f"** PyChemkin cannot find the specific Ansys installation: {_ansys_dir}"
-            )
+            msg = [
+                Color.RED,
+                "PyChemkin cannot find the specific Ansys installation:",
+                str(_ansys_dir),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.critical(this_msg)
             return 1
         else:
             plat = "winx64"
@@ -63,12 +98,18 @@ def __setwindows():
                 os.path.join(_ansys_dir, "tp", "zlib", "1.2.13", plat),
             ]
     else:
-        print("** PyChemkin does not support Chemkin versions older than 2025R1")
+        msg = [
+            Color.RED,
+            "PyChemkin does not support Chemkin versions older than 2025R1.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.critical(this_msg)
         return 2
     # set load dll paths
     for _lib_path in _lib_paths:
         os.add_dll_directory(_lib_path)
-    # set KINetics shared object
+    # set Chemkin-CFD-API shared object
     _target_lib = os.path.join(_ansys_dir, "reaction", _ckbin, "bin", "KINeticsdll.dll")
     return 0
 
@@ -131,16 +172,31 @@ def __setlinux():
 
     # check Ansys installation error
     if iErr == 1:
-        print("** error finding local Ansys chemkin installation")
-        print("** please make sure Ansys v251 or newer is installed locally")
-        print("** otherwise, please set the environment variable")
-        print("         ANSYSxxx_DIR")
-        print('with value = "<full path to local Ansys installation>/ANSYS"')
-        print("for example, ANSYS251_DIR = ")
-        print('             "$HOME/ansys_inc/v251/ANSYS"')
+        msg = [
+            Color.RED,
+            "failed to find local Ansys chemkin installation.\n",
+            Color.SPACEx6,
+            "please make sure Ansys v251 or newer is installed locally\n",
+            Color.SPACEx6,
+            "otherwise, please set the environment variable",
+            '"ANSYSxxx_DIR"\n',
+            Color.SPACEx6,
+            'with value = "<full path to local Ansys installation>/ANSYS"\n',
+            Color.SPACEx6,
+            'for example, ANSYS251_DIR = "$HOME/ansys_inc/v251/ANSYS".',
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.critical(this_msg)
         return 1
     elif iErr == 2:
-        print("** PyChemkin does not support Chemkin versions older than 2025R1")
+        msg = [
+            Color.RED,
+            "PyChemkin does not support Chemkin versions older than 2025R1.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.critical(this_msg)
         return 2
 
     # required third-party shared objects
@@ -174,7 +230,7 @@ def __setlinux():
         os.environ["PATH"] = combined_path
     else:
         os.environ["PATH"] = os.environ["PATH"] + ":" + combined_path
-    # set KINetics shared object
+    # set Chemkin-CFD-API shared object
     _target_lib = os.path.join(_ansys_dir, "reaction", _ckbin, "bin", "libKINetics.so")
     return 0
 
@@ -187,28 +243,44 @@ elif platform.system() == "Linux":
     # set ansys installation directory (Linux)
     status = __setlinux()
 else:
-    print(f"** unsupported platform {platform.system()}")
-    print("** PyChemkin does not support the current os")
+    msg = [
+        Color.RED,
+        "unsupported platform",
+        str(platform.system()),
+        "\n",
+        "PyChemkin does not support the current os.",
+        Color.END,
+    ]
+    this_msg = Color.SPACE.join(msg)
+    logger.critical(this_msg)
     exit()
 # check set up status
 if status != 0:
     exit()
-# load KINetics shared object
+# load Chemkin-CFD-API shared object
 try:
     chemkin = cdll.LoadLibrary(str(_target_lib))
 except OSError:
     inst_dir = os.path.join(str(_ansys_dir), "reaction", str(_ckbin), "bin")
-    print("** error initializing ansys-chemkin")
-    print("** please verify local Chemkin installation at ")
-    print("   " + inst_dir)
-    print(
-        "** run the chemkin set up script"
-        + " 'source chemkin_setup.ksh' in the directory"
-    )
-    print("** or check for a valid Ansys-chemkin license")
+    msg = [
+        Color.RED,
+        "error initializing ansys-chemkin.\n",
+        Color.SPACEx6,
+        "please verify local Chemkin installation at",
+        str(inst_dir),
+        "\n",
+        Color.SPACEx6,
+        "run the chemkin set up script",
+        "'source chemkin_setup.ksh' in the 'bin' directory.\n",
+        Color.SPACEx6,
+        "or check for a valid Ansys-chemkin license.",
+        Color.END,
+    ]
+    this_msg = Color.SPACE.join(msg)
+    logger.critical(this_msg)
     exit()
-# KINetics APIs
-# document: KINetics API Reference Guide (Ansys Help portal)
+# Chemkin-CFD-API
+# document: Chemkin-CFD-API Reference Guide (Ansys Help portal)
 #
 # syntax:
 # Specify the return type of the function
@@ -625,6 +697,8 @@ chemkin.KINAll0D_SetHeatTransfer.argtypes = [
 chemkin.KINAll0D_SetHeatTransferArea.restype = ctypes.c_int
 chemkin.KINAll0D_SetHeatTransferArea.argtypes = [ctypes.POINTER(ctypes.c_double)]
 # profile
+chemkin.KINAll0D_SetProfilePoints.restype = ctypes.c_int
+chemkin.KINAll0D_SetProfilePoints.argtypes = [ctypes.POINTER(ctypes.c_int)]
 chemkin.KINAll0D_SetProfileParameter.restype = ctypes.c_int
 chemkin.KINAll0D_SetProfileParameter.argtypes = [
     ctypes.POINTER(ctypes.c_char),

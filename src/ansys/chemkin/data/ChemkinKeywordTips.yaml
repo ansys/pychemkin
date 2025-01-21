@@ -29,7 +29,7 @@ USE_LEGACY_TECHNIQUE:
     DefaultValue: '4.x'
     Units: 'none'
 ATLS:
-    Description: 'absolute tolerance for the sensitivity coefficents'
+    Description: 'absolute tolerance for the sensitivity coefficients'
     DefaultValue: '1.0E-6'
     Units: 'none'
 RTLS:
