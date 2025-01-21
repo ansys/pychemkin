@@ -23,8 +23,11 @@ import os
 
 import chemkin as ck  # Chemkin
 from chemkin import Color
+
 # chemkin batch reactor models (transient)
-from chemkin.batchreactors.batchreactor import GivenPressureBatchReactor_EnergyConservation
+from chemkin.batchreactors.batchreactor import (
+    GivenPressureBatchReactor_EnergyConservation,
+)
 from chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
@@ -36,7 +39,7 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(True)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file 
+# interactive = False: save plot as a png file
 global interactive
 interactive = False
 
@@ -49,13 +52,13 @@ MyGasMech = ck.Chemistry(label="GRI 3.0")
 # inclusion of the full file path is recommended
 MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-#MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
 # create the fuel mixture
 fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition
-fuelmixture.X = [("H2", 2.0),("N2",3.76),("O2", 1.0)]
+fuelmixture.X = [("H2", 2.0), ("N2",3.76), ("O2", 1.0)]
 # setting pressure and temperature is not required in this case
 fuelmixture.pressure = ck.Patm
 fuelmixture.temperature = 1000
@@ -100,7 +103,7 @@ MyCONV.time = 0.0005
 # MyCONV.set_volume_profile(x, volprofile)
 # output controls
 # set timestep between saving solution
-#MyCONV.timestep_for_saving_solution = 0.01
+# MyCONV.timestep_for_saving_solution = 0.01
 # turn ON adaptive solution saving
 MyCONV.adaptive_solution_saving(mode=True, steps=20)
 # turn OFF adaptive solution saving
@@ -115,7 +118,7 @@ print(f"default relative tolerance = {RTOL}")
 MyCONV.force_nonnegative = True
 # specify the ignition definitions
 ck.show_ignition_definitions()
-MyCONV.set_ignition_delay(method="T_rise",val=400)
+MyCONV.set_ignition_delay(method="T_rise", val=400)
 # stop the simulation when ignition is detected
 # MyCONV.stop_after_ignition()
 # show solver option
@@ -133,7 +136,7 @@ if runstatus != 0:
     exit()
 # run success!
 print(Color.GREEN + ">>> RUN COMPLETED <<<", end="\n" + Color.END)
-#get ignition delay time (need to deduct the initial compression time = 0.01 [sec])
+# get ignition delay time (need to deduct the initial compression time = 0.01 [sec])
 # delaytime = MyCONV.get_ignition_delay()
 # print(f"ignition delay time = {delaytime} [msec]")
 # post-process the solutions
@@ -145,13 +148,7 @@ print(f"number of solution points = {solutionpoints}")
 timeprofile = MyCONV.get_solution_variable_profile("time")
 # get the temperature profile
 tempprofile = MyCONV.get_solution_variable_profile("temperature")
-# # get the volume profile
-# volprofile = MyCONV.get_solution_variable_profile("volume")
-#get CH4 mass fraction profile
-CH4massfraction = MyCONV.get_solution_variable_profile("H2O")
-#more involving post-processing by using Mixtures
-#mass
-massprofile = np.zeros_like(timeprofile, dtype=np.double)
+# more involving post-processing by using Mixtures
 # create arrays for CH4 mole fraction, CH4 ROP, and mixture viscosity
 H2Oprofile = np.zeros_like(timeprofile, dtype=np.double)
 H2OROPprofile = np.zeros_like(timeprofile, dtype=np.double)
@@ -171,14 +168,6 @@ for i in range(solutionpoints):
     # get CH4 ROP profile
     currentROP = solutionmixture.ROP()
     H2OROPprofile[i] = currentROP[H2O_index]
-#print(str(tempprofile))
-#exit()
-# validation
-# del_mass = np.zeros_like(timeprofile, dtype=np.double)
-# mass0 = massprofile[0]
-# for i in range(solutionpoints):
-#     del_mass[i] = abs(massprofile[i] - mass0)
-# print(f">>> maximum magnitude of reactor mass deviation = {np.max(del_mass)} [g]")
 # plot the profiles
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))
 plt.subplot(221)

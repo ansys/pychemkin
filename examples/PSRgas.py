@@ -24,9 +24,9 @@ import time
 
 import chemkin as ck  # Chemkin
 from chemkin import Color
-# external gaseous inlet
-from chemkin.inlet import Inlet
+from chemkin.inlet import Inlet  # external gaseous inlet
 from chemkin.logger import logger
+
 # chemkin perfectly-stirred reactor (PSR) model (steady-state)
 from chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
 import matplotlib.pyplot as plt  # plotting
@@ -39,18 +39,22 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(True)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file 
+# interactive = False: save plot as a png file
 global interactive
 interactive = False
 
 # set mechanism directory (the default chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data", "ModelFuelLibrary", "Skeletal")
+data_dir = os.path.join(
+    ck.ansys_dir, "reaction", "data", "ModelFuelLibrary", "Skeletal"
+)
 mechanism_dir = data_dir
 # create a chemistry set based on the gasoline 14 components mechanism
 MyGasMech = ck.Chemistry(label="hydrogen")
 # set mechanism input files
 # inclusion of the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "Hydrogen-Ammonia-NOx_chem_MFL2021.inp")
+MyGasMech.chemfile = os.path.join(
+    mechanism_dir, "Hydrogen-Ammonia-NOx_chem_MFL2021.inp"
+)
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
 # create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
@@ -100,8 +104,8 @@ sphere.steady_state_tolerances = (1.0e-9, 1.0e-6)
 sphere.timestepping_tolerances = (1.0e-9, 1.0e-6)
 # reset the gas species floor value in the steady-state solver
 sphere.set_species_floor(-1.0e-10)
-# inlet gas equivalence ratio increment 
-deltaequiv = 0.05 
+# inlet gas equivalence ratio increment
+deltaequiv = 0.05
 numbruns = 9
 # solution arrays
 inletequiv = np.zeros(numbruns, dtype=np.double)
@@ -121,7 +125,7 @@ for i in range(numbruns):
     print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
     # post-process the solution profiles
     solnmixture = sphere.process_solution()
-    # print the steady-state solution values 
+    # print the steady-state solution values
     # print(f"steady-state temperature = {solnmixture.temperature} [K]")
     # solnmixture.list_composition(mode="mole")
     # store solution values

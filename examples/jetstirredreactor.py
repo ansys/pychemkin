@@ -24,9 +24,9 @@ import time
 
 import chemkin as ck  # Chemkin
 from chemkin import Color
-# external gaseous inlet
-from chemkin.inlet import Inlet
+from chemkin.inlet import Inlet  # external gaseous inlet
 from chemkin.logger import logger
+
 # chemkin perfectly-stirred reactor (PSR) model (steady-state)
 from chemkin.stirreactors.PSR import PSR_SetResTime_FixedTemperature as PSR
 import matplotlib.pyplot as plt  # plotting
@@ -39,18 +39,22 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(True)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file 
+# interactive = False: save plot as a png file
 global interactive
 interactive = False
 
 # set mechanism directory (the default chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data", "ModelFuelLibrary", "Skeletal")
+data_dir = os.path.join(
+    ck.ansys_dir, "reaction", "data", "ModelFuelLibrary", "Skeletal"
+)
 mechanism_dir = data_dir
 # create a chemistry set based on the hydrogen-ammonia mechanism
 MyGasMech = ck.Chemistry(label="hydrogen")
 # set mechanism input files
 # inclusion of the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "Hydrogen-Ammonia-NOx_chem_MFL2021.inp")
+MyGasMech.chemfile = os.path.join(
+    mechanism_dir, "Hydrogen-Ammonia-NOx_chem_MFL2021.inp"
+)
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
 # create a premixed fuel-oxidizer mixture
@@ -74,8 +78,8 @@ JSR.set_inlet(feed)
 JSR.residence_time = 120.0 * 1.0e-3
 # set the number of initial pseudo time steps in the steady-state solver
 JSR.set_initial_timesteps(1000)
-# inlet gas temperature increment 
-deltatemp = 25.0 
+# inlet gas temperature increment
+deltatemp = 25.0
 numbruns = 19
 # find H2O species index
 H2Oindex = MyGasMech.get_specindex("h2o")
@@ -97,7 +101,7 @@ for i in range(numbruns):
     print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
     # post-process the solution profiles
     solnmixture = JSR.process_solution()
-    # print the steady-state solution values 
+    # print the steady-state solution values
     # print(f"steady-state temperature = {solnmixture.temperature} [K]")
     # solnmixture.list_composition(mode="mole")
     # store solution values

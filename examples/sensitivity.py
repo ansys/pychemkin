@@ -24,6 +24,7 @@ import time
 
 import chemkin as ck  # Chemkin
 from chemkin import Color
+
 # chemkin batch reactor models (transient)
 from chemkin.batchreactors.batchreactor import (
     GivenPressureBatchReactor_EnergyConservation,
@@ -39,7 +40,7 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(False)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file 
+# interactive = False: save plot as a png file
 global interactive
 interactive = False
 

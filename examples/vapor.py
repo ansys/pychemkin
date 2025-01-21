@@ -23,6 +23,7 @@ import os
 
 import chemkin as ck  # Chemkin
 from chemkin import Color
+
 # chemkin batch reactor model (transient)
 from chemkin.batchreactors.batchreactor import (
     GivenPressureBatchReactor_FixedTemperature,
@@ -36,7 +37,7 @@ current_dir = os.getcwd()
 logger.debug("working directory: " + current_dir)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file 
+# interactive = False: save plot as a png file
 global interactive
 interactive = False
 
