@@ -119,13 +119,13 @@ print(f"detonation wave speed = {speeds_mix1[1]/100.0} [m/sec]")
 resultfile = os.path.join(current_dir, "multiplemechanisms.result")
 results = {}
 results["state-temperature_IdealGas"] = [CJ_mix1.temperature]
-results["state-detonation_speed_IdealGas"] = [speeds_mix1[1]/100.0]
+results["state-detonation_speed_IdealGas"] = [speeds_mix1[1] / 100.0]
 results["state-temperature_RealGas"] = [CJ_mix2.temperature]
-results["state-detonation_speed_RealGas"] = [speeds_mix2[1]/100.0]
+results["state-detonation_speed_RealGas"] = [speeds_mix2[1] / 100.0]
 #
 r = open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
-    r.write(f"\"{k}\": {v},\n")
+    r.write(f'"{k}": {v},\n')
 r.write("}\n")
 r.close()

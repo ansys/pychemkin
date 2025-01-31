@@ -69,12 +69,12 @@ results = {}
 results["state-temperature"] = [air.temperature]
 results["state-pressure"] = [air.pressure]
 results["state-density"] = [air.RHO]
-results["state-viscosity"] = [air.mixture_viscosity()*100.0]
+results["state-viscosity"] = [air.mixture_viscosity() * 100.0]
 results["species-mole_fraction"] = air.X.tolist()
 #
 r = open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
-    r.write(f"\"{k}\": {v},\n")
+    r.write(f'"{k}": {v},\n')
 r.write("}\n")
 r.close()

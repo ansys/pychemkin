@@ -24,10 +24,12 @@
 pychemkin utilities
 """
 
+import numpy as np
+
 from .chemistry import Chemistry
 from .color import Color
 from .logger import logger
-import numpy as np
+
 
 def where_element_in_array_1D(arr, target):
     """
@@ -114,7 +116,7 @@ def find_interpolate_parameters(x: float, xarray):
             a sorted array containing all x values in strictly ascending order x[i] < x[i+1]
 
     Returns
-    ------- 
+    -------
     itarget: integer
         the largest index in the xarray of which its value is small or equal to the target x value
     ratio: double
@@ -140,7 +142,7 @@ def find_interpolate_parameters(x: float, xarray):
             "does not fall between",
             str(xarray[0]),
             "and",
-            str(xarray[iarraysize-1]),
+            str(xarray[iarraysize - 1]),
             Color.END,
         ]
         this_msg = Color.SPACE.join(msg)
@@ -199,14 +201,18 @@ def create_mixture_recipe_from_fractions(chemistry_set, frac):
         count: integer
             the size of the recipe list containing [gas species, mole/mass fraction] tuples
         recipe: list of tuples, [(species_symbol, fraction), ... ]
-            non-zero mixture composition corresponding to the given mole/mass fraction array 
+            non-zero mixture composition corresponding to the given mole/mass fraction array
     """
     # initialization
     count = 0
     recipe = []
     # check Chemistry object
     if not isinstance(chemistry_set, Chemistry):
-        msg = [Color.PURPLE, "the first argument must be a Chemistry object.", Color.END]
+        msg = [
+            Color.PURPLE,
+            "the first argument must be a Chemistry object.",
+            Color.END,
+        ]
         this_msg = Color.SPACE.join(msg)
         logger.error(this_msg)
         exit()
@@ -308,9 +314,12 @@ def calculate_stoichiometrics(chemistryset, fuel_molefrac, oxid_molefrac, prod_i
             stoichiometric_coefficients_of_products
     """
     # check the Chemistry object
-    iErr = 0
     if not isinstance(chemistryset, Chemistry):
-        msg = [Color.PURPLE, "the first argument must be a Chemistry object.", Color.END]
+        msg = [
+            Color.PURPLE,
+            "the first argument must be a Chemistry object.",
+            Color.END,
+        ]
         this_msg = Color.SPACE.join(msg)
         logger.error(this_msg)
         exit()

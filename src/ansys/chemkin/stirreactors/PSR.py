@@ -27,6 +27,8 @@
 import copy
 from ctypes import c_double, c_int
 
+import numpy as np
+
 from .. import chemkin_wrapper
 from ..chemistry import (
     check_chemistryset,
@@ -39,7 +41,6 @@ from ..inlet import Inlet
 from ..logger import logger
 from ..reactormodel import Keyword
 from ..stirreactors.openreactor import openreactor
-import numpy as np
 
 
 class perfectlystirredreactor(openreactor):

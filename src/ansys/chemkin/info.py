@@ -28,9 +28,10 @@ import importlib.resources
 import os
 import webbrowser
 
+import yaml
+
 from .color import Color
 from .logger import logger
-import yaml
 
 CKdict = {}  # chemkin hints
 _help_loaded = False

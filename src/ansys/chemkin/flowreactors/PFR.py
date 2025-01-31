@@ -27,6 +27,8 @@
 import copy
 from ctypes import c_double, c_int
 
+import numpy as np
+
 from .. import chemkin_wrapper
 from ..batchreactors.batchreactor import BatchReactors
 from ..chemistry import (
@@ -39,7 +41,6 @@ from ..color import Color as Color
 from ..inlet import Inlet
 from ..logger import logger
 from ..reactormodel import Keyword
-import numpy as np
 
 
 class PlugFlowReactor(BatchReactors):

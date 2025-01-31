@@ -22,7 +22,7 @@ def pytest_addoption(parser):
             "PSR",
             "",
         ),
-        default = "",
+        default="",
         help="run test groups named in GROUPNAME.",
     )
     parser.addoption(
@@ -54,7 +54,7 @@ def pytest_configure(config):
     """
     Register custom markers.
     """
-    # configure marker: @pytest.mark.group(GROUPNAME) for each group class 
+    # configure marker: @pytest.mark.group(GROUPNAME) for each group class
     config.addinivalue_line("markers", "group(groupname): mark test groups to run.")
 
 
@@ -90,9 +90,7 @@ def pytest_collection_modifyitems(items):
     sorted_items = items.copy()
     # Iteratively move tests of each class to the end of the test queue
     for class_ in CLASS_ORDER:
-        sorted_items = [
-            it for it in sorted_items if class_mapping[it] != class_
-        ] + [
+        sorted_items = [it for it in sorted_items if class_mapping[it] != class_] + [
             it for it in sorted_items if class_mapping[it] == class_
         ]
     items[:] = sorted_items
@@ -102,17 +100,21 @@ def pytest_collection_modifyitems(items):
 def get_nocompare(request):
     return request.config.getoption("--nocompare")
 
+
 @pytest.fixture
 def get_source_dir(request):
     return request.config.getoption("--source")
+
 
 @pytest.fixture
 def get_baseline_dir(request):
     return request.config.getoption("--baseline")
 
+
 @pytest.fixture
 def get_result_dir(request):
     return request.config.getoption("--results")
+
 
 @pytest.fixture
 def get_working_dir(request):

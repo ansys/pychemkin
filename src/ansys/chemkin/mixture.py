@@ -28,6 +28,9 @@ import copy
 import ctypes
 from ctypes import c_double, c_int
 
+import numpy as np
+import numpy.typing as npt
+
 from . import chemkin_wrapper as ck_wrapper
 from .chemistry import (
     Chemistry,
@@ -41,8 +44,6 @@ from .chemistry import (
 )
 from .color import Color
 from .utilities import calculate_stoichiometrics, where_element_in_array_1D
-import numpy as np
-import numpy.typing as npt
 
 
 class Mixture:

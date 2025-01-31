@@ -27,6 +27,8 @@
 import copy
 from ctypes import c_double, c_int
 
+import numpy as np
+
 from .. import chemkin_wrapper
 from ..chemistry import (
     check_chemistryset,
@@ -41,7 +43,6 @@ from ..engines.engine import Engine
 from ..inlet import Inlet
 from ..logger import logger
 from ..reactormodel import Keyword
-import numpy as np
 
 # import numpy.typing as npt
 

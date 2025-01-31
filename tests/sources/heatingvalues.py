@@ -20,7 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 import os
-import json
 
 import ansys.chemkin as ck
 from ansys.chemkin import Color
@@ -86,6 +85,7 @@ def getwaterheatofvaporization(temp):
     # remove the temporary water mechanism file
     os.remove(waterfile)
     return heatvaporization
+
 
 #
 # create the mechanism file with fuel species and complete combustion products only
@@ -236,6 +236,6 @@ results["state-HHV"] = HHV.tolist()
 r = open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
-    r.write(f"\"{k}\": {v},\n")
+    r.write(f'"{k}": {v},\n')
 r.write("}\n")
 r.close()

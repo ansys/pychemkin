@@ -29,13 +29,14 @@ from ctypes import POINTER, c_char_p, c_double, c_int
 import os
 from typing import Dict, List
 
+import numpy as np
+
 from . import chemkin_wrapper as ck_wrapper
 from .color import Color
 from .constants import RGas
 from .info import clear_hints
 from .logger import logger
 from .realgaseos import check_realgas_status, set_current_pressure
-import numpy as np
 
 _symbol_length = 16  # Chemkin element/species symbol length
 MAX_SPECIES_LENGTH = _symbol_length + 1  # Chemkin element/species symbol length + 1

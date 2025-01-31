@@ -27,6 +27,8 @@
 import copy
 from ctypes import c_double, c_int
 
+import numpy as np
+
 from .. import chemkin_wrapper
 from ..chemistry import (
     check_chemistryset,
@@ -44,7 +46,6 @@ from ..mixture import interpolate_mixtures
 from ..reactormodel import Keyword
 from ..reactormodel import ReactorModel as reactor
 from ..utilities import find_interpolate_parameters
-import numpy as np
 
 # import numpy.typing as npt
 

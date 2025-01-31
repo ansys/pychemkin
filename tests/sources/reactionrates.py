@@ -141,6 +141,6 @@ results["rate-net_reaction_rate_1800"] = net_rxn_rates.tolist()
 r = open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
-    r.write(f"\"{k}\": {v},\n")
+    r.write(f'"{k}": {v},\n')
 r.write("}\n")
 r.close()

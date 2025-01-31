@@ -28,6 +28,9 @@ import copy
 import ctypes
 from ctypes import c_double, c_int
 
+import numpy as np
+import numpy.typing as npt
+
 from . import chemkin_wrapper
 from .chemistry import (
     check_active_chemistryset,
@@ -40,8 +43,6 @@ from .constants import Patm
 from .inlet import Inlet
 from .logger import logger
 from .mixture import Mixture
-import numpy as np
-import numpy.typing as npt
 
 
 #

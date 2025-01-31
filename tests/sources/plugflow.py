@@ -189,6 +189,6 @@ results["species-NO2_mole_fraction"] = NO2profile.tolist()
 r = open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
-    r.write(f"\"{k}\": {v},\n")
+    r.write(f'"{k}": {v},\n')
 r.write("}\n")
 r.close()
