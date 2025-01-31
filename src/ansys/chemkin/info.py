@@ -28,8 +28,8 @@ import importlib.resources
 import os
 import webbrowser
 
-from chemkin.color import Color
-from chemkin.logger import logger
+from .color import Color
+from .logger import logger
 import yaml
 
 CKdict = {}  # chemkin hints
@@ -41,7 +41,7 @@ def setup_hints():
     Set up Chemkin keyword hints
     """
     # Chemkin keyword help data file in YAML format
-    _chemkin_resources_dir = importlib.resources.files("chemkin").joinpath("data")
+    _chemkin_resources_dir = importlib.resources.files("ansys.chemkin").joinpath("data")
     help_file = os.path.join(_chemkin_resources_dir, "ChemkinKeywordTips.yaml")
     global _help_loaded
     if not _help_loaded:

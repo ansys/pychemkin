@@ -24,8 +24,8 @@
     Chemkin steady-state solver controlling parameters.
 """
 
-from chemkin.color import Color
-from chemkin.logger import logger
+from .color import Color
+from .logger import logger
 import numpy as np
 
 

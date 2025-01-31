@@ -28,15 +28,16 @@ core
 from ctypes import c_int
 import inspect
 import os
+from pathlib import Path
 import platform
 
 # import Chemkin-CFD-API
 # import all commonly used constants and methods
 # so the users can have easy access to these resources
-from chemkin import chemkin_wrapper as ck_wrapper
-from chemkin.chemistry import Chemistry, done, set_verbose, verbose
-from chemkin.color import Color
-from chemkin.constants import (
+from . import chemkin_wrapper as ck_wrapper
+from .chemistry import Chemistry, done, set_verbose, verbose
+from .color import Color
+from .constants import (
     Patm,
     RGas,
     RGas_Cal,
@@ -46,7 +47,7 @@ from chemkin.constants import (
     ergs_per_joule,
     joules_per_calorie,
 )
-from chemkin.info import (
+from .info import (
     help,
     keyword_hints,
     manuals,
@@ -56,8 +57,8 @@ from chemkin.info import (
     show_ignition_definitions,
     show_realgas_usage,
 )
-from chemkin.logger import logger
-from chemkin.mixture import (
+from .logger import logger
+from .mixture import (
     Mixture,
     adiabatic_mixing,
     calculate_equilibrium,
@@ -67,7 +68,7 @@ from chemkin.mixture import (
     interpolate_mixtures,
     isothermal_mixing,
 )
-from chemkin.realgaseos import check_realgas_status, set_current_pressure
+from .realgaseos import check_realgas_status, set_current_pressure
 
 # show ansys (chemkin) version number
 msg = [
@@ -80,6 +81,7 @@ this_msg = Color.SPACE.join(msg)
 logger.info(this_msg)
 # get ansys installation location
 ansys_dir = str(ck_wrapper._ansys_dir)
+ansys_version = ck_wrapper._ansys_ver
 
 _chemkin_platform = None
 if platform.system() == "Windows":
@@ -88,7 +90,8 @@ else:
     _chemkin_platform = "linuxx8664"
 
 # get chemkin installation location
-_chemkin_root = os.path.join(ansys_dir, "reaction", "chemkin" + _chemkin_platform)
+_chemkin_root = os.path.join(ansys_dir, "reaction", "chemkin." + _chemkin_platform)
+chemkin_dir = Path(_chemkin_root)
 
 # set default units to cgs
 unit_code = c_int(1)
@@ -98,5 +101,6 @@ iError = ck_wrapper.chemkin.KINSetUnitSystem(unit_code)
 frm = inspect.currentframe()
 if frm is not None:
     _chemkin_module_path = os.path.dirname(inspect.getfile(frm))
+    pychemkin_dir = Path(_chemkin_module_path)
 # set up Chemkin keyword help data
 setup_hints()

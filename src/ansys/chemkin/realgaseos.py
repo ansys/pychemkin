@@ -26,7 +26,7 @@ Real-gas cubic EOS model.
 
 from ctypes import c_double, c_int
 
-from chemkin import chemkin_wrapper as ck_wrapper
+from . import chemkin_wrapper as ck_wrapper
 
 
 def check_realgas_status(chem_index: int) -> bool:

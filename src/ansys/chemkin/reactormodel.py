@@ -28,18 +28,18 @@ import copy
 import ctypes
 from ctypes import c_double, c_int
 
-from chemkin import chemkin_wrapper
-from chemkin.chemistry import (
+from . import chemkin_wrapper
+from .chemistry import (
     check_active_chemistryset,
     check_chemistryset,
     chemistryset_initialized,
     verbose,
 )
-from chemkin.color import Color
-from chemkin.constants import Patm
-from chemkin.inlet import Inlet
-from chemkin.logger import logger
-from chemkin.mixture import Mixture
+from .color import Color
+from .constants import Patm
+from .inlet import Inlet
+from .logger import logger
+from .mixture import Mixture
 import numpy as np
 import numpy.typing as npt
 

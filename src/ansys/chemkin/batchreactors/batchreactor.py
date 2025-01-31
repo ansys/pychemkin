@@ -27,23 +27,23 @@
 import copy
 from ctypes import c_double, c_int
 
-from chemkin import chemkin_wrapper
-from chemkin.chemistry import (
+from .. import chemkin_wrapper
+from ..chemistry import (
     check_chemistryset,
     chemistryset_initialized,
     force_activate_chemistryset,
     set_verbose,
     verbose,
 )
-from chemkin.color import Color as Color
-from chemkin.constants import Patm
-from chemkin.info import show_ignition_definitions
-from chemkin.inlet import Inlet
-from chemkin.logger import logger
-from chemkin.mixture import interpolate_mixtures
-from chemkin.reactormodel import Keyword
-from chemkin.reactormodel import ReactorModel as reactor
-from chemkin.utilities import find_interpolate_parameters
+from ..color import Color as Color
+from ..constants import Patm
+from ..info import show_ignition_definitions
+from ..inlet import Inlet
+from ..logger import logger
+from ..mixture import interpolate_mixtures
+from ..reactormodel import Keyword
+from ..reactormodel import ReactorModel as reactor
+from ..utilities import find_interpolate_parameters
 import numpy as np
 
 # import numpy.typing as npt

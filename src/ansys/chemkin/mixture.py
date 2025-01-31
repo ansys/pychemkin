@@ -28,8 +28,8 @@ import copy
 import ctypes
 from ctypes import c_double, c_int
 
-from chemkin import chemkin_wrapper as ck_wrapper
-from chemkin.chemistry import (
+from . import chemkin_wrapper as ck_wrapper
+from .chemistry import (
     Chemistry,
     check_active_chemistryset,
     check_chemistryset,
@@ -39,8 +39,8 @@ from chemkin.chemistry import (
     set_current_pressure,
     verbose,
 )
-from chemkin.color import Color
-from chemkin.utilities import calculate_stoichiometrics, where_element_in_array_1D
+from .color import Color
+from .utilities import calculate_stoichiometrics, where_element_in_array_1D
 import numpy as np
 import numpy.typing as npt
 

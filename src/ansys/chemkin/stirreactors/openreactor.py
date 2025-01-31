@@ -26,12 +26,12 @@
 
 from ctypes import c_int
 
-from chemkin.color import Color as Color
-from chemkin.inlet import Inlet
-from chemkin.logger import logger
-from chemkin.mixture import Mixture
-from chemkin.reactormodel import Keyword, ReactorModel
-from chemkin.steadystatesolver import SteadyStateSolver
+from ..color import Color as Color
+from ..inlet import Inlet
+from ..logger import logger
+from ..mixture import Mixture
+from ..reactormodel import Keyword, ReactorModel
+from ..steadystatesolver import SteadyStateSolver
 
 
 class openreactor(ReactorModel, SteadyStateSolver):

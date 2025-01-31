@@ -42,7 +42,7 @@ _ansys_dir = None
 _ckbin = None
 status = 0
 _target_lib = None
-_lib_paths = []
+_lib_paths: list[str] = []
 # create log
 msg = ["minimum version =", str(_min_version)]
 this_msg = Color.SPACE.join(msg)

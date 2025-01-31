@@ -27,13 +27,13 @@
 import copy
 from ctypes import c_double, c_int
 
-from chemkin import chemkin_wrapper
-from chemkin.batchreactors.batchreactor import BatchReactors
-from chemkin.color import Color as Color
-from chemkin.constants import Patm
-from chemkin.inlet import Inlet
-from chemkin.logger import logger
-from chemkin.reactormodel import Keyword
+from .. import chemkin_wrapper
+from ..batchreactors.batchreactor import BatchReactors
+from ..color import Color as Color
+from ..constants import Patm
+from ..inlet import Inlet
+from ..logger import logger
+from ..reactormodel import Keyword
 import numpy as np
 
 
