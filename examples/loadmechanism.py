@@ -45,9 +45,9 @@ however, only one ``Chemistry Set`` object is active at a time.
 import os
 
 # import PyChemkin packages
-import chemkin as ck
-from chemkin import Color
-from chemkin.logger import logger
+import ansys.chemkin as ck
+from ansys.chemkin import Color
+from ansys.chemkin.logger import logger
 
 # check the working directory
 current_dir = os.getcwd()

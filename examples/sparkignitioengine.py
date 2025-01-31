@@ -22,12 +22,12 @@
 import os
 import time
 
-import chemkin as ck  # Chemkin
-from chemkin import Color
+import ansys.chemkin as ck  # Chemkin
+from ansys.chemkin import Color
 
 # chemkin spark ignition (SI) engine model (transient)
-from chemkin.engines.SI import SIengine
-from chemkin.logger import logger
+from ansys.chemkin.engines.SI import SIengine
+from ansys.chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 

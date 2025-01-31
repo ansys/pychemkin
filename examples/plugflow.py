@@ -22,13 +22,13 @@
 import os
 import time
 
-import chemkin as ck  # Chemkin
-from chemkin import Color
+import ansys.chemkin as ck  # Chemkin
+from ansys.chemkin import Color
 
 # chemkin plug flow reactor model
-from chemkin.flowreactors.PFR import PlugFlowReactor_FixedTemperature
-from chemkin.inlet import Inlet
-from chemkin.logger import logger
+from ansys.chemkin.flowreactors.PFR import PlugFlowReactor_FixedTemperature
+from ansys.chemkin.inlet import Inlet
+from ansys.chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 

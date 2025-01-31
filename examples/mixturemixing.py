@@ -21,8 +21,8 @@
 # SOFTWARE.
 import os
 
-import chemkin as ck  # Chemkin
-from chemkin.logger import logger
+import ansys.chemkin as ck  # Chemkin
+from ansys.chemkin.logger import logger
 
 # check working directory
 current_dir = os.getcwd()

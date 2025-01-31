@@ -21,9 +21,9 @@
 # SOFTWARE.
 import os
 
-import chemkin as ck
-from chemkin import Color
-from chemkin.logger import logger
+import ansys.chemkin as ck
+from ansys.chemkin import Color
+from ansys.chemkin.logger import logger
 import numpy as np  # number crunching
 
 # check working directory

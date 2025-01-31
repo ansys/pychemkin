@@ -22,8 +22,8 @@
 
 import os
 
-import chemkin as ck  # Chemkin
-from chemkin.logger import logger
+import ansys.chemkin as ck  # Chemkin
+from ansys.chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 

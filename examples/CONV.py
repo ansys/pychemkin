@@ -21,14 +21,14 @@
 # SOFTWARE.
 import os
 
-import chemkin as ck  # Chemkin
-from chemkin import Color
+import ansys.chemkin as ck  # Chemkin
+from ansys.chemkin import Color
 
 # chemkin batch reactor models (transient)
-from chemkin.batchreactors.batchreactor import (
+from ansys.chemkin.batchreactors.batchreactor import (
     GivenVolumeBatchReactor_EnergyConservation,
 )
-from chemkin.logger import logger
+from ansys.chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 

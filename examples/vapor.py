@@ -21,14 +21,14 @@
 # SOFTWARE.
 import os
 
-import chemkin as ck  # Chemkin
-from chemkin import Color
+import ansys.chemkin as ck  # Chemkin
+from ansys.chemkin import Color
 
 # chemkin batch reactor model (transient)
-from chemkin.batchreactors.batchreactor import (
+from ansys.chemkin.batchreactors.batchreactor import (
     GivenPressureBatchReactor_FixedTemperature,
 )
-from chemkin.logger import logger
+from ansys.chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
@@ -191,7 +191,7 @@ plt.plot(timeprofile, denprofile, "m-", label="real gas")
 plt.plot(timeprofile_IG, denprofile_IG, "m--", label="ideal gas")
 plt.legend(loc="upper left")
 plt.xlabel("time [sec]")
-plt.ylabel("Mixture Dernsity [g/cm3]")
+plt.ylabel("Mixture Density [g/cm3]")
 # plot results
 if interactive:
     plt.show()

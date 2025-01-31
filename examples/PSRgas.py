@@ -22,13 +22,13 @@
 import os
 import time
 
-import chemkin as ck  # Chemkin
-from chemkin import Color
-from chemkin.inlet import Inlet  # external gaseous inlet
-from chemkin.logger import logger
+import ansys.chemkin as ck  # Chemkin
+from ansys.chemkin import Color
+from ansys.chemkin.inlet import Inlet  # external gaseous inlet
+from ansys.chemkin.logger import logger
 
 # chemkin perfectly-stirred reactor (PSR) model (steady-state)
-from chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
+from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
