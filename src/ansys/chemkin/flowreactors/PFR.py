@@ -21,26 +21,25 @@
 # SOFTWARE.
 
 """
-    Plug Flow Reactor (PFR) model.
+Plug Flow Reactor (PFR) model.
 """
 
 import copy
 from ctypes import c_double, c_int
 
-import numpy as np
-
-from .. import chemkin_wrapper
-from ..batchreactors.batchreactor import BatchReactors
-from ..chemistry import (
+from ansys.chemkin import chemkin_wrapper
+from ansys.chemkin.batchreactors.batchreactor import BatchReactors
+from ansys.chemkin.chemistry import (
     check_chemistryset,
     chemistryset_initialized,
     force_activate_chemistryset,
     verbose,
 )
-from ..color import Color as Color
-from ..inlet import Inlet
-from ..logger import logger
-from ..reactormodel import Keyword
+from ansys.chemkin.color import Color as Color
+from ansys.chemkin.inlet import Inlet
+from ansys.chemkin.logger import logger
+from ansys.chemkin.reactormodel import Keyword
+import numpy as np
 
 
 class PlugFlowReactor(BatchReactors):
@@ -145,6 +144,8 @@ class PlugFlowReactor(BatchReactors):
         # turn the momentum equation OFF
         # when the velocity or the pressure profile along the reactor is given
         self.setkeyword(key="MOMEN", value="ON")
+        # profile points
+        self._profilesize = int(0)
 
     @property
     def length(self) -> float:
@@ -667,7 +668,6 @@ class PlugFlowReactor(BatchReactors):
 
         # output initialization
         logger.debug("clearing output ...")
-        self.output = {}
 
         # keyword processing
         msg = [

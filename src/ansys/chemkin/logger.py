@@ -30,7 +30,7 @@ from typing import Dict
 
 
 class SingletonType(type):
-    """Provides the singleton helper class for the logger."""
+    """:no-index: Provides the singleton helper class for the logger."""
 
     _instances: Dict[type, type] = {}
 

@@ -27,20 +27,19 @@
 import copy
 from ctypes import c_double, c_int
 
-import numpy as np
-
-from .. import chemkin_wrapper
-from ..chemistry import (
+from ansys.chemkin import chemkin_wrapper
+from ansys.chemkin.chemistry import (
     check_chemistryset,
     chemistryset_initialized,
     force_activate_chemistryset,
     verbose,
 )
-from ..color import Color as Color
-from ..inlet import Inlet
-from ..logger import logger
-from ..reactormodel import Keyword
-from ..stirreactors.openreactor import openreactor
+from ansys.chemkin.color import Color as Color
+from ansys.chemkin.inlet import Inlet
+from ansys.chemkin.logger import logger
+from ansys.chemkin.reactormodel import Keyword
+from ansys.chemkin.stirreactors.openreactor import openreactor
+import numpy as np
 
 
 class perfectlystirredreactor(openreactor):
@@ -581,7 +580,6 @@ class perfectlystirredreactor(openreactor):
 
         # output initialization
         logger.debug("clearing output ...")
-        self.output = {}
 
         # keyword processing
         msg = [

@@ -26,10 +26,10 @@
 
 import copy
 
-from .color import Color
-from .constants import Patm
-from .logger import logger
-from .mixture import Mixture
+from ansys.chemkin.color import Color
+from ansys.chemkin.constants import Patm
+from ansys.chemkin.logger import logger
+from ansys.chemkin.mixture import Mixture
 
 
 class Inlet(Mixture):

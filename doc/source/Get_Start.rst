@@ -22,28 +22,28 @@ Getting Started
 
    ::
 
-      >>> import chemkin
+      >>> import ansys.chemkin
 
 
-  - **PyChemkin** is correctly installed if Python returns
+  - **PyChemkin** is correctly installed if python returns
 
    ::
 
       chemkin version number = xxx
 
 
-  - It is likely there is no Ansys product installed locally if Python does not return anything
+  - It is likely there is no Ansys product installed locally if python does not return anything
 
    ::
 
       >>>
 
 
-  - The local Ansys Chemkin version needs to be updated to at least version *2025 Release 1* if Python returns
+  - The local Ansys Chemkin version needs to be updated to at least version *2025 Release 2* if Python returns
 
    ::
 
-      ** PyChemkin does not support Chemkin versions older than 2025R1
+      ** PyChemkin does not support Chemkin versions older than 2025R2
 
 
 
@@ -70,14 +70,17 @@ Getting Started
       :caption: A simple **PyChemkin** example
       :linenos:
 
+         import os
+
          # import PyChemkin
-         import chemkin
+         import ansys.chemkin as chemkin
+
          # create a Chemistry Set for GRI 3.0 mechanism in the data directory
-         mech_dir = chemkin.ansys_dir + '\\reaction\\data'
+         mech_dir = os.path.join(chemkin.ansys_dir, "reaction", "data")
          # set up mechanism file names
-         mech_file = mech_dir+'\\grimech30_chem.inp'
-         therm_file = mech_dir+'\\grimech30_thermo.dat'
-         tran_file = mech_dir+'\\grimech30_transport.dat'
+         mech_file = os.path.join(mech_dir, "grimech30_chem.inp")
+         therm_file = os.path.join(mech_dir, "grimech30_thermo.dat")
+         tran_file = os.path.join(mech_dir, "grimech30_transport.dat")
          # instantiate Chemistry Set 'GasMech'
          GasMech = chemkin.Chemistry(chem=mech_file, therm=therm_file,  tran=tran_file,  label='GRI 3.0')
          # pre-process the Chemistry Set
@@ -101,16 +104,16 @@ Getting Started
          print(f"pressure    = {air.pressure/chemkin.Patm} [atm]")
          print(f"temperature = {air.temperature} [K]")
          # print the 'air' composition in mass fractions
-         air.listcomposition(mode='mass')
+         air.list_composition(mode='mass')
          # get 'air' mixture density [g/cm3]
          print(f"the mixture density = {air.RHO} [g/cm3]")
 
 
 - Getting Help
    - help within **PyChemkin**
-      - use ``chemkin.help()`` to get general information about a topic, for instance, 'ignition'.
-      - use ``chemkin.keywordhints()`` to get description and syntax of a *reactor* keyword.
-      - use ``chemkin.phrasehints()`` to get a list of *reactor* keywords related to a phrase.
+      - use ``ansys.chemkin.help()`` to get general information about a topic, for instance, 'ignition'.
+      - use ``ansys.chemkin.keywordhints()`` to get description and syntax of a *reactor* keyword.
+      - use ``ansys.chemkin.phrasehints()`` to get a list of *reactor* keywords related to a phrase.
 
    - online help
       `Ansys Learning Hub`_

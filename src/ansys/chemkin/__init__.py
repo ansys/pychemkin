@@ -34,10 +34,10 @@ import platform
 # import Chemkin-CFD-API
 # import all commonly used constants and methods
 # so the users can have easy access to these resources
-from . import chemkin_wrapper as ck_wrapper
-from .chemistry import Chemistry, done, set_verbose, verbose
-from .color import Color
-from .constants import (
+from ansys.chemkin import chemkin_wrapper as ck_wrapper
+from ansys.chemkin.chemistry import Chemistry, done, set_verbose, verbose
+from ansys.chemkin.color import Color
+from ansys.chemkin.constants import (
     Patm,
     RGas,
     RGas_Cal,
@@ -47,7 +47,7 @@ from .constants import (
     ergs_per_joule,
     joules_per_calorie,
 )
-from .info import (
+from ansys.chemkin.info import (
     help,
     keyword_hints,
     manuals,
@@ -57,8 +57,8 @@ from .info import (
     show_ignition_definitions,
     show_realgas_usage,
 )
-from .logger import logger
-from .mixture import (
+from ansys.chemkin.logger import logger
+from ansys.chemkin.mixture import (
     Mixture,
     adiabatic_mixing,
     calculate_equilibrium,
@@ -68,7 +68,7 @@ from .mixture import (
     interpolate_mixtures,
     isothermal_mixing,
 )
-from .realgaseos import check_realgas_status, set_current_pressure
+from ansys.chemkin.realgaseos import check_realgas_status, set_current_pressure
 
 # show ansys (chemkin) version number
 msg = [
@@ -83,7 +83,6 @@ logger.info(this_msg)
 ansys_dir = str(ck_wrapper._ansys_dir)
 ansys_version = ck_wrapper._ansys_ver
 
-_chemkin_platform = None
 if platform.system() == "Windows":
     _chemkin_platform = "win64"
 else:

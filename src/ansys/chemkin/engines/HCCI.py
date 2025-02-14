@@ -27,22 +27,21 @@
 import copy
 from ctypes import c_double, c_int
 
-import numpy as np
-
-from .. import chemkin_wrapper
-from ..chemistry import (
+from ansys.chemkin import chemkin_wrapper
+from ansys.chemkin.chemistry import (
     check_chemistryset,
     chemistryset_initialized,
     force_activate_chemistryset,
     set_verbose,
     verbose,
 )
-from ..color import Color as Color
-from ..constants import Patm
-from ..engines.engine import Engine
-from ..inlet import Inlet
-from ..logger import logger
-from ..reactormodel import Keyword
+from ansys.chemkin.color import Color as Color
+from ansys.chemkin.constants import Patm
+from ansys.chemkin.engines.engine import Engine
+from ansys.chemkin.inlet import Inlet
+from ansys.chemkin.logger import logger
+from ansys.chemkin.reactormodel import Keyword
+import numpy as np
 
 # import numpy.typing as npt
 
@@ -123,6 +122,8 @@ class HCCIengine(Engine):
         self.zoneEGRR: list[float] = []
         # FORTRAN file unit of the text output file
         self._myLOUT = c_int(155)
+        # profile points
+        self._profilesize = int(0)
         # set up basic HCCI engine model parameters
         iErr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,
@@ -1284,7 +1285,6 @@ class HCCIengine(Engine):
 
         # output initialization
         logger.debug("clearing output ...")
-        self.output = {}
 
         # keyword processing
         msg = [Color.YELLOW, "processing and generating keyword inputs ...", Color.END]
