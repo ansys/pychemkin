@@ -19,6 +19,41 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+"""
+.. _ref_closed_homogeneous:
+
+===========================================================
+Simulate hydrogen combustion in a constant pressure reactor
+===========================================================
+
+**Ansys chemkin** offers some idealized reactor models commonly used for studying chemical
+processes and for developing reaction mechanisms. The ``batch reactor`` is a transient 0-D
+numerical portrayal of the *closed homogeneous/perfectly mixed* gas-phase reactor. There are
+two basic types of batch reactor models
+
+    |    **constrained-pressure**
+    |    **constrained-volume**
+
+You can choose either to *specify the reactor temperature* (as a fixed value or by a
+piecewise-linear profile) or to *solve the energy conservation equation* for each reactor type.
+In total, you get *four variations* out of the base batch reactor model.
+
+This tutorial models the ignition of a stoichiometric hydrogen-air mixture (\ :math:`\phi = 1`\ )
+in a balloon (constant pressure) reactor. The reactor is created as an instance of the
+``GivenPressureBatchReactor_EnergyConservation`` object. The initial gas mixture in the batch reactor
+will be set by the properties of the hydrogen-air mixture. You will get the ignition delay time (if
+auto-ignition of the hydrogen-air mixture occurs during the simulation time) and plot the predicted
+profiles of gas temperature, gas density, H\ :sub:`2`\ O mole fraction, and the net production rate
+of H\ :sub:`2`\ O.
+"""
+
+# sphinx_gallery_thumbnail_path = '_static/plot_close_homogeneous.png'
+
+###############################################
+# Import PyChemkin package and start the logger
+# =============================================
+
 import os
 
 import ansys.chemkin as ck  # Chemkin
@@ -41,7 +76,14 @@ ck.set_verbose(True)
 # interactive = True: display plot
 # interactive = False: save plot as a png file
 global interactive
-interactive = False
+interactive = True
+
+#####################################
+# Create a ``Chemistry Set`` instance
+# ===================================
+# The mechanism is the GRI 3.0 mechanism for methane combustion.
+# The mechanism and its associated data files come with the standard Ansys Chemkin
+# installation under the subdirectory *"/reaction/data"*.
 
 # set mechanism directory (the default chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
@@ -53,82 +95,133 @@ MyGasMech = ck.Chemistry(label="GRI 3.0")
 MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+
+###################################
+# Pre-process the ``Chemistry Set``
+# =================================
+
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
+
+####################################################################
+# Set up gas mixtures based on the species in this ``Chemistry Set``
+# ==================================================================
+# Compose the species molar ratios of the fuel-air mixture in a
+# *"recipe" list* and use the ``fuelmixture.X`` method to set the mixture
+# composition (mole fractions) directly.
+#
+# Since you are going to use ``fuelmixture`` to instantiate the reactor object later,
+# setting the mixture pressure and temperature is equivalent to setting
+# the initial temperature and pressure of the batch reactor.
+
 # create the fuel mixture
 fuelmixture = ck.Mixture(MyGasMech)
-# set fuel composition
+# set fuel composition (mole ratios)
 fuelmixture.X = [("H2", 2.0), ("N2", 3.76), ("O2", 1.0)]
-# setting pressure and temperature is not required in this case
+# setting the mixture pressure and temperature is equivalent to setting
+# the initial temperature and pressure of the reactor in this case.
 fuelmixture.pressure = ck.Patm
 fuelmixture.temperature = 1000
-# products from the complete combustion of the fuel mixture and air
-products = ["H2O", "N2"]
-# species mole fractions of added/inert mixture. can also create an additives mixture here
-# add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
-# iError = premixed.X_by_Equivalence_Ratio(
-#     MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=0.7
-# )
-# if iError != 0:
-#     raise RuntimeError
-# list the composition of the premixed mixture
-fuelmixture.list_composition(mode="mole")
-# set mixture temperature and pressure (equivalent to setting the initial temperature and pressure of the reactor)
 
-# Rapid Compression Machine
-# create a constant volume batch reactor (with energy equation)
-#
-MyCONV = GivenPressureBatchReactor_EnergyConservation(fuelmixture, label="tran")
-# set the initial reactor temperature (see the warning message in the run output)
-# MyCONV.temperature = 800.0  # K
-# show initial gas composition inside the reactor
-MyCONV.list_composition(mode="mole")
+# list the composition of the premixed mixture
+# this serves as the baseline for verification later
+fuelmixture.list_composition(mode="mole")
+
+#################################################################
+# Set up a constant pressure batch reactor (with energy equation)
+# ===============================================================
+# Create the *constant pressure batch reactor* as an instance of the
+# ``GivenPressureBatchReactor_EnergyConservation`` object because the reactor pressure will be
+# kept constant (or assigned as a function of time). The ``batch reactor`` objects must be
+# associated with a ``Mixture`` which implicitly links the ``Chemistry Set``
+# (gas-phase mechanism and properties) to the ``batch reactor`` object. Additionally,
+# it also defines the initial conditions (pressure, temperature, volume, and gas composition) of
+# the batch reactor.
+MyCONP = GivenPressureBatchReactor_EnergyConservation(fuelmixture, label="tran")
+
+##############################
+# List the mixture composition
+# ============================
+# List the initial gas composition inside the reactor for verification. You can use the composition
+# printout from ``fuelmixture`` to verify that the initial gas composition inside ``MyCONP`` is set
+# correctly, that is, ``MyCONP`` has been initialized by ``fuelmixture``.
+MyCONP.list_composition(mode="mole")
+
+############################################
+# Set up additional reactor model parameters
+# ==========================================
+# *Reactor parameters*, *solver controls*, and *output instructions* need to be provided
+# before running the simulations. For a batch reactor, the *initial volume* and the
+# *simulation end time* are required inputs.
+
 # set other reactor properties
 # reactor volume [cm3]
-MyCONV.volume = 1
-MyCONV.temperature = 1000
+MyCONP.volume = 1
+MyCONP.temperature = 1000
 # simulation end time [sec]
-MyCONV.time = 0.0005
-# set RCM volume profile (overriding the volume value set earlier)
-# # number of profile data points
-# npoints = 3
-# # position array of the profile data
-# x = np.zeros(npoints, dtype=np.double)
-# # value array of the profile data
-# volprofile = np.zeros_like(x, dtype=np.double)
-# # set reactor volume data points
-# x = [0.0, 0.01, 2.0]  # [sec]
-# volprofile = [10.0, 4.0, 4.0]  # [cm3]
-# set the volume profile
-# MyCONV.set_volume_profile(x, volprofile)
-# output controls
-# set timestep between saving solution
-# MyCONV.timestep_for_saving_solution = 0.01
+MyCONP.time = 0.0005
+
+####################
+# Set output options
+# ==================
+# You can turn on the *adaptive solution saving* to resolve the steep variations in the solution
+# profile. Here additional solution data point will be saved for every **20** internal solver
+# steps. The ``set_ignition_delay`` method must be included for the reactor model to
+# report the *ignition delay times* after the simulation is done. If ``method="T_rise"`` is
+# set, the reactor model will consider the gas is auto-ignited when the predicted gas temperature
+# goes above the initial temperature by the amount indicated by the parameter ``val=400``.
+# You can choose a different auto-ignition definition.
+#
+# .. note::
+#   Type ``ansys.chemkin.show_ignition_definitions()`` to get the list of all available ignition
+#   delay time definitions in Chemkin.
+#
+# .. note::
+#   By default, time intervals for both print and save solution are **1/100** of the
+#   *simulation end time*. In this case :math:`dt=time/100=0.001`\ . You can change them
+#   to different values.
+#
+
 # turn ON adaptive solution saving
-MyCONV.adaptive_solution_saving(mode=True, steps=20)
-# turn OFF adaptive solution saving
-# MyCONV.adaptive_solution_saving(mode=False)
+MyCONP.adaptive_solution_saving(mode=True, steps=20)
+# specify the ignition definitions
+ck.show_ignition_definitions()
+MyCONP.set_ignition_delay(method="T_rise", val=400)
+
+#####################
+# Set solver controls
+# ===================
+# You can overwrite the default solver controls by using solver related methods, for example,
+# ``tolerances``.
+
 # set tolerances in tuple: (absolute tolerance, relative tolerance)
-MyCONV.tolerances = (1.0e-20, 1.0e-8)
+MyCONP.tolerances = (1.0e-20, 1.0e-8)
+
 # get solver parameters
-ATOL, RTOL = MyCONV.tolerances
+ATOL, RTOL = MyCONP.tolerances
 print(f"default absolute tolerance = {ATOL}")
 print(f"default relative tolerance = {RTOL}")
 # turn on the force non-negative solutions option in the solver
-MyCONV.force_nonnegative = True
-# specify the ignition definitions
-ck.show_ignition_definitions()
-MyCONV.set_ignition_delay(method="T_rise", val=400)
-# stop the simulation when ignition is detected
-# MyCONV.stop_after_ignition()
+MyCONP.force_nonnegative = True
 # show solver option
-print(f"timestep between solution printing: {MyCONV.timestep_for_printing_solution}")
+print(f"timestep between solution printing: {MyCONP.timestep_for_printing_solution}")
 # show timestep between printing solution
-print(f"forced non-negative solution values: {MyCONV.force_nonnegative}")
+print(f"forced non-negative solution values: {MyCONP.force_nonnegative}")
+
+#########################################
+# Display the added parameters (keywords)
+# =======================================
+# You can verify the parameters specified above are correctly assigned to the reactor model by
+# using the ``showkeywordinputlines`` method.
 # show the additional keywords given by user
-MyCONV.showkeywordinputlines()
-# run the CONV reactor model
-runstatus = MyCONV.run()
+MyCONP.showkeywordinputlines()
+
+####################
+# Run the simulation
+# ==================
+# Use the ``run`` method to start the batch reactor simulation.
+runstatus = MyCONP.run()
+
 # check run status
 if runstatus != 0:
     # run failed!
@@ -136,38 +229,70 @@ if runstatus != 0:
     exit()
 # run success!
 print(Color.GREEN + ">>> RUN COMPLETED <<<", end="\n" + Color.END)
-# get ignition delay time (need to deduct the initial compression time = 0.01 [sec])
-# delaytime = MyCONV.get_ignition_delay()
-# print(f"ignition delay time = {delaytime} [msec]")
-# post-process the solutions
-MyCONV.process_solution()
+
+###############################################
+# Get the ignition delay time from the solution
+# =============================================
+# Use the ``get_ignition_delay`` method to extract the ignition delay time after the
+# run is completed.
+delaytime = MyCONP.get_ignition_delay()
+print(f"ignition delay time = {delaytime} [msec]")
+
+###########################
+# Post-process the solution
+# =========================
+# The post-processing step will parse the solution and package the solution values at each
+# time point into a ``Mixture`` object. There are two ways to access the solution profiles:
+#
+#   1. the "raw" solution profiles (value as a function of time) are available for "time",
+#   "temperature", "pressure" , "volume", and species "mass fractions";
+#
+#   2. the ``Mixture`` objects that permit the use of all property and rate utilities to extract
+#   information such as viscosity, density, species production rates, and mole fractions.
+#
+# The "raw" solution profiles can be obtained by using the ``get_solution_variable_profile`` method. The
+# solution ``Mixture`` objects are accessed via either the ``get_solution_mixture_at_index`` for the
+# solution mixture at the given *time point* or the ``get_solution_mixture`` for the solution mixture
+# at the given *time* (in this case, the "mixture" is constructed by interpolation).
+#
+# .. note::
+#   Use the ``getnumbersolutionpoints`` to get the size of the solution profiles before creating the
+#   arrays.
+#
+MyCONP.process_solution()
 # get the number of solution time points
-solutionpoints = MyCONV.getnumbersolutionpoints()
+solutionpoints = MyCONP.getnumbersolutionpoints()
 print(f"number of solution points = {solutionpoints}")
+
 # get the time profile
-timeprofile = MyCONV.get_solution_variable_profile("time")
+timeprofile = MyCONP.get_solution_variable_profile("time")
 # get the temperature profile
-tempprofile = MyCONV.get_solution_variable_profile("temperature")
+tempprofile = MyCONP.get_solution_variable_profile("temperature")
 # more involving post-processing by using Mixtures
-# create arrays for CH4 mole fraction, CH4 ROP, and mixture viscosity
+# create arrays for H2O mole fraction, H2O ROP, and mixture density
 H2Oprofile = np.zeros_like(timeprofile, dtype=np.double)
 H2OROPprofile = np.zeros_like(timeprofile, dtype=np.double)
 denprofile = np.zeros_like(timeprofile, dtype=np.double)
 CurrentROP = np.zeros(MyGasMech.KK, dtype=np.double)
-# find CH4 species index
+# find H2O species index
 H2O_index = MyGasMech.get_specindex("H2O")
 # loop over all solution time points
 for i in range(solutionpoints):
     # get the mixture at the time point
-    solutionmixture = MyCONV.get_solution_mixture_at_index(solution_index=i)
+    solutionmixture = MyCONP.get_solution_mixture_at_index(solution_index=i)
     # get gas density [g/cm3]
     denprofile[i] = solutionmixture.RHO
     # reactor mass [g]
-    # get CH4 mole fraction profile
+    # get H2O mole fraction profile
     H2Oprofile[i] = solutionmixture.X[H2O_index]
-    # get CH4 ROP profile
+    # get H2O ROP profile
     currentROP = solutionmixture.ROP()
     H2OROPprofile[i] = currentROP[H2O_index]
+
+############################
+# Plot the solution profiles
+# ==========================
+
 # plot the profiles
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))
 plt.subplot(221)
@@ -177,15 +302,15 @@ plt.subplot(222)
 plt.plot(timeprofile, H2Oprofile, "b-")
 plt.ylabel("H2O Mole Fraction")
 plt.subplot(223)
-plt.plot(timeprofile, H2OROPprofile, "g-")
-plt.xlabel("time [sec]")
-plt.ylabel("H2O Production Rate [mol/cm3-sec]")
-plt.subplot(224)
 plt.plot(timeprofile, denprofile, "m-")
 plt.xlabel("time [sec]")
 plt.ylabel("Mixture Density [g/cm3]")
-# plot results
+plt.subplot(224)
+plt.plot(timeprofile, H2OROPprofile, "g-")
+plt.xlabel("time [sec]")
+plt.ylabel("H2O Production Rate [mol/cm3-sec]")
+# display the plots
 if interactive:
     plt.show()
 else:
-    plt.savefig("close_homogeneous.png", bbox_inches="tight")
+    plt.savefig("plot_close_homogeneous.png", bbox_inches="tight")

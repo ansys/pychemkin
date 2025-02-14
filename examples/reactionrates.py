@@ -19,6 +19,29 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+"""
+.. _ref_reaction_rates:
+
+==========================
+Ranking the reaction rates
+==========================
+When you have a mixture in PyChemkin, not only can you obtain its properties, you can also extract the *rate*
+information. The mixture can be one that is set up from scratch, or obtained from certain mixture operations,
+or a point (time or grid) solution of a reactor simulation. The mixture rate utilities let you access the
+**net production rate of species** (ROP), the **forward and the reverse reaction rates per reaction** (RR),
+and the **net chemical heat release rate** (HRR).
+
+This tutorial shows you how to use these PyChemkin mixture rate tools and how you can derive useful information
+from the raw data such as isolating dominant reactions at different mixture conditions.
+"""
+
+# sphinx_gallery_thumbnail_path = '_static/plot_reaction_rates.png'
+
+###############################################
+# Import PyChemkin package and start the logger
+# =============================================
+
 import os
 
 import ansys.chemkin as ck  # Chemkin
@@ -35,7 +58,15 @@ ck.set_verbose(True)
 # interactive = True: display plot
 # interactive = False: save plot as a png file
 global interactive
-interactive = False
+interactive = True
+
+
+#####################################
+# Create a ``Chemistry Set`` instance
+# ===================================
+# The first mechanism loaded is the GRI 3.0 mechanism for methane combustion.
+# The mechanism and its associated data files come with the standard Ansys Chemkin
+# installation under the subdirectory *"/reaction/data"*.
 
 # set mechanism directory (the default chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
@@ -47,47 +78,140 @@ MyGasMech = ck.Chemistry(label="GRI 3.0")
 MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+
+
+###################################
+# Pre-process the ``Chemistry Set``
+# =================================
+
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
-# create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
-# create the fuel mixture
+
+
+####################################################################
+# Set up gas mixtures based on the species in this ``Chemistry Set``
+# ==================================================================
+# To create a premixed fuel-oxidizer mixture by the *equivalence ratio*, you will
+# need to form the *fuel* and the *oxidizer* mixtures first.
+
+
+#########################
+# Create the fuel mixture
+# =======================
+# The fuel mixture consists of 100% methane.
+
 fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition
 fuelmixture.X = [("CH4", 1.0)]
 # setting pressure and temperature is not required in this case
 fuelmixture.pressure = 5.0 * ck.Patm
 fuelmixture.temperature = 1500.0
-# create the oxidizer mixture: air
+
+
+########################
+# Create the air mixture
+# ======================
+# "Air" is a mixture of oxygen and nitrogen. the temperature and the pressure of ``air`` are set to
+# the values of the ``fuelmixture``.
+
 air = ck.Mixture(MyGasMech)
 air.X = [("O2", 0.21), ("N2", 0.79)]
 # setting pressure and temperature is not required in this case
 air.pressure = 5.0 * ck.Patm
 air.temperature = 1500.0
-# create the premixed mixture to be defined
-premixed = ck.Mixture(MyGasMech)
+
+
+######################################################
+# Define the *combustion products* and the *additives*
+# ====================================================
+# To use the *equivalence ratio* method, you also need to define both
+# the *complete combustion products* and the *additives* composition.
+
 # products from the complete combustion of the fuel mixture and air
 products = ["CO2", "H2O", "N2"]
 # species mole fractions of added/inert mixture. can also create an additives mixture here
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
+
+
+##################################################
+# Create a *place-holder* for the fuel-air mixture
+# ================================================
+# You can create an *empty* ``Mixture`` object that will be fully *defined* later.
+# The composition of ``premixed`` will be determined when one of the *mixture composition methods*:
+#
+# ``X``, ``Y``, ``X_byEquivalence_Ratio``, or ``Y_byEquivalence_Ratio``
+#
+# is called. The *equivalence ratio* is specified by the parameter
+# ``equivalenceratio=1.0`` when calling the ``X_byEquivalence_Ratio`` or the ``Y_byEquivalence_Ratio`` method.
+
+# create the premixed mixture to be defined
+premixed = ck.Mixture(MyGasMech)
+# define the actual composition by the equivalence ratio
 iError = premixed.X_by_Equivalence_Ratio(
     MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=1.0
 )
 if iError != 0:
-    raise RuntimeError
-# list the composition of the premixed mixture
+    # check fuel-air mixture creation status
+    print("Error: failed to create the Fuel-Air mixture!")
+    exit()
+
+
+###############################################
+# Display the molar composition of ``premixed``
+# =============================================
+# list the composition of the premixed mixture for verification.
 premixed.list_composition(mode="mole")
+
+
+###################################################################
+# Evaluate reaction rates at given mixture temperature and pressure
+# =================================================================
+# Compute and rank the *net* reaction rates in ``MyGasMech`` at 1600 [K]
+# and 5 [atm]. The *net* rate of a reaction is computed by summing the forward rate ``kf``
+# and the reverse rate ``kr``. The rate utility ``RxnRates`` returns both the forward and
+# the reverse rates of each reaction in the mechanism. Get the net production rates of *all*
+# species by using the ``ROP`` method. The ROP values obtained are in [mole/cm\ :sup:`3`\ -sec],
+# alternatively you can use the ``massROP`` method to get mass-unit ROP values in [g/cm\ :sup:`3`\ -sec].
+# Use the optional parameter ``threshold`` to get only the ROP values with absolute value above
+# the given threshold value. For example, ``premixed.ROP(threshold=1.0e-8)`` will return a
+# ``rop`` array in which any raw ROP value with absolute value less than 1.0e-8 is set to zero.
+# By default ``threshold=0.0``, that is, all raw ROP values will be returned.
 #
-# compute reaction rates
-#
-# temperature and pressure are requires to compute the reaction rates
+# .. note::
+#    Temperature and pressure are requires to compute the reaction rates.
+
+# set the temperature and the pressure of the premixed mixture
 premixed.pressure = 5.0 * ck.Patm
 premixed.temperature = 1600.0
-# get the net species molar rates of production [mole/cm3-sec]
+
+#########################################################################
+# Obtain and sort the rates of production of all species in ``MyGasMech``
+# =======================================================================
+# Use the ``ROP`` method to get the *rates of production* (ROP) of the species.
+# You can *list* and *sort* the ROP values by using the ``list_ROP`` method.
+# ``spec_rate_order`` is the sorted species indices in *descending* order and ``species_rates``
+# contains the sorted ROP values.
+
 rop = premixed.ROP()
 # list the nonzero rates in descending order
 print()
-specrate_order, species_rates = premixed.list_ROP()
-# get the forward and the reverse rates of each reaction
+spec_rate_order, species_rates = premixed.list_ROP()
+
+
+###########################################################################
+# Evaluate and sort the rates of production of all species in ``MyGasMech``
+# =========================================================================
+# Use the ``RxnRates`` method to get the forward rate ``kf``
+# and the reverse rate ``kr`` of each reaction. The ``list_reaction_rates``
+# method will compute the net rate of each reaction and *sort* them in ascending
+# or descending order. The net reaction rate is computed by summing the forward and
+# the reverse rates of each reaction. ``rxn_order`` is list of the ranked reaction indices
+# and ``net_rxn_rates`` contains the *net* reaction rates in the same order.
+#
+# .. note::
+#   The species and the reactions index returned by ``list_ROP`` and ``list_reaction_rates``
+#   are **0-based** index, increment the returned index by 1 to get the actual **1-based** index.
+
 kf, kr = premixed.RxnRates()
 print()
 print(f"reverse reaction rates: (raw values of all {MyGasMech.IIGas:d} reactions)")
@@ -95,6 +219,15 @@ print(str(kr))
 print("=" * 40)
 # list the nonzero net reaction rates
 rxn_order, net_rxn_rates = premixed.list_reaction_rates()
+
+
+############################################
+# Plot the sorted reaction rates at 1600 [K]
+# ==========================================
+# Display the top net reaction rates and their reaction string in the commonly used *horizontal bar* plot.
+# Use the ``get_gas_reaction_string`` utility of the ``Chemistry Set`` to get the actual "reaction" for the
+# Y-axis label.
+
 # create a rate plot
 plt.rcParams.update({"figure.autolayout": True})
 plt.subplots(2, 1, sharex="col", figsize=(10, 5))
@@ -110,10 +243,30 @@ plt.barh(rxnstring, net_rxn_rates, color="blue", height=0.4)
 plt.xscale("symlog")
 # plt.ylabel('reaction')
 plt.text(-3.0e-4, 0.5, "T = 1600K", fontsize=10)
+
+
+###################################################################
+# Evaluate reaction rates at given mixture temperature and pressure
+# =================================================================
+# Compute and rank the *net* reaction rates in ``MyGasMech`` at 1800 [K]
+# and 5 [atm].
+
 # change the mixture temperature
 premixed.temperature = 1800.0
+
+
+######################################################################
+# Evaluate and sort the rates of production of all species at 1800 [K]
+# ====================================================================
 # get the list the nonzero net reaction rates at the new temperature
 rxn_order, net_rxn_rates = premixed.list_reaction_rates()
+
+
+############################################
+# Plot the sorted reaction rates at 1600 [K]
+# ==========================================
+# Display the top net reaction rates and their reaction string in the commonly used *horizontal bar* plot.
+
 plt.subplot(212)
 # convert reaction # from integers to strings
 rxnstring.clear()
@@ -126,8 +279,9 @@ plt.xlabel("reaction rate [mole/cm3-sec]")
 plt.text(-3.0e-4, 0.5, "T = 1800K", fontsize=10)
 # use log scale on x axis
 plt.xscale("symlog")
-# plot results
+
+# plot both ranking results
 if interactive:
     plt.show()
 else:
-    plt.savefig("reaction_rates.png", bbox_inches="tight")
+    plt.savefig("plot_reaction_rates.png", bbox_inches="tight")

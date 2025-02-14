@@ -19,6 +19,26 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+"""
+.. _ref_cooling_vapor:
+
+===================
+Cooling water vapor
+===================
+
+How the volume of water vapor will evolve when it is cooled from a temperature above the boiling point
+to a temperature that is just above the freezing point at constant pressure? How fast will the vapor
+volume drop? This tutorial uses the ``GivenPressureBatchReactor_FixedTemperature`` model to explore
+the different behaviors between an *"ideal gas"* water vapor and its *"real gas"* counterpart.
+"""
+
+# sphinx_gallery_thumbnail_path = '_static/plot_vapor_condensation.png'
+
+###############################################
+# Import PyChemkin package and start the logger
+# =============================================
+
 import os
 
 import ansys.chemkin as ck  # Chemkin
@@ -39,7 +59,15 @@ logger.debug("working directory: " + current_dir)
 # interactive = True: display plot
 # interactive = False: save plot as a png file
 global interactive
-interactive = False
+interactive = True
+
+#####################################
+# Create a ``Chemistry Set`` instance
+# ===================================
+# To compare the different behaviors of the water vapor under the *"ideal gas"* and the *"real gas"*
+# assumptions, you need to use a *real-gas EOS enabled* gas mechanism. The 'C2 NOx' mechanism that
+# includes information about the *Soave* cubic Equation of State (EOS) is suitable for this endeavor.
+# Therefore, ``MyMech`` is created from this gas phase mechanism.
 
 # set mechanism directory (the default chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
@@ -50,43 +78,60 @@ MyMech = ck.Chemistry(label="C2 NOx")
 # this mechanism file contains all the necessary thermodynamic and transport data
 # therefore no need to specify the therm and the tran data files
 MyMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
-# preprocess the 2nd mechanism files
+
+##########################################
+# Pre-process the C2 NOx ``Chemistry Set``
+# ========================================
+
+# preprocess the mechanism file
 iError = MyMech.preprocess()
 if iError == 0:
     print(Color.GREEN + ">>> preprocess OK", end=Color.END)
 else:
     print(Color.RED + ">>> preprocess failed!", end=Color.END)
     exit()
-# create the air+vapor mixture
+
+####################################
+# Set up the air/water vapor mixture
+# ==================================
+# Create the mixture of air and water vapor inside the imaginary strong but elastic container.
+# The initial gas temperature is set to 500 [K] and at a constant pressure of 100 [atm]. At this
+# temperature and pressure, the mixture should be entirely in gas form.
 mist = ck.Mixture(MyMech)
 # set mole fraction
 mist.X = [("H2O", 2.0), ("O2", 1.0), ("N2", 3.76)]
 mist.temperature = 500.0  # [K]
 mist.pressure = 100.0 * ck.Patm
-# set mixture mixing rule to Van der Waals (default)
-# mist.set_realgas_mixing_rule(rule=0)
-# create a constant pressure batch reactor (with given temperature)
+
+######################################################################
+# Create the reactor ``tank`` to perform the vapor cooling simulation
+# ====================================================================
+# Create a constant pressure batch reactor (with given temperature) instance by using
+# the ``GivenPressureBatchReactor_FixedTemperature`` method. The mixture ``mist`` you just
+# set up will be used to set the initial gas condition inside ``tank``.
 #
 tank = GivenPressureBatchReactor_FixedTemperature(mist, label="tank")
-# show initial gas composition inside the reactor
+
+############################################
+# Set up additional reactor model parameters
+# ==========================================
+# *Reactor parameters*, *solver controls*, and *output instructions* need to be provided
+# before running the simulations. For a batch reactor, the *initial volume* and the
+# *simulation end time* are required inputs.
+
+# verify initial gas composition inside the reactor
 tank.list_composition(mode="mole")
+
 # set other reactor properties
 tank.volume = 10.0  # cm3
 tank.time = 0.5  # sec
-# turn on real-gas cubic equation of state
-tank.userealgasEOS(mode=True)
-# output controls
-# set timestep between saving solution
-tank.timestep_for_saving_solution = 0.01
-# set tolerances in tuple: (absolute tolerance, relative tolerance)
-tank.tolerances = (1.0e-10, 1.0e-8)
-# get solver parameters
-ATOL, RTOL = tank.tolerances
-print(f"default absolute tolerance = {ATOL}")
-print(f"default relative tolerance = {RTOL}")
-# turn on the force non-negative solutions option in the solver
-tank.force_nonnegative = True
-# set tank profile
+
+#############################################
+# Set the gas temperature profile of ``tank``
+# ===========================================
+# Create a time-temperature profile by using two arrays. Use the ``set_temperature_profile``
+# method to "add" the profile to the reactor model.
+
 # number of profile data points
 npoints = 3
 # position array of the profile data
@@ -98,8 +143,51 @@ x = [0.0, 0.2, 2.0]  # [sec]
 TPROprofile = [500.0, 275.0, 275.0]  # [K]
 # set the temperature profile
 tank.set_temperature_profile(x, TPROprofile)
-# run the CONP reactor model with given temperature profile
+
+####################################
+# Switch *ON* the real gas EOS model
+# ==================================
+# Use the ``use_realgas_cubicEOS`` method to turn ON the real-gas EOS model. For more
+# information either type ``ansys.chemkin.help("real gas")`` for the real-gas model
+# usage or type ``ansys.chemkin.help("manuals")`` to access the on-line **Chemkin Theory**
+# manual for descriptions of the real-gas EOS models.
+#
+# .. note::
+#   By default the *Van der Waals* mixing rule is applied to evaluate thermodynamic properties
+#   of a real gas mixture. You can use ``set_realgas_mixing_rule`` to switch to a different
+#   mixing rule.
+#
+tank.userealgasEOS(mode=True)
+
+####################
+# Set output options
+# ==================
+
+# set timestep between saving solution
+tank.timestep_for_saving_solution = 0.01
+
+#####################
+# Set solver controls
+# ===================
+# You can overwrite the default solver controls by using solver related methods, for example,
+# ``tolerances``.
+
+# set tolerances in tuple: (absolute tolerance, relative tolerance)
+tank.tolerances = (1.0e-10, 1.0e-8)
+# get solver parameters
+ATOL, RTOL = tank.tolerances
+print(f"default absolute tolerance = {ATOL}")
+print(f"default relative tolerance = {RTOL}")
+# turn on the force non-negative solutions option in the solver
+tank.force_nonnegative = True
+
+##########################################################
+# Run the vapor cooling simulation with the *real gas EOS*
+# ========================================================
+# Run the CONP reactor model with given temperature profile with the *real gas EOS*
+# model switched *ON*.
 runstatus = tank.run()
+
 # check run status
 if runstatus != 0:
     # run failed!
@@ -108,7 +196,28 @@ if runstatus != 0:
 # run success!
 print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
 
-# post-process the solutions
+###########################
+# Post-process the solution
+# =========================
+# The post-processing step will parse the solution and package the solution values at each
+# time point into a ``Mixture`` object. There are two ways to access the solution profiles:
+#
+#   1. the "raw" solution profiles (value as a function of time) are available for "time",
+#   "temperature", "pressure" , "volume", and species "mass fractions";
+#
+#   2. the ``Mixture`` objects that permit the use of all property and rate utilities to extract
+#   information such as viscosity, density, and mole fractions.
+#
+# The "raw" solution profiles can be obtained by using the ``get_solution_variable_profile`` method. The
+# solution ``Mixture`` objects are accessed via either the ``get_solution_mixture_at_index`` for the
+# solution mixture at the given *time point* or the ``get_solution_mixture`` for the solution mixture
+# at the given *time* (in this case, the "mixture" is constructed by interpolation).
+#
+# .. note::
+#   Use the ``getnumbersolutionpoints`` to get the size of the solution profiles before creating the
+#   arrays.
+#
+
 tank.process_solution()
 # get the number of solution time points
 solutionpoints = tank.getnumbersolutionpoints()
@@ -132,11 +241,21 @@ for i in range(solutionpoints):
     # get mixture enthalpy profile
     Hprofile[i] = solutionmixture.HML() / ck.ergs_per_joule * 1.0e-3
 
-#
-# turn off real-gas cubic equation of state
+#####################################
+# Switch *OFF* the real gas EOS model
+# ===================================
+# Use the ``use_realgas_cubicEOS`` method to turn OFF the real-gas EOS model.
+# or, alternatively, use the ``use_idealgas_law`` method to switch ON the ideal
+# gas law.
 tank.userealgasEOS(mode=False)
-# run the CONP reactor model with given temperature profile
+
+###########################################################
+# Run the vapor cooling simulation with the *ideal gas law*
+# =========================================================
+# Run the CONP reactor model with given temperature profile with the
+# *ideal gas law* switched back *ON*.
 runstatus = tank.run()
+
 # check run status
 if runstatus != 0:
     # run failed!
@@ -144,6 +263,10 @@ if runstatus != 0:
     exit()
 # run success!
 print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
+
+#######################################
+# Post-process the *ideal gas* solution
+# =====================================
 # post-process the solutions
 tank.process_solution()
 # get the number of solution time points
@@ -167,6 +290,20 @@ for i in range(solutionpoints):
     Hprofile_IG[i] = solutionmixture.HML() / ck.ergs_per_joule * 1.0e-3
 
 ck.done()
+
+################################
+# Plot the RCM solution profiles
+# ==============================
+# You should observe that the mixture volume obtained by the *"real gas"* model is
+# noticeably lower than the *ideal gas"* volume. When water vapor is cooled below
+# the *boiling point*, formation of liquid water is expected due to condensation.
+# The *ideal gas law* assumes the mixture is always in gas phase and is unable to
+# address the phase change phenomenon. The *real gas EOS*, on the other hand, can
+# capture the formation of the liquid water as indicated by the sharper rise of the
+# *mixture density* during the cooling process. The *real gas* mixture also has lower
+# enthalpy level than that of the *ideal gas* mixture. The enthalpy differences
+# should largely represent the *heat of vaporization* of water at the temperature.
+
 # plot the profiles
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))
 thispres = str(mist.pressure / ck.Patm)
@@ -196,4 +333,4 @@ plt.ylabel("Mixture Density [g/cm3]")
 if interactive:
     plt.show()
 else:
-    plt.savefig("vapor_condensation.png", bbox_inches="tight")
+    plt.savefig("plot_vapor_condensation.png", bbox_inches="tight")

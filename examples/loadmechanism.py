@@ -24,23 +24,25 @@
 .. _ref_load_mechanism:
 
 =================================
-Pre-Process a Gas-Phase Mechanism
+Pre-process a gas-phase mechanism
 =================================
 
 Before running a Chemkin simulation, the reaction mechanism data must be loaded and
-pre-processed. The mechanism data consist of *a reaction mechanism input file*,
+preprocessed. The mechanism data consist of *a reaction mechanism input file*,
 *a thermodynamic data file*, and *an optional transport data file*.
 
-This example demonstartes the steps to instantiate and pre-process a ``Chemistry Set``
+This example demonstrates the steps to instantiate and preprocess a ``Chemistry Set``
 object which is always the first task in running any PyChemkin simulations.
 
 PyChemkin allows several ``Chemistry Set`` objects to coexist in the same Python project;
 however, only one ``Chemistry Set`` object is active at a time.
 """
 
-#################################################
+# sphinx_gallery_thumbnail_path = '_static/plot_preprocess.png'
+
+###############################################
 # Import PyChemkin package and start the logger
-# ===============================================
+# =============================================
 
 import os
 
@@ -62,7 +64,7 @@ ck.set_verbose(True)
 # ===================================
 # The first mechanism loaded is the GRI 3.0 mechanism for methane combustion.
 # The mechanism and its associated data files come with the standard Ansys Chemkin
-# installation under the subdirectory *"\reaction\data"*.
+# installation under the subdirectory *"/reaction/data"*.
 
 # set mechanism directory (the default chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
@@ -82,13 +84,13 @@ MyGasMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="G
 
 
 ###################################
-# Pre-Process the ``Chemistry Set``
+# Pre-process the ``Chemistry Set``
 # =================================
 
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
 
-# display the pre-process status
+# display the preprocess status
 print()
 if iError != 0:
     # When a non-zero value is returned from the process, check the text output files
@@ -103,9 +105,10 @@ else:
     print(f"number of gas species = {MyGasMech.number_species:d}")
     print(f"number of gas reactions = {MyGasMech.number_gas_reactions:d}")
 
-#####################################
-# Display basic mechanism information
-# ===================================
+
+#########################################
+# Display the basic mechanism information
+# =======================================
 
 print(f"\nelement and species information of mechanism {MyGasMech.label}")
 
@@ -146,8 +149,7 @@ print("=" * 50)
 # and the reaction mechanism files are specified one by one afterwards. The reaction mechanism
 # file in this case contains all the necessary thermodynamic and transport data, therefore
 # no need to specify the therm and the tran data files. Note that, an additional step is
-# required to instruct the pre-processor to include the transport data.
-
+# required to instruct the preprocessor to include the transport data.
 
 # set the 2nd mechanism directory (the default chemkin mechanism data directory)
 mechanism_dir = data_dir
@@ -166,13 +168,13 @@ My2ndMech.preprocess_transportdata()
 
 
 ##########################################
-# Pre-Process the second ``Chemistry Set``
+# Pre-process the second ``Chemistry Set``
 # ========================================
 
 # preprocess the 2nd mechanism files
 iError = My2ndMech.preprocess()
 
-# display the pre-process status
+# display the preprocess status
 print()
 if iError != 0:
     # When a non-zero value is returned from the process, check the text output files
@@ -188,9 +190,9 @@ else:
     print(f"number of gas reactions = {My2ndMech.IIGas:d}")
 
 
-#####################################
-# Display basic mechanism information
-# ===================================
+#########################################
+# Display the basic mechanism information
+# =======================================
 
 print(f"\nelement and species information of mechanism {My2ndMech.label}")
 print("=" * 50)
