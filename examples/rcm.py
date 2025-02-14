@@ -46,7 +46,7 @@ The gas mixture is then suddenly compressed causing both the pressure and the te
 mixture to rise rapidly. The reactor/chamber pressure is monitored to identify the onset of
 auto-ignition after the compression stopped. This tutorial models the RCM as a
 ``GivenVolumeBatchReactor_EnergyConservation``, and the compression process is simulated by a
-predetermined time-volume profile.  
+predetermined time-volume profile.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_RCM_solution.png'
@@ -295,12 +295,12 @@ print(f"ignition delay time = {delaytime} [msec]")
 # time point into a ``Mixture`` object. There are two ways to access the solution profiles:
 #
 #   1. the "raw" solution profiles (value as a function of time) are available for "time",
-#   "temperature", "pressure" , "volume", and species "mass fractions"; 
+#   "temperature", "pressure" , "volume", and species "mass fractions";
 #
 #   2. the ``Mixture`` objects that permit the use of all property and rate utilities to extract
 #   information such as viscosity, density, and mole fractions.
 #
-# The "raw" solution profiles can be obtained by using the ``get_solution_variable_profile`` method. The 
+# The "raw" solution profiles can be obtained by using the ``get_solution_variable_profile`` method. The
 # solution ``Mixture`` objects are accessed via either the ``get_solution_mixture_at_index`` for the
 # solution mixture at the given *time point* or the ``get_solution_mixture`` for the solution mixture
 # at the given *time* (in this case, the "mixture" is constructed by interpolation).
