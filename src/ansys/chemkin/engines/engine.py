@@ -27,15 +27,14 @@
 import copy
 from ctypes import c_double, c_int
 
+from ansys.chemkin import chemkin_wrapper
+from ansys.chemkin.batchreactors.batchreactor import BatchReactors
+from ansys.chemkin.color import Color as Color
+from ansys.chemkin.constants import Patm
+from ansys.chemkin.inlet import Inlet
+from ansys.chemkin.logger import logger
+from ansys.chemkin.reactormodel import Keyword
 import numpy as np
-
-from .. import chemkin_wrapper
-from ..batchreactors.batchreactor import BatchReactors
-from ..color import Color as Color
-from ..constants import Patm
-from ..inlet import Inlet
-from ..logger import logger
-from ..reactormodel import Keyword
 
 
 class Engine(BatchReactors):

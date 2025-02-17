@@ -19,6 +19,47 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+"""
+.. _ref_jet_stirred_reactor:
+
+=============================================
+Run PSR calculations for mechanism validation
+=============================================
+
+**Ansys chemkin** offers some idealized reactor models commonly used for studying chemical
+processes and for developing reaction mechanisms. The ``perfectly stirred reactor (PSR)`` model is
+a *steady state* 0-D model of the *open perfectly mixed* gas-phase reactor. There is no limit on
+the number of the inlets to the PSR, as soon as the inlet gases enter the reactor, they will be
+thoroughly mixed with the gas mixture inside. The PSR has only *one* outlet, and the outlet gas
+is assumed to be exactly the same as the gas mixture in the PSR. There are two basic types of
+PSR models
+
+    |    **constrained-pressure** (or "set residence time")
+    |    **constrained-volume**
+
+By default, the PSR is running under **constant pressure**; in this case, You will specify the
+*residence time* of the PSR. For the *constrained volume* type of application, the PSR volume
+must be provided and the residence time can be calculated from the reactor volume and the total
+inlet volumetric flow rate.
+
+For each type of the PSR, you can choose either to *specify the reactor temperature* (as a fixed
+value or by a piecewise-linear profile) or to *solve the energy conservation equation*. In total,
+you get *four variations* of the PSR model.
+
+The jet-stirred reactor is mostly employed in chemical kinetics studies. By controlling the reactor
+temperature, pressure, and/or residence time, you can gain knowledge about the major intermediates
+of a complex chemical process and postulate possible reaction pathways. This tutorial demonstrate the
+use of the PSR model to validate the reaction mechanism against the measured data from hydrogen
+oxidation experiments.
+"""
+
+# sphinx_gallery_thumbnail_path = '_static/plot_jet_stirred_reactor.png'
+
+###############################################
+# Import PyChemkin package and start the logger
+# =============================================
+
 import os
 import time
 
@@ -27,7 +68,7 @@ from ansys.chemkin import Color
 from ansys.chemkin.inlet import Inlet  # external gaseous inlet
 from ansys.chemkin.logger import logger
 
-# chemkin perfectly-stirred reactor (PSR) model (steady-state)
+# chemkin perfectly stirred reactor (PSR) model (steady-state)
 from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_FixedTemperature as PSR
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
@@ -41,7 +82,15 @@ ck.set_verbose(True)
 # interactive = True: display plot
 # interactive = False: save plot as a png file
 global interactive
-interactive = False
+interactive = True
+
+#####################################
+# Create a ``Chemistry Set`` instance
+# ===================================
+# The encrypted hydrogen-ammonia mechanism, ``Hydrogen-Ammonia-NOx_chem_MFL2021.inp``,
+# is used. This mechanism is developed under Chemkin's **Model Fuel Library (MFL)** project;
+# like the rest of the MFL mechanisms, it is located in the **ModelFuelLibrary** under the
+# *"/reaction/data"* directory of the standard Ansys Chemkin installation.
 
 # set mechanism directory (the default chemkin mechanism data directory)
 data_dir = os.path.join(
@@ -55,9 +104,24 @@ MyGasMech = ck.Chemistry(label="hydrogen")
 MyGasMech.chemfile = os.path.join(
     mechanism_dir, "Hydrogen-Ammonia-NOx_chem_MFL2021.inp"
 )
+
+############################################
+# Pre-process the gasoline ``Chemistry Set``
+# ==========================================
+
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
-# create a premixed fuel-oxidizer mixture
+
+##############################################################
+# Set up the H\ :sub:`2`\ -O\ :sub:`2`\ -N\ :sub:`2` ``Inlet``
+# ============================================================
+# Instantiate an ``Inlet`` object ``feed`` for the inlet gas mixture.
+# The ``Inlet`` object is a ``Mixture`` object with the addition of the
+# *inlet flow rate*. You can specify the inlet gas properties the same way you
+# set up a ``Mixture``. Set up the gas properties of ``feed`` as described by the experiment.
+# The inlet mass flow rate is assigned by the ``mass_flowrate`` method, the experiments use
+# a fixed inlet mass flow rate of 0.11 [g/sec].
+
 # create the fuel-oxidizer inlet to the JSR
 feed = Inlet(MyGasMech)
 # set H2-O2-N2 composition
@@ -69,15 +133,56 @@ temp = 800.0
 feed.temperature = temp
 # set inlet mass flow rate [g/sec]
 feed.mass_flowrate = 0.11
-# create the Jet-Stirred Reactor
-# use the inlet gas property as the estimated reactor condition
+
+###########################################################################
+# Create the PSR object to predict the gas composition of the outlet stream
+# =========================================================================
+# Use the ``PSR_SetResTime_FixedTemperature`` method to instantiate the Jet-Stirred Reactor ``JSR``
+# because both the reactor *temperature* and the *residence time* are fixed during the experiments.
+# The gas property of the inlet ``feed`` will be applied as the estimated reactor condition
+# of ``JSR``.
 JSR = PSR(feed, label="JSR")
+
+###################################
+# Connect the inlets to the reactor
+# =================================
+# You must connect at least **one** inlet to the open reactor. Use the ``set_inlet`` method to
+# add an ``Inlet`` object to the PSR. Inversely, use the ``remove_inlet`` to disconnect an inlet
+# from the PSR.
+
 # connect the inlet to the reactor
 JSR.set_inlet(feed)
+
+############################################
+# Set up additional reactor model parameters
+# ==========================================
+# *Reactor parameters*, *solver controls*, and *output instructions* need to be provided
+# before running the simulations. For the steady-state PSR, either the residence time or
+# the reactor volume must be provided.
+
 # set PSR residence time (sec): required for PSR_SetResTime_FixedTemperature model
 JSR.residence_time = 120.0 * 1.0e-3
+
+#####################
+# Set solver controls
+# ===================
+# You can overwrite the default solver controls by using solver related methods, for example,
+# ``tolerances``. Here, particular to this mechanism, a number of *pseudo time steps* is required
+# before attempting to actually search for the steady-state solution. This is done by using the
+# steady-state solver control method ``set_initial_timesteps``.
+
 # set the number of initial pseudo time steps in the steady-state solver
 JSR.set_initial_timesteps(1000)
+
+######################################################
+# Run the parameter study to replicate the experiments
+# ====================================================
+# Different inlet and reactor temperatures are used in the experiments, the temperature
+# value varies from 800 to 1050 [K].
+#
+# The result from each PSR run is converted to a ``Mixture`` object by the ``process_solution``
+# method. You can either overwrite the solution mixture or use a new one for each simulation result.
+
 # inlet gas temperature increment
 deltatemp = 25.0
 numbruns = 19
@@ -110,6 +215,7 @@ for i in range(numbruns):
     # update reactor temperature
     temp += deltatemp
     JSR.temperature = temp
+
 # compute the total runtime
 runtime = time.time() - start_time
 print(f"total simulation duration: {runtime} [sec] over {numbruns} runs")
@@ -143,6 +249,12 @@ H2O_data = [
     0.011036,
     0.010503,
 ]
+
+###############################
+# Plot the ignition delay curve
+# =============================
+# Compare the predicted H\ :sub:`2`\ O mole fraction to the measurement.
+
 # plot results
 plt.plot(inletTemp, h2oSSsolution, "b-", label="prediction")
 plt.plot(TEMP_data, H2O_data, "ro", label="data", markersize=4, fillstyle="none")
@@ -154,4 +266,4 @@ plt.title("JSR Solution")
 if interactive:
     plt.show()
 else:
-    plt.savefig("jet_stirred_reactor.png", bbox_inches="tight")
+    plt.savefig("plot_jet_stirred_reactor.png", bbox_inches="tight")

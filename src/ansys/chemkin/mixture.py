@@ -28,11 +28,8 @@ import copy
 import ctypes
 from ctypes import c_double, c_int
 
-import numpy as np
-import numpy.typing as npt
-
-from . import chemkin_wrapper as ck_wrapper
-from .chemistry import (
+from ansys.chemkin import chemkin_wrapper as ck_wrapper
+from ansys.chemkin.chemistry import (
     Chemistry,
     check_active_chemistryset,
     check_chemistryset,
@@ -42,8 +39,10 @@ from .chemistry import (
     set_current_pressure,
     verbose,
 )
-from .color import Color
-from .utilities import calculate_stoichiometrics, where_element_in_array_1D
+from ansys.chemkin.color import Color
+from ansys.chemkin.utilities import calculate_stoichiometrics, where_element_in_array_1D
+import numpy as np
+import numpy.typing as npt
 
 
 class Mixture:
@@ -105,6 +104,7 @@ class Mixture:
         self._SurfaceChem = c_int(
             chem.surfchem
         )  # flag indicating there is surface chemistry (type c_int: 0 = no, 1 = yes)
+        self.transport_data = chem._index_tran.value
         self._EOS = c_int(chem.EOS)  # real-gas EOS model in the mechanism
         self.userealgas = chem.userealgas  # status of the real-gas EOS usage
 
@@ -482,6 +482,7 @@ class Mixture:
         Returns
         -------
             error code: integer
+                error code
             localfrac: 1-D double array
                 normalized fraction array
         """
@@ -579,6 +580,7 @@ class Mixture:
         Returns
         -------
             error_code: integer
+                error code
             y: 1-D double array, dimension = number_species
                 mass fractions
         """
@@ -608,6 +610,7 @@ class Mixture:
         Returns
         -------
             error_code: integer
+                error code
             x: 1-D double array, dimensdion = number_species
                 mole fractions
         """
@@ -1804,6 +1807,11 @@ class Mixture:
             visc: : 1-D double array, dimension = number_species
                 species viscosity [gm/cm-sec]
         """
+        if self.transport_data != 1:
+            msg = [Color.PURPLE, "no transport data processed.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         TT = c_double(self.temperature)
         visc = np.zeros(self._KK, dtype=np.double)
         iErr = ck_wrapper.chemkin.KINGetViscosity(self._chemset_index, TT, visc)
@@ -1824,6 +1832,11 @@ class Mixture:
             cond: 1-D double array, dimension = number_species
                 species conductivity [ergs/cm-K-sec]
         """
+        if self.transport_data != 1:
+            msg = [Color.PURPLE, "no transport data processed.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         TT = c_double(self.temperature)
         cond = np.zeros(self._KK, dtype=np.double)
         iErr = ck_wrapper.chemkin.KINGetConductivity(self._chemset_index, TT, cond)
@@ -1844,6 +1857,11 @@ class Mixture:
             diffusioncoeffs: 2-D double array, dimension = [number_species, number_species]
                 species diffusion coefficients [cm2/sec]
         """
+        if self.transport_data != 1:
+            msg = [Color.PURPLE, "no transport data processed.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         PP = c_double(self.pressure)
         TT = c_double(self.temperature)
         dim = (self._KK, self._KK)
@@ -1872,6 +1890,11 @@ class Mixture:
             visc: double
                 mixture viscosity [gm/cm-sec]
         """
+        if self.transport_data != 1:
+            msg = [Color.PURPLE, "no transport data processed.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         # initialization
         visc = c_double(0.0e0)
         # check temperature
@@ -1903,6 +1926,11 @@ class Mixture:
             cond: double
                 mixture conductivity [erg/cm-K-sec]
         """
+        if self.transport_data != 1:
+            msg = [Color.PURPLE, "no transport data processed.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         # initialization
         cond = c_double(0.0e0)
         # check temperature
@@ -1934,6 +1962,11 @@ class Mixture:
             diffusioncoeffs: 1-D double array, dimension = number_species
                 mixture-averaged diffusion coefficients [cm2/sec]
         """
+        if self.transport_data != 1:
+            msg = [Color.PURPLE, "no transport data processed.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         # initialization
         diffusioncoeffs = np.zeros(self._KK, dtype=np.double)
         # check temperature
@@ -1980,6 +2013,11 @@ class Mixture:
             binarydiffusioncoeffs: 2-D double array, dimension = [number_species, number_species]
                 binary diffusion coefficients [cm2/sec]
         """
+        if self.transport_data != 1:
+            msg = [Color.PURPLE, "no transport data processed.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         # initialization
         dim = (self._KK, self._KK)
         binarydiffusioncoeffs = np.zeros(dim, dtype=np.double, order="F")
@@ -2028,6 +2066,11 @@ class Mixture:
             thermaldiffusioncoeffs: 1-D double array, dimension = number_species
                 thermal diffusivity [gm/cm-sec]
         """
+        if self.transport_data != 1:
+            msg = [Color.PURPLE, "no transport data processed.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         # initialization
         thermaldiffusioncoeffs = np.zeros(self._KK, dtype=np.double)
         cond = c_double(0.0e0)  # mixture thermal conductivity
@@ -3160,6 +3203,7 @@ def interpolate_mixtures(
 ) -> Mixture:
     """
     Create a new mixture object by interpolating the two mixture objects with a specific weight ratio
+
     ::
         mixture_new = (1 - ratio) * mixtureleft + ratio * mixtureright
 
@@ -3306,6 +3350,7 @@ def calculate_equilibrium(
             flag to indicate the returning composition is in 'mole' or 'mass' fraction
         EQOption: integer, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
             equilibrium type (see below)
+
             ::
                 1.  SPECIFIED T AND P
                 2.  SPECIFIED T AND V
@@ -3509,18 +3554,20 @@ def equilibrium(mixture: Mixture, opt: int = 1) -> Mixture:
             initial gas mixture
         opt: integer, {1, 2, 4, 5, 7, 8}
             equilibrium type
+
             ::
                 1.  SPECIFIED T AND P
                 2.  SPECIFIED T AND V
-                3*.  SPECIFIED T AND S
+                3.  SPECIFIED T AND S (*)
                 4.  SPECIFIED P AND V
                 5.  SPECIFIED P AND H
-                6*.  SPECIFIED P AND S
+                6.  SPECIFIED P AND S (*)
                 7.  SPECIFIED V AND U
                 8.  SPECIFIED V AND H
-                9*.  SPECIFIED V AND S
-                10*. CHAPMAN-JOUGUET DETONATION
-                * indicates the options are not available
+                9.  SPECIFIED V AND S (*)
+                10. CHAPMAN-JOUGUET DETONATION (*)
+
+                (*) indicates the options are not available
 
     Returns
     -------

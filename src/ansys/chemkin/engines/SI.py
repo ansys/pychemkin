@@ -27,18 +27,18 @@
 import copy
 from ctypes import c_double, c_int
 
-from .. import chemkin_wrapper
-from ..chemistry import (
+from ansys.chemkin import chemkin_wrapper
+from ansys.chemkin.chemistry import (
     check_chemistryset,
     chemistryset_initialized,
     force_activate_chemistryset,
     verbose,
 )
-from ..color import Color as Color
-from ..engines.engine import Engine
-from ..inlet import Inlet
-from ..logger import logger
-from ..reactormodel import Keyword
+from ansys.chemkin.color import Color as Color
+from ansys.chemkin.engines.engine import Engine
+from ansys.chemkin.inlet import Inlet
+from ansys.chemkin.logger import logger
+from ansys.chemkin.reactormodel import Keyword
 
 
 class SIengine(Engine):
@@ -82,6 +82,8 @@ class SIengine(Engine):
         Keyword.noFullKeyword = True
         # FORTRAN file unit of the text output file
         self._myLOUT = c_int(156)
+        # profile points
+        self._profilesize = int(0)
         # burn mass profile mode
         # 0: unset
         # 1: Wiebe function with n, b, SOI, burn duration
@@ -734,7 +736,6 @@ class SIengine(Engine):
 
         # output initialization
         logger.debug("Clearing output")
-        self.output = {}
 
         # keyword processing
         msg = [Color.YELLOW, "processing and generating keyword inputs ...", Color.END]

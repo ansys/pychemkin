@@ -106,20 +106,20 @@ mymixture2.X = [("H2", 0.02), ("O2", 0.2), ("N2", 0.8)]
 # compute detonation wave speed with mymixture2
 speeds_mix2, CJ_mix2 = ck.detonation(mymixture2)
 print(f"detonation mymixture2 temperature: {CJ_mix2.temperature} [K]")
-print(f"detonation wave speed = {speeds_mix2[1]/100.0} [m/sec]")
+print(f"detonation wave speed = {speeds_mix2[1] / 100.0} [m/sec]")
 #
 # re-activate My1stMech
 My1stMech.activate()
 # compute detonation wave speed with mymixture1
 speeds_mix1, CJ_mix1 = ck.detonation(mymixture1)
 print(f"detonation mymixture1 temperature: {CJ_mix1.temperature} [K]")
-print(f"detonation wave speed = {speeds_mix1[1]/100.0} [m/sec]")
+print(f"detonation wave speed = {speeds_mix1[1] / 100.0} [m/sec]")
 
 # return results for comparisons
 resultfile = os.path.join(current_dir, "multiplemechanisms.result")
 results = {}
-results["state-temperature_IdealGas"] = [CJ_mix1.temperature]
-results["state-detonation_speed_IdealGas"] = [speeds_mix1[1] / 100.0]
+# results["state-temperature_IdealGas"] = [CJ_mix1.temperature]
+# results["state-detonation_speed_IdealGas"] = [speeds_mix1[1] / 100.0]
 results["state-temperature_RealGas"] = [CJ_mix2.temperature]
 results["state-detonation_speed_RealGas"] = [speeds_mix2[1] / 100.0]
 #

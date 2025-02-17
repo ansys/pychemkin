@@ -29,14 +29,13 @@ from ctypes import POINTER, c_char_p, c_double, c_int
 import os
 from typing import Dict, List
 
+from ansys.chemkin import chemkin_wrapper as ck_wrapper
+from ansys.chemkin.color import Color
+from ansys.chemkin.constants import RGas
+from ansys.chemkin.info import clear_hints
+from ansys.chemkin.logger import logger
+from ansys.chemkin.realgaseos import check_realgas_status, set_current_pressure
 import numpy as np
-
-from . import chemkin_wrapper as ck_wrapper
-from .color import Color
-from .constants import RGas
-from .info import clear_hints
-from .logger import logger
-from .realgaseos import check_realgas_status, set_current_pressure
 
 _symbol_length = 16  # Chemkin element/species symbol length
 MAX_SPECIES_LENGTH = _symbol_length + 1  # Chemkin element/species symbol length + 1
@@ -134,6 +133,7 @@ def activate_chemistryset(chem_index: int) -> int:
     """
     Switch to (re-activate) the work spaces of the current Chemistry Set
     when there are multiple Chemistry Sets in the same project
+
     Parameters
     ----------
         chem_index: integer
@@ -866,8 +866,8 @@ class Chemistry:
         -------
             status: integer, {0, 1}
                 indicating whether the Chemistry set includes a surface mechanism
-                    0 = this chemistry set does NOT include a surface chemistry
-                    1 = this chemistry set includes a  surface chemistry
+                0 = this chemistry set does NOT include a surface chemistry
+                1 = this chemistry set includes a  surface chemistry
         """
         return self._index_surf.value
 
@@ -1254,6 +1254,11 @@ class Chemistry:
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
             exit()
+        if self._index_tran.value != 1:
+            msg = [Color.PURPLE, "no transport data processed.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         if temp <= 1.0e0:
             msg = [Color.PURPLE, "temperature value is too low.", Color.END]
             this_msg = Color.SPACE.join(msg)
@@ -1291,6 +1296,11 @@ class Chemistry:
                 "please preprocess the chemistry set first.",
                 Color.END,
             ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        if self._index_tran.value != 1:
+            msg = [Color.PURPLE, "no transport data processed.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
             exit()
@@ -1337,6 +1347,11 @@ class Chemistry:
                 "please preprocess the chemistry set first.",
                 Color.END,
             ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        if self._index_tran.value != 1:
+            msg = [Color.PURPLE, "no transport data processed.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
             exit()

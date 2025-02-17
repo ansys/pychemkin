@@ -10,12 +10,12 @@
    :maxdepth: 2
    :caption: Contents
 
-   readme_link
+   Overview
    Prerequisites
    Introduction
    Getting Started <Get_Start>
-   Tutorials
    License
+   Tutorials <auto_examples/index.rst>
 
 .. warning::
    - This project is under active development.
@@ -29,4 +29,3 @@
 .. _Ansys Chemkin: https://www.ansys.com/products/fluids/ansys-chemkin-pro/
 
 .. _Chemkin Documents: https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/prod_page.html?pn=Chemkin&pid=ChemkinPro&lang=en/
-

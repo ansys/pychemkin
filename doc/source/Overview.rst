@@ -1,0 +1,1 @@
+.. include:: ../../examples/GALLERY_HEADER.rst

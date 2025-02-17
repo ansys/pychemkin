@@ -19,6 +19,52 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+"""
+.. _ref_brute_force_sensitivity:
+
+========================================
+Perform brute-force sensitivity analysis
+========================================
+
+One of the advantages of PyChemkin is customizability. You can easily build a
+specialized workflow to facilitate your simulation goals.
+
+This tutorial demonstrates how to create a purpose-built workflow with PyChemkin
+by conducting a brute-force A-factor sensitivity analysis for ignition delay time
+of a premixed natural gas-air mixture at given initial temperature and pressure.
+Most Chemkin reactor models have the A-factor sensitivity analysis capability. The catch
+is that the subject variable of the analysis must be a member of the solution variables such
+as temperature, species mass fractions, and mass flow rate. However, for derived variables
+such as the ignition delay time, the built-in sensitivity analysis work as convenient. Thus,
+in this case, you may want to resort to the brute-force method to obtain those A-factor
+sensitivity coefficients with respect to the ignition delay time.
+
+To conduct the brute-force A-factor sensitivity analysis, you will have to repeat the three
+steps for every reaction in the mechanism one by one
+
+    1.  perturb the A-factor (the Arrhenius pre-exponent parameters) of a reaction
+
+    2.  obtain the ignition delay time with this perturbed A-factor by running a constant
+        pressure batch reactor simulation
+
+    3.  restore the A-factor to its original value
+
+The normalized ignition delay time sensitivity coefficient of reaction :math:`j` is the difference
+between the original and the perturbed ignition delay time values divided by the size of the A-factor
+disturbance
+
+.. math ::
+    S_{j} = \\frac{(I_{j,ptb} - I_{j,org})}{(A_{j,ptb} - A_{j,org})/A_{j,org}}
+
+"""
+
+# sphinx_gallery_thumbnail_path = '_static/plot_sensitivity_analysis.png'
+
+###############################################
+# Import PyChemkin package and start the logger
+# =============================================
+
 import os
 import time
 
@@ -44,6 +90,13 @@ ck.set_verbose(False)
 global interactive
 interactive = False
 
+#####################################
+# Create a ``Chemistry Set`` instance
+# ===================================
+# The mechanism is the GRI 3.0 mechanism for methane combustion.
+# The mechanism and its associated data files come with the standard Ansys Chemkin
+# installation under the subdirectory *"/reaction/data"*.
+
 # set mechanism directory (the default chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
@@ -53,26 +106,43 @@ MyGasMech = ck.Chemistry(label="GRI 3.0")
 # inclusion of the full file path is recommended
 MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-# pre-process
+
+###################################
+# Pre-process the ``Chemistry Set``
+# =================================
 iError = MyGasMech.preprocess()
+# check preprocess status
 if iError == 0:
     print("mechanism information:")
     print(f"number of gas species = {MyGasMech.KK:d}")
     print(f"number of gas reactions = {MyGasMech.IIGas:d}")
 else:
+    # When a non-zero value is returned from the process, check the text output files
+    # chem.out, tran.out, or summary.out for potential error messages about the mechanism data.
+    print(f"PreProcess: error encountered...code = {iError:d}")
+    print(f"see the summary file {MyGasMech.summaryfile} for details")
     exit()
-#
-# create air-fuel mixture with equivalence ratio = 1.1
+
+####################################################################
+# Set up gas mixtures based on the species in this ``Chemistry Set``
+# ==================================================================
+# Use the *equivalence ratio method* so that you can easily set up
+# the premixed fuel-oxidizer mixture composition by assigning an
+# *equivalence ratio* value. In this case, the fuel mixture consists
+# of methane, ethane, and propane as the simulated "natural gas".
+# The premixed air-fuel mixture has an equivalence ratio of 1.1.
 oxid = ck.Mixture(MyGasMech)
 # set mole fraction
 oxid.X = [("O2", 1.0), ("N2", 3.76)]
 oxid.temperature = 900
 oxid.pressure = ck.Patm  # 1 atm
+
 fuel = ck.Mixture(MyGasMech)
 # set mole fraction
 fuel.X = [("C3H8", 0.1), ("CH4", 0.8), ("H2", 0.1)]
 fuel.temperature = oxid.temperature
 fuel.pressure = oxid.pressure
+
 mixture = ck.Mixture(MyGasMech)
 mixture.pressure = oxid.pressure
 mixture.temperature = oxid.temperature
@@ -82,11 +152,35 @@ add_frac = np.zeros(MyGasMech.KK, dtype=np.double)
 iError = mixture.X_by_Equivalence_Ratio(
     MyGasMech, fuel.X, oxid.X, add_frac, products, equivalenceratio=1.1
 )
+# check fuel-oxidizer mixture creation status
 if iError != 0:
-    raise RuntimeError
+    print("Error: failed to create the Fuel-Oxidizer mixture!")
+    exit()
+
+##############################
+# List the mixture composition
+# ============================
+# list the composition of the premixed mixture for verification.
 if ck.verbose():
     mixture.list_composition(mode="mole")
-# get the original rate parameters
+
+########################################
+# Preparing for the sensitivity analysis
+# ======================================
+# You need to perform some preparation work before running
+# the brute-force sensitivity analysis. These tasks include: making
+# backup copies of the original Arrhenius rate parameters, set up a
+# *constant pressure* batch reactor object to compute the ignition
+# delay times, and establish the baseline ignition delay time value
+# with the original mechanism.
+
+##################################
+# Get the original rate parameters
+# ================================
+# The first step is to save a copy of the Arrhenius rate parameters
+# of all reactions. You can use the ``get_reaction_parameters`` method
+# associated with the ``MyGasMech`` object. You can also verify the
+# rate parameters by "screening" their values.
 Afactor, Beta, ActiveEnergy = MyGasMech.get_reaction_parameters()
 if ck.verbose():
     for i in range(MyGasMech.IIGas):
@@ -97,28 +191,59 @@ if ck.verbose():
         if np.isclose(0.0, Afactor[i], atol=1.0e-15):
             print("reaction pre-exponential factor = 0")
             exit()
-#
-# compute the ignition delay time
-# create a constant pressure batch reactor (with energy equation)
-#
+
+################################################################
+# Create the reactor object for ignition delay time calculations
+# ==============================================================
+# Use the ``GivenPressureBatchReactor_EnergyConservation`` method to instantiate a
+# *constant pressure batch reactor that also includes the energy equation*. You
+# should use the ``mixture`` you just created.
 MyCONP = GivenPressureBatchReactor_EnergyConservation(mixture, label="CONP")
-# show initial gas composition inside the reactor
+# show initial gas composition inside the reactor for verification
 MyCONP.list_composition(mode="mole")
-# set other reactor parameters
+
+############################################
+# Set up additional reactor model parameters
+# ==========================================
+# *Reactor parameters*, *solver controls*, and *output instructions* need to be provided
+# before running the simulations. For a batch reactor, the *initial volume* and the
+# *simulation end time* are required inputs. The ``set_ignition_delay`` method must be included
+# for the reactor model to report the *ignition delay times* after the simulation is done.
+# The *inflection points* definition is employed to detect the auto-ignition time because
+# ``method="T_inflection"`` is specified. You can choose a different auto-ignition definition.
+# Allow additional solution data point to be saved so that the predicted temperature profile
+# can have enough resolution to provide more precise ignition delay time value. Here the adoptive
+# solution saving is turned on by the ``adaptive_solution_saving`` method and the solution will
+# be recorded for every **20** solver internal steps. Remember to set a simulation end time
+# ``time`` that is long enough to catch the occurrence of auto-ignition.
+#
+# .. note::
+#   By default, time intervals for both print and save solution are **1/100** of the
+#   *simulation end time*. In this case :math:`dt=time/100=0.001`\ . You can change them
+#   to different values.
+#
+
 # reactor volume [cm3]
 MyCONP.volume = 10.0
 # simulation end time [sec]
 MyCONP.time = 2.0
+
 # turn ON adaptive solution saving
 MyCONP.adaptive_solution_saving(mode=True, steps=20)
+# set ignition delay
+MyCONP.set_ignition_delay(method="T_inflection")
+
 # set tolerances in tuple: (absolute tolerance, relative tolerance)
 MyCONP.tolerances = (1.0e-10, 1.0e-8)
-# set ignition delay
-# ck.show_ignition_definitions()
-MyCONP.set_ignition_delay(method="T_inflection")
-# set the start wall time
+
+# set the start wall time to get the total simulation run time
 start_time = time.time()
-# run the nominal case
+
+###############################
+# Establish the baseline result
+# =============================
+# Run the nominal case and get the baseline ignition delay time value
+# by using the ``get_ignition_delay`` method.
 runstatus = MyCONP.run()
 #
 if runstatus == 0:
@@ -130,16 +255,32 @@ else:
     print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
     print("failed to find the ignition delay time of the nominal case")
     exit()
+
+####################################
+# Run the sensitivity analysis cases
+# ==================================
+# Now compute the "raw" A-factor sensitivity coefficients of ignition delay time.
+# Firstly, you create an array ``IGsen`` to store the sensitivity coefficients, the size
+# of ``IGsen`` must be no less than the number of reactions in the mechanism ``MyGasMech``.
+# Secondly, you introduce a small perturbation to the A-factor one reaction at a time
+# by using the ``set_reaction_AFactor`` method. The advantage of this method is that you
+# do not need to preprocess the ``Chemistry Set`` every time you make a change to the rate
+# parameter. Then you run the same batch reactor ``MyCONP`` to get the ignition delay time.
 #
-# brute force A factor sensitivity coefficients of ignition delay time
+# Once the simulation is complete successfully, use the ``get_ignition_delay`` method to
+# extract the ignition delay time. Compute the difference between this ignition delay time
+# value (with altered A-factor) and the baseline value (from the original mechanism) and
+# save the result to array ``IGsen``. Remember to restore the A-factor to its original
+# value before moving on to the next reaction.
+
 # create sensitivity coefficient array
 IGsen = np.zeros(MyGasMech.IIGas, dtype=np.double)
 # set perturbation magnitude
 perturb = 0.001  # increase by 0.1%
-perturbplus1 = 1.0 + perturb
+perturb_plus_1 = 1.0 + perturb
 # loop over all reactions
 for i in range(MyGasMech.IIGas):
-    Anew = Afactor[i] * perturbplus1
+    Anew = Afactor[i] * perturb_plus_1
     # actual reaction index
     ireac = i + 1
     # update the A factor
@@ -161,12 +302,23 @@ for i in range(MyGasMech.IIGas):
         print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
         exit()
 
-# compute the total runtime
+# compute and report the total runtime (wall time)
 runtime = time.time() - start_time
 print(f"\ntotal simulation time: {runtime} [sec] over {MyGasMech.IIGas + 1} runs")
-# normalized sensitivity coefficient = d(delaytime) * A[i] / d(A[i])
+
+#################################################
+# Compute the normalized sensitivity coefficients
+# ===============================================
+# Compute the normalized sensitivity coefficient = d(delaytime) * A[i] / d(A[i]).
 IGsen /= perturb
-# print top n positive and negative ignition delay time sensitivity coefficients
+
+##################################
+# Screen and rank the coefficients
+# ================================
+# Print top 5 positive and negative ignition delay time sensitivity coefficients
+# to reveal the reactions of which the A-factor values have the strongest impact
+# on the auto-ignition timing (positively or negatively). The ranking will change
+# when the mixture composition or condition is changed.
 top = 5
 # rank the positive coefficients
 posindex = np.argpartition(IGsen, -top)[-top:]
@@ -176,6 +328,7 @@ poscoeffs = IGsen[posindex]
 NegIGsen = np.negative(IGsen)
 negindex = np.argpartition(NegIGsen, -top)[-top:]
 negcoeffs = IGsen[negindex]
+
 # print the top sensitivity coefficients
 if ck.verbose():
     print("positive sensitivity coefficients")
@@ -185,8 +338,12 @@ if ck.verbose():
     print("negative sensitivity coefficients")
     for i in range(top):
         print(f"reaction {negindex[i] + 1}: coefficient = {negcoeffs[i]}")
-#
-# create a rate plot
+
+##########################################
+# Plot the ranked sensitivity coefficients
+# ========================================
+# Create plots to show the reactions whose A-factors have most positive
+# and negative influence on the ignition delay time.
 plt.rcParams.update({"figure.autolayout": True, "ytick.color": "blue"})
 plt.subplots(2, 1, sharex="col", figsize=(10, 5))
 # convert reaction # from integers to strings
@@ -198,7 +355,6 @@ for i in range(len(posindex)):
 plt.subplot(211)
 plt.barh(rxnstring, poscoeffs, color="orange", height=0.4)
 plt.axvline(x=0, c="gray", lw=1)
-#
 # convert reaction # from integers to strings
 rxnstring.clear()
 fnegindex = np.flip(negindex)
@@ -215,4 +371,4 @@ plt.suptitle("Ignition Delay Time Sensitivity", fontsize=16)
 if interactive:
     plt.show()
 else:
-    plt.savefig("sensitivity_analysis.png", bbox_inches="tight")
+    plt.savefig("plot_sensitivity_analysis.png", bbox_inches="tight")

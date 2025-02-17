@@ -102,7 +102,7 @@ class PyCKtools:
         f = test_file + ".out"
         output_folder = os.path.join(current_dir, "outputs")
         f = os.path.join(output_folder, f)
-        fout = open(f, "w+")
+        fout = open(f, "w")
         # run test
         # change working directory
         os.chdir(new_working)
@@ -110,15 +110,27 @@ class PyCKtools:
             results = subprocess.run(["python", frun], stdout=fout, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Command returned non-zero exit status: {e.returncode}")
+            fout.close()
+            # change working directory back
+            os.chdir(root_dir)
             assert 0
         except subprocess.TimeoutExpired as e:
             print(f"Command timed out: {e.timeout}")
+            fout.close()
+            # change working directory back
+            os.chdir(root_dir)
             assert 0
         except FileNotFoundError as e:
             print(f"Command not found: {e}")
+            fout.close()
+            # change working directory back
+            os.chdir(root_dir)
             assert 0
         except OSError as e:
             print(f"OS error occurred: {e}")
+            fout.close()
+            # change working directory back
+            os.chdir(root_dir)
             assert 0
         # close the solution output file
         fout.close()

@@ -20,6 +20,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+"""
+.. _ref_adiabatic_flame_temperature:
+
+=========================================================
+Estimate the adiabatic flame temperature of a gas mixture
+=========================================================
+
+This tutorial will walk through the process of finding the *equilibrium
+state* of a mixture in PyChemkin. The ``Mixture`` ``equilibrium`` method with
+the *constant pressure and enthalpy* option is applied to estimate the
+*adiabatic flame temperature* of a methane-oxygen mixture.
+
+The influence of *equivalence ratio* on the predicted adiabatic flame temperature will be explored.
+"""
+
+# sphinx_gallery_thumbnail_path = '_static/plot_adiabatic_flame_temperature.png'
+
+###############################################
+# Import PyChemkin package and start the logger
+# =============================================
+
 import os
 
 import ansys.chemkin as ck  # Chemkin
@@ -36,67 +57,142 @@ ck.set_verbose(True)
 # interactive = True: display plot
 # interactive = False: save plot as a png file
 global interactive
-interactive = False
+interactive = True
 
-# This is a pychemkin equivalent of equil_test07
+#####################################
+# Create a ``Chemistry Set`` instance
+# ===================================
+# The first mechanism loaded is the GRI 3.0 mechanism for methane combustion.
+# The mechanism and its associated data files come with the standard Ansys Chemkin
+# installation under the subdirectory *"/reaction/data"*.
 
 # set mechanism directory (the default chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
-# create a chemistry set based on the diesel 14 components mechanism
+
+# create a chemistry set instance based on the GRI 3.0 methane combustion mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # inclusion of the full file path is recommended
 MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
+# skip the transport data file where is not needed by this example
 
+###################################
+# Pre-process the ``Chemistry Set``
+# =================================
+
+# preprocess the mechanism files
 iError = MyGasMech.preprocess()
 
-oxid = ck.Mixture(MyGasMech)
-# set mass fraction
-oxid.X = [("O2", 1.0)]
-oxid.temperature = 295.15
-oxid.pressure = ck.Patm  # 1 atm
-# mix the fuel and the air with an air-fuel ratio of 17.19 (almost stoichiometric?
+####################################################################
+# Set up gas mixtures based on the species in this ``Chemistry Set``
+# ==================================================================
+# There are a few methods to create a gas ``mixture`` in PyChemkin.
+# Here the *equivalence ratio method* is used to set up the combustible mixture
+# so that you can easily change the mixture composition by assigning a
+# different *equivalence ratio* value.
 
+# create an "oxid" mixture instance associated with the 'MyGasMech' Chemistry Set
+oxid = ck.Mixture(MyGasMech)
+# use a "recipe" to set the mole fractions of the mixture
+# the "oxid" mixture consists of 100% O2
+oxid.X = [("O2", 1.0)]
+oxid.temperature = 295.15  # [K]
+oxid.pressure = ck.Patm  # 1 atm
+
+# create an "fuel" mixture instance
 fuel = ck.Mixture(MyGasMech)
-# set mole fraction
+# set the "fuel" molar composition to 100% CH4
 fuel.X = [("CH4", 1.0)]
 fuel.temperature = oxid.temperature
 fuel.pressure = oxid.pressure
 
+# create an instance of the final fuel-oxidizer mixture
 mixture = ck.Mixture(MyGasMech)
 mixture.pressure = oxid.pressure
 mixture.temperature = oxid.temperature
+
+# the use of equivalence ratio requires the definition of the complete combustion
+# products of the fuel-oxidizer pair:
+# CH4 + 2O2 => CO2 + 2H2O
 products = ["CO2", "H2O"]
+
+# create an array to specify the composition of the additives to the fuel-oxidizer mixture
+# For example, diluent such as AR or HE may be added to the fuel-oxidizer mixture
+# Use an all-zero array if there is no additive
+add_frac = np.zeros(MyGasMech.KK, dtype=np.double)
+
+############################
+# Set up the parameter study
+# ==========================
+# Set up a parameter study to find out the impact of the *equivalence ratio*
+# on the *adiabatic flame temperature* of a fuel-oxidier mixture. The *equivalence ratio*
+# varies from 0.5 to 1.6 with an increment of 0.5.
 
 points = 12
 deq = 0.1
 equiv_ini = 0.5
 
+# create the solution arrays as double arrays
 T = np.zeros(points, dtype=np.double)
 equiv = np.zeros_like(T, dtype=np.double)
 
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)
-iError = 0
+#########################
+# Run the parameter study
+# =======================
+# The *adiabatic flame temperature* of a fuel-oxidizer mixture may be estimated
+# by utilizing the ``equilibrium`` method of the ``Mixture`` object. Choose the
+# *"constant-pressure"*, *"constant-enthalpy"* option for the equilibrium calculation
+# because you are finding the **adiabatic** temperature.
+# The ``equilibrium`` method returns a ``mixture`` object representing the mixture
+# at the equilibrium state. You can get the equilibrium temperature by using the
+# ``temperature`` method.
+# You can use the ``ck.help(topic="equilibrium")`` method to see all available options
+# of the ``equilibrium`` method.
+# This example uses the ``X_by_Equivalence_Ratio`` method to set the fuel-oxidizer composition
+# with the given *equivalence ratios* because the composition of both the *fuel* and the
+# *oxidizer* mixtures are specified in *mole fractions*.
+
 for i in range(points):
+    # set the current mixture equivalence ratio
     equiv_current = equiv_ini
+
+    # create the fuel-oxidizer mixture with the given equivalence ratio
     iError = mixture.X_by_Equivalence_Ratio(
         MyGasMech, fuel.X, oxid.X, add_frac, products, equivalenceratio=equiv_current
     )
+    # check fuel-oxidizer mixture creation status
     if iError != 0:
-        raise RuntimeError
-    result = ck.equilibrium(mixture, opt=5)
-    T[i] = result.temperature
+        print("Error: failed to create the Fuel-Oxidizer mixture!")
+        print(f"       equivalence ratio = {equiv_current}.")
+        exit()
+
+    # use "equilibrium" method to calculate the gas mixture at the equilibrium state
+    # Option #5 (opt=5) corresponds to the constant-pressure and the constant-enthalpy
+    # constraints of the equilibirum state.
+    # "EQ_mixture" is the gas mixture at the equilibrium state
+    EQ_mixture = ck.equilibrium(mixture, opt=5)
+
+    # save the results to the solution arrays
+    # us the "temperature" to obtain the temperature of the equilibrium state
+    T[i] = EQ_mixture.temperature
     equiv[i] = equiv_current
     equiv_ini = equiv_ini + deq
-print(T)
 
+###########################################
+# Plot the result from this parameter study
+# =========================================
+# the *adiabatic flame temperature* should exhibit a peak at around the stoichiometric,
+# that is, equivalence ratio = 1.
+
+# plot equilibrium/adiabatic temperatures against mixture equivalence ratios
 plt.plot(equiv, T, "bs--")
+# set up axis labels
 plt.xlabel("Equivalence ratio")
 plt.ylabel("Temperature [K]")
-# plot results
+# display/save the plot
 if interactive:
     plt.show()
 else:
-    plt.savefig("adiabatic_flame_temperature.png", bbox_inches="tight")
+    plt.savefig("plot_adiabatic_flame_temperature.png", bbox_inches="tight")

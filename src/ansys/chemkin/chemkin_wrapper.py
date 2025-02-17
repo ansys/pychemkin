@@ -29,10 +29,9 @@ from ctypes import cdll
 import os
 import platform
 
+from ansys.chemkin.color import Color
+from ansys.chemkin.logger import logger
 import numpy as np
-
-from .color import Color
-from .logger import logger
 
 # set ansys version number
 _min_version = 251
@@ -45,9 +44,6 @@ _target_lib = None
 _lib_paths: list[str] = []
 # create log
 msg = ["minimum version =", str(_min_version)]
-this_msg = Color.SPACE.join(msg)
-logger.debug(this_msg)
-msg = ["latest version = ", str(_valid_versions[0])]
 this_msg = Color.SPACE.join(msg)
 logger.debug(this_msg)
 

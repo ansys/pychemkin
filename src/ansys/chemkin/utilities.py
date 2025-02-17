@@ -24,11 +24,10 @@
 pychemkin utilities
 """
 
+from ansys.chemkin.chemistry import Chemistry
+from ansys.chemkin.color import Color
+from ansys.chemkin.logger import logger
 import numpy as np
-
-from .chemistry import Chemistry
-from .color import Color
-from .logger import logger
 
 
 def where_element_in_array_1D(arr, target):

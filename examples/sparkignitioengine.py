@@ -19,6 +19,45 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+"""
+.. _ref_sparkignition_engine:
+
+==================================
+Simulate a spark ignition engine
+==================================
+
+**Ansys chemkin** offers some idealized *internal combustion engine*(IC engine) models commonly used
+for fuel combustion and engine performance researches. The *Chemkin* ``IC engine model`` is a specialized
+transient 0-D *closed* gas-phase reactor that mainly perform combustion simulation between the
+intake valve closing (IVC) and the exhaust valve opening (EVO), that is, when the engine cylinder resembles
+a closed chamber. The cylinder volume is derived from the piston motion as a function of the engine
+crank angle (CA) and engine parameters such as engine speed (RPM) and stroke. The energy equation
+is always solved and there are several wall heat transfer models specifically designed for engine
+simulations.
+
+.. note ::
+    For additional information about the *Chemkin* IC engine models, please use the
+    ``ansys.chemkin.manuals()`` method to check out the online **Theory** manual.
+
+The chemkin spark ignition (SI) engine model offers a simple way to simulate the chemical kinetics taking place in
+the spark ignition engine. The chemkin SI engine model does not predict the fuel mass burning rate profile; on the
+contrary, it requires the burning rate profile as input in the form of the Wiebe function parameters, the burn profile
+anchor points, or a normalized profile data. The main uses of the chemkin SI engine model are conducting parameter
+studies of the burning rate profile on engine performance, emissions, and the onset of engine knock due to end gas
+autoignition.
+
+This tutorial models will describe the basic procedures to set up and run the simplest Chemkin IC engine model:
+the SI engine model. In addition to the basic engine parameters, many engine model specific features such as the
+*"exhaust gas recirculation"* and the *"wall heat transfer"* can be included in the engine simulation.
+"""
+
+# sphinx_gallery_thumbnail_path = '_static/plot_spark_ignition_engine.png'
+
+###############################################
+# Import PyChemkin package and start the logger
+# =============================================
+
 import os
 import time
 
@@ -40,7 +79,18 @@ ck.set_verbose(True)
 # interactive = True: display plot
 # interactive = False: save plot as a png file
 global interactive
-interactive = False
+interactive = True
+
+#####################################
+# Create a ``Chemistry Set`` instance
+# ===================================
+# For PRF, the encrypted 14-component gasoline mechanism, ``gasoline_14comp_WBencrypted.inp``,
+# is used. ``gasoline`` is the name given to this ``Chemistry Set``.
+#
+# .. note::
+#   This gasoline mechanism does not come with any transport data so you do not need to provide
+#   the transport data file.
+#
 
 # set mechanism directory (the default chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
@@ -50,12 +100,29 @@ MyGasMech = ck.Chemistry(label="Gasoline")
 # set mechanism input files
 # inclusion of the full file path is recommended
 MyGasMech.chemfile = os.path.join(mechanism_dir, "gasoline_14comp_WBencrypt.inp")
+
+############################################
+# Pre-process the gasoline ``Chemistry Set``
+# ==========================================
+
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
 print("mechanism information:")
 print(f"number of gas species = {MyGasMech.KK:d}")
 print(f"number of gas reactions = {MyGasMech.IIGas:d}")
-# create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
+
+################################################
+# Set up the stoichiometric gasoline-air mixture
+# ==============================================
+# You need to set up the stoichiometric gasoline-air mixture for the subsequent
+# SI engine calculations. Here the ``X_by_Equivalence_Ratio``method is used.
+# You create the ``fuel`` and the ``air`` mixtures first. Then define the
+# *complete combustion product species* and provide the *additives* composition if applicable.
+# And finally you can simply set ``equivalenceratio=1`` to create the stoichiometric
+# gasoline-air mixture.
+#
+# For PRF 90 gasoline, the ``recipe`` is ``[("ic8h18", 0.9), ("nc7h16", 0.1)]``.
+
 # create the fuel mixture
 fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition
@@ -63,31 +130,62 @@ fuelmixture.X = [("ic8h18", 0.9), ("nc7h16", 0.1)]
 # setting pressure and temperature is not required in this case
 fuelmixture.pressure = ck.Patm
 fuelmixture.temperature = 353.0
+
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
 air.X = [("o2", 0.21), ("n2", 0.79)]
 # setting pressure and temperature is not required in this case
 air.pressure = ck.Patm
 air.temperature = 353.0
-# create the unburned fuel-air mixture
-fresh = ck.Mixture(MyGasMech)
+
 # products from the complete combustion of the fuel mixture and air
 products = ["co2", "h2o", "n2"]
 # species mole fractions of added/inert mixture. can also create an additives mixture here
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
+
+# create the unburned fuel-air mixture
+fresh = ck.Mixture(MyGasMech)
+
 # mean equivalence ratio
 equiv = 1.0
 iError = fresh.X_by_Equivalence_Ratio(
     MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=equiv
 )
+# check fuel-oxidizer mixture creation status
 if iError != 0:
-    raise RuntimeError
-# list the composition of the unburned fuel-air mixture
+    print("Error: failed to create the Fuel-Oxidizer mixture!")
+    exit()
+
+##############################
+# List the mixture composition
+# ============================
+# list the composition of the premixed mixture for verification
 fresh.list_composition(mode="mole")
-# set mixture temperature and pressure (equivalent to setting the initial temperature and pressure of the reactor)
+
+##########################################################
+# Specify pressure and temperature of the fuel-air mixture
+# ========================================================
+# Since you are going to use ``fresh`` to instantiate the engine object later,
+# setting the mixture pressure and temperature is equivalent to setting
+# the initial temperature and pressure of the engine cylinder.
 fresh.temperature = fuelmixture.temperature
 fresh.pressure = fuelmixture.pressure
-# set exhaust gas recirculation (EGR) ratio with volume fraction
+
+###########################################
+# Add EGR to the ``fresh`` fuel-air mixture
+# =========================================
+# Many engines have the configuration for exhaust gas recirculation (EGR). Chemkin
+# engine models allow you to add the EGR mixture to the fresh fuel-air mixture entered
+# the cylinder. If the engine you are modeling has EGR, you should have the EGR ratio which
+# in most cases, is the volume ratio between the EGR mixture and the fresh fuel-air ratio.
+# However, you know nothing about the composition of the exhaust gas so you cannot simply "mix"
+# these two mixtures. In this case, you can use the ``get_EGR_mole_fraction`` method to estimate
+# the major components of the exhaust gas from the combustion of the fresh fuel-air mixture. The
+# parameter ``threshold=1.0e-8`` tells the method to ignore any species with mole fraction below
+# the threshold value. Once you have the EGR mixture composition, use the ``X_by_Equivalence_Ratio``
+# method the second time to **recreate** the fuel-air mixture ``fresh`` with the original
+# ``fuelmixture`` and ``air`` mixtures **AND** with the EGR composition you just got as the
+# *"additives"*.
 EGRratio = 0.3
 # compute the EGR stream composition in mole fractions
 add_frac = fresh.get_EGR_mole_fraction(EGRratio, threshold=1.0e-8)
@@ -101,15 +199,31 @@ iError = fresh.X_by_Equivalence_Ratio(
     equivalenceratio=equiv,
     threshold=1.0e-8,
 )
-# list the composition of the fuel+air+EGR mixture
+# list the composition of the fuel+air+EGR mixture for verification
 fresh.list_composition(mode="mole", bound=1.0e-8)
-# SI engine
-# create an SI engine object
+
+################################
+# Set up the SI engine reactor
+# ==============================
+# Create an SI engine object ``MyEngine`` using the
+# ``SIengine`` method and make the *new* ``fresh`` mixture as the initial
+# incylinder gas mixture at IVC. The chemkin SI engine model consists of
+# **two** zones: the unburned zone and the burned zone. At the IVC, the
+# unburned zone is filled with the ``fresh`` mixture and occupies the entire
+# engine cylinder. On the other hand, the burned zone is empty and has zero
+# volume/mass.
 MyEngine = SIengine(reactor_condition=fresh)
 # show initial gas composition inside the reactor
 MyEngine.list_composition(mode="mole", bound=1.0e-8)
-#
-# set engine parameters
+
+#####################################
+# Set up basic engine parameters
+# ===================================
+# Set the required engine parameters as listed in the code below. These
+# engine parameters are used to describe the cylinder volume during the
+# simulation. The ``starting_CA`` should be the crank angle corresponding
+# to the cylinder IVC and the ``ending_CA`` is typically the EVC crank angle.
+
 # cylinder bore diameter [cm]
 MyEngine.bore = 8.5
 # engine stroke [cm]
@@ -120,6 +234,7 @@ MyEngine.connecting_rod_length = 17.853
 MyEngine.compression_ratio = 12
 # engine speed [RPM]
 MyEngine.RPM = 600
+
 # set other parameters
 # simulation start CA [degree]
 MyEngine.starting_CA = -120.2
@@ -129,35 +244,68 @@ MyEngine.ending_CA = 139.8
 MyEngine.list_engine_parameters()
 print(f"engine displacement volume {MyEngine.get_displacement_volume()} [cm3]")
 print(f"engine clearance volume {MyEngine.get_clearance_volume()} [cm3]")
-# set mass burned fraction profile for the SI engine combustion
-# >>> option 1
-# use Wiebe function
+
+##########################################
+# Set up the SI engine specific parameters
+# ========================================
+
+#########################################
+# Set up the mass burned fraction profile
+# =======================================
+# The burning rate profile is required because the SI engine model use it to determine the
+# mass transfer rate from the "unburned zone" to the "burned zone" during the simulation.
+# You can use one of the *three* methods to specify the mass burning fraction profile
+# for the SI engine simulation.
+#
+#   1.  the Wiebe function
+#
+#       You need to provide *two* sets of parameters:
+#
+#       1.  start of combustion CA and burn duration ``set_burn_timing``
+#
+#       2.  the Wiebe function parameters ``wiebe_parameters``
+#
+#   2.  the burn profile anchor points
+#
+#       You need to provide *one* set of parameters ``set_burn_anchor_points``
+#
+#   3.  the burned mass fraction profile data
+#
+#       You need to provide *two* sets of parameters:
+#
+#       1.  start of combustion CA and burn duration ``set_burn_timing``
+#
+#       2.  normalized burn rate profile ``set_mass_burned_profile``
+#
+
 # start of combustion crank angle
 MyEngine.set_burn_timing(SOC=-14.5, duration=45.6)
 MyEngine.wiebe_parameters(n=4.0, b=7.0)
-# >>> option 2
-# use anchor points
-# MyEngine.set_burn_anchor_points(CA10=5.2, CA50=14.22, CA90=22.01)
-# >>> option 3
-# use burned mass fraction profile data
-# start of combustion crank angle
-# MyEngine.set_burn_timing(SOC=-14.5, duration=45.6)
-# nMBFdata = 9
-# MBangles = np.zeros(nMBFdata, dtype=np.double)
-# MBFrac = np.zeros_like(MBangles, dtype=np.double)
-# normalized crank angles (CA - SOC) / duration
-# MBangles = [0.0, 0.26985, 0.3371, 0.3742, 0.4322, 0.63, 0.704, 0.8, 1.0]
-# mass burned fraction
-# MBFrac =   [0.0, 0.01, 0.03, 0.05, 0.1, 0.5, 0.7, 0.9, 1.0]
-# MyEngine.set_mass_burned_profile(crankangles=MBangles, fractions=MBFrac)
-# <<<
 # set minimum zonal mass [g]
 MyEngine.set_minimum_zone_mass(minmass=1.0e-5)
-# wall heat transfer model
-# set model parameters
-# "dimensionless": [<a> <b> <c> <Twall>]
-# "dimensional": [<a> <b> <c> <Twall>]
-# "hohenburg": [<a> <b> <c> <d> <e> <Twall>]
+
+########################################
+# Set up engine wall heat transfer model
+# ======================================
+# By default, the engine cylinder is adiabatic. You must set up a
+# wall heat transfer model to include the heat loss effects in your
+# engine simulation. Chemkin support three widely used engine wall
+# heat transfer models, and the models and their parameters are
+#
+#   |     "dimensionless": [<a> <b> <c> <Twall>]
+#   |     "dimensional": [<a> <b> <c> <Twall>]
+#   |     "hohenburg": [<a> <b> <c> <d> <e> <Twall>]
+#
+# There is also the incylinder gas velocity correlation
+# (the Woschni correlation) that is associated with the engine
+# wall heat transfer models. The parameters of the Woschni correlation
+# are
+#
+#   |     [<C11> <C12> <C2> <swirl ratio>]
+#
+# You can also specify the surface areas of the piston head and the cylinder head
+# for more precision heat transfer wall area. By default, both the piston head and
+# the cylinder head surfaces are "flat".
 heattransferparameters = [0.1, 0.8, 0.0]
 # set cylinder wall temperature [K]
 Twall = 434.0
@@ -170,15 +318,35 @@ MyEngine.set_gas_velocity_correlation(GVparameters)
 MyEngine.set_piston_head_area(area=56.75)
 # set cylinder clearance surface area [cm2]
 MyEngine.set_cylinder_head_area(area=56.75)
-# output controls
+
+####################
+# Set output options
+# ==================
+# You can turn on the *adaptive solution saving* to resolve the steep variations in the solution
+# profile. Here additional solution data point will be saved for every **20** solver internal steps.
+# Since ignition in SI engine is controlled by the spark timing, that is, the start of combustion CA
+# of the chemkin SI engine model, the *ignition delay time* will **NOT** be reported.
+#
+# .. note::
+#   By default, time/crank angle intervals for both print and save solution are **1/100** of the
+#   *simulation duration*. In this case :math:`dCA=(EVO-IVC)/100=2.58`\ . You can make the model
+#   to report more frequently by using the ``CAstep_for_saving_solution`` or the
+#   ``CAstep_for_printing_solution`` method to set different interval values in CA.
+#
+
 # set the number of crank angles between saving solution
 MyEngine.CAstep_for_saving_solution = 0.5
 # set the number of crank angles between printing solution
 MyEngine.CAstep_for_printing_solution = 10.0
 # turn ON adaptive solution saving
 MyEngine.adaptive_solution_saving(mode=True, steps=20)
-# turn OFF adaptive solution saving
-# MyEngine.adaptive_solution_saving(mode=False)
+
+#####################
+# Set solver controls
+# ===================
+# You can overwrite the default solver controls by using solver related methods, for example,
+# ``tolerances``.
+
 # set tolerances in tuple: (absolute tolerance, relative tolerance)
 MyEngine.tolerances = (1.0e-15, 1.0e-6)
 # get solver parameters
@@ -194,11 +362,22 @@ print(
 )
 # show other transient solver setup
 print(f"forced non-negative solution values: {MyEngine.force_nonnegative}")
-# show the additional keywords given by user
+
+#########################################
+# Display the added parameters (keywords)
+# =======================================
+# You can verify the parameters specified above are correctly assigned to the engine model by
+# using the ``showkeywordinputlines`` method.
 MyEngine.showkeywordinputlines()
 # set the start wall time
 start_time = time.time()
-# run the single-zone HCCI engine model
+
+####################
+# Run the simulation
+# ==================
+# Use the ``run`` method to start the SI engine simulation. The simulation
+# may take more then 30 seconds because the gasoline mechanism contains a lot
+# of species and reactions.
 runstatus = MyEngine.run()
 # compute the total runtime
 runtime = time.time() - start_time
@@ -210,17 +389,58 @@ if runstatus != 0:
 # run success!
 print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
 print(f"total simulation duration: {runtime} [sec]")
+
+###########################
+# Post-process the solution
+# =========================
+# The post-processing step will parse the solution and package the solution values at each
+# time point into a ``Mixture`` object. There are two ways to access the solution profiles:
 #
-# post-process the solution profiles in selected zone
+#   1. the "raw" solution profiles (value as a function of time) are available for "time",
+#   "temperature", "pressure" , "volume", and species "mass fractions";
+#
+#   2. the ``Mixture`` objects that permit the use of all property and rate utilities to extract
+#   information such as viscosity, density, and mole fractions.
+#
+# The "raw" solution profiles can be obtained by using the ``get_solution_variable_profile`` method. The
+# solution ``Mixture`` objects are accessed via either the ``get_solution_mixture_at_index`` for the
+# solution mixture at the given *time point* or the ``get_solution_mixture`` for the solution mixture
+# at the given *time* (in this case, the "mixture" is constructed by interpolation).
+#
+# .. note ::
+#   For engine models, use the ``process_engine_solution`` to post-process the solutions.
+#
+# .. note::
+#   Use the ``getnumbersolutionpoints`` to get the size of the solution profiles before creating the
+#   arrays.
+#
+# .. note ::
+#   Use the ``get_CA`` method to convert the time values reported in the solution to crank angles.
+#
+
+######################################################
+# Post-process the solution profiles in selected zone
+# ====================================================
+# The solution of the SI engine model contains the results of
+# the *unburned zones*, the *burned zone*, **plus** the *"cylinder averaged"* results.
+# That is, there *three* solution records. The "unburned zone" is designated as *zone 1*
+# and the "burned zone" is *zone 2*. So, to process the result of the "burned zone", you
+# use ``zoneID=2`` when you call the engine post-processor
+# ``process_engine_solution``. If the ``zoneID`` parameter is omitted, the cylinder averaged
+# results will be post-processed by default.
+#
+# .. note ::
+#   The ``process_engine_solution`` method can process only one set of result at
+#   a time (one zonal result or the cylinder averaged result) so you need to
+#   post-process the zones one by one to obtain all solution data of the multi-zone
+#   simulation.
+#
 unburnedzone = 1
 burnedzone = 2
 zonestrings = ["Unburned Zone", "Burned Zone"]
 thiszone = burnedzone
 MyEngine.process_engine_solution(zoneID=thiszone)
 plottitle = zonestrings[thiszone - 1] + " Solution"
-# post-process cylinder-averged solution profiles
-# MyMZEngine.process_average_engine_solution()
-# plottitle = "Cylinder Averaged Solution"
 # get the number of solution time points
 solutionpoints = MyEngine.getnumbersolutionpoints()
 print(f"number of solution points = {solutionpoints}")
@@ -249,15 +469,24 @@ for i in range(solutionpoints):
     solutionmixture = MyEngine.get_solution_mixture_at_index(solution_index=i)
     # get zonal CO mole fraction
     COprofile[i] = solutionmixture.X[COindex]
-#
+
 # post-process cylinder-averged solution
 MyEngine.process_average_engine_solution()
 # get the cylinder volume profile
 cylindervolprofile = MyEngine.get_solution_variable_profile("volume")
 # create arrays for cylinder-averaged mixture temperature
 cylindertempprofile = MyEngine.get_solution_variable_profile("temperature")
+
+###################################
+# Plot the engine solution profiles
+# =================================
+# Plot the zonal and the cylinder averaged profiles from
+# the SI engine simulation.
 #
-# plot the profiles
+# .. note ::
+#   You can get profiles of the thermodynamic and the transport properties
+#   by applying ``Mixture`` utility methods to the solution ``Mixtures``.
+#
 plt.subplots(2, 2, sharex="col", figsize=(13, 6.5))
 plt.suptitle(plottitle, fontsize=16)
 plt.subplot(221)
@@ -282,4 +511,4 @@ plt.ylabel("CO Mole Fraction")
 if interactive:
     plt.show()
 else:
-    plt.savefig("spark_ignition_engine.png", bbox_inches="tight")
+    plt.savefig("plot_spark_ignition_engine.png", bbox_inches="tight")

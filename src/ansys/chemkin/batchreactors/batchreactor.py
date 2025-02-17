@@ -27,25 +27,24 @@
 import copy
 from ctypes import c_double, c_int
 
-import numpy as np
-
-from .. import chemkin_wrapper
-from ..chemistry import (
+from ansys.chemkin import chemkin_wrapper
+from ansys.chemkin.chemistry import (
     check_chemistryset,
     chemistryset_initialized,
     force_activate_chemistryset,
     set_verbose,
     verbose,
 )
-from ..color import Color as Color
-from ..constants import Patm
-from ..info import show_ignition_definitions
-from ..inlet import Inlet
-from ..logger import logger
-from ..mixture import interpolate_mixtures
-from ..reactormodel import Keyword
-from ..reactormodel import ReactorModel as reactor
-from ..utilities import find_interpolate_parameters
+from ansys.chemkin.color import Color as Color
+from ansys.chemkin.constants import Patm
+from ansys.chemkin.info import show_ignition_definitions
+from ansys.chemkin.inlet import Inlet
+from ansys.chemkin.logger import logger
+from ansys.chemkin.mixture import interpolate_mixtures
+from ansys.chemkin.reactormodel import Keyword
+from ansys.chemkin.reactormodel import ReactorModel as reactor
+from ansys.chemkin.utilities import find_interpolate_parameters
+import numpy as np
 
 # import numpy.typing as npt
 
@@ -106,7 +105,7 @@ class BatchReactors(reactor):
         self._problemtype = c_int(self.ProblemTypes.get("CONP", 1))
         self._energytype = c_int(self.EnergyTypes.get("ENERGY", 1))
         # profile points
-        self._profilesize = 0
+        self._profilesize = int(0)
 
     @property
     def volume(self) -> float:
@@ -1199,7 +1198,6 @@ class BatchReactors(reactor):
 
         # output initialization
         logger.debug("clearing output ...")
-        self.output = {}
 
         # keyword processing
         msg = [
