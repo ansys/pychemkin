@@ -3,13 +3,19 @@ Getting Started
 
 - Installing the ``ansys-chemkin`` package
 
-   **PyChemkin** is available for download as the ``ansys-chemkin`` package on `Test PyPI`_.
+   **PyChemkin** is available for download as the ``ansys-chemkin`` package from the **PyAnsys** GitHub repository.
+   Download the source codes and build the wheelhouse on local machine with the ``flit_core`` tools
+
+   ::
+
+      python -m build
+
 
    ``pip`` is the preferred installation method
 
    ::
 
-      python -m pip install -i https://test.pypi.org/simple/ ansys-chemkin
+      pip install dist\ansys_chemkin-*.whl
 
 
 .. note:: Please refer to the `Prerequisites`_ for all required Python extensions to install/run **PyChemkin**.
@@ -29,7 +35,7 @@ Getting Started
 
    ::
 
-      chemkin version number = xxx
+      Chemkin version number = xxx
 
 
   - It is likely there is no Ansys product installed locally if python does not return anything
@@ -43,7 +49,7 @@ Getting Started
 
    ::
 
-      ** PyChemkin does not support Chemkin versions older than 2025R2
+      ** PyChemkin does not support Chemkin versions older than 2025 R2
 
 
 

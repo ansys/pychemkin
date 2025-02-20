@@ -1,1 +1,1 @@
-.. include:: ../../examples/GALLERY_HEADER.rst
+.. include:: ../../README.rst
