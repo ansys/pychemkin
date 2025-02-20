@@ -36,7 +36,7 @@ from ansys.chemkin.chemistry import (
     verbose,
 )
 from ansys.chemkin.color import Color as Color
-from ansys.chemkin.inlet import Inlet
+from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
 from ansys.chemkin.reactormodel import Keyword
 import numpy as np
@@ -47,19 +47,19 @@ class PlugFlowReactor(BatchReactors):
     Generic Plug Flow Reactor (PFR) model with energy equation
     """
 
-    def __init__(self, inlet: Inlet, label: str = "PFR"):
+    def __init__(self, inlet: Stream, label: str = "PFR"):
         """
         Initialize a generic PFR object
 
         Parameters
         ----------
-            inlet: Inlet object
+            inlet: Stream object
                 an inlet stream representing the gas properties and the flow rate at the PFR entrance
             label: string, optional
                 reactor name
         """
         # check Inlet
-        if isinstance(inlet, Inlet):
+        if isinstance(inlet, Stream):
             # initialization
             super().__init__(inlet, label)
         else:
@@ -740,7 +740,7 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
                 reactor name
         """
         # check Inlet
-        if isinstance(inlet, Inlet):
+        if isinstance(inlet, Stream):
             # initialization
             super().__init__(inlet, label)
         else:
@@ -981,13 +981,13 @@ class PlugFlowReactor_FixedTemperature(PlugFlowReactor):
 
         Parameters
         ----------
-            inlet: Inlet object
+            inlet: Stream object
                 an inlet stream representing the gas properties and the flow rate at the PFR entrance
             label: string, optional
                 reactor name
         """
         # check Inlet
-        if isinstance(inlet, Inlet):
+        if isinstance(inlet, Stream):
             # initialization
             super().__init__(inlet, label)
         else:

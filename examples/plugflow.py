@@ -38,9 +38,9 @@ is fixed, however, Chemkin does permit the use of a pressure profile to enforce 
 *pressure gradient* in the PFR. The PFR object in PyChemkin is created by the
 ``PlugFlowReactor_FixedTemperature`` or the ``PlugFlowReactor_EnergyConservation`` method.
 Unlike the *closed* ``batch reactor`` model which is instantiated by a ``Mixture`` object,
-the ``open reactor`` model such as the PFR is initiated by an ``Inlet`` object. In PyChemkin,
-the ``Inlet`` object is simply a ``Mixture`` object with the addition of the inlet mass/volumetric
-flow rate or velocity. You already know how to create an ``Inlet`` object if you now how to create
+the ``open reactor`` model such as the PFR is initiated by an ``Stream`` object. In PyChemkin,
+the ``Stream`` object is simply a ``Mixture`` object with the addition of the inlet mass/volumetric
+flow rate or velocity. You already know how to create an ``Stream`` object if you now how to create
 a ``Mixture`` in PyChemkin. The inlet flow rate can be specified by one of these methods:
 ``velocity``, ``mass_flowrate``, ``vol_flowrate``, and ``sccm`` (standard cubic centimeters per minute).
 
@@ -66,7 +66,7 @@ from ansys.chemkin import Color
 
 # chemkin plug flow reactor model
 from ansys.chemkin.flowreactors.PFR import PlugFlowReactor_FixedTemperature
-from ansys.chemkin.inlet import Inlet
+from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
@@ -103,18 +103,18 @@ MyGasMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
 
-#############################################
-# Instantiate and set up the ``Inlet`` object
-# ===========================================
+##############################################
+# Instantiate and set up the ``Stream`` object
+# ============================================
 # Create a hot exhaust gas mixture by assigning the mole fractions of the
-# species. An ``Inlet`` object is simply a ``Mixture`` object with the addition of
+# species. An ``Stream`` object is simply a ``Mixture`` object with the addition of
 # mass/volumetric flow rate or velocity. Here the gas composition ``exhaust.X`` is given
 # by a *recipe* consisting of the common species in the combustion exhaust such as
 # CO\ :sub:`2` and H\ :sub:`2`O and the CH\ :sub:`4` injected. The *inlet velocity*
 # is given by ``exhaust.velocity = 26.815``.
 
 # create the inlet (mixture + flow rate)
-exhaust = Inlet(MyGasMech)
+exhaust = Stream(MyGasMech)
 # set inlet temperature [K]
 exhaust.temperature = 1750.0
 # set inlet/PFR pressure [atm]
@@ -137,8 +137,8 @@ exhaust.velocity = 26.815
 # ===================================
 # Create a plug flow reactor object  with the ``PlugFlowReactor_FixedTemperature``
 # method. The **required input parameter** of the ``open reactor`` models in PyChemkin
-# is the ``Inlet`` object while the PyChemmkin ``batch reactor`` models take the ``Mixture``
-# object as the input parameter. In this case, the ``exhaust`` ``Inlet`` is used to create the
+# is the ``Stream`` object while the PyChemmkin ``batch reactor`` models take the ``Mixture``
+# object as the input parameter. In this case, the ``exhaust`` ``Stream`` is used to create the
 # PFR instance ``tubereactor``.
 tubereactor = PlugFlowReactor_FixedTemperature(exhaust)
 
@@ -148,7 +148,7 @@ tubereactor = PlugFlowReactor_FixedTemperature(exhaust)
 # For PFR, the required *Reactor parameters* are the *reactor diameter* [cm] or the
 # *cross-sectional flow area* [cm2] and the *reactor length* [cm].
 # The mixture condition as well as the inlet mass flow rate of the inlet is already defined
-# by the ``Inlet`` object when the ``tubereactor`` is instantiated.
+# by the ``Stream`` object when the ``tubereactor`` is instantiated.
 
 # set PFR diameter [cm]
 tubereactor.diameter = 5.8431

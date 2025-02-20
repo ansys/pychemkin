@@ -65,7 +65,7 @@ import time
 
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
-from ansys.chemkin.inlet import Inlet  # external gaseous inlet
+from ansys.chemkin.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.logger import logger
 
 # chemkin perfectly stirred reactor (PSR) model (steady-state)
@@ -112,18 +112,18 @@ MyGasMech.chemfile = os.path.join(
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
 
-##############################################################
-# Set up the H\ :sub:`2`\ -O\ :sub:`2`\ -N\ :sub:`2` ``Inlet``
-# ============================================================
-# Instantiate an ``Inlet`` object ``feed`` for the inlet gas mixture.
-# The ``Inlet`` object is a ``Mixture`` object with the addition of the
+###############################################################
+# Set up the H\ :sub:`2`\ -O\ :sub:`2`\ -N\ :sub:`2` ``Stream``
+# =============================================================
+# Instantiate an ``Stream`` object ``feed`` for the inlet gas mixture.
+# The ``Stream`` object is a ``Mixture`` object with the addition of the
 # *inlet flow rate*. You can specify the inlet gas properties the same way you
 # set up a ``Mixture``. Set up the gas properties of ``feed`` as described by the experiment.
 # The inlet mass flow rate is assigned by the ``mass_flowrate`` method, the experiments use
 # a fixed inlet mass flow rate of 0.11 [g/sec].
 
 # create the fuel-oxidizer inlet to the JSR
-feed = Inlet(MyGasMech)
+feed = Stream(MyGasMech)
 # set H2-O2-N2 composition
 feed.X = [("h2", 1.1e-2), ("n2", 9.62e-1), ("o2", 2.75e-2)]
 # setting reactor pressure [dynes/cm2]
@@ -147,7 +147,7 @@ JSR = PSR(feed, label="JSR")
 # Connect the inlets to the reactor
 # =================================
 # You must connect at least **one** inlet to the open reactor. Use the ``set_inlet`` method to
-# add an ``Inlet`` object to the PSR. Inversely, use the ``remove_inlet`` to disconnect an inlet
+# add an ``Stream`` object to the PSR. Inversely, use the ``remove_inlet`` to disconnect an inlet
 # from the PSR.
 
 # connect the inlet to the reactor

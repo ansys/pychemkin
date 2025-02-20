@@ -68,7 +68,7 @@ import time
 
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
-from ansys.chemkin.inlet import Inlet  # external gaseous inlet
+from ansys.chemkin.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.logger import logger
 
 # chemkin perfectly-stirred reactor (PSR) model (steady-state)
@@ -116,10 +116,10 @@ MyGasMech.chemfile = os.path.join(
 iError = MyGasMech.preprocess()
 
 ####################################################
-# Set up the "fuel" and the "air" ``Inlet`` objects
+# Set up the "fuel" and the "air" ``Stream`` objects
 # ==================================================
-# Instantiate an ``Inlet`` object ``fuel`` for the inlet stream containing
-# the *fuel* mixture, and another ``air`` ``Inlet`` object for the inlet *air*
+# Instantiate an ``Stream`` object ``fuel`` for the inlet stream containing
+# the *fuel* mixture, and another ``air`` ``Stream`` object for the inlet *air*
 # stream. The ``Inlet`` object is a ``Mixture`` object with the addition of the
 # *inlet flow rate*. You can specify the inlet gas properties the same way you
 # set up a ``Mixture``. Here the ``fuel`` and the ``air`` inlets are created
@@ -140,7 +140,7 @@ iError = MyGasMech.preprocess()
 #
 
 # create the fuel inlet
-fuel = Inlet(MyGasMech, label="Fuel")
+fuel = Stream(MyGasMech, label="Fuel")
 # set fuel composition
 fuel.X = [("h2", 0.21), ("n2", 0.79)]
 # setting pressure and temperature is not required in this case
@@ -150,7 +150,7 @@ fuel.temperature = 450.0  # inlet temperature
 fuel.vol_flowrate = 25.0
 
 # create the oxidizer inlet: air
-air = Inlet(MyGasMech, label="Oxid")
+air = Stream(MyGasMech, label="Oxid")
 air.X = [("o2", 0.21), ("n2", 0.79)]
 # setting pressure and temperature is not required in this case
 air.pressure = fuel.pressure
@@ -193,7 +193,7 @@ combustor.volume = 200.0
 # Connect the inlets to the reactor
 # =================================
 # You must connect at least **one** inlet to the open reactor. Use the ``set_inlet`` method to
-# add an ``Inlet`` object to the PSR. Inversely, use the ``remove_inlet`` to disconnect an inlet
+# add an ``Stream`` object to the PSR. Inversely, use the ``remove_inlet`` to disconnect an inlet
 # from the PSR. Here two inlets, ``fuel`` and ``air`` are connected to the PSR ``combustor``. The
 # "fuel-to-air ratio" will be controlled by the mass or the volumetric flow rate ratio of the ``fuel``
 # and the ``air`` inlets.

@@ -67,7 +67,7 @@ import time
 
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
-from ansys.chemkin.inlet import Inlet  # external gaseous inlet
+from ansys.chemkin.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.logger import logger
 
 # chemkin perfectly-stirred reactor (PSR) model (steady-state)
@@ -115,10 +115,10 @@ MyGasMech.chemfile = os.path.join(
 iError = MyGasMech.preprocess()
 
 ##############################################################
-# Set up the H\ :sub:`2`\ -air ``Inlet``
+# Set up the H\ :sub:`2`\ -air ``Stream``
 # ============================================================
-# Instantiate an ``Inlet`` object ``feed`` for the inlet gas mixture.
-# The ``Inlet`` object is a ``Mixture`` object with the addition of the
+# Instantiate an ``Stream`` object ``feed`` for the inlet gas mixture.
+# The ``Stream`` object is a ``Mixture`` object with the addition of the
 # *inlet flow rate*. You can specify the inlet gas properties the same way you
 # set up a ``Mixture``. Here the ``X_by_Equivalence_Ratio`` method is used.
 # You create the ``fuel`` and the ``air`` mixtures first. Then define the
@@ -144,7 +144,7 @@ air.pressure = fuel.pressure
 air.temperature = fuel.temperature
 
 # create the fuel-oxidizer inlet to the PSR
-feed = Inlet(MyGasMech, label="feed_1")
+feed = Stream(MyGasMech, label="feed_1")
 # products from the complete combustion of the fuel mixture and air
 products = ["h2o", "n2"]
 # species mole fractions of added/inert mixture. can also create an additives mixture here
@@ -196,7 +196,7 @@ sphere.residence_time = 3.0 * 1.0e-5
 # Connect the inlet to the reactor
 # =================================
 # You must connect at least **one** inlet to the open reactor. Use the ``set_inlet`` method to
-# add an ``Inlet`` object to the PSR. Inversely, use the ``remove_inlet`` to disconnect an inlet
+# add an ``Stream`` object to the PSR. Inversely, use the ``remove_inlet`` to disconnect an inlet
 # from the PSR.
 #
 # .. note ::

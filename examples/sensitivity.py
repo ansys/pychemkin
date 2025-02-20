@@ -88,7 +88,7 @@ ck.set_verbose(False)
 # interactive = True: display plot
 # interactive = False: save plot as a png file
 global interactive
-interactive = False
+interactive = True
 
 #####################################
 # Create a ``Chemistry Set`` instance
