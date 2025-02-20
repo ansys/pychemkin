@@ -25,9 +25,10 @@
 """
 
 from ctypes import c_int
+from typing import Union
 
 from ansys.chemkin.color import Color as Color
-from ansys.chemkin.inlet import Inlet
+from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
 from ansys.chemkin.mixture import Mixture
 from ansys.chemkin.reactormodel import Keyword, ReactorModel
@@ -39,7 +40,7 @@ class openreactor(ReactorModel, SteadyStateSolver):
     Generic open reactor model
     """
 
-    def __init__(self, guessedmixture: Inlet, label: str | None = None):
+    def __init__(self, guessedmixture: Stream, label: Union[str, None] = None):
         """
         Create a steady-state flow reactor object
 
@@ -51,7 +52,7 @@ class openreactor(ReactorModel, SteadyStateSolver):
                 reactor name
         """
         # check reactor Mixture object
-        if isinstance(guessedmixture, (Inlet, Mixture)):
+        if isinstance(guessedmixture, (Stream, Mixture)):
             if label is None:
                 self.label = "Reactor"
             else:
@@ -76,7 +77,7 @@ class openreactor(ReactorModel, SteadyStateSolver):
         # number of external inlets
         self.numbexternalinlets = 0
         # dict of external inlet objects {inlet label: inlet object}
-        self.externalinlets: dict[str, Inlet] = {}
+        self.externalinlets: dict[str, Stream] = {}
         # total mass flow rate into this reactor [g/sec]
         self.totalmassflowrate = 0.0
         #
@@ -86,19 +87,19 @@ class openreactor(ReactorModel, SteadyStateSolver):
         # specify "reactor volume" = "SETVOLV"
         self.ProblemTypes = {"SETVOL": 1, "SETTAU": 2}
 
-    def set_inlet(self, extinlet: Inlet):
+    def set_inlet(self, extinlet: Stream):
         """
         Add an external inlet to the reactor
 
         Parameters
         ----------
-            extinlet: Inlet object
+            extinlet: Stream object
                 external inlet to the open reactor
         """
         # check Inlet
-        if not isinstance(extinlet, Inlet):
+        if not isinstance(extinlet, Stream):
             # wrong argument type
-            msg = [Color.RED, "the argument must be an Inlet object", Color.END]
+            msg = [Color.RED, "the argument must be a Stream object", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.critical(this_msg)
             exit()
@@ -147,7 +148,7 @@ class openreactor(ReactorModel, SteadyStateSolver):
                     Color.PURPLE,
                     "inlet flow rate < 0.\n",
                     Color.SPACEx6,
-                    "specify flow rate of the 'Inlet' object.",
+                    "specify flow rate of the 'Stream' object.",
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
@@ -185,7 +186,7 @@ class openreactor(ReactorModel, SteadyStateSolver):
             extinlet = self.externalinlets.pop(inletname, None)
             if extinlet is None:
                 missed = True
-            elif not isinstance(extinlet, Inlet):
+            elif not isinstance(extinlet, Stream):
                 # some internal messed up
                 missed = True
                 msg = [Color.RED, name, "is not an inlet.", Color.END]

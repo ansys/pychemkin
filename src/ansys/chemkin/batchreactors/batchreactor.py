@@ -26,6 +26,7 @@
 
 import copy
 from ctypes import c_double, c_int
+from typing import Union
 
 from ansys.chemkin import chemkin_wrapper
 from ansys.chemkin.chemistry import (
@@ -38,7 +39,7 @@ from ansys.chemkin.chemistry import (
 from ansys.chemkin.color import Color as Color
 from ansys.chemkin.constants import Patm
 from ansys.chemkin.info import show_ignition_definitions
-from ansys.chemkin.inlet import Inlet
+from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
 from ansys.chemkin.mixture import interpolate_mixtures
 from ansys.chemkin.reactormodel import Keyword
@@ -67,7 +68,7 @@ class BatchReactors(reactor):
     EnergyTypes: dict = {"ENERGY": int(1), "GivenT": int(2)}
     ProblemTypes: dict = {"CONP": int(1), "CONV": int(2), "ICEN": int(3)}
 
-    def __init__(self, reactor_condition: Inlet, label: str):
+    def __init__(self, reactor_condition: Stream, label: str):
         """
         Initialize a generic Batch Reactor object
 
@@ -373,9 +374,9 @@ class BatchReactors(reactor):
     def adaptive_solution_saving(
         self,
         mode: bool,
-        value_change: float | None = None,
-        target: str | None = None,
-        steps: int | None = None,
+        value_change: Union[float, None] = None,
+        target: Union[str, None] = None,
+        steps: Union[int, None] = None,
     ):
         """
         Set up adaptive solution data saving
@@ -1644,7 +1645,7 @@ class GivenPressureBatchReactor_FixedTemperature(BatchReactors):
     with given reactor pressure (CONP) and reactor temperature (TGIV)
     """
 
-    def __init__(self, reactor_condition: Inlet, label: str = "CONPT"):
+    def __init__(self, reactor_condition: Stream, label: str = "CONPT"):
         """
         Initialize a Given Pressure Batch Reactor object with given reactor temperature
 
@@ -1769,7 +1770,7 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
     solving the energy equation (ENRG)
     """
 
-    def __init__(self, reactor_condition: Inlet, label: str = "CONP"):
+    def __init__(self, reactor_condition: Stream, label: str = "CONP"):
         """
         Initialize a Given Pressure Batch Reactor object that solves the Energy Equation
 
@@ -2059,7 +2060,7 @@ class GivenVolumeBatchReactor_FixedTemperature(BatchReactors):
     with given reactor volume (CONV) and reactor temperature (TGIV)
     """
 
-    def __init__(self, reactor_condition: Inlet, label: str = "CONVT"):
+    def __init__(self, reactor_condition: Stream, label: str = "CONVT"):
         """
         Initialize a Given Volume Batch Reactor object with given reactor temperature
 
@@ -2184,7 +2185,7 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
     solving the energy equation (ENRG)
     """
 
-    def __init__(self, reactor_condition: Inlet, label: str = "CONV"):
+    def __init__(self, reactor_condition: Stream, label: str = "CONV"):
         """
         Initialize a Given Volume Batch Reactor object that solves the Energy Equation
 

@@ -26,6 +26,7 @@
 
 import copy
 from ctypes import c_double, c_int
+from typing import Union
 
 from ansys.chemkin import chemkin_wrapper
 from ansys.chemkin.chemistry import (
@@ -35,7 +36,7 @@ from ansys.chemkin.chemistry import (
     verbose,
 )
 from ansys.chemkin.color import Color as Color
-from ansys.chemkin.inlet import Inlet
+from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
 from ansys.chemkin.reactormodel import Keyword
 from ansys.chemkin.stirreactors.openreactor import openreactor
@@ -47,7 +48,7 @@ class perfectlystirredreactor(openreactor):
     Generic perfectly-stirred reactor model
     """
 
-    def __init__(self, guessedmixture: Inlet, label: str | None = None):
+    def __init__(self, guessedmixture: Stream, label: Union[str, None] = None):
         """
         Initialize a steady-state constant pressure perfectly-stirred reactor (PSR) object
 
@@ -81,6 +82,8 @@ class perfectlystirredreactor(openreactor):
         self.HTarea = 0.0
         # heat transfer parameters
         self._heat_loss_rate = c_double(0.0e0)
+        # single reactor (default) or reactor network
+        self._network_mode = False
         # check required inputs
         self._numb_requiredinput = 0
         self._requiredlist: list[str] = []
@@ -682,6 +685,7 @@ class perfectlystirredreactor(openreactor):
             logger.critical(this_msg)
             exit()
         # set solution mixture
+        self._numbsolutionpoints = self._nreactors
         # steady-state presure solution [dynes/cm2]
         smixture.pressure = pres.value
         # steady-state temperature solution [K]
@@ -708,7 +712,7 @@ class PSR_SetResTime_EnergyConservation(perfectlystirredreactor):
     so the reactor volume and density are varying in this case.
     """
 
-    def __init__(self, guessedmixture: Inlet, label: str | None = None):
+    def __init__(self, guessedmixture: Stream, label: Union[str, None] = None):
         """
         Create a steady-state constant pressure perfectly-stirred reactor (PSR)
 
@@ -863,7 +867,7 @@ class PSR_SetVolume_EnergyConservation(perfectlystirredreactor):
     so the reactor residence time and density are varying in this case.
     """
 
-    def __init__(self, guessedmixture: Inlet, label: str | None = None):
+    def __init__(self, guessedmixture: Stream, label: Union[str, None] = None):
         """
         Create a steady-state constant pressure perfectly-stirred reactor (PSR)
 
@@ -1018,7 +1022,7 @@ class PSR_SetResTime_FixedTemperature(perfectlystirredreactor):
     so the reactor volume and density are varying in this case.
     """
 
-    def __init__(self, guessedmixture: Inlet, label: str | None = None):
+    def __init__(self, guessedmixture: Stream, label: Union[str, None] = None):
         """
         Create a steady-state constant pressure perfectly-stirred reactor (PSR)
 
@@ -1047,7 +1051,7 @@ class PSR_SetVolume_FixedTemperature(perfectlystirredreactor):
     so the reactor residence time and density are varying in this case.
     """
 
-    def __init__(self, guessedmixture: Inlet, label: str | None = None):
+    def __init__(self, guessedmixture: Stream, label: Union[str, None] = None):
         """
         Create a steady-state constant pressure perfectly-stirred reactor (PSR)
 

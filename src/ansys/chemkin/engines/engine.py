@@ -26,12 +26,13 @@
 
 import copy
 from ctypes import c_double, c_int
+from typing import Union
 
 from ansys.chemkin import chemkin_wrapper
 from ansys.chemkin.batchreactors.batchreactor import BatchReactors
 from ansys.chemkin.color import Color as Color
 from ansys.chemkin.constants import Patm
-from ansys.chemkin.inlet import Inlet
+from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
 from ansys.chemkin.reactormodel import Keyword
 import numpy as np
@@ -42,7 +43,7 @@ class Engine(BatchReactors):
     Generic engine cylinder model
     """
 
-    def __init__(self, reactor_condition: Inlet, label: str):
+    def __init__(self, reactor_condition: Stream, label: str):
         """
         Initialize a generic Engine object
 
@@ -104,7 +105,7 @@ class Engine(BatchReactors):
         # Woschni "GVEL <C11> <C12> <C2> <swirling ratio>"
         self.gasvelocity: list[float] = []
         # Woschni+Huber IMEP "HIMP <IMEP>"
-        self.HuberIMEP: float | None = None  # [atm]
+        self.HuberIMEP: Union[float, None] = None  # [atm]
         # flag for wall heat transfer, default = adiabatic
         self._wallheattransfer = False
         # check required inputs
@@ -729,7 +730,7 @@ class Engine(BatchReactors):
             exit()
 
     def set_zonal_gas_rate_multiplier(
-        self, value: float = 1.0e0, zoneID: int | None = None
+        self, value: float = 1.0e0, zoneID: Union[int, None] = None
     ):
         """
         Set the value of the gas-phase reaction rate multiplier
@@ -838,7 +839,7 @@ class Engine(BatchReactors):
         self._wallheattransfer = True
 
     def set_gas_velocity_correlation(
-        self, gasvelparameters: list, IMEP: float | None = None
+        self, gasvelparameters: list, IMEP: Union[float, None] = None
     ):
         """
         Set the cylinder gas velocity correlation parameters
@@ -1063,7 +1064,7 @@ class Engine(BatchReactors):
             logger.error(this_msg)
             exit()
 
-    def process_engine_solution(self, zoneID: int | None = None):
+    def process_engine_solution(self, zoneID: Union[int, None] = None):
         """
         Post-process solution to extract the raw solution variable data from
         engine simulation results
@@ -1164,7 +1165,7 @@ class Engine(BatchReactors):
             this_msg = Color.SPACE.join(msg)
             logger.critical(this_msg)
             exit()
-        # store the ratw solution data in a dictionary
+        # store the raw solution data in a dictionary
         # time
         self._solution_rawarray["time"] = copy.deepcopy(time)
         # temperature

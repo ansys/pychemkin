@@ -26,6 +26,7 @@
 
 import copy
 from ctypes import c_double, c_int
+from typing import Union
 
 from ansys.chemkin import chemkin_wrapper
 from ansys.chemkin.chemistry import (
@@ -36,7 +37,7 @@ from ansys.chemkin.chemistry import (
 )
 from ansys.chemkin.color import Color as Color
 from ansys.chemkin.engines.engine import Engine
-from ansys.chemkin.inlet import Inlet
+from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
 from ansys.chemkin.reactormodel import Keyword
 
@@ -46,7 +47,7 @@ class SIengine(Engine):
     Spark Ignition (SI) engine model
     """
 
-    def __init__(self, reactor_condition: Inlet, label: str | None = None):
+    def __init__(self, reactor_condition: Stream, label: Union[str, None] = None):
         """
         Initialize a spark-ignition Engine object
 
