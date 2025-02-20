@@ -39,17 +39,17 @@ class Grid:
         """
         Grid quality control parameters for Chemkin 1-D steady-state reactor models.
         """
-        self.max_numb_grid_points: int = 250
-        self.max_numb_adapt_points: int = 10
-        self.gradient: float = 0.1
-        self.curvature: float = 0.5
-        self.numb_grid_points: int = 6
-        self.starting_x: float = 0.0
-        self.ending_x: float = 0.0
-        self.reaction_zone_center_x: float = 0.0
-        self.reaction_zone_width: float = 0.0
-        self.grid_T_profile: bool = False
-        self.grid_profile: list[float] = []
+        self.max_numb_grid_points = 250
+        self.max_numb_adapt_points = 10
+        self.gradient = 0.1
+        self.curvature = 0.5
+        self.numb_grid_points = 6
+        self.starting_x = 0.0
+        self.ending_x = 0.0
+        self.reaction_zone_center_x = 0.0
+        self.reaction_zone_width = 0.0
+        self.grid_T_profile = False
+        self.grid_profile = []
 
     def set_numb_grid_points(self, numb_points: int):
         """
@@ -69,7 +69,7 @@ class Grid:
 
     def set_max_grid_points(self, numb_points: int):
         """
-        Set the maximum number of grid points allowed during the soltion refinement.
+        Set the maximum number of grid points allowed during the solution refinement.
 
         Parameters
         ----------
@@ -93,10 +93,10 @@ class Grid:
             position: double
                 coordinate of the first grid point [cm]
         """
-        return (self.starting_x)
+        return self.starting_x
 
     @start_position.setter
-    def start_positions(self, position: float):
+    def start_position(self, position: float):
         """
         Reset the coordinate value of the first grid point, that is, the inlet/entrance.
 
@@ -117,10 +117,10 @@ class Grid:
             position: double
                 coordinate of the last grid point [cm]
         """
-        return (self.ending_x)
+        return self.ending_x
 
     @end_position.setter
-    def end_positions(self, position: float):
+    def end_position(self, position: float):
         """
         Set the coordinate value of the last grid point, that is, the outlet/exit/gap.
 
@@ -174,7 +174,7 @@ class Grid:
 
     def set_max_adaptive_points(self, numb_points: int):
         """
-        Set the maximum number of adaptive grid points allowed per soltion refinement.
+        Set the maximum number of adaptive grid points allowed per solution refinement.
 
         Parameters
         ----------
@@ -244,7 +244,7 @@ class Grid:
         Parameters
         ----------
             on: boolean, default = False
-                use the grid points of the temperature profile as the initial grid points 
+                use the grid points of the temperature profile as the initial grid points
         """
         self.grid_T_profile = on
 
@@ -300,6 +300,6 @@ class Grid:
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
             ierror = 3
-        
+
         if ierror == 0:
             self.grid_profile = copy.deepcopy(mesh)
