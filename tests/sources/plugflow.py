@@ -27,7 +27,7 @@ from ansys.chemkin import Color
 
 # chemkin plug flow reactor model
 from ansys.chemkin.flowreactors.PFR import PlugFlowReactor_FixedTemperature
-from ansys.chemkin.inlet import Inlet
+from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
@@ -54,7 +54,7 @@ MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 iError = MyGasMech.preprocess()
 # create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
 # create the inlet (mixture + flow rate)
-feedstock = Inlet(MyGasMech)
+feedstock = Stream(MyGasMech)
 # set inlet temperature [K]
 feedstock.temperature = 1444.48
 # set inlet/PFR pressure [atm]

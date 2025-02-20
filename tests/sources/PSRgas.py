@@ -24,7 +24,7 @@ import time
 
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
-from ansys.chemkin.inlet import Inlet  # external gaseous inlet
+from ansys.chemkin.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.logger import logger
 
 # chemkin perfectly-stirred reactor (PSR) model (steady-state)
@@ -72,7 +72,7 @@ air.X = [("o2", 0.21), ("n2", 0.79)]
 air.pressure = fuel.pressure
 air.temperature = fuel.temperature
 # create the fuel-oxidizer inlet to the PSR
-feed = Inlet(MyGasMech, label="feed_1")
+feed = Stream(MyGasMech, label="feed_1")
 # products from the complete combustion of the fuel mixture and air
 products = ["h2o", "n2"]
 # species mole fractions of added/inert mixture. can also create an additives mixture here

@@ -5,7 +5,7 @@ import os
 
 import pytest
 
-from tools import PyCKtools
+from .tools import PyCKtools
 
 
 class TestCompareResults:

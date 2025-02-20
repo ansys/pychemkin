@@ -3,7 +3,7 @@ Test script to run the group(s) of PyChemkin tests under the test groups sources
 """
 import pytest
 
-from tools import PyCKtools
+from .tools import PyCKtools
 
 
 class TestClassBasic:
