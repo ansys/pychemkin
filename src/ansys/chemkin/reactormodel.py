@@ -27,6 +27,7 @@
 import copy
 import ctypes
 from ctypes import c_double, c_int
+from typing import Union
 
 import numpy as np
 import numpy.typing as npt
@@ -40,7 +41,7 @@ from .chemistry import (
 )
 from .color import Color
 from .constants import Patm
-from .inlet import Inlet
+from .inlet import Stream
 from .logger import logger
 from .mixture import Mixture
 
@@ -645,7 +646,7 @@ class ReactorModel:
     A generic Chemkin reactor model framework
     """
 
-    def __init__(self, reactor_condition: Inlet, label: str):
+    def __init__(self, reactor_condition: Stream, label: str):
         """
         Initialize the basic parameters of Chemkin reactor model
 
@@ -657,7 +658,7 @@ class ReactorModel:
                 reactor label/name
         """
         # check mixture
-        if isinstance(reactor_condition, (Mixture, Inlet)):
+        if isinstance(reactor_condition, (Mixture, Stream)):
             # if a Mixture object is passed in , verify the Mixture
             iErr = reactor_condition.validate()
             if iErr != 0:
@@ -757,8 +758,6 @@ class ReactorModel:
         self._solution_rawarray: dict[str, npt.ArrayLike] = {}
         self._numbsolutionmixtures = 0
         self._solution_mixturearray: list[Mixture] = []
-        # initialize output buffer
-        self.output: dict[str, str] = {}
         # initialize Chemkin-CFD-API
         if not check_chemistryset(self._chemset_index.value):
             # need to initialize Chemkin-CFD-API
@@ -831,7 +830,7 @@ class ReactorModel:
                 # new keyword
                 return self._numbkeywords, True
 
-    def setkeyword(self, key: str, value: bool | int | float | str):
+    def setkeyword(self, key: str, value: Union[bool, int, float, str]):
         """
         Set a Chemkin keyword and its parameter
 
@@ -917,6 +916,65 @@ class ReactorModel:
         # create the keyword lines from the keyword objects in the keyword list
         for k in self._keyword_list:
             n, line = k.getvalue_as_string()
+            self._linelength.append(n)
+            self._keyword_lines.append(line)
+            self._numblines += 1
+        # print the entire keyword input block
+        if verbose():
+            print("** INPUT KEYWORDS:")
+            # print(f'number of keyword input lines: {self._numblines:d} == {self._numbkeywords:d} \n')
+            print("=" * 40)
+            for line in self._keyword_lines:
+                print(line)
+            print("=" * 40)
+        iErr = self._numbkeywords - self._numblines
+        return iErr, self._numblines
+
+    def showkeywordinputlines_with_tag(self, tag: str = ""):
+        """
+        list all currently-defined keywords, their parameters, and an
+        extra tag string line by line
+
+        Parameters
+        ----------
+            tag: string
+                additional tag for the keywords, for example, the reactor index
+        """
+        # header
+        print("** INPUT KEYWORDS: \n")
+        print("=" * 40)
+        # display the keyword and the parameters line by line
+        for k in self._keyword_list:
+            n, line = k.getvalue_as_string()
+            print(f"{line[:n]:s}    {tag}")
+        print("=" * 40)
+
+    def createkeywordinputlines_with_tag(self, tag: str = "") -> tuple[int, int]:
+        """
+        Create keyword input lines for Chemkin applications
+        one keyword per line: <keyword>     <parameter>    <tag>
+
+        Parameters
+        ----------
+            tag: string
+                additional tag for the keywords, for example, the reactor index
+        Returns
+        -------
+            Error code: integer
+            number of lines: integer
+                number of keyword lines to be added to the inputs
+        """
+        # initialization
+        self._numblines = 0
+        self._linelength.clear()
+        self._keyword_lines.clear()
+        # create the keyword lines from the keyword objects in the keyword list
+        for k in self._keyword_list:
+            n, line = k.getvalue_as_string()
+            # append the tag to the end of the line
+            line = line + Keyword.fourspaces + tag
+            # re-calculate the line length
+            n = len(line)
             self._linelength.append(n)
             self._keyword_lines.append(line)
             self._numblines += 1
@@ -1397,10 +1455,10 @@ class ReactorModel:
     def setsensitivityanalysis(
         self,
         mode: bool = True,
-        absolute_tolerance: float | None = None,
-        relative_tolerance: float | None = None,
-        temperature_threshold: float | None = None,
-        species_threshold: float | None = None,
+        absolute_tolerance: Union[float, None] = None,
+        relative_tolerance: Union[float, None] = None,
+        temperature_threshold: Union[float, None] = None,
+        species_threshold: Union[float, None] = None,
     ):
         """
         Switch ON/OFF A-factor sensitivity analysis
@@ -1675,9 +1733,6 @@ class ReactorModel:
         """
         # a shell method to be overridden by child classes
         logger.debug("Running " + str(self.__class__.__name__) + " " + self.label)
-        # output initialization
-        logger.debug("Clearing output")
-        self.output.clear()
         # keyword processing
         logger.debug("Processing keywords")
         retVal = (

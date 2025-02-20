@@ -21,26 +21,27 @@
 # SOFTWARE.
 
 """
-    Chemkin reactor inlet utilities.
+Chemkin reactor inlet/stream utilities.
 """
 
 import copy
+from typing import Union
 
 from ansys.chemkin.color import Color
 from ansys.chemkin.constants import Patm
 from ansys.chemkin.logger import logger
-from ansys.chemkin.mixture import Mixture
+from ansys.chemkin.mixture import Mixture, compare_mixtures
 
 
-class Inlet(Mixture):
+class Stream(Mixture):
     """
     Generic inlet stream consists of the gas species defined in the given chemistry set
     for Chemkin open reactor models
     """
 
-    # The "Inlet" class is an extension of the "Mixture" class
+    # The "Stream" class is an extension of the "Mixture" class
 
-    def __init__(self, chem, label: str | None = None):
+    def __init__(self, chem, label: Union[str, None] = None):
         """
         Initialize an inlet object with a given chemistry set for open reactor models
 
@@ -473,3 +474,60 @@ class Inlet(Mixture):
             exit()
         # set velocity gradient
         self._velgrad = velgrad
+
+
+# stream utilities
+def compare_streams(
+    streamA: Stream,
+    streamB: Stream,
+    atol: float = 1.0e-10,
+    rtol: float = 1.0e-3,
+    mode: str = "mass",
+) -> tuple[bool, float, float]:
+    """
+    Compare properties of stream B against those of stream A. The stream properties
+    include mixture properties such as pressure [atm], temperature [K], and
+    species mass/mole fractions and the stream mass flow rate. When the
+    differences in the property values satisfy both the absolute and the relative
+    tolerances, this method will return "True", that is, stream B is essentially
+    identical to stream A; otherwise, "False" will be returned.
+
+    Parameters
+    ----------
+        streamA: Stream object
+            mixture A, the target stream
+        streamB: Stream object
+            stream B, the sample stream
+        atol: double, default = 1.0e-10
+            the absolute tolerance for the max property differences
+        rtol: double, default = 1.0e-3
+            the relative tolerance for the max property differences
+        mode: string {"mass", "mole"}, default = "mass"
+            compare species "mass" or "mole" fractions
+
+    Returns
+    -------
+        issame: boolean
+            the equivalence of the two mixtures
+        atol_max: double
+            the max absolute difference value
+        rtol_max: double
+            the max relative difference value
+    """
+    # check mixtures first
+    issame, diff_max, var_max = compare_mixtures(
+        streamA, streamB, atol=atol, rtol=rtol, mode=mode
+    )
+    # compare stream mass flow rate
+    mflr_diff = abs(streamA.mass_flowrate - streamB.mass_flowrate)
+    # find relative difference
+    mflr_var = mflr_diff / streamA.mass_flowrate
+    print(f"mass flow rate difference: {mflr_diff}       {mflr_var}")
+    # check tolerances
+    issame = issame or mflr_diff <= atol
+    issame = issame or mflr_var <= rtol
+    #
+    diff_max = max(diff_max, mflr_diff)
+    var_max = max(var_max, mflr_var)
+    #
+    return issame, diff_max, var_max

@@ -27,7 +27,7 @@
 import ctypes
 from ctypes import POINTER, c_char_p, c_double, c_int
 import os
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from ansys.chemkin import chemkin_wrapper as ck_wrapper
 from ansys.chemkin.color import Color
@@ -992,7 +992,7 @@ class Chemistry:
     # alias
     species_molar_weight = WT
 
-    def SpeciesCp(self, temp: float = 0.0, pres: float | None = None):
+    def SpeciesCp(self, temp: float = 0.0, pres: Union[float, None] = None):
         """
         Get species specific heat capacity at constant pressure
 
@@ -1058,7 +1058,7 @@ class Chemistry:
 
         return Cp
 
-    def SpeciesCv(self, temp: float = 0.0, pres: float | None = None):
+    def SpeciesCv(self, temp: float = 0.0, pres: Union[float, None] = None):
         """
         Get species specific heat capacity at constant volume (ideal gas only)
 
@@ -1095,7 +1095,7 @@ class Chemistry:
 
         return Cv
 
-    def SpeciesH(self, temp: float = 0.0, pres: float | None = None):
+    def SpeciesH(self, temp: float = 0.0, pres: Union[float, None] = None):
         """
         Get species enthalpy
 
@@ -1160,7 +1160,7 @@ class Chemistry:
 
         return H
 
-    def SpeciesU(self, temp: float = 0.0, pres: float | None = None):
+    def SpeciesU(self, temp: float = 0.0, pres: Union[float, None] = None):
         """
         Get species internal energy
 

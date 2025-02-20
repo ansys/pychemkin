@@ -26,6 +26,7 @@ Chemkin help menu for keywords and key phrases.
 
 import importlib.resources
 import os
+from typing import Union
 import webbrowser
 
 from ansys.chemkin.color import Color
@@ -123,7 +124,7 @@ def phrase_hints(phrase: str):
         logger.error(this_msg)
 
 
-def help(topic: str | None = None):
+def help(topic: Union[str, None] = None):
     """
     Provide assistance on finding information about Chemkin keywords.
 
