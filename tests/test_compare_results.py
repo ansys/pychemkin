@@ -29,7 +29,11 @@ class TestCompareResults:
             pytest.skip("--nocompare option set.")
 
         # check the folders
-        new_result_dir = os.path.join(get_working_dir, get_result_dir)
+        if PyCKtools.RESULT_FOLDER is None:
+            new_working = get_working_dir
+        else:
+            new_working = PyCKtools.RESULT_FOLDER
+        new_result_dir = os.path.join(new_working, get_result_dir)
         iErr = PyCKtools.check_folder(new_result_dir)
         assert iErr == 0, f"result folder {new_result_dir} not found."
         baseline_dir = os.path.join(get_working_dir, get_baseline_dir)
@@ -41,7 +45,7 @@ class TestCompareResults:
         r_file_names = PyCKtools.get_file_names(new_result_dir)
         b_file_names = PyCKtools.get_file_names(baseline_dir)
         # create the comparison log file
-        logf = open(os.path.join(get_working_dir, "compareresults.log"), "w+")
+        logf = open(os.path.join(new_working, "compareresults.log"), "w+")
         count_all_files = 0
         count_missing = 0
         count_skipped = 0

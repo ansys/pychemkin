@@ -12,6 +12,7 @@ import numpy as np
 
 class PyCKtools:
     FIRST_PASS = 0
+    RESULT_FOLDER = None
 
     def check_folder(thisfolder):
         """
@@ -77,7 +78,7 @@ class PyCKtools:
         # find the working directory
         current_dir = os.getcwd()
         # set sources folder
-        source_folder = os.path.join(current_dir, source_dir)
+        source_folder = os.path.join(root_dir, source_dir)
         # check if the source folder exists
         status = PyCKtools.check_folder(source_folder)
         assert 0 == status, "bad source folder name."
@@ -88,7 +89,9 @@ class PyCKtools:
             status = PyCKtools.create_folder(output_folder)
             assert 0 == status, "fail to get fresh output folder"
         # verify the temporary working folder
-        new_working = os.path.join(root_dir, result_dir)
+        new_working = os.path.join(current_dir, result_dir)
+        if PyCKtools.RESULT_FOLDER is None:
+            PyCKtools.RESULT_FOLDER = current_dir
         # check if the temporary working folder exists
         if PyCKtools.FIRST_PASS == 0:
             status = PyCKtools.create_folder(new_working)
@@ -112,25 +115,25 @@ class PyCKtools:
             print(f"Command returned non-zero exit status: {e.returncode}")
             fout.close()
             # change working directory back
-            os.chdir(root_dir)
+            os.chdir(current_dir)
             assert 0
         except subprocess.TimeoutExpired as e:
             print(f"Command timed out: {e.timeout}")
             fout.close()
             # change working directory back
-            os.chdir(root_dir)
+            os.chdir(current_dir)
             assert 0
         except FileNotFoundError as e:
             print(f"Command not found: {e}")
             fout.close()
             # change working directory back
-            os.chdir(root_dir)
+            os.chdir(current_dir)
             assert 0
         except OSError as e:
             print(f"OS error occurred: {e}")
             fout.close()
             # change working directory back
-            os.chdir(root_dir)
+            os.chdir(current_dir)
             assert 0
         # close the solution output file
         fout.close()
@@ -143,7 +146,7 @@ class PyCKtools:
             os.remove(inp_files)
         # return the return code from the subprocess run
         # change working directory
-        os.chdir(root_dir)
+        os.chdir(current_dir)
         #
         return results.returncode
 
