@@ -82,11 +82,7 @@ print(f"the premixed mixture temperature is {premixed.temperature:f} [K]")
 # return results for comparisons
 resultfile = os.path.join(current_dir, "mixturemixing.result")
 results = {}
-results["state-temperature"] = [
-    premixed.temperature,
-    ar.temperature,
-    float(diluted.temperature),
-]
+results["state-temperature"] = [premixed.temperature, ar.temperature, float(diluted.temperature)]
 results["species-premixed_mole_fraction"] = premixed.X.tolist()
 results["species-diluted_mole_fraction"] = diluted.X.tolist()
 #

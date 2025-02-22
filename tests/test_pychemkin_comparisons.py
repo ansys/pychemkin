@@ -29,10 +29,10 @@ class TestCompareResults:
             pytest.skip("--nocompare option set.")
 
         # check the folders
-        if PyCKtools.RESULT_FOLDER is None:
+        if PyCKtools.TARGET_FOLDER is None:
             new_working = get_working_dir
         else:
-            new_working = PyCKtools.RESULT_FOLDER
+            new_working = PyCKtools.TARGET_FOLDER
         new_result_dir = os.path.join(new_working, get_result_dir)
         iErr = PyCKtools.check_folder(new_result_dir)
         assert iErr == 0, f"result folder {new_result_dir} not found."

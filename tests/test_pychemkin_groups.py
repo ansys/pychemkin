@@ -27,6 +27,9 @@ class TestClassBasic:
         """
         Run the selected pychemin utility test case.
         """
+        # initialization
+        PyCKtools.init_test_status()
+        # run the basic test cases
         iErr = PyCKtools.run_test(
             get_working_dir, get_source_dir, get_result_dir, test_file
         )

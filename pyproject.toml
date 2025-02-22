@@ -87,4 +87,4 @@ quiet-level = 3
 skip = "*.toml,*.pyc,*.xml,*.gif,*.png,*.jpg,*.js,*.html,*.svg,*.asc,*.out"
 
 [tool.pytest.ini_options]
-addopts = "-ra --maxfail=3 --group='all"
+addopts = "-ra --maxfail=3"

@@ -22,13 +22,13 @@ def pytest_addoption(parser):
             "PSR",
             "",
         ),
-        default="",
+        default="all",
         help="run test groups named in GROUPNAME.",
     )
     parser.addoption(
         "--source",
         action="store",
-        default="sources",
+        default="integration_tests",
         help="specify the folder containing the test source files.",
     )
     parser.addoption(
@@ -56,6 +56,7 @@ def pytest_configure(config):
     """
     # configure marker: @pytest.mark.group(GROUPNAME) for each group class
     config.addinivalue_line("markers", "group(groupname): mark test groups to run.")
+    config.option.python_files = ["test_pychemkin_*.py"]
 
 
 def pytest_runtest_setup(item):

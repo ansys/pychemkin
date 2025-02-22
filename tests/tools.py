@@ -12,7 +12,7 @@ import numpy as np
 
 class PyCKtools:
     FIRST_PASS = 0
-    RESULT_FOLDER = None
+    TARGET_FOLDER = None
 
     def check_folder(thisfolder):
         """
@@ -90,8 +90,8 @@ class PyCKtools:
             assert 0 == status, "fail to get fresh output folder"
         # verify the temporary working folder
         new_working = os.path.join(current_dir, result_dir)
-        if PyCKtools.RESULT_FOLDER is None:
-            PyCKtools.RESULT_FOLDER = current_dir
+        if PyCKtools.TARGET_FOLDER is None:
+            PyCKtools.TARGET_FOLDER = current_dir
         # check if the temporary working folder exists
         if PyCKtools.FIRST_PASS == 0:
             status = PyCKtools.create_folder(new_working)
@@ -235,3 +235,10 @@ class PyCKtools:
         # check differences
         iErr = len(bad_ID)
         return iErr, bad_ID, diff
+
+    def init_test_status():
+        """
+        Initialize the test status values before running the tests.
+        """
+        PyCKtools.TARGET_FOLDER = None
+        PyCKtools.FIRST_PASS = 0
