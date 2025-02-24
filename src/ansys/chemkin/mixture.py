@@ -40,6 +40,7 @@ from ansys.chemkin.chemistry import (
     verbose,
 )
 from ansys.chemkin.color import Color
+from ansys.chemkin.constants import Patm
 from ansys.chemkin.utilities import calculate_stoichiometrics, where_element_in_array_1D
 import numpy as np
 import numpy.typing as npt
@@ -3314,6 +3315,190 @@ def interpolate_mixtures(
     del frac
     #
     return mixturenew
+
+
+def compare_mixtures(
+    mixtureA: Mixture,
+    mixtureB: Mixture,
+    atol: float = 1.0e-10,
+    rtol: float = 1.0e-3,
+    mode: str = "mass",
+) -> tuple[bool, float, float]:
+    """
+    Compare properties of mixture B against those of mixture A. The mixture properties
+    include pressure [atm], temperature [K], and species mass/mole fractions. When the
+    differences in the property values satisfy both the absolute and the relative
+    tolerances, this method will return "True", that is, mixture B is essentially
+    identical to mixture A; otherwise, "False" will be returned.
+
+    Parameters
+    ----------
+        mixtureA: Mixture object
+            mixture A, the target mixture
+        mixtureB: Mixture object
+            mixture B, the sample mixture
+        atol: double, default = 1.0e-10
+            the absolute tolerance for the max property differences
+        rtol: double, default = 1.0e-3
+            the relative tolerance for the max property differences
+        mode: string {"mass", "mole"}, default = "mass"
+            compare species "mass" or "mole" fractions
+
+    Returns
+    -------
+        issame: boolean
+            the equivalence of the two mixtures
+        atol_max: double
+            the max absolute difference value
+        rtol_max: double
+            the max relative difference value
+    """
+    # check mixtures
+    if not isinstance(mixtureA, Mixture):
+        msg = [
+            Color.PURPLE,
+            "the first argument must be a Mixture object.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    iErr = mixtureA.validate()
+    if iErr != 0:
+        msg = [
+            Color.PURPLE,
+            "the first mixture is not fully defined.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    #
+    if not isinstance(mixtureB, Mixture):
+        msg = [
+            Color.PURPLE,
+            "the second argument must be a Mixture object.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    iErr = mixtureB.validate()
+    if iErr != 0:
+        msg = [
+            Color.PURPLE,
+            "the second mixture is not fully defined.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # check chemistry sets
+    if mixtureA.chemID != mixtureB.chemID:
+        msg = [
+            Color.PURPLE,
+            "the Mixtures belong to different Chemistry Sets.\n",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # check if the chemstry set is active
+    if not check_active_chemistryset(mixtureA.chemID):
+        msg = [
+            Color.PURPLE,
+            "the Chemistry Set associated with the Mixture is not currently active.\n",
+            Color.SPACEx6,
+            "activate Chemistry Set using the 'active()' method.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # compare mixture pressure
+    pres_diff = abs(mixtureA.pressure - mixtureB.pressure)
+    # find relative difference
+    pres_var = pres_diff / mixtureA.pressure
+    # convert the difference to [atm]
+    pres_diff /= Patm
+    # check tolerances
+    issame = pres_diff <= atol
+    issame = issame or pres_var <= rtol
+    diff_max = pres_diff
+    var_max = pres_var
+    print(f"pressure difference: {pres_diff}       {pres_var}")
+    # compare mixture temperature
+    temp_diff = abs(mixtureA.temperature - mixtureB.temperature)
+    # find relative difference
+    temp_var = temp_diff / mixtureA.temperature
+    # check tolerances
+    issame = issame or temp_diff <= atol
+    issame = issame or temp_var <= rtol
+    diff_max = max(diff_max, temp_diff)
+    var_max = max(var_max, temp_var)
+    print(f"temperature difference: {temp_diff}       {temp_var}")
+    # compare composition
+    spec_index_count = 0
+    spec_index_max = []
+    spec_diff_max: list[float] = []
+    spec_var_max: list[float] = []
+    if mode == "mole":
+        # compare mole fractions
+        k = 0
+        while k <= mixtureA._KK:
+            frac = mixtureA.X[k]
+            spec_diff = abs(frac - mixtureB.X[k])
+            if np.isclose(frac, 0.0, atol=atol):
+                found = issame or spec_diff <= atol
+                spec_var = 0.0
+            else:
+                spec_var = spec_diff / frac
+                found = spec_diff <= atol
+                found = found or spec_var <= rtol
+            #
+            if found:
+                spec_index_max.append(k)
+                spec_diff_max.append(spec_diff)
+                spec_var_max.append(spec_var)
+                spec_index_count += 1
+            k += 1
+    else:
+        # compare mass fractions
+        k = 0
+        while k <= mixtureA._KK:
+            frac = mixtureA.Y[k]
+            spec_diff = abs(frac - mixtureB.Y[k])
+            if np.isclose(frac, 0.0, atol=atol):
+                found = issame or spec_diff <= atol
+                spec_var = 0.0
+            else:
+                spec_var = spec_diff / frac
+                found = spec_diff <= atol
+                found = found or spec_var <= rtol
+            #
+            if found:
+                spec_index_max.append(k)
+                spec_diff_max.append(spec_diff)
+                spec_var_max.append(spec_var)
+                spec_index_count += 1
+            k += 1
+    # check tolerances
+    if spec_index_count > 0:
+        issame = True
+        print("composition differences:")
+        count = 0
+        for k in spec_index_max:
+            print(f"species {mixtureA._specieslist[k]}")
+            print(f"   difference: {spec_diff_max[count]}       {spec_var_max[count]}")
+            count += 1
+        diff_spec = max(spec_diff_max)
+        diff_max = max(diff_max, diff_spec)
+        var_spec = max(spec_var_max)
+        var_max = max(var_max, var_spec)
+    else:
+        print("no composition difference")
+    #
+    return issame, diff_max, var_max
 
 
 # equilibrium
