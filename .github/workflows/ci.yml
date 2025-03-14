@@ -93,6 +93,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pandoc/actions/setup@v1
+      - name: Install libjpeg
+        run: sudo apt-get -y install libjpeg-dev
       - name: Run Ansys documentation building action
         uses: ansys/actions/doc-build@v8
         env:
