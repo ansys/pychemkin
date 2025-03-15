@@ -87,8 +87,8 @@ print("PFR inlet gas compsition")
 tubereactor.list_composition(mode="mole", bound=1.0e-8)
 # set distance between saving solution
 tubereactor.timestep_for_saving_solution = 0.0005
-# turn ON adaptive solution saving
-tubereactor.adaptive_solution_saving(mode=True, steps=100)
+# turn OFF adaptive solution saving
+tubereactor.adaptive_solution_saving(mode=False, steps=100)
 # show the additional keywords given by user
 tubereactor.showkeywordinputlines()
 # set the start wall time
@@ -178,7 +178,7 @@ else:
     plt.savefig("plug_flow_reactor.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "pluflow.result")
+resultfile = os.path.join(current_dir, "plugflow.result")
 results = {}
 results["state-distance"] = xprofile.tolist()
 results["state-temperature"] = tempprofile.tolist()

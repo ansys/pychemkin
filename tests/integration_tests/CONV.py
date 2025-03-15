@@ -113,8 +113,8 @@ MyCONV.set_volume_profile(x, volprofile)
 # output controls
 # set timestep between saving solution
 MyCONV.timestep_for_saving_solution = 0.01
-# turn ON adaptive solution saving
-MyCONV.adaptive_solution_saving(mode=True, value_change=100, target="TEMPERATURE")
+# turn OFF adaptive solution saving
+MyCONV.adaptive_solution_saving(mode=False, value_change=100, target="TEMPERATURE")
 # turn OFF adaptive solution saving
 # MyCONV.adaptive_solution_saving(mode=False)
 # set tolerances in tuple: (absolute tolerance, relative tolerance)

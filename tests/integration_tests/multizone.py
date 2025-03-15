@@ -176,8 +176,8 @@ MyMZEngine.define_additive_fractions(addfrac=zadd)
 MyMZEngine.CAstep_for_saving_solution = 0.5
 # set the number of crank angles between printing solution
 MyMZEngine.CAstep_for_printing_solution = 10.0
-# turn ON adaptive solution saving
-MyMZEngine.adaptive_solution_saving(mode=True, steps=20)
+# turn OFF adaptive solution saving
+MyMZEngine.adaptive_solution_saving(mode=False, steps=20)
 # turn OFF adaptive solution saving
 # MyMZEngine.adaptive_solution_saving(mode=False)
 # set tolerances in tuple: (absolute tolerance, relative tolerance)

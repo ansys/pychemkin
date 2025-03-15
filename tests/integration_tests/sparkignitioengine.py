@@ -175,8 +175,8 @@ MyEngine.set_cylinder_head_area(area=56.75)
 MyEngine.CAstep_for_saving_solution = 0.5
 # set the number of crank angles between printing solution
 MyEngine.CAstep_for_printing_solution = 10.0
-# turn ON adaptive solution saving
-MyEngine.adaptive_solution_saving(mode=True, steps=20)
+# turn OFF adaptive solution saving
+MyEngine.adaptive_solution_saving(mode=False, steps=20)
 # turn OFF adaptive solution saving
 # MyEngine.adaptive_solution_saving(mode=False)
 # set tolerances in tuple: (absolute tolerance, relative tolerance)

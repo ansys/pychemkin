@@ -104,8 +104,8 @@ MyCONV.time = 0.0005
 # output controls
 # set timestep between saving solution
 # MyCONV.timestep_for_saving_solution = 0.01
-# turn ON adaptive solution saving
-MyCONV.adaptive_solution_saving(mode=True, steps=20)
+# turn OFF adaptive solution saving
+MyCONV.adaptive_solution_saving(mode=False, steps=20)
 # turn OFF adaptive solution saving
 # MyCONV.adaptive_solution_saving(mode=False)
 # set tolerances in tuple: (absolute tolerance, relative tolerance)
