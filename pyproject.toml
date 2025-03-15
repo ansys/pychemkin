@@ -89,4 +89,4 @@ quiet-level = 3
 skip = "*.toml,*.pyc,*.xml,*.gif,*.png,*.jpg,*.js,*.html,*.svg,*.asc,*.out"
 
 [tool.pytest.ini_options]
-addopts = "-ra --maxfail=3"
+addopts = "-ra --maxfail=3 --nocompare"
