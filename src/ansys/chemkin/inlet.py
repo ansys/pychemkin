@@ -33,10 +33,11 @@ from ansys.chemkin.constants import Patm
 from ansys.chemkin.logger import logger
 from ansys.chemkin.mixture import (
     Mixture,
-    compare_mixtures,
     calculate_mixture_temperature_from_enthalpy,
+    compare_mixtures,
 )
 import numpy as np
+
 
 class Stream(Mixture):
     """
@@ -518,7 +519,7 @@ def clone_stream(source: Stream, target: Stream):
             the "target" Stream to get new properties
     """
     # check Chemistry set
-    if (source.chemID == target.chemID):
+    if source.chemID == target.chemID:
         # clone the Stream properties
         target.temperature = source.temperature
         target.pressure = source.pressure
@@ -533,6 +534,7 @@ def clone_stream(source: Stream, target: Stream):
         this_msg = Color.SPACE.join(msg)
         logger.error(this_msg)
         exit()
+
 
 def compare_streams(
     streamA: Stream,
@@ -589,12 +591,13 @@ def compare_streams(
     #
     return issame, diff_max, var_max
 
+
 def adiabatic_mixing_streams(streamA: Stream, streamB: Stream) -> Stream:
     """
     Create a new Stream object by mixing two streams adiabatically. The
     enthalpy of the final stream is the sum of the enthalpies of
     the two streams, and so is the final mass flow rate.
-    
+
     Parameters
     ----------
         streamA: Stream object
@@ -676,14 +679,17 @@ def adiabatic_mixing_streams(streamA: Stream, streamB: Stream) -> Stream:
     print(f"final stream temperature = {final_stream.temperature} [K]")
     return final_stream
 
-def create_stream_from_mixture(chem: Chemistry, mixture: Mixture, flow_rate: float = 0.0, mode: str = "mass") -> Stream:
+
+def create_stream_from_mixture(
+    chem: Chemistry, mixture: Mixture, flow_rate: float = 0.0, mode: str = "mass"
+) -> Stream:
     """
     Create a new Stream object from the given Mixture object.
 
     Parameters
     ----------
         chem: Chemistry object
-            the Chemistry Set used to instatiate the mixture
+            the Chemistry Set used to instantiate the mixture
         mixture: Mixture object
             the Mixture whose properties will be used to set up the new Stream
         flow_rate: double, >= 0.0, default = 0.0
@@ -723,7 +729,7 @@ def create_stream_from_mixture(chem: Chemistry, mixture: Mixture, flow_rate: flo
             new_stream.velocity = flow_rate
             msg = [
                 Color.MAGENTA,
-                "remember to provide \"flow area\" to this Stream.",
+                'remember to provide "flow area" to this Stream.',
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)

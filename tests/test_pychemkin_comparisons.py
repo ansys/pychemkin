@@ -63,7 +63,7 @@ class TestCompareResults:
                 # prepare for result comparisons
                 this_result_file = os.path.join(new_result_dir, rf)
                 this_result = PyCKtools.load_results(this_result_file)
-                msg = "results have different number of entries"
+                msg = str(test_name) + ": bad result file format."
                 assert type(this_result) == dict, msg
                 # load the baseline file
                 base_name = test_name + baseline_tag
@@ -71,7 +71,7 @@ class TestCompareResults:
                     this_baseline_file = os.path.join(baseline_dir, base_name)
                     # find corresponding baseline
                     this_baseline = PyCKtools.load_results(this_baseline_file)
-                    msg = "trouble reading the baseline of test " + str(test_name)
+                    msg = str(test_name) + ": trouble reading the baseline of test."
                     assert type(this_baseline) == dict, msg
                     # get tolerances from the baseline file
                     state_tol = this_baseline.get("tolerance-var", [1.0e-6, 1.0e-2])
@@ -81,7 +81,7 @@ class TestCompareResults:
                     var_list = list(this_result.keys())
                     base_list = list(this_baseline.keys())
                     # baseline contains three more keys for the tolerances
-                    msg = "result file mismatch."
+                    msg = str(test_name) + ": result file mismatch."
                     assert PyCKtools.check_list_size(var_list, base_list, 3), msg
                     status = 0
                     # go through all stored variables
@@ -90,7 +90,10 @@ class TestCompareResults:
                         r_list = this_result.get(var, [0.0])
                         b_list = this_baseline.get(var, [0.0])
                         # check array sizes
-                        msg = "results have different number of entries"
+                        msg = (
+                            str(test_name)
+                            + ": results have different number of entries."
+                        )
                         assert PyCKtools.check_list_size(r_list, b_list, 0), msg
                         # set tolerances
                         atol, rtol = PyCKtools.get_tolerances(

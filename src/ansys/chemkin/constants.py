@@ -42,29 +42,35 @@ RGas_Cal = (
 # == end of global constants
 
 
-class Air():
+class Air:
     """
     define the "air" composition in PyChemkin with a fixed mixture "recipe".
     A "recipe" is a list of tuples of ("species symbol", fraction) to define a
     gas mixture in PyChemkin.
     This class uses the upper case symbols for oxygen and nitrogen.
     """
+
+    @staticmethod
     def X() -> list[tuple[str, float]]:
         return [("O2", 0.21), ("N2", 0.79)]
 
+    @staticmethod
     def Y() -> list[tuple[str, float]]:
         return [("O2", 0.23), ("N2", 0.77)]
 
 
-class air():
+class air:
     """
     define the "air" composition in PyChemkin with a fixed mixture "recipe".
     A "recipe" is a list of tuples of ("species symbol", fraction) to define a
     gas mixture in PyChemkin.
     This class uses the lower case symbols for oxygen and nitrogen.
     """
+
+    @staticmethod
     def X() -> list[tuple[str, float]]:
         return [("o2", 0.21), ("n2", 0.79)]
 
+    @staticmethod
     def Y() -> list[tuple[str, float]]:
         return [("o2", 0.23), ("n2", 0.77)]

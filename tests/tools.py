@@ -113,24 +113,28 @@ class PyCKtools:
             results = subprocess.run(["python", frun], stdout=fout, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Command returned non-zero exit status: {e.returncode}")
+            print(f"test = {test_file}")
             fout.close()
             # change working directory back
             os.chdir(current_dir)
             assert 0
         except subprocess.TimeoutExpired as e:
             print(f"Command timed out: {e.timeout}")
+            print(f"test = {test_file}")
             fout.close()
             # change working directory back
             os.chdir(current_dir)
             assert 0
         except FileNotFoundError as e:
             print(f"Command not found: {e}")
+            print(f"test = {test_file}")
             fout.close()
             # change working directory back
             os.chdir(current_dir)
             assert 0
         except OSError as e:
             print(f"OS error occurred: {e}")
+            print(f"test = {test_file}")
             fout.close()
             # change working directory back
             os.chdir(current_dir)

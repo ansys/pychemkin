@@ -297,7 +297,9 @@ class perfectlystirredreactor(openreactor):
         if reactorindex > 0:
             self.ireac = c_int(reactorindex)
 
-    def set_estimate_conditions(self, option: str, guess_temp: Union[float, None] = None):
+    def set_estimate_conditions(
+        self, option: str, guess_temp: Union[float, None] = None
+    ):
         """
         Reset the initial/guessed reactor gas mixture properties to
         improve the steady-state solution finding performance.
@@ -312,7 +314,7 @@ class perfectlystirredreactor(openreactor):
                 "TP" indicates the new guessed mixture is the
                 equilibrium state at the new given guess_temp
                 "TT" indicates the new guessed mixture has the
-                coomposition but at the new given guess_temp 
+                coomposition but at the new given guess_temp
             guess_temp: double, optional
                 new mixture temperature [K] used by options "TP" and "TT"
         """
@@ -330,7 +332,7 @@ class perfectlystirredreactor(openreactor):
                 msg = [
                     Color.PURPLE,
                     "new gas temperature is not provided,\n",
-                    "the original temeprature",
+                    "the original temperature",
                     str(self.reactormixture.temperature),
                     "is applied.",
                     Color.END,
@@ -342,7 +344,7 @@ class perfectlystirredreactor(openreactor):
                 msg = [
                     Color.PURPLE,
                     "new gas temperature value is invalid,\n",
-                    "the original temeprature",
+                    "the original temperature",
                     str(self.reactormixture.temperature),
                     "is applied.",
                     Color.END,
@@ -353,7 +355,7 @@ class perfectlystirredreactor(openreactor):
                 # use the given temperature
                 self.reactormixture.temperature = guess_temp
                 self.temperature = guess_temp
-            
+
             if option.upper() == "TP":
                 # use the constant temperature equilibirum mixture as the new guess
                 newmixture = equilibrium(self.reactormixture, opt=1)
@@ -375,7 +377,7 @@ class perfectlystirredreactor(openreactor):
             msg = [
                 Color.PURPLE,
                 "new gas temperature value is invalid,\n",
-                "the original temeprature",
+                "the original temperature",
                 str(self.reactormixture.temperature),
                 "is applied.",
                 Color.END,
@@ -410,7 +412,7 @@ class perfectlystirredreactor(openreactor):
             msg = [
                 Color.PURPLE,
                 "the mode of the new composition is invalid,",
-                "should be either \"mole\" or \"mass\".",
+                'should be either "mole" or "mass".',
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
