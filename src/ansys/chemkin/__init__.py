@@ -38,6 +38,8 @@ from ansys.chemkin import chemkin_wrapper as ck_wrapper
 from ansys.chemkin.chemistry import Chemistry, done, set_verbose, verbose
 from ansys.chemkin.color import Color
 from ansys.chemkin.constants import (
+    air,
+    Air,
     Patm,
     RGas,
     RGas_Cal,

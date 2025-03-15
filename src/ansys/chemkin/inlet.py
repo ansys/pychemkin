@@ -27,11 +27,16 @@ Chemkin reactor inlet/stream utilities.
 import copy
 from typing import Union
 
+from ansys.chemkin.chemistry import Chemistry
 from ansys.chemkin.color import Color
 from ansys.chemkin.constants import Patm
 from ansys.chemkin.logger import logger
-from ansys.chemkin.mixture import Mixture, compare_mixtures
-
+from ansys.chemkin.mixture import (
+    Mixture,
+    compare_mixtures,
+    calculate_mixture_temperature_from_enthalpy,
+)
+import numpy as np
 
 class Stream(Mixture):
     """
@@ -70,7 +75,7 @@ class Stream(Mixture):
         # set inlet label
         if label is None:
             label = "inlet"
-        self.label = label
+        self._label = label
 
     def convert_to_mass_flowrate(self) -> float:
         """
@@ -475,8 +480,60 @@ class Stream(Mixture):
         # set velocity gradient
         self._velgrad = velgrad
 
+    @property
+    def label(self) -> str:
+        """
+        Get the label of the Stream.
+
+        Returns
+        -------
+            label: string
+                label of the Stream
+        """
+        return self._label
+
+    @label.setter
+    def label(self, name: str):
+        """
+        Set the label of the Stream.
+
+        Parameters
+        ----------
+            name: string
+                label of the Stream
+        """
+        self._label = name
+
 
 # stream utilities
+def clone_stream(source: Stream, target: Stream):
+    """
+    Copy the properties of the source Stream to the target Stream.
+
+    Parameters
+    ----------
+        source: Stream object
+            the "source" Stream to be cloned
+        target: Stream object
+            the "target" Stream to get new properties
+    """
+    # check Chemistry set
+    if (source.chemID == target.chemID):
+        # clone the Stream properties
+        target.temperature = source.temperature
+        target.pressure = source.pressure
+        target.mass_flowrate = source.mass_flowrate
+        target.X = source.X
+    else:
+        msg = [
+            Color.PURPLE,
+            "the streams have different Chemistry Sets.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+
 def compare_streams(
     streamA: Stream,
     streamB: Stream,
@@ -531,3 +588,149 @@ def compare_streams(
     var_max = max(var_max, mflr_var)
     #
     return issame, diff_max, var_max
+
+def adiabatic_mixing_streams(streamA: Stream, streamB: Stream) -> Stream:
+    """
+    Create a new Stream object by mixing two streams adiabatically. The
+    enthalpy of the final stream is the sum of the enthalpies of
+    the two streams, and so is the final mass flow rate.
+    
+    Parameters
+    ----------
+        streamA: Stream object
+            mixture A, the target stream
+        streamB: Stream object
+            stream B, the sample stream
+    Returns
+    -------
+        final_stream: Stream object
+            the final stream from combining steamA and streamB
+    """
+    if isinstance(streamA, Stream) and isinstance(streamB, Stream):
+        if streamA.chemID == streamB.chemID:
+            final_stream = copy.deepcopy(streamA)
+        else:
+            msg = [
+                Color.PURPLE,
+                "the streams have different Chemistry Sets.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+    else:
+        msg = [
+            Color.PURPLE,
+            "the streams must be Stream objects.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+
+    # number of gas species
+    numb_species = streamA._KK
+    # initialization
+    massfrac = np.zeros(numb_species, dtype=np.double)
+    mix_h = 0.0e0
+    speciesfrac_sum = 0.0e0
+    # total mass flow rate
+    total_mass_flow_rate = streamA.mass_flowrate + streamB.mass_flowrate
+    final_stream.mass_flowrate = total_mass_flow_rate
+    # compute the species mass fractions in the combined stream
+    for k in range(numb_species):
+        massfrac[k] = streamA.Y[k] * streamA.mass_flowrate
+        massfrac[k] += streamB.Y[k] * streamB.mass_flowrate
+        massfrac[k] /= total_mass_flow_rate
+        speciesfrac_sum += massfrac[k]
+
+    if speciesfrac_sum > 0.0e0:
+        for k in range(numb_species):
+            massfrac[k] /= speciesfrac_sum
+        final_stream.Y = massfrac
+
+    # compute the final stream's enthalpy flux [ergs/g]
+    mix_h = streamA.HML() / streamA.WTM * streamA.mass_flowrate
+    mix_h += streamB.HML() / streamB.WTM * streamB.mass_flowrate
+    mix_h /= total_mass_flow_rate
+    # use mean molecular weight of the gas mixture of the combined stream
+    # to convert the enthalpy from [erg/g] to [erg/mol]
+    mix_h *= final_stream.WTM
+    # compute temperature of the final mixture from the mixture enthalpy
+    # set the guessed temperature
+    t_guessed = 0.0e0
+    iErr = calculate_mixture_temperature_from_enthalpy(
+        mixture=final_stream, mixtureH=mix_h, guesstemperature=t_guessed
+    )
+    if iErr != 0:
+        msg = [
+            Color.PURPLE,
+            "failed to compute the final stream temperature,",
+            "error code =",
+            str(iErr),
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    print(f"final stream temperature = {final_stream.temperature} [K]")
+    return final_stream
+
+def create_stream_from_mixture(chem: Chemistry, mixture: Mixture, flow_rate: float = 0.0, mode: str = "mass") -> Stream:
+    """
+    Create a new Stream object from the given Mixture object.
+
+    Parameters
+    ----------
+        chem: Chemistry object
+            the Chemistry Set used to instatiate the mixture
+        mixture: Mixture object
+            the Mixture whose properties will be used to set up the new Stream
+        flow_rate: double, >= 0.0, default = 0.0
+            the flow rate/velocity of the new Stream, [g/sec], [cm3/sec], [cm/sec], [standard cm3/minute]
+        mode: string, {"mass", "vol", "vel", "sccm"}
+            the type of flow rate data is given by the flow_rate parameter
+    Returns
+    -------
+        new_stream: Stream object
+            the new Stream based on the given Mixture
+    """
+    # create the Stream object
+    new_stream = Stream(chem)
+    # transfer the Mixture properties to the new Stream object
+    if isinstance(mixture, Mixture):
+        new_stream.pressure = mixture.pressure
+        new_stream.temperature = mixture.temperature
+        new_stream.X = mixture.X
+    else:
+        msg = [
+            Color.PURPLE,
+            "the second parameter must be a Mixture object.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # set the flow rate of the new Stream object
+    if flow_rate > 0.0:
+        if mode.lower() == "vol":
+            new_stream.vol_flowrate = flow_rate
+        elif mode.lower() == "mass":
+            new_stream.mass_flowrate = flow_rate
+        elif mode.lower() == "sccm":
+            new_stream.sccm = flow_rate
+        else:
+            new_stream.velocity = flow_rate
+            msg = [
+                Color.MAGENTA,
+                "remember to provide \"flow area\" to this Stream.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.warning(this_msg)
+    else:
+        msg = [Color.PURPLE, "flow rate must > 0.", Color.END]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    return new_stream

@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 """
-    perfectly-stirred reactor (PSR) model
+    Perfectly-stirred reactor (PSR) model
 """
 
 import copy
@@ -38,6 +38,7 @@ from ansys.chemkin.chemistry import (
 from ansys.chemkin.color import Color as Color
 from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
+from ansys.chemkin.mixture import equilibrium
 from ansys.chemkin.reactormodel import Keyword
 from ansys.chemkin.stirreactors.openreactor import openreactor
 import numpy as np
@@ -296,6 +297,126 @@ class perfectlystirredreactor(openreactor):
         if reactorindex > 0:
             self.ireac = c_int(reactorindex)
 
+    def set_estimate_conditions(self, option: str, guess_temp: Union[float, None] = None):
+        """
+        Reset the initial/guessed reactor gas mixture properties to
+        improve the steady-state solution finding performance.
+
+        Parameters
+        ----------
+            option: str, {"TP", "HP", "TT"}
+                options for additional transformation of the
+                guessed mixture composition.
+                "HP" indicates the new guessed mixture is the
+                equilibrium state with the same enthalpy.
+                "TP" indicates the new guessed mixture is the
+                equilibrium state at the new given guess_temp
+                "TT" indicates the new guessed mixture has the
+                coomposition but at the new given guess_temp 
+            guess_temp: double, optional
+                new mixture temperature [K] used by options "TP" and "TT"
+        """
+        if option.upper() == "HP":
+            # use the constant enthalpy equilibirum mixture as the new guess
+            newmixture = equilibrium(self.reactormixture, opt=5)
+            # update the guess mixture properties
+            self.reactormixture.temperature = newmixture.temperature
+            self.temperature = newmixture.temperature
+            self.reactormixture.X = newmixture.X
+            del newmixture
+        else:
+            if guess_temp is None:
+                # use the current mixture temperature
+                msg = [
+                    Color.PURPLE,
+                    "new gas temperature is not provided,\n",
+                    "the original temeprature",
+                    str(self.reactormixture.temperature),
+                    "is applied.",
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.info(this_msg)
+            elif guess_temp < 250.0:
+                # use the current mixture temperature
+                msg = [
+                    Color.PURPLE,
+                    "new gas temperature value is invalid,\n",
+                    "the original temeprature",
+                    str(self.reactormixture.temperature),
+                    "is applied.",
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.info(this_msg)
+            else:
+                # use the given temperature
+                self.reactormixture.temperature = guess_temp
+                self.temperature = guess_temp
+            
+            if option.upper() == "TP":
+                # use the constant temperature equilibirum mixture as the new guess
+                newmixture = equilibrium(self.reactormixture, opt=1)
+                # update the guess mixture composition
+                self.reactormixture.X = newmixture.X
+                del newmixture
+
+    def reset_estimate_temperature(self, temp: float):
+        """
+        Reset the estimated reactor gas temperature.
+
+        Parameters
+        ----------
+            temp: double
+                estimated reactor gas temperature [K]
+        """
+        if temp < 250.0:
+            # bad value, use the current mixture temperature
+            msg = [
+                Color.PURPLE,
+                "new gas temperature value is invalid,\n",
+                "the original temeprature",
+                str(self.reactormixture.temperature),
+                "is applied.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
+            exit()
+        else:
+            # use the given temperature
+            self.reactormixture.temperature = temp
+            self.temperature = temp
+
+    def reset_estimate_composition(self, fraction: list[float], mode: str = "mole"):
+        """
+        Reset the estimated reactor gas composition.
+
+        Parameters
+        ----------
+            fraction: 1-D double array, dimension = number_species or PyChemkin recipe
+                estimated reactor gas composition
+            mode: string, {"mole", "mass"}
+                the given fractions are mole or mass fractions
+        """
+        if mode.lower() == "mole":
+            # set mole fraction
+            self.reactormixture.X = fraction
+        elif mode.lower() == "mass":
+            # set mass fraction
+            self.reactormixture.Y = fraction
+        else:
+            # error condition
+            msg = [
+                Color.PURPLE,
+                "the mode of the new composition is invalid,",
+                "should be either \"mole\" or \"mass\".",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
+            exit()
+
     def validate_inputs(self) -> int:
         """
         Validate the keywords specified by the user before running the simulation
@@ -436,7 +557,7 @@ class perfectlystirredreactor(openreactor):
             self.set_SSsolver_keywords()
             # create input lines from additional user-specified keywords
             iErrInputs, nlines = self.createkeywordinputlines()
-            if iErrInputs == 0:
+            if iErrInputs == 0 and nlines > 0:
                 # process additional keywords in _keyword_index and _keyword_lines
                 for s in self._keyword_lines:
                     # convert string to byte
@@ -463,6 +584,8 @@ class perfectlystirredreactor(openreactor):
                     ]
                     this_msg = Color.SPACE.join(msg)
                     logger.error(this_msg)
+            elif iErrInputs == 0:
+                pass
             else:
                 msg = [
                     Color.PURPLE,
@@ -641,15 +764,15 @@ class perfectlystirredreactor(openreactor):
 
         return retVal
 
-    def process_solution(self):
+    def process_solution(self) -> Stream:
         """
         Post-process solution to extract the raw solution variable data
         package the steady-state solution into a mixture object
 
         Returns
         -------
-            smixture: Mixture object
-                gas mixture representing the steady-state solution
+            smixture: Stream object
+                gas stream representing the steady-state solution
         """
         # check existing raw data
         if self.getrawsolutionstatus():
@@ -665,7 +788,7 @@ class perfectlystirredreactor(openreactor):
         msg = [Color.YELLOW, "post-processing raw solution data ...", Color.END]
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
-        # create a Mixture object to hold the mixture properties of current solution
+        # create a Stream object to hold the mixture properties of current solution
         smixture = copy.deepcopy(self.reactormixture)
         # create a species mass fraction array to hold the steady-state solution
         frac = np.zeros(self.numbspecies, dtype=np.double)
@@ -697,6 +820,23 @@ class perfectlystirredreactor(openreactor):
         else:
             # mole fractions
             smixture.X = frac
+        # get reactor outlet mass flow rate [g/sec]
+        exitmassflowrate = c_double(0.0)
+        iErr = chemkin_wrapper.chemkin.KINAll0D_GetExitMassFlowRate(exitmassflowrate)
+        if iErr == 0:
+            smixture.mass_flowrate = max(0.0, exitmassflowrate.value)
+        else:
+            smixture.mass_flowrate = 0.0
+            msg = [
+                Color.RED,
+                "failed to get the total outlet mass flow rate,",
+                "error code =",
+                str(iErr),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.critical(this_msg)
+            exit()
         # clean up
         del frac
         # return the solution mixture

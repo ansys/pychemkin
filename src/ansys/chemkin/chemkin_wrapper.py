@@ -35,7 +35,7 @@ import numpy as np
 
 # set ansys version number
 _min_version = 251
-_valid_versions = [262, 261, 252, 251, 242]
+_valid_versions = [262, 261, 252, 251]
 _ansys_ver = _min_version
 _ansys_dir = None
 _ckbin = None
@@ -761,6 +761,8 @@ chemkin.KINAll0D_GetEngineHeatRelease.argtypes = [
     ctypes.POINTER(ctypes.c_double),
     ctypes.POINTER(ctypes.c_double),
 ]
+chemkin.KINAll0D_GetExitMassFlowRate.restype = ctypes.c_int
+chemkin.KINAll0D_GetExitMassFlowRate.argtypes = [ctypes.POINTER(ctypes.c_double)]
 # Premix interfaces
 chemkin.KINPremix_SetParameter.restype = ctypes.c_int
 chemkin.KINPremix_SetParameter.argtypes = [

@@ -35,12 +35,12 @@ from ansys.chemkin.chemistry import (
     check_chemistryset,
     check_realgas_status,
     chemistryset_initialized,
-    logger,
     set_current_pressure,
     verbose,
 )
 from ansys.chemkin.color import Color
 from ansys.chemkin.constants import Patm
+from ansys.chemkin.logger import logger
 from ansys.chemkin.utilities import calculate_stoichiometrics, where_element_in_array_1D
 import numpy as np
 import numpy.typing as npt
@@ -3124,7 +3124,7 @@ def calculate_mixture_temperature_from_enthalpy(
         mixture: Mixture object
             gas mixture of interest
         mixtureH: double
-            mixture enthalpy of the given gas mixture
+            mixture enthalpy of the given gas mixture [erg/mol]
         guesstemperature: double, optional
             a guessed value for the mixture temperature at the start of the iteration process
 

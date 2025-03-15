@@ -920,7 +920,7 @@ class ReactorModel:
             self._keyword_lines.append(line)
             self._numblines += 1
         # print the entire keyword input block
-        if verbose():
+        if verbose() and self._numblines > 0:
             print("** INPUT KEYWORDS:")
             # print(f'number of keyword input lines: {self._numblines:d} == {self._numbkeywords:d} \n')
             print("=" * 40)
@@ -979,7 +979,7 @@ class ReactorModel:
             self._keyword_lines.append(line)
             self._numblines += 1
         # print the entire keyword input block
-        if verbose():
+        if verbose() and self._numblines > 0:
             print("** INPUT KEYWORDS:")
             # print(f'number of keyword input lines: {self._numblines:d} == {self._numbkeywords:d} \n')
             print("=" * 40)

@@ -395,6 +395,9 @@ class BatchReactors(reactor):
         # turn ON/OFF the adaptive solution saving option
         self.setkeyword(key="ADAP", value=mode)
         self.setkeyword(key="NADAP", value=not mode)
+        if not mode:
+            # turn OFF the adaptive solution saving
+            return
         # set options
         if steps is not None:
             # use number of solver time steps option:
@@ -445,7 +448,7 @@ class BatchReactors(reactor):
                 self.setkeyword(key="ADAP", value=True)
                 self.setkeyword(key="AVAR", value=target)
                 self.setkeyword(key="AVALUE", value=value_change)
-        elif mode:
+        else:
             # use error
             msg = [
                 Color.PURPLE,

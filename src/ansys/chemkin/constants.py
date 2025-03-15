@@ -40,3 +40,31 @@ RGas_Cal = (
     RGas * 1.0e-7 / joules_per_calorie
 )  # universal gas constant R [cal/mol-K] (double scalar)
 # == end of global constants
+
+
+class Air():
+    """
+    define the "air" composition in PyChemkin with a fixed mixture "recipe".
+    A "recipe" is a list of tuples of ("species symbol", fraction) to define a
+    gas mixture in PyChemkin.
+    This class uses the upper case symbols for oxygen and nitrogen.
+    """
+    def X() -> list[tuple[str, float]]:
+        return [("O2", 0.21), ("N2", 0.79)]
+
+    def Y() -> list[tuple[str, float]]:
+        return [("O2", 0.23), ("N2", 0.77)]
+
+
+class air():
+    """
+    define the "air" composition in PyChemkin with a fixed mixture "recipe".
+    A "recipe" is a list of tuples of ("species symbol", fraction) to define a
+    gas mixture in PyChemkin.
+    This class uses the lower case symbols for oxygen and nitrogen.
+    """
+    def X() -> list[tuple[str, float]]:
+        return [("o2", 0.21), ("n2", 0.79)]
+
+    def Y() -> list[tuple[str, float]]:
+        return [("o2", 0.23), ("n2", 0.77)]
