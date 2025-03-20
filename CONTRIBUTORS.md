@@ -3,7 +3,7 @@
 ## Project Lead
 
 * [Anthony Shelburn](https://github.com/ashelburn)
-* [Chou](https://github.com/cpchou23)
+* [Chen-Pang Chou](https://github.com/cpchou23)
 
 ## Individual Contributors
 

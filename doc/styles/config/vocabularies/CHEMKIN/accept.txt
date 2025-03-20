@@ -73,12 +73,14 @@ partlist
 peakness
 perfectly-stirred
 PFR
+PFRs
 pfr
 plt
 png
 preprocess
 preprocessor
 PSR
+PSRs
 psr
 ptb
 PyPI

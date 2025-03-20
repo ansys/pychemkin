@@ -1,9 +1,12 @@
-# Contribute
+# Contributing
+
+The *PyChemkin* package is maintained by ANSYS. Please feel free to
+ask any questions and make code contributions to this repository.
 
 Overall guidance on contributing to a PyAnsys library appears in the
 [Contributing] topic in the *PyAnsys developer's guide*. Ensure that you
 are thoroughly familiar with this guide before attempting to contribute to
-PyChemkin.
+*PyChemkin*.
 
 The following contribution information is specific to *PyChemkin*.
 
