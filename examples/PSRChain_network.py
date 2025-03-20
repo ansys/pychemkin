@@ -281,7 +281,7 @@ print(f"total simulation duration: {runtime} [sec]")
 # .. note::
 #   Use the ``number_external_outlets`` method to find out the number of
 #   external exists of the reactor network.
-# 
+#
 
 # get the outlet stream from the reactor network solutions
 # find the number of external outlet stream from the reactor network
