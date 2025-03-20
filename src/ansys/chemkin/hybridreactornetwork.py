@@ -77,42 +77,42 @@ class ReactorNetwork:
         self.numb_external_outlet = 0
         # dictionary of reactors having external outlet flow
         # {outlet index : reactor index}
-        self.external_outlets = {}
+        self.external_outlets: dict[int, int] = {}
         # external outlet streams
         # {outlet index : Stream object}
-        self.external_outlet_streams = {}
+        self.external_outlet_streams: dict[int, Stream] = {}
         # mapping of reactor name and reactor index
         # {reactor name : reactor index}
-        self.reactor_map = {}
+        self.reactor_map: dict[str, int] = {}
         # dictionary of the reactors joined the network
         # {reactor index : Reactor object}
-        self.reactor_objects = {}
+        self.reactor_objects: dict[int, Union[PSR, PFR]] = {}
         # solution Stream objects for inter-connecting streams between the reactors
         # array size = number of reactors in the network
         # {"source" reactor index : outflow Stream object}
-        self.reactor_solutions = {}
+        self.reactor_solutions: dict[int, Stream] = {}
         # outlet flow connectivity to other reactors in the network
         # {"source" reactor index : {[("target reactor index", outflow split fraction), ... ]}
-        self.outflow_targets = {}
+        self.outflow_targets: dict[int, tuple[int, float]] = {}
         # flag to set internal outflow connection
         self.outflow_altered = True
         # incoming flow from outside of the reactor network
         # {reactor index : number of external inlets}
-        self.external_connections = {}
+        self.external_connections: dict[int, int] = {}
         # incoming flow collected from other reactors in the network
         # {"target" reactor index : [("source reactor index", outflow split fraction), ... ]}
-        self.inflow_sources = {}
+        self.inflow_sources: dict[int, tuple[int, float]] = {}
         # stream object representing all internal flows to the reactor (inckluding the through flow)
         # {reactor index : Stream object}
-        self.internal_inflow = {}
+        self.internal_inflow: dict[int, Stream] = {}
         # flag indicating the inletnal inlet stream of the reactor is "connected"
         # {reactor index : True/Flase}
-        self.internal_inflow_ready = {}
+        self.internal_inflow_ready: dict[int, bool] = {}
         # number of "tearing points"
         self.numb_tearpoints = 0
         # index of the "tear stream" source reactor
         # array size = number of "tearing points" in the network
-        self.tearpoint = []
+        self.tearpoint: list[int] = []
         # maximum number of tear stream iteration count
         self.max_tearloop_count = 200
         # tearing stream convergence tolerance
@@ -414,6 +414,7 @@ class ReactorNetwork:
                 else:
                     # find the total outflow fraction
                     total_frac += frac
+
             # check split fraction sum
             if total_frac > 1.0:
                 msg = [
@@ -469,11 +470,11 @@ class ReactorNetwork:
                     exit()
                 # add the split table to the connection table
                 new_table = []
-                for v in connect_table:
+                for con in connect_table:
                     # split is a list of tuples of (target reactor index, split fraction)
                     # normalize the split fractions
-                    new_frac = v[1] / total_frac
-                    new_table.append((v[0], new_frac))
+                    new_frac = con[1] / total_frac
+                    new_table.append((con[0], new_frac))
                 self.outflow_targets[reactor_index] = copy.deepcopy(new_table)
                 del connect_table
                 del new_table
@@ -1058,7 +1059,7 @@ class ReactorNetwork:
         self._tear_converged = False
         # storage of the last reactor network solution
         # { reactor index : Stream object}
-        last_reactor_solutions = {}
+        last_reactor_solutions: dict[int, Stream] = {}
         # tear loop counter
         loop_count = 0
         #
