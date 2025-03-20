@@ -843,7 +843,7 @@ class ReactorNetwork:
 
         if sum_status == 0:
             # all reactors have been run with return code = 0
-            self.network_run_status = 0 
+            self.network_run_status = 0
         elif sum_status > 0:
             # all reactors have been run but some with return code > 0
             self.network_run_status = sum_status
