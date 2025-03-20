@@ -27,19 +27,12 @@
 import copy
 from typing import Union
 
-from ansys.chemkin.chemistry import (
-    Chemistry,
-    verbose,
-)
-from ansys.chemkin.inlet import (
-    adiabatic_mixing_streams,
-    clone_stream,
-    compare_streams,
-    Stream,  # external gaseous inlet
-)
+from ansys.chemkin.chemistry import Chemistry, verbose
 from ansys.chemkin.color import Color as Color
-from ansys.chemkin.logger import logger
 from ansys.chemkin.flowreactors.PFR import PlugFlowReactor as PFR
+from ansys.chemkin.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.inlet import adiabatic_mixing_streams, clone_stream, compare_streams
+from ansys.chemkin.logger import logger
 from ansys.chemkin.stirreactors.PSR import perfectlystirredreactor as PSR
 
 
@@ -50,6 +43,7 @@ class ReactorNetwork:
     connections, "Tearing points" can be manually defined and "tear stream" method is
     applied to solve the entire network iteratively.
     """
+
     def __init__(self, chem: Chemistry):
         """
         Create a hybrid reactor network object in which the reactors are solved individually.
@@ -61,7 +55,11 @@ class ReactorNetwork:
         """
         # check parameters
         if not isinstance(chem, Chemistry):
-            msg = [Color.RED, 'the parameter must be a "Chemistry Set" object', Color.END]
+            msg = [
+                Color.RED,
+                'the parameter must be a "Chemistry Set" object',
+                Color.END,
+            ]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
             exit()
@@ -88,7 +86,7 @@ class ReactorNetwork:
         self.reactor_map = {}
         # dictionary of the reactors joined the network
         # {reactor index : Reactor object}
-        self.reactor_objects = {} 
+        self.reactor_objects = {}
         # solution Stream objects for inter-connecting streams between the reactors
         # array size = number of reactors in the network
         # {"source" reactor index : outflow Stream object}
@@ -184,7 +182,7 @@ class ReactorNetwork:
             # check: the first reactor must have at least one external inlet
             # by definition PFR has ONE external inlet
             if isinstance(reactor, PSR):
-                # check if the reactor is a PSR 
+                # check if the reactor is a PSR
                 if self.numb_reactors == 0 and reactor.numbexternalinlets <= 0:
                     msg = [
                         Color.PURPLE,
@@ -205,7 +203,9 @@ class ReactorNetwork:
             # add to the reactor dictionary
             self.reactor_objects[self.numb_reactors] = reactor
             # any external inlets
-            self.external_connections[self.numb_reactors] = reactor.number_external_inlets
+            self.external_connections[
+                self.numb_reactors
+            ] = reactor.number_external_inlets
             #
             if verbose():
                 msg = [
@@ -266,7 +266,9 @@ class ReactorNetwork:
         """
         if len(self.outflow_targets) > 0:
             for reactor_id, outflows in self.outflow_targets.items():
-                print(f"reactor number {reactor_id}: {self.get_reactor_label(reactor_id)}")
+                print(
+                    f"reactor number {reactor_id}: {self.get_reactor_label(reactor_id)}"
+                )
                 print("-- outflow connections --")
                 for v in outflows:
                     if v[0] == self._exit_index:
@@ -276,7 +278,9 @@ class ReactorNetwork:
                         if v[0] == reactor_id + 1:
                             # it is a through flow to the downstream reactor
                             print("  *through flow*")
-                        print(f"  reactor no. {v[0]} {self.get_reactor_label(v[0])}: {v[1]}")
+                        print(
+                            f"  reactor no. {v[0]} {self.get_reactor_label(v[0])}: {v[1]}"
+                        )
                 print("-" * 10)
         else:
             # no outlet flow connection defined: chain network
@@ -287,7 +291,9 @@ class ReactorNetwork:
                 print(f"reactor number {id}: {name}")
                 print("-- outflow connections --")
                 print("  *through flow*")
-                print(f"  reactor no. {downstream} {self.get_reactor_label(downstream)}: 1.0")
+                print(
+                    f"  reactor no. {downstream} {self.get_reactor_label(downstream)}: 1.0"
+                )
                 print("-" * 10)
 
     def show_internal_inflow_connections(self):
@@ -296,12 +302,16 @@ class ReactorNetwork:
         """
         if len(self.inflow_sources) > 0:
             for reactor_id, inflows in self.inflow_sources.items():
-                print(f"reactor number {reactor_id}: {self.get_reactor_label(reactor_id)}")
+                print(
+                    f"reactor number {reactor_id}: {self.get_reactor_label(reactor_id)}"
+                )
                 print("-- internal inlet sources --")
                 for v in inflows:
                     if v[0] == reactor_id + 1:
                         print("  *through flow*")
-                    print(f"  reactor no. {v[0]} {self.get_reactor_label(v[0])}: {v[1]}")
+                    print(
+                        f"  reactor no. {v[0]} {self.get_reactor_label(v[0])}: {v[1]}"
+                    )
                 print("-" * 10)
         else:
             # no inlet flow connection defined
@@ -314,7 +324,9 @@ class ReactorNetwork:
                 print("  *no internal inlet stream from other reactors*")
                 print("-" * 10)
 
-    def add_outflow_connections(self, source_label: str, outflow_split: list[tuple[str, float]]):
+    def add_outflow_connections(
+        self, source_label: str, outflow_split: list[tuple[str, float]]
+    ):
         """
         Add outflow connections to other reactors in the network. The connection is given
         by a tuple consistinig of the target reactor name and the mass flow rate split fraction.
@@ -471,7 +483,7 @@ class ReactorNetwork:
                 Color.PURPLE,
                 "reactor NOT in the network.\n",
                 Color.SPACEx6,
-                "please \"add\" reactor",
+                'please "add" reactor',
                 source_label,
                 "to the network first",
                 Color.END,
@@ -551,7 +563,7 @@ class ReactorNetwork:
                 del self.external_outlets[nexit]
                 self.numb_external_outlet -= 1
                 # in case this is the last reactor of a chain network
-                # add an external outlet to the second to last reactor 
+                # add an external outlet to the second to last reactor
                 if self.numb_external_outlet <= 0:
                     self.set_external_outlet(id - 1)
             # remove exernal inlet connection
@@ -592,8 +604,10 @@ class ReactorNetwork:
                 if n == self.last_reactor:
                     # there is no more downstream reactor
                     self.set_external_outlet(n)
-                    print(f" - added reactor # {n} {name}"
-                          + f" as the external outlets # {self.numb_external_outlet}")
+                    print(
+                        f" - added reactor # {n} {name}"
+                        + f" as the external outlets # {self.numb_external_outlet}"
+                    )
                     # 100% outlet mass flow goes oout of the network
                     self.outflow_targets[n] = [(self._exit_index, 1.0)]
                 else:
@@ -601,14 +615,16 @@ class ReactorNetwork:
                     downstream = n + 1
                     # 100% outlet mass flow goes to the next reactor (through flow only)
                     self.outflow_targets[n] = [(downstream, 1.0)]
-                    print(f" - added thru flow to"
-                          + f"reactor # {downstream} {self.get_reactor_label(downstream)}")
+                    print(
+                        f" - added thru flow to"
+                        + f"reactor # {downstream} {self.get_reactor_label(downstream)}"
+                    )
                 print(f" reactor # {n} {name}")
                 print(f" updated outlet target list {self.outflow_targets.get(n, [])}")
         else:
             # network with outlet flow splitting but without recycling stream
             # R1 -> R2 -> R4 -> R5
-            #  \--> R3 ---^ 
+            #  \--> R3 ---^
             # the connection has been verified when the connections were added
             print(f" *total number of reactors = {self.numb_reactors}")
             print(f" *the last reactor # {self.last_reactor}")
@@ -618,7 +634,9 @@ class ReactorNetwork:
                 # check if it is the last reactor in the network
                 name = self.get_reactor_label(n)
                 print(f"   reactor # {n} {name}")
-                print(f"   updated outlet target list {self.outflow_targets.get(n, [])}")
+                print(
+                    f"   updated outlet target list {self.outflow_targets.get(n, [])}"
+                )
         # collect the incoming streams from other reactors in the network
         self.set_inflow_connections()
         #
@@ -699,7 +717,9 @@ class ReactorNetwork:
                     if initialized:
                         # the total internal inlet to the current reactor is already created
                         # merge the internal flow from the source PSR into the total internal inlet stream to the current PSR
-                        this_stream = copy.deepcopy(self.reactor_solutions.get(id, None))
+                        this_stream = copy.deepcopy(
+                            self.reactor_solutions.get(id, None)
+                        )
                         if this_stream is None:
                             # failed to find the solution mixture of the source reactor
                             msg = [
@@ -715,7 +735,9 @@ class ReactorNetwork:
                         #
                         merging_flowrate = this_stream.mass_flowrate * frac
                         this_stream.mass_flowrate = merging_flowrate
-                        new_stream = adiabatic_mixing_streams(this_stream, incoming_stream)
+                        new_stream = adiabatic_mixing_streams(
+                            this_stream, incoming_stream
+                        )
                         clone_stream(new_stream, incoming_stream)
                         del this_stream
                         del new_stream
@@ -724,11 +746,15 @@ class ReactorNetwork:
                         name = "from_network_internal"
                         incoming_stream = Stream(self.network_chem, label=name)
                         clone_stream(self.reactor_solutions[id], incoming_stream)
-                        incoming_stream.mass_flowrate = self.reactor_solutions[id].mass_flowrate * frac
+                        incoming_stream.mass_flowrate = (
+                            self.reactor_solutions[id].mass_flowrate * frac
+                        )
                         initialized = True
                 else:
                     # skip the reactor does not have solution yet
-                    print(f"building internal inlet for reactor {self.get_reactor_label(reactor_index)}")
+                    print(
+                        f"building internal inlet for reactor {self.get_reactor_label(reactor_index)}"
+                    )
                     print(f"reactor {self.get_reactor_label(id)} not having solution")
                     print(f"source: {v}")
         else:
@@ -814,7 +840,7 @@ class ReactorNetwork:
         for rxtor in self.reactor_objects.values():
             status = rxtor.getrunstatus(mode="silent")
             sum_status += status
-        
+
         if sum_status == 0:
             # all reactors have been run with return code = 0
             self.network_run_status = 0 
@@ -931,8 +957,12 @@ class ReactorNetwork:
             if verbose():
                 print("-" * 10)
                 print(f"network external outlet # {ioutlet} from reactor # {nrxtor}")
-                print(f"   mass flow rate = {self.reactor_solutions[nrxtor].mass_flowrate * frac} [g/sec]")
-                print(f"   temperature = {self.reactor_solutions[nrxtor].temperature} [K]")
+                print(
+                    f"   mass flow rate = {self.reactor_solutions[nrxtor].mass_flowrate * frac} [g/sec]"
+                )
+                print(
+                    f"   temperature = {self.reactor_solutions[nrxtor].temperature} [K]"
+                )
                 print("-" * 10)
 
     def get_external_stream(self, stream_index: int) -> list[Stream]:
@@ -1016,7 +1046,7 @@ class ReactorNetwork:
                 # process the solution and add the solution stream to the outflow stream list
                 self.reactor_solutions[id] = rxtor.process_solution()
             status += reactor_run_status
-        
+
         # construct the outlet stream properties
         self.set_external_streams()
 
@@ -1101,7 +1131,9 @@ class ReactorNetwork:
                     this_inlet = self.internal_inflow.get(id, None)
                     if this_inlet is not None:
                         rxtor.reset_estimate_composition(this_inlet.X, mode="mole")
-                        rxtor.set_estimate_conditions(option="TP", guess_temp=rxtor.temperature)
+                        rxtor.set_estimate_conditions(
+                            option="TP", guess_temp=rxtor.temperature
+                        )
 
                 # update the previous reactor solutions
                 if id in last_reactor_solutions.keys():
@@ -1110,13 +1142,18 @@ class ReactorNetwork:
                     stream_new = self.reactor_solutions[id]
                     stream_old = last_reactor_solutions[id]
                     # check tear point residuals
-                    if id in self.tearpoint: # and loop_count > 1
+                    if id in self.tearpoint:
                         # compare last and current reactor solutions
-                        converged, residual = self.check_tearstream_convergence(stream_old, stream_new)
+                        converged, residual = self.check_tearstream_convergence(
+                            stream_old, stream_new
+                        )
                         # update overall residual
                         loop_residual = max(loop_residual, residual)
                         # check flow rate change in the tear stream
-                        flow_residual = abs(self.internal_inflow[id].mass_flowrate - stream_old.mass_flowrate)
+                        flow_residual = abs(
+                            self.internal_inflow[id].mass_flowrate
+                            - stream_old.mass_flowrate
+                        )
                         flow_residual /= stream_old.mass_flowrate
                         loop_residual = max(loop_residual, flow_residual)
                         converged = converged and loop_residual <= self.tolerance
@@ -1131,7 +1168,9 @@ class ReactorNetwork:
                 else:
                     # there is no previous reactor solution
                     # create storage for the last reactor solution and save the current reactor solution there
-                    last_reactor_solutions[id] = copy.deepcopy(self.reactor_solutions[id])
+                    last_reactor_solutions[id] = copy.deepcopy(
+                        self.reactor_solutions[id]
+                    )
                     self.tear_converged = False
 
             # increment the tear loop iteration count
@@ -1180,7 +1219,7 @@ class ReactorNetwork:
 
         return status
 
-# tear stream utilities
+    # tear stream utilities
     def remove_tearpoint(self, reactor_name: str):
         """
         Remove the tear point from the list.
@@ -1352,10 +1391,12 @@ class ReactorNetwork:
                 True=the two streams are close within the relative tolerance
                 False=the differences of the two streams are greater than the relative tolerance
             residual: double
-                the maximum relative difference between the properties of the streams 
+                the maximum relative difference between the properties of the streams
         """
         # compare the streams
-        converged, max_atol, max_rtol = compare_streams(streamA, streamB, atol=1.0e-8, rtol=self.tolerance)
+        converged, max_atol, max_rtol = compare_streams(
+            streamA, streamB, atol=1.0e-8, rtol=self.tolerance
+        )
         return converged, max_rtol
 
     def update_tear_solution(self, new_stream: Stream, old_stream: Stream) -> Stream:
@@ -1391,7 +1432,7 @@ class ReactorNetwork:
         for k in range(len(old_fractions)):
             diff = new_fractions[k] - old_fractions[k]
             new_fractions[k] = old_fractions[k] + fac * diff
-        
+
         updated_stream.Y = new_fractions
         # clean up
         del old_fractions
