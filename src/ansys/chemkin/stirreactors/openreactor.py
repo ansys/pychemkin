@@ -28,7 +28,7 @@ from ctypes import c_int
 from typing import Union
 
 from ansys.chemkin.color import Color as Color
-from ansys.chemkin.inlet import Stream
+from ansys.chemkin.inlet import Stream, clone_stream
 from ansys.chemkin.logger import logger
 from ansys.chemkin.mixture import Mixture
 from ansys.chemkin.reactormodel import Keyword, ReactorModel
@@ -162,6 +162,43 @@ class openreactor(ReactorModel, SteadyStateSolver):
         msg = [Color.YELLOW, "new inlet", inletname, "is added.", Color.END]
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
+
+    def reset_inlet(self, new_stream: Stream):
+        """
+        Reset the properties of an existing external inlet from the reactor by the inlet name
+
+        Parameters
+        ----------
+            new_stream: Stream object
+                the updated inlet properties with the same stream label
+        """
+        # check input
+        if not isinstance(new_stream, Stream):
+            msg = [Color.PURPLE, "the argument must be a Stream.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        # update the named inlet from the externalinlets dict
+        missed = True
+        # construct the full inlet name
+        inletname = self.label + "_" + new_stream.label
+        # loop over the external inlet dict
+        for iname, inlet in self.externalinlets.items():
+            if inletname == iname:
+                # found matching inlet
+                missed = False
+                # take out the original mass flow rate contribution
+                self.totalmassflowrate -= inlet.mass_flowrate
+                # add the new mass flow rate contribution
+                self.totalmassflowrate += new_stream.mass_flowrate
+                # update the inlet properties
+                clone_stream(new_stream, inlet)
+
+        if missed:
+            msg = [Color.PURPLE, "inlet", new_stream.label, "is not found.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
 
     def remove_inlet(self, name: str):
         """

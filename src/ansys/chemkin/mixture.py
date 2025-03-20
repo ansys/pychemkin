@@ -3426,7 +3426,8 @@ def compare_mixtures(
     issame = issame or pres_var <= rtol
     diff_max = pres_diff
     var_max = pres_var
-    print(f"pressure difference: {pres_diff}       {pres_var}")
+    if not issame:
+        print(f"pressure difference: {pres_diff}   {pres_var}")
     # compare mixture temperature
     temp_diff = abs(mixtureA.temperature - mixtureB.temperature)
     # find relative difference
@@ -3436,7 +3437,8 @@ def compare_mixtures(
     issame = issame or temp_var <= rtol
     diff_max = max(diff_max, temp_diff)
     var_max = max(var_max, temp_var)
-    print(f"temperature difference: {temp_diff}       {temp_var}")
+    if not issame:
+        print(f"temperature difference: {temp_diff}   {temp_var}")
     # compare composition
     spec_index_count = 0
     spec_index_max = []
@@ -3445,7 +3447,7 @@ def compare_mixtures(
     if mode == "mole":
         # compare mole fractions
         k = 0
-        while k <= mixtureA._KK:
+        while k < mixtureA._KK:
             frac = mixtureA.X[k]
             spec_diff = abs(frac - mixtureB.X[k])
             if np.isclose(frac, 0.0, atol=atol):
@@ -3465,7 +3467,7 @@ def compare_mixtures(
     else:
         # compare mass fractions
         k = 0
-        while k <= mixtureA._KK:
+        while k < mixtureA._KK:
             frac = mixtureA.Y[k]
             spec_diff = abs(frac - mixtureB.Y[k])
             if np.isclose(frac, 0.0, atol=atol):
@@ -3476,7 +3478,7 @@ def compare_mixtures(
                 found = spec_diff <= atol
                 found = found or spec_var <= rtol
             #
-            if found:
+            if not found:
                 spec_index_max.append(k)
                 spec_diff_max.append(spec_diff)
                 spec_var_max.append(spec_var)
@@ -3484,19 +3486,19 @@ def compare_mixtures(
             k += 1
     # check tolerances
     if spec_index_count > 0:
-        issame = True
+        issame = False
         print("composition differences:")
         count = 0
         for k in spec_index_max:
             print(f"species {mixtureA._specieslist[k]}")
-            print(f"   difference: {spec_diff_max[count]}       {spec_var_max[count]}")
+            print(f"   difference: {spec_diff_max[count]}   {spec_var_max[count]}")
             count += 1
         diff_spec = max(spec_diff_max)
         diff_max = max(diff_max, diff_spec)
         var_spec = max(spec_var_max)
         var_max = max(var_max, var_spec)
-    else:
-        print("no composition difference")
+        print(f"spec value {diff_spec}   {var_spec}")
+        print(f"max value {diff_max}   {var_max}")
     #
     return issame, diff_max, var_max
 

@@ -581,13 +581,15 @@ def compare_streams(
     mflr_diff = abs(streamA.mass_flowrate - streamB.mass_flowrate)
     # find relative difference
     mflr_var = mflr_diff / streamA.mass_flowrate
-    print(f"mass flow rate difference: {mflr_diff}       {mflr_var}")
     # check tolerances
-    issame = issame or mflr_diff <= atol
-    issame = issame or mflr_var <= rtol
+    flowsame = mflr_diff <= atol
+    flowsame = flowsame or mflr_var <= rtol
+    if not flowsame:
+        print(f"=== mass flow rate difference: {mflr_diff}   {mflr_var}\n")
     #
     diff_max = max(diff_max, mflr_diff)
     var_max = max(var_max, mflr_var)
+    issame = issame or flowsame
     #
     return issame, diff_max, var_max
 
@@ -604,6 +606,7 @@ def adiabatic_mixing_streams(streamA: Stream, streamB: Stream) -> Stream:
             mixture A, the target stream
         streamB: Stream object
             stream B, the sample stream
+
     Returns
     -------
         final_stream: Stream object
@@ -696,6 +699,7 @@ def create_stream_from_mixture(
             the flow rate/velocity of the new Stream, [g/sec], [cm3/sec], [cm/sec], [standard cm3/minute]
         mode: string, {"mass", "vol", "vel", "sccm"}
             the type of flow rate data is given by the flow_rate parameter
+
     Returns
     -------
         new_stream: Stream object

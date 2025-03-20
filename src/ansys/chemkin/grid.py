@@ -48,8 +48,8 @@ class Grid:
         self.ending_x = 0.0
         self.reaction_zone_center_x = 0.0
         self.reaction_zone_width = 0.0
-        self.grid_T_profile = False
         self.grid_profile = []
+        self.numb_grid_profile = 0
 
     def set_numb_grid_points(self, numb_points: int):
         """
@@ -236,19 +236,7 @@ class Grid:
         else:
             self.curvature = curvature
 
-    def use_temp_profiel_initial_mesh(self, on: bool = False):
-        """
-        Use the grid points in the user defined initial/estimated temperature profile
-        as the initial/starting grid points.
-
-        Parameters
-        ----------
-            on: boolean, default = False
-                use the grid points of the temperature profile as the initial grid points
-        """
-        self.grid_T_profile = on
-
-    def set_grid_profile(self, mesh: list[float]):
+    def set_grid_profile(self, mesh: list[float]) -> int:
         """
         Specify the grid point coordinates of the initial grid points.
 
@@ -256,6 +244,10 @@ class Grid:
         ----------
             mesh: 1-D double array
                 initial grid point positions [cm]
+
+        Returns
+        -------
+            error code
         """
         ierror = 0
         ngrids = len(mesh)
@@ -302,4 +294,7 @@ class Grid:
             ierror = 3
 
         if ierror == 0:
+            self.numb_grid_profile = ngrids
             self.grid_profile = copy.deepcopy(mesh)
+
+        return ierror
