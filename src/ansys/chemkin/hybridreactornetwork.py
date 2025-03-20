@@ -93,7 +93,7 @@ class ReactorNetwork:
         self.reactor_solutions: dict[int, Stream] = {}
         # outlet flow connectivity to other reactors in the network
         # {"source" reactor index : {[("target reactor index", outflow split fraction), ... ]}
-        self.outflow_targets: dict[int, tuple[int, float]] = {}
+        self.outflow_targets: dict[int, list[tuple[int, float]]] = {}
         # flag to set internal outflow connection
         self.outflow_altered = True
         # incoming flow from outside of the reactor network
@@ -101,7 +101,7 @@ class ReactorNetwork:
         self.external_connections: dict[int, int] = {}
         # incoming flow collected from other reactors in the network
         # {"target" reactor index : [("source reactor index", outflow split fraction), ... ]}
-        self.inflow_sources: dict[int, tuple[int, float]] = {}
+        self.inflow_sources: dict[int, list[tuple[int, float]]] = {}
         # stream object representing all internal flows to the reactor (inckluding the through flow)
         # {reactor index : Stream object}
         self.internal_inflow: dict[int, Stream] = {}
