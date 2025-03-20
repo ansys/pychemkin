@@ -62,15 +62,12 @@ import time
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
 from ansys.chemkin.hybridreactornetwork import ReactorNetwork as ERN
-from ansys.chemkin.inlet import (
-    adiabatic_mixing_streams,
-    Stream,  # external gaseous inlet
-)
+from ansys.chemkin.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.inlet import adiabatic_mixing_streams
 from ansys.chemkin.logger import logger
 
 # chemkin perfectly-stirred reactor (PSR) model (steady-state)
 from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
-
 
 # check working directory
 current_dir = os.getcwd()
@@ -134,7 +131,8 @@ fuel.mass_flowrate = 3.275  # [g/sec]
 air = Stream(MyGasMech)
 air.temperature = 550.0  # [K]
 air.pressure = 2.1 * ck.Patm
-air.X = ck.Air.X()  # use predefined "air" recipe in mole fractions (with upper cased symbols)
+# use predefined "air" recipe in mole fractions (with upper cased symbols)
+air.X = ck.Air.X()
 air.mass_flowrate = 45.0  # [g/sec]
 
 #################################################
@@ -176,7 +174,7 @@ CO_index = MyGasMech.get_specindex("CO")
 # There are three reactors in the network; from upstream to downstream, they
 # are ``combustor``, ``dilution zone``, and ``reburning zone``. And all of them
 # have one external inlet.
-# 
+#
 # .. note::
 #   *PyChemkin* requires that the **first** reactor/zone must have at least
 #   **one external inlet**. The rest of the reactors will have at least the
@@ -253,7 +251,7 @@ PSRChain.show_reactors()
 # =========================
 # Use the ``run`` method to solve the entire reactor network. The hybrid ``ReactorNetwork``
 # will solve the reactors one by one in the order they are added to the network.
-# 
+#
 
 # set the start wall time
 start_time = time.time()

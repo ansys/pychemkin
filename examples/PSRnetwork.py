@@ -196,7 +196,7 @@ secondary_air = Stream(MyGasMech, label="Secondary_Air")
 secondary_air.X = air.X
 secondary_air.pressure = air.pressure
 secondary_air.temperature = 670.0  # [K]
-secondary_air.mass_flowrate =  100.0  # [g/sec]
+secondary_air.mass_flowrate = 100.0  # [g/sec]
 
 # find the species index
 CH4_index = MyGasMech.get_specindex("CH4")
@@ -214,7 +214,7 @@ CO_index = MyGasMech.get_specindex("CO")
 # There are three reactors in the network; from upstream to downstream, they
 # are ``premix zone``, ``flame zone``, and ``recirculation zone``. The
 # *"recirculation zone"* does not have external inlet.
-# 
+#
 # .. note::
 #   *PyChemkin* requires that the **first** reactor/zone must have at least
 #   **one external inlet**. The rest of the reactors will have at least the
@@ -250,9 +250,9 @@ flame.set_inlet(secondary_air)
 # PSR #3: recirculation zone
 recirculation = PSR(premixed, label="recirculation zone")
 # use use the equilibrium state of the inlet gas mixture as the guessed solution
-recirculation .set_estimate_conditions(option="TP", guess_temp=1600.0)
+recirculation.set_estimate_conditions(option="TP", guess_temp=1600.0)
 # set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
-recirculation .residence_time = 1.5 * 1.0e-3
+recirculation.residence_time = 1.5 * 1.0e-3
 
 #####################################
 # Create the reactor network
@@ -340,7 +340,7 @@ PSRnetwork.add_outflow_connections(recirculation.label, split_table)
 # this reactor network. The relative tolerance for the overall
 # reactor network convergence can be set by the ``set_tear_tolerance``
 # method. The default tolerance is 1.0e-6.
-# 
+#
 
 # define the tear point reactor as reactor #3
 PSRnetwork.add_tearingpoint(recirculation.label)
@@ -393,7 +393,7 @@ print()
 # .. note::
 #   Use the ``number_external_outlets`` method to find out the number of
 #   external exists of the reactor network.
-# 
+#
 
 # get the outlet stream from the reactor network solutions
 # find the number of external outlet stream from the reactor network

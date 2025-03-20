@@ -62,10 +62,8 @@ import time
 
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
-from ansys.chemkin.inlet import (
-    adiabatic_mixing_streams,
-    Stream,  # external gaseous inlet
-)
+from ansys.chemkin.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.inlet import adiabatic_mixing_streams
 from ansys.chemkin.logger import logger
 
 # chemkin perfectly-stirred reactor (PSR) model (steady-state)
@@ -165,7 +163,7 @@ CO_index = MyGasMech.get_specindex("CO")
 # solution of the upstream reactor. Get the solution stream from the upstream
 # reactor using the ``process_solution`` method, then use the ``set_inlet`` method
 # to connect the resulting solution stream to the downstream reactor.
-# 
+#
 # .. note::
 #   *PyChemkin* requires that the **first** reactor/zone must have at least
 #   **one external inlet**. The rest of the reactors will have at least the
