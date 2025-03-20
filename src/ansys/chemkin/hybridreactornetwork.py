@@ -106,7 +106,7 @@ class ReactorNetwork:
         # {reactor index : Stream object}
         self.internal_inflow: dict[int, Stream] = {}
         # flag indicating the inletnal inlet stream of the reactor is "connected"
-        # {reactor index : True/Flase}
+        # {reactor index : True/False}
         self.internal_inflow_ready: dict[int, bool] = {}
         # number of "tearing points"
         self.numb_tearpoints = 0
@@ -567,7 +567,7 @@ class ReactorNetwork:
                 # add an external outlet to the second to last reactor
                 if self.numb_external_outlet <= 0:
                     self.set_external_outlet(id - 1)
-            # remove exernal inlet connection
+            # remove external inlet connection
             if id in self.external_connections.keys():
                 del self.external_connections[id]
             # remove solution
@@ -617,7 +617,7 @@ class ReactorNetwork:
                     # 100% outlet mass flow goes to the next reactor (through flow only)
                     self.outflow_targets[n] = [(downstream, 1.0)]
                     print(
-                        f" - added thru flow to"
+                        " - added thru flow to "
                         + f"reactor # {downstream} {self.get_reactor_label(downstream)}"
                     )
                 print(f" reactor # {n} {name}")
@@ -766,7 +766,7 @@ class ReactorNetwork:
 
     def set_internal_inlet(self, reactor_index: int) -> int:
         """
-        Ceate or update the merged inlet stream to the reactor from the rest of
+        Create or update the merged inlet stream to the reactor from the rest of
         the reactors in the network.
 
         Parameters
@@ -789,7 +789,7 @@ class ReactorNetwork:
             status = 1
             #
             if id not in self.external_connections.keys():
-                # the reactor deoes not have external inlet, either
+                # the reactor does not have external inlet, either
                 msg = [
                     Color.PURPLE,
                     "run failure: reactor",
@@ -1204,7 +1204,7 @@ class ReactorNetwork:
                 Color.PURPLE,
                 "failure to solve the reactor network:\n",
                 Color.SPACEx6,
-                "max tear iteration cound reached",
+                "max tear iteration count reached",
                 str(self.max_tearloop_count),
                 "\n",
                 Color.SPACEx6,

@@ -31,7 +31,7 @@ This tutorial describes the process of setting up and solving an equivalent reac
 
 An equivalent reactor network is employed as a reduced-order model to simulate the steady-state
 combustion process inside a gas turbine combustor chamber. This reduced-order reactor network model retains the
-complexity of the combustion chemistry by sacrificing details of the combustor geometries, the spacial resolution and
+complexity of the combustion chemistry by sacrificing details of the combustor geometries, the spatial resolution and
 the mass and energy transfer processes. An ERN usually comprises of PSRs (perfectly-stirred reactors) and
 PFRs (plug-flow reactors). The network configuration and connectivity,
 the reactor parameters, and the mass flow rates can be determined from "hot" steady-state CFD simulation results and/or
@@ -418,7 +418,7 @@ for m in range(PSRnetwork.number_external_outlets):
     print(f"NO = {network_outflow.X[NO_index]}")
     print("-" * 10)
 
-# diplay the raector solutions
+# display the raector solutions
 print()
 print("=" * 10)
 print("reactor/zone")
