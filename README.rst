@@ -1,5 +1,5 @@
-.. image:: ./PyChemkin.svg
-   :alt: PyChemkin
+PyChemkin
+=========
 
 |
 
