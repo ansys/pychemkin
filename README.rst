@@ -139,7 +139,7 @@ development version or previously released versions.
 User manuals and tutorials for Chemkin can be found at `Chemkin Documents`_.
 
 On the PyAnsys Chemkin Issues page,
-you can create issues to report bugs and request new features. On the PyChemkin Discussions 
+you can create issues to report bugs and request new features. On the PyChemkin Discussions
 page or the `Discussions <https://discuss.ansys.com/>`_
 page on the Ansys Developer portal, you can post questions, share ideas, and get community feedback.
 
