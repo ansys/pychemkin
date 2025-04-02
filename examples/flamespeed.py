@@ -68,7 +68,7 @@ ck.set_verbose(True)
 # interactive = True: display plot
 # interactive = False: save plot as a png file
 global interactive
-interactive = False
+interactive = True
 
 #####################################
 # Create a ``Chemistry Set`` instance
@@ -91,17 +91,13 @@ interactive = False
 #
 
 # set mechanism directory (the default chemkin mechanism data directory)
-data_dir = os.path.join(
-    ck.ansys_dir, "reaction", "data"
-)
+data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # create a chemistry set based on the gasoline 14 components mechanism
 MyGasMech = ck.Chemistry(label="C2 NOx")
 # set mechanism input files
 # inclusion of the full file path is recommended
-MyGasMech.chemfile = os.path.join(
-    mechanism_dir, "C2_NOx_SRK.inp"
-)
+MyGasMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
 
 # direct the preprocessor to include the transport properties
 # only when the mechanism file contains all the transport data
@@ -239,7 +235,7 @@ flamespeedcalculator.use_thermal_diffusion(mode=True)
 # these two treatments in the *Chemkin* *Input* manual.
 
 # specific the species composition boundary treatment ("comp" or "flux")
-# use "COMP" to keep the inlet species mass fraction values the same as the "given inlet stream". 
+# use "COMP" to keep the inlet species mass fraction values the same as the "given inlet stream".
 flamespeedcalculator.set_species_boundary_types(mode="comp")
 
 ############################
@@ -316,7 +312,9 @@ print()
 flamespeedcalculator.process_solution()
 
 # print the predicted laminar flame speed
-print(f"the predicted laminar flame speed = {flamespeedcalculator.get_flame_speed()} [cm/sec]")
+print(
+    f"the predicted laminar flame speed = {flamespeedcalculator.get_flame_speed()} [cm/sec]"
+)
 # get the number of solution grid points
 solutionpoints = flamespeedcalculator.get_solution_size()
 print(f"number of solution points = {solutionpoints}")

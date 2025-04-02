@@ -473,14 +473,8 @@ class SteadyStateSolver:
         """
         if stage in [1, 2]:
             this_key = "TIM" + str(stage)
-            this_phrase = (
-                this_key
-                + Keyword.fourspaces
-                + str(numb_steps)
-                + Keyword.fourspaces
-                + str(step_size)
-            )
-            self.SSsolverkeywords[this_phrase] = True
+            this_phrase = this_key + Keyword.fourspaces + str(numb_steps)
+            self.SSsolverkeywords[this_phrase] = step_size
         else:
             msg = [Color.PURPLE, "the stage must be either 1 or 2.", Color.END]
             this_msg = Color.SPACE.join(msg)

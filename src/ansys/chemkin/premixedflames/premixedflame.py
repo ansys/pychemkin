@@ -25,7 +25,7 @@ Steady state, 1-D burner stabilized premixed flame models.
 """
 
 import copy
-from ctypes import c_int, c_double
+from ctypes import c_double, c_int
 from typing import Union
 
 from ansys.chemkin import chemkin_wrapper
@@ -73,7 +73,7 @@ class PremixedFlame(Flame):
             extinlet: Stream object
                 external inlet to the open reactor
         """
-        # There is only ONE inlet allowed fot the premixed flame models.
+        # There is only ONE inlet allowed for the premixed flame models.
         msg = [
             Color.MAGENTA,
             "Premixed flame models do NOT allow the second inlet stream.",
@@ -82,6 +82,25 @@ class PremixedFlame(Flame):
         this_msg = Color.SPACE.join(msg)
         logger.error(this_msg)
         exit()
+
+    def unburnt_temperature(self, temperature: float):
+        """
+        Set the unburnt fuel-oxidizer gas temperature for the flame speed calculation.
+        By default, the inlet Stream temperature will be used.
+
+        Parameters
+        ----------
+            temperature: double
+                unburnt gas temperature [K]
+        """
+        if temperature <= 200.0:
+            msg = [Color.PURPLE, "invalid temperature value.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        # set unburnt temperature
+        self.temperature = temperature
+        self.setkeyword("Tunburnt", value=temperature)
 
     def set_profilekeywords(self) -> int:
         """
@@ -98,7 +117,7 @@ class PremixedFlame(Flame):
         numblines = 0
         # create the keyword lines from the keyword objects in the profile list
         profile_ID = self._profiles_index(tag)
-        T_profile =  self._profiles_list[profile_ID]
+        T_profile = self._profiles_list[profile_ID]
         npoints = T_profile.size
         #
         positions = T_profile.pos
@@ -106,12 +125,7 @@ class PremixedFlame(Flame):
         # loop over all data points
         for x in positions:
             this_key = ""
-            this_key = (
-                tag
-                + str(x)
-                + Keyword.fourspaces
-                + str(y[numblines])
-            )
+            this_key = tag + str(x) + Keyword.fourspaces + str(y[numblines])
             self.setkeyword(this_key, True)
             numblines += 1
         # check error
@@ -206,7 +220,8 @@ class PremixedFlame(Flame):
                 return iErr
         else:
             # burner stabilized flame and solve the energy equation
-            pass
+            if "Tunburnt" not in self._keyword_index:
+                self.setkeyword("Tunburnt", self.temperature)
         # prepare mesh keywords
         self.set_mesh_keywords()
         if iErr == 0:
@@ -470,7 +485,9 @@ class PremixedFlame(Flame):
         # get raw solution data
         npoint = c_int(npoints)
         nspecies = c_int(self.reactormixture.KK)
-        iErr = chemkin_wrapper.chemkin.KINPremix_GetSolution(npoint, nspecies, pos, temp, frac)
+        iErr = chemkin_wrapper.chemkin.KINPremix_GetSolution(
+            npoint, nspecies, pos, temp, frac
+        )
         if iErr != 0:
             msg = [
                 Color.RED,
@@ -739,7 +756,6 @@ class PremixedFlame(Flame):
 
 class BurnedStabilized_GivenTemperature(PremixedFlame):
     def __init__(self, inlet: Stream, label: Union[str, None] = None):
-
         #
         if label is None:
             label = "Premixed Burner"
@@ -774,6 +790,44 @@ class BurnedStabilized_EnergyEquation(PremixedFlame):
         # solve the energy equation
         self.setkeyword("ENRG", True)
 
+    def skip_fix_T_solution(self, mode: bool = True):
+        """
+        Skip the step of finding the intermediate solution with fixed temperature
+
+        Parameters
+        ----------
+            mode: boolean {True, False}
+                ON/OFF
+        """
+        # skip the fixed temperature solution
+        self.setkeyword("NOFT", value=mode)
+
+    def automatic_temperature_profile_estimate(self, mode: bool = True):
+        """
+        Let the premixed flame model to construct an estimated temperature profile
+        based on the equilibrium state to start the calculation
+
+        Parameters
+        ----------
+            mode: boolean {True, False}
+                ON/OFF
+        """
+        # use the automatic temperature profile estimate function
+        self.setkeyword("TPROF", value=mode)
+
+    def use_TPRO_grids(self, mode: bool = True):
+        """
+        Use the position values of the temperature profile data as
+        the initial grid points to start the simulation
+
+        Parameters
+        ----------
+            mode: boolean {True, False}
+                ON/OFF
+        """
+        # use the TPRO grids
+        self.setkeyword("USE_TPRO_GRID", value=mode)
+
 
 class FreelyPropagating(PremixedFlame):
     def __init__(self, inlet: Stream, label: Union[str, None] = None):
@@ -804,6 +858,19 @@ class FreelyPropagating(PremixedFlame):
         # skip the fixed temperature solution
         self.setkeyword("NOFT", value=mode)
 
+    def automatic_temperature_profile_estimate(self, mode: bool = True):
+        """
+        Let the premixed flame model to construct an estimated temperature profile
+        based on the equilibrium state to start the calculation
+
+        Parameters
+        ----------
+            mode: boolean {True, False}
+                ON/OFF
+        """
+        # use the automatic temperature profile estimate function
+        self.setkeyword("TPROF", value=mode)
+
     def use_TPRO_grids(self, mode: bool = True):
         """
         Use the position values of the temperature profile data as
@@ -815,25 +882,7 @@ class FreelyPropagating(PremixedFlame):
                 ON/OFF
         """
         # use the TPRO grids
-        self.setkeyword("TRPOF", value=mode)
-
-    def unburnt_temperature(self, temperature: float):
-        """
-        Set the unburnt fuel-oxidizer gas temperature for the flame speed calculation.
-        By default, the inlet Stream temperature will be used.
-
-        Parameters
-        ----------
-            temperature: double
-                unburnt gas temperature [K]
-        """
-        if temperature <= 200.0:
-            msg = [Color.PURPLE, "invalid temperature value.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        # set unburnt temperature
-        self.setkeyword("Tunburnt", value=temperature)
+        self.setkeyword("USE_TPRO_GRID", value=mode)
 
     def pinned_temperature(self, temperature: float = 400.0):
         """

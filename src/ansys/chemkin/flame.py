@@ -30,14 +30,15 @@ from ansys.chemkin.color import Color as Color
 from ansys.chemkin.grid import Grid
 from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
-from ansys.chemkin.mixture import Mixture
 from ansys.chemkin.reactormodel import Keyword, ReactorModel
 from ansys.chemkin.steadystatesolver import SteadyStateSolver
+
 
 class Flame(ReactorModel, SteadyStateSolver, Grid):
     """
     Generic steady state, one dimensional flame model
     """
+
     def __init__(self, fuelstream: Stream, label: str):
         """
         Create a 1-D flame object
@@ -53,9 +54,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         if isinstance(fuelstream, Stream):
             self.label = label
             # initialization
-            ReactorModel.__init__(
-                self, reactor_condition=fuelstream, label=self.label
-            )
+            ReactorModel.__init__(self, reactor_condition=fuelstream, label=self.label)
         else:
             # wrong argument type
             msg = [Color.RED, "the first argument must be a Stream object.", Color.END]
@@ -63,7 +62,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
             logger.critical(this_msg)
             exit()
         if self.reactormixture.transport_data == 0:
-           # transport property is required by the flame models
+            # transport property is required by the flame models
             msg = [Color.RED, "transport properties are required.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.critical(this_msg)
@@ -90,7 +89,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         # species mass transport property type
         # not set = 0; mixture_averaged = 1; multi-component = 2
         self.transport_mode = 0
-        # number of grid points in the solution 
+        # number of grid points in the solution
         self._numbsolutionpoints = 0
         #
         self._speciesmode = "mass"
@@ -250,8 +249,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
             for k, v in self.SSsolverkeywords.items():
                 self.setkeyword(k, v)
 
-
-# mass transport options
+    # mass transport options
 
     def use_mixture_averaged_transport(self):
         """
@@ -266,7 +264,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
     def use_multicomponent_transport(self):
         """
         Use the multi-component transport properties.
-        Use of the multi-component transport properties is recommanded when
+        Use of the multi-component transport properties is recommended when
         the pressure is low.
         """
         self.setkeyword(key="MULT", value=True)
@@ -281,7 +279,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
 
         .. math::
 
-            Le = Sc/Pr = \\frac{(\kappa/\\rho C_{p})}{D}
+            Le = Sc/Pr = \\frac{(\\kappa/\\rho C_{p})}{D}
 
         Parameters
         ----------
@@ -298,7 +296,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
     def use_thermal_diffusion(self, mode: bool = True):
         """
         Include the thermal diffusion (Doret) effect.
-        The inclusion of thermal diffucivity is recommanded when there are significant
+        The inclusion of thermal diffucivity is recommended when there are significant
         amount of "light" species in the system. Species with molecular weight less than 5 g/mol
         is considered a light species, for example, hydrogen.
 
