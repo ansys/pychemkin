@@ -60,6 +60,9 @@ class PremixedFlame(Flame):
             self.label = label
         # initialization
         super().__init__(fuelstream=inlet, label=label)
+        # set flow area to unity for easy conversion from mass flow rate to mass flux in the flame models
+        if not inlet._haveflowarea:
+            inlet.flowarea = 1.0  # [cm2]
         # mass flow rate [g/sec]
         # constant
         self._final_mass_flow_rate = -1.0

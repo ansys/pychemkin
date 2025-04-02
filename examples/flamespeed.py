@@ -212,7 +212,7 @@ flamespeedcalculator.set_solution_quality(gradient=0.1, curvature=0.5)
 # Set transport property options
 # ===============================
 # *Chemkin* offers three methods to compute the *mixture* properties: the *mixture averaged*
-# method, the *multi-component" method, and the constant *Lewis number* method. When the system
+# method, the *multi-component* method, and the constant *Lewis number* method. When the system
 # pressure is not too low, the *mixture averaged* method should be adequate. The *multi-component*
 # method, although it is slightly more accurate, would make the simulation time longer and harder
 # to converge. Using the constant *Lewis number* method implies that all the species would have
@@ -305,7 +305,8 @@ print()
 # .. note::
 #   The ``mass_flowrate`` from the solution ``Streams`` is actually the *mass flux* [g/cm\ :sup:`2`\ -sec].
 #   It can used to derive the velocity at the corresponding location by dividing it by the local gas mixture
-#   density [g/cm\ :sup:`3`\ ].
+#   density [g/cm\ :sup:`3`\ ]. Here the ``get_flame_speed`` is used to retrieve the predict laminar flame
+#   speed value.
 #
 
 # post-process the solutions
