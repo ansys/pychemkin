@@ -220,6 +220,22 @@ class ReactorNetwork:
                 this_msg = Color.SPACE.join(msg)
                 logger.info(this_msg)
 
+    def add_reactor_list(self, reactor_list: list[Union[PSR, PFR]]):
+        """
+        Add a list of reactors to the network in order.
+        Plan the order (sequence) of reactor addition carefully. The order of the reactors is
+        somewhat important as it might affect the convergence rate of the network, especially with
+        the presence of any "tearing stream".
+
+        Parameters
+        ----------
+            reactor: list of open reactor (PSR or PFR) object
+                the reactor objects to be added to the network
+        """
+        # add the reactors one by one in the order given in the list
+        for rxtor in reactor_list:
+            self.add_reactor(rxtor)
+
     def show_reactors(self):
         """
         Show the reactor labels in the network.

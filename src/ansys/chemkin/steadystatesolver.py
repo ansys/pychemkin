@@ -21,11 +21,12 @@
 # SOFTWARE.
 
 """
-    Chemkin steady-state solver controlling parameters.
+Chemkin steady-state solver controlling parameters.
 """
 
 from ansys.chemkin.color import Color
 from ansys.chemkin.logger import logger
+from ansys.chemkin.reactormodel import Keyword
 import numpy as np
 
 
@@ -452,3 +453,36 @@ class SteadyStateSolver:
             msg = [Color.PURPLE, "print level must be either 0, 1, or 2.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
+
+    def set_pseudo_timestepping_parameters(
+        self, numb_steps: int = 100, step_size: float = 1.0e-6, stage: int = 1
+    ):
+        """
+        Set the parameters for the pseudo time stepping process of the steady state solver.
+
+        Parameters
+        ----------
+            numb_step: integer, default = 100
+                the number of pseudo time steps to be taken during each time stepping process
+            step_size: double, default = 1.0e-6 [sec]
+                the initial time step size for each time stepping process
+            stage: integer, {1, 2}
+                the stage the time stepping process is in.
+                1 = fixed temperature stage
+                2 = solving energy equation
+        """
+        if stage in [1, 2]:
+            this_key = "TIM" + str(stage)
+            this_phrase = (
+                this_key
+                + Keyword.fourspaces
+                + str(numb_steps)
+                + Keyword.fourspaces
+                + str(step_size)
+            )
+            self.SSsolverkeywords[this_phrase] = True
+        else:
+            msg = [Color.PURPLE, "the stage must be either 1 or 2.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()

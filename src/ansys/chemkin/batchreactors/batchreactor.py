@@ -1524,7 +1524,7 @@ class BatchReactors(reactor):
             smixture.pressure = pres[i]
             # temperature [K]
             smixture.temperature = temp[i]
-            # mixture voluke [cm3]
+            # mixture volume [cm3]
             smixture.volume = vol[i]
             # species composition
             for k in range(self.numbspecies):

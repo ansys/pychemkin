@@ -122,6 +122,18 @@ class Mixture:
         return self._chemset_index.value
 
     @property
+    def KK(self) -> int:
+        """
+        Get the number of gas species
+
+        Returns
+        -------
+            num_spec: integer
+                number of gas species in the mixture
+        """
+        return self._KK
+
+    @property
     def pressure(self) -> float:
         """
         Get gas mixture pressure [dynes/cm2]

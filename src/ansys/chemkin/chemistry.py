@@ -748,6 +748,36 @@ class Chemistry:
             this_msg = Color.SPACE.join(msg)
             logger.info(this_msg)
 
+    def verify_transport_data(self) -> bool:
+        """
+        Verify the availability of transport property data in the mechanism
+
+        Returns
+        -------
+            availability: boolean
+                True = the transport property is available
+        """
+        if self._index_tran.value == 0:
+            # no transport data
+            return False
+        #
+        return True
+
+    def verify_surface_mechanism(self) -> bool:
+        """
+        Verify the availability of surface chemistry data in the mechanism
+
+        Returns
+        -------
+            availability: boolean
+                True = the surface chemistry data is available
+        """
+        if self._index_surf.value == 0:
+            # no surface chemistry data
+            return False
+        #
+        return True
+
     @property
     def species_symbols(self):
         """

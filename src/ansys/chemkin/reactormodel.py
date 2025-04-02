@@ -117,7 +117,9 @@ class Keyword:
     # those _protectedkeywords via the setkeyword method are required.
     noFullKeyword = True  # default: API-call mode
 
-    def __init__(self, phrase: str, value, data_type: str):
+    def __init__(
+        self, phrase: str, value: Union[int, float, bool, str], data_type: str
+    ):
         """
         Initialize the Chemkin keyword
 
@@ -319,6 +321,32 @@ class Keyword:
             return mode
         else:
             return self._value
+
+    @property
+    def keyphrase(self) -> str:
+        """
+        Get the phrase of the keyword
+
+        Returns
+        -------
+            keyword phrase: string
+        """
+        return self._key
+
+    @property
+    def keyprefix(self) -> bool:
+        """
+        Get the status of the keyword
+
+        Returns
+        -------
+            status: boolean
+                keyword is ON/OFF
+        """
+        if self._prefix != "!":
+            return True
+        else:
+            return False
 
     def getvalue_as_string(self):
         """
@@ -659,7 +687,7 @@ class ReactorModel:
         """
         # check mixture
         if isinstance(reactor_condition, (Mixture, Stream)):
-            # if a Mixture object is passed in , verify the Mixture
+            # if a Mixture/Stream object is passed in , verify the Mixture/Stream
             iErr = reactor_condition.validate()
             if iErr != 0:
                 msg = [Color.PURPLE, "the mixture is not fully defined.", Color.END]
