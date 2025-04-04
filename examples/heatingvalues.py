@@ -92,13 +92,22 @@ thistemperature = 298.15
 # method after preprocessing the ``WaterMech`` ``Chemistry Set``.
 
 
-def getwaterheatofvaporization(temp):
+def getwaterheatofvaporization(temp: float) -> float:
     """
     Compute water heat of vaporization [erg/g-water] at the given temperature
     Use the enthalpy difference between water vapor and liquid water at the temperature
     Enthalpy data depend on temperature only
-    There are empirical formulas for heat of vaporization, for example, DIPPR EQ
-    :param temp: temperature [K] (double scalar)
+    There are empirical formulas for heat of vaporization, for example, DIPPR EQ.
+
+    Parameters
+    ----------
+        temp: double scalar
+            water temperature [K]
+
+    Returns
+    -------
+        enthalpy: double
+            water enthalpy of vaporization [erg/g-water]
     """
     # compute water heat of vaporization
     # create a chemistry set object

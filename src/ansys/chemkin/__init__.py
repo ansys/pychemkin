@@ -48,6 +48,7 @@ from ansys.chemkin.constants import (
     ergs_per_calorie,
     ergs_per_joule,
     joules_per_calorie,
+    water_heat_vaporization,
 )
 from ansys.chemkin.info import (
     help,

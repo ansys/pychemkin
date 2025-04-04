@@ -74,3 +74,49 @@ class air:
     @staticmethod
     def Y() -> list[tuple[str, float]]:
         return [("o2", 0.23), ("n2", 0.77)]
+
+
+def water_heat_vaporization(temperature: float) -> float:
+    """
+    Get the heat if vporization of water at the given temperature [K]
+
+    Parameters
+    ----------
+        temperature: double
+            water temperature [K]
+
+    Returns
+    -------
+        enthalpy: double
+            enthalpy of vaporization of water at the given temperature [erg/g-water]
+    """
+    # critical temperature of water [K]
+    Tc = 647.096
+    # reduce temperature
+    Tr = temperature / Tc
+    # check value
+    if temperature < 1.5e2:
+        print("temperature value is too low.")
+        exit()
+    elif Tr >= 1.0:
+        print(
+            f"temperature value is above the critical temperature of wwater {Tc} [K]."
+        )
+        exit()
+    #
+    a = (5.1546e7, 0.28402, -0.15843, 0.2375)
+    Trm1 = 1.0 - Tr
+    #
+    index = 1
+    fac = 1.0
+    exponent = 0.0
+    while index < 4:
+        exponent += a[index] * fac
+        fac *= Tr
+        index += 1
+    h = Trm1**exponent
+    # heat of vaporization [J/kmol]
+    h *= a[0]
+    # convert to [erg/g-water]
+    h_erg = h * 1.0e-3 / 18.0 * 1.0e7
+    return h_erg
