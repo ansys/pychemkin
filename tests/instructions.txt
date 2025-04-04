@@ -1,3 +1,0 @@
-D:\Tasks\PyChemkin\tests\test_cases
-solutions
-D:\Tasks\PyChemkin\tests\baselines

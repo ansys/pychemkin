@@ -1,87 +1,81 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
 [project]
 name = "ansys-chemkin"
-
-[tool.poetry]
-name = "ansys-chemkin"
-version = "0.25.dev11"
+version = "0.25.dev20"
 description = "PyChemkin provides Pythonic interface to Ansys chemkin utilities and reactor models"
-license = "MIT"
-authors = ["ANSYS, Inc. <ansys.support@ansys.com>"]
-maintainers = ["PyAnsys developers <pyansys.maintainers@ansys.com>"]
-readme = "README.md"
+requires-python = ">=3.9,<4"
+license = { file = "LICENSE" }
+authors = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
+maintainers = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
+readme = "README.rst"
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Science/Research",
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: Microsoft :: Windows :: Windows 11",
     "Operating System :: Microsoft :: Windows :: Windows 10",
     "Natural Language :: English",
 ]
-packages = [
-	{include = "chemkin", from = "ansys"},
+dependencies = [
+    "numpy>=1.14.0,<2.0.0",
+    "pyyaml>=6.0",
+    "matplotlib==3.6.0",
 ]
+
 
 [project.optional-dependencies]
 tests = [
-    "pytest>=8.3.2",
-    "pytest-cov>=4.1.0",
-    "dill>=0.3.5.1",
+    "pytest==8.3.2",
+    "pytest-cov==4.1.0",
+    "dill==0.3.5.1",
     "pytest-mock==3.10.0",
     "urllib3==2.2.2",
-    "requests>=2.28.2",
-    "docker>=6.1.0",
+    "requests==2.32.3",
+    "docker==6.1.0",
     "usd-core>=24.11",
-    "pygltflib>=1.16.2",
-    "matplotlib>=3.6.0",
+    "pygltflib==1.16.2",
+    "matplotlib==3.6.0",
+    "numpy>=1.14.0,<2.0.0",
+    "pyyaml>=6.0",
 ]
 
-[tool.poetry.dependencies]
-python = ">=3.9,<3.13"
-numpy= ">=1.14.0"
-pyyaml = ">=6.0"
-matplotlib = ">=3.6.0"
+doc = [
+    "ansys-sphinx-theme==1.0.3",
+    "sphinx-autoapi==3.3.1",
+    "matplotlib==3.6.0",
+    "jupytext==1.16.4",
+    "notebook==7.2.2",
+    "nbsphinx==0.9.5",
+    "numpydoc==1.8.0",
+    "pandas==2.2.2",
+    "pandoc==2.4.0",
+    "Pillow==9.0",
+    "PyGitHub==2.4.0",
+    "pyvista==0.44.1",
+    "requests==2.32.3",
+    "sphinx-copybutton==0.5.2",
+    "sphinx-design==0.6.1",
+    "sphinx-gallery==0.17.1",
+    "sphinx-jinja==2.0.2",
+    "sphinx-notfound-page==1.0.4",
+]
 
-[tool.poetry.group.test.dependencies]
-pytest = "*"
-pytest-cov = "*"
-matplotlib = ">=3.6.0"
+[project.urls]
+Source = "https://github.com/ansys/pychemkin"
+Issues = "https://github.com/ansys/pychemkin/issues"
+Discussions = "https://github.com/ansys/pychemkin/discussions"
+Documentation = "https://chemkin.docs.pyansys.com/"
+Releases = "https://github.com/ansys/pychemkin/releases/"
 
-[tool.poetry.group.doc]
-optional = true
-
-[tool.poetry.group.doc.dependencies]
-sphinx-autoapi = "3.3.1"
-ansys-sphinx-theme = ">=1.0.3"
-matplotlib = ">=3.6.0"
-jupytext = "1.16.4"
-notebook = "7.2.2"
-nbsphinx = "0.9.5"
-numpydoc = "1.8.0"
-pandas = "2.2.2"
-pandoc = ">=2.4.0"
-Pillow = ">=9.0"
-PyGitHub = "2.4.0"
-pyvista = "0.44.1"
-requests = "2.32.3"
-sphinx-copybutton = "0.5.2"
-sphinx-design = "0.6.1"
-sphinx-gallery = "0.17.1"
-sphinx-jinja = "2.0.2"
-sphinx-notfound-page = "1.0.4"
-
-[tool.poetry.group.tests]
-optional = true
-
-[tool.poetry.group.tests.dependencies]
-pytest = "*"
-pytest-cov = "*"
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.flit.module]
+name = "ansys.chemkin"
 
 [tool.black]
-line-length = "88"
+line-length = 88
 
 [tool.isort]
 profile = "black"
@@ -93,3 +87,55 @@ src_paths = ["ansys", "tests"]
 ignore-words-list = "delt, pres, te"
 quiet-level = 3
 skip = "*.toml,*.pyc,*.xml,*.gif,*.png,*.jpg,*.js,*.html,*.svg,*.asc,*.out"
+
+[tool.pytest.ini_options]
+addopts = "-ra --maxfail=3"
+
+[tool.towncrier]
+package = "ansys.tools.visualization_interface"
+directory = "doc/changelog.d"
+filename = "CHANGELOG.md"
+start_string = "<!-- towncrier release notes start -->\n"
+underlines = ["", "", ""]
+template = "doc/changelog.d/changelog_template.jinja"
+title_format = "## [{version}](https://github.com/ansys/ansys-tools-visualization-interface/releases/tag/v{version}) - {project_date}"
+issue_format = "[#{issue}](https://github.com/ansys/ansys-tools-visualization-interface/pull/{issue})"
+
+[[tool.towncrier.type]]
+directory = "added"
+name = "Added"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "changed"
+name = "Changed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "fixed"
+name = "Fixed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "dependencies"
+name = "Dependencies"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "miscellaneous"
+name = "Miscellaneous"
+showcontent = true
+[[tool.towncrier.type]]
+directory = "documentation"
+name = "Documentation"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "maintenance"
+name = "Maintenance"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "test"
+name = "Test"
+showcontent = true

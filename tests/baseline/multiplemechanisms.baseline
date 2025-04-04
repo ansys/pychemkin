@@ -1,0 +1,9 @@
+{
+"tolerance-var": [1.0E-6, 1.0E-4],
+"tolerance-frac": [1.0E-6, 1.0E-6],
+"tolerance-ROP": [1.0E-6, 1.0E-4],
+"state-temperature_IdealGas": [2915.5239669598445],
+"state-detonation_speed_IdealGas": [1740.4130495713532],
+"state-temperature_RealGas": [798.3778980458744],
+"state-detonation_speed_RealGas": [788.7318111806968],
+}

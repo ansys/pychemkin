@@ -1,0 +1,295 @@
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+"""
+.. _ref_multiple_inlets_PSR:
+
+=========================================================
+Learn the impact of residence time on combustion in PSR
+=========================================================
+
+**Ansys chemkin** offers some idealized reactor models commonly used for studying chemical
+processes and for developing reaction mechanisms. The ``perfectly stirred reactor (PSR)`` model is
+a *steady state* 0-D model of the *open perfectly mixed* gas-phase reactor. There is no limit on
+the number of the inlets to the PSR, as soon as the inlet gases enter the reactor, they will be
+thoroughly mixed with the gas mixture inside. The PSR has only *one* outlet, and the outlet gas
+is assumed to be exactly the same as the gas mixture in the PSR. There are two basic types of
+PSR models
+
+    |    **constrained-pressure** (or "set residence time")
+    |    **constrained-volume**
+
+By default, the PSR is running under **constant pressure**. The PyChemkin PSR models
+always require the connected inlets to be defined, that is, the total inlet flow rate to the PSR
+is always known. Therefore, either the **residence time** or the **reactor volume** is needed to
+satisfy the basic setup of the PSR model. In this case, You will specify the *reactor volume*
+of the PSR, and the residence time will be calculated from the reactor volume and the total
+inlet volumetric flow rate.
+
+For each type of the PSR, you can choose either to *specify the reactor temperature* (as a fixed
+value or by a piecewise-linear profile) or to *solve the energy conservation equation*. In total,
+you get *four variations* of the PSR model.
+
+The perfectly-stirred reactor is mostly employed in chemical kinetics studies. By controlling the reactor
+temperature, pressure, and/or residence time, you can gain knowledge about the major intermediates
+of a complex chemical process and postulate possible reaction pathways. This tutorial describes a parameter
+study of the influence of the PSR residence time on the hydrogen combustion process. Two inlet streams are
+used, one for the fuel mixture and the other for the air mixture. The "fuel-to-air ratio" inside the PSR
+will be determined by the mass or the volumetric flow rate ratio of the two inlet streams.
+"""
+
+# sphinx_gallery_thumbnail_path = '_static/plot_multi_inlet_PSR.png'
+
+###############################################
+# Import PyChemkin package and start the logger
+# =============================================
+
+import os
+import time
+
+import ansys.chemkin as ck  # Chemkin
+from ansys.chemkin import Color
+from ansys.chemkin.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.logger import logger
+
+# chemkin perfectly-stirred reactor (PSR) model (steady-state)
+from ansys.chemkin.stirreactors.PSR import PSR_SetVolume_EnergyConservation as PSR
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
+
+# check working directory
+current_dir = os.getcwd()
+logger.debug("working directory: " + current_dir)
+# set verbose mode
+ck.set_verbose(True)
+# set interactive mode for plotting the results
+# interactive = True: display plot
+# interactive = False: save plot as a png file
+global interactive
+interactive = True
+
+#####################################
+# Create a ``Chemistry Set`` instance
+# ===================================
+# The encrypted hydrogen-ammonia mechanism, ``Hydrogen-Ammonia-NOx_chem_MFL2021.inp``,
+# is used. This mechanism is developed under Chemkin's **Model Fuel Library (MFL)** project;
+# like the rest of the MFL mechanisms, it is located in the **ModelFuelLibrary** under the
+# *"/reaction/data"* directory of the standard Ansys Chemkin installation.
+
+# set mechanism directory (the default chemkin mechanism data directory)
+data_dir = os.path.join(
+    ck.ansys_dir, "reaction", "data", "ModelFuelLibrary", "Skeletal"
+)
+mechanism_dir = data_dir
+# create a chemistry set based on the gasoline 14 components mechanism
+MyGasMech = ck.Chemistry(label="hydrogen")
+# set mechanism input files
+# inclusion of the full file path is recommended
+MyGasMech.chemfile = os.path.join(
+    mechanism_dir, "Hydrogen-Ammonia-NOx_chem_MFL2021.inp"
+)
+
+############################################
+# Pre-process the gasoline ``Chemistry Set``
+# ==========================================
+
+# preprocess the mechanism files
+iError = MyGasMech.preprocess()
+
+####################################################
+# Set up the "fuel" and the "air" ``Stream`` objects
+# ==================================================
+# Instantiate an ``Stream`` object ``fuel`` for the inlet stream containing
+# the *fuel* mixture, and another ``air`` ``Stream`` object for the inlet *air*
+# stream. The ``Inlet`` object is a ``Mixture`` object with the addition of the
+# *inlet flow rate*. You can specify the inlet gas properties the same way you
+# set up a ``Mixture``. Here the ``fuel`` and the ``air`` inlets are created
+# separately. And you can adjust their inlet volumetric flow rates to create
+# the desired hydrogen-air mixture. The inlet volumetric flow rate is assigned
+# by the ``vol_flowrate`` method. In this project, the ``fuel`` and the ``air`` inlets
+# have fixed volumetric flow rates of 25 and 50 [cm3/sec], respectively.
+#
+# .. note ::
+#   This is how the hydrogen to oxygen molar ratio is determined
+#
+#   .. math ::
+#       H_{2}:O_{2}=0.21[cm^3/cm^3]*25[cm^3/s]:0.21[cm^3/cm^3]*50[cm^3/s]=1:2
+#
+# .. note ::
+#   The PSR *residence time* will be specified indirectly through the *reactor volume*
+#   in the parameter study.
+#
+
+# create the fuel inlet
+fuel = Stream(MyGasMech, label="Fuel")
+# set fuel composition
+fuel.X = [("h2", 0.21), ("n2", 0.79)]
+# setting pressure and temperature is not required in this case
+fuel.pressure = ck.Patm
+fuel.temperature = 450.0  # inlet temperature
+# set inlet volumetric flow rate [cm3/sec]
+fuel.vol_flowrate = 25.0
+
+# create the oxidizer inlet: air
+air = Stream(MyGasMech, label="Oxid")
+air.X = [("o2", 0.21), ("n2", 0.79)]
+# setting pressure and temperature is not required in this case
+air.pressure = fuel.pressure
+air.temperature = fuel.temperature
+# set inlet volumetric flow rate [cm3/sec]
+air.vol_flowrate = 50.0
+
+###########################################################################
+# Create the PSR object to predict the gas composition of the outlet stream
+# =========================================================================
+# Use the ``PSR_SetVolume_EnergyConservation`` method to instantiate the PSR
+# ``combustor``. The energy equation must be included because the goal is to
+# see how the residence time would affect the hydrogen combustion process.
+# The PSR ``combustor`` is initiated with the parameter set to the ``fuel`` inlet,
+# Hence, the gas property of the inlet ``fuel`` will be applied
+# as the estimated reactor condition of ``combustor``. You can overwrite
+# any estimated reactor conditions by using appropriate methods. For example,
+# ``combustor.temperature = 2000.0`` changes the estimated reactor temperature
+# from 450 (the temperature of the ``fuel`` inlet) to 2000 [K]. The reactor
+# volume of the nominal case is set by the ``volume`` method.
+
+# create a PSR with fixed reactor volume and
+# with the fuel inlet composition as the estimated reactor condition
+combustor = PSR(fuel, label="tincan")
+
+############################################
+# Set up additional reactor model parameters
+# ==========================================
+# *Reactor parameters*, *solver controls*, and *output instructions* need to be provided
+# before running the simulations. For the steady-state PSR, either the residence time or
+# the reactor volume must be provided. You can also make changes to any estimated reactor
+# conditions if desired.
+
+# reset the estimated reactor temperature [K]
+combustor.temperature = 2000.0
+# set the reactor volume (cm3): required for PSR_SetVolume_EnergyConservation model
+combustor.volume = 200.0
+
+###################################
+# Connect the inlets to the reactor
+# =================================
+# You must connect at least **one** inlet to the open reactor. Use the ``set_inlet`` method to
+# add an ``Stream`` object to the PSR. Inversely, use the ``remove_inlet`` to disconnect an inlet
+# from the PSR. Here two inlets, ``fuel`` and ``air`` are connected to the PSR ``combustor``. The
+# "fuel-to-air ratio" will be controlled by the mass or the volumetric flow rate ratio of the ``fuel``
+# and the ``air`` inlets.
+
+# add external inlets to the PSR
+combustor.set_inlet(fuel)
+combustor.set_inlet(air)
+
+#####################
+# Set solver controls
+# ===================
+# You can overwrite the default solver controls by using solver related methods, for example,
+# ``tolerances``. Here the tolerances to be used by the steady state solver for the
+# "steady-state search" and the "pseudo time stepping`` stages are changed. Sometimes, during
+# the iterations, some species mass fractions might become negative and the solver would report
+# an error and stop. To overcome this issue, you can provided a small "cushion" to allow species
+# mass fractions to go slightly negative by resetting the mass fraction floor value with the
+# ``set_species_floor`` method.
+
+# reset the tolerances in the steady-state solver
+combustor.steady_state_tolerances = (1.0e-9, 1.0e-6)
+combustor.timestepping_tolerances = (1.0e-9, 1.0e-6)
+# reset the gas species floor value in the steady-state solver
+combustor.set_species_floor(-1.0e-10)
+
+#################################################
+# Run the PSR residence time parameter study
+# ===============================================
+# The PSR residence time :math:`\tau` is determined as
+#
+# .. math ::
+#
+#   \tau = \frac{reactor\text{ }volume}{total\text{ }volumetric\text{ }flow\text{ }rate}
+#
+# In this parameter study, the reactor volume is *decreased* from 200 to
+# 160 [cm3]. Accordingly, :math:`\tau` will be *decreased* from
+# 2.67 to 2.13 [sec] because the total inlet volumetric flow rate is kept
+# constant at 75 [cm3/sec]. Usually you want to run the "burning" cases
+# (large residence times) first in the PSR parameter study.
+#
+# The result from each PSR run is converted to a ``Mixture`` object by the ``process_solution``
+# method. You can either overwrite the solution mixture or use a new one for each simulation result.
+
+# reactor volume increment
+deltaVol = -5
+numbruns = 9
+# solution arrays
+residencetime = np.zeros(numbruns, dtype=np.double)
+tempSSsolution = np.zeros_like(residencetime, dtype=np.double)
+# set the start wall time
+start_time = time.time()
+# loop over all inlet temperature values
+for i in range(numbruns):
+    # run the PSR model
+    runstatus = combustor.run()
+    # check run status
+    if runstatus != 0:
+        # run failed!
+        print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+        exit()
+    # run success!
+    print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
+    # post-process the solution profiles
+    solnmixture = combustor.process_solution()
+    # print the steady-state solution values
+    print(f"steady-state temperature = {solnmixture.temperature} [K]")
+    # solnmixture.list_composition(mode="mole")
+    # store solution values
+    # final reactor gas density [g/cm3]
+    # density = solnmixture.RHO
+    # final reactor mass [g]
+    # mass = density * combustor.volume
+    # PSR apparent residence time [sec]
+    residencetime[i] = combustor.volume / combustor.net_vol_flowrate
+    tempSSsolution[i] = solnmixture.temperature
+    # update reactor volume
+    combustor.volume += deltaVol
+
+# compute the total runtime
+runtime = time.time() - start_time
+print(f"total simulation duration: {runtime} [sec] over {numbruns} runs")
+
+##################################
+# Plot the parameter study results
+# ================================
+# Plot the predicted PSR temperature against the residence time. You can observe
+# that the hydrogen-air mixture ceases to burn when the residence time becomes
+# too small. This is called **"blown out"** in the gas turbine terminology
+# because the fuel-air mixture gets blown out of the combustor before any
+# significant chemical reaction could take place.
+plt.plot(residencetime, tempSSsolution, "bo-")
+plt.xlabel("Apparent Residence Time [sec]")
+plt.ylabel("Exit Gas Temperature [K]")
+plt.title("PSR Solution")
+# plot results
+if interactive:
+    plt.show()
+else:
+    plt.savefig("plot_multi_inlet_PSR.png", bbox_inches="tight")
