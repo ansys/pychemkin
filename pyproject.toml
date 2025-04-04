@@ -61,7 +61,7 @@ doc = [
     "sphinx-design==0.6.1",
     "sphinx-gallery==0.17.1",
     "sphinx-jinja==2.0.2",
-    "sphinx-notfound-page==1.0.4"
+    "sphinx-notfound-page==1.0.4",
 ]
 
 [project.urls]
@@ -89,4 +89,53 @@ quiet-level = 3
 skip = "*.toml,*.pyc,*.xml,*.gif,*.png,*.jpg,*.js,*.html,*.svg,*.asc,*.out"
 
 [tool.pytest.ini_options]
-addopts = "-ra --maxfail=3 --nocompare"
+addopts = "-ra --maxfail=3"
+
+[tool.towncrier]
+package = "ansys.tools.visualization_interface"
+directory = "doc/changelog.d"
+filename = "CHANGELOG.md"
+start_string = "<!-- towncrier release notes start -->\n"
+underlines = ["", "", ""]
+template = "doc/changelog.d/changelog_template.jinja"
+title_format = "## [{version}](https://github.com/ansys/ansys-tools-visualization-interface/releases/tag/v{version}) - {project_date}"
+issue_format = "[#{issue}](https://github.com/ansys/ansys-tools-visualization-interface/pull/{issue})"
+
+[[tool.towncrier.type]]
+directory = "added"
+name = "Added"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "changed"
+name = "Changed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "fixed"
+name = "Fixed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "dependencies"
+name = "Dependencies"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "miscellaneous"
+name = "Miscellaneous"
+showcontent = true
+[[tool.towncrier.type]]
+directory = "documentation"
+name = "Documentation"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "maintenance"
+name = "Maintenance"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "test"
+name = "Test"
+showcontent = true
