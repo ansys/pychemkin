@@ -44,12 +44,12 @@ tests = [
 ]
 
 doc = [
-    "ansys-sphinx-theme==1.0.3",
-    "sphinx-autoapi==3.3.1",
+    "ansys-sphinx-theme==1.0.11",
+    "sphinx-autoapi==3.6.0",
     "matplotlib==3.6.0",
     "jupytext==1.16.4",
     "notebook==7.2.2",
-    "nbsphinx==0.9.5",
+    "nbsphinx==0.9.7",
     "numpydoc==1.8.0",
     "pandas==2.2.2",
     "pandoc==2.4.0",
@@ -59,9 +59,9 @@ doc = [
     "requests==2.32.3",
     "sphinx-copybutton==0.5.2",
     "sphinx-design==0.6.1",
-    "sphinx-gallery==0.17.1",
+    "sphinx-gallery==0.19.0",
     "sphinx-jinja==2.0.2",
-    "sphinx-notfound-page==1.0.4",
+    "sphinx-notfound-page==1.1.0",
 ]
 
 [project.urls]
