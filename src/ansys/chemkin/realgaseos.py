@@ -54,7 +54,7 @@ def check_realgas_status(chem_index: int) -> bool:
     return status
 
 
-def set_current_pressure(chem_index: int, pressure: float):
+def set_current_pressure(chem_index: int, pressure: float) -> int:
     """
     Set gas mixture pressure for real-gas EOS calculations
 

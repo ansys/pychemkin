@@ -40,6 +40,8 @@ from ansys.chemkin.engines.engine import Engine
 from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
 from ansys.chemkin.reactormodel import Keyword
+import numpy as np
+import numpy.typing as npt
 
 
 class SIengine(Engine):
@@ -261,7 +263,9 @@ class SIengine(Engine):
         self.massburnedCA50 = CA50
         self.massburnedCA90 = CA90
 
-    def set_mass_burned_profile(self, crankangles, fractions) -> int:
+    def set_mass_burned_profile(
+        self, crankangles: npt.NDArray[np.double], fractions: npt.NDArray[np.double]
+    ) -> int:
         """
         Specify SI engine mass burned fraction profile
 

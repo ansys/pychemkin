@@ -1070,6 +1070,15 @@ class ReactorNetwork:
         return status
 
     def run_with_tearstream(self) -> int:
+        """
+        Run the individual reactors in the network one by one with
+        tear stream iteration.
+
+        Returns
+        -------
+            run_status: integer
+                error code
+        """
         # initialization
         status = 0
         self._tear_converged = False

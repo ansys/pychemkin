@@ -41,11 +41,12 @@ from ansys.chemkin.constants import Patm
 from ansys.chemkin.info import show_ignition_definitions
 from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
-from ansys.chemkin.mixture import interpolate_mixtures
+from ansys.chemkin.mixture import Mixture, interpolate_mixtures
 from ansys.chemkin.reactormodel import Keyword
 from ansys.chemkin.reactormodel import ReactorModel as reactor
 from ansys.chemkin.utilities import find_interpolate_parameters
 import numpy as np
+import numpy.typing as npt
 
 # import numpy.typing as npt
 
@@ -642,7 +643,9 @@ class BatchReactors(reactor):
         else:
             return ignitiondelaytime.value
 
-    def set_volume_profile(self, x, vol) -> int:
+    def set_volume_profile(
+        self, x: npt.NDArray[np.double], vol: npt.NDArray[np.double]
+    ) -> int:
         """
         Specify reactor volume profile
 
@@ -675,7 +678,9 @@ class BatchReactors(reactor):
             iErr = self.setprofile(key=keyword, x=x, y=vol)
             return iErr
 
-    def set_pressure_profile(self, x, pres) -> int:
+    def set_pressure_profile(
+        self, x: npt.NDArray[np.double], pres: npt.NDArray[np.double]
+    ) -> int:
         """
         Specify reactor pressure profile
 
@@ -708,7 +713,9 @@ class BatchReactors(reactor):
             iErr = self.setprofile(key=keyword, x=x, y=pres)
             return iErr
 
-    def set_surfacearea_profile(self, x, area) -> int:
+    def set_surfacearea_profile(
+        self, x: npt.NDArray[np.double], area: npt.NDArray[np.double]
+    ) -> int:
         """
         Specify reactor reactive surface area profile
 
@@ -1256,7 +1263,7 @@ class BatchReactors(reactor):
 
         return retVal
 
-    def get_solution_size(self):
+    def get_solution_size(self) -> tuple[int, int]:
         """
         Get the number of reactors and the number of solution points
 
@@ -1430,7 +1437,7 @@ class BatchReactors(reactor):
         # clean up
         del time, pres, temp, vol, frac
 
-    def get_solution_variable_profile(self, varname: str):
+    def get_solution_variable_profile(self, varname: str) -> npt.NDArray[np.double]:
         """
         Get the profile of the solution variable specified
 
@@ -1480,7 +1487,7 @@ class BatchReactors(reactor):
         var = self._solution_rawarray.get(vname)
         return var
 
-    def create_solution_mixtures(self, specfrac) -> int:
+    def create_solution_mixtures(self, specfrac: npt.NDArray[np.double]) -> int:
         """
         Create a list of Mixtures that represent the gas inside the reactor at a solution point
 
@@ -1543,7 +1550,7 @@ class BatchReactors(reactor):
         del pres, temp, vol, frac, species, smixture
         return 0
 
-    def get_solution_mixture(self, time):
+    def get_solution_mixture(self, time: float) -> Mixture:
         """
         Get the mixture representing the solution state inside the reactor at the given time
 
@@ -1592,7 +1599,7 @@ class BatchReactors(reactor):
             #
             return mixturetarget
 
-    def get_solution_mixture_at_index(self, solution_index):
+    def get_solution_mixture_at_index(self, solution_index: int) -> Mixture:
         """
         Get the mixture representing the solution state inside the reactor at the given solution point index
 
@@ -1746,7 +1753,9 @@ class GivenPressureBatchReactor_FixedTemperature(BatchReactors):
             self._inputcheck.append("TIME")
             self._endtime = c_double(value)
 
-    def set_temperature_profile(self, x, temp) -> int:
+    def set_temperature_profile(
+        self, x: npt.NDArray[np.double], temp: npt.NDArray[np.double]
+    ) -> int:
         """
         Specify reactor temperature profile
 
@@ -1996,7 +2005,9 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
             # set the corresponding keyword
             self.setkeyword(key="AREAQ", value=value)
 
-    def set_heat_transfer_area_profile(self, x, area):
+    def set_heat_transfer_area_profile(
+        self, x: npt.NDArray[np.double], area: npt.NDArray[np.double]
+    ) -> int:
         """
         Specify reactor heat transfer area profile
 
@@ -2026,7 +2037,9 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
             iErr = self.setprofile(key=keyword, x=x, y=area)
             return iErr
 
-    def set_heat_loss_profile(self, x, Qloss):
+    def set_heat_loss_profile(
+        self, x: npt.NDArray[np.double], Qloss: npt.NDArray[np.double]
+    ) -> int:
         """
         Specify reactor heat loss rate profile
 
@@ -2161,7 +2174,9 @@ class GivenVolumeBatchReactor_FixedTemperature(BatchReactors):
             self._inputcheck.append("TIME")
             self._endtime = c_double(value)
 
-    def set_temperature_profile(self, x, temp):
+    def set_temperature_profile(
+        self, x: npt.NDArray[np.double], temp: npt.NDArray[np.double]
+    ) -> int:
         """
         Specify reactor temperature profile
 
@@ -2411,7 +2426,9 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
             # set the corresponding keyword
             self.setkeyword(key="AREAQ", value=value)
 
-    def set_heat_transfer_area_profile(self, x, area):
+    def set_heat_transfer_area_profile(
+        self, x: npt.NDArray[np.double], area: npt.NDArray[np.double]
+    ) -> int:
         """
         Specify reactor heat transfer area profile
 
@@ -2441,7 +2458,9 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
             iErr = self.setprofile(key=keyword, x=x, y=area)
             return iErr
 
-    def set_heat_loss_profile(self, x, Qloss):
+    def set_heat_loss_profile(
+        self, x: npt.NDArray[np.double], Qloss: npt.NDArray[np.double]
+    ) -> int:
         """
         Specify reactor heat loss rate profile
 

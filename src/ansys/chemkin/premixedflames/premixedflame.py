@@ -42,6 +42,7 @@ from ansys.chemkin.mixture import interpolate_mixtures
 from ansys.chemkin.reactormodel import Keyword
 from ansys.chemkin.utilities import find_interpolate_parameters
 import numpy as np
+import numpy.typing as npt
 
 
 class PremixedFlame(Flame):
@@ -545,7 +546,7 @@ class PremixedFlame(Flame):
         # clean up
         del pos, temp, frac
 
-    def get_solution_variable_profile(self, varname: str):
+    def get_solution_variable_profile(self, varname: str) -> npt.NDArray[np.double]:
         """
         Get the profile of the solution variable specified
 
@@ -595,7 +596,7 @@ class PremixedFlame(Flame):
         var = self._solution_rawarray.get(vname)
         return var
 
-    def create_solution_streams(self, specfrac) -> int:
+    def create_solution_streams(self, specfrac: npt.NDArray[np.double]) -> int:
         """
         Create a list of Streams that represent the gas mixture at a solution point
 
@@ -656,7 +657,7 @@ class PremixedFlame(Flame):
         del temp, frac, species, sstream
         return 0
 
-    def get_solution_stream(self, x) -> Stream:
+    def get_solution_stream(self, x: float) -> Stream:
         """
         Get the Stream representing the solution state at the given location
 
