@@ -1,6 +1,26 @@
 Getting Started
 ===============
 
+Prerequisites
+-------------
+- `Ansys Chemkin`_ release 2025R2 or newer and a valid license
+- `Python`_ 3.9 or newer
+- `Numpy`_ 1.14.0 or newer
+- `PyYAML`_ 6.0 or newer
+- `matplotlib`_ for running examples and tutorials
+
+.. _Ansys Chemkin: https://www.ansys.com/products/fluids/ansys-chemkin-pro
+
+.. _Python: https://www.python.org/downloads/windows/
+
+.. _Numpy: https://numpy.org/install
+
+.. _PyYAML: https://pypi.org/project/PyYAML/
+
+.. _matplotlib: https://matplotlib.org/stable/install/index.html
+
+Installation
+------------
 - Installing the ``ansys-chemkin`` package
 
    **PyChemkin** is available for download as the ``ansys-chemkin`` package from the **PyAnsys** GitHub repository.
@@ -16,9 +36,6 @@ Getting Started
    ::
 
       pip install dist\ansys_chemkin-*.whl
-
-
-.. note:: Please refer to the `Prerequisites`_ for all required Python extensions to install/run **PyChemkin**.
 
 
 - Verifying the installation
@@ -55,7 +72,8 @@ Getting Started
 
 .. note:: A valid Ansys license is still required to run **PyChemkin** after the installation.
 
-
+Example
+-------
 - Creating **PyChemkin** project
    The structure of a **PyChemkin** project follows the basic workflow of setting up and running a reactor model in Ansys Chemkin GUI:
       1. Create the *Chemistry Set* which includes the mechanism, the thermodynamic data, and/or the transport data.
@@ -114,7 +132,8 @@ Getting Started
          # get 'air' mixture density [g/cm3]
          print(f"the mixture density = {air.RHO} [g/cm3]")
 
-
+Support
+-------
 - Getting Help
    - help within **PyChemkin**
       - use ``ansys.chemkin.help()`` to get general information about a topic, for instance, 'ignition'.
@@ -131,10 +150,6 @@ Getting Started
 - Documents
    - `Chemkin Documents`_
 
-
-.. _Test PyPI: https://test.pypi.org/project/ansys-chemkin/
-
-.. _Prerequisites: Prerequisites.rst
 
 .. _Ansys Learning Hub: https://learninghub.ansys.com/pages/17/home-page
 
