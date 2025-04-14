@@ -27,7 +27,7 @@ jobs:
     name: "Code style"
     runs-on: windows-latest
     steps:
-      - uses: ansys/actions/code-style@v8
+      - uses: ansys/actions/code-style@v9
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -52,7 +52,7 @@ jobs:
           - ${{ github.event_name == 'push' && contains(github.ref, 'refs/tags') }}
     steps:
       - name: Build wheelhouse and perform smoke test
-        uses: ansys/actions/build-wheelhouse@v8
+        uses: ansys/actions/build-wheelhouse@v9
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           library-namespace: ${{ env.PACKAGE_NAMESPACE }}
@@ -74,7 +74,7 @@ jobs:
         python-version: ['3.9', '3.10', '3.11', '3.12']
     steps:
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@v8
+        uses: ansys/actions/tests-pytest@v9
         env:
           ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER) }}
           POETRY_VIRTUALENVS_CREATE: 'false'
@@ -96,7 +96,7 @@ jobs:
       - name: Install libjpeg
         run: sudo apt-get -y install libjpeg-dev
       - name: Run Ansys documentation building action
-        uses: ansys/actions/doc-build@v8
+        uses: ansys/actions/doc-build@v9
         env:
           ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER) }}
         with:
@@ -109,7 +109,7 @@ jobs:
     needs: [doc, tests]
     runs-on: windows-latest
     steps:
-      - uses: ansys/actions/build-library@v8
+      - uses: ansys/actions/build-library@v9
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -122,7 +122,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: "Deploy the latest documentation"
-        uses: ansys/actions/doc-deploy-dev@v8
+        uses: ansys/actions/doc-deploy-dev@v9
         with:
             cname: ${{ env.DOCUMENTATION_CNAME }}
             token: ${{ secrets.GITHUB_TOKEN }}
@@ -135,20 +135,20 @@ jobs:
     steps:
       # Upload first to the private PyPi, at least up until we release
       - name: Release to the private PyPI repository
-        uses: ansys/actions/release-pypi-private@v8
+        uses: ansys/actions/release-pypi-private@v9
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           twine-token: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
 
       - name: Release to the public PyPI repository
-        uses: ansys/actions/release-pypi-public@v8
+        uses: ansys/actions/release-pypi-public@v9
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           twine-username: "__token__"
           twine-token: ${{ secrets.PYPI_TOKEN }}
 
       - name: Release to GitHub
-        uses: ansys/actions/release-github@v8
+        uses: ansys/actions/release-github@v9
         with:
           library-name: ${{ env.PACKAGE_NAME }}
 
@@ -160,7 +160,7 @@ jobs:
     needs: release
     steps:
       - name: "Deploy the stable documentation"
-        uses: ansys/actions/doc-deploy-stable@v8
+        uses: ansys/actions/doc-deploy-stable@v9
         with:
             cname: ${{ env.DOCUMENTATION_CNAME }}
             token: ${{ secrets.GITHUB_TOKEN }}
