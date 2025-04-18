@@ -131,7 +131,8 @@ fuel.mass_flowrate = 3.275  # [g/sec]
 air = Stream(MyGasMech)
 air.temperature = 550.0  # [K]
 air.pressure = 2.1 * ck.Patm
-air.X = ck.Air.X()  # use predefined "air" recipe in mole fractions (with upper cased symbols)
+# use predefined "air" recipe in mole fractions (with upper cased symbols)
+air.X = ck.Air.X()
 air.mass_flowrate = 45.0  # [g/sec]
 
 #################################################

@@ -59,7 +59,9 @@ from ansys.chemkin.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.logger import logger
 
 # chemkin perfectly-stirred reactor (PSR) model (steady-state)
-from ansys.chemkin.premixedflames.premixedflame import BurnedStabilized_GivenTemperature as Burner
+from ansys.chemkin.premixedflames.premixedflame import (
+    BurnedStabilized_GivenTemperature as Burner
+)
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
@@ -87,9 +89,7 @@ interactive = True
 #
 
 # set mechanism directory (the default chemkin mechanism data directory)
-data_dir = os.path.join(
-    ck.ansys_dir, "reaction", "data"
-)
+data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # inclusion of the full file path is recommended
 chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
@@ -116,7 +116,7 @@ if iError != 0:
 # The ``Stream`` object is a ``Mixture`` object with the addition of the
 # *inlet flow rate*. You can specify the inlet gas properties the same way you
 # set up a ``Mixture``. You can simply use a composition *"recipe"* to create
-# the C\ :sub:`2`\ H\ :sub:`4` + O\ :sub:`2`\ + AR mixture. The burner inlet mass flow 
+# the C\ :sub:`2`\ H\ :sub:`4` + O\ :sub:`2`\ + AR mixture. The burner inlet mass flow
 # rate can be assigned by the ``mass_flowrate`` method.
 #
 # .. note::
@@ -168,11 +168,52 @@ flatflame = Burner(premixed, label="ethylene flame")
 TPRO_data_points = 21
 gridpoints = np.zeros(TPRO_data_points, dtype=np.double)
 temp_data = np.zeros_like(gridpoints, dtype=np.double)
-gridpoints = [0.0, 0.01, 0.02, 0.0345643, 0.0602659, 0.100148, 0.118759, 0.135598, 0.15421, 0.179911,
-              0.211817, 0.233087, 0.260561, 0.293353, 0.348301, 0.436928, 0.517578, 0.7161,  0.935894,
-              1.16632, 1.2]
-temp_data = [300.0, 450.0, 600.0, 828.498, 1104.4, 1496.7, 1634.65, 1714.85, 1768.33, 1801.12, 1807.2,
-             1803.78, 1799.51, 1788.35, 1778.09, 1767.01, 1760.23, 1744.13, 1737.55, 1730.99, 1729.31]
+gridpoints = [
+    0.0,
+    0.01,
+    0.02,
+    0.0345643,
+    0.0602659,
+    0.100148,
+    0.118759,
+    0.135598,
+    0.15421,
+    0.179911,
+    0.211817,
+    0.233087,
+    0.260561,
+    0.293353,
+    0.348301,
+    0.436928,
+    0.517578,
+    0.7161, 
+    0.935894,
+    1.16632,
+    1.2,
+]
+temp_data = [
+    300.0,
+    450.0,
+    600.0,
+    828.498,
+    1104.4,
+    1496.7,
+    1634.65,
+    1714.85,
+    1768.33,
+    1801.12,
+    1807.2,
+    1803.78,
+    1799.51,
+    1788.35,
+    1778.09,
+    1767.01,
+    1760.23,
+    1744.13,
+    1737.55,
+    1730.99,
+    1729.31,
+]
 flatflame.set_temperature_profile(x=gridpoints, temp=temp_data)
 
 ###############################################
@@ -220,7 +261,7 @@ flatflame.use_mixture_averaged_transport()
 # these two treatments in the *Chemkin* *Input* manual.
 
 # specific the species composition boundary treatment ("comp" or "flux")
-# use "FLUX" to ensure that the "net" species mass fluxes are zero at the burner outlet. 
+# use "FLUX" to ensure that the "net" species mass fluxes are zero at the burner outlet.
 flatflame.set_species_boundary_types(mode="flux")
 
 ############################
@@ -265,7 +306,7 @@ print(f"number of solution points = {solutionpoints}")
 # of *"continuation"* to gradually get to the solution of the intended condition.
 # For example, you can get to the solution of a very fuel-lean mixture by starting with
 # a slightly fuel-rich mixture flame and use the ``continuation`` method to run the more
-# difficult fuel-lean case from the converged solution.  
+# difficult fuel-lean case from the converged solution.
 #
 
 # tightening the converge criteria
