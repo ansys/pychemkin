@@ -60,7 +60,7 @@ from ansys.chemkin.logger import logger
 
 # chemkin perfectly-stirred reactor (PSR) model (steady-state)
 from ansys.chemkin.premixedflames.premixedflame import (
-    BurnedStabilized_GivenTemperature as Burner
+    BurnedStabilized_GivenTemperature as Burner,
 )
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
