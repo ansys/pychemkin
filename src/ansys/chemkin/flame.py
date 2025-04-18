@@ -32,6 +32,8 @@ from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
 from ansys.chemkin.reactormodel import Keyword, ReactorModel
 from ansys.chemkin.steadystatesolver import SteadyStateSolver
+import numpy as np
+import numpy.typing as npt
 
 
 class Flame(ReactorModel, SteadyStateSolver, Grid):
@@ -96,7 +98,9 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         # number of required input
         self._numb_requiredinput = 0
 
-    def set_temperature_profile(self, x, temp) -> int:
+    def set_temperature_profile(
+        self, x: npt.NDArray[np.double], temp: npt.NDArray[np.double]
+    ) -> int:
         """
         Specify temperature profile
 
@@ -258,8 +262,8 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         self.setkeyword(key="MIX", value=True)
         if self.transport_mode == 2:
             # turn OFF the multi-component transport properties
-            self.setkeyword(key="MULT", value=False)
-        self.transport_mode == 1
+            self.removekeyword(key="MULT")
+        self.transport_mode = 1
 
     def use_multicomponent_transport(self):
         """
@@ -270,8 +274,8 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         self.setkeyword(key="MULT", value=True)
         if self.transport_mode == 1:
             # turn OFF the mixture-averaged transport properties
-            self.setkeyword(key="MIX", value=False)
-        self.transport_mode == 2
+            self.removekeyword(key="MIX")
+        self.transport_mode = 2
 
     def use_fixed_Lewis_number_transport(self, Lewis: float = 1.0):
         """
@@ -288,6 +292,12 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         """
         if Lewis > 0.0:
             self.setkeyword(key="LEWIS", value=Lewis)
+            # turn OFF the multi-component transport properties
+            if self.transport_mode == 2:
+                self.use_mixture_averaged_transport()
+            # turn OFF thermal diffusion
+            if "TDIF" in self._keyword_index:
+                self.removekeyword(key="TDIF")
         else:
             msg = [Color.PURPLE, "Lewis number > 0.", Color.END]
             this_msg = Color.SPACE.join(msg)

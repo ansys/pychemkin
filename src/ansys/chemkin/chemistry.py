@@ -36,6 +36,7 @@ from ansys.chemkin.info import clear_hints
 from ansys.chemkin.logger import logger
 from ansys.chemkin.realgaseos import check_realgas_status, set_current_pressure
 import numpy as np
+import numpy.typing as npt
 
 _symbol_length = 16  # Chemkin element/species symbol length
 MAX_SPECIES_LENGTH = _symbol_length + 1  # Chemkin element/species symbol length + 1
@@ -204,7 +205,7 @@ def chemistryset_initialized(chem_index: int):
     logger.debug(">>> Chemkin-CFD-API initialized <<<")
 
 
-def check_active_chemistryset(chem_index: int):
+def check_active_chemistryset(chem_index: int) -> bool:
     """
     Verify if the chemistry set is currently activated.
 
@@ -443,7 +444,7 @@ class Chemistry:
                 logger.info(this_msg)
 
     @property
-    def surffile(self):
+    def surffile(self) -> str:
         """
         Get surface mechanism filename of this chemistry set
 
@@ -788,6 +789,7 @@ class Chemistry:
             Ksymbol: list of strings
                 list of species symbols in the gas-phase mechanism
         """
+        global MAX_SPECIES_LENGTH
         if self._KSYMdone == 0:
             # recycle existing data
             buff = (LP_c_char * self._num_gas_species.value)()
@@ -947,7 +949,7 @@ class Chemistry:
     number_gas_reactions = IIGas
 
     @property
-    def AWT(self):
+    def AWT(self) -> npt.NDArray[np.double]:
         """
         compute atomic masses
 
@@ -984,7 +986,7 @@ class Chemistry:
     atomic_weight = AWT
 
     @property
-    def WT(self):
+    def WT(self) -> npt.NDArray[np.double]:
         """
         compute gas species molecular masses
 
@@ -1022,7 +1024,9 @@ class Chemistry:
     # alias
     species_molar_weight = WT
 
-    def SpeciesCp(self, temp: float = 0.0, pres: Union[float, None] = None):
+    def SpeciesCp(
+        self, temp: float = 0.0, pres: Union[float, None] = None
+    ) -> npt.NDArray[np.double]:
         """
         Get species specific heat capacity at constant pressure
 
@@ -1088,7 +1092,9 @@ class Chemistry:
 
         return Cp
 
-    def SpeciesCv(self, temp: float = 0.0, pres: Union[float, None] = None):
+    def SpeciesCv(
+        self, temp: float = 0.0, pres: Union[float, None] = None
+    ) -> npt.NDArray[np.double]:
         """
         Get species specific heat capacity at constant volume (ideal gas only)
 
@@ -1125,7 +1131,9 @@ class Chemistry:
 
         return Cv
 
-    def SpeciesH(self, temp: float = 0.0, pres: Union[float, None] = None):
+    def SpeciesH(
+        self, temp: float = 0.0, pres: Union[float, None] = None
+    ) -> npt.NDArray[np.double]:
         """
         Get species enthalpy
 
@@ -1190,7 +1198,9 @@ class Chemistry:
 
         return H
 
-    def SpeciesU(self, temp: float = 0.0, pres: Union[float, None] = None):
+    def SpeciesU(
+        self, temp: float = 0.0, pres: Union[float, None] = None
+    ) -> npt.NDArray[np.double]:
         """
         Get species internal energy
 
@@ -1261,7 +1271,7 @@ class Chemistry:
 
         return U
 
-    def SpeciesVisc(self, temp: float = 0.0):
+    def SpeciesVisc(self, temp: float = 0.0) -> npt.NDArray[np.double]:
         """
         Get species viscosity
 
@@ -1306,7 +1316,7 @@ class Chemistry:
 
         return visc
 
-    def SpeciesCond(self, temp: float = 0.0):
+    def SpeciesCond(self, temp: float = 0.0) -> npt.NDArray[np.double]:
         """
         Get species conductivity
 
@@ -1355,7 +1365,9 @@ class Chemistry:
 
         return cond
 
-    def SpeciesDiffusionCoeffs(self, press: float = 0.0, temp: float = 0.0):
+    def SpeciesDiffusionCoeffs(
+        self, press: float = 0.0, temp: float = 0.0
+    ) -> npt.NDArray[np.double]:
         """
         Get species diffusion coefficients
 
@@ -1547,7 +1559,9 @@ class Chemistry:
             logger.info(this_msg)
             self.userealgas = False
 
-    def get_reaction_parameters(self):
+    def get_reaction_parameters(
+        self,
+    ) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double], npt.NDArray[np.double]]:
         """
         Get the Arrhenius reaction rate parameters of all gas-phase reactions
 

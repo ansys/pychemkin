@@ -28,6 +28,8 @@ import copy
 
 from ansys.chemkin.color import Color
 from ansys.chemkin.logger import logger
+import numpy as np
+import numpy.typing as npt
 
 
 class Grid:
@@ -236,7 +238,7 @@ class Grid:
         else:
             self.curvature = curvature
 
-    def set_grid_profile(self, mesh: list[float]) -> int:
+    def set_grid_profile(self, mesh: npt.NDArray[np.double]) -> int:
         """
         Specify the grid point coordinates of the initial grid points.
 

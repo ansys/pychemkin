@@ -24,7 +24,7 @@
 .. _ref_hydrogen_flame_speed:
 
 ========================================================================
-Compute the laminar flame speed of diluted hydrogen at elevated pressure
+Compute the laminar flame speed of diluted hydrogen at low pressure
 ========================================================================
 
 The *freely propagating premixed flame* model can be utilized to obtain the
@@ -35,8 +35,8 @@ the gas mixture, a constant across the entire calculation domain because of the 
 conservation.
 
 This tutorial demonstrates the application of the "freely propagating" premixed flame model
-to calculate the laminar flame speed of an N\ :sub:`2` diluted hydrogen-air mixture at an
-elevated pressure. Since the transport processes are critical for flame calculations, the
+to calculate the laminar flame speed of an N\ :sub:`2` diluted hydrogen-air mixture at
+low pressure. Since the transport processes are critical for flame calculations, the
 *transport data* must be included in the mechanism data and pre-processed.
 """
 
@@ -86,14 +86,11 @@ interactive = True
 #   Use the ``preprocess_transportdata`` method if the transport data is embedded in the
 #   gas-phase mechanism file.
 #
-# .. note::
-#   Transport property is *required* to run the flame model simulations.
-#
 
 # set mechanism directory (the default chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
-# create a chemistry set based on the gasoline 14 components mechanism
+# create a chemistry set based on the C2 NOx mechanism
 MyGasMech = ck.Chemistry(label="C2 NOx")
 # set mechanism input files
 # inclusion of the full file path is recommended
@@ -132,8 +129,8 @@ fuel = ck.Mixture(MyGasMech)
 # set fuel composition: hydrogen diluted by nitrogen
 fuel.X = [("H2", 0.7), ("N2", 0.3)]
 # setting pressure and temperature is not required in this case
-fuel.pressure = 10.0 * ck.Patm
-fuel.temperature = 298.0  # inlet temperature
+fuel.pressure = 0.0125 * ck.Patm
+fuel.temperature = 300.0  # inlet temperature
 
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
@@ -162,8 +159,8 @@ if iError != 0:
 premixed.pressure = fuel.pressure
 # set inlet/unburnt gas temperature [K]
 premixed.temperature = fuel.temperature
-# set estimated value for the inlet mass flow rate [g/sec]
-premixed.mass_flowrate = 1.0
+# set estimated value of the flame speed [cm/sec]
+premixed.velocity = 65.0
 
 ##################################################
 # Instantiate the laminar speed calculator
@@ -194,19 +191,29 @@ flamespeedcalculator = FlameSpeed(premixed, label="premixed_hydrogen")
 # the solution quality parameters specified by the ``set_solution_quality`` method.
 #
 # The ``end_poistion`` is a required input as it defines the length of the calculation domain.
-# Typically, the length of the calculation domain is between 1 to 10 [cm].
+# Typically, the length of the calculation domain is between 1 to 10 [cm]. For low pressure
+# conditions, the flame thickness becomes wider and a larger calculation domain is required.
+#
+# .. note::
+#   There are three methods to set up the initial mesh for the premixed flame calculations:
+#
+#   1. ``use_TPRO_grids`` method (default) to use the grid points in the estimate temperature profile.
+#
+#   2. ``set_numb_grid_points`` method to create a uniform mesh of the given number of grid points.
+#
+#   3. ``set_grid_profile`` method to specify the initial grid point profile.
 #
 
-# set the initial mesh to 11 uniformly distributed grid points
-flamespeedcalculator.set_numb_grid_points(11)
+# set the initial mesh to 35 uniformly distributed grid points
+flamespeedcalculator.set_numb_grid_points(35)
 # set the maximum total number of grid points allowed in the calculation (optional)
 flamespeedcalculator.set_max_grid_points(150)
 # define the calculation domain [cm]
-flamespeedcalculator.end_position = 5.0
+flamespeedcalculator.end_position = 40.0
 # maximum number of grid points can be added during each grid adaption event (optional)
-flamespeedcalculator.set_max_adaptive_points(10)
+flamespeedcalculator.set_max_adaptive_points(20)
 # set the maximum values of the grdient and the curvature of the solution profiles (optional)
-flamespeedcalculator.set_solution_quality(gradient=0.1, curvature=0.5)
+flamespeedcalculator.set_solution_quality(gradient=0.1, curvature=0.2)
 
 #################################
 # Set transport property options
@@ -222,8 +229,8 @@ flamespeedcalculator.set_solution_quality(gradient=0.1, curvature=0.5)
 # (molecular weight < 5.0).
 #
 
-# use the multi-component formulism to evaluate the mixture transport properties
-flamespeedcalculator.use_multicomponent_transport()
+# use the mixture-averaged formulism to evaluate the mixture transport properties
+flamespeedcalculator.use_mixture_averaged_transport()
 # include the thermal diffusion effect (because the unburned mixture has hydrogen (molecular weight < 5.0))
 flamespeedcalculator.use_thermal_diffusion(mode=True)
 
@@ -245,6 +252,11 @@ flamespeedcalculator.set_species_boundary_types(mode="comp")
 # solver parameters have their own default values. Change the solver parameters when the premixed
 # flame simulation does not converge with the default settings.
 #
+# .. note::
+#   The ``FreelyPropagating`` flame speed calculator has an option to automatically generate
+#   an estimate temperature profile that might improve the convergence performance. Use the
+#   ``automatic_temperature_profile_estimate`` method to turn this option on.
+#
 
 # reset the tolerances in the steady-state solver (optional)
 flamespeedcalculator.steady_state_tolerances = (1.0e-9, 1.0e-6)
@@ -253,8 +265,8 @@ flamespeedcalculator.timestepping_tolerances = (1.0e-6, 1.0e-4)
 flamespeedcalculator.set_species_floor(-1.0e-4)
 # skip the fixed-temperature step (optional)
 flamespeedcalculator.skip_fix_T_solution(mode=True)
-# specify the pinned temperature value (optional)
-flamespeedcalculator.pinned_temperature(400.0)
+# reduce the Jacobian age during the pseudo time stepping phase
+flamespeedcalculator.set_pseudo_Jacobian_age(10)
 
 ####################################
 # Run the premixed flame calculation
@@ -266,13 +278,19 @@ flamespeedcalculator.pinned_temperature(400.0)
 # ``get_flame_speed`` method. You can create other property profiles by looping through the
 # solution ``Streams`` with proper ``Mixture`` methods.
 #
+# .. note::
+#   When the inlet stream condition is close to the flammability limit, the flame speed
+#   calculation might fail. Remember that the reaction mechanism (reaction rates, thermodynamic
+#   properties, and transport properties) and the reactor model are *models* that contain assumptions
+#   and uncertainties.
+#
 
 # set the start wall time
 start_time = time.time()
 
 status = flamespeedcalculator.run()
 if status != 0:
-    print(Color.RED + "failed to solve the reactor network!" + Color.END)
+    print(Color.RED + "failed to calculate the laminar flame speed!" + Color.END)
     exit()
 
 # compute the total runtime
@@ -323,10 +341,11 @@ print(f"number of solution points = {solutionpoints}")
 mesh = flamespeedcalculator.get_solution_variable_profile("distance")
 # get the temperature profile
 tempprofile = flamespeedcalculator.get_solution_variable_profile("temperature")
+# get HO2 mass fraction profile
+HO2profile = flamespeedcalculator.get_solution_variable_profile("HO2")
 
 # create arrays for mixture density, mixture viscosity, and mixture specific heat capacity
 denprofile = np.zeros_like(mesh, dtype=np.double)
-Cpprofile = np.zeros_like(mesh, dtype=np.double)
 viscprofile = np.zeros_like(mesh, dtype=np.double)
 # loop over all solution grid points
 for i in range(solutionpoints):
@@ -334,8 +353,6 @@ for i in range(solutionpoints):
     solutionstream = flamespeedcalculator.get_solution_stream_at_grid(grid_index=i)
     # get gas density [g/cm3]
     denprofile[i] = solutionstream.RHO
-    # get mixture specific heat capacity profile [erg/mole-K]
-    Cpprofile[i] = solutionstream.CPBL() / ck.ergs_per_joule * 1.0e-3
     # get mixture viscosity profile [g/cm-sec] or [Poise]
     viscprofile[i] = solutionstream.mixture_viscosity() * 1.0e2
 
@@ -350,19 +367,19 @@ for i in range(solutionpoints):
 #
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))
 plt.subplot(221)
-plt.plot(mesh, tempprofile, "b-")
+plt.plot(mesh, tempprofile, "r-")
 plt.ylabel("Temperature [K]")
 plt.subplot(222)
 plt.plot(mesh, denprofile, "b-")
 plt.ylabel("Mixture Density [g/cm3]")
 plt.subplot(223)
-plt.plot(mesh, viscprofile, "g-")
+plt.plot(mesh, HO2profile, "g-")
+plt.xlabel("Distance [cm]")
+plt.ylabel("HO2 Mass Fraction")
+plt.subplot(224)
+plt.plot(mesh, viscprofile, "m-")
 plt.xlabel("Distance [cm]")
 plt.ylabel("Mixture Viscosity [cP]")
-plt.subplot(224)
-plt.plot(mesh, Cpprofile, "m-")
-plt.xlabel("Distance [cm]")
-plt.ylabel("Mixture Cp [kJ/mole]")
 # plot results
 if interactive:
     plt.show()
