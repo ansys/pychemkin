@@ -165,19 +165,5 @@ jobs:
             cname: ${{ env.DOCUMENTATION_CNAME }}
             token: ${{ secrets.GITHUB_TOKEN }}
 
-  build-failure:
-    name: Teams notify on failure
-    if: failure() && (github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.ref_type == 'tag')
-    needs: tests
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Microsoft Teams Notification
-        uses: jdcargile/ms-teams-notification@v1.4
-        with:
-          github-token: ${{ github.token }} # this will use the runner's token.
-          ms-teams-webhook-uri: ${{ secrets.MS_TEAMS_WEBHOOK_URI }}
-          notification-summary: GitHub CI failure - ${{ github.event.pull_request.title }}
-          notification-color: dc3545
-          timezone: America/Los_Angeles
+
 
