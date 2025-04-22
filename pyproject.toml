@@ -21,40 +21,40 @@ classifiers = [
     "Natural Language :: English",
 ]
 dependencies = [
-    "numpy>=1.14.0,<2.0.0",
+    "numpy>=1.14.0,<3.0.0",
     "pyyaml>=6.0",
-    "matplotlib==3.6.0",
+    "matplotlib==3.9.4",
 ]
 
 
 [project.optional-dependencies]
 tests = [
-    "pytest==8.3.2",
-    "pytest-cov==4.1.0",
+    "pytest==8.3.5",
+    "pytest-cov==6.1.1",
     "dill==0.3.5.1",
-    "pytest-mock==3.10.0",
+    "pytest-mock==3.14.0",
     "urllib3==2.2.2",
     "requests==2.32.3",
-    "docker==6.1.0",
+    "docker==7.1.0",
     "usd-core>=24.11",
-    "pygltflib==1.16.2",
-    "matplotlib==3.6.0",
-    "numpy>=1.14.0,<2.0.0",
+    "pygltflib==1.16.3",
+    "matplotlib==3.9.4",
+    "numpy>=1.14.0,<3.0.0",
     "pyyaml>=6.0",
 ]
 
 doc = [
     "ansys-sphinx-theme==1.0.3",
     "sphinx-autoapi==3.3.1",
-    "matplotlib==3.6.0",
-    "jupytext==1.16.4",
-    "notebook==7.2.2",
+    "matplotlib==3.9.4",
+    "jupytext==1.16.7",
+    "notebook==7.3.3",
     "nbsphinx==0.9.5",
     "numpydoc==1.8.0",
-    "pandas==2.2.2",
+    "pandas==2.2.3",
     "pandoc==2.4.0",
-    "Pillow==9.0",
-    "PyGitHub==2.4.0",
+    "Pillow==11.2.1",
+    "PyGitHub==2.6.1",
     "pyvista==0.44.1",
     "requests==2.32.3",
     "sphinx-copybutton==0.5.2",
