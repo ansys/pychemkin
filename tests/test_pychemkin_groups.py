@@ -199,12 +199,36 @@ class TestClassPSR:
     # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s], ignition delay [msec], heat [cal]
     # species: mole/mass fraction
     # rate: reaction rate, rate of production, heat release rate
-    PSR_list = ["PSRgas", "jetstirredreactor", "multi-inletPSR"]
+    PSR_list = ["PSRgas", "jetstirredreactor", "multi-inletPSR", "PSRChain_declustered"]
 
     @pytest.mark.parametrize("test_file", PSR_list)
     def test_engine(self, get_working_dir, get_source_dir, get_result_dir, test_file):
         """
-        Run the selected pychemin PFR model test case.
+        Run the selected pychemin PSR model test case.
+        """
+        iErr = PyCKtools.run_test(
+            get_working_dir, get_source_dir, get_result_dir, test_file
+        )
+        assert 0 == iErr, "run failed."
+
+
+@pytest.mark.group("ERN", "all")
+class TestClassERN:
+    """
+    Tests to verify Chemkin equivalent reactor network (ERN) model.
+    """
+
+    # define tolerances for this group of tests
+    # {'type_of_variable': [absolute_tolerance, relative_tolerance], ... }
+    # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s], ignition delay [msec], heat [cal]
+    # species: mole/mass fraction
+    # rate: reaction rate, rate of production, heat release rate
+    PSR_list = ["PSRChain_network", "PSRnetwork"]
+
+    @pytest.mark.parametrize("test_file", PSR_list)
+    def test_engine(self, get_working_dir, get_source_dir, get_result_dir, test_file):
+        """
+        Run the selected pychemin ERN model test case.
         """
         iErr = PyCKtools.run_test(
             get_working_dir, get_source_dir, get_result_dir, test_file

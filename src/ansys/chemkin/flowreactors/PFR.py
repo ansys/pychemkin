@@ -40,6 +40,7 @@ from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
 from ansys.chemkin.reactormodel import Keyword
 import numpy as np
+import numpy.typing as npt
 
 
 class PlugFlowReactor(BatchReactors):
@@ -237,7 +238,9 @@ class PlugFlowReactor(BatchReactors):
             self.reactormixture._flowarea = area
             self.reactorflowarea = area
 
-    def set_diameter_profile(self, x, diam) -> int:
+    def set_diameter_profile(
+        self, x: npt.NDArray[np.double], diam: npt.NDArray[np.double]
+    ) -> int:
         """
         Specify plug-flow reactor diameter profile
 
@@ -302,7 +305,9 @@ class PlugFlowReactor(BatchReactors):
             self.reactormixture._haveflowarea = True
             self.reactormixture._flowarea = area
 
-    def set_flowarea_profile(self, x, area) -> int:
+    def set_flowarea_profile(
+        self, x: npt.NDArray[np.double], area: npt.NDArray[np.double]
+    ) -> int:
         """
         Specify plug-flow reactor cross-sectional flow area profile
 
@@ -912,7 +917,9 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
             # set the corresponding keyword
             self.setkeyword(key="AREAQ", value=value)
 
-    def set_heat_transfer_area_profile(self, x, area) -> int:
+    def set_heat_transfer_area_profile(
+        self, x: npt.NDArray[np.double], area: npt.NDArray[np.double]
+    ) -> int:
         """
         Specify reactor heat transfer area per reactor length profile
 
@@ -931,7 +938,9 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
         iErr = self.setprofile(key=keyword, x=x, y=area)
         return iErr
 
-    def set_heat_loss_profile(self, x, Qloss) -> int:
+    def set_heat_loss_profile(
+        self, x: npt.NDArray[np.double], Qloss: npt.NDArray[np.double]
+    ) -> int:
         """
         Specify reactor heat loss rate per length profile
 
@@ -950,7 +959,9 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
         iErr = self.setprofile(key=keyword, x=x, y=Qloss)
         return iErr
 
-    def set_velocity_profile(self, x, vel) -> int:
+    def set_velocity_profile(
+        self, x: npt.NDArray[np.double], vel: npt.NDArray[np.double]
+    ) -> int:
         """
         Specify axial velocity profile along the plug-flow reactor
 
@@ -1035,7 +1046,9 @@ class PlugFlowReactor_FixedTemperature(PlugFlowReactor):
             logger.critical(this_msg)
             exit()
 
-    def set_temperature_profile(self, x, temp) -> int:
+    def set_temperature_profile(
+        self, x: npt.NDArray[np.double], temp: npt.NDArray[np.double]
+    ) -> int:
         """
         Specify reactor temperature profile
 

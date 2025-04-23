@@ -764,7 +764,7 @@ class Engine(BatchReactors):
                 self.setkeyword(key=keyphrase, value=True)
 
     def set_wall_heat_transfer(
-        self, model: str, HTparameters: list, walltemperature: float
+        self, model: str, HTparameters: list[float], walltemperature: float
     ):
         """
         Set cylinder wall heat transfer model and parameters
@@ -839,7 +839,7 @@ class Engine(BatchReactors):
         self._wallheattransfer = True
 
     def set_gas_velocity_correlation(
-        self, gasvelparameters: list, IMEP: Union[float, None] = None
+        self, gasvelparameters: list[float], IMEP: Union[float, None] = None
     ):
         """
         Set the cylinder gas velocity correlation parameters
@@ -950,7 +950,7 @@ class Engine(BatchReactors):
         for line in species_lines:
             self.setkeyword(key=line, value=True)
 
-    def get_engine_heat_release_CAs(self):
+    def get_engine_heat_release_CAs(self) -> tuple[float, float, float]:
         """
         Get heat release crank angles from the engine solution
 
@@ -987,7 +987,7 @@ class Engine(BatchReactors):
 
         return HR10.value, HR50.value, HR90.value
 
-    def get_engine_solution_size(self, expected: int):
+    def get_engine_solution_size(self, expected: int) -> tuple[int, int]:
         """
         Get the number of zones and the number of solution points
 

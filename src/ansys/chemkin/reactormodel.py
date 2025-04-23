@@ -257,7 +257,7 @@ class Keyword:
             this_msg = Color.SPACE.join(msg)
             logger.info(this_msg)
 
-    def resetvalue(self, value):
+    def resetvalue(self, value: Union[int, float, bool, str]):
         """
         Reset the parameter value of an existing keyword
 
@@ -307,7 +307,7 @@ class Keyword:
         return type(self._value)
 
     @property
-    def value(self):
+    def value(self) -> Union[int, float, bool, str]:
         """
         Get parameter value of the keyword
 
@@ -348,7 +348,7 @@ class Keyword:
         else:
             return False
 
-    def getvalue_as_string(self):
+    def getvalue_as_string(self) -> tuple[int, str]:
         """
         Create the keyword input line for Chemkin applications
 
@@ -471,7 +471,7 @@ class Profile:
     Generic Chemkin profile keyword class
     """
 
-    def __init__(self, key: str, x, y):
+    def __init__(self, key: str, x: npt.NDArray[np.double], y: npt.NDArray[np.double]):
         """
         Create a profile object
 
@@ -481,7 +481,7 @@ class Profile:
                 profile keyword
             x: 1-D double array
                 position of the profile data points
-            y:1-D double array
+            y: 1-D double array
                 variable value of the profile data
         """
         # initialization
@@ -557,7 +557,7 @@ class Profile:
         return self._status
 
     @property
-    def pos(self):
+    def pos(self) -> npt.NDArray[np.double]:
         """
         Get position values of profiles data
 
@@ -569,7 +569,7 @@ class Profile:
         return self._pos
 
     @property
-    def value(self):
+    def value(self) -> npt.NDArray[np.double]:
         """
         Get variable values of profile data
 
@@ -601,7 +601,9 @@ class Profile:
         for i in range(self._size):
             print(f"{self._pos[i]:f}         {self._val[i]}")
 
-    def resetprofile(self, size: int, x, y):
+    def resetprofile(
+        self, size: int, x: npt.NDArray[np.double], y: npt.NDArray[np.double]
+    ):
         """
         Reset the profile data
 
@@ -629,7 +631,7 @@ class Profile:
         self._pos[:] = x[:]
         self._val[:] = y[:]
 
-    def getprofile_as_string_list(self):
+    def getprofile_as_string_list(self) -> tuple[int, list[str]]:
         """
         Create the keyword input lines as a list for Chemkin applications
 
@@ -832,7 +834,7 @@ class ReactorModel:
             this_msg = Color.SPACE.join(msg)
             logger.info(this_msg)
 
-    def __findkeywordslot(self, key: str):
+    def __findkeywordslot(self, key: str) -> tuple[int, bool]:
         """
         Find the proper index in the global keyword list to add a new keyword or to modify the keyword parameter
 
@@ -912,6 +914,43 @@ class ReactorModel:
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
                 exit()
+
+    def removekeyword(self, key: str):
+        """
+        Remove an existing Chemkin keyword and its parameter
+
+        Parameters
+        ----------
+            key: string
+                Chemkin keyword phrase
+        """
+        # find the keyword
+        i, newkey = self.__findkeywordslot(key.upper())
+        if newkey:
+            msg = [Color.YELLOW, "keyword", key, "not found.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.warning(this_msg)
+            exit()
+        else:
+            # remove keyword from the keyword index and the keyword list
+            if self._keyword_list[i].keyphrase != key.upper():
+                msg = [
+                    Color.YELLOW,
+                    "keyword index error.\n",
+                    Color.SPACEx6,
+                    "expected keyword",
+                    key.upper(),
+                    "   actual keyword",
+                    self._keyword_list[i].keyphrase,
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.warning(this_msg)
+                exit()
+            # remove key from the keyword list and index
+            del self._keyword_list[i]
+            self._keyword_index.remove(key.upper())
+            self._numbkeywords -= 1
 
     def showkeywordinputlines(self):
         """
@@ -1043,7 +1082,9 @@ class ReactorModel:
                 # new keyword
                 return self._numbprofiles, True
 
-    def setprofile(self, key: str, x, y) -> int:
+    def setprofile(
+        self, key: str, x: npt.NDArray[np.double], y: npt.NDArray[np.double]
+    ) -> int:
         """
         Set a Chemkin profile and its parameter
 
@@ -1130,7 +1171,7 @@ class ReactorModel:
         # create the keyword lines from the keyword objects in the profile list
         for p in self._profiles_list:
             n, lines = p.getprofile_as_string_list()
-            keyword_lines.append(lines)
+            keyword_lines.extend(lines)
             numblines += n
             numbprofiles += 1
             # print the entire keyword input block per profile
@@ -1150,8 +1191,8 @@ class ReactorModel:
         self,
         solvertype: int,
         threshold: float = 1.0e-12,
-        molefrac=None,
-    ):
+        molefrac: npt.NDArray[np.double] = None,
+    ) -> tuple[int, list[str]]:
         """
         Create keyword input lines for initial/estimated species mole fraction inside the batch reactor
 
@@ -1193,9 +1234,9 @@ class ReactorModel:
         self,
         key: str = "XEST",
         threshold: float = 1.0e-12,
-        molefrac=None,
+        molefrac: npt.NDArray[np.double] = None,
         addon: str = "",
-    ):
+    ) -> tuple[int, list[str]]:
         """
         Create keyword input lines for initial/estimated species mole fraction inside the batch reactor
 
@@ -1335,7 +1376,7 @@ class ReactorModel:
         return self.reactormixture.Y
 
     @massfraction.setter
-    def massfraction(self, recipe):
+    def massfraction(self, recipe: list[tuple[str, float]]):
         """
         (Re)set the initial/guessed/estimate gas species mass fractions inside the reactor
 
@@ -1347,7 +1388,7 @@ class ReactorModel:
         self.reactormixture.Y(recipe)
 
     @property
-    def molefraction(self):
+    def molefraction(self) -> npt.NDArray[np.double]:
         """
         Get the initial/guessed/estimate gas species mole fractions inside the reactor
 
@@ -1359,7 +1400,7 @@ class ReactorModel:
         return self.reactormixture.X
 
     @molefraction.setter
-    def molefraction(self, recipe):
+    def molefraction(self, recipe: list[tuple[str, float]]):
         """
         (Re)set the initial/guessed/estimate gas species mole fractions inside the reactor
 
@@ -1371,7 +1412,7 @@ class ReactorModel:
         self.reactormixture.X(recipe)
 
     @property
-    def concentration(self):
+    def concentration(self) -> npt.NDArray[np.double]:
         """
         Get the initial/guessed/estimate gas species molar concentrations inside the reactor
 
@@ -1682,14 +1723,14 @@ class ReactorModel:
         """
         Set the simulation run status
 
-        Returns
-        -------
+        Parameters
+        ----------
             run_status: integer
                 error code
         """
         self.runstatus = code
 
-    def getrunstatus(self, mode: str = "silent"):
+    def getrunstatus(self, mode: str = "silent") -> int:
         """
         Get the reactor model simuation status
 
@@ -1827,7 +1868,7 @@ class ReactorModel:
             status = True
         return status
 
-    def get_solution_size(self):
+    def get_solution_size(self) -> tuple[int, int]:
         """
         Get the number of reactors and the number of solution points
 
@@ -1851,7 +1892,7 @@ class ReactorModel:
         """
         return self._numbsolutionpoints
 
-    def parsespeciessolutiondata(self, frac):
+    def parsespeciessolutiondata(self, frac: npt.NDArray[np.double]):
         """
         Parse the species fraction solution data that are stored in a 2D array (number_species x numb_solution)
 

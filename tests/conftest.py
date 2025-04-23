@@ -20,6 +20,7 @@ def pytest_addoption(parser):
             "engine",
             "PFR",
             "PSR",
+            "ERN",
             "",
         ),
         default="all",
@@ -85,6 +86,7 @@ def pytest_collection_modifyitems(items):
         "TestClassEngine",
         "TestClassPFR",
         "TestClassPSR",
+        "TestClassERN",
         "TestCompareResults",
     ]
     class_mapping = {item: item.cls.__name__ for item in items}

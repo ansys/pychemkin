@@ -42,6 +42,7 @@ from ansys.chemkin.mixture import equilibrium
 from ansys.chemkin.reactormodel import Keyword
 from ansys.chemkin.stirreactors.openreactor import openreactor
 import numpy as np
+import numpy.typing as npt
 
 
 class perfectlystirredreactor(openreactor):
@@ -390,7 +391,11 @@ class perfectlystirredreactor(openreactor):
             self.reactormixture.temperature = temp
             self.temperature = temp
 
-    def reset_estimate_composition(self, fraction: list[float], mode: str = "mole"):
+    def reset_estimate_composition(
+        self,
+        fraction: Union[npt.NDArray[np.double], list[tuple[str, float]]],
+        mode: str = "mole",
+    ):
         """
         Reset the estimated reactor gas composition.
 
@@ -606,10 +611,6 @@ class perfectlystirredreactor(openreactor):
         """
         Run the reactor model after the keywords are processed
 
-        Parameters
-        ----------
-            kwargs: command arguments
-
         Returns
         -------
             Error code: integer
@@ -621,10 +622,6 @@ class perfectlystirredreactor(openreactor):
     def run(self) -> int:
         """
         Generic Chemkin run reactor model method
-
-        Parameters
-        ----------
-            kwargs: command arguments
 
         Returns
         -------

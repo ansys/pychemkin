@@ -233,9 +233,9 @@ class PyCKtools:
                 if r_diff > 0.0:
                     bad_ID.append(i)
                     if np.isclose(b_value, 0.0, atol=1.0e-9):
-                        diff.append(a_diff)
+                        diff.append(abs(a_diff))
                     else:
-                        diff.append(a_diff / b_value)
+                        diff.append(abs(a_diff / b_value))
         # check differences
         iErr = len(bad_ID)
         return iErr, bad_ID, diff

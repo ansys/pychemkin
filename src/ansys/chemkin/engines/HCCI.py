@@ -44,8 +44,6 @@ from ansys.chemkin.logger import logger
 from ansys.chemkin.reactormodel import Keyword
 import numpy as np
 
-# import numpy.typing as npt
-
 
 class HCCIengine(Engine):
     """
@@ -376,7 +374,7 @@ class HCCIengine(Engine):
             # x must be a double array of size = number of gas species
             self.zonemolefrac.append(x)
 
-    def define_fuel_composition(self, recipe: list[tuple]):
+    def define_fuel_composition(self, recipe: list[tuple[str, float]]):
         """
         set the fuel composition for setting up zonal gas composition by zonal equivalence ratio
 
@@ -395,7 +393,7 @@ class HCCIengine(Engine):
         self.fuel_composition = []
         self.fuel_composition = copy.deepcopy(recipe)
 
-    def define_oxid_composition(self, recipe: list[tuple]):
+    def define_oxid_composition(self, recipe: list[tuple[str, float]]):
         """
         set the oxidizer composition for setting up zonal gas composition by zonal equivalence ratio
 

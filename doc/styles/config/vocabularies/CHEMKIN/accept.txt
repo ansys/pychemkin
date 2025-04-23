@@ -20,6 +20,7 @@ CA
 CA10
 CA50
 CA90
+centerline
 CH4
 chem
 CHEMKIN
@@ -55,6 +56,9 @@ IC
 Incylinder
 incylinder
 linenos
+LINUX
+Linux
+linux
 IVC
 matplotlib
 mech_dir

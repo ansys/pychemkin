@@ -1,0 +1,10 @@
+{
+"tolerance-var": [1.0E-6, 1.0E-4],
+"tolerance-frac": [1.0E-6, 1.0E-6],
+"tolerance-ROP": [1.0E-6, 1.0E-4],
+"state-temperature": [1719.5286675552693],
+"state-mass_flow_rate": [110.39500000000002],
+"species-mole_fraction_CH4": [3.2960196448895963e-06],
+"species-mole_fraction_CO": [0.00021184523507509828],
+"species-mole_fraction_NO": [0.00020524261724825708],
+}

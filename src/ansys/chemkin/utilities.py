@@ -23,14 +23,18 @@
 """
 pychemkin utilities
 """
+from typing import Union
 
 from ansys.chemkin.chemistry import Chemistry
 from ansys.chemkin.color import Color
 from ansys.chemkin.logger import logger
 import numpy as np
+import numpy.typing as npt
 
 
-def where_element_in_array_1D(arr, target):
+def where_element_in_array_1D(
+    arr: Union[npt.NDArray[np.double], npt.NDArray[np.int32]], target: Union[int, float]
+) -> tuple[int, npt.NDArray[np.int32]]:
     """
     Find the number of occurrence and the element index in the 1D arr array that matches the target value.
     Using numpy.argwhere might be more efficient. However, the numpy method returns a list of lists of occurrence indices
@@ -102,7 +106,9 @@ def bisect(ileft: int, iright: int, x: float, xarray) -> int:
     return itarget
 
 
-def find_interpolate_parameters(x: float, xarray):
+def find_interpolate_parameters(
+    x: float, xarray: npt.NDArray[np.double]
+) -> tuple[int, float]:
     """
     Find the index ileft that
        xarray[ileft] <= x <= xarray[iright] where iright = ileft + 1
@@ -155,7 +161,9 @@ def find_interpolate_parameters(x: float, xarray):
     return itarget, ratio
 
 
-def interpolate_array(x: float, x_array, y_array) -> float:
+def interpolate_array(
+    x: float, x_array: npt.NDArray[np.double], y_array: npt.NDArray[np.double]
+) -> float:
     """
     Find the value in the y_array from the interpolation parameters ileft and ratio
         y = (1-ratio)* y_array[ileft] + ratio * y_array[ileft+1]
@@ -183,7 +191,9 @@ def interpolate_array(x: float, x_array, y_array) -> float:
     return y
 
 
-def create_mixture_recipe_from_fractions(chemistry_set, frac):
+def create_mixture_recipe_from_fractions(
+    chemistry_set: Chemistry, frac: npt.NDArray[np.double]
+) -> tuple[int, list[tuple[str, float]]]:
     """
     Build a PyChemkin mixture recipe/formula from a species fraction array (i.e., mixture mole/mass composition).
     This mixture recipe can then be used to create the corresponding Mixture object.
@@ -240,7 +250,9 @@ def create_mixture_recipe_from_fractions(chemistry_set, frac):
 
 # stoichiometric
 #
-def _nonzero_element_in_array_1D(arr, threshold: float = 0.0):
+def _nonzero_element_in_array_1D(
+    arr: Union[npt.NDArray[np.int32], npt.NDArray[np.double]], threshold: float = 0.0
+) -> tuple[int, npt.NDArray[np.int32]]:
     """
     Find the number of occurrence and the indices of the non-zero (> 0) element in the array arr.
     Using numpy.nonzero might be more efficient. However, the numpy method returns a list of lists of occurrence indices
@@ -275,7 +287,12 @@ def _nonzero_element_in_array_1D(arr, threshold: float = 0.0):
     return nonzero_count, nonzero_index
 
 
-def calculate_stoichiometrics(chemistryset, fuel_molefrac, oxid_molefrac, prod_index):
+def calculate_stoichiometrics(
+    chemistryset: Chemistry,
+    fuel_molefrac: npt.NDArray[np.double],
+    oxid_molefrac: npt.NDArray[np.double],
+    prod_index: npt.NDArray[np.int32],
+) -> tuple[float, npt.NDArray[np.double]]:
     """
     calculate the stoichiometric coefficients of the complete combustion reaction of the given fuel and oxidizer mixtures.
     Consider the complete combustion of the fuel + oxidizer mixture
