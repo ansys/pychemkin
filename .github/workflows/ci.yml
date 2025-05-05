@@ -10,7 +10,8 @@ on:
       - main
 
 env:
-  DOCUMENTATION_CNAME: 'chemkin.docs.pyansys.com'
+  # DOCUMENTATION_CNAME: 'chemkin.docs.pyansys.com'
+  DOCUMENTATION_CNAME: 'musical-waddle-4kyl82o.pages.github.io/' # remove after release and uncomment previous
   MAIN_PYTHON_VERSION: '3.10'
   PACKAGE_NAME: 'ansys-chemkin'
   PACKAGE_NAMESPACE: 'ansys.chemkin'
@@ -119,13 +120,15 @@ jobs:
     # Deploy development only when merging to main
     if: github.ref == 'refs/heads/main'
     needs: build-library
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: "Deploy the latest documentation"
         uses: ansys/actions/doc-deploy-dev@v9
         with:
             cname: ${{ env.DOCUMENTATION_CNAME }}
             token: ${{ secrets.GITHUB_TOKEN }}
+            bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
+            bot-email: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
 
   release:
     name: Release
