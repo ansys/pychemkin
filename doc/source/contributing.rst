@@ -1,7 +1,7 @@
 Contribute
 ==========
 
-Thank you for your interest in contributing to PyChemkin. Contributions for making the project
+Thank you for your interest in contributing to PyChemkin. Contributions for making the project 
 better can include fixing bugs, adding new features, and improving the documentation.
 
 Overall guidance on contributing to a PyAnsys library appears in the
@@ -22,9 +22,9 @@ The following contribution information is specific to PyChemkin.
         python -m pip install --upgrade pip
         pip install -e .
 
-- Adhere to code style.
-    PyChemkin follows the PEP 8 standard as indicated in `PEP 8`_` in the *PyAnsys developer’s guide*
-    and implements style checking using ``pre-commit``.
+- Follow the code style.
+    PyChemkin follows the PEP 8 standard as described in `PEP 8`_ in the *PyAnsys developer’s guide*
+    and uses ``pre-commit`` for style checking.
 
     To ensure your code meets minimum code styling standards, run these commands:
 
@@ -44,7 +44,7 @@ The following contribution information is specific to PyChemkin.
 
     ::
 
-        pip install -e .tests
+        pip install - .tests
 
     To run the tests, navigate to the root directory of the repository and run this command:
 
@@ -74,7 +74,7 @@ The following contribution information is specific to PyChemkin.
 
     - On Windows:
 
-        ::
+      ::
 
           ./make.bat html
 
