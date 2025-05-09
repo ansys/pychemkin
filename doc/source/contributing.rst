@@ -1,7 +1,7 @@
 Contribute
 ==========
 
-Thank you for your interest in contributing to PyChemkin. Contributions for making the project 
+Thank you for your interest in contributing to PyChemkin. Contributions for making the project
 better can include fixing bugs, adding new features, and improving the documentation.
 
 Overall guidance on contributing to a PyAnsys library appears in the
