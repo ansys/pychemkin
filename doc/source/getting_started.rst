@@ -8,7 +8,7 @@ Install prerequisites
 - `Python`_ 3.9 or later
 - `NumPy`_ 1.14.0 or later
 - `PyYAML`_ 6.0 or later
-- `Matplotlib`_ to run examples and tutorials
+- `Matplotlib`_ to run examples
 
 .. _Ansys Chemkin: https://www.ansys.com/products/fluids/ansys-chemkin-pro
 .. _Python: https://www.python.org/downloads/windows/
@@ -47,13 +47,13 @@ Install PyChemkin
 
       Chemkin version number = xxx
 
-   If Python does not display anything, PyChemkin is likely not installed locally:
+   PyChemkin is likely not installed locally if Python displays nothing:
 
    ::
 
       >>>
 
-   If Python displays the following statement, update the local Ansys Chemkin installation to at least 2025 R2:
+   If Python displays the following statement, update the local Ansys Chemkin installation to at 2025 R2 or later:
 
    ::
 

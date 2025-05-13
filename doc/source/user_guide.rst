@@ -12,7 +12,7 @@ In addition, PyChemkin introduces a hierarchy of four key objects to enhance use
 - **Stream:** A mixture object with an additional property of mass flow rate.
 - **Reactor:** An instance of a Chemkin reactor model that transforms the initial mixture into another mixture.
 
-The following figure shows PyChemkin's mixture-centric concept. It illustrates the basic types of operations applicable to the mixture object. The mixture inherits all properties of a chemistry set. It is then combined or mixed with a constraint, equilibrium (with constraints), and process (by a reactor model).
+The following figure shows PyChemkin's mixture-centric concept. It illustrates the basic types of operations applicable to the mixture object, which inherits all properties of a chemistry set. The mixture s then combined or mixed with a constraint, equilibrium (with constraints), and process (by a reactor model).
 
 .. image:: _static/mixture_concept.png
    :width: 600
@@ -23,25 +23,25 @@ Workflow for a basic reactor model
 
 The workflow for setting up and running a basic reactor model in PyChemkin is the same as in the Ansys Chemkin GUI:
 
-1. Create a chemistry set, which includes the mechanism, thermodynamic data, and/or transport data.
-2. Preprocess the chemistry set.
-3. Create a mixture or a stream based on the chemistry set.
-4. Specify the mixture or stream properties, such as temperature, pressure, volume (optional), and species composition.
-5. Instantiate the reactor using the created mixture.
-6. Set up the simulation:
+#. Create a chemistry set, which includes the mechanism, thermodynamic data, and/or transport data.
+#. Preprocess the chemistry set.
+#. Create a mixture or a stream based on the chemistry set.
+#. Specify the mixture or stream properties, such as temperature, pressure, volume (optional), and species composition.
+#. Instantiate the reactor using the created mixture.
+#. Set up the simulation:
 
    - Specify reactor properties not provided by the initial mixture or stream, such as heat loss rate to the surroundings and end time.
    - Specify solver parameters, such as tolerances and solver timestep size.
    - Specify saving controls, such as the solution saving interval and adaptive solution saving.
 
-7. Run the simulation.
-8. Process the solution.
-9. Customize the output if necessary and generate plots.
+#. Run the simulation.
+#. Process the solution.
+#. Customize the output if necessary and generate plots.
 
-Code example
-------------
+Code sample
+-----------
 
-This sample code computes the density of a mixture named ``air``:
+This code sample computes the density of a mixture named ``air``:
 
 .. code-block:: python
    :linenos:
@@ -84,7 +84,7 @@ This sample code computes the density of a mixture named ``air``:
       # get 'air' mixture density [g/cm3]
       print(f"Mixture density = {air.RHO} [g/cm3].")
 
-For more examples, see :ref: `examples`.
+For more examples, see :ref:`examples`.
 
 Support
 -------
@@ -92,7 +92,7 @@ Support
 Pythonic methods
 ~~~~~~~~~~~~~~~~~
 
-Use these methods to get help within PyChemkin:
+Use these Pythonic methods to get help within PyChemkin:
 
 - ``ansys.chemkin.help()``: Get general information about a topic, such as ``ignition``.
 - ``ansys.chemkin.keywordhints()``: Get the description and syntax of a reactor keyword.
@@ -101,7 +101,7 @@ Use these methods to get help within PyChemkin:
 Ansys training and documentation
 --------------------------------
 
-Visit these Ansys resources for product training and documentation:
+For product training and documentation, see these Ansys resources:
 
 - `Ansys Learning Hub`_
 - `Chemkin product documentation`_
