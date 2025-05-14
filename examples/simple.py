@@ -27,23 +27,22 @@
 Set up a PyChemkin project
 ==========================
 
-This example shows how to set up a PyChemkin project and start to use PyChemkin features
-to build your simulation project. You begin by importing the PyChemkin package, which is
-named ``ansys.chemkin``. You can also optionally import the PyChemkin logger package, which
-is named ``ansys.chemkin.logger``.
+This example shows how to set up a PyChemkin project and start to use PyChemkin features.
+You begin by importing the PyChemkin package, which is named ``ansys.chemkin``. You can
+also optionally import the PyChemkin logger package, which is named ``ansys.chemkin.logger``.
 
-Next, you must use the ``Chemistry()`` method to instantiate and preprocess a chemistry set.
+Next, you use the ``Chemistry()`` method to instantiate and preprocess a chemistry set.
 This requires specifying the file names (with full file paths) of the mechanism file, the
 thermodynamic data file, and the optional transport data file.
 
-Once you have instantiated the chemistry set instance, you use the ``preprocess()`` method to
-preprocess the mechanism data. Once these steps are finished successfully, you can start to
-use PyChemkin features to build your simulation project.
+Once a chemistry set instance is instantiated, you use the ``preprocess()`` method to
+preprocess the mechanism data. You can then start to use PyChemkin features to build
+your simulation.
 """
 
 ###############################################
-# Import PyChemkin package and start the logger
-# =============================================
+# Import PyChemkin packages
+# =========================
 # Import the ``ansys.chemkin`` package to start using PyChemkin in the project.
 # Importing the ``ansys.chemkin.logger`` package is optional.
 
@@ -61,9 +60,9 @@ from ansys.chemkin.logger import logger
 #
 # Assign the files to the corresponding chemistry set arguments:
 #
-# - ``chem`` : mechanism input file
-# - ``therm``: thermodynamic data file
-# - ``tran`` : transport data file (optional)
+# - ``chem``: Mechanism input file
+# - ``therm``: Thermodynamic data file
+# - ``tran``: Transport data file (optional)
 #
 #
 # .. note::
@@ -94,9 +93,8 @@ GasMech = ansys.chemkin.Chemistry(
 status = GasMech.preprocess()
 
 #################################
-# Verify the preprocessing status
+# Check the preprocessing status
 # ===============================
-# Check the preprocess status.
 
 if status != 0:
     # failed
@@ -108,7 +106,7 @@ if status != 0:
 #################################
 # Start to use PyChemkin features
 # ===============================
-# You can start to use PyChemkin features to build your simulation project.
+# Start to use PyChemkin features to build your simulation.
 # For example, using the ``Mixture()`` method, you can create an ``air`` mixture based
 # on the ``GasMech`` chemistry set.
 
@@ -135,11 +133,11 @@ air.X = [("O2", 0.21), ("N2", 0.79)]
 #
 
 # print pressure and temperature of the `air` mixture
-print(f"pressure    = {air.pressure/ansys.chemkin.Patm} [atm]")
-print(f"temperature = {air.temperature} [K]")
+print(f"Pressure    = {air.pressure/ansys.chemkin.Patm} [atm]")
+print(f"Temperature = {air.temperature} [K]")
 # print the 'air' composition in mass fractions
 air.list_composition(mode="mass")
 # get 'air' mixture density [g/cm3]
-print(f"the mixture density   = {air.RHO} [g/cm3]")
+print(f"Mixture density   = {air.RHO} [g/cm3]")
 # get 'air' mixture viscosity [g/cm-sec] or [poise]
-print(f"the mixture viscosity = {air.mixture_viscosity()*100.0} [cP]")
+print(f"Mixture viscosity = {air.mixture_viscosity()*100.0} [cP]")

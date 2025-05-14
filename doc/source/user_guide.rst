@@ -12,7 +12,7 @@ In addition, PyChemkin introduces a hierarchy of four key objects to enhance use
 - **Stream:** A mixture object with an additional property of mass flow rate.
 - **Reactor:** An instance of a Chemkin reactor model that transforms the initial mixture into another mixture.
 
-The following figure shows PyChemkin's mixture-centric concept. It illustrates the basic types of operations applicable to the mixture object, which inherits all properties of a chemistry set. The mixture s then combined or mixed with a constraint, equilibrium (with constraints), and process (by a reactor model).
+The following figure shows PyChemkin's mixture-centric concept. It illustrates the basic types of operations applicable to the mixture object, which inherits all properties of a chemistry set. The mixture is then combined or mixed with a constraint, equilibrium (with constraints), and a process (by a reactor model).
 
 .. image:: _static/mixture_concept.png
    :width: 600
@@ -38,10 +38,10 @@ The workflow for setting up and running a basic reactor model in PyChemkin is th
 #. Process the solution.
 #. Customize the output if necessary and generate plots.
 
-Code sample
------------
+Code example
+------------
 
-This code sample computes the density of a mixture named ``air``:
+This code example computes the density of a mixture named ``air``:
 
 .. code-block:: python
    :linenos:
@@ -67,7 +67,7 @@ This code sample computes the density of a mixture named ``air``:
           print(f'Preprocess: error encountered...code = {status:d}')
           print(f'See the summary file {GasMech.summaryfile} for details.')
           exit()
-      # Create a mixture named 'air' based on the 'GasMech' chemistry set
+      # create a mixture named 'air' based on the 'GasMech' chemistry set
       air = chemkin.Mixture(GasMech)
       # set 'air' condition
       # mixture pressure in [dynes/cm2]
@@ -92,7 +92,7 @@ Support
 Pythonic methods
 ~~~~~~~~~~~~~~~~~
 
-Use these Pythonic methods to get help within PyChemkin:
+To get help within PyChemkin, use these Pythonic methods:
 
 - ``ansys.chemkin.help()``: Get general information about a topic, such as ``ignition``.
 - ``ansys.chemkin.keywordhints()``: Get the description and syntax of a reactor keyword.

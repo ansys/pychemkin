@@ -47,13 +47,13 @@ Install PyChemkin
 
       Chemkin version number = xxx
 
-   PyChemkin is likely not installed locally if Python displays nothing:
+   PyChemkin is probably not installed locally if Python displays nothing:
 
    ::
 
       >>>
 
-   If Python displays the following statement, update the local Ansys Chemkin installation to at 2025 R2 or later:
+   If Python displays the following statement, update the local Ansys Chemkin installation to 2025 R2 or later:
 
    ::
 

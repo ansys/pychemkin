@@ -49,7 +49,7 @@ if iError != 0:
     print(f"see the summary file {My1stMech.summaryfile} for details")
     exit()
 else:
-    print(Color.GREEN + "PreProcess success!!", end=Color.END)
+    print(Color.GREEN + "Preprocessing succeeded.", end=Color.END)
     print("mechanism information:")
     print(f"number of elements = {My1stMech.MM:d}")
     print(f"number of gas species = {My1stMech.KK:d}")
@@ -89,7 +89,7 @@ if iError != 0:
     print(f"see the summary file {My2ndMech.summaryfile} for details")
     exit()
 else:
-    print(Color.GREEN + "PreProcess success!!", end=Color.END)
+    print(Color.GREEN + "Preprocessing succeeded.", end=Color.END)
     print("mechanism information:")
     print(f"number of elements = {My2ndMech.MM:d}")
     print(f"number of gas species = {My2ndMech.KK:d}")
