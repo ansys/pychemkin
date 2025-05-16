@@ -87,7 +87,7 @@ interactive = True
 #   gas-phase mechanism file.
 #
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # create a chemistry set based on the C2 NOx mechanism

@@ -83,7 +83,7 @@ interactive = True
 # must use the ``preprocess_transportdata`` method to tell the preprocessor to also include the transport data,
 # the preprocessor does **NOT** include the transport data by default.
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # create a chemistry set based on the C2 NOx mechanism

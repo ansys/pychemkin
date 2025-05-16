@@ -30,7 +30,7 @@ PyChemkin provides Pythonic access to the Ansys Chemkin API for CFD models. It f
         :link: user_guide
         :link-type: doc
 
-        Understand key concepts for using PyChemkin and where to access Chemkin manuals
+        Understand key concepts for using PyChemkin and learn where you can access Chemkin manuals
         for information on the parameters, options, and theory related to the properties
         and reactor models.
 

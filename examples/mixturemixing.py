@@ -65,7 +65,7 @@ ck.set_verbose(True)
 # Load the GRI 3.0 mechanism and its associated data files, which come with the standard Ansys Chemkin
 # installation in the ``/reaction/data`` subdirectory.
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # create a chemistry set based on GRI 3.0

@@ -69,7 +69,7 @@ interactive = True
 # includes information about the *Soave* cubic Equation of State (EOS) is suitable for this endeavor.
 # Therefore, ``MyMech`` is created from this gas phase mechanism.
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # create a chemistry set based on C2_NOx using an alternative method

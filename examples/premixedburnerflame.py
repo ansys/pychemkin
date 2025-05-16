@@ -88,7 +88,7 @@ interactive = True
 #   *convection and diffusion*, are important to sustain the flame structure.
 #
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # inclusion of the full file path is recommended

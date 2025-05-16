@@ -66,7 +66,7 @@ ck.set_verbose(True)
 # The mechanism and its associated data files come with the standard Ansys Chemkin
 # installation under the subdirectory *"/reaction/data"*.
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 
@@ -151,7 +151,7 @@ print("=" * 50)
 # no need to specify the therm and the tran data files. Note that, an additional step is
 # required to instruct the preprocessor to include the transport data.
 
-# set the 2nd mechanism directory (the default chemkin mechanism data directory)
+# set the 2nd mechanism directory (the default Chemkin mechanism data directory)
 mechanism_dir = data_dir
 
 # create a chemistry set based on C2_NOx using an alternative method

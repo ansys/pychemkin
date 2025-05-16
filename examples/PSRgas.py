@@ -94,7 +94,7 @@ interactive = True
 # like the rest of the MFL mechanisms, it is located in the **ModelFuelLibrary** under the
 # *"/reaction/data"* directory of the standard Ansys Chemkin installation.
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(
     ck.ansys_dir, "reaction", "data", "ModelFuelLibrary", "Skeletal"
 )

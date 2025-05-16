@@ -29,7 +29,7 @@ import numpy as np  # number crunching
 # check working directory
 current_dir = os.getcwd()
 logger.debug("working directory: " + current_dir)
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 logger.debug("data directory: " + data_dir)
 # set pressure & temperature condition

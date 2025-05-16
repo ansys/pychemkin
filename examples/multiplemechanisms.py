@@ -51,14 +51,14 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(True)
 
 
-###############################################
-# Create an instance of the first chemistry set
-# =============================================
+################################
+# Create the first chemistry set
+# ==============================
 # The first mechanism loaded is the GRI 3.0 mechanism for methane combustion.
 # The mechanism and its associated data files come with the standard Ansys Chemkin
 # installation in the ``/reaction/data`` directory.
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 
@@ -71,9 +71,9 @@ tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
 My1stMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="GRI 3.0")
 
 
-######################################
-# Preprocess the GRI 3.0 chemistry set
-# ====================================
+####################################
+# Preprocess the first chemistry set
+# ==================================
 
 # preprocess the mechanism files
 iError = My1stMech.preprocess()
@@ -125,9 +125,9 @@ equil_mix1_HP = ck.equilibrium(mymixture1, opt=5)
 print(f"Equilibrium temperature of mymixture1: {equil_mix1_HP.temperature} [K]")
 
 
-##############################################
-# Create an instance of a second chemistry set
-# ============================================
+#################################
+# Create the second chemistry set
+# ===============================
 # The second mechanism is the ``C2 NOx`` mechanism from the ``/reaction/data``
 # directory. A different process for setting up a chemistry set is employed here.
 # The chemistry set instance is created before the mechanism files are specified.
@@ -138,7 +138,7 @@ print(f"Equilibrium temperature of mymixture1: {equil_mix1_HP.temperature} [K]")
 # the mechanism file, that is, ``chemfile``. If your simulation requires the transport properties, you
 # must use the ``preprocess_transportdata()`` method to tell the preprocessor to also include the transport data.
 
-# set the second mechanism directory (the default chemkin mechanism data directory)
+# set the second mechanism directory (the default Chemkin mechanism data directory)
 mechanism_dir = data_dir
 # create a chemistry set based on C2_NOx using an alternative method
 My2ndMech = ck.Chemistry(label="C2 NOx")
@@ -153,14 +153,14 @@ My2ndMech.preprocess_transportdata()
 
 
 #####################################
-# Preprocess the C2 NOx chemistry set
+# Preprocess the second chemistry set
 # ===================================
-# The 'C2 NOx' mechanism also includes information about the *Soave* cubic
+# The `'C2 NOx`` mechanism also includes information about the *Soave* cubic
 # Equation of State (EOS) for the real-gas applications. The PyChemkin preprocessor
 # indicates the availability of the real-gas model in the chemistry set processed.
-# For example, during preprocessing, ``real-gas cubic EOS 'Soave' is available`` is printed.
+# For example, during preprocessing, this is printed: ``real-gas cubic EOS 'Soave' is available``.
 # As soon as the second chemistry set is preprocessed successfully, it becomes the **active**
-# chemistry set of the project. The first Chemistry Set, ``My1stMech``, is pushed to the background.
+# chemistry set of the project. The first chemistry set, ``My1stMech``, is pushed to the background.
 
 # preprocess the second mechanism files
 iError = My2ndMech.preprocess()
@@ -180,7 +180,7 @@ else:
 
 
 ################################################################################
-# Set up the second gas mixture based on the species in the C2 NOx chemistry set
+# Set up the second gas mixture based on the species in the second chemistry set
 # ==============================================================================
 # Create gas mixture instance ``mymixture2`` based on the ``My2ndMech`` chemistry set.
 mymixture2 = ck.Mixture(My2ndMech)
@@ -192,9 +192,9 @@ mymixture2.pressure = 2.0 * ck.Patm
 mymixture2.X = [("H2", 0.02), ("O2", 0.2), ("N2", 0.8)]
 
 
-############################
-# Run detonation calculation
-# ==========================
+###############################
+# Run the detonation calculation
+# ==============================
 # Now you can compute detonation wave speed with the ``mymixture2`` gas mixture. ``CJ_mix2`` represents the mixture at
 # the Chapman-Jouguet state. The speed of sound and detonation wave speed are returned in
 # the tuple ``speeds_mix2``.
@@ -213,9 +213,9 @@ print(f"Detonation wave speed = {speeds_mix2[1]/100.0} [m/sec]")
 My1stMech.activate()
 
 
-############################
-# Run detonation calculation
-# ==========================
+################################
+# Run the detonation calculation
+# ==============================
 # Now you can compute detonation wave speed with the ``mymixture1``gas mixture. ``CJ_mix1`` represents the mixture at
 # the Chapman-Jouguet state. The speed of sound and detonation wave speed are returned in
 # the tuple ``speeds_mix1``.
