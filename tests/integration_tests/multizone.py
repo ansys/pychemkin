@@ -207,10 +207,10 @@ runstatus = MyMZEngine.run()
 # check run status
 if runstatus != 0:
     # run failed!
-    print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+    print(Color.RED + ">>> Run failed. <<<", end=Color.END)
     exit()
 # run success!
-print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
+print(Color.GREEN + ">>> Run completed. <<<", end=Color.END)
 #
 # get ignition delay "time"
 delayCA = MyMZEngine.get_ignition_delay()

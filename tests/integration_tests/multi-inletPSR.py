@@ -104,10 +104,10 @@ for i in range(numbruns):
     # check run status
     if runstatus != 0:
         # run failed!
-        print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+        print(Color.RED + ">>> Run failed. <<<", end=Color.END)
         exit()
     # run success!
-    print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
+    print(Color.GREEN + ">>> Run completed. <<<", end=Color.END)
     # post-process the solution profiles
     solnmixture = combustor.process_solution()
     # print the steady-state solution values

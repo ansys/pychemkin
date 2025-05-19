@@ -128,7 +128,7 @@ iError = MyGasMech.preprocess()
 # have fixed volumetric flow rates of 25 and 50 [cm3/sec], respectively.
 #
 # .. note ::
-#   This is how the hydrogen to oxygen molar ratio is determined:
+#   This equation is used to determine the hydrogen-to-oxygen molar ratio:
 #
 #   .. math ::
 #       H_{2}:O_{2}=0.21[cm^3/cm^3]*25[cm^3/s]:0.21[cm^3/cm^3]*50[cm^3/s]=1:2
@@ -218,9 +218,9 @@ combustor.timestepping_tolerances = (1.0e-9, 1.0e-6)
 # reset the gas species floor value in the steady-state solver
 combustor.set_species_floor(-1.0e-10)
 
-#################################################
+############################################
 # Run the PSR residence time parameter study
-# ===============================================
+# ==========================================
 # The PSR residence time :math:`\tau` is calculated as follows:
 #
 # .. math ::
@@ -251,10 +251,10 @@ for i in range(numbruns):
     # check run status
     if runstatus != 0:
         # Run failed.
-        print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+        print(Color.RED + ">>> Run failed. <<<", end=Color.END)
         exit()
     # Run succeeded.
-    print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
+    print(Color.GREEN + ">>> Run completed. <<<", end=Color.END)
     # postprocess the solution profiles
     solnmixture = combustor.process_solution()
     # print the steady-state solution values

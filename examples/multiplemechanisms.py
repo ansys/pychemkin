@@ -80,7 +80,7 @@ iError = My1stMech.preprocess()
 print()
 if iError != 0:
     # encountered error during preprocessing
-    print(f"PreProcess: error encountered...code = {iError:d}")
+    print(f"Preprocessing error encountered. Code = {iError:d}.")
     print(f"see the summary file {My1stMech.summaryfile} for details")
     exit()
 else:
@@ -167,7 +167,7 @@ iError = My2ndMech.preprocess()
 print()
 if iError != 0:
     # encountered error during preprocessing
-    print(f"PreProcess: error encountered...code = {iError:d}")
+    print(f"Preprocessing error encountered. Code = {iError:d}.")
     print(f"Se the summary file {My2ndMech.summaryfile} for details.")
     exit()
 else:

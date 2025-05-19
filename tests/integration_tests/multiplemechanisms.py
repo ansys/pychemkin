@@ -45,7 +45,7 @@ My1stMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="G
 iError = My1stMech.preprocess()
 print()
 if iError != 0:
-    print(f"PreProcess: error encountered...code = {iError:d}")
+    print(f"Preprocessing error encountered. Code = {iError:d}.")
     print(f"see the summary file {My1stMech.summaryfile} for details")
     exit()
 else:
@@ -85,7 +85,7 @@ My2ndMech.preprocess_transportdata()
 iError = My2ndMech.preprocess()
 print()
 if iError != 0:
-    print(f"PreProcess: error encountered...code = {iError:d}")
+    print(f"Preprocessing error encountered. Code = {iError:d}.")
     print(f"see the summary file {My2ndMech.summaryfile} for details")
     exit()
 else:

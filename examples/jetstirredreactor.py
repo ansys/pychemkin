@@ -201,10 +201,10 @@ for i in range(numbruns):
     # check run status
     if runstatus != 0:
         # Run failed.
-        print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+        print(Color.RED + ">>> Run failed. <<<", end=Color.END)
         exit()
     # Run succeeded.
-    print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
+    print(Color.GREEN + ">>> Run completed. <<<", end=Color.END)
     # postprocess the solution profiles
     solnmixture = JSR.process_solution()
     # print the steady-state solution values

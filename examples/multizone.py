@@ -52,7 +52,7 @@ and the "wall heat transfer" will be applied to the engine simulation. You will 
 initial distributions of zone size, temperature, and composition.
 """
 
-# sphinx_gallery_thumbnail_path = '_static/plot_multizone_HCCI_engine.png'
+# sphinx_gallery_thumbnail_path = '../../doc/source/_static/plot_multizone_HCCI_engine.png'
 
 ###############################################
 # Import PyChemkin package and start the logger
@@ -377,10 +377,10 @@ runstatus = MyMZEngine.run()
 # check run status
 if runstatus != 0:
     # run failed!
-    print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+    print(Color.RED + ">>> Run failed. <<<", end=Color.END)
     exit()
 # run success!
-print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
+print(Color.GREEN + ">>> Run completed. <<<", end=Color.END)
 
 ######################################################
 # Get the ignition delay crank angle from the solution

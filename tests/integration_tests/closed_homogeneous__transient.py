@@ -132,10 +132,10 @@ runstatus = MyCONV.run()
 # check run status
 if runstatus != 0:
     # run failed!
-    print(Color.RED + ">>> RUN FAILED <<<", end="\n" + Color.END)
+    print(Color.RED + ">>> Run failed. <<<", end="\n" + Color.END)
     exit()
 # run success!
-print(Color.GREEN + ">>> RUN COMPLETED <<<", end="\n" + Color.END)
+print(Color.GREEN + ">>> Run completed. <<<", end="\n" + Color.END)
 # get ignition delay time (need to deduct the initial compression time = 0.01 [sec])
 # delaytime = MyCONV.get_ignition_delay()
 # print(f"ignition delay time = {delaytime} [msec]")

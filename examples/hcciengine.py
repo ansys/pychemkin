@@ -342,11 +342,11 @@ runstatus = MyEngine.run()
 # check run status
 if runstatus != 0:
     # run failed!
-    print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+    print(Color.RED + ">>> Run failed. <<<", end=Color.END)
     logger.error("run failed")
     exit()
 # run success!
-print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
+print(Color.GREEN + ">>> Run completed. <<<", end=Color.END)
 logger.info("run completed")
 
 ######################################################

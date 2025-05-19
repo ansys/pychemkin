@@ -127,7 +127,7 @@ if runstatus == 0:
     print(f"ignition delay time = {delaytime_org} [msec]")
 else:
     # if get this, most likely the END time is too short
-    print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+    print(Color.RED + ">>> Run failed. <<<", end=Color.END)
     print("failed to find the ignition delay time of the nominal case")
     exit()
 #
@@ -158,7 +158,7 @@ for i in range(MyGasMech.IIGas):
     else:
         # if get this, most likely the END time is too short
         print(f"trouble finding ignition delay time for raection {ireac}")
-        print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+        print(Color.RED + ">>> Run failed. <<<", end=Color.END)
         exit()
 
 # compute the total runtime

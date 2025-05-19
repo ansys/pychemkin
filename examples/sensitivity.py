@@ -119,7 +119,7 @@ if iError == 0:
 else:
     # When a non-zero value is returned from the process, check the text output files
     # chem.out, tran.out, or summary.out for potential error messages about the mechanism data.
-    print(f"PreProcess: error encountered...code = {iError:d}")
+    print(f"Preprocessing error encountered. Code = {iError:d}.")
     print(f"see the summary file {MyGasMech.summaryfile} for details")
     exit()
 
@@ -252,7 +252,7 @@ if runstatus == 0:
     print(f"ignition delay time = {delaytime_org} [msec]")
 else:
     # if get this, most likely the END time is too short
-    print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+    print(Color.RED + ">>> Run failed. <<<", end=Color.END)
     print("failed to find the ignition delay time of the nominal case")
     exit()
 
@@ -299,7 +299,7 @@ for i in range(MyGasMech.IIGas):
     else:
         # if get this, most likely the END time is too short
         print(f"trouble finding ignition delay time for raection {ireac}")
-        print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+        print(Color.RED + ">>> Run failed. <<<", end=Color.END)
         exit()
 
 # compute and report the total runtime (wall time)

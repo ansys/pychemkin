@@ -93,7 +93,7 @@ print()
 if iError != 0:
     # When a non-zero value is returned from the process, check the text output files
     # chem.out, tran.out, or summary.out for potential error messages about the mechanism data.
-    print(f"PreProcess: error encountered...code = {iError:d}")
+    print(f"Preprocessing error encountered. Code = {iError:d}.")
     print(f"see the summary file {MyGasMech.summaryfile} for details")
     exit()
 else:
@@ -177,7 +177,7 @@ print()
 if iError != 0:
     # When a non-zero value is returned from the process, check the text output files
     # chem.out, tran.out, or summary.out for potential error messages about the mechanism data.
-    print(f"PreProcess: error encountered...code = {iError:d}")
+    print(f"Preprocessing error encountered. Code = {iError:d}.")
     print(f"see the summary file {My2ndMech.summaryfile} for details")
     exit()
 else:

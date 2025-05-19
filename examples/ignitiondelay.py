@@ -261,7 +261,7 @@ for i in range(npoints):
         print(f"ignition delay time = {delaytime[i]} [msec]")
     else:
         # if get this, most likely the END time is too short
-        print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+        print(Color.RED + ">>> Run failed. <<<", end=Color.END)
     init_temp += delta_temp
 
 # compute the total runtime
