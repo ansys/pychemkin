@@ -55,7 +55,7 @@ use the PSR model to validate the reaction mechanism against the measured data f
 oxidation experiments.
 """
 
-# sphinx_gallery_thumbnail_path = '../../doc/source/_static/plot_jet_stirred_reactor.png'
+# sphinx_gallery_thumbnail_path = '_static/plot_jet_stirred_reactor.png'
 
 ###############################################
 # Import PyChemkin packages and start the logger
@@ -81,7 +81,7 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(True)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file
+# interactive = False: save plot as a PNG file
 global interactive
 interactive = True
 

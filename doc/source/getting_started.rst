@@ -15,19 +15,21 @@ Install prerequisites
 .. _NumPy: https://numpy.org/install
 .. _PyYAML: https://pypi.org/project/PyYAML/
 .. _Matplotlib: https://matplotlib.org/stable/install/index.html
+.. _Flit: https://flit.pypa.io/en/stable/
+.. _pip: https://pip.pypa.io/en/stable/index.html
 
 Install PyChemkin
 -----------------
 
 1. Install PyChemkin.
 
-   Download the ``ansys-chemkin`` package from the PyAnsys GitHub repository. Build the wheelhouse locally using ``flit_core`` tools:
+   Download the ``ansys-chemkin`` package from the PyAnsys GitHub repository. Build the wheelhouse locally using `Flit`_:
 
    ::
 
       python -m build
 
-   Install the package using ``pip``:
+   Install the package using `pip`_:
 
    ::
 

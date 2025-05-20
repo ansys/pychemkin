@@ -45,7 +45,7 @@ In this example, the reactors are solved one by one from upstream to downstream.
 upstream reactor is obtained, it is used to set up the external inlet of the immediate downstream reactor. This process continues until all reactors in the chain network are solved. Since there is no recycling stream in this configuration, the entire reactor network can be solved in one sweep.
 """
 
-# sphinx_gallery_thumbnail_path = '../../doc/source/_static/chain_reactor_network.png'
+# sphinx_gallery_thumbnail_path = '_static/chain_reactor_network.png'
 
 ###############################################
 # Import PyChemkin package and start the logger
@@ -101,7 +101,7 @@ iError = MyGasMech.preprocess()
 ################################################################
 # Set up gas mixtures based on the species in this chemistry set
 # ==============================================================
-# Create the "fuel" and the "air" mixtures to initialize the external
+# Create the ``fuel`` and ``air`` mixtures to initialize the external
 # inlet streams. The fuel for this case is pure methane.
 
 # fuel is pure methane

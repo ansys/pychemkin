@@ -33,7 +33,7 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(True)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file
+# interactive = False: save plot as a PNG file
 global interactive
 interactive = False
 

@@ -26,15 +26,14 @@
 ===========================================================
 Calculate the detonation wave speed of a real gas mixture
 ===========================================================
-A PyChemkin mixture object offers the ``detonation()`` method for computing the
-Chapman-Jouguet state and detonation wave speed of a combustible mixture.
-
-This example shows how to use the ``detonation()`` method to predict the detonation wave speeds of a
-natural gas-air mixture at various initial pressures and compare the *ideal-gas* and the
-*real-gas* results against the experimental data.
+You use the ``detonation()`` method on a combustible mixture to compute the
+Chapman-Jouguet state and detonation wave speed. This example shows how to use this
+method to predict the detonation wave speeds of a natural gas-air mixture at various
+initial pressures and compare the *ideal-gas* and the *real-gas* results against the
+experimental data.
 """
 
-# sphinx_gallery_thumbnail_path = '../../doc/source/_static/plot_detonation.png'
+# sphinx_gallery_thumbnail_path = '_static/plot_detonation.png'
 
 ################################################
 # Import PyChemkin packages and start the logger

@@ -67,7 +67,7 @@ def getwaterheatofvaporization(temp):
     # close the mechnaism file
     w.close()
     # set mechanism input files
-    # inclusion of the full file path is recommended
+    # including the full file path is recommended
     WaterMech.chemfile = waterfile
     WaterMech.thermfile = os.path.join(
         data_dir,
@@ -125,7 +125,7 @@ m.write("END\n")
 m.close()
 #
 # set mechanism input files
-# inclusion of the full file path is recommended
+# including the full file path is recommended
 MyGasMech.chemfile = mymechfile
 MyGasMech.thermfile = os.path.join(
     data_dir,

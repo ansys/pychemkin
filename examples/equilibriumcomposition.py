@@ -27,9 +27,9 @@
 Estimate the steady-state NO emission level of a complete burned fuel-air mixture
 =================================================================================
 
-This example shows how to quickly estimate the steady state NO level
+This example shows how to quickly estimate the steady-state NO level
 that could be formed by the combustion of a fuel-air mixture at a given temperature.
-Without needing any reaction, the NO concentration gets to its steady state
+Without needing any reaction, the NO concentration gets to its steady-state
 (or the maximum) level when the product mixture from the fuel-air combustion
 reaches the equilibrium state at the given temperature. You can find the equilibrium state of
 the fresh fuel-air mixture by using the ``equilibrium()`` method with the ``fixed pressure``
@@ -37,11 +37,11 @@ and ``fixed temperature`` options.
 
 This example explores the influence of temperature on the predicted adiabatic flame temperature.
 Knowing that nitrogen oxides (NOx) are stable at high temperatures (> 2000 [K]),
-you can expect that the steady state NO level should increase sharply when the temperature
+you can expect that the steady-state NO level should increase sharply when the temperature
 gets high enough.
 """
 
-# sphinx_gallery_thumbnail_path = '../../doc/source/_static/plot_equilibrium_composition.png'
+# sphinx_gallery_thumbnail_path = '_static/plot_equilibrium_composition.png'
 
 ################################################
 # Import PyChemkin packages and start the logger
@@ -61,7 +61,7 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(True)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file
+# interactive = False: save plot as a PNG file
 global interactive
 interactive = True
 

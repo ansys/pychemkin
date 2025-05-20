@@ -27,8 +27,8 @@
 Use a chain reactor network to model a fictional gas combustor
 ==============================================================
 
-This example shows how to set up and solve a series of linked perfectly-stirred reactors
-(PSRs) in PyChemkin. This is the simplest reactor network as it does not contain any recycling stream or
+This example shows how to set up and solve a series of linked PSRs (perfectly-stirred reactors)
+in PyChemkin. This is the simplest reactor network as it does not contain any recycling stream or
 outflow splitting.
 
 Here is a PSR chain model of a fictional can combustor:
@@ -37,14 +37,14 @@ Here is a PSR chain model of a fictional can combustor:
    :scale: 80 %
    :alt: Chain reactor network
 
-The primary inlet stream to the first reactor, the *combustor", is the fuel-lean methane-air mixture
+The primary inlet stream to the first reactor, the *combustor*, is the fuel-lean methane-air mixture
 that is formed by mixing the fuel (methane) and the heated air. The exhaust from the combustor
 enters the second reactor, the *dilution zone*, where the hot combustion products are cooled by the introduction of additional cool air. The cooled and diluted gas mixture in the dilution zone then travel tos the third reactor, the *reburning zone*. A mixture of fuel (methane) and carbon dioxide is injected to the gas in the *reburning zone*, attempting to convert any remaining carbon monoxide or nitric oxide in the exhaust gas to carbon dioxide or nitrogen, respectively.
 
 The chain reactor network in this example is configured and solved by using the ``ReactorNetwork`` module. This module automatically handles the tasks of running the individual reactors and setting up the inlet to the downstream reactor.
 """
 
-# sphinx_gallery_thumbnail_path = '../../doc/source/_static/chain_reactor_network.png'
+# sphinx_gallery_thumbnail_path = '_static/chain_reactor_network.png'
 
 ################################################
 # Import PyChemkin packages and start the logger
@@ -60,7 +60,7 @@ from ansys.chemkin.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.inlet import adiabatic_mixing_streams
 from ansys.chemkin.logger import logger
 
-# chemkin perfectly-stirred reactor (PSR) model (steady-state)
+# Chemkin PSR model (steady-state)
 from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
 
 # check working directory

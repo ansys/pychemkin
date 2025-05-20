@@ -27,16 +27,16 @@
 Work with multiple mechanisms in a PyChemkin project
 ====================================================
 
-PyChemkin can facilitate multiple mechanisms in one project. However, only one active
-chemistry set object is allowed at a time. This example shows how to use the ``activate()``
-method to switch between multiple chemistry set objects (mechanisms) in the same Python project.
+PyChemkin can facilitate multiple mechanisms in one project. However, only one
+chemistry set can be active at a time. This example shows how to use the ``activate()``
+method to switch between multiple chemistry sets (mechanisms) in the same Python project.
 You can use this method to compare results from two different mechanisms,
-such as the *master* and the *reduced* mechanisms.
+such as the *base* and *reduced* mechanisms.
 """
 
-###############################################
+################################################
 # Import PyChemkin packages and start the logger
-# =============================================
+# =============================================+
 
 import os
 

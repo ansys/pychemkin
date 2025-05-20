@@ -48,7 +48,7 @@ profiles of gas temperature, gas density, H\ :sub:`2`\ O mole fraction, and the 
 of H\ :sub:`2`\ O.
 """
 
-# sphinx_gallery_thumbnail_path = '../../doc/source/_static/plot_close_homogeneous.png'
+# sphinx_gallery_thumbnail_path = '_static/plot_close_homogeneous.png'
 
 ################################################
 # Import PyChemkin packages and start the logger
@@ -252,8 +252,8 @@ print(f"Ignition delay time = {delaytime} [msec].")
 #
 # To obtain the raw solution profiles, you can use the ``get_solution_variable_profile()`` method. To
 # obtain the solution mixture objects, you can use either the ``get_solution_mixture_at_index()``
-# method for the# solution mixture at the given time point or the ``get_solution_mixture()``
-# method for the solution mixture at the given time. (In this case, the mixture is constructed by # interpolation.)
+# method for the# solution mixture at a given time point or the ``get_solution_mixture()``
+# method for the solution mixture at a given time. (In this case, the mixture is constructed by # interpolation.)
 #
 # .. note::
 #   Use the ``getnumbersolutionpoints()`` method to get the size of the solution profiles before

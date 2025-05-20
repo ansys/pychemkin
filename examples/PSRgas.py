@@ -56,7 +56,7 @@ of a complex chemical process and postulate possible reaction pathways. The para
 **fixed residence time PSR**.
 """
 
-# sphinx_gallery_thumbnail_path = '../../doc/source/_static/plot_PSR_gas.png'
+# sphinx_gallery_thumbnail_path = '_static/plot_PSR_gas.png'
 
 ################################################
 # Import PyChemkin packages and start the logger
@@ -70,7 +70,7 @@ from ansys.chemkin import Color
 from ansys.chemkin.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.logger import logger
 
-# chemkin perfectly-stirred reactor (PSR) model (steady-state)
+# Chemkin PSR model (steady-state)
 from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching

@@ -34,7 +34,7 @@ ck.set_verbose(True)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # set mechanism input files
-# inclusion of the full file path is recommended
+# including the full file path is recommended
 chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")

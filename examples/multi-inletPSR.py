@@ -27,7 +27,7 @@
 Determine the impact of residence time on combustion in PSR
 ===========================================================
 
-**Ansys Chemkin offers some idealized reactor models commonly used for studying chemical
+Ansys Chemkin offers some idealized reactor models commonly used for studying chemical
 processes and for developing reaction mechanisms. The PSR (Perfectly Stirred Reactor) model is
 a steady-state 0-D model of the open perfectly mixed gas-phase reactor. There is no limit on
 the number of the inlets to the PSR. As soon as the inlet gases enter the reactor, they are
@@ -36,18 +36,18 @@ is assumed to be exactly the same as the gas mixture in the PSR. There are two b
 PSR models:
 
 - **constrained-pressure** (or "set residence time")
--**constrained-volume**
+- **constrained-volume**
 
-By default, the PSR model is running under **constant pressure**. The PyChemkin PSR models
+By default, the PSR model is running under constant pressure. The PyChemkin PSR models
 always require the connected inlets to be defined, that is, the total inlet flow rate to the PSR
-is always known. Therefore, either the **residence time** or the **reactor volume** is needed to
-satisfy the basic setup of the PSR model. This example specifies the *reactor volume*
+is always known. Therefore, either the residence time or the reactor volume is needed to
+satisfy the basic setup of the PSR model. This example specifies the eactor volume
 of the PSR. The residence time is calculated from the reactor volume and the total
 inlet volumetric flow rate.
 
 For each type of PSR model, you can choose either to specify the reactor temperature (as a fixed
 value or by a piecewise-linear profile) or to solve the energy conservation equation. In total,
-you get four variations* of the PSR model.
+you get four variations of the PSR model.
 
 PSR models are mostly employed in chemical kinetics studies. By controlling the reactor
 temperature, pressure, and/or residence time, you can gain knowledge about the major intermediates
@@ -56,7 +56,7 @@ of a complex chemical process and postulate possible reaction pathways.
 This example describes a parameter study of the influence of the PSR residence time on the hydrogen combustion process. It uses two inlet streams, one for the fuel mixture and the other for the air mixture. The fuel-to-air ratio inside the PSR is determined by the mass or the volumetric flow rate ratio of the two inlet streams.
 """
 
-# sphinx_gallery_thumbnail_path = '_../../doc/source/_static/plot_multi_inlet_PSR.png'
+# sphinx_gallery_thumbnail_path = '_static/plot_multi_inlet_PSR.png'
 
 ################################################
 # Import PyChemkin packages and start the logger
@@ -70,7 +70,7 @@ from ansys.chemkin import Color
 from ansys.chemkin.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.logger import logger
 
-# chemkin perfectly-stirred reactor (PSR) model (steady-state)
+# Chemkin PSR model (steady-state)
 from ansys.chemkin.stirreactors.PSR import PSR_SetVolume_EnergyConservation as PSR
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
@@ -82,7 +82,7 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(True)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file
+# interactive = False: save plot as a PNG file
 global interactive
 interactive = True
 
@@ -101,7 +101,7 @@ mechanism_dir = data_dir
 # create a chemistry set based on the gasoline 14 components mechanism
 MyGasMech = ck.Chemistry(label="hydrogen")
 # set mechanism input files
-# inclusion of the full file path is recommended
+# including the full file path is recommended
 MyGasMech.chemfile = os.path.join(
     mechanism_dir, "Hydrogen-Ammonia-NOx_chem_MFL2021.inp"
 )

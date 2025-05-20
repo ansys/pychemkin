@@ -58,7 +58,7 @@ ck.set_verbose(True)
 
 
 #####################################
-# Create a ``Chemistry Set`` instance
+# Create a chemistry set
 # ===================================
 # The first mechanism loaded is the GRI 3.0 mechanism for methane combustion.
 # The mechanism and its associated data files come with the standard Ansys Chemkin
@@ -69,7 +69,7 @@ data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 
 # set mechanism input files
-# inclusion of the full file path is recommended
+# including the full file path is recommended
 # the gas-phase reaction mechanism file (GRI 3.0)
 chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 # the thermodynamic data file

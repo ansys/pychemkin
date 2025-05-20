@@ -26,19 +26,19 @@
 ===================
 Rank reaction rates
 ===================
-When you have a mixture in PyChemkin, not only can you obtain its properties, you can also extract the rate information. The mixture can be any one of the following:
+When you have a mixture in PyChemkin, not only can you obtain its properties, but you can also extract the rate information. The mixture can be any one of the following:
 
 - Set up from scratch.
 - Obtained from certain mixture operations.
-_ Based on a point (time or grid) solution of a reactor simulation.
+- Based on a point (time or grid) solution of a reactor simulation.
 
-The mixture rate utilities let you access the *net production rate of species* (ROP), the *forward and the reverse reaction rates per reaction* (RR), and the *net chemical heat release rate* (HRR).
+The mixture rate utilities let you access the net production rate of species (ROP), forward and reverse reaction rates per reaction (RR), and net chemical heat release rate (HRR).
 
 This example shows how to use these PyChemkin mixture rate tools and derive useful information
 from the raw data, such as isolating dominant reactions at different mixture conditions.
 """
 
-# sphinx_gallery_thumbnail_path = '../../doc/source/_static/plot_reaction_rates.png'
+# sphinx_gallery_thumbnail_path = '_static/plot_reaction_rates.png'
 
 ################################################
 # Import PyChemkin packages and start the logger

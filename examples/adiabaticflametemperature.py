@@ -28,14 +28,12 @@ Estimate the adiabatic flame temperature of a gas mixture
 =========================================================
 
 This example shows how to find the equilibrium state of a mixture.
-The ``Mixture`` ``equilibrium`` method with
-the ``constant pressure and enthalpy`` option is applied to estimate the
-*adiabatic flame temperature* of a methane-oxygen mixture.
+The mixture ``equilibrium()`` method with the ``constant pressure and enthalpy`` option is applied to estimate the *adiabatic flame temperature* of a methane-oxygen mixture.
 
 The influence of *equivalence ratio* on the predicted adiabatic flame temperature will be explored.
 """
 
-# sphinx_gallery_thumbnail_path = '../../doc/source/_static/plot_adiabatic_flame_temperature.png'
+# sphinx_gallery_thumbnail_path = '_static/plot_adiabatic_flame_temperature.png'
 
 ###############################################
 # Import PyChemkin packages and start the logger
@@ -55,7 +53,7 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(True)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file
+# interactive = False: save plot as a PNG file
 global interactive
 interactive = True
 

@@ -43,7 +43,7 @@ This example shows different ways to create a mixture object in PyChemkin. The u
 ``equivalence ratio()`` method creates a new mixture from predefined **fuel** and **oxidizer** mixtures by assigning an equivalence ratio value.
 """
 
-# sphinx_gallery_thumbnail_path = '../../doc/source/_static/plot_create_mixture.png'
+# sphinx_gallery_thumbnail_path = '_static/plot_create_mixture.png'
 
 ################################################
 # Import PyChemkin packages and start the logger
@@ -64,7 +64,7 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(True)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file
+# interactive = False: save plot as a PNG file
 global interactive
 interactive = True
 

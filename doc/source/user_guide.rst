@@ -4,15 +4,14 @@ User guide
 Introduction
 ------------
 
-PyChemkin inherits all Ansys Chemkin functionalities, providing Pythonic interfaces to Chemkin utilities and reactor models.
-In addition, PyChemkin introduces a hierarchy of four key objects to enhance user experiences within the Python framework:
+PyChemkin inherits all Ansys Chemkin functionalities, providing Pythonic interfaces to Chemkin utilities and reactor models. In addition, PyChemkin introduces a hierarchy of four key objects to enhance user experiences within the Python framework:
 
 - **Chemistry set:** A collection of utilities that handle chemistry and species properties.
 - **Mixture:** A basic element representing a gas mixture that can be manipulated and transformed.
 - **Stream:** A mixture object with an additional property of mass flow rate.
 - **Reactor:** An instance of a Chemkin reactor model that transforms the initial mixture into another mixture.
 
-The following figure shows PyChemkin's mixture-centric concept. It illustrates the basic types of operations applicable to the mixture object, which inherits all properties of a chemistry set. The mixture is then combined or mixed with a constraint, equilibrium (with constraints), and a process (by a reactor model).
+The following figure shows PyChemkin's mixture-centric concept. It illustrates the basic types of operations applicable to a mixture, which inherits all properties of a chemistry set. A mixture can then be combined or mixed with a constraint, equilibrium (with constraints), and a process (by a reactor model).
 
 .. image:: _static/mixture_concept.png
    :width: 600
@@ -26,7 +25,7 @@ The workflow for setting up and running a basic reactor model in PyChemkin is th
 #. Create a chemistry set, which includes the mechanism, thermodynamic data, and/or transport data.
 #. Preprocess the chemistry set.
 #. Create a mixture or a stream based on the chemistry set.
-#. Specify the mixture or stream properties, such as temperature, pressure, volume (optional), and species composition.
+#. Specify mixture or stream properties, such as temperature, pressure, volume (optional), and species composition.
 #. Instantiate the reactor using the created mixture.
 #. Set up the simulation:
 
@@ -57,14 +56,14 @@ This code example computes the density of a mixture named ``air``:
       mech_file = os.path.join(mech_dir, "grimech30_chem.inp")
       therm_file = os.path.join(mech_dir, "grimech30_thermo.dat")
       tran_file = os.path.join(mech_dir, "grimech30_transport.dat")
-      # instantiate the chemistry set named 'GasMech'
+      # instantiate a chemistry set named 'GasMech'
       GasMech = chemkin.Chemistry(chem=mech_file, therm=therm_file,  tran=tran_file,  label='GRI 3.0')
       # preprocess the chemistry set
       status = GasMech.preprocess()
       # check preprocess status
       if status != 0:
           # failed
-          print(f'Preprocess: error encountered...code = {status:d}')
+          print(f'Preprocess: Error encountered. Code = {status:d}.')
           print(f'See the summary file {GasMech.summaryfile} for details.')
           exit()
       # create a mixture named 'air' based on the 'GasMech' chemistry set
@@ -98,8 +97,8 @@ To get help within PyChemkin, use these Pythonic methods:
 - ``ansys.chemkin.keywordhints()``: Get the description and syntax of a reactor keyword.
 - ``ansys.chemkin.phrasehints()``: Get a list of reactor keywords related to a phrase.
 
-Ansys training and documentation
---------------------------------
+Product training and documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For product training and documentation, see these Ansys resources:
 
