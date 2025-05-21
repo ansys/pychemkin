@@ -30,13 +30,13 @@ Set up a PSR parameter study for inlet stream equivalence ratio
 Ansys Chemkin offers some idealized reactor models commonly used for studying chemical
 processes and for developing reaction mechanisms. The PSR (perfectly stirred reactor) model is
 a steady-state 0-D model of the *open perfectly mixed* gas-phase reactor. There is no limit on
-the number of the inlets to the PSR. As soon as the inlet gases enter the reactor, they are
+the number of inlets to the PSR. As soon as the inlet gases enter the reactor, they are
 thoroughly mixed with the gas mixture inside. The PSR has only *one* outlet, and the outlet gas
 is assumed to be exactly the same as the gas mixture in the PSR.
 
 There are two basic types of PSR models:
 
-- **constrained-pressure** (or "set residence time")
+- **constrained-pressure** (or set residence time)
 - **constrained-volume**
 
 By default, the PSR model is running under **constant pressure**. The PyChemkin PSR models

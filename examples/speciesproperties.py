@@ -27,15 +27,13 @@
 Evaluate gas species properties
 ===============================
 
-PyChemkin inherits many Ansys Chemkin utilities for evaluating species properties in a mechanism. Most tools for
-calculating the species properties are part of the PyChemkin ``Chemistry Set`` methods. This example shows how
-to apply some of these methods to evaluate *species* thermodynamic and transport properties.
+PyChemkin inherits many Ansys Chemkin utilities for evaluating species properties in a mechanism. Most tools for calculating the species properties are part of the PyChemkin ``Chemistry()`` methods. This example shows how use some of these methods to evaluate species thermodynamic and transport properties.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_species_properties.png'
 
 ################################################
-# Import PyChemkin packageS and start the logger
+# Import PyChemkin packages and start the logger
 # ==============================================
 
 import os
@@ -88,10 +86,12 @@ iError = MyGasMech.preprocess()
 #########################################
 # Display the basic mechanism information
 # =======================================
-# Display the element and species information from the GRI 3.0 mechanism. You can get the entire list of
-# the elements and the gas species in the mechanism by using the ``element_symbols`` and ``species_symbols`` lists, respectively.
-# Use the ``get_specindex()`` method to get the species index of a species in the mechanism. To check the elemental
-# composition of a gas species, use the ``SpeciesComposition()`` method as shown in the following code.
+# Display the element and species information from the GRI 3.0 mechanism. You can get the entire list
+# of the elements and the gas species in the mechanism by using the ``element_symbols`` and
+# ``species_symbols`` lists, respectively.
+#
+# Use the ``get_specindex()`` method to get the species index of a species in the mechanism. Use
+# the ``SpeciesComposition()`` method to check the elemental composition of a gas species.
 #
 # .. note::
 #   Both the species name/symbol and element name/symbol are case-sensitive.
@@ -100,7 +100,7 @@ iError = MyGasMech.preprocess()
 elelist = MyGasMech.element_symbols
 # extract gas species symbols as a list
 specieslist = MyGasMech.species_symbols
-# list of gas species interested
+# list of gas species of interest
 plotspeclist = ["CH4", "O2", "N2"]
 # find elemental compositions of selected species
 print(" ")
@@ -118,8 +118,8 @@ print()
 ##################################
 # Plot selected species properties
 # ================================
-# Properties of CH\ :sub:`4`\ , O\ :sub:`2`\ , and N\ :sub:`2` are calculated
-# and plotted against the temperature. These property methods are used:
+# Calculate and plot the properties of CH\ :sub:`4`\ , O\ :sub:`2`\ , and N\ :sub:`2` against the
+# temperature. Use these property methods:
 #
 # - ``SpeciesCv``: Species specific heat capacity at constant volume [erg/mol-K]
 # - ``SpeciesCond``: Species thermal conductivity [erg/cm-K-sec]
@@ -150,7 +150,7 @@ T = np.zeros(points, dtype=np.double)
 k = 0
 # loop over selected gas species
 for s in plotspeclist:
-    # starting temperature at 300K
+    # starting temperature at 300 [K]
     Temp = 300.0
     # loop over temperature data points
     for i in range(points):
@@ -180,7 +180,7 @@ kappa = np.zeros(points, dtype=np.double)
 k = 0
 # loop over selected gas species
 for s in plotspeclist:
-    # starting temperature at 300K
+    # starting temperature at 300 [K]
     Temp = 300.0
     # loop over temperature data points
     for i in range(points):
@@ -203,7 +203,7 @@ plt.legend(plotspeclist, loc="upper left")
 # Evaluate the binary diffusion coefficients between different gas species
 # ========================================================================
 # Use the ``SpeciesDiffusionCoeffs()`` method to calculate the binary diffusion coefficients
-# between pairs of gas species. Here the binary diffusion coefficients are evaluated at 2 [atm]
+# between pairs of gas species. Here, the binary diffusion coefficients are evaluated at 2 [atm]
 # and 500 [K]. The binary diffusion coefficient between CH\ :sub:`4` and O\ :sub:`2` is shown.
 
 diffcoef = MyGasMech.SpeciesDiffusionCoeffs(2.0 * ck.Patm, 500.0)
@@ -211,7 +211,7 @@ ID1 = MyGasMech.get_specindex(plotspeclist[0])
 ID2 = MyGasMech.get_specindex(plotspeclist[1])
 c = diffcoef[ID1][ID2]
 print(
-    f"diffusion coefficient for {plotspeclist[0]} against {plotspeclist[1]} is {c:e} [cm2/sec]"
+    f"Diffusion coefficient for {plotspeclist[0]} against {plotspeclist[1]} is {c:e} [cm²/sec]."
 )
 
 # plot results

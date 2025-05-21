@@ -30,15 +30,13 @@ Combine gas mixtures
 PyChemkin provides a set of basic mixture utilities enabling the creation of new mixtures from existing ones.
 The mixing methods let you combine two mixtures at constant pressure with specific constraints.
 
-- The ``adiabatic_mixing()`` method combines two mixtures while keeping the overall enthalpy constant. The temperature of
-  the combined mixture is determined by the conservation of the overall enthalpy of the two parent mixtures.
+- The ``adiabatic_mixing()`` method combines two mixtures while keeping the overall enthalpy
+  constant. The temperature of the combined mixture is determined by the conservation of the overall enthalpy of the two parent mixtures.
 
-- The ``isothermal_mixing()``method simply combines two mixtures and determines the composition of the final mixture
-  according to the mole or mass ratios specified. You must assign any temperature value of the combined mixture because
-  this method does not consider the enthalpy conservation.
+- The ``isothermal_mixing()`` method simply combines two mixtures and determines the composition of
+  the final mixture according to the mole or mass ratios specified. Because this method does not consider the enthalpy conservation, you must assign the temperature value of the combined mixture.
 
-This example shows how to use these mixing methods and understand the differences in the temperatures of their combined
-mixtures. It first creates a fuel (CH\ :sub:`4`\ ) mixture and an air (O\ :sub:`2`\ +N\ :sub:`2`\ ) mixture and then make a fuel-air mixture by mixing them *isothermally* (that is, without considering the enthalpy conservation) with a given air-to-fuel mass ratio. The example then dilutes the fuel-air mixture with argon (AR) *adiabatically* with the molar/volumetric ratio specified.
+This example shows how to use these two mixing methods and understand the differences in the temperatures of their combined mixtures. It first creates a fuel (CH\ :sub:`4`\ ) mixture and an air (O\ :sub:`2`\ +N\ :sub:`2`\ ) mixture and then makes a fuel-air mixture by mixing them *isothermally* (that is, without considering the enthalpy conservation) with a given air-to-fuel mass ratio. The example then dilutes the fuel-air mixture with argon (AR) *adiabatically* with the molar/volumetric ratio specified.
 """
 
 ################################################
@@ -59,11 +57,11 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(True)
 
 
-#################################
-# Create a chemistry set instance
-# ===============================
+########################
+# Create a chemistry set
+# ======================
 # Load the GRI 3.0 mechanism and its associated data files, which come with the standard Ansys Chemkin
-# installation in the ``/reaction/data`` subdirectory.
+# installation in the ``/reaction/data`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
@@ -90,9 +88,9 @@ iError = MyGasMech.preprocess()
 # Set up gas mixtures
 # ===================
 # Set up gas mixtures based on the species in this chemistry set.
-# Use the *equivalence ratio method* to set up the combustible mixture
+# Use the equivalence ratio method to set up the combustible mixture
 # so that you can easily change the mixture composition by assigning a
-# different *equivalence ratio* value.
+# different equivalence ratio value.
 
 
 #######################
@@ -127,7 +125,7 @@ air.temperature = 300.0
 # Use the ``isothermal_mixing()`` method to mix the ``fuel`` and ``air`` mixtures created earlier.
 # Define the mixing formula using ``mixture_recipe`` with this mass ratio: ``fuel:air=1.00:17.19``.
 # Use the ``finaltemperature`` parameter to set the temperature of the
-# new ``premixed`` mixture to 300 K. Set ``mode="mass"`` because
+# new ``premixed`` mixture to 300 [K]. Set ``mode="mass"`` because
 # the ratios given in ``mixture_recipe`` are mass ratios.
 
 # mix the fuel and the air with an air-fuel ratio of 17.19 (almost stoichiometric)
@@ -153,7 +151,7 @@ print()
 # Create a diluent mixture with pure argon
 # ========================================
 # Create an argon mixture to dilute the premixed mixture later. Set the mixture
-# temperature to a higher temperature of 600 K.
+# temperature to a temperature of 600 [K].
 
 ar = ck.Mixture(MyGasMech)
 # species composition
@@ -181,8 +179,8 @@ diluted = ck.adiabatic_mixing(recipe=dilute_recipe, mode="mole")
 # ===========================================
 # Use the ``list_composition()`` method with ``mode="mole"`` to display the molar composition.
 # Also display the temperatures of the three mixtures involved in the adiabatic mixing process
-# for verification. The ```diluted`` temperature of the diluted mixture should sit in between
-# those of the ``premixed`` and ``arg`` mixtures.
+# for verification. The temperature of the diluted mixture should sit in between
+# those of the ``premixed`` and ``ar`` mixtures.
 
 # list molar composition
 diluted.list_composition(mode="mole")

@@ -28,11 +28,11 @@ Estimate the steady-state NO emission level of a complete burned fuel-air mixtur
 =================================================================================
 
 This example shows how to quickly estimate the steady-state NO level
-that could be formed by the combustion of a fuel-air mixture at a given temperature.
-Without needing any reaction, the NO concentration gets to its steady-state
-(or the maximum) level when the product mixture from the fuel-air combustion
-reaches the equilibrium state at the given temperature. You can find the equilibrium state of
-the fresh fuel-air mixture by using the ``equilibrium()`` method with the ``fixed pressure``
+that is formed by the combustion of a fuel-air mixture at a given temperature.
+Without needing any reaction, the NO concentration gets to its steady state
+(or the maximum level) when the product mixture from the fuel-air combustion
+reaches the equilibrium state at the given temperature. To find the equilibrium state of
+the fresh fuel-air mixture, the ``equilibrium()`` method is used with the ``fixed pressure``
 and ``fixed temperature`` options.
 
 This example explores the influence of temperature on the predicted adiabatic flame temperature.
@@ -65,9 +65,9 @@ ck.set_verbose(True)
 global interactive
 interactive = True
 
-#################################
-# Create a chemistry set instance
-# ===============================
+########################
+# Create a chemistry set
+# ======================
 # The first mechanism loaded is the GRI 3.0 mechanism for methane combustion.
 # The mechanism and its associated data files come with the standard Ansys Chemkin
 # installation in the ``/reaction/data`` directory.
@@ -94,9 +94,9 @@ iError = MyGasMech.preprocess()
 # Set up gas mixtures
 # ===================
 # Set up gas mixtures based on the species in this chemistry set.
-# There are a few methods for creating a gas mixture in PyChemkin. Here
+# PyChemkin provides a few methods for creating a gas mixture. Here,
 # the ``isothermal_mixing()`` method is used to create a ``fuel-air`` mixture
-# by mixing ``fuel`` and ``air`` mixtures with a predetermined
+# by mixing the ``fuel`` and ``air`` mixtures with a predetermined
 # air/fuel rate.
 
 #######################
@@ -110,9 +110,9 @@ fuel.X = [("CH4", 0.8), ("H2", 0.2)]
 fuel.temperature = 300.0
 fuel.pressure = ck.Patm  # 1 atm
 
-#########################
+#######################
 # Create an air mixture
-# =======================
+# =====================
 # Create an air mixture of oxygen and nitrogen.
 
 air = ck.Mixture(MyGasMech)
@@ -128,7 +128,7 @@ air.pressure = ck.Patm  # 1 atm
 # Use the ``isothermal_mixing()`` method to mix the ``fuel`` and ``air`` mixtures created earlier.
 # Define the mixing formula using ``mixture_recipe`` with this mass ratio: ``fuel:air=1.00:17.19``.
 # Use the ``finaltemperature`` parameter to set the temperature of the
-# new ``premixed`` mixture to 300 K. Set ``mode="mass"`` because
+# new ``premixed`` mixture to 300 [K]. Set ``mode="mass"`` because
 # the ratios given in ``mixture_recipe`` are mass ratios.
 
 mixture_recipe = [(fuel, 1.0), (air, 17.19)]
@@ -165,6 +165,7 @@ for k in range(points):
     NO[k] = eqstate.X[NO_index] * 1.0e6  # convert to ppm
     T[k] = Temp
     Temp += dTemp
+
 
 ##################
 # Plot the results

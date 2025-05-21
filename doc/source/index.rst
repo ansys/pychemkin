@@ -3,7 +3,7 @@
 .. figure:: _static/logo/PyChemkin.png
     :width: 640px
 
-PyChemkin provides Pythonic access to the Ansys Chemkin API for CFD models. It facilitates programmatic customization of Chemkin simulation workflows within the Python ecosystem and permits access to Chemkin property and rate utilities as well as selected reactor models. With PyChemkin, you can perform these tasks:
+PyChemkin provides Pythonic access to the Ansys Chemkin API for CFD (computational fluid dynamics)models. It facilitates programmatic customization of Chemkin simulation workflows within the Python ecosystem and permits access to Chemkin property and rate utilities as well as selected reactor models. With PyChemkin, you can perform these tasks:
 
 * Process Chemkin-compatible gas-phase mechanisms.
 * Evaluate species and mixture thermodynamic and transport properties.
@@ -29,8 +29,8 @@ PyChemkin provides Pythonic access to the Ansys Chemkin API for CFD models. It f
         :link: user_guide
         :link-type: doc
 
-        Understand key concepts for using PyChemkin, how to set up and run a basic
-        reactor model, and where you can find supporting information.
+        Understand key concepts for using PyChemkin. Also learn how to set up and run a basic
+        reactor model and where you can find supporting information.
 
     .. grid-item-card:: API reference :fa:`book-bookmark`
         :link: autoapi/index

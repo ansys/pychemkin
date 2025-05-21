@@ -154,7 +154,7 @@ iError = mixture.X_by_Equivalence_Ratio(
 )
 # check fuel-oxidizer mixture creation status
 if iError != 0:
-    print("Error: failed to create the Fuel-Oxidizer mixture!")
+    print("Error: Failed to create the fuel-oxidizer mixture.")
     exit()
 
 ##############################

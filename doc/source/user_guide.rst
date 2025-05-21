@@ -11,7 +11,7 @@ PyChemkin inherits all Ansys Chemkin functionalities, providing Pythonic interfa
 - **Stream:** A mixture object with an additional property of mass flow rate.
 - **Reactor:** An instance of a Chemkin reactor model that transforms the initial mixture into another mixture.
 
-The following figure shows PyChemkin's mixture-centric concept. It illustrates the basic types of operations applicable to a mixture, which inherits all properties of a chemistry set. A mixture can then be combined or mixed with a constraint, equilibrium (with constraints), and a process (by a reactor model).
+The following figure shows PyChemkin's mixture-centric concept. It illustrates the basic types of operations applicable to a mixture, which inherits all properties of a chemistry set. A mixture can be combined with a constraint, equilibrium (with constraints), or a process (by a reactor model).
 
 .. image:: _static/mixture_concept.png
    :width: 600
@@ -63,7 +63,7 @@ This code example computes the density of a mixture named ``air``:
       # check preprocess status
       if status != 0:
           # failed
-          print(f'Preprocess: Error encountered. Code = {status:d}.')
+          print(f'Preprocessing: Error encountered. Code = {status:d}.')
           print(f'See the summary file {GasMech.summaryfile} for details.')
           exit()
       # create a mixture named 'air' based on the 'GasMech' chemistry set

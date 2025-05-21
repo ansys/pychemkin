@@ -28,16 +28,19 @@ Set up a PyChemkin project
 ==========================
 
 This example shows how to set up a PyChemkin project and start to use PyChemkin features.
-You begin by importing the PyChemkin package, which is named ``ansys.chemkin``. You can
-also optionally import the PyChemkin logger package, which is named ``ansys.chemkin.logger``.
+You begin by importing the PyChemkin package, which is named ``ansys.chemkin``, and optionally
+the PyChemkin logger package, which is named ``ansys.chemkin.logger``.
 
 Next, you use the ``Chemistry()`` method to instantiate and preprocess a chemistry set.
-This requires specifying the file names (with full file paths) of the mechanism file, the
-thermodynamic data file, and the optional transport data file.
+This requires specifying the file names (with full file paths) of the mechanism file,
+thermodynamic data file, and optional transport data file.
 
-Once a chemistry set instance is instantiated, you use the ``preprocess()`` method to
+Once the chemistry set instance is instantiated, you use the ``preprocess()`` method to
 preprocess the mechanism data. You can then start to use PyChemkin features to build
 your simulation.
+
+.. note::
+   Running PyChemkin requires Ansys 2025 R2 or later.
 """
 
 ###############################################
@@ -60,13 +63,9 @@ from ansys.chemkin.logger import logger
 #
 # Assign the files to the corresponding chemistry set arguments:
 #
-# - ``chem``: Mechanism input file
-# - ``therm``: Thermodynamic data file
-# - ``tran``: Transport data file (optional)
-#
-#
-# .. note::
-#   Running PyChemkin requires Ansys 2025 R2 or later.
+# - ``mech_file``: Mechanism input file
+# - ``therm_file``: Thermodynamic data file
+# - ``tran_file``: Transport data file (optional)
 #
 
 # create GRI 3.0 mechanism from the data directory
@@ -98,16 +97,16 @@ status = GasMech.preprocess()
 
 if status != 0:
     # failed
-    print(f"PreProcess: error encountered...code = {status:d}")
+    print(f"Preprocessing: Error encountered. Code = {status:d}.")
     print(f"See the summary file {GasMech.summaryfile} for details.")
-    logger.error("Preprocess failed.")
+    logger.error("Preprocessing failed.")
     exit()
 
 #################################
 # Start to use PyChemkin features
 # ===============================
 # Start to use PyChemkin features to build your simulation.
-# For example, using the ``Mixture()`` method, you can create an ``air`` mixture based
+# For example, using the ``Mixture()`` method, create an ``air`` mixture based
 # on the ``GasMech`` chemistry set.
 
 # create 'air' mixture based on 'GasMech' chemistry set
@@ -120,16 +119,16 @@ air.temperature = 300.0
 # mixture composition in mole fractions
 air.X = [("O2", 0.21), ("N2", 0.79)]
 
-##############################################################
-# Print the properties of the ``air`` mixture for verification
-# ============================================================
+##########################################################
+# Print the properties of the air mixture for verification
+# ========================================================
 #
 # .. note::
 #
 #   - The default units of temperature and pressure are [K] and [dynes/cm\ :sup:`2`\ ], respectively.
 #   - The constant ``Patm`` is a conversion multiplier for pressure.
 #   - Transport property methods such as ``mixture_viscosity()`` require transport data. You
-#     must include the ``tran`` data file when creating the chemistry set.
+#     must include the transport data file when creating the chemistry set.
 #
 
 # print pressure and temperature of the `air` mixture

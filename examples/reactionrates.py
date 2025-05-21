@@ -26,7 +26,7 @@
 ===================
 Rank reaction rates
 ===================
-When you have a mixture in PyChemkin, not only can you obtain its properties, but you can also extract the rate information. The mixture can be any one of the following:
+When you have a mixture in PyChemkin, you can not only obtain its properties but also extract the rate information. The mixture can be any one of the following:
 
 - Set up from scratch.
 - Obtained from certain mixture operations.
@@ -34,7 +34,7 @@ When you have a mixture in PyChemkin, not only can you obtain its properties, bu
 
 The mixture rate utilities let you access the net production rate of species (ROP), forward and reverse reaction rates per reaction (RR), and net chemical heat release rate (HRR).
 
-This example shows how to use these PyChemkin mixture rate tools and derive useful information
+This example shows how to use PyChemkin mixture rate tools to derive useful information
 from the raw data, such as isolating dominant reactions at different mixture conditions.
 """
 
@@ -93,8 +93,8 @@ iError = MyGasMech.preprocess()
 ################################################################
 # Set up gas mixtures based on the species in this chemistry set
 # ==============================================================
-# To create a premixed fuel-oxidizer mixture by the equivalence ratio, you must
-# first create the *fuel* and the *oxidizer* mixtures.
+# Before you can create a premixed fuel-oxidizer mixture by the equivalence ratio, you must
+# first create fuel and the oxidizer mixtures.
 
 
 #########################
@@ -140,7 +140,7 @@ add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
 # Create a placeholder for the fuel-air mixture
 # =============================================
 # You can create an empty mixture object that is fully defined later.
-# The composition of ``premixed`` mixture is determined when calling one of the
+# The composition of the ``premixed`` mixture is determined when calling one of the
 # mixture composition methods:
 #
 # - ``X()``
@@ -172,20 +172,24 @@ premixed.list_composition(mode="mole")
 
 #####################################################################
 # Evaluate reaction rates at a given mixture temperature and pressure
-# ===============================++==================================
+# ===================================================================
 # Compute and rank the *net* reaction rates in the ``MyGasMech`` chemistry set at 1600 [K]
 # and 5 [atm]. The *net* rate of a reaction is computed by summing the forward rate ``kf``
-# and the reverse rate ``kr``. The rate utility ``RxnRates`` returns both the forward and
-# the reverse rates of each reaction in the mechanism. Get the net production rates of *all*
-# species by using the ``ROP`` method. The ROP values obtained are in [mole/cm\ :sup:`3`\ -sec],
-# alternatively you can use the ``massROP`` method to get mass-unit ROP values in [g/cm\ :sup:`3`\ -sec].
-# Use the optional parameter ``threshold`` to get only the ROP values with absolute value above
-# the given threshold value. For example, ``premixed.ROP(threshold=1.0e-8)`` will return a
-# ``rop`` array in which any raw ROP value with absolute value less than 1.0e-8 is set to zero.
-# By default ``threshold=0.0``, that is, all raw ROP values will be returned.
+# and the reverse rate ``kr``. The ``RxnRates`` rate utility returns both the forward and
+# the reverse rates of each reaction in the mechanism.
+#
+# Get the net production rates of *all* species by using the ``ROP`` method.
+# The ROP values obtained are in [mole/cm\ :sup:`3`\ -sec].
+# Alternatively, you can use the ``massROP`` method to get mass-unit ROP values in
+# [g/cm\ :sup:`3`\ -sec].
+#
+# Use the optional ``threshold`` parameter to get only the ROP values with absolute value above
+# the given threshold value. For example, ``premixed.ROP(threshold=1.0e-8)`` returns a
+# ``rop`` array in which any raw ROP value with an absolute value less than 1.0e-8 is set to zero.
+# By default, ``threshold=0.0``, in which case all raw ROP values are returned.
 #
 # .. note::
-#    Temperature and pressure are requires to compute the reaction rates.
+#    Temperature and pressure are required to compute the reaction rates.
 
 # set the temperature and the pressure of the premixed mixture
 premixed.pressure = 5.0 * ck.Patm
@@ -194,13 +198,13 @@ premixed.temperature = 1600.0
 ########################################################
 # Obtain and sort the rates of production of all species
 # ======================================================
-# Use the ``ROP()`` method to get the rates of production (ROP) of all species in the.
+# Use the ``ROP()`` method to get the rates of production (ROP) of all species in the
 # ``MyGasMech`` chemistry set. You can use the ``list_ROP()`` method to list and sort
-# the ROP values. ``spec_rate_order`` is the sorted species indices in *descending*
-# order, and ``species_rates`` contains the sorted ROP values.
+# the ROP values. ``spec_rate_order`` contains the sorted species indices in descending
+# order. ``species_rates`` contains the sorted ROP values.
 
 rop = premixed.ROP()
-# list the nonzero rates in descending order
+# list the non-zero rates in descending order
 print()
 spec_rate_order, species_rates = premixed.list_ROP()
 
@@ -208,32 +212,32 @@ spec_rate_order, species_rates = premixed.list_ROP()
 ##########################################################
 # Evaluate and sort the rates of production of all species
 # ========================================================
-# Use the ``RxnRates()`` method to get the forward rate ``kf``
-# and the reverse rate ``kr`` of each reaction. The ``list_reaction_rates()``
+# Use the ``RxnRates()`` method to get the forward rate (``kf``)
+# and reverse rate (``kr``) of each reaction. The ``list_reaction_rates()``
 # method computes the net rate of each reaction and sorts them in ascending
 # or descending order. The net reaction rate is computed by summing the forward and
-# reverse rates of each reaction. ``rxn_order`` is a list of the ranked reaction indices,
-# and ``net_rxn_rates`` contains the net reaction rates in the same order.
+# reverse rates of each reaction. ``rxn_order`` is a list of the ranked reaction indices.
+# ``net_rxn_rates`` contains the net reaction rates in the same order.
 #
 # .. note::
 #   The species and the reactions indexes returned by the ``list_ROP()`` and ``list_reaction_rates()``
-#   methodsare **0-based** indexes. Increment the returned index by 1 to get the actual **1-based** index.
+#   methods are 0-based indexes. Increment the returned index by 1 to get the actual 1-based index.
 
 kf, kr = premixed.RxnRates()
 print()
 print(f"Reverse reaction rates: (raw values of all {MyGasMech.IIGas:d} reactions)")
 print(str(kr))
 print("=" * 40)
-# list the nonzero net reaction rates
+# list the non-zero net reaction rates
 rxn_order, net_rxn_rates = premixed.list_reaction_rates()
 
 
 ############################################
 # Plot the sorted reaction rates at 1600 [K]
 # ==========================================
-# Display the top net reaction rates and their reaction string in the commonly used horizontal bar plot.
-# Use the ``get_gas_reaction_string`` utility of the chemistry set to get the actual reaction for the
-# Y-axis label.
+# Display the top net reaction rates and their reaction strings in the commonly used horizontal
+# bar plot. Use the ``get_gas_reaction_string`` utility of the chemistry set to get the actual
+# reaction for the Y-axis label.
 
 # create a rate plot
 plt.rcParams.update({"figure.autolayout": True})
@@ -254,7 +258,7 @@ plt.text(-3.0e-4, 0.5, "T = 1600K", fontsize=10)
 
 #####################################################################
 # Evaluate reaction rates at a given mixture temperature and pressure
-# =================================++================================
+# ===================================================================
 # Compute and rank the net reaction rates in the ``MyGasMech`` chemistry set at 1800 [K]
 # and 5 [atm].
 
