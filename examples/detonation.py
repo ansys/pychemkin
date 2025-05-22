@@ -73,7 +73,7 @@ mechanism_dir = data_dir
 MyMech = ck.Chemistry(label="C2 NOx")
 # set mechanism input files individually
 # Because this mechanism file contains all the necessary thermodynamic and transport data,
-# you do not need to specify the thermodynamic and transport data files.
+# you do not need to specify thermodynamic and transport data files.
 MyMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
 
 #####################################

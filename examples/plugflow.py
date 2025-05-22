@@ -31,20 +31,22 @@ The PFR (plug flow reactor) model is widely adopted in the chemical kinetic
 studies of emission abatement processes because of its simplicity in flow treatment
 as well as its resemblance of an exhaust duct or a tailpipe.
 
-The PFR model is a steady-state *open reactor* because materials are allowed to
+The PFR model is a steady-state open reactor because materials are allowed to
 move in and out of the reactor. The solutions are obtained along the length of the reactor
-as the inlet materials march towards the reactor exit. Typically the pressure of the PFR
+as the inlet materials march toward the reactor exit. Typically, the pressure of the PFR
 is fixed. However, Chemkin does permit the use of a pressure profile to enforce a certain
-pressure gradient in the PFR. The PFR object in PyChemkin is created by the
-``PlugFlowReactor_FixedTemperature()`` or ``PlugFlowReactor_EnergyConservation()`` method.
-Unlike the *closed* ``batch reactor`` model which is instantiated by a mixture,
-the open reactor model, such as the PFR model, is initiated by an ``Stream`` object. In PyChemkin,
-the stream is simply a mixture with the addition of the inlet mass/volumetric
-flow rate or velocity. You already know how to create a stream if you now how to create
-a mixture. You can specify the inlet flow rate using one of these methods:
-``velocity``, ``mass_flowrate``, ``vol_flowrate``, and ``sccm`` (standard cubic centimeters per minute).
+pressure gradient in the PFR.
 
-This example shows the use of the Chemkin PFR model to study the
+Use the ``PlugFlowReactor_FixedTemperature()`` or ``PlugFlowReactor_EnergyConservation()``
+method to create a PFR. Unlike the closed batch reactor model, which is instantiated by a mixture,
+the open reactor model, such as the PFR model, is initiated by a stream, which is
+simply a mixture with the addition of the inlet mass/volumetric
+flow rate or velocity. You already know how to create a stream if you know how to create
+a mixture. You can specify the inlet flow rate using one of these methods:
+``velocity()``, ``mass_flowrate()``, ``vol_flowrate()``, or ``sccm()``
+(standard cubic centimeters per minute).
+
+This example shows how to use the Chemkin PFR model to study the
 reduction of nitric oxide (NO) in the combustion exhaust by using the
 CH\ :sub:`4` reburning process. This is achieved by injecting CH\ :sub:`4` into the
 hot exhaust gas mixture. As the exhaust gas travels along the tubular reactor, the injected
@@ -82,7 +84,7 @@ interactive = True
 ########################
 # Create a chemistry set
 # ======================
-# The mechanism used is the C2 NOx mechanism the combustion of C1-C2 hydrocarbons.
+# The mechanism to load is the C2 NOx mechanism for the combustion of C1-C2 hydrocarbons.
 # The mechanism comes with the standard Ansys Chemkin
 # installation in the ``/reaction/data`` directory.
 
@@ -107,8 +109,8 @@ iError = MyGasMech.preprocess()
 # =================================
 # Create a hot exhaust gas mixture by assigning the mole fractions of the
 # species. A stream is simply a mixture with the addition of
-# mass/volumetric flow rate or velocity. Here the gas composition ``exhaust.X`` is given
-# by a *recipe* consisting of the common species in the combustion exhaust, such as
+# mass/volumetric flow rate or velocity. Here, the gas composition ``exhaust.X`` is given
+# by a recipe consisting of the common species in the combustion exhaust, such as
 # CO\ :sub:`2` and H\ :sub:`2`O and the CH\ :sub:`4` injected. The inlet velocity
 # is given by ``exhaust.velocity = 26.815``.
 
@@ -167,10 +169,10 @@ tubereactor.list_composition(mode="mass", bound=1.0e-8)
 # Set output options
 # ==================
 # You can turn on adaptive solution saving to resolve the steep variations in the solution
-# profile. Here additional solution data point is saved for every **100** internal solver steps.
+# profile. Here, additional solution data points are saved for every **100** internal solver steps.
 #
 # .. note::
-#   By default, distance intervals for both print and save solution are **1/100** of the
+#   By default, distance intervals for both print and save solution are 1/100 of the
 #   reactor length. In this case, :math:`dt=time/100=0.001`\ . You can change them
 #   to different values.
 
@@ -182,8 +184,8 @@ tubereactor.adaptive_solution_saving(mode=True, steps=100)
 #########################################
 # Display the added parameters (keywords)
 # =======================================
-# You can verify that the preceding parameters are correctly assigned to the reactor model by
-# using the ``showkeywordinputlines()`` method.
+# Use the ``showkeywordinputlines()`` method to verify that the preceding
+# parameters are correctly assigned to the reactor model.
 tubereactor.showkeywordinputlines()
 
 ######################################################
@@ -192,7 +194,7 @@ tubereactor.showkeywordinputlines()
 # Use the ``run()`` method to start the plug flow simulation.
 #
 # .. note ::
-#   You can use two ``time`` calls (one before the run and the other after) to
+#   You can use two ``time`` calls (one before the run and one after the run) to
 #   get the simulation run time (wall time).
 #
 
@@ -209,7 +211,7 @@ if runstatus != 0:
     exit()
 # run succeeded.
 print(Color.GREEN + ">>> Run completed. <<<", end=Color.END)
-print(f"Total simulation duration: {runtime * 1.0e3} [msec].")
+print(f"Total simulation duration: {runtime * 1.0e3} [msec]")
 
 ##########################
 # Postprocess the solution
@@ -220,7 +222,7 @@ print(f"Total simulation duration: {runtime * 1.0e3} [msec].")
 # - The raw solution profiles (value as a function of distance) are available for distance,
 #   temperature, pressure, volume, and species mass fractions.
 #
-#  -The mixtures permit the use of all property and rate utilities to extract
+# - The mixtures permit the use of all property and rate utilities to extract
 #   information such as viscosity, density, and mole fractions.
 #
 # You can use the ``get_solution_variable_profile()`` method to get the raw solution profiles. You
@@ -229,7 +231,7 @@ print(f"Total simulation duration: {runtime * 1.0e3} [msec].")
 # solution mixture at the given distance. (In this case, the mixture is constructed by interpolation.)
 #
 # You can get the outlet solution by simply grabbing the solution values at the very last point by
-#  using \ :math:`(outlet solution index) = (number of solutions) - 1`\ .
+# using \ :math:`(outlet solution index) = (number of solutions) - 1`\.
 #
 
 # postprocess the solution profiles
@@ -260,16 +262,16 @@ YN2profile = tubereactor.get_solution_variable_profile("N2")
 YNO_inlet = exhaust.Y[MyGasMech.get_specindex("NO")]
 # outlet grid index
 xout_index = solutionpoints - 1
-print("At the reactor inlet: x = 0 [xm].")
+print("At the reactor inlet: x = 0 [xm]")
 print(f"The NO mass fraction = {YNO_inlet}.")
-print(f"At the reactor outlet: x = {xprofile[xout_index]} [cm].")
+print(f"At the reactor outlet: x = {xprofile[xout_index]} [cm]")
 print(f"The NO mass fraction = {YNOprofile[xout_index]}.")
 print(
     "The NO conversion rate = "
-    + f"{(YNO_inlet - YNOprofile[xout_index]) / YNO_inlet * 100.0} %\n"
+    + f"{(YNO_inlet - YNOprofile[xout_index]) / YNO_inlet * 100.0} %\n."
 )
 
-# more involving postprocessing by using mixtures
+# more involved postprocessing using mixtures
 #
 # create arrays for the gas velocity profile
 velocityprofile = np.zeros_like(xprofile, dtype=np.double)
@@ -277,7 +279,7 @@ velocityprofile = np.zeros_like(xprofile, dtype=np.double)
 massflowrate = tubereactor.mass_flowrate
 # reactor cross-section area [cm2]
 areaflow = tubereactor.flowarea
-print(f"Mass flow rate: {massflowrate} [g/sec]\nflow area: {areaflow} [cm2].")
+print(f"Mass flow rate: {massflowrate} [g/sec]\nflow area: {areaflow} [cm2]")
 # ratio
 ratio = massflowrate / areaflow
 # loop over all solution time points

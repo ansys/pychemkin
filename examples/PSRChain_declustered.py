@@ -23,15 +23,15 @@
 """
 .. _ref_connected_reactors:
 
-=====================================================================
-Use a chain of individual reactors to model a fictional gas combustor
-=====================================================================
+===========================================================
+Use a chain of individual reactors to model a gas combustor
+===========================================================
 
-This example shows how to set up and solve a series of linked PSRs (perfectly-stirred reactors)
-in PyChemkin. This is the simplest reactor network as it does not contain any recycling stream or
-outflow splitting.
+This example shows how to set up and solve a series of linked PSRs (perfectly-stirred reactors).
+This is the simplest reactor network as it does not contain any recycling streams or
+outflow splittings.
 
-Here is the PSR chain model of a fictional can combustor.
+Here is the PSR chain model of a fictional gas combustor.
 
  .. figure:: chain_reactor_network.png
    :scale: 80 %
@@ -39,17 +39,17 @@ Here is the PSR chain model of a fictional can combustor.
 
 The primary inlet stream to the first reactor, the *combustor*, is the fuel-lean methane-air mixture
 that is formed by mixing the fuel (methane) and the heated air. The exhaust from the combustor
-enters the second reactor, the *dilution zone*, where the hot combustion products are cooled by the introduction of additional cool air. The cooled and diluted gas mixture in the *dilution zone* then travel to the third reactor, the *reburning zone*. A mixture of fuel (methane) and carbon dioxide is injected to the gas in the reburning zone, attempting to convert any remaining carbon monoxide or nitric oxide in the exhaust gas to carbon dioxide or nitrogen, respectively.
+enters the second reactor, the *dilution zone*, where the hot combustion products are cooled by the introduction of additional cool air. The cooled and diluted gas mixture in the *dilution zone* then travels to the third reactor, the *reburning zone*. A mixture of fuel (methane) and carbon dioxide is injected to the gas in the reburning zone, attempting to convert any remaining carbon monoxide or nitric oxide in the exhaust gas to carbon dioxide or nitrogen, respectively.
 
-In this example, the reactors are solved one by one from upstream to downstream. Once the solution of the
+This example solves the reactors one by one, from upstream to downstream. Once the solution of the
 upstream reactor is obtained, it is used to set up the external inlet of the immediate downstream reactor. This process continues until all reactors in the chain network are solved. Since there is no recycling stream in this configuration, the entire reactor network can be solved in one sweep.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/chain_reactor_network.png'
 
-###############################################
-# Import PyChemkin package and start the logger
-# =============================================
+################################################
+# Import PyChemkin packages and start the logger
+# ==============================================
 
 import os
 import time
@@ -77,8 +77,8 @@ interactive = True
 ########################
 # Create a chemistry set
 # ======================
-# The mechanism is the GRI 3.0 mechanism for methane combustion.
-# The mechanism and its associated data files come with the standard Ansys Chemkin
+# The mechanism to load is the GRI 3.0 mechanism for methane combustion.
+# This mechanism and its associated data files come with the standard Ansys Chemkin
 # installation in the ``/reaction/data`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
@@ -122,7 +122,7 @@ air.mass_flowrate = 45.0  # [g/sec]
 # Create external inlet streams from the mixtures
 # ===============================================
 # Use the stream ``adiabatic_mixing_streams()`` method to combine
-# the ``fuel`` and the ``air`` streams. The final gas temperature should
+# the ``fuel`` and ``air`` streams. The final gas temperature should
 # land between the temperatures of the two source streams. The mass flow
 # rate of the ``premixed`` stream should be the sum of the sources. A simple
 # PyChemkin composition recipe is used to create the ``reburn_fuel`` stream.
@@ -145,9 +145,9 @@ O2_index = MyGasMech.get_specindex("O2")
 NO_index = MyGasMech.get_specindex("NO")
 CO_index = MyGasMech.get_specindex("CO")
 
-#####################################
-# Create individual PSR for each zone
-# ===================================
+###########################
+# Create PSRs for each zone
+# =========================
 # Set up the PSR for each zone one by one with external inlets only. PyChemkin
 # requires that the first reactor/zone must have at least one external inlet.
 # There are three reactors in the network. From upstream to downstream, they
@@ -161,13 +161,13 @@ CO_index = MyGasMech.get_specindex("CO")
 # .. note::
 #
 #   - PyChemkin requires that the first reactor/zone must have at least
-#   one external inlet. The rest of the reactors have at least the
-#   through-flow from the immediate upstream reactor so they do not require
-#   an external inlet.
+#     one external inlet. The rest of the reactors have at least the
+#     through-flow from the immediate upstream reactor so they do not require
+#     an external inlet.
 #
-#   -The ``Stream`` parameter used to instantiate a ``PSR`` object is used to establish
-#   the *guessed reactor solution* and is modified when the network is solved by
-#   the ``ERN``.
+#   - The ``Stream`` parameter used to instantiate a PSR object is used to establish
+#     the *guessed reactor solution* and is modified when the network is solved by
+#     the ``ERN``.
 #
 #   - The reactors in the network must be postprocessed individually.
 #

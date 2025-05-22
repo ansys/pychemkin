@@ -66,8 +66,8 @@ interactive = True
 ########################
 # Create a chemistry set
 # ======================
-# The first mechanism loaded is the GRI 3.0 mechanism for methane combustion.
-# The mechanism and its associated data files come with the standard Ansys Chemkin
+# The first mechanism to load is the GRI 3.0 mechanism for methane combustion.
+# This mechanism and its associated data files come with the standard Ansys Chemkin
 # installation in the ``/reaction/data`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)

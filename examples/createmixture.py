@@ -33,14 +33,14 @@ two mixtures, find the equilibrium state of a mixture, or use a mixture to defin
 a reactor. A PyChemkin *reactor model* is a black box that transforms a mixture
 from its initial state to a new one.
 
-The following schematic shows the basic operations available for the mixture object in PyChemkin: **create**, **combine/mix**, and **transform** (by a reactor model).
+The following schematic shows the basic operations available for a mixture in PyChemkin: **create**, **combine/mix**, and **transform** (by a reactor model).
 
 .. figure:: mixture_concept.png
   :scale: 45 %
   :alt: the mixture concept
 
-This example shows different ways to create a mixture object in PyChemkin. The use of the composition **recipe** allows you to provide just the non-zero species components with a *list of species-fraction pairing tuples*. Alternatively, the ``numpy`` **array** lets you use a *full-size* (= number of species) mole/mass fraction array to specify the mixture composition. The
-``equivalence ratio()`` method creates a new mixture from predefined **fuel** and **oxidizer** mixtures by assigning an equivalence ratio value.
+This example shows different ways to create a mixture in PyChemkin. The use of the composition *recipe* lets you provide just the non-zero species components with a list of species-fraction pairing tuples. Alternatively, the NumPy array lets you use a *full-size* (equal to the number of species) mole/mass fraction array to specify the mixture composition. The
+``equivalence ratio()`` method creates a new mixture from predefined fuel and oxidizer mixtures by assigning an equivalence ratio value.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_create_mixture.png'
@@ -71,12 +71,12 @@ interactive = True
 ########################
 # Create a chemistry set
 # ======================
-# The mechanism loaded is the C2 NOx mechanism. The mechanism file and the associated data files
+# The mechanism to load is the C2 NOx mechanism. This mechanism file and the associated data files
 # come with the standard Ansys Chemkin installation in the ``/reaction/data`` directory.
-# The ``C2 NOx`` mechanism file, in addition to the reactions, also contains the thermodynamic
+# The C2 NOx mechanism file, in addition to the reactions, contains the thermodynamic
 # and transport data of all species in the mechanism. In this case, you only need to specify
 # the mechanism file, that is, ``chemfile``. If your simulation requires the transport properties, you
-# must use the ``preprocess_transportdata()`` method to tell the preprocessor to also include the
+# must use the ``preprocess_transportdata()`` method to tell the PyChemkin preprocessor to also include the
 # transport data. The preprocessor does not include the transport data by default.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
@@ -95,11 +95,11 @@ MyGasMech.preprocess_transportdata()
 #####################################
 # Preprocess the C2 NOx chemistry set
 # ===================================
-# The C2 NOx mechanism also includes information about the *Soave* cubic
-# Equation of State (EOS) for the real-gas applications. The PyChemkin preprocessor
+# The C2 NOx mechanism includes information about the *Soave* cubic
+# Equation of State (EOS) for real-gas applications. The preprocessor
 # indicates the availability of the real-gas model in the chemistry set processed.
-# For example, during preprocessing, you see this print out: *"real-gas cubic EOS 'Soave' is
-# available"* .
+# For example, during preprocessing, you see this print out: ``real-gas cubic EOS 'Soave' is
+# available``.
 
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
@@ -124,15 +124,15 @@ premixed.X = mixture_recipe
 ##################################
 # Find mixture mean molecular mass
 # ================================
-# You can use the ``WTM`` method to get the mean molar mass of the gas mixture.
+# Use the ``WTM()`` method to get the mean molar mass of the gas mixture.
 
-print(f"mean molecular mass = {premixed.WTM:f} gm/mole")
-print("=" * 40)
+print(f"Mean molecular mass = {premixed.WTM:f} gm/mole")
+print("=" * 40.0)
 
 ##############################
 # List the mixture composition
 # ============================
-# You can use the ``Y`` method to automatically convert the mole fractions to mass fractions
+# Use the ``Y()`` method to automatically convert the mole fractions to mass fractions
 # and vice versa. Use the ``list_composition()`` method to display
 # only the non-zero components of the gas mixture.
 
@@ -147,25 +147,28 @@ print("=" * 40)
 premixed.list_composition(mode="mole")
 print("=" * 40)
 
-################################
-# Create a hard copyof a mixture
-# ==============================
+#################################
+# Create a hard copy of a mixture
+# ===============================
 # Create a hard copy of the premixed mixture. (Soft copying, that is,
-# using ``anotherpremixed = premixed``, works too.)
+# using ``anotherpremixed = premixed``, also works.)
 anotherpremixed = copy.deepcopy(premixed)
 # display the molar composition of the new mixture
-print("\nformatted mixture composition of the copied mixture:")
+print("\nFormatted mixture composition of the copied mixture")
 anotherpremixed.list_composition(mode="mole")
-print("=" * 40)
+print("=" * 40.0)
 
 #####################################
 # Compute and plot mixture properties
 # ===================================
 # The PyChemkin ``Mixture`` module offers many basic methods to compute the
-# thermodynamic and the transport properties of *a species* and a *gas mixture*.
-# In the following code, selected mixture properties are plotted as a function of the mixture
-# temperature. The mixture density and mixture enthalpy are obtained by using the ``RHO`` and ``HML``
-# methods, respectively. The ``mixture_viscosity()`` method returns mixture transport property ``viscosity``. The ``mixture_diffusion_coeffs()`` method returns the mixture-averaged diffusion coefficient of CH\ :sub:`4`. The temperature and pressure are required to compute the properties.
+# thermodynamic and transport properties of a species and a gas mixture.
+# The following code plots selected mixture properties as a function of the mixture
+# temperature. It uses the ``RHO()`` and ``HML()`` methods to get the mixture density
+# and mixture enthalpy, respectively. Use the ``mixture_viscosity()`` method to get
+# the mixture transport property, ``viscosity``. Use the ``mixture_diffusion_coeffs()``
+# method to get the mixture-averaged diffusion coefficient of CH\ :sub:`4`.
+# The temperature and pressure are required to compute the properties.
 
 plt.subplots(2, 2, sharex="col", figsize=(9, 9))
 dTemp = 20.0

@@ -54,8 +54,8 @@ ck.set_verbose(True)
 ################################
 # Create the first chemistry set
 # ==============================
-# The first mechanism loaded is the GRI 3.0 mechanism for methane combustion.
-# The mechanism and its associated data files come with the standard Ansys Chemkin
+# The first mechanism to load is the GRI 3.0 mechanism for methane combustion.
+# This mechanism and its associated data files come with the standard Ansys Chemkin
 # installation in the ``/reaction/data`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
@@ -145,7 +145,7 @@ mechanism_dir = data_dir
 My2ndMech = ck.Chemistry(label="C2 NOx")
 # set mechanism input files individually
 # this mechanism file contains all necessary thermodynamic and transport data
-# thus, there is no need to specify the thermodynamic and transport data files
+# thus, there is no need to specify thermodynamic and transport data files
 My2ndMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
 
 # direct the preprocessor to include the transport properties
