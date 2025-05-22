@@ -7,7 +7,10 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 from datetime import datetime
+import os
 
+from ansys.chemkin import __version__
+from ansys_sphinx_theme import get_version_match
 from sphinx.builders.latex import LaTeXBuilder
 
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
@@ -15,9 +18,51 @@ LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
 project = "PyChemkin"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc. <ansys.support@ansys.com>"
+cname = os.getenv("DOCUMENTATION_CNAME", default="chemkin.docs.pyansys.com")
+switcher_version = get_version_match(__version__)
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
+
+
+html_context = {
+    "github_user": "ansys",
+    "github_repo": "pychemkin",
+    "github_version": "main",
+    "doc_path": "doc/source",
+}
+html_theme_options = {
+    "logo": "pyansys",
+    "switcher": {
+        "json_url": f"https://{cname}/versions.json",
+        "version_match": switcher_version,
+    },
+    "check_switcher": False,
+    "github_url": "https://github.com/ansys/pychemkin",
+    "show_prev_next": False,
+    "show_breadcrumbs": True,
+    "collapse_navigation": True,
+    "use_edit_page_button": True,
+    "additional_breadcrumbs": [
+        ("PyAnsys", "https://docs.pyansys.com/"),
+    ],
+    "icon_links": [
+        {
+            "name": "Support",
+            "url": "https://github.com/ansys/pychemkin/discussions",
+            "icon": "fa fa-comment fa-fw",
+        },
+        {
+            "name": "Download documentation in PDF",
+            "url": f"https://{cname}/version/{switcher_version}/_static/assets/download/pychemkin.pdf",  # noqa: E501
+            "icon": "fa fa-file-pdf fa-fw",
+        },
+    ],
+    "ansys_sphinx_theme_autoapi": {
+        "project": project,
+    },
+}
+
 
 extensions = [
     "sphinx.ext.autodoc",

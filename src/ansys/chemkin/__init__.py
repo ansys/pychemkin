@@ -26,6 +26,7 @@ core
 """
 
 from ctypes import c_int
+import importlib.metadata as importlib_metadata
 import inspect
 import os
 from pathlib import Path
@@ -72,6 +73,9 @@ from ansys.chemkin.mixture import (
     isothermal_mixing,
 )
 from ansys.chemkin.realgaseos import check_realgas_status, set_current_pressure
+
+__version__ = importlib_metadata.version(__name__.replace(".", "-"))
+
 
 # show ansys (chemkin) version number
 msg = [
