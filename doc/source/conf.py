@@ -9,8 +9,6 @@
 from datetime import datetime
 import os
 
-from ansys.chemkin import __version__
-from ansys_sphinx_theme import get_version_match
 from sphinx.builders.latex import LaTeXBuilder
 
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
@@ -19,7 +17,6 @@ project = "PyChemkin"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc. <ansys.support@ansys.com>"
 cname = os.getenv("DOCUMENTATION_CNAME", default="chemkin.docs.pyansys.com")
-switcher_version = get_version_match(__version__)
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -35,7 +32,6 @@ html_theme_options = {
     "logo": "pyansys",
     "switcher": {
         "json_url": f"https://{cname}/versions.json",
-        "version_match": switcher_version,
     },
     "check_switcher": False,
     "github_url": "https://github.com/ansys/pychemkin",
@@ -54,7 +50,7 @@ html_theme_options = {
         },
         {
             "name": "Download documentation in PDF",
-            "url": f"https://{cname}/version/{switcher_version}/_static/assets/download/pychemkin.pdf",  # noqa: E501
+            "url": f"https://{cname}/version/_static/assets/download/pychemkin.pdf",  # noqa: E501
             "icon": "fa fa-file-pdf fa-fw",
         },
     ],
