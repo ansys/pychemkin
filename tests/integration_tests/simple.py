@@ -39,7 +39,7 @@ status = GasMech.preprocess()
 # check preprocess status
 if status != 0:
     # failed
-    print(f"PreProcess: error encountered...code = {status:d}")
+    print(f"Preprocessing: Error encountered. Code = {status:d}.")
     print(f"see the summary file {GasMech.summaryfile} for details")
     logger.error("PreProcess failed")
     exit()

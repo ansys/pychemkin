@@ -66,7 +66,7 @@ from ansys.chemkin.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.inlet import adiabatic_mixing_streams
 from ansys.chemkin.logger import logger
 
-# chemkin perfectly-stirred reactor (PSR) model (steady-state)
+# Chemkin PSR model (steady-state)
 from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
 
 # check working directory
@@ -76,24 +76,24 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(True)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file
+# interactive = False: save plot as a PNG file
 global interactive
 interactive = True
 
 #####################################
-# Create a ``Chemistry Set`` instance
+# Create a chemistry set
 # ===================================
-# The mechanism is the GRI 3.0 mechanism for methane combustion.
-# The mechanism and its associated data files come with the standard Ansys Chemkin
-# installation under the subdirectory *"/reaction/data"*.
+# The mechanism to load is the GRI 3.0 mechanism for methane combustion.
+# This mechanism and its associated data files come with the standard Ansys Chemkin
+# installation in the ``/reaction/data`` directory.
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # create a chemistry set based on the GRI mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
-# inclusion of the full file path is recommended
+# including the full file path is recommended
 MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 

@@ -39,17 +39,17 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(True)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file
+# interactive = False: save plot as a PNG file
 global interactive
 interactive = False
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # create a chemistry set based on the diesel 14 components mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
-# inclusion of the full file path is recommended
+# including the full file path is recommended
 MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
@@ -141,10 +141,10 @@ runstatus = MyCONV.run()
 # check run status
 if runstatus != 0:
     # run failed!
-    print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+    print(Color.RED + ">>> Run failed. <<<", end=Color.END)
     exit()
 # run success!
-print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
+print(Color.GREEN + ">>> Run completed. <<<", end=Color.END)
 # get ignition delay time (need to deduct the initial compression time = 0.01 [sec])
 delaytime = MyCONV.get_ignition_delay() - 0.01 * 1.0e3
 print(f"ignition delay time = {delaytime} [msec]")

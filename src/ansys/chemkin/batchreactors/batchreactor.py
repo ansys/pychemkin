@@ -1552,7 +1552,7 @@ class BatchReactors(reactor):
 
     def get_solution_mixture(self, time: float) -> Mixture:
         """
-        Get the mixture representing the solution state inside the reactor at the given time
+        Get the mixture representing the solution state inside the reactor at a given time
 
         Parameters
         ----------

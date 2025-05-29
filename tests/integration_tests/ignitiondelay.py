@@ -40,17 +40,17 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(False)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file
+# interactive = False: save plot as a PNG file
 global interactive
 interactive = False
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # create a chemistry set based on GRI 3.0
 gasoline = ck.Chemistry(label="gasoline 14comp")
 # set mechanism input files
-# inclusion of the full file path is recommended
+# including the full file path is recommended
 gasoline.chemfile = os.path.join(mechanism_dir, "gasoline_14comp_WBencrypt.inp")
 # preprocess the mechanism files
 iError = gasoline.preprocess()
@@ -140,7 +140,7 @@ for i in range(npoints):
         print(f"ignition delay time = {delaytime[i]} [msec]")
     else:
         # if get this, most likely the END time is too short
-        print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+        print(Color.RED + ">>> Run failed. <<<", end=Color.END)
     init_temp += delta_temp
 # compute the total runtime
 runtime = time.time() - start_time

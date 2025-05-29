@@ -10,8 +10,7 @@ on:
       - main
 
 env:
-  # DOCUMENTATION_CNAME: 'chemkin.docs.pyansys.com'
-  DOCUMENTATION_CNAME: 'musical-waddle-4kyl82o.pages.github.io/' # remove after release and uncomment previous
+  DOCUMENTATION_CNAME: 'chemkin.docs.pyansys.com'
   MAIN_PYTHON_VERSION: '3.10'
   PACKAGE_NAME: 'ansys-chemkin'
   PACKAGE_NAMESPACE: 'ansys.chemkin'

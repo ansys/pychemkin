@@ -27,25 +27,25 @@
 Estimate the steady-state NO emission level of a complete burned fuel-air mixture
 =================================================================================
 
-This tutorial will demonstrate a quick method to estimate the steady state NO level
-that could be formed by the combustion of a fuel-air mixture at a given temperature.
+This example shows how to quickly estimate the steady-state NO level
+that is formed by the combustion of a fuel-air mixture at a given temperature.
 Without needing any reaction, the NO concentration gets to its steady state
-(or the maximum) level when the product mixture from the fuel-air combustion
-reaches the equilibrium state at the given temperature. You can find the *equilibrium state* of
-the fresh fuel-air mixture by using the ``equilibrium`` method with the *fixed pressure*
-and *fixed temperature* option.
+(or the maximum level) when the product mixture from the fuel-air combustion
+reaches the equilibrium state at the given temperature. To find the equilibrium state of
+the fresh fuel-air mixture, the ``equilibrium()`` method is used with the ``fixed pressure``
+and ``fixed temperature`` options.
 
-In this project, the influence of *temperature* on the predicted adiabatic flame temperature
-will be explored. Knowing that Nitrogen oxides (NOx) are stable at high temperatures (> 2000 [K]),
-you can expect that the steady state NO level should increase sharply when the temperature
+This example explores the influence of temperature on the predicted adiabatic flame temperature.
+Knowing that nitrogen oxides (NOx) are stable at high temperatures (> 2000 [K]),
+you can expect that the steady-state NO level should increase sharply when the temperature
 gets high enough.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_equilibrium_composition.png'
 
-###############################################
-# Import PyChemkin package and start the logger
-# =============================================
+################################################
+# Import PyChemkin packages and start the logger
+# ==============================================
 
 import os
 
@@ -61,57 +61,60 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(True)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file
+# interactive = False: save plot as a PNG file
 global interactive
 interactive = True
 
-#####################################
-# Create a ``Chemistry Set`` instance
-# ===================================
-# The first mechanism loaded is the GRI 3.0 mechanism for methane combustion.
-# The mechanism and its associated data files come with the standard Ansys Chemkin
-# installation under the subdirectory *"/reaction/data"*.
+########################
+# Create a chemistry set
+# ======================
+# The first mechanism to load is the GRI 3.0 mechanism for methane combustion.
+# This mechanism and its associated data files come with the standard Ansys Chemkin
+# installation in the ``/reaction/data`` directory.
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # create a chemistry set based on GRI 3.0
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
-# inclusion of the full file path is recommended
+# including the full file path is recommended
 MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-# transport data not needed
+# transport data is not needed
 
-###################################
-# Pre-process the ``Chemistry Set``
-# =================================
+##############################
+# Preprocess the chemistry set
+# ============================
 
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
 
-####################################################################
-# Set up gas mixtures based on the species in this ``Chemistry Set``
-# ==================================================================
-# There are a few methods to create a gas ``mixture`` in PyChemkin. Here
-# the fuel-air mixture is created by mixing the ``fuel`` and the ``air``
-# mixtures by using the ``isothermal_mixing`` method with a predetermined
-# *air/fuel rate*.
+#####################
+# Set up gas mixtures
+# ===================
+# Set up gas mixtures based on the species in this chemistry set.
+# PyChemkin provides a few methods for creating a gas mixture. Here,
+# the ``isothermal_mixing()`` method is used to create a ``fuel-air`` mixture
+# by mixing the ``fuel`` and ``air`` mixtures with a predetermined
+# air/fuel rate.
 
-#########################
-# Create the fuel mixture
-# =======================
-# The fuel mixture consists of 80% methane and 20% hydrogen.
+#######################
+# Create a fuel mixture
+# =====================
+# Create a fuel mixture of 80% methane and 20% hydrogen.
+
 fuel = ck.Mixture(MyGasMech)
 # set mole fraction
 fuel.X = [("CH4", 0.8), ("H2", 0.2)]
 fuel.temperature = 300.0
 fuel.pressure = ck.Patm  # 1 atm
 
-#########################
-# Create the air mixture
-# =======================
-# "Air" is a mixture of oxygen and nitrogen.
+#######################
+# Create an air mixture
+# =====================
+# Create an air mixture of oxygen and nitrogen.
+
 air = ck.Mixture(MyGasMech)
 # set mass fraction
 air.Y = [("O2", 0.23), ("N2", 0.77)]
@@ -122,11 +125,12 @@ air.pressure = ck.Patm  # 1 atm
 #####################################
 # Create a fuel-air mixture by mixing
 # ===================================
-# Mix mixtures ``fuel`` and ``air`` created in the previous steps by the ``isothermal_mixing`` method.
-# The *mixing formula* of the two mixtures are defined by the ``mixture_recipe`` with mass ratio:
-# ``fuel:air=1.00:17.19``. You must assign the *temperature* of the new mixture ``premixed``
-# through the use of parameter ``finaltemperature=300``. Set ``mode="mass"`` because
-# the ratios given in the ``mixture_recipe`` are mass ratios.
+# Use the ``isothermal_mixing()`` method to mix the ``fuel`` and ``air`` mixtures created earlier.
+# Define the mixing formula using ``mixture_recipe`` with this mass ratio: ``fuel:air=1.00:17.19``.
+# Use the ``finaltemperature`` parameter to set the temperature of the
+# new ``premixed`` mixture to 300 [K]. Set ``mode="mass"`` because
+# the ratios given in ``mixture_recipe`` are mass ratios.
+
 mixture_recipe = [(fuel, 1.0), (air, 17.19)]
 # create the new mixture (the air-fuel ratio is by mass)
 premixed = ck.isothermal_mixing(
@@ -136,9 +140,9 @@ premixed = ck.isothermal_mixing(
 ############################################################
 # Find the equilibrium composition at different temperatures
 # ==========================================================
-# Perform the equilibrium calculation with *fixed pressure* and
-# *fixed temperature*. The NO mole fraction of the equilibrium state
-# at each temperature will be stored in an array. The gas temperature
+# Perform the equilibrium calculation with fixed pressure and
+# fixed temperature. The NO mole fraction of the equilibrium state
+# at each temperature is stored in an array. The gas temperature
 # is increased from 500 to 2480 [K].
 
 # NO species index
@@ -162,11 +166,13 @@ for k in range(points):
     T[k] = Temp
     Temp += dTemp
 
+
 ##################
 # Plot the results
 # ================
 # Plot the equilibrium NO mole fractions versus the temperatures
 # of the fuel-air mixtures.
+
 plt.plot(T, NO, "bs--", markersize=3, markevery=4)
 plt.xlabel("Temperature [K]")
 plt.ylabel("NO [ppm]")

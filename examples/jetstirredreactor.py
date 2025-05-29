@@ -27,38 +27,37 @@
 Run PSR calculations for mechanism validation
 =============================================
 
-**Ansys chemkin** offers some idealized reactor models commonly used for studying chemical
-processes and for developing reaction mechanisms. The ``perfectly stirred reactor (PSR)`` model is
-a *steady state* 0-D model of the *open perfectly mixed* gas-phase reactor. There is no limit on
-the number of the inlets to the PSR, as soon as the inlet gases enter the reactor, they will be
-thoroughly mixed with the gas mixture inside. The PSR has only *one* outlet, and the outlet gas
-is assumed to be exactly the same as the gas mixture in the PSR. There are two basic types of
-PSR models
+Ansys Chemkin offers some idealized reactor models commonly used for studying chemical
+processes and for developing reaction mechanisms. The PSR (perfectly stirred reactor) model is
+a steady-state 0-D model of the open perfectly mixed gas-phase reactor. There is no limit on
+the number of inlets to the PSR. As soon as the inlet gases enter the reactor, they are
+thoroughly mixed with the gas mixture inside. The PSR has only one outlet, and the outlet gas
+is assumed to be exactly the same as the gas mixture in the PSR.
 
-    |    **constrained-pressure** (or "set residence time")
-    |    **constrained-volume**
+There are two basic types of PSR models:
 
-By default, the PSR is running under **constant pressure**; in this case, You will specify the
-*residence time* of the PSR. For the *constrained volume* type of application, the PSR volume
-must be provided and the residence time can be calculated from the reactor volume and the total
+- **constrained-pressure** (or set residence time)
+- **constrained-volume**
+
+By default, the PSR is running under constant pressure. In this case, you specify the
+residence time of the PSR. For the constrained-volume type of application, you must provide
+the PSR volume. You can calculate the residence time from the reactor volume and the total
 inlet volumetric flow rate.
 
-For each type of the PSR, you can choose either to *specify the reactor temperature* (as a fixed
-value or by a piecewise-linear profile) or to *solve the energy conservation equation*. In total,
-you get *four variations* of the PSR model.
+For each type of PSR, you either specify the reactor temperature (as a fixed
+value or by a piecewise-linear profile) or solve the energy conservation equation. In total,
+you get four variations of the PSR model.
 
-The jet-stirred reactor is mostly employed in chemical kinetics studies. By controlling the reactor
-temperature, pressure, and/or residence time, you can gain knowledge about the major intermediates
-of a complex chemical process and postulate possible reaction pathways. This tutorial demonstrate the
-use of the PSR model to validate the reaction mechanism against the measured data from hydrogen
-oxidation experiments.
+The JSR (jet-stirred reactor is mostly employed in chemical kinetics studies. By controlling the reactor temperature, pressure, and/or residence time, you can gain knowledge about the major intermediates of a complex chemical process and postulate possible reaction pathways.
+
+This example shows how to use the PSR model to validate the reaction mechanism against the measured data from hydrogen oxidation experiments.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_jet_stirred_reactor.png'
 
-###############################################
-# Import PyChemkin package and start the logger
-# =============================================
+################################################
+# Import PyChemkin packages and start the logger
+# ==============================================
 
 import os
 import time
@@ -80,19 +79,19 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(True)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file
+# interactive = False: save plot as a PNG file
 global interactive
 interactive = True
 
-#####################################
-# Create a ``Chemistry Set`` instance
-# ===================================
-# The encrypted hydrogen-ammonia mechanism, ``Hydrogen-Ammonia-NOx_chem_MFL2021.inp``,
-# is used. This mechanism is developed under Chemkin's **Model Fuel Library (MFL)** project;
-# like the rest of the MFL mechanisms, it is located in the **ModelFuelLibrary** under the
-# *"/reaction/data"* directory of the standard Ansys Chemkin installation.
+########################
+# Create a chemistry set
+# ======================
+# This code uses the encrypted hydrogen-ammonia mechanism, ``Hydrogen-Ammonia-NOx_chem_MFL2021.inp``.
+# This mechanism is developed under Chemkin's **Model Fuel Library (MFL)** project.
+# Like the rest of the MFL mechanisms, it is in the ``ModelFuelLibrary`` in the
+# ``/reaction/data`` directory of the standard Ansys Chemkin installation.
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(
     ck.ansys_dir, "reaction", "data", "ModelFuelLibrary", "Skeletal"
 )
@@ -100,33 +99,34 @@ mechanism_dir = data_dir
 # create a chemistry set based on the hydrogen-ammonia mechanism
 MyGasMech = ck.Chemistry(label="hydrogen")
 # set mechanism input files
-# inclusion of the full file path is recommended
+# including the full file path is recommended
 MyGasMech.chemfile = os.path.join(
     mechanism_dir, "Hydrogen-Ammonia-NOx_chem_MFL2021.inp"
 )
 
-############################################
-# Pre-process the gasoline ``Chemistry Set``
-# ==========================================
+#######################################
+# Preprocess the gasoline chemistry set
+# =====================================
 
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
 
-###############################################################
-# Set up the H\ :sub:`2`\ -O\ :sub:`2`\ -N\ :sub:`2` ``Stream``
-# =============================================================
-# Instantiate an ``Stream`` object ``feed`` for the inlet gas mixture.
-# The ``Stream`` object is a ``Mixture`` object with the addition of the
-# *inlet flow rate*. You can specify the inlet gas properties the same way you
-# set up a ``Mixture``. Set up the gas properties of ``feed`` as described by the experiment.
-# The inlet mass flow rate is assigned by the ``mass_flowrate`` method, the experiments use
+###########################################################
+# Set up the H\ :sub:`2`\ -O\ :sub:`2`\ -N\ :sub:`2` stream
+# =========================================================
+# Instantiate a stream feed for the inlet gas mixture.
+# A stream is a mixture with the addition of the
+# inlet flow rate. You set up the inlet gas properties in the same way you
+# set up a mixture. Set up the gas properties of the feed as described by the experiment.
+#
+# Use the ``mass_flowrate()`` method to assign the inlet mass flow rate. The experiments use
 # a fixed inlet mass flow rate of 0.11 [g/sec].
 
 # create the fuel-oxidizer inlet to the JSR
 feed = Stream(MyGasMech)
 # set H2-O2-N2 composition
 feed.X = [("h2", 1.1e-2), ("n2", 9.62e-1), ("o2", 2.75e-2)]
-# setting reactor pressure [dynes/cm2]
+# set reactor pressure [dynes/cm2]
 feed.pressure = ck.Patm
 # set inlet gas temperature [K]
 temp = 800.0
@@ -134,21 +134,21 @@ feed.temperature = temp
 # set inlet mass flow rate [g/sec]
 feed.mass_flowrate = 0.11
 
-###########################################################################
-# Create the PSR object to predict the gas composition of the outlet stream
-# =========================================================================
-# Use the ``PSR_SetResTime_FixedTemperature`` method to instantiate the Jet-Stirred Reactor ``JSR``
-# because both the reactor *temperature* and the *residence time* are fixed during the experiments.
-# The gas property of the inlet ``feed`` will be applied as the estimated reactor condition
-# of ``JSR``.
+####################################################################
+# Create the PSR to predict the gas composition of the outlet stream
+# ==================================================================
+# Use the ``PSR_SetResTime_FixedTemperature()`` method to instantiate the JSR
+# because both the reactor temperature and residence time are fixed during the experiments.
+# The gas property of the inlet feed is applied as the estimated reactor condition
+# of the JSR.
 JSR = PSR(feed, label="JSR")
 
 ###################################
 # Connect the inlets to the reactor
 # =================================
-# You must connect at least **one** inlet to the open reactor. Use the ``set_inlet`` method to
-# add an ``Stream`` object to the PSR. Inversely, use the ``remove_inlet`` to disconnect an inlet
-# from the PSR.
+# You must connect at least one inlet to the open reactor. Use the ``set_inlet()`` method to
+# add a stream to the PSR. Inversely, use the ``remove_inlet()`` method to disconnect
+# an inlet from the PSR.
 
 # connect the inlet to the reactor
 JSR.set_inlet(feed)
@@ -156,9 +156,9 @@ JSR.set_inlet(feed)
 ############################################
 # Set up additional reactor model parameters
 # ==========================================
-# *Reactor parameters*, *solver controls*, and *output instructions* need to be provided
-# before running the simulations. For the steady-state PSR, either the residence time or
-# the reactor volume must be provided.
+# You must provide reactor parameters, solver controls, and output instructions
+# before running the simulations. For the steady-state PSR, you must provide either the residence
+# time or the reactor volume.
 
 # set PSR residence time (sec): required for PSR_SetResTime_FixedTemperature model
 JSR.residence_time = 120.0 * 1.0e-3
@@ -166,27 +166,27 @@ JSR.residence_time = 120.0 * 1.0e-3
 #####################
 # Set solver controls
 # ===================
-# You can overwrite the default solver controls by using solver related methods, for example,
-# ``tolerances``. Here, particular to this mechanism, a number of *pseudo time steps* is required
+# You can overwrite the default solver controls by using solver-related methods, such as
+# those for tolerances. Here, particular to this mechanism, a number of *pseudo timesteps* is required
 # before attempting to actually search for the steady-state solution. This is done by using the
-# steady-state solver control method ``set_initial_timesteps``.
+# steady-state solver control method, ``set_initial_timesteps()``.
 
-# set the number of initial pseudo time steps in the steady-state solver
+# set the number of initial pseudo timesteps in the steady-state solver
 JSR.set_initial_timesteps(1000)
 
 ######################################################
 # Run the parameter study to replicate the experiments
 # ====================================================
-# Different inlet and reactor temperatures are used in the experiments, the temperature
+# Different inlet and reactor temperatures are used in the experiments. The temperature
 # value varies from 800 to 1050 [K].
 #
-# The result from each PSR run is converted to a ``Mixture`` object by the ``process_solution``
-# method. You can either overwrite the solution mixture or use a new one for each simulation result.
+# Use the ``process_solution()`` method to convert the result from each PSR run to a
+# mixture. You can either overwrite the solution mixture or use a new one for each simulation result.
 
 # inlet gas temperature increment
 deltatemp = 25.0
 numbruns = 19
-# find H2O species index
+# find "h2o" species index
 H2Oindex = MyGasMech.get_specindex("h2o")
 # solution arrays
 inletTemp = np.zeros(numbruns, dtype=np.double)
@@ -199,15 +199,15 @@ for i in range(numbruns):
     runstatus = JSR.run()
     # check run status
     if runstatus != 0:
-        # run failed!
-        print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+        # Run failed.
+        print(Color.RED + ">>> Run failed. <<<", end=Color.END)
         exit()
-    # run success!
-    print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
-    # post-process the solution profiles
+    # Run succeeded.
+    print(Color.GREEN + ">>> Run completed. <<<", end=Color.END)
+    # postprocess the solution profiles
     solnmixture = JSR.process_solution()
     # print the steady-state solution values
-    # print(f"steady-state temperature = {solnmixture.temperature} [K]")
+    # print(f"Steady-state temperature = {solnmixture.temperature} [K].")
     # solnmixture.list_composition(mode="mole")
     # store solution values
     inletTemp[i] = solnmixture.temperature
@@ -218,7 +218,7 @@ for i in range(numbruns):
 
 # compute the total runtime
 runtime = time.time() - start_time
-print(f"total simulation duration: {runtime} [sec] over {numbruns} runs")
+print(f"Total simulation duration: {runtime} [sec] over {numbruns} runs")
 #
 # experimental data
 # JSR temperature [K]

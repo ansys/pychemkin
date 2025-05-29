@@ -54,7 +54,7 @@ from ansys.chemkin import Color
 from ansys.chemkin.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.logger import logger
 
-# chemkin perfectly-stirred reactor (PSR) model (steady-state)
+# Chemkin PSR model (steady-state)
 from ansys.chemkin.premixedflames.premixedflame import FreelyPropagating as FlameSpeed
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
@@ -66,12 +66,12 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(True)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file
+# interactive = False: save plot as a PNG file
 global interactive
 interactive = True
 
 #####################################
-# Create a ``Chemistry Set`` instance
+# Create a chemistry set
 # ===================================
 # The 'C2 NOx' mechanism is from the default *"/reaction/data"* directory.
 # This mechanism also includes information about the *Soave* cubic
@@ -87,13 +87,13 @@ interactive = True
 #   gas-phase mechanism file.
 #
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # create a chemistry set based on the C2 NOx mechanism
 MyGasMech = ck.Chemistry(label="C2 NOx")
 # set mechanism input files
-# inclusion of the full file path is recommended
+# including the full file path is recommended
 MyGasMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
 
 # direct the preprocessor to include the transport properties

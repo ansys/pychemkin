@@ -72,7 +72,7 @@ import numpy as np  # number crunching
 # check working directory
 current_dir = os.getcwd()
 logger.debug("working directory: " + current_dir)
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 logger.debug("data directory: " + data_dir)
 # set pressure & temperature condition of the standard state
@@ -130,7 +130,7 @@ def getwaterheatofvaporization(temp: float) -> float:
     # close the mechnaism file
     w.close()
     # set mechanism input files
-    # inclusion of the full file path is recommended
+    # including the full file path is recommended
     WaterMech.chemfile = waterfile
     WaterMech.thermfile = os.path.join(
         data_dir,
@@ -217,7 +217,7 @@ m.write("END\n")
 m.close()
 #
 # set mechanism input files
-# inclusion of the full file path is recommended
+# including the full file path is recommended
 MyGasMech.chemfile = mymechfile
 MyGasMech.thermfile = os.path.join(
     data_dir,

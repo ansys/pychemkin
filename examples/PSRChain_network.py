@@ -23,38 +23,32 @@
 """
 .. _ref_chain_reactor_network:
 
-==============================================================
-Use a chain reactor network to model a fictional gas combustor
-==============================================================
+====================================================
+Use a chain reactor network to model a gas combustor
+====================================================
 
-This tutorial describes the process of setting up and solving a series of linked perfectly-stirred reactors
-(PSR) in PyChemkin. This is the simplest reactor network as it does not contain any recycling stream or
-outflow splitting.
+This example shows how to set up and solve a series of linked PSRs (perfectly-stirred reactors).
+This is the simplest reactor network as it does not contain any recycling streams or
+outflow splittings.
 
-The PSR chain model of a fictional can combustor is displayed below
+Here is a PSR chain model of a fictional gas combustor:
 
  .. figure:: chain_reactor_network.png
    :scale: 80 %
-   :alt: the chain reactor network
+   :alt: Chain reactor network
 
-The *"primary inlet stream"* to the first reactor, the *"combustor"*, is the fuel-lean methane-air mixture
-that is formed by mixing the fuel (methane) and the heated air. The exhaust from the *"combustor"* will enter the
-second reactor, the "dilution zone"*, where the hot combustion products will be cooled by the introduction of
-additional cool air. The cooled and diluted gas mixture in the *"dilution zone"* will then travel to the third
-reactor, the *"reburning zone"*. A mixture of fuel (methane) and carbon dioxide is injected to the gas in the
-*"reburning zone"* attempting to convert any remaining carbon monoxide or nitric oxide in the exhaust gas to
-carbon dioxide or nitrogen, respectively.
+The primary inlet stream to the first reactor, the *combustor*, is the fuel-lean methane-air mixture
+that is formed by mixing the fuel (methane) and the heated air. The exhaust from the combustor
+enters the second reactor, the *dilution zone*, where the hot combustion products are cooled by the introduction of additional cool air. The cooled and diluted gas mixture in the dilution zone then travel tos the third reactor, the *reburning zone*. A mixture of fuel (methane) and carbon dioxide is injected to the gas in the reburning zone, attempting to convert any remaining carbon monoxide or nitric oxide in the exhaust gas to carbon dioxide or nitrogen, respectively.
 
-In this tutorial, the chain reactor network will be configured and solved by using the ``ReactorNetwork`` module.
-The module automatically handles the tasks of running the individual reactors and setting up the inlet to the downstream
-reactor.
+This example uses the ``ReactorNetwork`` module to configure and solve this chain reactor network. This module automatically handles the tasks of running the individual reactors and setting up the inlet to the downstream reactor.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/chain_reactor_network.png'
 
-###############################################
-# Import PyChemkin package and start the logger
-# =============================================
+################################################
+# Import PyChemkin packages and start the logger
+# ==============================================
 
 import os
 import time
@@ -66,7 +60,7 @@ from ansys.chemkin.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.inlet import adiabatic_mixing_streams
 from ansys.chemkin.logger import logger
 
-# chemkin perfectly-stirred reactor (PSR) model (steady-state)
+# Chemkin PSR model (steady-state)
 from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
 
 # check working directory
@@ -75,49 +69,49 @@ logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
 
-#####################################
-# Create a ``Chemistry Set`` instance
-# ===================================
-# The mechanism is the GRI 3.0 mechanism for methane combustion.
-# The mechanism and its associated data files come with the standard Ansys Chemkin
-# installation under the subdirectory *"/reaction/data"*.
+########################
+# Create a chemistry set
+# ======================
+# The mechanism to load is the GRI 3.0 mechanism for methane combustion.
+# This mechanism and its associated data files come with the standard Ansys Chemkin
+# installation in the ``/reaction/data`` directory.
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # create a chemistry set based on the GRI mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
-# inclusion of the full file path is recommended
+# including the full file path is recommended
 MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 
-############################################
-# Pre-process the gasoline ``Chemistry Set``
-# ==========================================
+#######################################
+# Preprocess the gasoline chemistry set
+# =====================================
 
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
 
-####################################################################
-# Set up gas mixtures based on the species in this ``Chemistry Set``
-# ==================================================================
-# Create the ``fuel`` and the ``air`` streams/mixtures before setting up the
-# external inlet streams. The "fuel" in this case is pure methane. The main
-# inlet stream ``premixed`` to the ``combustor`` is formed by mixing the
-# ``fuel`` and the ``air`` streams adiabatically. The fuel to air mass ratio
-# is provided implicitly by the *mass flow rates* of the two streams. The
+################################################################
+# Set up gas mixtures based on the species in this chemistry set
+# ==============================================================
+# Create the ``fuel`` and ``air`` streams before setting up the
+# external inlet streams. The fuel in this case is pure methane. The main
+# ``premixed`` inlet stream to the combustor is formed by mixing the
+# ``fuel`` and ``air`` streams adiabatically. The fuel-to-air mass ratio
+# is provided implicitly by the mass flow rates of the two streams. The
 # external inlet to the second reactor, the ``dilution zone``, is simply the
 # ``air`` stream with a different mass flow rate (and different temperature
-# if desirable). The ``reburn_fuel`` stream to be injected to the downstream
-# ``reburning zone`` is a mixture of methane and carbon dioxide.
+# if desirable). The ``reburn_fuel`` stream to inject to the downstream
+# reburning zone is a mixture of methane and carbon dioxide.
 #
 # .. note::
-#   PyChemkin has *"air"* redefined as a convenient way to set up the air
-#   stream/mixture in the simulations. Use ``ansys.chemkin.Air.X()`` or
-#   ``ansys.chemkin.Air.Y()`` when the mechanism uses "O2" and "N2" for
-#   oxygen and nitrogen. Use ``ansys.chemkin.air.X()`` or ``ansys.chemkin.air.Y()``
-#   when oxygen and nitrogen are represented by "o2" and "n2".
+#   PyChemkin has ``air`` predefined as a convenient way to set up the air
+#   stream/mixture in simulations. Use the ``ansys.chemkin.Air.X()`` or
+#   ``ansys.chemkin.Air.Y()`` method when the mechanism uses "O2" and "N2" for
+#   oxygen and nitrogen. Use the ``ansys.chemkin.air.X()`` or ``ansys.chemkin.air.Y()``
+#   method when the mechanism uses "o2" and "n2" for oxygen and nitrogen.
 #
 
 # fuel is pure methane
@@ -138,18 +132,18 @@ air.mass_flowrate = 45.0  # [g/sec]
 #################################################
 # Create external inlet streams from the mixtures
 # ===============================================
-# Use the ``Stream`` method ``adiabatic_mixing_streams`` to combine
+# Use the ``adiabatic_mixing_streams()`` method to combine
 # the ``fuel`` and the ``air`` streams. The final gas temperature should
 # land between the temperatures of the two source streams. The mass flow
-# rate of the ``premixed`` stream should be the sum of the sources. A simple
-# *PyChemkin* composition "recipe" is used to create the ``reburn_fuel`` stream.
+# rate of the ``premixed`` stream should be the sum of the sources. Use a simple
+# PyChemkin composition recipe to create the ``reburn_fuel`` stream.
 
 # premixed stream for the combustor
 premixed = adiabatic_mixing_streams(fuel, air)
 
 # verify the premixed stream properties
-print(f"premixed stream temperature = {premixed.temperature} [K]")
-print(f"premixed stream mass flow rate = {premixed.mass_flowrate} [g/sec]")
+print(f"Premixed stream temperature = {premixed.temperature} [K].")
+print(f"Premixed stream mass flow rate = {premixed.mass_flowrate} [g/sec].")
 
 # additional fuel injection for the reburning zone
 reburn_fuel = Stream(MyGasMech)
@@ -164,26 +158,26 @@ O2_index = MyGasMech.get_specindex("O2")
 NO_index = MyGasMech.get_specindex("NO")
 CO_index = MyGasMech.get_specindex("CO")
 
-#####################################
-# Create individual PSR for each zone
-# ===================================
+###########################
+# Create PSRs for each zone
+# =========================
 # Set up the PSR for each zone one by one with *external inlets only*.
-# For PSRs, use the ``set_inlet`` method to add the external inlets to the
-# reactor. PFR always requires *one* external inlet when it is instantiated.
+# For PSR creation, use the ``set_inlet()`` method to add the external inlets to the
+# reactor. A PFR always requires one external inlet when it is instantiated.
 #
-# There are three reactors in the network; from upstream to downstream, they
-# are ``combustor``, ``dilution zone``, and ``reburning zone``. And all of them
+# There are three reactors in the network. From upstream to downstream, they
+# are ``combustor``, ``dilution zone``, and ``reburning zone``. All of them
 # have one external inlet.
 #
 # .. note::
-#   *PyChemkin* requires that the **first** reactor/zone must have at least
-#   **one external inlet**. The rest of the reactors will have at least the
-#   "through flow" from the immediate upstream reactor so they do not require
+#   PyChemkin requires that the first reactor/zone must have at least
+#   one external inlet. Because the rest of the reactors have at least the
+#   through flow from the immediate upstream reactor, they do not require
 #   an external inlet.
 #
 # .. note::
-#   The ``Stream`` parameter used to instantiate a ``PSR`` object is used to establish
-#   the *guessed reactor solution* and will be modified when the network is solved by
+#   The ``Stream`` parameter used to instantiate a PSR is used to establish
+#   the *guessed reactor solution* and is modified when the network is solved by
 #   the ``ERN``.
 #
 
@@ -201,7 +195,7 @@ dilution = PSR(premixed, label="dilution zone")
 # set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
 dilution.residence_time = 1.5 * 1.0e-3
 # add external inlet
-# first, assign the "correct" mass flow rate to the "air" stream
+# assign the correct mass flow rate to the "air" stream
 air.mass_flowrate = 62.0  # [g/sec]
 dilution.set_inlet(air)
 
@@ -212,30 +206,29 @@ reburn.residence_time = 3.5 * 1.0e-3
 # add external inlet
 reburn.set_inlet(reburn_fuel)
 
-#####################################
+############################
 # Create the reactor network
-# ===================================
-# Create a hybrid ``ReactorNetwork`` object ``PSRChain`` and add the reactors one
-# by one from upstream to downstream using the ``add_reactor`` method. For a
-# simple chain network such as the one used in the current tutorial, you do not
+# ==========================
+# Create a hybrid reactor network named ``PSRChain`` and use the ``add_reactor()``
+# method to add the reactors one by one from upstream to downstream. For a
+# simple chain network such as the one used in this example, you do not
 # need to define the connectivity among the reactors. The reactor network model
-# will figure out the through flow connections automatically.
+# automatically figures out the through-flow connections.
 #
 # .. note::
-#   Use the ``show_reactors`` method to get the list of reactors in the network in
-#   the order they are added.
 #
-# .. note::
-#   Use the ``remove_reactor`` method to remove an existing reactor from the
-#   network by the reactor ``name/label``. Similarly, use the ``clear_connections``
-#   to undo the network connectivity.
+#   - Use the ``show_reactors()`` method to get the list of reactors in the network in
+#     the order they are added.
 #
-# .. note::
-#   The order of the reactor addition is important as it dictates the solution
+#   - Use the ``remove_reactor()`` method to remove an existing reactor from the
+#     network by the reactor ``name/label``. Similarly, use the ``clear_connections()``
+#     method to undo the network connectivity.
+#
+#   - The order of the reactor addition is important as it dictates the solution
 #   sequence and thus the convergence rate.
 #
 
-# instantiate the chain PSR network as a hy
+# instantiate the chain PSR network as a hybrid reactor network
 PSRChain = ERN(MyGasMech)
 
 # add the reactors from upstream to downstream
@@ -249,8 +242,8 @@ PSRChain.show_reactors()
 ###########################
 # Solve the reactor network
 # =========================
-# Use the ``run`` method to solve the entire reactor network. The hybrid ``ReactorNetwork``
-# will solve the reactors one by one in the order they are added to the network.
+# Use the ``run()`` method to solve the entire reactor network. The hybrid reactor network
+# solves the reactors one by one in the order that they are added to the network.
 #
 
 # set the start wall time
@@ -259,33 +252,33 @@ start_time = time.time()
 # solve the reactor network
 status = PSRChain.run()
 if status != 0:
-    print(Color.RED + "failed to solve the reactor network!" + Color.END)
+    print(Color.RED + "Failed to solve the reactor network." + Color.END)
     exit()
 
 # compute the total runtime
 runtime = time.time() - start_time
 print()
-print(f"total simulation duration: {runtime} [sec]")
+print(f"Total simulation duration: {runtime} [sec]")
 
-############################################
-# Post-process the reactor network solutions
-# ==========================================
-# There are two ways to process the results from a reactor network. You
-# can extract the solution of an individual reactor member as a ``Stream``
-# object by using the ``get_reactor_stream`` by the reactor ``name``. Or,
-# get the stream properties of a specific network outlet by using the
-# ``get_external_stream`` method with the outlet index. Once you get the
-# solution as a ``Stream`` object, you can use any ``Stream`` or ``Mixture``
+#####################################
+# Postprocess reactor network results
+# ===================================
+# There are two ways to process results from a reactor network. You
+# can extract the solution of an individual reactor member as a stream
+# by using the ``get_reactor_stream()`` method to get the reactor by its name. Or,
+# you can get the stream properties of a specific network outlet by using the
+# ``get_external_stream()`` method to get the stream by its outlet index. Once
+# you get the solution as a stream, you can use any stream or mixture
 # method to further manipulate the solutions.
 #
 # .. note::
-#   Use the ``number_external_outlets`` method to find out the number of
-#   external exists of the reactor network.
+#   Use the ``number_external_outlets()`` method to find out the number of
+#   external outlets of the reactor network.
 #
 
 # get the outlet stream from the reactor network solutions
-# find the number of external outlet stream from the reactor network
-print(f"number of outlet stream = {PSRChain.number_external_outlets}")
+# find the number of external outlet streams from the reactor network
+print(f"Number of outlet streams = {PSRChain.number_external_outlets}.")
 
 # get the first (and the only) external outlet stream properties
 network_outflow = PSRChain.get_external_stream(1)

@@ -23,39 +23,33 @@
 """
 .. _ref_connected_reactors:
 
-=====================================================================
-Use a chain of individual reactors to model a fictional gas combustor
-=====================================================================
+===========================================================
+Use a chain of individual reactors to model a gas combustor
+===========================================================
 
-This tutorial describes the process of setting up and solving a series of linked perfectly-stirred reactors
-(PSR) in PyChemkin. This is the simplest reactor network as it does not contain any recycling stream or
-outflow splitting.
+This example shows how to set up and solve a series of linked PSRs (perfectly-stirred reactors).
+This is the simplest reactor network as it does not contain any recycling streams or
+outflow splittings.
 
-The PSR chain model of a fictional can combustor is displayed below
+Here is the PSR chain model of a fictional gas combustor.
 
  .. figure:: chain_reactor_network.png
    :scale: 80 %
-   :alt: the chain reactor network
+   :alt: Chain reactor network
 
-The *"primary inlet stream"* to the first reactor, the *"combustor"*, is the fuel-lean methane-air mixture
-that is formed by mixing the fuel (methane) and the heated air. The exhaust from the *"combustor"* will enter the
-second reactor, the "dilution zone"*, where the hot combustion products will be cooled by the introduction of
-additional cool air. The cooled and diluted gas mixture in the *"dilution zone"* will then travel to the third
-reactor, the *"reburning zone"*. A mixture of fuel (methane) and carbon dioxide is injected to the gas in the
-*"reburning zone"* attempting to convert any remaining carbon monoxide or nitric oxide in the exhaust gas to
-carbon dioxide or nitrogen, respectively.
+The primary inlet stream to the first reactor, the *combustor*, is the fuel-lean methane-air mixture
+that is formed by mixing the fuel (methane) and the heated air. The exhaust from the combustor
+enters the second reactor, the *dilution zone*, where the hot combustion products are cooled by the introduction of additional cool air. The cooled and diluted gas mixture in the *dilution zone* then travels to the third reactor, the *reburning zone*. A mixture of fuel (methane) and carbon dioxide is injected to the gas in the reburning zone, attempting to convert any remaining carbon monoxide or nitric oxide in the exhaust gas to carbon dioxide or nitrogen, respectively.
 
-In this tutorial, the reactors will be solved one by one from upstream to downstream. Once the solution of the
-upstream reactor is obtained, it will be used to set up the external inlet of the immediate downstream reactor.
-This process will continue till all reactors in the chain network are solved. Since there is no recycling stream
-in this configuration, the entire reactor network can be solved in one sweep.
+This example solves the reactors one by one, from upstream to downstream. Once the solution of the
+upstream reactor is obtained, it is used to set up the external inlet of the immediate downstream reactor. This process continues until all reactors in the chain network are solved. Since there is no recycling stream in this configuration, the entire reactor network can be solved in one sweep.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/chain_reactor_network.png'
 
-###############################################
-# Import PyChemkin package and start the logger
-# =============================================
+################################################
+# Import PyChemkin packages and start the logger
+# ==============================================
 
 import os
 import time
@@ -66,7 +60,7 @@ from ansys.chemkin.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.inlet import adiabatic_mixing_streams
 from ansys.chemkin.logger import logger
 
-# chemkin perfectly-stirred reactor (PSR) model (steady-state)
+# Chemkin PSR model (steady-state)
 from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
 
 # check working directory
@@ -76,39 +70,39 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(True)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file
+# interactive = False: save plot as a PNG file
 global interactive
 interactive = True
 
-#####################################
-# Create a ``Chemistry Set`` instance
-# ===================================
-# The mechanism is the GRI 3.0 mechanism for methane combustion.
-# The mechanism and its associated data files come with the standard Ansys Chemkin
-# installation under the subdirectory *"/reaction/data"*.
+########################
+# Create a chemistry set
+# ======================
+# The mechanism to load is the GRI 3.0 mechanism for methane combustion.
+# This mechanism and its associated data files come with the standard Ansys Chemkin
+# installation in the ``/reaction/data`` directory.
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # create a chemistry set based on the GRI mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
-# inclusion of the full file path is recommended
+# including the full file path is recommended
 MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 
-############################################
-# Pre-process the gasoline ``Chemistry Set``
-# ==========================================
+#######################################
+# Preprocess the gasoline chemistry set
+# =====================================
 
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
 
-####################################################################
-# Set up gas mixtures based on the species in this ``Chemistry Set``
-# ==================================================================
-# Create the "fuel" and the "air" mixtures to initialize the external
-# inlet streams. The "fuel" for this case is pure methane.
+################################################################
+# Set up gas mixtures based on the species in this chemistry set
+# ==============================================================
+# Create the ``fuel`` and ``air`` mixtures to initialize the external
+# inlet streams. The fuel for this case is pure methane.
 
 # fuel is pure methane
 fuel = Stream(MyGasMech)
@@ -127,11 +121,11 @@ air.mass_flowrate = 45.0  # [g/sec]
 #################################################
 # Create external inlet streams from the mixtures
 # ===============================================
-# Use the ``Stream`` method ``adiabatic_mixing_streams`` to combine
-# the ``fuel`` and the ``air`` streams. The final gas temperature should
+# Use the stream ``adiabatic_mixing_streams()`` method to combine
+# the ``fuel`` and ``air`` streams. The final gas temperature should
 # land between the temperatures of the two source streams. The mass flow
 # rate of the ``premixed`` stream should be the sum of the sources. A simple
-# *PyChemkin* composition "recipe" is used to create the ``reburn_fuel`` stream.
+# PyChemkin composition recipe is used to create the ``reburn_fuel`` stream.
 
 # premixed stream for the combustor
 premixed = adiabatic_mixing_streams(fuel, air)
@@ -151,32 +145,31 @@ O2_index = MyGasMech.get_specindex("O2")
 NO_index = MyGasMech.get_specindex("NO")
 CO_index = MyGasMech.get_specindex("CO")
 
-#####################################
-# Create individual PSR for each zone
-# ===================================
+###########################
+# Create PSRs for each zone
+# =========================
 # Set up the PSR for each zone one by one with external inlets only. PyChemkin
-# requires that the **first reactor/zone must have at least one external inlet**.
-# There are three reactors in the network; from upstream to downstream, they
-# are ``combustor``, ``dilution zone``, and ``reburning zone``. And all of them
-# have one external inlet. For the two downstream reactors, you need to create
-# the "through flow" stream from their respective upstream reactor by using the
-# solution of the upstream reactor. Get the solution stream from the upstream
-# reactor using the ``process_solution`` method, then use the ``set_inlet`` method
-# to connect the resulting solution stream to the downstream reactor.
+# requires that the first reactor/zone must have at least one external inlet.
+# There are three reactors in the network. From upstream to downstream, they
+# are ``combustor``, ``dilution zone``, and ``reburning zone``. All of them
+# have one external inlet. For the two downstream reactors, you must create
+# the through-flow stream from their respective upstream reactor by using the
+# solution of the upstream reactor. Use the ``process_solution()`` method to
+# get the solution stream from the upstream reactor. Then, use the ``set_inlet()``
+# method to connect the resulting solution stream to the downstream reactor.
 #
 # .. note::
-#   *PyChemkin* requires that the **first** reactor/zone must have at least
-#   **one external inlet**. The rest of the reactors will have at least the
-#   "through flow" from the immediate upstream reactor so they do not require
-#   an external inlet.
 #
-# .. note::
-#   The ``Stream`` parameter used to instantiate a ``PSR`` object is used to establish
-#   the *guessed reactor solution* and will be modified when the network is solved by
-#   the ``ERN``.
+#   - PyChemkin requires that the first reactor/zone must have at least
+#     one external inlet. The rest of the reactors have at least the
+#     through-flow from the immediate upstream reactor so they do not require
+#     an external inlet.
 #
-# .. note::
-#   The reactors in the "network" must be post-processed individually.
+#   - The ``Stream`` parameter used to instantiate a PSR object is used to establish
+#     the *guessed reactor solution* and is modified when the network is solved by
+#     the ``ERN``.
+#
+#   - The reactors in the network must be postprocessed individually.
 #
 
 # PSR #1: combustor
@@ -192,20 +185,20 @@ start_time = time.time()
 # run PSR #1
 status = combustor.run()
 if status != 0:
-    print(Color.RED + combustor.label + " run failed!")
+    print(Color.RED + combustor.label + " Run failed.")
     exit()
-# post-process the solution profiles
+# postprocess the solution profiles
 solnstream1 = combustor.process_solution()
 solnstream1.label = "PSR1"
 print("=" * 40)
-print("combustor exit")
+print("Combustor exited.")
 print("=" * 40)
-print(f"temperature = {solnstream1.temperature} [K]")
-print(f"mass flow rate = {solnstream1.mass_flowrate} [g/sec]")
-print(f"CH4 = {solnstream1.X[CH4_index]}")
-print(f"O2 = {solnstream1.X[O2_index]}")
-print(f"CO = {solnstream1.X[CO_index]}")
-print(f"NO = {solnstream1.X[NO_index]}")
+print(f"Temperature = {solnstream1.temperature} [K].")
+print(f"Mass flow rate = {solnstream1.mass_flowrate} [g/sec].")
+print(f"CH4 = {solnstream1.X[CH4_index]}.")
+print(f"O2 = {solnstream1.X[O2_index]}.")
+print(f"CO = {solnstream1.X[CO_index]}.")
+print(f"NO = {solnstream1.X[NO_index]}.")
 
 # PSR #2: cooling
 cooling = PSR(solnstream1, label="cooling zone")
@@ -214,26 +207,26 @@ cooling.residence_time = 1.5 * 1.0e-3
 # add external inlet
 air.mass_flowrate = 62.0  # [g/sec]
 cooling.set_inlet(air)
-# add the through flow from PSR #1
+# add the through-flow from PSR #1
 cooling.set_inlet(solnstream1)
 # run PSR #2
 status = cooling.run()
 if status != 0:
-    print(Color.RED + cooling.label + " run failed!")
+    print(Color.RED + cooling.label + " Run failed.")
     exit()
 # post-process the solution profiles
 solnstream2 = cooling.process_solution()
 solnstream2.label = "PSR2"
 print()
 print("=" * 40)
-print("dilution zone exit")
+print("Dilution zone exited.")
 print("=" * 40)
-print(f"temperature = {solnstream2.temperature} [K]")
-print(f"mass flow rate = {solnstream2.mass_flowrate} [g/sec]")
-print(f"CH4 = {solnstream2.X[CH4_index]}")
-print(f"O2 = {solnstream2.X[O2_index]}")
-print(f"CO = {solnstream2.X[CO_index]}")
-print(f"NO = {solnstream2.X[NO_index]}")
+print(f"Temperature = {solnstream2.temperature} [K].")
+print(f"Mass flow rate = {solnstream2.mass_flowrate} [g/sec].")
+print(f"CH4 = {solnstream2.X[CH4_index]}.")
+print(f"O2 = {solnstream2.X[O2_index]}.")
+print(f"CO = {solnstream2.X[CO_index]}.")
+print(f"NO = {solnstream2.X[NO_index]}.")
 
 # PSR #3: reburn
 reburn = PSR(solnstream2, label="reburn zone")
@@ -246,23 +239,23 @@ reburn.set_inlet(solnstream2)
 # run PSR #3
 status = reburn.run()
 if status != 0:
-    print(Color.RED + reburn.label + " run failed!")
+    print(Color.RED + reburn.label + " Run failed.")
     exit()
 # post-process the solution profiles
 outflow = reburn.process_solution()
 outflow.label = "outflow"
 print()
 print("=" * 40)
-print("outflow")
+print("Outflow exited.")
 print("=" * 40)
-print(f"temperature = {outflow.temperature} [K]")
-print(f"mass flow rate = {outflow.mass_flowrate} [g/sec]")
-print(f"CH4 = {outflow.X[CH4_index]}")
-print(f"O2 = {outflow.X[O2_index]}")
-print(f"CO = {outflow.X[CO_index]}")
-print(f"NO = {outflow.X[NO_index]}")
+print(f"Temperature = {outflow.temperature} [K].")
+print(f"Mass flow rate = {outflow.mass_flowrate} [g/sec].")
+print(f"CH4 = {outflow.X[CH4_index]}.")
+print(f"O2 = {outflow.X[O2_index]}.")
+print(f"CO = {outflow.X[CO_index]}.")
+print(f"NO = {outflow.X[NO_index]}.")
 
 # compute the total runtime
 runtime = time.time() - start_time
 print()
-print(f"total simulation duration: {runtime} [sec]")
+print(f"Total simulation duration: {runtime} [sec].")
