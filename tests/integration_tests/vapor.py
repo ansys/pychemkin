@@ -37,11 +37,11 @@ current_dir = os.getcwd()
 logger.debug("working directory: " + current_dir)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file
+# interactive = False: save plot as a PNG file
 global interactive
 interactive = False
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # create a chemistry set based on C2_NOx using an alternative method
@@ -103,10 +103,10 @@ runstatus = tank.run()
 # check run status
 if runstatus != 0:
     # run failed!
-    print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+    print(Color.RED + ">>> Run failed. <<<", end=Color.END)
     exit()
 # run success!
-print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
+print(Color.GREEN + ">>> Run completed. <<<", end=Color.END)
 
 # post-process the solutions
 tank.process_solution()
@@ -140,10 +140,10 @@ runstatus = tank.run()
 # check run status
 if runstatus != 0:
     # run failed!
-    print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+    print(Color.RED + ">>> Run failed. <<<", end=Color.END)
     exit()
 # run success!
-print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
+print(Color.GREEN + ">>> Run completed. <<<", end=Color.END)
 # post-process the solutions
 tank.process_solution()
 # get the number of solution time points

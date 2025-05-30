@@ -27,7 +27,7 @@ from ansys.chemkin import Color
 from ansys.chemkin.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.logger import logger
 
-# chemkin perfectly-stirred reactor (PSR) model (steady-state)
+# Chemkin PSR model (steady-state)
 from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
@@ -39,11 +39,11 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(True)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file
+# interactive = False: save plot as a PNG file
 global interactive
 interactive = False
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(
     ck.ansys_dir, "reaction", "data", "ModelFuelLibrary", "Skeletal"
 )
@@ -51,7 +51,7 @@ mechanism_dir = data_dir
 # create a chemistry set based on the gasoline 14 components mechanism
 MyGasMech = ck.Chemistry(label="hydrogen")
 # set mechanism input files
-# inclusion of the full file path is recommended
+# including the full file path is recommended
 MyGasMech.chemfile = os.path.join(
     mechanism_dir, "Hydrogen-Ammonia-NOx_chem_MFL2021.inp"
 )
@@ -119,10 +119,10 @@ for i in range(numbruns):
     # check run status
     if runstatus != 0:
         # run failed!
-        print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+        print(Color.RED + ">>> Run failed. <<<", end=Color.END)
         exit()
     # run success!
-    print(Color.GREEN + ">>> RUN COMPLETED <<<", end=Color.END)
+    print(Color.GREEN + ">>> Run completed. <<<", end=Color.END)
     # post-process the solution profiles
     solnmixture = sphere.process_solution()
     # print the steady-state solution values

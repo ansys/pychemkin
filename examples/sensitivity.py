@@ -86,24 +86,24 @@ logger.debug("working directory: " + current_dir)
 ck.set_verbose(False)
 # set interactive mode for plotting the results
 # interactive = True: display plot
-# interactive = False: save plot as a png file
+# interactive = False: save plot as a PNG file
 global interactive
 interactive = True
 
 #####################################
-# Create a ``Chemistry Set`` instance
+# Create a chemistry set
 # ===================================
-# The mechanism is the GRI 3.0 mechanism for methane combustion.
-# The mechanism and its associated data files come with the standard Ansys Chemkin
-# installation under the subdirectory *"/reaction/data"*.
+# The mechanism to load is the GRI 3.0 mechanism for methane combustion.
+# This mechanism and its associated data files come with the standard Ansys Chemkin
+# installation in the ``/reaction/data`` directory.
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # create a chemistry set based on the diesel 14 components mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
-# inclusion of the full file path is recommended
+# including the full file path is recommended
 MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 
@@ -119,7 +119,7 @@ if iError == 0:
 else:
     # When a non-zero value is returned from the process, check the text output files
     # chem.out, tran.out, or summary.out for potential error messages about the mechanism data.
-    print(f"PreProcess: error encountered...code = {iError:d}")
+    print(f"Preprocessing error encountered. Code = {iError:d}.")
     print(f"see the summary file {MyGasMech.summaryfile} for details")
     exit()
 
@@ -154,7 +154,7 @@ iError = mixture.X_by_Equivalence_Ratio(
 )
 # check fuel-oxidizer mixture creation status
 if iError != 0:
-    print("Error: failed to create the Fuel-Oxidizer mixture!")
+    print("Error: Failed to create the fuel-oxidizer mixture.")
     exit()
 
 ##############################
@@ -252,7 +252,7 @@ if runstatus == 0:
     print(f"ignition delay time = {delaytime_org} [msec]")
 else:
     # if get this, most likely the END time is too short
-    print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+    print(Color.RED + ">>> Run failed. <<<", end=Color.END)
     print("failed to find the ignition delay time of the nominal case")
     exit()
 
@@ -299,7 +299,7 @@ for i in range(MyGasMech.IIGas):
     else:
         # if get this, most likely the END time is too short
         print(f"trouble finding ignition delay time for raection {ireac}")
-        print(Color.RED + ">>> RUN FAILED <<<", end=Color.END)
+        print(Color.RED + ">>> Run failed. <<<", end=Color.END)
         exit()
 
 # compute and report the total runtime (wall time)

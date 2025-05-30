@@ -58,18 +58,18 @@ ck.set_verbose(True)
 
 
 #####################################
-# Create a ``Chemistry Set`` instance
+# Create a chemistry set
 # ===================================
-# The first mechanism loaded is the GRI 3.0 mechanism for methane combustion.
-# The mechanism and its associated data files come with the standard Ansys Chemkin
+# The first mechanism to load is the GRI 3.0 mechanism for methane combustion.
+# This mechanism and its associated data files come with the standard Ansys Chemkin
 # installation under the subdirectory *"\reaction\data"*.
 
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 
 # set mechanism input files
-# inclusion of the full file path is recommended
+# including the full file path is recommended
 # the gas-phase reaction mechanism file (GRI 3.0)
 chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 # the thermodynamic data file
@@ -93,7 +93,7 @@ print()
 if iError != 0:
     # When a non-zero value is returned from the process, check the text output files
     # chem.out, tran.out, or summary.out for potential error messages about the mechanism data.
-    print(f"PreProcess: error encountered...code = {iError:d}")
+    print(f"Preprocessing error encountered. Code = {iError:d}.")
     print(f"see the summary file {MyGasMech.summaryfile} for details")
     exit()
 else:
@@ -149,7 +149,7 @@ print("=" * 50)
 # required to instruct the pre-processor to include the transport data.
 
 
-# set the 2nd mechanism directory (the default chemkin mechanism data directory)
+# set the 2nd mechanism directory (the default Chemkin mechanism data directory)
 mechanism_dir = data_dir
 
 # create a chemistry set based on C2_NOx using an alternative method
@@ -177,7 +177,7 @@ print()
 if iError != 0:
     # When a non-zero value is returned from the process, check the text output files
     # chem.out, tran.out, or summary.out for potential error messages about the mechanism data.
-    print(f"PreProcess: error encountered...code = {iError:d}")
+    print(f"Preprocessing error encountered. Code = {iError:d}.")
     print(f"see the summary file {My2ndMech.summaryfile} for details")
     exit()
 else:

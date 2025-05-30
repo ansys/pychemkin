@@ -30,11 +30,11 @@ current_dir = os.getcwd()
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
-# set mechanism directory (the default chemkin mechanism data directory)
+# set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
 # set mechanism input files
-# inclusion of the full file path is recommended
+# including the full file path is recommended
 chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
@@ -45,11 +45,11 @@ My1stMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="G
 iError = My1stMech.preprocess()
 print()
 if iError != 0:
-    print(f"PreProcess: error encountered...code = {iError:d}")
+    print(f"Preprocessing error encountered. Code = {iError:d}.")
     print(f"see the summary file {My1stMech.summaryfile} for details")
     exit()
 else:
-    print(Color.GREEN + "PreProcess success!!", end=Color.END)
+    print(Color.GREEN + "Preprocessing succeeded.", end=Color.END)
     print("mechanism information:")
     print(f"number of elements = {My1stMech.MM:d}")
     print(f"number of gas species = {My1stMech.KK:d}")
@@ -70,7 +70,7 @@ print(f"equilibrium temperature of mymixture1 : {equil_mix1_HP.temperature} [K]"
 #
 # load the second mechanism
 #
-# set the 2nd mechanism directory (the default chemkin mechanism data directory)
+# set the 2nd mechanism directory (the default Chemkin mechanism data directory)
 mechanism_dir = data_dir
 # create a chemistry set based on C2_NOx using an alternative method
 My2ndMech = ck.Chemistry(label="C2 NOx")
@@ -85,11 +85,11 @@ My2ndMech.preprocess_transportdata()
 iError = My2ndMech.preprocess()
 print()
 if iError != 0:
-    print(f"PreProcess: error encountered...code = {iError:d}")
+    print(f"Preprocessing error encountered. Code = {iError:d}.")
     print(f"see the summary file {My2ndMech.summaryfile} for details")
     exit()
 else:
-    print(Color.GREEN + "PreProcess success!!", end=Color.END)
+    print(Color.GREEN + "Preprocessing succeeded.", end=Color.END)
     print("mechanism information:")
     print(f"number of elements = {My2ndMech.MM:d}")
     print(f"number of gas species = {My2ndMech.KK:d}")
