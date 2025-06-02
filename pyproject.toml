@@ -55,7 +55,7 @@ doc = [
     "pandoc==2.4.0",
     "Pillow==11.2.1",
     "PyGitHub==2.6.1",
-    "pyvista==0.45.1",
+    "pyvista==0.45.2",
     "requests==2.32.3",
     "sphinx-copybutton==0.5.2",
     "sphinx-design==0.6.1",
