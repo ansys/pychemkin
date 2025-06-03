@@ -11,6 +11,7 @@ import os
 
 from ansys_sphinx_theme import get_version_match
 from sphinx.builders.latex import LaTeXBuilder
+from sphinx_gallery import sorting as sg_sorting
 
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
 
@@ -97,10 +98,26 @@ autoapi_dirs = ["../../src/ansys/chemkin"]
 # autoapi_options = [ 'members', 'imported-members', 'inherited-members', 'undoc-memebers', #
 #                   'special-members', 'private-members', 'show-inheritance', 'show-module-summary', ]
 autoapi_ignore = ["*wrapper*", "*reactormodel*", "*color*", "*info*", "*utilities*"]
+# explicit order of the example groups
+explicit_order = [
+    "../../examples/chemistry",
+    "../../examples/mixture",
+    "../../examples/batch",
+    "../../examples/engine",
+    "../../examples/PSR",
+    "../../examples/PFR",
+    "../../examples/reactor_network",
+    "../../examples/premixed_flame",
+]
+example_order = sg_sorting.ExplicitOrder(explicit_order)
+# sphinx gallery configurations
 sphinx_gallery_conf = {
     "examples_dirs": "../../examples",  # path to your example scripts
     "gallery_dirs": "auto_examples",  # path to where to save gallery generated output
     "example_extensions": {".py"},
+    "subsection_order": example_order,
+    "within_subsection_order": "FileNameSortKey",
+    "remove_config_comments": True,
 }
 
 # -- Options for HTML output -------------------------------------------------

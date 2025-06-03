@@ -235,7 +235,7 @@ sphere.set_species_floor(-1.0e-10)
 # the ``PSR_SetResTime_EnergyConservation`` model, the PSR residence time remains constant for
 # all runs. The effects from any variations of the inlet are reflected on the PSR volume.
 #
-# Use the the ``process_solution()`` method to convert the result from each PSR to a mixture.
+# Use the ``process_solution()`` method to convert the result from each PSR to a mixture.
 # You can either overwrite the solution mixture or use a new one for each simulation result.
 
 # inlet gas equivalence ratio increment

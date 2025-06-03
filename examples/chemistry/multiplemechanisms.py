@@ -210,7 +210,7 @@ print(f"Detonation wave speed = {speeds_mix2[1]/100.0} [m/sec]")
 ###################################################
 # Switch to the first chemistry set and gas mixture
 # =================================================
-# Use the ``activate()`` method to reactivate the `My1stMech` chemistry set and the `mymixture1` gas mixture.
+# Use the ``activate()`` method to reactivate the ``My1stMech`` chemistry set and the ``mymixture1`` gas mixture.
 
 My1stMech.activate()
 

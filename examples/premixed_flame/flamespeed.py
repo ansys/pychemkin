@@ -42,9 +42,9 @@ low pressure. Since the transport processes are critical for flame calculations,
 
 # sphinx_gallery_thumbnail_path = '_static/plot_hydrogen_premixed_flame.png'
 
-###############################################
-# Import PyChemkin package and start the logger
-# =============================================
+################################################
+# Import PyChemkin packages and start the logger
+# ==============================================
 
 import os
 import time
@@ -54,7 +54,7 @@ from ansys.chemkin import Color
 from ansys.chemkin.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.logger import logger
 
-# Chemkin PSR model (steady-state)
+# Chemkin 1-D premixed freely propagating flame model (steady-state)
 from ansys.chemkin.premixedflames.premixedflame import FreelyPropagating as FlameSpeed
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
@@ -107,8 +107,8 @@ MyGasMech.preprocess_transportdata()
 # preprocess the mechanism files
 iError = MyGasMech.preprocess()
 if iError != 0:
-    print("Error: failed to preprocess the mechanism!")
-    print(f"       error code = {iError}")
+    print("Error: Failed to preprocess the mechanism!")
+    print(f"       Error code = {iError}")
     exit()
 
 #######################################################################################
@@ -122,7 +122,7 @@ if iError != 0:
 # *complete combustion product species* and provide the *additives* composition
 # if applicable. And finally you can simply set ``equivalenceratio=1`` to create
 # the stoichiometric hydrogen-air mixture. The estimated inlet mass flow rate can be
-# assigned by the ``mass_flowrate`` method.
+# assigned by the ``mass_flowrate()`` method.
 
 # create the fuel mixture
 fuel = ck.Mixture(MyGasMech)
@@ -152,7 +152,7 @@ iError = premixed.X_by_Equivalence_Ratio(
 )
 # check fuel-oxidizer mixture creation status
 if iError != 0:
-    print("Error: failed to create the hydrogen-air mixture!")
+    print("Error: Failed to create the hydrogen-air mixture!")
     exit()
 
 # setting inlet pressure [dynes/cm2]
@@ -165,17 +165,17 @@ premixed.velocity = 65.0
 ##################################################
 # Instantiate the laminar speed calculator
 # ================================================
-# Set up the *freely propagating premixed flame* model by using the ``Stream``
-# object representing the premixed fuel-oxidizer mixture (with the estimated
+# Set up the *freely propagating premixed flame* model by using the stream
+# representing the premixed fuel-oxidizer mixture (with the estimated
 # mass flow rate value). When the flame speed is expected to be very small
 # (< 10 [cm/sec]) or very large (> 300 [cm/sec]), it might be beneficial to
 # set the ``mass_flowrate`` of this inlet to the mass flux [g/cm\ :sup:`2`\ -sec]
 # based on the estimated flame speed value. There are many options and parameters
 # related to the treatment of the species boundary condition, the transport properties.
-# All the available options and parameters are described in the *Chemkin* *Input* manual.
+# All the available options and parameters are described in the *Chemkin Input* manual.
 #
 # .. note::
-#   The ``Stream`` parameter used to instantiate a ``FlameSpeed`` object is
+#   The stream parameter used to instantiate a ``FlameSpeed`` object is
 #   the properties of the unburned fuel-oxidizer mixture of which the *laminar
 #   flame speed* will be determined.
 #
@@ -186,7 +186,7 @@ flamespeedcalculator = FlameSpeed(premixed, label="premixed_hydrogen")
 # Set up initial mesh and grid adaption options
 # =============================================
 # The premixed flame models provides several methods to set up the initial
-# mesh.  Here a uniform mesh of 11 grid points is used at the start of the simulation.
+# mesh.  Here a uniform mesh of 35 grid points is used at the start of the simulation.
 # The flame models would add more grid points to where they are needed as determined by
 # the solution quality parameters specified by the ``set_solution_quality`` method.
 #
@@ -218,18 +218,20 @@ flamespeedcalculator.set_solution_quality(gradient=0.1, curvature=0.2)
 #################################
 # Set transport property options
 # ===============================
-# *Chemkin* offers three methods to compute the *mixture* properties: the *mixture averaged*
-# method, the *multi-component* method, and the constant *Lewis number* method. When the system
-# pressure is not too low, the *mixture averaged* method should be adequate. The *multi-component*
-# method, although it is slightly more accurate, would make the simulation time longer and harder
-# to converge. Using the constant *Lewis number* method implies that all the species would have
-# the same transport properties.
+# Ansys Chemkin offers three methods for computing mixture properties:
 #
-# Include the thermal diffusion effect, when there are large amount of light species
-# (molecular weight < 5.0).
+# - **Mixture averaged**
+# - **Multi-component**
+# - **Constant Lewis number
+#
+# When the system pressure is not too low, the mixture averaged method should be adequate.
+# The multi-component method, although it is slightly more accurate, makes the simulation time longer
+# and is harder to converge. Using the constant Lewis number method implies that all the species
+# would have the same transport properties. Include the thermal diffusion effect, when there are large
+# amount of light species (molecular weight < 5.0).
 #
 
-# use the mixture-averaged formulism to evaluate the mixture transport properties
+# use the mixture averaged formulism to evaluate the mixture transport properties
 flamespeedcalculator.use_mixture_averaged_transport()
 # include the thermal diffusion effect (because the unburned mixture has hydrogen (molecular weight < 5.0))
 flamespeedcalculator.use_thermal_diffusion(mode=True)
@@ -238,11 +240,11 @@ flamespeedcalculator.use_thermal_diffusion(mode=True)
 # Set species composition boundary option
 # =======================================
 # There two types of boundary condition treatments for the species composition available
-# from the premixed flame models: *"comp"* and *"flux"*. You can find the descriptions of
-# these two treatments in the *Chemkin* *Input* manual.
+# from the premixed flame models: ``comp`` and ``flux``. You can find the descriptions of
+# these two treatments in the *Chemkin Input* manual.
 
-# specific the species composition boundary treatment ("comp" or "flux")
-# use "COMP" to keep the inlet species mass fraction values the same as the "given inlet stream".
+# specific the species composition boundary treatment ('comp' or 'flux')
+# use 'comp' to keep the inlet species mass fraction values the same as the "given inlet stream".
 flamespeedcalculator.set_species_boundary_types(mode="comp")
 
 ############################
@@ -260,7 +262,7 @@ flamespeedcalculator.set_species_boundary_types(mode="comp")
 
 # reset the tolerances in the steady-state solver (optional)
 flamespeedcalculator.steady_state_tolerances = (1.0e-9, 1.0e-6)
-flamespeedcalculator.timestepping_tolerances = (1.0e-6, 1.0e-4)
+flamespeedcalculator.time_stepping_tolerances = (1.0e-6, 1.0e-4)
 # reset the gas species floor value in the steady-state solver (optional)
 flamespeedcalculator.set_species_floor(-1.0e-4)
 # skip the fixed-temperature step (optional)
@@ -271,12 +273,12 @@ flamespeedcalculator.set_pseudo_Jacobian_age(10)
 ####################################
 # Run the premixed flame calculation
 # ==================================
-# Use the ``run`` method to run the freely propagating premixed flame (flame speed) model.
+# Use the ``run()`` method to run the freely propagating premixed flame (flame speed) model.
 # will solve the reactors one by one in the order they are added to the network. After the
-# premixed flame calculation concludes successfully, use the ``process_solution`` method to
-# post-process the solutions. The predicted laminar flame speed can be obtained by using the
-# ``get_flame_speed`` method. You can create other property profiles by looping through the
-# solution ``Streams`` with proper ``Mixture`` methods.
+# premixed flame calculation concludes successfully, use the ``process_solution()`` method to
+# postprocess the solutions. The predicted laminar flame speed can be obtained by using the
+# ``get_flame_speed()`` method. You can create other property profiles by looping through the
+# solution streams with proper ``Mixture`` methods.
 #
 # .. note::
 #   When the inlet stream condition is close to the flammability limit, the flame speed
@@ -290,53 +292,51 @@ start_time = time.time()
 
 status = flamespeedcalculator.run()
 if status != 0:
-    print(Color.RED + "failed to calculate the laminar flame speed!" + Color.END)
+    print(Color.RED + "Failed to calculate the laminar flame speed!" + Color.END)
     exit()
 
 # compute the total runtime
 runtime = time.time() - start_time
 print()
-print(f"total simulation duration: {runtime} [sec]")
+print(f"Total simulation duration: {runtime} [sec].")
 print()
 
 ############################################
-# Post-process the premixed flame results
+# Postprocess the premixed flame results
 # ==========================================
-# The post-processing step will parse the solution and package the solution values at each
-# time point into a ``Stream`` object. There are two ways to access the solution profiles:
+# The postprocessing step will parse the solution and package the solution values at each
+# time point into a stream. There are two ways to access the solution profiles:
 #
-#   1. the "raw" solution profiles (value as a function of time) are available for "distance",
+#   1. the raw solution profiles (value as a function of time) are available for "distance",
 #   "temperature", and species "mass fractions";
 #
-#   2. the ``Stream`` objects that permit the use of all property and rate utilities to extract
+#   2. the streams that permit the use of all property and rate utilities to extract
 #   information such as viscosity, density, and mole fractions.
 #
-# The "raw" solution profiles can be obtained by using the ``get_solution_variable_profile`` method. The
-# solution ``Stream`` objects are accessed via either the ``get_solution_stream_at_grid`` for the
-# solution stream at the given *grid point* or the ``get_solution_stream`` for the solution stream
-# at the given *location* (in this case, the "stream" is constructed by interpolation).
+# You can use the ``get_solution_variable_profile()`` method to get the raw solution profiles. You
+# solution streams are accessed using either the ``get_solution_stream_at_grid()`` method for the
+# solution stream at the given grid point or the ``get_solution_stream()`` method for the
+# solution stream at the given location. (In this case, the stream is constructed by interpolation.)
 #
 # .. note::
-#   Use the ``get_solution_size`` to get the number of grid pints in the solution profiles before
-#   creating the arrays.
-#
-# .. note::
-#   The ``mass_flowrate`` from the solution ``Streams`` is actually the *mass flux* [g/cm\ :sup:`2`\ -sec].
-#   It can used to derive the velocity at the corresponding location by dividing it by the local gas mixture
-#   density [g/cm\ :sup:`3`\ ]. Here the ``get_flame_speed`` is used to retrieve the predict laminar flame
-#   speed value.
+#   - Use the ``get_solution_size()`` to get the number of grid pints in the solution profiles before
+#     creating the arrays.
+#   - The ``mass_flowrate`` from the solution streams is actually the *mass flux* [g/cm\ :sup:`2`\ -sec].
+#     It can used to derive the velocity at the corresponding
+#     location by dividing it by the local gas mixture density [g/cm\ :sup:`3`\ ]. The ``get_flame_speed()``
+#     can also be used to retrieve the predict laminar flame speed value.
 #
 
-# post-process the solutions
+# postprocess the solutions
 flamespeedcalculator.process_solution()
 
 # print the predicted laminar flame speed
 print(
-    f"the predicted laminar flame speed = {flamespeedcalculator.get_flame_speed()} [cm/sec]"
+    f"The predicted laminar flame speed = {flamespeedcalculator.get_flame_speed()} [cm/sec]."
 )
 # get the number of solution grid points
 solutionpoints = flamespeedcalculator.get_solution_size()
-print(f"number of solution points = {solutionpoints}")
+print(f"Number of solution points = {solutionpoints}.")
 # get the grid profile
 mesh = flamespeedcalculator.get_solution_variable_profile("distance")
 # get the temperature profile

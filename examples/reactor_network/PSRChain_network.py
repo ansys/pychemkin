@@ -39,7 +39,7 @@ Here is a PSR chain model of a fictional gas combustor:
 
 The primary inlet stream to the first reactor, the *combustor*, is the fuel-lean methane-air mixture
 that is formed by mixing the fuel (methane) and the heated air. The exhaust from the combustor
-enters the second reactor, the *dilution zone*, where the hot combustion products are cooled by the introduction of additional cool air. The cooled and diluted gas mixture in the dilution zone then travel tos the third reactor, the *reburning zone*. A mixture of fuel (methane) and carbon dioxide is injected to the gas in the reburning zone, attempting to convert any remaining carbon monoxide or nitric oxide in the exhaust gas to carbon dioxide or nitrogen, respectively.
+enters the second reactor, the *dilution zone*, where the hot combustion products are cooled by the introduction of additional cool air. The cooled and diluted gas mixture in the dilution zone then travel to the third reactor, the *reburning zone*. A mixture of fuel (methane) and carbon dioxide is injected to the gas in the reburning zone, attempting to convert any remaining carbon monoxide or nitric oxide in the exhaust gas to carbon dioxide or nitrogen, respectively.
 
 This example uses the ``ReactorNetwork`` module to configure and solve this chain reactor network. This module automatically handles the tasks of running the individual reactors and setting up the inlet to the downstream reactor.
 """

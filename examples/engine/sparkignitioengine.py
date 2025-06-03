@@ -332,7 +332,7 @@ MyEngine.adaptive_solution_saving(mode=True, steps=20)
 # Set solver controls
 # ===================
 # You can overwrite the default solver controls by using solver-related methods, such as
-# those for olerances.
+# those for tolerances.
 
 # set tolerances in tuple: (absolute tolerance, relative tolerance)
 MyEngine.tolerances = (1.0e-15, 1.0e-6)
