@@ -9,4 +9,4 @@ profile data or solved by the energy equation.
 
 The examples consist of projects that utilize the *batch reactor* model to perform simulations of
 various complexities, from tracking the evolution of the mixture properties to the A-factor sensitivity
-analysis. 
+analysis.

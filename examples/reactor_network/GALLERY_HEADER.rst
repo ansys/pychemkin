@@ -11,7 +11,7 @@ add the reactors to the *hybridreactornetwork*. If there are *recycling* streams
 the *hybridreactornetwork* will solve the entire *ERN* iteratively. In this case, a *tear point* must be explicitly
 specified. The last methods is to create the network and its connectivity first, and the entire *ERN* will be solved in a coupled
 manner. This methods is the default method in Chemkin GUI, but it is currently under development in **PyChemkin**. Note that currently,
-*PSR* is the only reactor model that is allowed in the *ERN*. 
+*PSR* is the only reactor model that is allowed in the *ERN*.
 
 The *PSRChain_xxx* examples show the two methods to build and run a series of linked PSRs (no stream recycling) can be modeled in **PyChemkin**.
 The *PSRnetwork* example goes over the steps of creating and running an *ERN* with recycling streams by using the *hybridreactornetwork* method.

@@ -153,11 +153,11 @@ phi = 0.6
 # create mixture by using the equivalence ratio
 iError = premixed.X_by_Equivalence_Ratio(
     MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=phi
-    )
+)
 # check fuel-oxidizer mixture creation status
 if iError != 0:
     print(
-        + "Error: failed to create the methane-air mixture "
+        "Error: failed to create the methane-air mixture "
         + "for equivalence ratio = "
         + str(phi)
     )
@@ -208,7 +208,7 @@ flamespeedcalculator.end_position = 1.0
 # case. Normally, the most "extreme" cases are difficult to converge. When running into these situations, start
 # the parameter runs from the stoichiometric condition and go down the lean and/or the rich branch. Here
 # the runs start from the most fuel-lean case (\ :math:`\phi = 0.6`\) and progress all the way to the most
-# fuel-rich case (\ :math:`\phi = 1.6`\) in steps of 0.05.  
+# fuel-rich case (\ :math:`\phi = 1.6`\) in steps of 0.05.
 #
 # .. note::
 #   - When the inlet stream condition is close to the flammability limit, the flame speed
@@ -220,7 +220,7 @@ flamespeedcalculator.end_position = 1.0
 #     accumulated from all previous runs.
 #   - Use the ``set_molefractions`` method to update the inlet gas composition before each run. Similarly,
 #     use the ``pressure`` and the ``temperature`` methods to change the inlet condition.
-# 
+#
 
 # total number of parameter cases
 points = 21
@@ -254,7 +254,7 @@ for i in range(points):
     flamespeed[i] = flamespeedcalculator.get_flame_speed()
     # print the predicted laminar flame speed
     print(
-        f"methane-air equivalance ratio = {phi} :\n"
+        f"methane-air equivalence ratio = {phi} :\n"
         + f"the predicted laminar flame speed = {flamespeed[i]} [cm/sec]"
     )
     #
@@ -326,7 +326,7 @@ data_speed = [
 ###########################################
 # Plot the premixed flame solution profiles
 # =========================================
-# Plot the predicted flame speeds against the experimental data 
+# Plot the predicted flame speeds against the experimental data
 #
 
 plt.plot(data_equiv, data_speed, label="data", linestyle="", marker="^", color="blue")

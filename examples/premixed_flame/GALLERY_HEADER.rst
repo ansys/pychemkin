@@ -7,6 +7,6 @@ The *flame speed calculator* is commonly used to calculate the laminar flame spe
 fuel-oxidizer mixture. The predicted/computed flame speeds can be used to validate a combustion
 mechanism or can serve as a prre-processor to construct a "flame speed table" or a
 "combustion progress table" for other applications. The *flat flame* burner-stablized model is
-primarily used to study the flame chemistry in conjunction with the flat flame experiments. 
+primarily used to study the flame chemistry in conjunction with the flat flame experiments.
 
 The examples show different ways to perform the "premixed flame" calculations.
