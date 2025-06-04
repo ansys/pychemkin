@@ -91,7 +91,7 @@ Support
 Pythonic methods
 ~~~~~~~~~~~~~~~~~
 
-To get help within PyChemkin, use these Pythonic methods:
+To get help within PyChemkin, use these pythonic methods:
 
 - ``ansys.chemkin.help()``: Get general information about a topic, such as ``ignition``.
 - ``ansys.chemkin.keywordhints()``: Get the description and syntax of a reactor keyword.

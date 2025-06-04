@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 """
-    Perfectly-stirred reactor (PSR) model
+    Perfectly stirred reactor (PSR) model
 """
 
 import copy

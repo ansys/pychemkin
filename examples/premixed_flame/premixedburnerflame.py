@@ -58,7 +58,7 @@ from ansys.chemkin import Color
 from ansys.chemkin.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.logger import logger
 
-# Chemkin PSR model (steady-state)
+# Chemkin 1-D premixed burner-stabilized flame model (steady-state)
 from ansys.chemkin.premixedflames.premixedflame import (
     BurnedStabilized_GivenTemperature as Burner,
 )
@@ -115,7 +115,7 @@ if iError != 0:
 # Instantiate a stream named ``premixed`` for the inlet gas mixture.
 # This stream is a mixture with the addition of the inlet flow rate.
 # You specify the inlet gas properties in the same way you
-# set up a mxture. You can simply use a composition *"recipe"* to create
+# set up a mixture. You can simply use a composition *"recipe"* to create
 # the C\ :sub:`2`\ H\ :sub:`4` + O\ :sub:`2`\ + AR mixture. You use the
 # ``mass_flowrate()`` method to assign the burner inlet mass flow rate.
 #
@@ -334,7 +334,7 @@ print()
 # - The raw solution profiles (value as a function of distance) are available for distance,
 #   temperature, pressure, volume, and species mass fractions.
 #
-#  -The mixtures permit the use of all property and rate utilities to extract
+#  -The streams permit the use of all property and rate utilities to extract
 #   information such as viscosity, density, and mole fractions.
 #
 # You can use the ``get_solution_variable_profile()`` method to get the raw solution profiles. You
@@ -356,7 +356,7 @@ flatflame.process_solution()
 
 # get the number of solution grid points
 solutionpoints = flatflame.get_solution_size()
-print(f"number of final solution points = {solutionpoints}")
+print(f"Number of final solution points = {solutionpoints}.")
 # get the grid profile
 mesh = flatflame.get_solution_variable_profile("distance")
 # get the temperature profile

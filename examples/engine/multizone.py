@@ -148,7 +148,7 @@ fresh.list_composition(mode="mole")
 ##########################################################
 # Specify pressure and temperature of the fuel-air mixture
 # ========================================================
-# Since you are going to use the ``fresh`` fuel-air mixutre to instantiate the engine object later,
+# Since you are going to use the ``fresh`` fuel-air mixture to instantiate the engine object later,
 # setting the mixture pressure and temperature is equivalent to setting
 # the initial temperature and pressure of the engine cylinder.
 fresh.temperature = 447.0

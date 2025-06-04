@@ -43,7 +43,7 @@ always require the connected inlets to be defined, that is, the total inlet flow
 is always known. Therefore, either the residence time or the reactor volume is needed to
 satisfy the basic setup of the PSR model.
 
-This example specifies the eactor volume of the PSR. The residence time is calculated from the reactor volume and the total inlet volumetric flow rate.
+This example specifies the reactor volume of the PSR. The residence time is calculated from the reactor volume and the total inlet volumetric flow rate.
 
 For each type of PSR model, you can either specify the reactor temperature (as a fixed
 value or by a piecewise-linear profile) or solve the energy conservation equation. In total,
