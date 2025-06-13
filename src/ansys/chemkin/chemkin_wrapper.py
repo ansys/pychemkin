@@ -37,10 +37,10 @@ import numpy as np
 _min_version = 251
 _valid_versions = [262, 261, 252, 251]
 _ansys_ver = _min_version
-_ansys_dir = None
-_ckbin = None
+_ansys_dir = ""
+_ckbin = ""
 status = 0
-_target_lib = None
+_target_lib = ""
 _lib_paths: list[str] = []
 # create log
 msg = ["minimum version =", str(_min_version)]
