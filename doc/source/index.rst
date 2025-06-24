@@ -33,7 +33,7 @@ PyChemkin provides Pythonic access to the Ansys Chemkin API for CFD (computation
         reactor model and where you can find supporting information.
 
     .. grid-item-card:: API reference :fa:`book-bookmark`
-        :link: autoapi/index
+        :link: api/index
         :link-type: doc
 
         Understand how to use Python to interact programmatically with PyChemkin.
