@@ -78,7 +78,7 @@ class SIengine(Engine):
         # 2 zones: the unburned and the burned zones
         self._nreactors = nzones
         self._npsrs = c_int(1)
-        self._ninlets = c_int(0)
+        self._ninlets = np.zeros(1, dtype=int)
         # number of zones
         self._nzones = c_int(nzones)
         # use API mode for SI simulations
@@ -446,9 +446,9 @@ class SIengine(Engine):
         """
         iErr = 0
         iErrc = 0
-        iErrKey = 0
-        iErrInputs = 0
-        iErrProf = 0
+        err_key = 0
+        err_inputs = 0
+        err_profile = 0
         # set_verbose(True)
         # verify required inputs
         iErr = self.validate_inputs()
@@ -495,7 +495,7 @@ class SIengine(Engine):
                 Color.PURPLE,
                 "failed to set up profile keywords,",
                 "error code =",
-                str(iErrProf),
+                str(err_profile),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -503,9 +503,9 @@ class SIengine(Engine):
             return iErr
         # prepare initial conditions
         # initial mass fraction
-        Y_init = self.reactormixture.Y
+        y_init = self.reactormixture.Y
         # connecting rod length to crank radius ratio
-        LOLR = c_double(self.connectrodlength / self.crankradius)
+        lolr = c_double(self.connectrodlength / self.crankradius)
         # set reactor initial conditions and geometry parameters
         if self._reactortype.value == self.ReactorTypes.get("SI", 5):
             # insert the ICEN keywords
@@ -519,11 +519,11 @@ class SIengine(Engine):
                 c_double(self.compressratio),
                 c_double(self.borediam),
                 c_double(self.enginestroke),
-                LOLR,
+                lolr,
                 self._temperature,
                 self._pressure,
                 self._heat_loss_rate,
-                Y_init,
+                y_init,
             )
             iErr += iErrc
             if iErrc != 0:
@@ -609,8 +609,6 @@ class SIengine(Engine):
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
                 return iErrc
-        else:
-            pass
         # check if the wall heat transfer model is set up
         if iErr == 0 and self._wallheattransfer:
             self.set_heat_transfer_keywords()
@@ -621,33 +619,33 @@ class SIengine(Engine):
                 npoints = c_int(p.size)
                 x = p.pos
                 y = p.value
-                iErrProf = chemkin_wrapper.chemkin.KINAll0D_SetProfileParameter(
+                err_profile = chemkin_wrapper.chemkin.KINAll0D_SetProfileParameter(
                     key, npoints, x, y
                 )
-                iErr += iErrProf
-            if iErrProf != 0:
+                iErr += err_profile
+            if err_profile != 0:
                 msg = [
                     Color.PURPLE,
                     "failed to set up profile keywords,",
                     "error code =",
-                    str(iErrProf),
+                    str(err_profile),
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                return iErrProf
+                return err_profile
         if iErr == 0:
             # set additional keywords
             # create input lines from additional user-specified keywords
-            iErrInputs, nlines = self.createkeywordinputlines()
-            if iErrInputs == 0:
+            err_inputs, nlines = self.createkeywordinputlines()
+            if err_inputs == 0:
                 # process additional keywords in _keyword_index and _keyword_lines
                 for s in self._keyword_lines:
                     # convert string to byte
                     line = bytes(s, "utf-8")
                     # set additional keyword one by one
-                    iErrKey = chemkin_wrapper.chemkin.KINAll0D_SetUserKeyword(line)
-                if iErrInputs == 0:
+                    err_key = chemkin_wrapper.chemkin.KINAll0D_SetUserKeyword(line)
+                if err_inputs == 0:
                     if verbose():
                         msg = [
                             Color.YELLOW,
@@ -662,7 +660,7 @@ class SIengine(Engine):
                         Color.PURPLE,
                         "failed to create additional input lines,",
                         "error code =",
-                        str(iErrInputs),
+                        str(err_inputs),
                         Color.END,
                     ]
                     this_msg = Color.SPACE.join(msg)
@@ -671,13 +669,13 @@ class SIengine(Engine):
                 msg = [
                     Color.PURPLE,
                     "failed to process additional keywords, error code =",
-                    str(iErrInputs),
+                    str(err_inputs),
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
         #
-        iErr = iErr + iErrInputs + iErrKey
+        iErr = iErr + err_inputs + err_key
 
         return iErr
 
