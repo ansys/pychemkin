@@ -851,7 +851,7 @@ class ReactorNetwork:
         Returns
         -------
             status: integer
-                run status, 0=all reactor success;-100=not run; other=failed
+                run status, 0=all reactor success; <-100=not run; other=failed
         """
         sum_status = 0
         for rxtor in self.reactor_objects.values():
@@ -864,9 +864,6 @@ class ReactorNetwork:
         elif sum_status > 0:
             # all reactors have been run but some with return code > 0
             self.network_run_status = sum_status
-        else:
-            # some reactors have NOT been run
-            pass
         return self.network_run_status
 
     def run(self) -> int:
@@ -893,7 +890,7 @@ class ReactorNetwork:
             run_status = self.run_with_tearstream()
         return run_status
 
-    def get_reactor_Stream(self, reactor_name: str) -> Stream:
+    def get_reactor_stream(self, reactor_name: str) -> Stream:
         """
         Get the solution Stream object of the given reactor name/label.
 
