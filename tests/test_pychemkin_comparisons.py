@@ -20,14 +20,13 @@ class TestCompareResults:
         get_working_dir,
         get_baseline_dir,
         get_result_dir,
-        get_nocompare,
+        get_compare,
     ):
         """
         Compare current test results against the baselines.
         """
-        if get_nocompare:
-            pytest.skip("--nocompare option set.")
-
+        if not get_compare:
+            pytest.skip("no --compare option set.")
         # check the folders
         if PyCKtools.TARGET_FOLDER is None:
             new_working = get_working_dir

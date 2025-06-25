@@ -45,9 +45,9 @@ def pytest_addoption(parser):
         help="specify the folder containing the test results.",
     )
     parser.addoption(
-        "--nocompare",
+        "--compare",
         action="store_true",
-        help="skip comparing results against the baselines.",
+        help="compare results against the baselines.",
     )
 
 
@@ -100,8 +100,8 @@ def pytest_collection_modifyitems(items):
 
 
 @pytest.fixture
-def get_nocompare(request):
-    return request.config.getoption("--nocompare")
+def get_compare(request):
+    return request.config.getoption("--compare")
 
 
 @pytest.fixture
