@@ -23,6 +23,9 @@
 """
 pychemkin utilities
 """
+import os
+import re
+import secrets
 from typing import Union
 
 from ansys.chemkin.chemistry import Chemistry
@@ -30,6 +33,8 @@ from ansys.chemkin.color import Color
 from ansys.chemkin.logger import logger
 import numpy as np
 import numpy.typing as npt
+
+ck_rng = None  # random number generator
 
 
 def where_element_in_array_1D(
@@ -428,9 +433,7 @@ def calculate_stoichiometrics(
         elname = ""
         if numb_prodelem == numb_coreelem:
             for m in prodelem_index:
-                if m in coreelem_index:
-                    pass
-                else:
+                if m not in coreelem_index:
                     elname = chemistryset.element_symbols[m]
                     msg = [
                         Color.PURPLE,
@@ -483,3 +486,67 @@ def calculate_stoichiometrics(
     alpha = -x[0]
     nu = x[1:numb_coreelem]
     return alpha, nu
+
+
+def random(range: Union[None, tuple[float, float]] = None) -> float:
+    """
+    Generate a (reproducible) random floating number value >= 0.0 and < 1.0
+    by using the Numpy pseudo-random number generator.
+    If the range tuple (a, b) is given, the random number will
+    have a value >= a and < b.
+
+    Parameters
+    ----------
+        range: tuple of floats (a, b) and b > a, default = (0.0, 1.0)
+            the range of the random number values
+
+    Returns
+    -------
+        random: float
+            random number
+    """
+    global ck_rng
+    if ck_rng is None:
+        # need initialization
+        # get the seeding value
+        seed = secrets.randbits(128)
+        seed -= 54231
+        # create a random number generator instance
+        ck_rng = np.random.default_rng(seed)
+
+    if range is None:
+        # return value [0, 1)
+        return ck_rng.random()
+    else:
+        # return value [a, b)
+        width = range[1] - range[0]
+        return range[0] + ck_rng.random() * width
+
+
+def find_file(filepath: str, partialfilename: str, fileext: str) -> str:
+    """
+    Find the correct version of the given partial file name.
+    This is mostly to handle the different years/versions of the
+    MFL mechanisms that come with the Ansys Chemkin installation.
+
+    Parameters
+    ----------
+        filepath: string
+            the directory where the file is located
+        partialfilename: string
+            the leading portion of the file name
+        fileext: string
+            file extension
+
+    Returns
+    -------
+        thefile: string
+            full path name of the file, = "" if no file matches the 'partialname' in the 'filepath'
+    """
+    thefile = ""
+    for file in os.listdir(filepath):
+        if fileext in os.path.splitext(file)[1]:
+            if re.search(partialfilename, file):
+                thefile = os.path.join(filepath, file)
+                break
+    return thefile
