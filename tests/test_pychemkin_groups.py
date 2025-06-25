@@ -22,9 +22,7 @@ class TestClassBasic:
     fresh = True
 
     @pytest.mark.parametrize("test_file", basic_list)
-    def test_basic(
-        self, get_working_dir, get_source_dir, get_result_dir, test_file
-    ):
+    def test_basic(self, get_working_dir, get_source_dir, get_result_dir, test_file):
         """
         Run the selected pychemin basic utility test cases.
         """
@@ -219,6 +217,7 @@ class TestClassPSR:
             get_working_dir, get_source_dir, get_result_dir, test_file
         )
         assert 0 == iErr, "run failed."
+
 
 @pytest.mark.group("ERN", "all")
 @pytest.mark.ERN
