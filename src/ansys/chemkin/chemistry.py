@@ -83,7 +83,7 @@ def set_verbose(OnOff: bool):
 
 def chemkin_version() -> int:
     """
-    Return the Chemkin-CFD-API verion number currently in use
+    Return the Chemkin-CFD-API version number currently in use
 
     Returns
     -------
