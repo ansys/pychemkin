@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "ansys-chemkin"
-version = "0.25.dev20"
+version = "25.2.dev20"
 description = "PyChemkin provides Pythonic interface to Ansys chemkin utilities and reactor models"
 requires-python = ">=3.9,<4"
 license = { file = "LICENSE" }
@@ -12,7 +12,7 @@ authors = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
 maintainers = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
 readme = "README.rst"
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 4 - Pre-Beta",
     "Intended Audience :: Science/Research",
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",

@@ -146,6 +146,6 @@ page on the Ansys Developer portal, you can post questions, share ideas, and get
 To reach the project support team, email `pyansys.core@ansys.com <mailto:pyansys.core@ansys.com>`_.
 
 .. LINKS AND REFERENCES
-.. _Prerequisites: ./doc/source/Prerequisites.rst
-.. _Getting Started: ./doc/source/Get_Start.rst
+.. _Prerequisites: ./doc/source/getting_started.rst
+.. _Getting Started: ./doc/source/getting_started.rst
 .. _Chemkin Documents: https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/prod_page.html?pn=Chemkin&pid=ChemkinPro&lang=en/
