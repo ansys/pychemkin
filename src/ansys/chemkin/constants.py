@@ -28,6 +28,7 @@ Constants used by Chemkin utilities and models.
 boltzmann = 1.3806504e-16  # Boltzmann constant [ergs/K] (double scalar)
 avogadro = 6.02214179e23  # Avogadro number [1/mole] (double scalar)
 Patm = 1.01325e06  # atmospheric pressure [dynes/cm2] (double scalar)
+Ptorrs = Patm / 760.0  # 1 torr in [dynes/cm2] (double scalar)
 ergs_per_joule = 1.0e7  # ergs per joule [ergs/J] (double scalar)
 joules_per_calorie = 4.184e0  # joules per calorie [J/cal] (double scalar)
 ergs_per_calorie = (

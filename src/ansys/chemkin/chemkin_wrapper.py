@@ -26,6 +26,7 @@
 
 import ctypes
 from ctypes import cdll
+import datetime
 import os
 import platform
 
@@ -35,15 +36,28 @@ import numpy as np
 
 # set ansys version number
 _min_version = 251
-_valid_versions = [262, 261, 252, 251]
+_valid_versions: list[int] = []
+_sub_releases = [2, 1]
 _ansys_ver = _min_version
 _ansys_dir = ""
 _ckbin = ""
 status = 0
 _target_lib = ""
 _lib_paths: list[str] = []
+# generate possible Ansys versions based on the current year
+this_date = datetime.datetime.now()
+_this_year = this_date.year
+# the newest version cannot have release year later than next year
+# get the last two digits of the year: ## of 20## (change to 21## when the 22nd century comes)
+# assemble the release year part
+_max_release_year = ((_this_year % 100) + 1) * 10
+_test_release = _max_release_year
+while _test_release >= _min_version - (_min_version % 10):
+    for r in _sub_releases:
+        _valid_versions.append(_test_release + r)
+    _test_release -= 10
 # create log
-msg = ["minimum version =", str(_min_version)]
+msg = ["minimum Ansys version to run PyChemkin =", str(_min_version)]
 this_msg = Color.SPACE.join(msg)
 logger.debug(this_msg)
 
@@ -137,25 +151,25 @@ def __setlinux():
     if _ansys_home == "NA":
         # environment variable ANSYSxxx_DIR is NOT defined
         # check local Ansys installation
-        _userhome = os.environ.get("HOME", "NA")
-        if _userhome != "NA":
-            _ansys_home = os.path.join(_userhome, "ansys_inc")
-            foundhome = False
+        _user_home = os.environ.get("HOME", "NA")
+        if _user_home != "NA":
+            _ansys_home = os.path.join(_user_home, "ansys_inc")
+            found_home = False
             if os.path.isdir(_ansys_home):
                 # find all local Ansys installations
-                localversions = [f.name for f in os.scandir(_ansys_home) if f.is_dir()]
+                local_versions = [f.name for f in os.scandir(_ansys_home) if f.is_dir()]
                 for v in _valid_versions:
                     _ansys_ver = v
                     if v >= _min_version:
-                        thisversion = "v" + str(v)
-                        if thisversion in localversions:
-                            _ansys_dir = os.path.join(_ansys_home, thisversion)
-                            foundhome = True
+                        this_version = "v" + str(v)
+                        if this_version in local_versions:
+                            _ansys_dir = os.path.join(_ansys_home, this_version)
+                            found_home = True
                             break
                     else:
                         iErr = 2
                         break
-                if not foundhome:
+                if not found_home:
                     iErr = 1
             else:
                 # no local Ansys installation
@@ -581,7 +595,7 @@ chemkin.KINAll0D_Setup.argtypes = [
     ctypes.POINTER(ctypes.c_int),
     ctypes.POINTER(ctypes.c_int),
     ctypes.POINTER(ctypes.c_int),
-    ctypes.POINTER(ctypes.c_int),
+    np.ctypeslib.ndpointer(dtype=np.int32, flags="C_CONTIGUOUS"),
     ctypes.POINTER(ctypes.c_int),
 ]
 chemkin.KINAll0D_SetupWorkArrays.restype = ctypes.c_int
