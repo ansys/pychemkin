@@ -9,12 +9,12 @@ PyChemkin
    :target: https://docs.pyansys.com/
    :alt: PyAnsys
 
-.. |python| image:: https://img.shields.io/pypi/pyversions/ansys-geometry-core?logo=pypi
-   :target: https://pypi.org/project/ansys-geometry-core/
+.. |python| image:: https://img.shields.io/pypi/pyversions/pychemkin?logo=pypi
+   :target: https://pypi.org/project/pychemkin/
    :alt: Python
 
-.. |pypi| image:: https://img.shields.io/pypi/v/ansys-geometry-core.svg?logo=python&logoColor=white&label=PyPI
-   :target: https://pypi.org/project/ansys-geometry-core
+.. |pypi| image:: https://img.shields.io/pypi/v/pychemkin.svg?logo=python&logoColor=white&label=PyPI
+   :target: https://pypi.org/project/pychemkin
    :alt: PyPI
 
 .. |MIT| image:: https://img.shields.io/badge/License-MIT-yellow.svg
