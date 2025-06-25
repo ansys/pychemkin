@@ -85,7 +85,7 @@ class perfectlystirredreactor(openreactor):
         # heat transfer parameters
         self._heat_loss_rate = c_double(0.0e0)
         # single reactor (default) or reactor network
-        self._network_mode = False
+        self.standalone = True
         # check required inputs
         self._numb_requiredinput = 0
         self._requiredlist: list[str] = []
@@ -93,7 +93,7 @@ class perfectlystirredreactor(openreactor):
         # default number of reactors
         self._nreactors = 1
         self._npsrs = c_int(1)
-        self._ninlets = c_int(0)  # self.numbexternalinlets
+        self._ninlets = np.zeros(1, dtype=int)  # self.numbexternalinlets
         self._nzones = c_int(0)
         # default reactor type settings
         # Perfectly-Stirred Reactor (PSR) model
@@ -261,8 +261,7 @@ class perfectlystirredreactor(openreactor):
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
             iErr += 11
-        else:
-            pass
+
         # check total mass flow rate
         if iErr == 0:
             # check total mass flow rate
@@ -297,6 +296,7 @@ class perfectlystirredreactor(openreactor):
         """
         if reactorindex > 0:
             self.ireac = c_int(reactorindex)
+            self.standalone = False
 
     def set_estimate_conditions(
         self, option: str, guess_temp: Union[float, None] = None
@@ -461,6 +461,17 @@ class perfectlystirredreactor(openreactor):
             for k, v in self.SSsolverkeywords.items():
                 self.setkeyword(k, v)
 
+    def cluster_process_keywords(self) -> int:
+        """
+        Process input keywords for the reactor model in cluster network mode
+
+        Returns
+        -------
+            Error code: integer
+        """
+        iErr = self.__process_keywords()
+        return iErr
+
     def __process_keywords(self) -> int:
         """
         Process input keywords for the reactor model
@@ -471,8 +482,8 @@ class perfectlystirredreactor(openreactor):
         """
         iErr = 0
         iErrc = 0
-        iErrKey = 0
-        iErrInputs = 0
+        err_key = 0
+        err_inputs = 0
         # set_verbose(True)
         # verify required inputs
         iErr = self.validate_inputs()
@@ -484,25 +495,29 @@ class perfectlystirredreactor(openreactor):
         # check external inlet
         if self.numbexternalinlets <= 0 or self.totalmassflowrate <= 0.0:
             # no external inlet for an open reactor
-            iErr = 100
-            msg = [
-                Color.PURPLE,
-                "missing external inlet for an open reactor.",
-                Color.END,
-            ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            return iErr
-        # set up inlets
-        iErrInputs = self.set_inlet_keywords()
-        iErr += iErrInputs
+            if self.standalone:
+                iErr = 100
+                msg = [
+                    Color.PURPLE,
+                    "missing external inlet for an open reactor.",
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+                return iErr
+        else:
+            # set up inlets
+            err_inputs = self.set_inlet_keywords()
+            if err_inputs != 0:
+                print(f"error code = {err_inputs}")
+            iErr += err_inputs
         # prepare estimated reactor conditions
         # estimated reactor mass fraction
-        Y_init = self.reactormixture.Y
+        y_init = self.reactormixture.Y
         # surface sites (not applicable)
-        Site_init = np.zeros(1, dtype=np.double)
+        site_init = np.zeros(1, dtype=np.double)
         # bulk activities (not applicable)
-        Bulk_init = np.zeros_like(Site_init, dtype=np.double)
+        bulk_init = np.zeros_like(site_init, dtype=np.double)
         # set estimated reactor conditions and geometry parameters
         if self._reactortype.value == 2:
             iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupPSRReactorInputs(
@@ -515,9 +530,9 @@ class perfectlystirredreactor(openreactor):
                 self._heat_loss_rate,
                 self._residencetime,
                 self._reactivearea,
-                Y_init,
-                Site_init,
-                Bulk_init,
+                y_init,
+                site_init,
+                bulk_init,
             )
             iErr += iErrc
             if iErrc != 0:
@@ -536,42 +551,47 @@ class perfectlystirredreactor(openreactor):
             # output controls (use additional keywords)
             # ROP (use additional keywords)
             # sensitivity (use additional keywords)
-        else:
-            pass
-        if iErr == 0 and self._numbprofiles > 0:
+
+        if iErr == 0 and self._numbprofiles > 0 and self.standalone:
             for p in self._profiles_list:
                 key = bytes(p.profilekey, "utf-8")
                 npoints = c_int(p.size)
                 x = p.pos
                 y = p.value
-                iErrProf = chemkin_wrapper.chemkin.KINAll0D_SetProfileParameter(
+                err_profile = chemkin_wrapper.chemkin.KINAll0D_SetProfileParameter(
                     key, npoints, x, y
                 )
-                iErr += iErrProf
-            if iErrProf != 0:
+                iErr += err_profile
+            if err_profile != 0:
                 msg = [
                     Color.PURPLE,
                     "failed to set up profile keywords,",
                     "error code =",
-                    str(iErrProf),
+                    str(err_profile),
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                return iErrProf
+                return err_profile
         if iErr == 0:
             # set additional keywords
             self.set_SSsolver_keywords()
             # create input lines from additional user-specified keywords
-            iErrInputs, nlines = self.createkeywordinputlines()
-            if iErrInputs == 0 and nlines > 0:
+            if self.standalone:
+                # single PSR
+                err_inputs, nlines = self.createkeywordinputlines()
+            else:
+                # PSR is in a cluster
+                id_tag = str(self.ireac.value)
+                err_inputs, nlines = self.createkeywordinputlines_with_tag(id_tag)
+            if err_inputs == 0 and nlines > 0:
                 # process additional keywords in _keyword_index and _keyword_lines
                 for s in self._keyword_lines:
                     # convert string to byte
                     line = bytes(s, "utf-8")
                     # set additional keyword one by one
-                    iErrKey = chemkin_wrapper.chemkin.KINAll0D_SetUserKeyword(line)
-                if iErrInputs == 0:
+                    err_key = chemkin_wrapper.chemkin.KINAll0D_SetUserKeyword(line)
+                if err_inputs == 0:
                     if verbose():
                         msg = [
                             Color.YELLOW,
@@ -586,24 +606,25 @@ class perfectlystirredreactor(openreactor):
                         Color.PURPLE,
                         "failed to create additional input lines,",
                         "error code =",
-                        str(iErrInputs),
+                        str(err_inputs),
                         Color.END,
                     ]
                     this_msg = Color.SPACE.join(msg)
                     logger.error(this_msg)
-            elif iErrInputs == 0:
+            elif err_inputs == 0:
+                # do nothing
                 pass
             else:
                 msg = [
                     Color.PURPLE,
                     "failed to process additional keywords, error code =",
-                    str(iErrInputs),
+                    str(err_inputs),
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
         #
-        iErr = iErr + iErrInputs + iErrKey
+        iErr = iErr + err_inputs + err_key
 
         return iErr
 
@@ -630,7 +651,7 @@ class perfectlystirredreactor(openreactor):
         # initialize the PSR model
         # set up basic PSR parameters
         # number of external inlets
-        self._ninlets = c_int(self.numbexternalinlets)
+        self._ninlets[0] = self.numbexternalinlets
         #
         # activate the Chemistry set associated with the Reactor instance
         force_activate_chemistryset(self._chemset_index.value)
