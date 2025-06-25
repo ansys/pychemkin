@@ -95,8 +95,6 @@ suppress_warnings = [
 # exclude_patterns = []
 nbsphinx_execute = "never"
 autoapi_dirs = ["../../src/ansys/chemkin"]
-# autoapi_options = [ 'members', 'imported-members', 'inherited-members', 'undoc-memebers', #
-#                   'special-members', 'private-members', 'show-inheritance', 'show-module-summary', ]
 autoapi_ignore = ["*wrapper*", "*reactormodel*", "*color*", "*info*", "*utilities*"]
 # explicit order of the example groups
 explicit_order = [
