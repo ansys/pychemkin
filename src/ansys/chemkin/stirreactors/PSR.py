@@ -93,7 +93,7 @@ class perfectlystirredreactor(openreactor):
         # default number of reactors
         self._nreactors = 1
         self._npsrs = c_int(1)
-        self._ninlets = np.zeros(1, dtype=int)  # self.numbexternalinlets
+        self._ninlets = np.zeros(1, dtype=np.int32)  # self.numbexternalinlets
         self._nzones = c_int(0)
         # default reactor type settings
         # Perfectly-Stirred Reactor (PSR) model

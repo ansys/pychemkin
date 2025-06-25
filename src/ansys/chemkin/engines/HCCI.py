@@ -88,7 +88,7 @@ class HCCIengine(Engine):
         # defaults for all closed homogeneous reactor models
         self._nreactors = nzones
         self._npsrs = c_int(1)
-        self._ninlets = np.zeros(1, dtype=int)
+        self._ninlets = np.zeros(1, dtype=np.int32)
         # number of zones
         self._nzones = c_int(nzones)
         # must use full keyword mode for multi-zone simulations

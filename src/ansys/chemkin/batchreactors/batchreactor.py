@@ -97,7 +97,7 @@ class BatchReactors(reactor):
         # default number of reactors
         self._nreactors = 1
         self._npsrs = c_int(1)
-        self._ninlets = np.zeros(1, dtype=int)
+        self._ninlets = np.zeros(1, dtype=np.int32)
         self._nzones = c_int(0)
         # default energy type
         self._reactortype = c_int(self.ReactorTypes.get("Batch", 1))
@@ -1673,7 +1673,7 @@ class GivenPressureBatchReactor_FixedTemperature(BatchReactors):
         # defaults for all closed homogeneous reactor models
         self._nreactors = 1
         self._npsrs = c_int(1)
-        self._ninlets = np.zeros(1, dtype=int)
+        self._ninlets = np.zeros(1, dtype=np.int32)
         self._nzones = c_int(0)
         # heat transfer parameters
         self._heat_loss_rate = c_double(0.0e0)
@@ -1800,7 +1800,7 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
         # defaults for all closed homogeneous reactor models
         self._nreactors = 1
         self._npsrs = c_int(1)
-        self._ninlets = np.zeros(1, dtype=int)
+        self._ninlets = np.zeros(1, dtype=np.int32)
         self._nzones = c_int(0)
         # heat transfer parameters
         self._heat_loss_rate = c_double(0.0e0)
@@ -2094,7 +2094,7 @@ class GivenVolumeBatchReactor_FixedTemperature(BatchReactors):
         # defaults for all closed homogeneous reactor models
         self._nreactors = 1
         self._npsrs = c_int(1)
-        self._ninlets = np.zeros(1, dtype=int)
+        self._ninlets = np.zeros(1, dtype=np.int32)
         self._nzones = c_int(0)
         # heat transfer parameters
         self._heat_loss_rate = c_double(0.0e0)
@@ -2221,7 +2221,7 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
         # defaults for all closed homogeneous reactor models
         self._nreactors = 1
         self._npsrs = c_int(1)
-        self._ninlets = np.zeros(1, dtype=int)
+        self._ninlets = np.zeros(1, dtype=np.int32)
         self._nzones = c_int(0)
         # heat transfer parameters
         self._heat_loss_rate = c_double(0.0e0)

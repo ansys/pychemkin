@@ -78,7 +78,7 @@ class SIengine(Engine):
         # 2 zones: the unburned and the burned zones
         self._nreactors = nzones
         self._npsrs = c_int(1)
-        self._ninlets = np.zeros(1, dtype=int)
+        self._ninlets = np.zeros(1, dtype=np.int32)
         # number of zones
         self._nzones = c_int(nzones)
         # use API mode for SI simulations

@@ -78,7 +78,7 @@ class PlugFlowReactor(BatchReactors):
         # defaults for all plug flow reactor models
         self._nreactors = 1
         self._npsrs = c_int(self._nreactors)
-        self._ninlets = np.zeros(1, dtype=int)
+        self._ninlets = np.zeros(1, dtype=np.int32)
         # number of zones
         self._nzones = c_int(0)
         # use API mode for PFR simulations
