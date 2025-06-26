@@ -35,11 +35,18 @@ import platform
 # import all commonly used constants and methods
 # so the users can have easy access to these resources
 from ansys.chemkin import chemkin_wrapper as ck_wrapper
-from ansys.chemkin.chemistry import Chemistry, done, set_verbose, verbose
+from ansys.chemkin.chemistry import (
+    Chemistry,
+    chemkin_version,
+    done,
+    set_verbose,
+    verbose,
+)
 from ansys.chemkin.color import Color
 from ansys.chemkin.constants import (
     Air,
     Patm,
+    Ptorrs,
     RGas,
     RGas_Cal,
     air,
@@ -77,7 +84,7 @@ from ansys.chemkin.realgaseos import check_realgas_status, set_current_pressure
 msg = [
     Color.YELLOW,
     "Chemkin version number =",
-    str(ck_wrapper._ansys_ver),
+    str(chemkin_version()),
     Color.END,
 ]
 this_msg = Color.SPACE.join(msg)

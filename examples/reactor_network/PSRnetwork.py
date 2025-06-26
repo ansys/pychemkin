@@ -30,7 +30,16 @@ Simulate a combustor using an equivalent reactor network with stream recycling
 This example shows how to set up and solve an ERN (equivalent reactor network) in PyChemkin.
 
 An ERN is employed as a reduced-order model to simulate the steady-state
-combustion process inside a gas turbine combustor chamber. This reduced-order reactor network model retains the complexity of the combustion chemistry by sacrificing details of the combustor geometries, the spatial resolution, and the mass and energy transfer processes. An ERN usually comprises PSRs (perfectly-stirred reactors) and PFRs (plug-flow reactors). The network configuration and connectivity, the reactor parameters, and the mass flow rates can be determined from "hot" steady-state CFD simulation results and/or from observations and measured data of the actual/similar devices. Once a reactor network is calibrated against the experimental data of a gas combustor, it becomes a handy tool for quickly estimating the emissions from the combustor
+combustion process inside a gas turbine combustor chamber. This reduced-order
+reactor network model retains the complexity of the combustion chemistry
+by sacrificing details of the combustor geometries, the spatial resolution,
+and the mass and energy transfer processes. An ERN usually comprises PSRs
+(perfectly-stirred reactors) and PFRs (plug-flow reactors).
+The network configuration and connectivity, the reactor parameters,
+and the mass flow rates can be determined from "hot" steady-state CFD simulation results
+and/or from observations and measured data of the actual/similar devices.
+Once a reactor network is calibrated against the experimental data of a gas combustor,
+it becomes a handy tool for quickly estimating the emissions from the combustor
 when it is subjected to certain variations in the fuel compositions.
 
 This figure shows a proposed ERN model of a fictional gas turbine combustor.
@@ -39,15 +48,32 @@ This figure shows a proposed ERN model of a fictional gas turbine combustor.
    :scale: 80 %
    :alt: Combustor reactor network
 
-The *primary fuel* is mixed with the incoming air to form a *fuel-lean* mixture before entering the chamber through the primary inlet. Additional air, the *primary air*, is introduced to the combustion chamber separately through openings surrounding the primary inlet. The *secondary air* is entrained into the combustion chamber through well-placed holes on the liners at a location slightly downstream from the primary inlet.
+The *primary fuel* is mixed with the incoming air to form a *fuel-lean* mixture
+before entering the chamber through the primary inlet. Additional air, the *primary air*,
+is introduced to the combustion chamber separately through openings surrounding the primary inlet.
+The *secondary air* is entrained into the combustion chamber through well-placed holes
+on the liners at a location slightly downstream from the primary inlet.
 
-The first PSR (reactor #1) represents the *mixing zone* around the main injector where the cool *premixed fuel-air* stream and the *primary air* stream are preheated by mixing with the hot combustion products from the *recirculation zone*.
+The first PSR (reactor #1) represents the *mixing zone* around the main injector
+where the cool *premixed fuel-air* stream and the *primary air* stream are preheated
+by mixing with the hot combustion products from the *recirculation zone*.
 
-Downstream from PSR #1, PSR #2, the *flame zone* is where the combustion of the heated fuel-air mixture takes place. The secondary air is injected here to cool down the combustion exhaust before it exits the combustion chamber. A portion of the exhaust gas coming out of PSR #2 does not leave the combustion chamber directly and is diverted to PSR #3, the *recirculation zone*.
+Downstream from PSR #1, PSR #2, the *flame zone* is where the combustion of
+the heated fuel-air mixture takes place. The secondary air is injected here to cool down
+the combustion exhaust before it exits the combustion chamber. A portion of the exhaust gas
+coming out of PSR #2 does not leave the combustion chamber directly and is diverted to PSR #3,
+the *recirculation zone*.
 
-The majority of the outlet flow from PSR #3 is recirculated back to the flame zone to sustain the fuel-lean premixed flame there. The rest of the hot gas from PSR #3 travels further back to PSR #1, the mixing zone, to preheat the fuel-lean mixture just entering the combustion chamber. Finally, the cooled flue gas leaves the chamber in a stream-like manner. Typically, a PFR is applied to simulation of the outflow.
+The majority of the outlet flow from PSR #3 is recirculated back to the flame zone to
+sustain the fuel-lean premixed flame there. The rest of the hot gas from PSR #3 travels
+further back to PSR #1, the mixing zone, to preheat the fuel-lean mixture just entering the combustion chamber.
+Finally, the cooled flue gas leaves the chamber in a stream-like manner. Typically, a PFR is applied to simulation of the outflow.
 
-The reactors in the network are solved individually one by one. When there is a *tear stream* in the network, the ERN should be solved iteratively. A tear stream is usually a *recycle" stream* that can serve as a pivot point for solving the recycle network iteratively. The convergence of the ERN is then determined by the absence of the per-iteration variation of the computed tear stream properties, such as species composition. In the current project, the recycling streams from PSR #3 to PSR #1 and PSR #2 are tear streams.
+The reactors in the network are solved individually one by one. When there is a *tear stream* in the network,
+the ERN should be solved iteratively. A tear stream is usually a *recycle" stream* that can serve as
+a pivot point for solving the recycle network iteratively. The convergence of the ERN is then determined
+by the absence of the per-iteration variation of the computed tear stream properties, such as species composition.
+In the current project, the recycling streams from PSR #3 to PSR #1 and PSR #2 are tear streams.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/combustor_ERN.png'
@@ -240,9 +266,8 @@ recirculation.residence_time = 1.5 * 1.0e-3
 # ==========================
 # Create a hybrid reactor network named ``PSRnetwork`` and add the reactors one
 # by one from upstream to downstream using the ``add_reactor()`` method. For a
-# simple chain network, such as the one used in the current example, you do not
-# need to define the connectivity among the reactors. The reactor network model
-# automatically figures out the through-flow connections.
+# simple chain network you do not need to define the connectivity among the reactors.
+# The reactor network model automatically figures out the through-flow connections.
 #
 # .. note::
 #
@@ -255,7 +280,7 @@ recirculation.residence_time = 1.5 * 1.0e-3
 #     sequence and thus the convergence rate.
 #
 
-# instantiate the chain PSR network as a hybrid reactor network
+# instantiate the PSR network as a hybrid reactor network
 PSRnetwork = ERN(MyGasMech)
 
 # add the reactors from upstream to downstream
@@ -375,7 +400,7 @@ print()
 
 # get the outlet stream from the reactor network solutions
 # find the number of external outlet streams from the reactor network
-print(f"number of outlet streams = {PSRnetwork.number_external_outlets()}.")
+print(f"number of outlet streams = {PSRnetwork.number_external_outlets}.")
 
 # display the external outlet stream properties
 for m in range(PSRnetwork.number_external_outlets):
@@ -410,8 +435,4 @@ for index, stream in PSRnetwork.reactor_solutions.items():
     print(f"O2 = {stream.X[O2_index]}.")
     print(f"CO = {stream.X[CO_index]}.")
     print(f"NO = {stream.X[NO_index]}.")
-    print("-" * 10)
-    print(f"O2 = {stream.X[O2_index]}")
-    print(f"CO = {stream.X[CO_index]}")
-    print(f"NO = {stream.X[NO_index]}")
     print("-" * 10)

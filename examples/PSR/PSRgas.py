@@ -73,6 +73,7 @@ from ansys.chemkin.logger import logger
 
 # Chemkin PSR model (steady-state)
 from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
+from ansys.chemkin.utilities import find_file
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
@@ -104,8 +105,10 @@ mechanism_dir = data_dir
 MyGasMech = ck.Chemistry(label="hydrogen")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(
-    mechanism_dir, "Hydrogen-Ammonia-NOx_chem_MFL2021.inp"
+MyGasMech.chemfile = find_file(
+    mechanism_dir,
+    "Hydrogen-Ammonia-NOx_chem_MFL",
+    "inp",
 )
 
 #######################################

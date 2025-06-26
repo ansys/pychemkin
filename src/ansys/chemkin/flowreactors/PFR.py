@@ -78,7 +78,7 @@ class PlugFlowReactor(BatchReactors):
         # defaults for all plug flow reactor models
         self._nreactors = 1
         self._npsrs = c_int(self._nreactors)
-        self._ninlets = c_int(0)
+        self._ninlets = np.zeros(1, dtype=np.int32)
         # number of zones
         self._nzones = c_int(0)
         # use API mode for PFR simulations
@@ -447,8 +447,8 @@ class PlugFlowReactor(BatchReactors):
         """
         iErr = 0
         iErrc = 0
-        iErrKey = 0
-        iErrInputs = 0
+        err_key = 0
+        err_inputs = 0
         # set_verbose(True)
         # verify required inputs
         iErr = self.validate_inputs()
@@ -488,11 +488,11 @@ class PlugFlowReactor(BatchReactors):
         # get inlet mass flow rate
         self._massflowrate = c_double(self.mass_flowrate)
         # inlet mass fraction
-        Y_init = self.reactormixture.Y
+        y_init = self.reactormixture.Y
         # surface sites (not applicable)
-        Site_init = np.zeros(1, dtype=np.double)
+        site_init = np.zeros(1, dtype=np.double)
         # bulk activities (not applicable)
-        Bulk_init = np.zeros_like(Site_init, dtype=np.double)
+        bulk_init = np.zeros_like(site_init, dtype=np.double)
         # set reactor inlet conditions and geometry parameters
         if self._reactortype.value == self.ReactorTypes.get("PFR", 3):
             iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupPFRInputs(
@@ -503,10 +503,10 @@ class PlugFlowReactor(BatchReactors):
                 self._pressure,
                 self._heat_loss_rate,
                 self.reactordiameter,
-                Site_init,
-                Bulk_init,
+                site_init,
+                bulk_init,
                 self._massflowrate,
-                Y_init,
+                y_init,
             )
             iErr += iErrc
             if iErrc != 0:
@@ -545,8 +545,7 @@ class PlugFlowReactor(BatchReactors):
                     this_msg = Color.SPACE.join(msg)
                     logger.error(this_msg)
                     return iErrc
-        else:
-            pass
+
         if iErr == 0 and self._numbprofiles > 0:
             for p in self._profiles_list:
                 key = bytes(p.profilekey, "utf-8")
@@ -571,15 +570,15 @@ class PlugFlowReactor(BatchReactors):
         if iErr == 0:
             # set additional keywords
             # create input lines from additional user-specified keywords
-            iErrInputs, nlines = self.createkeywordinputlines()
-            if iErrInputs == 0:
+            err_inputs, nlines = self.createkeywordinputlines()
+            if err_inputs == 0:
                 # process additional keywords in _keyword_index and _keyword_lines
                 for s in self._keyword_lines:
                     # convert string to byte
                     line = bytes(s, "utf-8")
                     # set additional keyword one by one
-                    iErrKey = chemkin_wrapper.chemkin.KINAll0D_SetUserKeyword(line)
-                if iErrInputs == 0:
+                    err_key = chemkin_wrapper.chemkin.KINAll0D_SetUserKeyword(line)
+                if err_inputs == 0:
                     if verbose():
                         msg = [
                             Color.YELLOW,
@@ -594,7 +593,7 @@ class PlugFlowReactor(BatchReactors):
                         Color.PURPLE,
                         "failed to create additional input lines,",
                         "error code =",
-                        str(iErrInputs),
+                        str(err_inputs),
                         Color.END,
                     ]
                     this_msg = Color.SPACE.join(msg)
@@ -603,13 +602,13 @@ class PlugFlowReactor(BatchReactors):
                 msg = [
                     Color.PURPLE,
                     "failed to process additional keywords, error code =",
-                    str(iErrInputs),
+                    str(err_inputs),
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
         #
-        iErr = iErr + iErrInputs + iErrKey
+        iErr = iErr + err_inputs + err_key
 
         return iErr
 

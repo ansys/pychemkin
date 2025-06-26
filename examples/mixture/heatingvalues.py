@@ -67,6 +67,7 @@ import os
 import ansys.chemkin as ck
 from ansys.chemkin import Color
 from ansys.chemkin.logger import logger
+from ansys.chemkin.utilities import find_file
 import numpy as np  # number crunching
 
 # check working directory
@@ -164,7 +165,7 @@ def getwaterheatofvaporization(temp: float) -> float:
 #   determine the complete combustion products.
 #
 # .. note ::
-#   The thermodynamic data file ``Gasoline-Diesel-Biodiesel_PAH_NOx_therm_MFL2023.dat`` should
+#   The thermodynamic data file ``Gasoline-Diesel-Biodiesel_PAH_NOx_therm_MFL2024.dat`` should
 #   have the property data of most commonly seen fuel species. This encrypted data file is developed
 #   under the *Model Fuel Library* project and is available in the *reaction/data/ModelFuelLibrary*.
 #
@@ -218,12 +219,18 @@ m.close()
 #
 # set mechanism input files
 # including the full file path is recommended
+# note that the "year" in thermodynamic data file name could be different.
+# it's MFL2023 for Ansys Chemkin 2025R1, MFL2024 for 2025R2, ...
 MyGasMech.chemfile = mymechfile
-MyGasMech.thermfile = os.path.join(
+therm_dir = os.path.join(
     data_dir,
     "ModelFuelLibrary",
     "Full",
-    "Gasoline-Diesel-Biodiesel_PAH_NOx_therm_MFL2023.dat",
+)
+MyGasMech.thermfile = find_file(
+    therm_dir,
+    "Gasoline-Diesel-Biodiesel_PAH_NOx_therm_MFL",
+    "dat",
 )
 
 ############################################

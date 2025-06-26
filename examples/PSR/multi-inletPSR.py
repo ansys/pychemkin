@@ -72,6 +72,7 @@ from ansys.chemkin.logger import logger
 
 # Chemkin PSR model (steady-state)
 from ansys.chemkin.stirreactors.PSR import PSR_SetVolume_EnergyConservation as PSR
+from ansys.chemkin.utilities import find_file
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
@@ -89,7 +90,8 @@ interactive = True
 ########################
 # Create a chemistry set
 # ======================
-# This example uses the encrypted hydrogen-ammonia mechanism, ``Hydrogen-Ammonia-NOx_chem_MFL2021.inp``. This mechanism is developed under Chemkin's **Model Fuel Library (MFL)** project.
+# This example uses the encrypted hydrogen-ammonia mechanism, ``Hydrogen-Ammonia-NOx_chem_MFL2021.inp``.
+# This mechanism is developed under Chemkin's **Model Fuel Library (MFL)** project.
 # Like the rest of the MFL mechanisms, it is located in ``ModelFuelLibrary`` in
 # the ``/reaction/data`` directory of the standard Ansys Chemkin installation.
 
@@ -102,8 +104,10 @@ mechanism_dir = data_dir
 MyGasMech = ck.Chemistry(label="hydrogen")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(
-    mechanism_dir, "Hydrogen-Ammonia-NOx_chem_MFL2021.inp"
+MyGasMech.chemfile = find_file(
+    mechanism_dir,
+    "Hydrogen-Ammonia-NOx_chem_MFL",
+    "inp",
 )
 
 #######################################

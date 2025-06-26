@@ -48,8 +48,6 @@ from ansys.chemkin.utilities import find_interpolate_parameters
 import numpy as np
 import numpy.typing as npt
 
-# import numpy.typing as npt
-
 
 class BatchReactors(reactor):
     """
@@ -99,7 +97,7 @@ class BatchReactors(reactor):
         # default number of reactors
         self._nreactors = 1
         self._npsrs = c_int(1)
-        self._ninlets = c_int(0)
+        self._ninlets = np.zeros(1, dtype=np.int32)
         self._nzones = c_int(0)
         # default energy type
         self._reactortype = c_int(self.ReactorTypes.get("Batch", 1))
@@ -867,11 +865,11 @@ class BatchReactors(reactor):
             return iErr
         # prepare initial conditions
         # initial mass fraction
-        Y_init = self.reactormixture.Y
+        y_init = self.reactormixture.Y
         # surface sites (not applicable)
-        Site_init = np.zeros(1, dtype=np.double)
+        site_init = np.zeros(1, dtype=np.double)
         # bulk activities (not applicable)
-        Bulk_init = np.zeros_like(Site_init, dtype=np.double)
+        bulk_init = np.zeros_like(site_init, dtype=np.double)
         # set reactor initial conditions and geometry parameters
         if self._reactortype.value == self.ReactorTypes.get("Batch"):
             iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupBatchInputs(
@@ -882,9 +880,9 @@ class BatchReactors(reactor):
                 self._volume,
                 self._heat_loss_rate,
                 self._reactivearea,
-                Y_init,
-                Site_init,
-                Bulk_init,
+                y_init,
+                site_init,
+                bulk_init,
             )
             iErr += iErrc
             if iErrc != 0:
@@ -897,9 +895,9 @@ class BatchReactors(reactor):
         self.set_reactorcondition_keywords()
         if iErr == 0 and self._numbprofiles > 0:
             # get keyword lines of all profiles
-            iErrProf, nproflines, prof_lines = self.createprofileinputlines()
-            iErr += iErrProf
-            if iErrProf == 0:
+            err_profile, nproflines, prof_lines = self.createprofileinputlines()
+            iErr += err_profile
+            if err_profile == 0:
                 # set the profile keywords
                 for pkey in prof_lines:
                     for line in pkey:
@@ -909,12 +907,12 @@ class BatchReactors(reactor):
                     Color.PURPLE,
                     "failed to set up profile keywords,",
                     "error code =",
-                    str(iErrProf),
+                    str(err_profile),
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                return iErrProf
+                return err_profile
         # solve integrated heat release rate due to chemical reactions
         if self.EnergyTypes.get("ENERGY") == self._energytype.value:
             self.setkeyword(key="QRGEQ", value=True)
@@ -989,8 +987,8 @@ class BatchReactors(reactor):
         """
         iErr = 0
         iErrc = 0
-        iErrKey = 0
-        iErrInputs = 0
+        err_key = 0
+        err_inputs = 0
         # set_verbose(True)
         # verify required inputs
         iErr = self.validate_inputs()
@@ -1028,11 +1026,11 @@ class BatchReactors(reactor):
             return iErr
         # prepare initial conditions
         # initial mass fraction
-        Y_init = self.reactormixture.Y
+        y_init = self.reactormixture.Y
         # surface sites (not applicable)
-        Site_init = np.zeros(1, dtype=np.double)
+        site_init = np.zeros(1, dtype=np.double)
         # bulk activities (not applicable)
-        Bulk_init = np.zeros_like(Site_init, dtype=np.double)
+        bulk_init = np.zeros_like(site_init, dtype=np.double)
         # set reactor initial conditions and geometry parameters
         if self._reactortype.value == self.ReactorTypes.get("Batch"):
             iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupBatchInputs(
@@ -1043,9 +1041,9 @@ class BatchReactors(reactor):
                 self._volume,
                 self._heat_loss_rate,
                 self._reactivearea,
-                Y_init,
-                Site_init,
-                Bulk_init,
+                y_init,
+                site_init,
+                bulk_init,
             )
             iErr += iErrc
             if iErrc != 0:
@@ -1080,42 +1078,41 @@ class BatchReactors(reactor):
                     this_msg = Color.SPACE.join(msg)
                     logger.error(this_msg)
                     return iErrc
-        else:
-            pass
+
         if iErr == 0 and self._numbprofiles > 0:
             for p in self._profiles_list:
                 key = bytes(p.profilekey, "utf-8")
                 npoints = c_int(p.size)
                 x = p.pos
                 y = p.value
-                iErrProf = chemkin_wrapper.chemkin.KINAll0D_SetProfileParameter(
+                err_profile = chemkin_wrapper.chemkin.KINAll0D_SetProfileParameter(
                     key, npoints, x, y
                 )
-                iErr += iErrProf
-            if iErrProf != 0:
+                iErr += err_profile
+            if err_profile != 0:
                 msg = [
                     Color.PURPLE,
                     "failed to set up profile keywords,",
                     "error code =",
-                    str(iErrProf),
+                    str(err_profile),
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                return iErrProf
+                return err_profile
         if iErr == 0:
             # set additional keywords
             # create input lines from additional user-specified keywords
-            iErrInputs, nlines = self.createkeywordinputlines()
-            if iErrInputs == 0:
+            err_inputs, nlines = self.createkeywordinputlines()
+            if err_inputs == 0:
                 # process additional keywords in _keyword_index and _keyword_lines
                 for s in self._keyword_lines:
                     # convert string to byte
                     line = bytes(s, "utf-8")
                     # set additional keyword one by one
-                    iErrKey = chemkin_wrapper.chemkin.KINAll0D_SetUserKeyword(line)
-                    iErrInputs += iErrKey
-                if iErrInputs == 0:
+                    err_key = chemkin_wrapper.chemkin.KINAll0D_SetUserKeyword(line)
+                    err_inputs += err_key
+                if err_inputs == 0:
                     if verbose():
                         msg = [
                             Color.YELLOW,
@@ -1130,7 +1127,7 @@ class BatchReactors(reactor):
                         Color.PURPLE,
                         "failed to create additional input lines,",
                         "error code =",
-                        str(iErrInputs),
+                        str(err_inputs),
                         Color.END,
                     ]
                     this_msg = Color.SPACE.join(msg)
@@ -1139,13 +1136,13 @@ class BatchReactors(reactor):
                 msg = [
                     Color.PURPLE,
                     "failed to process additional keywords, error code =",
-                    str(iErrInputs),
+                    str(err_inputs),
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
         #
-        iErr = iErr + iErrInputs + iErrKey
+        iErr = iErr + err_inputs + err_key
 
         return iErr
 
@@ -1552,7 +1549,7 @@ class BatchReactors(reactor):
 
     def get_solution_mixture(self, time: float) -> Mixture:
         """
-        Get the mixture representing the solution state inside the reactor at a given time
+        Get the mixture representing the solution state inside the reactor at the given time
 
         Parameters
         ----------
@@ -1676,7 +1673,7 @@ class GivenPressureBatchReactor_FixedTemperature(BatchReactors):
         # defaults for all closed homogeneous reactor models
         self._nreactors = 1
         self._npsrs = c_int(1)
-        self._ninlets = c_int(0)
+        self._ninlets = np.zeros(1, dtype=np.int32)
         self._nzones = c_int(0)
         # heat transfer parameters
         self._heat_loss_rate = c_double(0.0e0)
@@ -1803,7 +1800,7 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
         # defaults for all closed homogeneous reactor models
         self._nreactors = 1
         self._npsrs = c_int(1)
-        self._ninlets = c_int(0)
+        self._ninlets = np.zeros(1, dtype=np.int32)
         self._nzones = c_int(0)
         # heat transfer parameters
         self._heat_loss_rate = c_double(0.0e0)
@@ -2097,7 +2094,7 @@ class GivenVolumeBatchReactor_FixedTemperature(BatchReactors):
         # defaults for all closed homogeneous reactor models
         self._nreactors = 1
         self._npsrs = c_int(1)
-        self._ninlets = c_int(0)
+        self._ninlets = np.zeros(1, dtype=np.int32)
         self._nzones = c_int(0)
         # heat transfer parameters
         self._heat_loss_rate = c_double(0.0e0)
@@ -2224,7 +2221,7 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
         # defaults for all closed homogeneous reactor models
         self._nreactors = 1
         self._npsrs = c_int(1)
-        self._ninlets = c_int(0)
+        self._ninlets = np.zeros(1, dtype=np.int32)
         self._nzones = c_int(0)
         # heat transfer parameters
         self._heat_loss_rate = c_double(0.0e0)

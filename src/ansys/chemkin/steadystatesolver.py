@@ -24,6 +24,8 @@
 Chemkin steady-state solver controlling parameters.
 """
 
+from typing import Union
+
 from ansys.chemkin.color import Color
 from ansys.chemkin.logger import logger
 from ansys.chemkin.reactormodel import Keyword
@@ -56,15 +58,15 @@ class SteadyStateSolver:
         # floor value (lower bound) of the gas species mass fraction during iteration
         self.speciesfloor = -1.0e-14
         # reset negative gas species fraction to the given value in intermediate solution
-        self.speciespositive = None
+        self.species_positive = 0.0e0
         # use legacy steady-state solver algorithm
-        self.uselegacytechnique = None
+        self.use_legacy_technique = False
         # use damping in search: 0 = OFF; 1 = ON
         self.SSdamping = 1
         # absolute perturbation for Jacobian evaluation
-        self.absoluteperturbation = None
+        self.absolute_perturbation = 0.0e0
         # relative perturbation for Jacobian evaluation
-        self.relativeperturbation = None
+        self.relative_perturbation = 0.0e0
         # >>> pseudo trasient (time stepping) algorithm:
         # absolute tolerance for the time stepping solution
         self.TRabsolute_tolerance = 1.0e-9
@@ -92,13 +94,12 @@ class SteadyStateSolver:
         self.TRstride_ENRG = 1.0e-6  # [sec]
         self.TRnumbsteps_ENRG = 100
         # solver message output level: 0 ~ 2
-        self.printlevel = 1
-        #
+        self.print_level = 1
         # steady-state solver keywords
-        self.SSsolverkeywords = {}
+        self.SSsolverkeywords: dict[str, Union[int, float, str, bool]] = {}
 
     @property
-    def steady_state_tolerances(self):
+    def steady_state_tolerances(self) -> tuple[float, float]:
         """
         Get tolerance for the steady-state search algorithm
 
@@ -145,7 +146,7 @@ class SteadyStateSolver:
             logger.error(this_msg)
 
     @property
-    def time_stepping_tolerances(self) -> tuple:
+    def time_stepping_tolerances(self) -> tuple[float, float]:
         """
         Get tolerance for the pseudo time stepping solution algorithm
 
@@ -261,18 +262,18 @@ class SteadyStateSolver:
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
 
-    def set_species_floor(self, floorvalue: float):
+    def set_species_floor(self, floor_value: float):
         """
         set the minimum species fraction value allowed during steady-state solution search
 
         Parameters
         ----------
-            floorvalue: double
+            floor_value: double
                 minimum species fraction value
         """
-        if np.abs(floorvalue) < 1.0:
-            self.SSsolverkeywords["SFLR"] = floorvalue
-            self.speciesfloor = floorvalue
+        if np.abs(floor_value) < 1.0:
+            self.SSsolverkeywords["SFLR"] = floor_value
+            self.speciesfloor = floor_value
         else:
             msg = [Color.PURPLE, "species floor value must < 1.", Color.END]
             this_msg = Color.SPACE.join(msg)
@@ -307,7 +308,7 @@ class SteadyStateSolver:
         """
         if resetvalue >= 0.0:
             self.SSsolverkeywords["SPOS"] = resetvalue
-            self.speciespositive = resetvalue
+            self.species_positive = resetvalue
         else:
             msg = [Color.PURPLE, "species fraction value must >= 0.", Color.END]
             this_msg = Color.SPACE.join(msg)
@@ -407,7 +408,7 @@ class SteadyStateSolver:
             ON: boolean
                 turn On the damping option
         """
-        if type(ON) == bool:
+        if isinstance(ON, bool):
             if ON:
                 self.SSdamping = 1
             else:
@@ -427,8 +428,8 @@ class SteadyStateSolver:
             ON: boolean
                 turn On the legacy solver
         """
-        if type(ON) == bool:
-            self.uselegacytechnique = ON
+        if isinstance(ON, bool):
+            self.use_legacy_technique = ON
             if ON:
                 self.SSsolverkeywords["USE_LEGACY_TECHNIQUE"] = "4X"
         else:
@@ -448,7 +449,7 @@ class SteadyStateSolver:
         """
         if level in [0, 1, 2]:
             self.SSsolverkeywords["PRNT"] = level
-            self.printlevel = level
+            self.print_level = level
         else:
             msg = [Color.PURPLE, "print level must be either 0, 1, or 2.", Color.END]
             this_msg = Color.SPACE.join(msg)

@@ -33,6 +33,7 @@ from ansys.chemkin.chemistry import (
     check_chemistryset,
     chemistryset_initialized,
     force_activate_chemistryset,
+    verify_version,
 )
 from ansys.chemkin.color import Color as Color
 from ansys.chemkin.flame import Flame
@@ -133,6 +134,9 @@ class PremixedFlame(Flame):
         -------
             Error code: integer
         """
+        # check minimum version requirement = 2026 R1
+        if not verify_version(261):
+            exit()
         # initialization
         tag = "TPRO"
         numblines = 0
@@ -183,6 +187,9 @@ class PremixedFlame(Flame):
         -------
             Error code: integer
         """
+        # check minimum version requirement = 2026 R1
+        if not verify_version(261):
+            exit()
         # initialization
         tag = "GRID"
         numblines = 0
@@ -190,7 +197,9 @@ class PremixedFlame(Flame):
         npoints = self.numb_grid_profile
         # loop over all data points
         for x in self.grid_profile:
-            self.setkeyword(tag, x)
+            this_key = ""
+            this_key = tag + " " + str(x)
+            self.setkeyword(this_key, True)
             numblines += 1
         # check error
         iErr = numblines - npoints
@@ -205,14 +214,14 @@ class PremixedFlame(Flame):
             Error code: integer
         """
         # estimated reactor mass fraction
-        Y_init = self.reactormixture.Y
+        y_init = self.reactormixture.Y
         # run the premixed flame simulation
         iErr = chemkin_wrapper.chemkin.KINPremix_CalculateFlame(
             self._myLOUT,
             self._chemset_index,
             self._pressure,
             self._temperature,
-            Y_init,
+            y_init,
             c_double(self.starting_x),
             c_double(self.ending_x),
         )
@@ -229,6 +238,7 @@ class PremixedFlame(Flame):
         """
         iErr = 0
         iErrc = 0
+        err_key = 0
         # set_verbose(True)
         # set inlet mass flux (estimated)
         # this keyword is optional
@@ -265,15 +275,15 @@ class PremixedFlame(Flame):
             # set additional keywords
             self.set_SSsolver_keywords()
             # set profile keywords
-            iErrkey = 0
+            err_key = 0
             if self._numbprofiles > 0:
                 iErrc = self.set_profilekeywords()
-                iErrkey += iErrc
+                err_key += iErrc
             # prepare mesh keywords
             iErrc = self.set_mesh_keywords()
-            iErrkey += iErrc
+            err_key += iErrc
         # set keywords
-        if iErr + iErrkey == 0:
+        if iErr + err_key == 0:
             # pass all the keywords to the flame model
             for k in self._keyword_list:
                 this_key = bytes(k.keyphrase, "utf-8")  # Chemkin keyword phrase
@@ -319,7 +329,7 @@ class PremixedFlame(Flame):
         #
         self.showkeywordinputlines()
         #
-        return iErr + iErrkey
+        return iErr + err_key
 
     def run(self) -> int:
         """
@@ -429,7 +439,7 @@ class PremixedFlame(Flame):
         # check if the model is already run once
         status = self.getrunstatus(mode="silent")
         if status == -100:
-            msg = [Color.MAGENTA, "please run the reactor simulation first.", Color.END]
+            msg = [Color.MAGENTA, "please run the flame simulation first.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.warning(this_msg)
             exit()
@@ -438,7 +448,7 @@ class PremixedFlame(Flame):
                 Color.PURPLE,
                 "simulation was failed.\n",
                 Color.SPACEx6,
-                "please correct the error(s) and rerun the reactor simulation.",
+                "please correct the error(s) and rerun the flame simulation.",
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -475,7 +485,7 @@ class PremixedFlame(Flame):
         # check run completion
         status = self.getrunstatus(mode="silent")
         if status == -100:
-            msg = [Color.MAGENTA, "please run the reactor simulation first.", Color.END]
+            msg = [Color.MAGENTA, "please run the flame simulation first.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.warning(this_msg)
             exit()
@@ -484,7 +494,7 @@ class PremixedFlame(Flame):
                 Color.PURPLE,
                 "simulation was failed.\n",
                 Color.SPACEx6,
-                "please correct the error(s) and rerun the reactor simulation.",
+                "please correct the error(s) and rerun the flame simulation.",
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -492,7 +502,7 @@ class PremixedFlame(Flame):
             exit()
         # number of time points in the solution
         npoints = c_int(0)
-        # get solution size of the batch reactor
+        # get solution size of the premixed flame
         iErr = chemkin_wrapper.chemkin.KINPremix_GetSolutionGridPoints(npoints)
         if iErr == 0 and npoints.value > 2:
             # return the solution sizes
@@ -626,7 +636,7 @@ class PremixedFlame(Flame):
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
             exit()
-        # compute laniar flame speed
+        # compute laminar flame speed
         if self._flamemode == 0:
             inlet_density = self._solution_mixturearray[0].RHO
             self.flamespeed = self._final_mass_flow_rate / inlet_density

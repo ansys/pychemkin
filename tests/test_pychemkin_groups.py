@@ -19,16 +19,17 @@ class TestClassBasic:
     # species: mole/mass fraction
     # rate: reaction rate, rate of production, heat release rate
     basic_list = ["simple", "loadmechanism"]
+    fresh = True
 
     @pytest.mark.parametrize("test_file", basic_list)
-    def test_utilities(
-        self, get_working_dir, get_source_dir, get_result_dir, test_file
-    ):
+    def test_basic(self, get_working_dir, get_source_dir, get_result_dir, test_file):
         """
-        Run the selected pychemin utility test case.
+        Run the selected pychemin basic utility test cases.
         """
         # initialization
-        PyCKtools.init_test_status()
+        if TestClassBasic.fresh:
+            PyCKtools.init_test_status()
+            TestClassBasic.fresh = False
         # run the basic test cases
         iErr = PyCKtools.run_test(
             get_working_dir, get_source_dir, get_result_dir, test_file
@@ -37,6 +38,7 @@ class TestClassBasic:
 
 
 @pytest.mark.group("utilities", "all")
+@pytest.mark.utilities
 class TestClassUtilities:
     """
     Tests to verify Chemkin utilities for
@@ -56,7 +58,7 @@ class TestClassUtilities:
         "mixturemixing",
         "speciesproperties",
         "reactionrates",
-        # skip the test below because the subprocess produces a non-zero return code but the test is complpeted successfully
+        # skip the test below because the subprocess produces a non-zero return code but the test is completed successfully
         #    "multiplemechanisms",
     ]
 
@@ -65,7 +67,7 @@ class TestClassUtilities:
         self, get_working_dir, get_source_dir, get_result_dir, test_file
     ):
         """
-        Run the selected pychemin utility test case.
+        Run the selected pychemin utility test cases.
         """
         iErr = PyCKtools.run_test(
             get_working_dir, get_source_dir, get_result_dir, test_file
@@ -74,6 +76,7 @@ class TestClassUtilities:
 
 
 @pytest.mark.group("equilibrium", "all")
+@pytest.mark.equilibrium
 class TestClassEquilibrium:
     """
     Tests to verify Chemkin utilities for
@@ -98,7 +101,7 @@ class TestClassEquilibrium:
         self, get_working_dir, get_source_dir, get_result_dir, test_file
     ):
         """
-        Run the selected pychemin equilibrium utility test case.
+        Run the selected pychemin equilibrium utility test cases.
         """
         iErr = PyCKtools.run_test(
             get_working_dir, get_source_dir, get_result_dir, test_file
@@ -107,6 +110,7 @@ class TestClassEquilibrium:
 
 
 @pytest.mark.group("batch", "all")
+@pytest.mark.batch
 class TestClassBatch:
     """
     Tests to verify Chemkin 0-D closed-homogeneous batch reactor models.
@@ -128,7 +132,7 @@ class TestClassBatch:
     @pytest.mark.parametrize("test_file", batch_list)
     def test_batch(self, get_working_dir, get_source_dir, get_result_dir, test_file):
         """
-        Run the selected pychemin batch reactor test case.
+        Run the selected pychemin batch reactor test cases.
         """
         iErr = PyCKtools.run_test(
             get_working_dir, get_source_dir, get_result_dir, test_file
@@ -137,6 +141,7 @@ class TestClassBatch:
 
 
 @pytest.mark.group("engine", "all")
+@pytest.mark.engine
 class TestClassEngine:
     """
     Tests to verify Chemkin 0-D engine models.
@@ -156,7 +161,7 @@ class TestClassEngine:
     @pytest.mark.parametrize("test_file", engine_list)
     def test_engine(self, get_working_dir, get_source_dir, get_result_dir, test_file):
         """
-        Run the selected pychemin engine model test case.
+        Run the selected pychemin engine model test cases.
         """
         iErr = PyCKtools.run_test(
             get_working_dir, get_source_dir, get_result_dir, test_file
@@ -165,6 +170,7 @@ class TestClassEngine:
 
 
 @pytest.mark.group("PFR", "all")
+@pytest.mark.PFR
 class TestClassPFR:
     """
     Tests to verify Chemkin Plug-Flow Reactor (PFR) model.
@@ -189,6 +195,7 @@ class TestClassPFR:
 
 
 @pytest.mark.group("PSR", "all")
+@pytest.mark.PSR
 class TestClassPSR:
     """
     Tests to verify Chemkin Perfectly-Stirred Reactor (PSR) model.
@@ -204,7 +211,7 @@ class TestClassPSR:
     @pytest.mark.parametrize("test_file", PSR_list)
     def test_engine(self, get_working_dir, get_source_dir, get_result_dir, test_file):
         """
-        Run the selected pychemin PSR model test case.
+        Run the selected pychemin PSR model test cases.
         """
         iErr = PyCKtools.run_test(
             get_working_dir, get_source_dir, get_result_dir, test_file
@@ -213,6 +220,7 @@ class TestClassPSR:
 
 
 @pytest.mark.group("ERN", "all")
+@pytest.mark.ERN
 class TestClassERN:
     """
     Tests to verify Chemkin equivalent reactor network (ERN) model.
@@ -228,7 +236,7 @@ class TestClassERN:
     @pytest.mark.parametrize("test_file", PSR_list)
     def test_engine(self, get_working_dir, get_source_dir, get_result_dir, test_file):
         """
-        Run the selected pychemin ERN model test case.
+        Run the selected pychemin ERN model test cases.
         """
         iErr = PyCKtools.run_test(
             get_working_dir, get_source_dir, get_result_dir, test_file

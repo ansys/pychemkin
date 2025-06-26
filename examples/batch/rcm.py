@@ -89,7 +89,7 @@ interactive = True
 # set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 mechanism_dir = data_dir
-# create a chemistry set based on the diesel 14-components mechanism
+# create a chemistry set based on the GRI 3.0 mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended

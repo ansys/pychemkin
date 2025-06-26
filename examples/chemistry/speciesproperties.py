@@ -27,7 +27,9 @@
 Evaluate gas species properties
 ===============================
 
-PyChemkin inherits many Ansys Chemkin utilities for evaluating species properties in a mechanism. Most tools for calculating the species properties are part of the PyChemkin ``Chemistry()`` methods. This example shows how use some of these methods to evaluate species thermodynamic and transport properties.
+PyChemkin inherits many Ansys Chemkin utilities for evaluating species properties in a mechanism.
+Most tools for calculating the species properties are part of the PyChemkin ``Chemistry()`` methods.
+This example shows how use some of these methods to evaluate species thermodynamic and transport properties.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_species_properties.png'

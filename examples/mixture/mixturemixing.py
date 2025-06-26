@@ -39,6 +39,8 @@ The mixing methods let you combine two mixtures at constant pressure with specif
 This example shows how to use these two mixing methods and understand the differences in the temperatures of their combined mixtures. It first creates a fuel (CH\ :sub:`4`\ ) mixture and an air (O\ :sub:`2`\ +N\ :sub:`2`\ ) mixture and then makes a fuel-air mixture by mixing them *isothermally* (that is, without considering the enthalpy conservation) with a given air-to-fuel mass ratio. The example then dilutes the fuel-air mixture with argon (AR) *adiabatically* with the molar/volumetric ratio specified.
 """
 
+# sphinx_gallery_thumbnail_path = '_static/merge_operation.png'
+
 ################################################
 # Import PyChemkin packages and start the logger
 # ==============================================

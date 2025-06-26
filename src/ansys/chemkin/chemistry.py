@@ -81,6 +81,48 @@ def set_verbose(OnOff: bool):
     chemkin_verbose = OnOff
 
 
+def chemkin_version() -> int:
+    """
+    Return the Chemkin-CFD-API version number currently in use
+
+    Returns
+    -------
+        version: integer
+            Chemkin-CFD-API version number
+    """
+    return ck_wrapper._ansys_ver
+
+
+def verify_version(min_version: int) -> bool:
+    """
+    Check if the version of Chemkin-CFD-API currently in use meets
+    the minimum version required by certain operations
+
+    Parameters
+    ----------
+        min_version: integer
+            minimum chemkin-CFD-API version required to perform the operation
+
+    Returns
+    -------
+        status: boolean
+    """
+    status = chemkin_version() >= min_version
+    if not status:
+        msg = [
+            Color.PURPLE,
+            "this operation is NOT supported by the current chemkin version",
+            str(chemkin_version()),
+            "\n",
+            "the minimum chemkin version required for this operation is",
+            str(min_version),
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+    return status
+
+
 def done():
     """
     Release Chemkin license and reset the Chemistry sets
@@ -1715,7 +1757,7 @@ class Chemistry:
         # convert the reaction parameters
         ireac = c_int(reaction_index)
         iStringSize = c_int(0)
-        # get reaction string
+        # get reaction string (might have to be increased to 2048 for 26R1)
         rstring = bytes(" " * 1024, "utf-8")
         iErr = ck_wrapper.chemkin.KINGetGasReactionString(
             self._chemset_index, ireac, iStringSize, rstring

@@ -162,7 +162,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
             error code: integer
         """
         iErr = 0
-        # aet up initial mesh related keywords
+        # set up initial mesh related keywords
         if self.grid_T_profile:
             # use temperature profile grid as the initial grid
             if self.temp_profile_set:
@@ -214,10 +214,11 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
                 return iErr
             count = 0
             for x in self.grid_profile:
-                self.setkeyword(key="GRID", value=x)
+                this_key = "GRID    " + str(x)
+                self.setkeyword(this_key, True)
                 count += 1
             if count != self.numb_grid_profile:
-                msg = [Color.PURPLE, "grid profile has provblem.", Color.END]
+                msg = [Color.PURPLE, "grid profile has problem.", Color.END]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
                 iErr = abs(count - self.numb_grid_profile) * 10
