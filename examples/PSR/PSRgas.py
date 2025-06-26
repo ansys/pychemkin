@@ -70,10 +70,10 @@ import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
 from ansys.chemkin.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.logger import logger
-from ansys.chemkin.utilities import find_file
 
 # Chemkin PSR model (steady-state)
 from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
+from ansys.chemkin.utilities import find_file
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 

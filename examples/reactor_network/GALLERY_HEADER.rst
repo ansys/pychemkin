@@ -15,7 +15,7 @@ Simply defined the reactors with the associated external inlets and add the reac
 If there are *recycling* streams from the downstream reactor to the upstream ones, the *hybridreactornetwork* will solve the
 entire *ERN* iteratively. In this case, a *tear point* must be explicitly specified. The last method, the coupled method,
 is to create the network and its connectivity first, and the entire *ERN* will be solved in a coupled manner. This method
-is the default method in Chemkin GUI and is available as the *PSRCluster* "model" in **PyChemkin**. 
+is the default method in Chemkin GUI and is available as the *PSRCluster* "model" in **PyChemkin**.
 
 Chemkin *ERN* has a few limitations:
     * The first reactor of the reactor network must have at least one external inlet.
