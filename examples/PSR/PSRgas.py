@@ -70,6 +70,7 @@ import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
 from ansys.chemkin.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.logger import logger
+from ansys.chemkin.utilities import find_file
 
 # Chemkin PSR model (steady-state)
 from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
@@ -104,8 +105,10 @@ mechanism_dir = data_dir
 MyGasMech = ck.Chemistry(label="hydrogen")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(
-    mechanism_dir, "Hydrogen-Ammonia-NOx_chem_MFL2021.inp"
+MyGasMech.chemfile = find_file(
+    mechanism_dir,
+    "Hydrogen-Ammonia-NOx_chem_MFL",
+    "inp",
 )
 
 #######################################

@@ -34,6 +34,8 @@ You can use this method to compare results from two different mechanisms,
 such as the *base* and *reduced* mechanisms.
 """
 
+# sphinx_gallery_thumbnail_path = '_static/plot_preprocess.png'
+
 ################################################
 # Import PyChemkin packages and start the logger
 # ==============================================

@@ -43,6 +43,8 @@ your simulation.
    Running PyChemkin requires Ansys 2025 R2 or later.
 """
 
+# sphinx_gallery_thumbnail_path = '_static/workflow.png'
+
 ###############################################
 # Import PyChemkin packages
 # =========================

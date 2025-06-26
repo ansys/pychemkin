@@ -39,10 +39,16 @@ Here is the PSR chain model of a fictional gas combustor.
 
 The primary inlet stream to the first reactor, the *combustor*, is the fuel-lean methane-air mixture
 that is formed by mixing the fuel (methane) and the heated air. The exhaust from the combustor
-enters the second reactor, the *dilution zone*, where the hot combustion products are cooled by the introduction of additional cool air. The cooled and diluted gas mixture in the *dilution zone* then travels to the third reactor, the *reburning zone*. A mixture of fuel (methane) and carbon dioxide is injected to the gas in the reburning zone, attempting to convert any remaining carbon monoxide or nitric oxide in the exhaust gas to carbon dioxide or nitrogen, respectively.
+enters the second reactor, the *dilution zone*, where the hot combustion products are cooled by
+the introduction of additional cool air. The cooled and diluted gas mixture in the *dilution zone* then
+travels to the third reactor, the *reburning zone*. A mixture of fuel (methane) and carbon dioxide is
+injected to the gas in the reburning zone, attempting to convert any remaining carbon monoxide or
+nitric oxide in the exhaust gas to carbon dioxide or nitrogen, respectively.
 
 This example solves the reactors one by one, from upstream to downstream. Once the solution of the
-upstream reactor is obtained, it is used to set up the external inlet of the immediate downstream reactor. This process continues until all reactors in the chain network are solved. Since there is no recycling stream in this configuration, the entire reactor network can be solved in one sweep.
+upstream reactor is obtained, it is used to set up the external inlet of the immediate downstream reactor.
+This process continues until all reactors in the chain network are solved. Since there is no recycling stream
+in this configuration, the entire reactor network can be solved in one sweep.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/chain_reactor_network.png'
