@@ -37,7 +37,7 @@ tests = [
     "requests==2.32.4",
     "docker==7.1.0",
     "usd-core>=24.11",
-    "pygltflib==1.16.4",
+    "pygltflib==1.16.5",
     "matplotlib==3.9.4",
     "numpy>=1.14.0,<3.0.0",
     "pyyaml>=6.0",
