@@ -258,7 +258,7 @@ def run_rcm_multiproc():
     # set number of processors
     numProcessors = 4
     # specify txt file name for initial conditions
-    conditionFile = "data/conditions.txt"
+    conditionFile = "data/rcm_multiproc_conditions.txt"
     # read RCM conditions
     rcmInput = RCMconditions(["CH4", "N2", "O2"], os.path.join(current_dir, conditionFile))
 
