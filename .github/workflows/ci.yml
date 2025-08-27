@@ -91,7 +91,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: doc-style
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: pandoc/actions/setup@v1
       - name: Install libjpeg
         run: sudo apt-get -y install libjpeg-dev
