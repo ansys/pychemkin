@@ -21,7 +21,7 @@ repos:
         additional_dependencies: ["tomli"]
 
   - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.5
+    rev: 1.8.0
     hooks:
       - id: bandit
         # args not working with pyproject.toml
