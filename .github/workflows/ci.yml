@@ -14,7 +14,7 @@ env:
   MAIN_PYTHON_VERSION: '3.10'
   PACKAGE_NAME: 'ansys-chemkin'
   PACKAGE_NAMESPACE: 'ansys.chemkin'
-  CHEMKIN_IMAGE: 'ghcr.io/ansys/chemkin'
+  CHEMKIN_IMAGE: 'ghcr.io/ansys/chemkin-dev'
   POETRY_VIRTUALENVS_CREATE: 'false'
 
 concurrency:
@@ -64,7 +64,7 @@ jobs:
     needs: [smoke-tests]
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/ansys/chemkin
+      image: ghcr.io/ansys/chemkin-dev
       credentials:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
