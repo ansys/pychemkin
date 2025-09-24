@@ -36,7 +36,7 @@ from its initial state to a new one.
 The following schematic shows the basic operations available for a mixture in PyChemkin: **create**, **combine/mix**, and **transform** (by a reactor model).
 
 .. figure:: mixture_concept.png
-  :scale: 45 %
+  :scale: 30 %
   :alt: the mixture concept
 
 This example shows different ways to create a mixture in PyChemkin. The use of the composition *recipe* lets you provide just the non-zero species components with a list of species-fraction pairing tuples. Alternatively, the NumPy array lets you use a *full-size* (equal to the number of species) mole/mass fraction array to specify the mixture composition. The

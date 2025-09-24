@@ -523,6 +523,76 @@ def random(range: Union[None, tuple[float, float]] = None) -> float:
         return range[0] + ck_rng.random() * width
 
 
+def random_pick_integers(numb_picks: int, source_integers: list[int]) -> tuple[list[int], list[int]]:
+    """
+    Return a list of unique integers randomly selected from the source integer list
+    The total number of the random integers to be picked, numb_picks, must be
+    < the size of the source integer list.
+
+    Parameters
+    ----------
+        numb_picks: integer
+            the total number of random integers to be picked
+        source_integers: list of integers
+            the source list of the integers to be picked randomly
+
+    Returns
+    -------
+        picked_list: list of integer, dimension = numb_picks
+            list of unique randome integers picked from the source list
+        unpicked_list: list of integer, dimension = len(source_integers) - numb_picks
+            list of integers of the source list that are not picked
+    """
+    # check
+    if numb_picks < 1:
+        msg = [
+            Color.PURPLE,
+            "the total number of random picks must > 1.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+
+    max_picks = len(source_integers)
+    if max_picks < numb_picks:
+        msg = [
+            Color.PURPLE,
+            "The number of random picks requested",
+            str(numb_picks),
+            "is more than the number of integers",
+            "in the source list",
+            str(max_picks),
+            ".",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    #
+    picked_list: list[int] = []
+    # set source pointer
+    arrow = max_picks
+    # random pick
+    for i in range(numb_picks):
+        # randomly pick a slot in source_list
+        slot = int(random() * float(arrow)) + 1
+        # add the value of the slot to the picked list
+        picked_list.append(source_integers[slot - 1])
+        if slot != arrow:
+            # swap the values of the picked slot and the last avaiable slot
+            id1 = slot - 1
+            id2 = arrow - 1
+            replaced = source_integers[id1]
+            source_integers[id1] = source_integers[id2]
+            source_integers[id2] = replaced
+        # reduce the available slot by 1
+        arrow -= 1
+    # save the unpicked integers in the source list
+    unpicked_list = source_integers[0:arrow]
+    return picked_list, unpicked_list
+
+
 def find_file(filepath: str, partialfilename: str, fileext: str) -> str:
     """
     Find the correct version of the given partial file name.
@@ -550,3 +620,167 @@ def find_file(filepath: str, partialfilename: str, fileext: str) -> str:
                 thefile = os.path.join(filepath, file)
                 break
     return thefile
+
+
+def interpolate_point(
+    x_value: float,
+    x_array: Union[list[float], npt.NDArray[np.double]],
+    y_array: Union[list[float], npt.NDArray[np.double]]
+) -> tuple[int, float]:
+    """
+    Get the y value from the given x value based on the given
+    correlation (y = f(x)) defined by the x_array and the y_array.
+
+    Parameters
+    ----------
+        x_value: double
+            the x value to be used to obtain the y value by interpolation
+        x_array: 1-D double array
+            the data for all x values
+        y_array: 1-D double array
+            the y values for each x value data point in the x_array
+
+    Returns
+    -------
+        indexJP: integer
+            the x_array index where x(indexJP - 1) < x_value <= x(indexJP)
+        y_value: double
+            the interpolated y value: y_value = f(x_value) 
+    """
+    # check array lengths
+    if len(x_array) != len(y_array):
+        msg = [
+            Color.PURPLE,
+            "The given arrays must have the same length.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # check x range:
+    x0 = x_array[0]
+    xlast = x_array[len(x_array) - 1]
+    if (x_value - x0) * (x_value - xlast) > 0.0:
+        # x value is not covered by the x_array data points
+        msg = [
+            Color.PURPLE,
+            "The given x value",
+            str(x_value),
+            "is out of the range defined in the x array [",
+            str(x0),
+            ",",
+            str(xlast),
+            "]",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # find the x range and verify x_array is monotonic
+    # ascending order: up = Ture
+    change = xlast - x0
+    not_good = np.isclose(np.abs(change), 0.0, atol=1.0e-8)
+    if not not_good:
+        up = change > 0.0
+        #
+        for j, x in enumerate(x_array):
+            if j > 0:
+                change = x - x_old
+                if change < 0.0:
+                    # x value decreases for ascending array
+                    not_good = up
+                elif change > 0.0:
+                    # x value increases for descending array
+                    not_good = not up
+                else:
+                    # flat
+                    not_good = True
+                    break
+            x_old = x
+    #
+    if not_good:
+        msg = [
+            Color.PURPLE,
+            "The given x array must be monotonic.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # interpolation
+    for j, x in enumerate(x_array):
+        if j == 0:
+            change = x_array[j] - x_value
+            if np.isclose(np.abs(change), 0.0, atol=1.0e-8):
+                return j, y_array[j]
+        else:
+            dx = x_array[j] - x_array[j - 1]
+            dxjp = x_array[j] - x_value
+            frac = dxjp / dx
+            if frac >= 0.0:
+                y_value = (1.0e0 - frac) * y_array[j] + frac * y_array[j - 1]
+                return j, y_value
+    return -1, 0.0
+
+class workingFolders:
+    def __init__(self, dir_name: str, root_dir: str):
+        """
+        Create and change to the designated working directory to run the parameter study case
+
+        Parameters
+        ----------
+            dir_name: string
+                name of the working folder
+            root_dir: string
+                name of the top/root folder of the working folders
+        """
+        # create or clean up the working directory for this run
+        # name = "SI_engine_" + str(index)
+        self.root_dir = root_dir
+        self.work_dir = os.path.join(root_dir, dir_name)
+        if os.path.isdir(self.work_dir):
+            # directory exists
+            for f in os.listdir(self.work_dir):
+                file_path = os.path.join(self.work_dir, f)
+                if os.path.isfile(file_path):
+                    # remove any existing file
+                    try:
+                        os.remove(file_path)
+                    except OSError as e:
+                        print(f"Error removing {file_path}: {e}")
+        else:
+            # create a new directory
+            os.mkdir(self.work_dir)
+        # change to the working directory
+        os.chdir(self.work_dir)
+
+    @property
+    def root(self) -> str:
+        """
+        Get the "root" directory of the current structure
+
+        Returns
+        -------
+            root: string
+                the upper level folder
+        """
+        return self.root_dir
+
+    @property
+    def work(self) -> str:
+        """
+        Get the "work" directory of the current structure
+
+        Returns
+        -------
+            work: string
+                the working level folder
+        """
+        return self.work_dir
+
+    def done(self):
+        """
+        Change back to the root direcory
+        """
+        # change to the working directory for this run
+        os.chdir(self.root_dir)

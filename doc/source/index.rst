@@ -30,7 +30,9 @@ PyChemkin provides Pythonic access to the Ansys Chemkin API for CFD (computation
         :link-type: doc
 
         Understand key concepts for using PyChemkin. Also learn how to set up and run a basic
-        reactor model and where you can find supporting information.
+        reactor model and where you can find supporting information. Basic understanding of chemical kinetics,
+        especially gas-phase combustion chemistry, and familiarity of Chemkin and Python are expected.
+
 
     .. grid-item-card:: API reference :fa:`book-bookmark`
         :link: api/index

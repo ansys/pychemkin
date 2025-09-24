@@ -428,6 +428,7 @@ mflr = []
 X_CH4 = []
 X_CO = []
 X_NO = []
+
 for index, stream in PSRnetwork.reactor_solutions.items():
     name = PSRnetwork.get_reactor_label(index)
     print(f"reactor: {name}")

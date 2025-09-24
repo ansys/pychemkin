@@ -246,7 +246,7 @@ flatflame.set_solution_quality(gradient=0.1, curvature=0.1)
 #
 # - **Mixture averaged**
 # - **Multi-component**
-# - **Constant Lewis number
+# - **Constant Lewis number**
 #
 # When the system pressure is not too low, the mixture averaged method should be adequate.
 # The multi-component method, although it is slightly more accurate, makes the simulation time longer
@@ -334,7 +334,7 @@ print()
 # - The raw solution profiles (value as a function of distance) are available for distance,
 #   temperature, pressure, volume, and species mass fractions.
 #
-#  -The streams permit the use of all property and rate utilities to extract
+# - The streams permit the use of all property and rate utilities to extract
 #   information such as viscosity, density, and mole fractions.
 #
 # You can use the ``get_solution_variable_profile()`` method to get the raw solution profiles. You

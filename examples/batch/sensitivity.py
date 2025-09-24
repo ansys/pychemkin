@@ -236,6 +236,9 @@ MyCONP.set_ignition_delay(method="T_inflection")
 # set tolerances in tuple: (absolute tolerance, relative tolerance)
 MyCONP.tolerances = (1.0e-10, 1.0e-8)
 
+# suppress the text output during the runs
+MyCONP.stop_output()
+
 # set the start wall time to get the total simulation run time
 start_time = time.time()
 

@@ -68,6 +68,11 @@ class PremixedFlame(Flame):
         # mass flow rate [g/sec]
         # constant
         self._final_mass_flow_rate = -1.0
+        # raw solution data structure
+        self._solution_tags = [
+            "distance",
+            "temperature",
+        ]
 
     def set_inlet(self, extinlet: Stream):
         """
@@ -668,7 +673,7 @@ class PremixedFlame(Flame):
             return 1
         # check variable name
         vname = varname.rstrip()
-        if vname.lower() in ["distance", "temperature"]:
+        if vname.lower() in self._solution_tags:
             # is a property variable?
             vname = vname.lower()
         else:

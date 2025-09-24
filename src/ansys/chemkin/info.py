@@ -297,7 +297,8 @@ def show_ignition_definitions():
     print("    1: 'T_inflection'")
     print("    2: 'T_rise', <val>")
     print("    3: 'T_ignition', <val>")
-    print("    4: 'Species_peak', '<target species>'", end=Color.END)
+    print("    4: 'Species_peak', '<target species>'")
+    print("    5: 'Thermicity_peak'", end=Color.END)
 
 
 def manuals():

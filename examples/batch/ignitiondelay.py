@@ -109,7 +109,7 @@ iError = gasoline.preprocess()
 # Set up the stoichiometric gasoline-air mixture
 # ==============================================
 # You need to set up the stoichiometric gasoline-air mixture for the subsequent
-# ignition delay time calculations. Here the ``X_by_Equivalence_Ratio``method is used.
+# ignition delay time calculations. Here the ``X_by_Equivalence_Ratio`` method is used.
 # You create the ``fuel`` and the ``air`` mixtures first. Then define the
 # *complete combustion product species* and provide the *additives* composition if applicable.
 # And finally you can simply set ``equivalenceratio=1`` to create the stoichiometric

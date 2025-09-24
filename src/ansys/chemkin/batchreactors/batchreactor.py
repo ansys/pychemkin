@@ -37,7 +37,7 @@ from ansys.chemkin.chemistry import (
     verbose,
 )
 from ansys.chemkin.color import Color as Color
-from ansys.chemkin.constants import Patm
+from ansys.chemkin.constants import Patm, RGas_Cal
 from ansys.chemkin.info import show_ignition_definitions
 from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
@@ -106,6 +106,8 @@ class BatchReactors(reactor):
         self._energytype = c_int(self.EnergyTypes.get("ENERGY", 1))
         # profile points
         self._profilesize = int(0)
+        # text output control flag
+        self.suppress_output = False
 
     @property
     def volume(self) -> float:
@@ -519,6 +521,9 @@ class BatchReactors(reactor):
                     logger.error(this_msg)
                 else:
                     self.setkeyword(key="KLIM", value=target)
+            elif method == "Thermicity_peak":
+                # use  peak total thermicity location
+                self.setkeyword(key="SLIM", value=True)
             else:
                 # incorrect ignition detection method given
                 msg = [
@@ -640,6 +645,31 @@ class BatchReactors(reactor):
                 return ignitiondelaytime.value
         else:
             return ignitiondelaytime.value
+
+    def refresh_starting_mixture(self, new_mixture: Mixture):
+        """
+        Reset the initial gas-phase mixture condition inside the batch reactor.
+
+        Parameters
+        ----------
+            new_mixture: Mixture object
+                new mixture as the initial reactor gas condition
+        """
+        if isinstance(new_mixture, Mixture):
+            self.pressure = new_mixture.pressure
+            self.temperature = new_mixture.temperature
+            self.volume = new_mixture.volume
+            self.Y = new_mixture.Y
+        else:
+            # error condition
+            msg = [
+                Color.PURPLE,
+                "the parameter must be a Mixture object.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
 
     def set_volume_profile(
         self, x: npt.NDArray[np.double], vol: npt.NDArray[np.double]
@@ -790,6 +820,12 @@ class BatchReactors(reactor):
         )
         for line in species_lines:
             self.setkeyword(key=line, value=True)
+
+    def stop_output(self):
+        """
+        Stop the reactor model from writing text output to file
+        """
+        self.suppress_output = True
 
     def validate_inputs(self) -> int:
         """
@@ -1240,6 +1276,11 @@ class BatchReactors(reactor):
         msg = [Color.YELLOW, "running reactor simulation ...", Color.END]
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
+        # suppress text output to file
+        if self.suppress_output:
+            iErr = chemkin_wrapper.chemkin.KINAll0D_SuppressOutput()
+        # reset run status
+        self.setrunstatus(code=-100)
         if Keyword.noFullKeyword:
             # use API calls
             retVal = self.__run_model()
@@ -1418,6 +1459,30 @@ class BatchReactors(reactor):
         self._solution_rawarray["volume"] = copy.deepcopy(vol)
         # species mass fractions
         self.parsespeciessolutiondata(frac)
+        # if the energy equation is solved, get gas-phase hear release rate
+        if self._energytype.value == self.EnergyTypes.get("ENERGY", 1):
+            gas_heatrelease = np.zeros_like(time, dtype=np.double)
+            gas_heatrealease_rate = np.zeros_like(time, dtype=np.double)
+            iErr = chemkin_wrapper.chemkin.KINAll0D_GetGasHeatReleaseRate(
+                icreac, icnpts, gas_heatrelease, gas_heatrealease_rate
+            )
+            if iErr != 0:
+                msg = [
+                    Color.RED,
+                    "failed to fetch the raw solution heat release rate from memory,",
+                    "error code =",
+                    str(iErr),
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.critical(this_msg)
+                exit()
+            #
+            # accumulated gas-phase chemistry heat release [erg]
+            self._solution_rawarray["gasheatrelease"] = copy.deepcopy(gas_heatrelease)
+            # gas-phase chemistry heat rrelease rate [erg/sec]
+            self._solution_rawarray["gashrr"] = copy.deepcopy(gas_heatrealease_rate)
+            del gas_heatrelease, gas_heatrealease_rate
         # create solution mixture
         iErr = self.create_solution_mixtures(frac)
         if iErr != 0:
@@ -1431,8 +1496,18 @@ class BatchReactors(reactor):
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
             exit()
+        # calculate total termicity [1/sec]
+        thermicity = np.zeros_like(time, dtype=np.double)
+        for i, m in enumerate(self._solution_mixturearray):
+            thermicity[i] = m.thermicity()
+        # total thermicity
+        self._solution_rawarray["thermicity"] = copy.deepcopy(thermicity)
+        # set up single point solution parameters
+        delay = self.get_ignition_delay()
+        if delay > 0.0e0:
+            self._solution_parameters["ignition_delay"] = delay
         # clean up
-        del time, pres, temp, vol, frac
+        del time, pres, temp, vol, thermicity, frac
 
     def get_solution_variable_profile(self, varname: str) -> npt.NDArray[np.double]:
         """
@@ -1645,6 +1720,32 @@ class BatchReactors(reactor):
         mixturetarget = copy.deepcopy(self._solution_mixturearray[solution_index])
         return mixturetarget
 
+    def get_last_solution_mixture(self) -> Mixture:
+        """
+        Get the mixture representing the solution state inside the reactor at the last solution point index
+
+        Returns
+        -------
+            mixturetarget: Mixture object
+                a Mixture representing the gas properties in the reactor at the last time/position point
+        """
+        # check status
+        if not self.getmixturesolutionstatus():
+            msg = [
+                Color.YELLOW,
+                "please use 'process_solution' method",
+                "to post-process the raw solution data first.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
+            exit()
+        # set index to the last solution point
+        solution_index = self._numbsolutionpoints - 1
+        # get the mixture
+        mixturetarget = copy.deepcopy(self._solution_mixturearray[solution_index])
+        return mixturetarget
+
 
 class GivenPressureBatchReactor_FixedTemperature(BatchReactors):
     """
@@ -1813,6 +1914,11 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
         # required inputs: (1) end time
         self._numb_requiredinput = 1
         self._requiredlist = ["TIME"]
+        # raw solution data structure
+        # GasHRR: heat release rate [erg/sec] due to gas-phase chemsitry
+        # GasHeatRelease: accumulated heat release [erg] due to gas-phase chemistry
+        self._solution_tags.append("gashrr") 
+        self._solution_tags.append("gasheatrelease")
         # set up basic batch reactor parameters
         iErr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,
@@ -2234,6 +2340,11 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
         # required inputs: (1) end time
         self._numb_requiredinput = 1
         self._requiredlist = ["TIME"]
+        # raw solution data structure
+        # GasHRR: heat release rate [erg/sec] due to gas-phase chemsitry
+        # GasHeatRelease: accumulated heat release [erg] due to gas-phase chemistry
+        self._solution_tags.append("gashrr") 
+        self._solution_tags.append("gasheatrelease")
         # set up basic batch reactor parameters
         iErr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,
@@ -2486,3 +2597,135 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
             keyword = "QPRO"
             iErr = self.setprofile(key=keyword, x=x, y=Qloss)
             return iErr
+
+
+@staticmethod
+def calculate_effective_activation_energy(
+    initial_mixture: Mixture,
+    duration: float = 0.01,
+    perturb: float = 0.02,
+    model: str = "CONV",
+    ) -> tuple[float, float]:
+    """
+    Estimate the effective reduced activation energy of a gas-phase combustion mechanism
+    at the given mixture condition.
+
+    Parameters
+    ----------
+        initial_mixture: Mixture object
+            the condition of the reference gas mixture
+        duration: double, optional, default = 0.01 [sec]
+            reactor simulation time [sec]
+        pertub: double, optional, default = 0.02 (2%)
+            the size (fraction) of the perturbation
+        model: string, {"CONP", "CONV"}
+            the reactor model to be used to estimate the activation energy
+
+    Returns
+    -------
+        reduced_Eact: double
+            reduced effective activation energy [-]
+        activation_energy: double
+            the effective activation energy [cal/mol]
+    """
+    if not isinstance(initial_mixture, Stream):
+        msg = [
+            Color.PURPLE,
+            "the first parameter must be a Mixture object",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # check reactor volume
+    if initial_mixture.volume <= 0.0:
+        # set volume to 1 [cm3] if it is not provided
+        initial_mixture.volume = 1.0
+    #
+    if model.upper() == "CONV":
+        rxtor = GivenVolumeBatchReactor_EnergyConservation(initial_mixture, label=model)
+    elif model.upper() == "CONP":
+        rxtor = GivenPressureBatchReactor_EnergyConservation(initial_mixture, label=model)
+    else:
+        msg = [
+            Color.PURPLE,
+            "invalid reactor model, use either",
+            "'CONP' for constant pressure reactor model or",
+            "'CONV' for constant volume reactor model.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # initialization
+    reduced_Eact = 0.0e0
+    activation_energy = 0.0e0
+    # perturbation
+    temp_base = initial_mixture.temperature
+    dtemp = temp_base * perturb
+    # set the run parameters
+    temps: float = []
+    temps.append(temp_base + dtemp)
+    temps.append(temp_base - dtemp)
+    # reactor set up
+    # initial reactor volume [cm3]
+    rxtor.volume = initial_mixture.volume
+    # simulation end time [sec]
+    rxtor.time = duration
+    # turn ON adaptive solution saving
+    rxtor.adaptive_solution_saving(mode=True, value_change=100, target="TEMPERATURE")
+    # set ignition delay
+    rxtor.set_ignition_delay(method="T_inflection")
+    # tolerances are given in tuple: (absolute tolerance, relative tolerance)
+    rxtor.tolerances = (1.0e-10, 1.0e-8)
+    # run the parameter study
+    delaytime: float = []
+    for t in temps:
+        # reset the initial reactor temperature
+        rxtor.temperature = t
+        # run the reactor model
+        runstatus = rxtor.run()
+        #
+        if runstatus == 0:
+            # get ignition delay time [msec]
+            delay = rxtor.get_ignition_delay()
+            delaytime.append(delay * 1.0e-3)
+            print(f"ignition delay time = {delay} [msec]")
+        else:
+            # run failed
+            msg = [
+                Color.RED,
+                ">>> Run failed. <<<\n",
+                "for case: temperature =",
+                str(t),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+    # verify the ignition delay times
+    for case in range(len(delaytime)):
+        time = delaytime[case]
+        temp = temps[case]
+        if time <= 0.0e0:
+            # if get this, most likely the END time is too short
+            msg = [
+                Color.PURPLE,
+                "ignition delay time not found, for case temperature =",
+                str(temp),
+                ", most likely the simulation time is too short.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+    # estimate the effective reduced activation energy
+    termn = np.log(delaytime[0]) - np.log(delaytime[1])
+    termd = (1.0e0/temps[0] - 1.0e0/temps[1])
+    reduced_Eact = termn / termd / temp_base
+    reduced_Eact = max(reduced_Eact, 0.0e0)
+    # effect activation energy [cal/mol]
+    activation_energy =  reduced_Eact * RGas_Cal * temp_base
+    # clean up
+    del rxtor
+    return reduced_Eact, activation_energy

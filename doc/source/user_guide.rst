@@ -4,7 +4,7 @@ User guide
 Introduction
 ------------
 
-PyChemkin inherits all Ansys Chemkin functionalities, providing Pythonic interfaces to Chemkin utilities and reactor models. In addition, PyChemkin introduces a hierarchy of four key objects to enhance user experiences within the Python framework:
+PyChemkin inherits all Ansys Chemkin functionalities, providing pythonic interfaces to Chemkin utilities and reactor models. In addition, PyChemkin introduces a hierarchy of four key objects to enhance user experiences within the Python framework:
 
 - **Chemistry set:** A collection of utilities that handle chemistry and species properties.
 - **Mixture:** A basic element representing a gas mixture that can be manipulated and transformed.

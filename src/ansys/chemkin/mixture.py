@@ -27,6 +27,7 @@
 import copy
 import ctypes
 from ctypes import c_double, c_int
+from typing import Union
 
 from ansys.chemkin import chemkin_wrapper as ck_wrapper
 from ansys.chemkin.chemistry import (
@@ -133,6 +134,29 @@ class Mixture:
         """
         return self._KK
 
+    def get_specindex(self, symbol: str) -> int:
+        """
+        Get the index of the given gas species symbol
+
+        Parameters
+        ----------
+            symbol: string
+                gas species symbol (case sensitive)
+
+        Returns
+        -------
+            index: integer
+                corresponding gas species index in the mechanism. =0 if not found.
+        """
+        if symbol in self._specieslist:
+            index = self._specieslist.index(symbol)
+            return index
+        else:
+            msg = [Color.PURPLE, "species symbol not found:", symbol, Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
     @property
     def pressure(self) -> float:
         """
@@ -219,10 +243,10 @@ class Mixture:
         if self._vol > 0.0e0:
             return self._vol
         else:
-            msg = [Color.PURPLE, "mixture volume is not provided.", Color.END]
+            msg = [Color.YELLOW, "mixture volume is not provided.", Color.END]
             this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            logger.warning(this_msg)
+            return 0.0e0
 
     @volume.setter
     def volume(self, vol: float):
@@ -269,7 +293,7 @@ class Mixture:
             exit()
 
     @X.setter
-    def X(self, recipe: list[tuple[str, float]]):
+    def X(self, recipe: Union[list[tuple[str, float]], npt.NDArray[np.double]]):
         """
         Set mixture molar composition
 
@@ -363,7 +387,7 @@ class Mixture:
             exit()
 
     @Y.setter
-    def Y(self, recipe: list[tuple[str, float]]):
+    def Y(self, recipe: Union[list[tuple[str, float]], npt.NDArray[np.double]]):
         """
         Set mixture mass composition
 
@@ -437,7 +461,7 @@ class Mixture:
         Returns
         -------
             c: 1-D double array, dimensdion = number_species
-                mixture compisition in molar concentrations [mole/cm3]
+                mixture composition in molar concentrations [mole/cm3]
         """
         if self._Xset == 1:
             # mole fractions are given
@@ -837,7 +861,7 @@ class Mixture:
             t: double
                 temperature [K]
             massfrac: 1-D double array, dimension = number_species
-                mixture compisition in mass fractions
+                mixture composition in mass fractions
             wt: 1-D double array, dimension = number_species
                 species molecular masses [gm/mole]
 
@@ -894,7 +918,7 @@ class Mixture:
             t: double
                 temperature [K]
             molefrac: 1-D double array, dimension = number_species
-                mixture compisition in mole fractions
+                mixture composition in mole fractions
             wt: 1-D double array, dimension = number_species
                 species molecular masses [gm/mole]
 
@@ -1351,6 +1375,312 @@ class Mixture:
             exit()
 
     @staticmethod
+    def calculate_pressure_from_density(
+        chemID: int,
+        rho: float,
+        temp: float,
+        frac: npt.NDArray[np.double],
+        wt: npt.NDArray[np.double],
+        mode: str,
+    ) -> float:
+        """
+        Calculate the gas mixture pressure given the mixture density, temperature, and species composition in mass fractions.
+
+        Parameters
+        ----------
+            chemID: integer
+                chemistry set index associated with the mixture
+            rho: double
+                density [g/cm3]
+            temp: double
+                temperature [K]
+            frac: 1-D double array, dimension = number_species
+                mixture composition in mass or mole fractions
+            wt: 1-D double array, dimension = number_species
+                molar masses of the species in the mixture in [gm/mol]
+            mode: string, {'mole', 'mass'}
+                flag indicates the frac array is 'mass' or 'mole' fractions
+
+        Returns
+        -------
+            pres: double
+                pressure [dynes/cm2]
+        """
+        # check inputs
+        if chemID < 0:
+            msg = [Color.PURPLE, "invalid chemistry.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        # number species
+        kgas = len(frac)
+        if kgas != len(wt):
+            msg = [
+                Color.PURPLE,
+                mode,
+                "fraction and molar mass arrays",
+                "must have the same size =",
+                str(kgas),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        if temp <= 10.0:
+            msg = [Color.PURPLE, "invalid temperature value.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        if rho <= 0.0:
+            msg = [Color.PURPLE, "invalid density value.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        
+        # initialization
+        pres = c_double(0.0)
+        if mode.lower() == "mole":
+            # convert mole fraction to mass fraction and normalize
+            y = Mixture.mole_fraction_to_mass_fraction(molefrac=frac, wt=wt)
+        elif mode.lower() == "mass":
+            # normalize mass fractions
+            iErr, y = Mixture.normalize(frac=frac)
+        else:
+            # fraction type not given or incorrect
+            msg = [
+                Color.PURPLE,
+                'must specify "mole" or "mass" fractions given.',
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        # convert parameters to c pointers
+        chemset_index = ctypes.c_int(chemID)
+        tt = c_double(temp)  # temperature scalar
+        rr = c_double(rho)  # density scalar
+        yy = np.ctypeslib.as_array(y)  # mass fraction array
+        # compute pressure from density and mass fraction
+        iErr = ck_wrapper.chemkin.KINGetGasPressure(chemset_index, rr, tt, yy, pres)
+        if iErr == 0 and pres.value > 0.0:
+            return pres.value
+        else:
+            # failed to compute mixture pressure
+            msg = [Color.PURPLE, "failed to compute mixture pressure.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+    @staticmethod
+    def mixture_thermicity(
+        chemID: int,
+        p: float,
+        t: float,
+        rho: float,
+        frac: npt.NDArray[np.double],
+        wt: npt.NDArray[np.double],
+        mode: str,
+    ) -> float:
+        """
+        Get mixture total thermicity from the given mixture condition: pressure, temperature, density, and species composition
+
+        Parameters
+        ----------
+            chemID: integer
+                chemistry set index associated with the mixture
+            p: double
+                mixture pressure in [dynes/cm2]
+            t: double
+                mixture temperature in [K]
+            rho: double
+                mixture desnity in [g/cm3]
+            frac: 1-D double array, dimension = number_species
+                mixture composition given by either mass or mole fractions as specified by mode
+            wt: 1-D double array, dimension = number_species
+                molar masses of the species in the mixture in [gm/mol]
+            mode: string, {'mole', 'mass'}
+                flag indicates the frac array is 'mass' or 'mole' fractions
+
+        Returns
+        -------
+            sigma: double
+                mixture total thermicity [1/sec]
+        """
+        # check inputs
+        if chemID < 0:
+            msg = [Color.PURPLE, "invalid chemistry.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        if t <= 10.0:
+            msg = [Color.PURPLE, "invalid temperature value.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        if rho <= 0.0:
+            msg = [Color.PURPLE, "invalid density value.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        # number species
+        kgas = len(frac)
+        if kgas != len(wt):
+            msg = [
+                Color.PURPLE,
+                mode,
+                "fraction and molar mass arrays",
+                "must have the same size =",
+                str(kgas),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        # initialization
+        sigma = c_double(0.0)
+        if mode.lower() == "mole":
+            # convert mole fraction to mass fraction and normalize
+            y = Mixture.mole_fraction_to_mass_fraction(molefrac=frac, wt=wt)
+        elif mode.lower() == "mass":
+            # normalize mass fractions
+            iErr, y = Mixture.normalize(frac=frac)
+        else:
+            # fraction type not given or incorrect
+            msg = [
+                Color.PURPLE,
+                'must specify "mole" or "mass" fractions given.',
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        # convert parameters to c pointers
+        chemset_index = ctypes.c_int(chemID)
+        pp = c_double(p)
+        tt = c_double(t)  # temperature scalar
+        rr = c_double(rho)
+        yy = np.ctypeslib.as_array(y)  # mass fraction array
+        # real-gas
+        if check_realgas_status(chemID):
+            # real-gas cubic EOS is active, set current pressure that is required by the chemkin real-gas module
+            set_current_pressure(chemID, p)
+            # compute total thermicity from mass fraction
+            iErr = ck_wrapper.chemkin.KINRealGas_GetMixtureThermicity(chemset_index, pp, tt, rr, yy, sigma)
+        else:
+            # compute total thermicity from mass fraction
+            iErr = ck_wrapper.chemkin.KINGetGasMixtureThermicity(chemset_index, pp, tt, rr, yy, sigma)
+        if iErr == 0:
+            return sigma.value
+        else:
+            # failed to compute mixture total thermicity
+            msg = [Color.PURPLE, "failed to compute mixture total thermicity.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+    @staticmethod
+    def mixture_sound_speed(
+        chemID: int,
+        p: float,
+        t: float,
+        frac: npt.NDArray[np.double],
+        wt: npt.NDArray[np.double],
+        mode: str,
+    ) -> float:
+        """
+        Get mixture speed of sound from the given mixture condition: pressure, temperature, and species composition
+
+        Parameters
+        ----------
+            chemID: integer
+                chemistry set index associated with the mixture
+            p: double
+                mixture pressure in [dynes/cm2]
+            t: double
+                mixture temperature in [K]
+            frac: 1-D double array, dimension = number_species
+                mixture composition given by either mass or mole fractions as specified by mode
+            wt: 1-D double array, dimension = number_species
+                molar masses of the species in the mixture in [gm/mol]
+            mode: string, {'mole', 'mass'}
+                flag indicates the frac array is 'mass' or 'mole' fractions
+
+        Returns
+        -------
+            soundspeed: double
+                mixture speed of sound [cm/sec]
+        """
+        # check inputs
+        if chemID < 0:
+            msg = [Color.PURPLE, "invalid chemistry.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        if t <= 10.0:
+            msg = [Color.PURPLE, "invalid temperature value.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        # number species
+        kgas = len(frac)
+        if kgas != len(wt):
+            msg = [
+                Color.PURPLE,
+                mode,
+                "fraction and molar mass arrays",
+                "must have the same size =",
+                str(kgas),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        # initialization
+        gamma = c_double(0.0)
+        soundspeed = c_double(0.0)
+        if mode.lower() == "mole":
+            # convert mole fraction to mass fraction and normalize
+            y = Mixture.mole_fraction_to_mass_fraction(molefrac=frac, wt=wt)
+        elif mode.lower() == "mass":
+            # normalize mass fractions
+            iErr, y = Mixture.normalize(frac=frac)
+        else:
+            # fraction type not given or incorrect
+            msg = [
+                Color.PURPLE,
+                'must specify "mole" or "mass" fractions given.',
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        # convert parameters to c pointers
+        chemset_index = ctypes.c_int(chemID)
+        pp = c_double(p)
+        tt = c_double(t)  # temperature scalar
+        yy = np.ctypeslib.as_array(y)  # mass fraction array
+        # compute speed of sound from mass fraction
+        iErr = ck_wrapper.chemkin.KINGetGasMixtureSoundSpeed(chemset_index, pp, tt, yy, gamma, soundspeed)
+        if iErr == 0:
+            return soundspeed.value
+        else:
+            # failed to compute mixture spedd of sound
+            msg = [Color.PURPLE, "failed to compute mixture speed of sound.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+    @staticmethod
     def rate_of_production(
         chemID: int,
         p: float,
@@ -1683,6 +2013,160 @@ class Mixture:
                 mode="mass",
             )
             return cpbl
+        else:
+            # mixture composition is not provided
+            msg = [Color.PURPLE, "mixture composition is not provided.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+    def set_pressure_by_density(self, rho: float):
+        """
+        (Re)set the gas mixture pressure value by using the mixture density.
+
+        Parameters
+        ----------
+            rho: double
+                gas mixture density [g/cm3]
+        """
+        pressure = 0.0
+        # check temperature
+        if self._Tset == 0:
+            msg = [Color.PURPLE, "mixture temperature [K] is not provided.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        #
+        if self._Xset == 1:
+            # mixture mole fraction given
+            pressure = Mixture.calculate_pressure_from_density(
+                self._chemset_index.value,
+                rho=rho,
+                temp=self._temp,
+                frac=self._molefrac,
+                wt=self._WT,
+                mode="mole",
+            )
+        elif self._Yset == 1:
+            # mixture mass fraction given
+            pressure = Mixture.calculate_pressure_from_density(
+                self._chemset_index.value,
+                rho=rho,
+                temp=self._temp,
+                frac=self._massfrac,
+                wt=self._WT,
+                mode="mass",
+            )
+        else:
+            # mixture composition is not provided
+            msg = [Color.PURPLE, "mixture composition is not provided.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        # check pressure
+        if self._Pset != 0:
+            msg = [
+                Color.YELLOW,
+                "mixture pressure [dynes/cm2] will be overwritten.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
+        # initialize mixture pressure
+        self._Pset = 1
+        self.pressure = pressure
+        self._press = pressure
+
+    def thermicity(self) -> float:
+        """
+        Get the total thermicity of the mixture
+
+        Returns
+        -------
+            thermicity: double
+                mixture total thermicity [1/sec]
+        """
+        # initialization
+        thermicity = 0.0e0
+        # check temperature
+        if self._Tset == 0:
+            msg = [Color.PURPLE, "mixture temperature [K] is not provided.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        # get mixture density [g/cm3]
+        rho = self.RHO
+        if self._Xset == 1:
+            # mixture mole fraction given
+            thermicity = Mixture.mixture_thermicity(
+                self._chemset_index.value,
+                p=self._press,
+                t=self._temp,
+                rho=rho,
+                frac=self._molefrac,
+                wt=self._WT,
+                mode="mole",
+            )
+            return thermicity
+        elif self._Yset == 1:
+            # mixture mass fraction given
+            thermicity = Mixture.mixture_thermicity(
+                self._chemset_index.value,
+                p=self._press,
+                t=self._temp,
+                rho=rho,
+                frac=self._massfrac,
+                wt=self._WT,
+                mode="mass",
+            )
+            return thermicity
+        else:
+            # mixture composition is not provided
+            msg = [Color.PURPLE, "mixture composition is not provided.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+    def sound_speed(self) -> float:
+        """
+        Get the speed of sound of the mixture
+
+        Returns
+        -------
+            soundspeed: double
+                mixture speed of sound [cm/sec]
+        """
+        # initialization
+        soundspeed = 0.0e0
+        # check temperature
+        if self._Tset == 0:
+            msg = [Color.PURPLE, "mixture temperature [K] is not provided.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        #
+        if self._Xset == 1:
+            # mixture mole fraction given
+            soundspeed = Mixture.mixture_sound_speed(
+                self._chemset_index.value,
+                p=self._press,
+                t=self._temp,
+                frac=self._molefrac,
+                wt=self._WT,
+                mode="mole",
+            )
+            return soundspeed
+        elif self._Yset == 1:
+            # mixture mass fraction given
+            soundspeed = Mixture.mixture_sound_speed(
+                self._chemset_index.value,
+                p=self._press,
+                t=self._temp,
+                frac=self._massfrac,
+                wt=self._WT,
+                mode="mass",
+            )
+            return soundspeed
         else:
             # mixture composition is not provided
             msg = [Color.PURPLE, "mixture composition is not provided.", Color.END]
@@ -2797,8 +3281,69 @@ class Mixture:
             logger.info(this_msg)
             self.userealgas = True
 
+    def resetcomposition(self):
+        """
+        Reset all species fractions to 0
+        """
+        self._Yset = 0
+        self._massfrac[:] = 0.0e0
+        self._Xset = 0
+        self._molefrac[:] = 0.0e0
+
+
+
 
 # mixture mixing
+def verify_mixture(this_mixture: Mixture) -> bool:
+    """
+    Verify the Mixture is valid and active
+
+    Parameters
+    ----------
+        this_mixture: Mixture object
+            the Mixture object to be verified
+
+    Returns
+    -------
+        status: boolean, {True, False}
+            flag indicating the Mixture is valid and active
+    """
+    # check mixture
+    if not isinstance(this_mixture, Mixture):
+        msg = [
+            Color.PURPLE,
+            "the argument must be a Mixture object.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        return False
+    iErr = this_mixture.validate()
+    if iErr != 0:
+        msg = [
+            Color.PURPLE,
+            "the mixture is not fully defined.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        return False
+    # check if the chemstry set is active
+    if not check_active_chemistryset(this_mixture.chemID):
+        msg = [
+            Color.PURPLE,
+            "the Chemistry Set associated with the Mixture is not currently active.\n",
+            Color.SPACEx6,
+            "activate Chemistry Set using the 'active()' method.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        return False
+    # OK
+    return True
+
+
 def isothermal_mixing(
     recipe: list[tuple[Mixture, float]], mode: str, finaltemperature: float
 ) -> Mixture:
@@ -3289,44 +3834,10 @@ def interpolate_mixtures(
             the resulting gas mixture
     """
     # check mixtures
-    if not isinstance(mixtureleft, Mixture):
-        msg = [
-            Color.PURPLE,
-            "the first argument must be a Mixture object.",
-            Color.END,
-        ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
-        exit()
-    iErr = mixtureleft.validate()
-    if iErr != 0:
-        msg = [
-            Color.PURPLE,
-            "the first mixture is not fully defined.",
-            Color.END,
-        ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
+    if not verify_mixture(mixtureleft):
         exit()
     #
-    if not isinstance(mixtureright, Mixture):
-        msg = [
-            Color.PURPLE,
-            "the second argument must be a Mixture object.",
-            Color.END,
-        ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
-        exit()
-    iErr = mixtureright.validate()
-    if iErr != 0:
-        msg = [
-            Color.PURPLE,
-            "the second mixture is not fully defined.",
-            Color.END,
-        ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
+    if not verify_mixture(mixtureright):
         exit()
     # check ratio
     if ratio < 0.0e0 or ratio > 1.0e0:
@@ -3342,19 +3853,7 @@ def interpolate_mixtures(
     if mixtureright.chemID != mixtureleft.chemID:
         msg = [
             Color.PURPLE,
-            "the Mixtures belong to different Chemistry Sets.\n",
-            Color.END,
-        ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
-        exit()
-    # check if the chemstry set is active
-    if not check_active_chemistryset(mixtureright.chemID):
-        msg = [
-            Color.PURPLE,
-            "the Chemistry Set associated with the Mixture is not currently active.\n",
-            Color.SPACEx6,
-            "activate Chemistry Set using the 'active()' method.",
+            "the Mixtures belong to different Chemistry Sets.",
             Color.END,
         ]
         this_msg = Color.SPACE.join(msg)
@@ -3381,6 +3880,335 @@ def interpolate_mixtures(
     del frac
     #
     return mixturenew
+
+
+def species_diffusion_velocity(
+    mixtureA: Mixture,
+    mixtureB: Mixture,
+    mode: str = "mix",
+    tdiff: bool = True,
+) -> npt.NDArray[np.double]:
+    """
+    Compute species diffusive velocities between two gas mixtures.
+    In this case, the (positive) species diffusion velocities computed
+    are going in the direction from the mixture A to the mixture B.
+    To compute the actual diffusion velocities, divide the values [cm2/sec]
+    returned from this method by the "actual" distance [cm] separating the
+    two mixtures. The Chemistry Set must contain the preprocessed
+    transport data.
+
+    Consider mixture A is the gas mixture at grid point (J+1), and mixture B at grid point J.
+    The actual species diffusion velocities should be -YV(k) / (X(J+1) - X(J)).
+
+    Parameters
+    ----------
+        mixtureA: Mixture object
+            "source" mixture
+        mixtureB: Mixture object
+            "target" mixture
+        mode: string, {"mix", "multi"}, default = "mix"
+            transport formulation
+        tdiff: boolean, {True, False}, default = True
+            to include species thermal diffusion (Soret) effect in the species diffusion fluxe calculation
+
+    Returns
+    -------
+        YV: 1-D double array, dimension = number of gas species
+            species diffusion velocities (Y(k) * V(k)) [cm2/sec] from mixture A to mixture B separating by a distance of 1 [cm]
+            a positive YV indicates the species diffusion flux is going out of mixture A and is heading towards mixture B
+    """
+    # check mixtures
+    if not verify_mixture(mixtureA):
+        exit()
+    #
+    if not verify_mixture(mixtureB):
+        exit()
+    # check chemistry sets
+    if mixtureA.chemID != mixtureB.chemID:
+        msg = [
+            Color.PURPLE,
+            "the Mixtures belong to different Chemistry Sets.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # check transport data
+    if mixtureA.transport_data == 0:
+        msg = [
+            Color.PURPLE,
+            "the Chemistry Set associated with the Mixtures does not contain transport data.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # number of species
+    nspecies = mixtureA.KK
+    # species molecular weight [g/mol]
+    WT = mixtureA.WT
+    # find the averaged mixtue of the two mixtures
+    mixtureAVE = interpolate_mixtures(mixtureA, mixtureB, ratio=0.5)
+    # mixture mean molecular weight [g/mol]
+    WTM_ave = mixtureAVE.WTM
+    # species concentration gradients
+    dCA_B = np.zeros(nspecies, dtype=np.double)
+    # species diffusion flux from mixture A to mixture B
+    # YVk = Yk * Vk
+    # mass fraction of species k: Yk
+    # diffusion velocity [cm2/sec] of species k: Vk = Dm(k) * WT(k) * (X_A(k) - X_B(k)) / WTM
+    YV = np.zeros_like(dCA_B, dtype=np.double)
+    for k in range(nspecies):
+        dCA_B[k] = (mixtureA.X[k] - mixtureB.X[k]) * WT[k] / WTM_ave
+    # check transport property formulation
+    if mode.lower() == "multi":
+        # use multi-component method to evaluate the diffusion coefficients
+        # Dkj[k][j] [cm2/sec] is a 2-D array
+        Dkj = mixtureAVE.mixture_binary_diffusion_coeffs()
+        for k in range(nspecies):
+            sum_flux = 0.0
+            for j in range(nspecies):
+                sum_flux += Dkj[k][j] * dCA_B[j]
+            YV[k] = -WT[k] * sum_flux / WTM_ave
+        # clean up
+        del Dkj
+    else:
+        # use mixture averge method to evaluate the diffusion coefficients
+        # Dkm[k] [cm2/sec] is a 1-D array
+        Dkm = mixtureAVE.mixture_diffusion_coeffs()
+        for k in range(nspecies):
+            YV[k] = Dkm[k] * dCA_B[k]
+        # clean up
+        del Dkm
+    # include thermal diffusion flux?
+    if tdiff:
+        # DTk [g/cm-sec] is a 1-D array
+        # thermal diffusion velocity [cm2/sec] of species k: Wk = -DTk(k) * (T_A - T_B) / T_ave / rho_ave
+        DTk = mixtureAVE.mixture_thermal_diffusion_coeffs()
+        rho_ave = mixtureAVE.RHO
+        temp_ave = mixtureAVE.temperature
+        delta_temp = mixtureA.temperature - mixtureB.temperature
+        factor = delta_temp / temp_ave / rho_ave
+        for k in range(nspecies):
+           YV[k] += DTk[k] * factor
+        # clean up
+        del DTk
+
+    # clean up
+    del dCA_B, WT, mixtureAVE
+    #
+    return YV
+
+
+def mixing_by_exchange_with_the_mean(
+    mixtureA: Mixture,
+    mixtureB: Mixture,
+    mix_time: float,
+    mix_param: float,
+    tau: float,
+) -> tuple[Mixture, Mixture]:
+    """
+    Partially mix two mixtures of the same mass with a given mixing duration time based on the
+    Interaction-by-Exchange-with-the-Mean (IEM) model.
+    The characteristic time constant, tau, controls the extent of the mixing. When tau ~ 0,
+    no mixing takes place. When tau ~ infinity, the two mixtures will be instantly incorporated
+    at the molecular level and the two final mixtures will be identical. An example of this characteristic
+    mixing time scale is the large eddy turnover time. The IEM model parameter normally has a value around 1.
+
+    Parameters
+    ----------
+        mixtureA: Mixture object
+            gas mixture to be mixed
+        mixtureB: Mixture object
+            gas mixture to be mixed
+        mix_time: double
+            mixing duration [sec]
+        mix_param: double
+            IEM model parameter [-]
+        tau: double
+            characteristic mixing time scale [sec]
+
+    Returns
+    -------
+        mixtureA_new: Mixture object
+            the new state of mixture A after the mixing
+        mixtureB_new: Mixture object
+            the new state of mixture B after the mixing
+    """
+    # check mixtures
+    if not verify_mixture(mixtureA):
+        exit()
+    #
+    if not verify_mixture(mixtureB):
+        exit()
+    # check chemistry sets
+    if mixtureA.chemID != mixtureB.chemID:
+        msg = [
+            Color.PURPLE,
+            "the Mixtures belong to different Chemistry Sets.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # check the mixing duration time
+    if mix_time < 1.0e-10:
+        msg = [
+            Color.PURPLE,
+            "mixture mixing duration must > 0.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # check the IEM mxing model parameter
+    if mix_param < 1.0e-10:
+        msg = [
+            Color.PURPLE,
+            "mixing model parameter must > 0.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # check the characteristic mixing time scale
+    if tau < 1.0e-10:
+        msg = [
+            Color.PURPLE,
+            "mixing time scale must > 0.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # find the average mixtue of the two mixtures
+    mixtureAVE = interpolate_mixtures(mixtureB, mixtureA, ratio=0.5)
+    # compute mixing vector
+    factor = -mix_param * mix_time / tau / 2.0e0
+    mix_v = np.exp(factor)
+    # compute the new states of the two mixtures
+    # mixture A
+    mixtureA_new = interpolate_mixtures(mixtureAVE, mixtureA, mix_v)
+    # mixture B
+    mixtureB_new = interpolate_mixtures(mixtureAVE, mixtureB, mix_v)
+    # clean up
+    del mixtureAVE
+    #
+    return mixtureA_new, mixtureB_new
+
+
+def calculate_mass_weighted_mean_mixture(
+    mixtures: list[Mixture], masses: Union[list[float], None] = None
+) -> Mixture:
+    """
+    Calculate the mass-weighted mean mixture from a list of mixtures
+
+    Parameters
+    ----------
+        mixtures: list of Mixture objects
+            list of mixtures from which the mean mixture will be determined
+        masses: list of doubles, optional
+            mass ratios of the mixtures
+
+    Returns
+    -------
+        mean_mixture: Mixture object
+            the mass weighted mean mixture
+    """
+    #
+    if not isinstance(mixtures[0], Mixture):
+        msg = [
+            Color.PURPLE,
+            "the mixtures list must contain,",
+            "Mixture objects.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    if masses is None:
+        # use the actual mixture masses to create the masses list
+        masses = []
+        for m in mixtures:
+            masses.append(m.RHO * m.volume)
+    else:
+        # check list lengths
+        if len(mixtures) != len(masses):
+            msg = [
+                Color.PURPLE,
+                "the mixtures list must have the same,",
+                "length as the masses list.\n",
+                Color.SPACEx6,
+                "mixture list length =",
+                str(len(mixtures)),
+                "\n",
+                Color.SPACEx6,
+                "masses list length =",
+                str(len(masses)),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+    # create the mean mixture object
+    mean_mixture = copy.deepcopy(mixtures[0])
+    # total mass
+    total_mass = 0.0e0
+    mean_h = 0.0e0
+    mean_y = np.zeros_like(mean_mixture.Y, dtype=np.double)
+    #
+    id = 0
+    for m in mixtures:
+        if m.pressure != mean_mixture.pressure:
+            msg = [
+                Color.PURPLE,
+                "the mixtures must have the same pressure,",
+                "mixture",
+                str(id),
+                "has a different value =",
+                str(m.pressure / Patm),
+                "[atm].",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        # compute mean values
+        this_mass = masses[id]
+        mean_h += m.HML() * this_mass / m.WTM
+        this_y = m.Y
+        this_y[:] *= this_mass
+        mean_y += this_y
+        total_mass += this_mass
+        id += 1
+    # normalization
+    mean_h /= total_mass
+    mean_y[:] /= total_mass
+    # update the species mass fractions of the mean mixture
+    mean_mixture.resetcomposition()
+    mean_mixture.Y = mean_y
+    # convert to molar enthalpy [erg/mol]
+    mean_h *= mean_mixture.WTM
+    # set the guessed temperature
+    t_guessed = mean_mixture.temperature
+    iErr = calculate_mixture_temperature_from_enthalpy(
+        mixture=mean_mixture, mixtureH=mean_h, guesstemperature=t_guessed
+    )
+    if iErr != 0:
+        msg = [
+            Color.PURPLE,
+            "failed to determine the mean mixture temperature,",
+            "error code =",
+            str(iErr),
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # if the masses list is assigned, the mean mixture volume is not clearly defined here
+    mean_mixture.volume = total_mass / mean_mixture.RHO
+    return mean_mixture
 
 
 def compare_mixtures(
@@ -3420,62 +4248,16 @@ def compare_mixtures(
             the max relative difference value
     """
     # check mixtures
-    if not isinstance(mixtureA, Mixture):
-        msg = [
-            Color.PURPLE,
-            "the first argument must be a Mixture object.",
-            Color.END,
-        ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
-        exit()
-    iErr = mixtureA.validate()
-    if iErr != 0:
-        msg = [
-            Color.PURPLE,
-            "the first mixture is not fully defined.",
-            Color.END,
-        ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
+    if not verify_mixture(mixtureA):
         exit()
     #
-    if not isinstance(mixtureB, Mixture):
-        msg = [
-            Color.PURPLE,
-            "the second argument must be a Mixture object.",
-            Color.END,
-        ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
-        exit()
-    iErr = mixtureB.validate()
-    if iErr != 0:
-        msg = [
-            Color.PURPLE,
-            "the second mixture is not fully defined.",
-            Color.END,
-        ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
+    if not verify_mixture(mixtureB):
         exit()
     # check chemistry sets
     if mixtureA.chemID != mixtureB.chemID:
         msg = [
             Color.PURPLE,
             "the Mixtures belong to different Chemistry Sets.\n",
-            Color.END,
-        ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
-        exit()
-    # check if the chemstry set is active
-    if not check_active_chemistryset(mixtureA.chemID):
-        msg = [
-            Color.PURPLE,
-            "the Chemistry Set associated with the Mixture is not currently active.\n",
-            Color.SPACEx6,
-            "activate Chemistry Set using the 'active()' method.",
             Color.END,
         ]
         this_msg = Color.SPACE.join(msg)

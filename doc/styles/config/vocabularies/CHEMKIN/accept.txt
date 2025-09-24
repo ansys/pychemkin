@@ -31,13 +31,19 @@ chem
 CHEMKIN
 Chemkin
 chemkin
+Cmix
 COx
 Cp
+cpu
+CPU
+cpus
+CPUs
 Curl
 current_dir
 Cv
 dCA
 dedent
+delta_time
 DI
 di
 Deoring
@@ -46,6 +52,8 @@ EGR
 eigen
 enablement
 endgas
+ENDGAS
+Endgas
 enums
 EOS
 eos
@@ -119,6 +127,7 @@ PSRCluster
 PSRnetwork_coupled
 psr
 ptb
+pymoo
 PyPI
 Python
 python

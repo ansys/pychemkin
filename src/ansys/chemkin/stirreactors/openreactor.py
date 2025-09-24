@@ -86,6 +86,8 @@ class openreactor(ReactorModel, SteadyStateSolver):
         # specify "reactor residence time" = "SETTAU" or
         # specify "reactor volume" = "SETVOLV"
         self.ProblemTypes = {"SETVOL": 1, "SETTAU": 2}
+        # text output control flag
+        self.suppress_output = False
 
     def set_inlet(self, extinlet: Stream):
         """
@@ -296,3 +298,9 @@ class openreactor(ReactorModel, SteadyStateSolver):
                 total number of external inlets to the reactor
         """
         return self.numbexternalinlets
+
+    def stop_output(self):
+        """
+        Stop the reactor model from writing text output to file
+        """
+        self.suppress_output = True

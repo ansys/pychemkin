@@ -21,6 +21,9 @@ def pytest_addoption(parser):
             "PFR",
             "PSR",
             "ERN",
+            "premixed",
+            "opposed",
+            "shock",
             "",
         ),
         default="all",
@@ -87,6 +90,9 @@ def pytest_collection_modifyitems(items):
         "TestClassPFR",
         "TestClassPSR",
         "TestClassERN",
+        "TestClassPremixed",
+        "TestClassOpposedFlame",
+        "TestClassShockTube",
         "TestCompareResults",
     ]
     class_mapping = {item: item.cls.__name__ for item in items}

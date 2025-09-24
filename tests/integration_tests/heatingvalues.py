@@ -24,6 +24,7 @@ import os
 import ansys.chemkin as ck
 from ansys.chemkin import Color
 from ansys.chemkin.logger import logger
+from ansys.chemkin.utilities import find_file
 import numpy as np  # number crunching
 
 # check working directory
@@ -126,12 +127,18 @@ m.close()
 #
 # set mechanism input files
 # including the full file path is recommended
+# note that the "year" in thermodynamic data file name could be different.
+# it's MFL2023 for Ansys Chemkin 2025R1, MFL2024 for 2025R2, ...
 MyGasMech.chemfile = mymechfile
-MyGasMech.thermfile = os.path.join(
+therm_dir = os.path.join(
     data_dir,
     "ModelFuelLibrary",
     "Full",
-    "Gasoline-Diesel-Biodiesel_PAH_NOx_therm_MFL2023.dat",
+)
+MyGasMech.thermfile = find_file(
+    therm_dir,
+    "Gasoline-Diesel-Biodiesel_PAH_NOx_therm_MFL",
+    "dat",
 )
 # pre-process
 iError = MyGasMech.preprocess()
@@ -217,6 +224,9 @@ for f in fuels:
     LHV[fuelcount] = -(Hburned - Hunburned) / fmass
     HHV[fuelcount] = -(Hburned - (Hunburned + heatvaporization * wmass)) / fmass
     fuelcount += 1
+
+# delete the local mechanism file just created
+os.remove(mymechfile)
 
 # display results
 print(f"Fuel Heating Values at {thistemperature} [K] and {thispressure*1.0e-6} [bar]\n")

@@ -104,8 +104,12 @@ explicit_order = [
     "../../examples/engine",
     "../../examples/PSR",
     "../../examples/PFR",
+    "../../examples/shock_tube",
     "../../examples/reactor_network",
     "../../examples/premixed_flame",
+    "../../examples/opposed_flow_flame",
+    "../../examples/multiprocessing",
+    "../../examples/advanced",
 ]
 example_order = sg_sorting.ExplicitOrder(explicit_order)
 # sphinx gallery configurations

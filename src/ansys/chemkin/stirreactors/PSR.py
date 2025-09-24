@@ -767,6 +767,9 @@ class perfectlystirredreactor(openreactor):
         msg = [Color.YELLOW, "running reactor simulation ...", Color.END]
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
+        # suppress text output to file
+        if self.suppress_output:
+            iErr = chemkin_wrapper.chemkin.KINAll0D_SuppressOutput()
         if Keyword.noFullKeyword:
             # use API calls
             retVal = self.__run_model()

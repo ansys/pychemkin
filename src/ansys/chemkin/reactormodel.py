@@ -647,10 +647,7 @@ class Profile:
         # special treatment for pressure profile
         factor = 1.0e0
         if self._profilekeyword == "PPRO":
-            if Keyword.noFullKeyword:
-                # use API calls: pressure profile units = dynes/cm2
-                pass
-            else:
+            if not Keyword.noFullKeyword:
                 # use Full Keywords: pressure units = atm
                 factor = Patm
         # assembly the profile keyword lines
@@ -782,12 +779,15 @@ class ReactorModel:
             "volume",
             "velocity",
             "flowrate",
+            "thermicity",
         ]
         self._speciesmode = "mass"
         self._numbsolutionpoints = 0
         self._solution_rawarray: dict[str, npt.ArrayLike] = {}
         self._numbsolutionmixtures = 0
         self._solution_mixturearray: list[Mixture] = []
+        # single point solution variables for transient models
+        self._solution_parameters: dict[str, Union[int, float]] = {}
         # initialize Chemkin-CFD-API
         if not check_chemistryset(self._chemset_index.value):
             # need to initialize Chemkin-CFD-API
@@ -1081,6 +1081,24 @@ class ReactorModel:
             else:
                 # new keyword
                 return self._numbprofiles, True
+
+    def clear_all_keywords(self):
+        """
+        Delete all existing keyword components
+        """
+        # number of keywords used
+        self._numbkeywords = 0
+        # list of keyword phrases used for easy searching
+        self._keyword_index.clear()
+        # list of keyword objects defined
+        self._keyword_list.clear()
+        # list of keyword lines
+        # (each line is a string consists of: '<keyword> <parameter>', i.e., _keyword_index + _keyword_parameters)
+        self._keyword_lines.clear()
+        # number of keyword lines
+        self._numblines = 0
+        # length of each keyword line
+        self._linelength.clear()
 
     def setprofile(
         self, key: str, x: npt.NDArray[np.double], y: npt.NDArray[np.double]
@@ -1423,6 +1441,26 @@ class ReactorModel:
         """
         return self.reactormixture.concentration
 
+    def set_molefractions(self, molefrac: npt.NDArray[np.double]):
+        """
+        (Re)set the reactor initial/guessed species mole fractions
+
+        Parameters
+        ----------
+            molefrac: 1-D double array, dimension = number of gas species
+        """
+        self.reactormixture.X = molefrac
+
+    def set_massfractions(self, massfrac: npt.NDArray[np.double]):
+        """
+        (Re)set the reactor initial/guessed species mass fractions
+
+        Parameters
+        ----------
+            molefrac: 1-D double array, dimension = number of gas species
+        """
+        self.reactormixture.Y = massfrac
+
     def list_composition(self, mode: str, option: str = " ", bound: float = 0.0e0):
         """
         List the gas mixture composition inside the reactor
@@ -1580,9 +1618,6 @@ class ReactorModel:
                     self.setkeyword(key="EPST", value=temperature_threshold)
                 if species_threshold is not None:
                     self.setkeyword(key="EPSS", value=species_threshold)
-            else:
-                # do nothing
-                pass
 
     def setROPanalysis(self, mode=True, threshold=None):
         """
@@ -1616,9 +1651,6 @@ class ReactorModel:
                 self.setkeyword(key="AROP", value=mode)
                 if threshold is not None:
                     self.setkeyword(key="EPSR", value=threshold)
-            else:
-                # do nothing
-                pass
 
     @property
     def realgas(self) -> bool:

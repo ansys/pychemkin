@@ -770,6 +770,9 @@ class SIengine(Engine):
         msg = [Color.YELLOW, "running SI engine simulation ...", Color.END]
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
+        # suppress text output to file
+        if self.suppress_output:
+            iErr = chemkin_wrapper.chemkin.KINAll0D_SuppressOutput()
         if Keyword.noFullKeyword:
             # use API calls
             retVal = self.__run_model()
@@ -789,3 +792,19 @@ class SIengine(Engine):
             logger.critical(this_msg)
 
         return retVal
+
+    def check_engine_knock(self) -> float:
+        """
+        Get the status of the engine knock analysis.
+
+        Returns
+        -------
+            knocking: double
+                end gas autoignition crank angle. if no ignition, returns -720 CA.
+        """
+        knockCA = -720.0
+        kk = c_double(0.0)
+        iErr = chemkin_wrapper.chemkin.KINAll0D_GetSIEngineKnockCA(kk)
+        if iErr == 0:
+            knockCA = kk.value
+        return knockCA

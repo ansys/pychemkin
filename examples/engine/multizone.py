@@ -160,7 +160,7 @@ fresh.pressure = 1.065 * ck.Patm
 # Many engines have the configuration for exhaust gas recirculation (EGR). Chemkin
 # engine models allow you to add the EGR mixture to the fresh fuel-air mixture entered
 # the cylinder. If the engine you are modeling has EGR, you should have the EGR ratio, which
-# is generally the volume ratio between the EGR mixture and the fresh fuel-air ratio.
+# is generally the volume ratio of the EGR mixture and the fresh fuel-air mixture.
 # However, because you know nothing about the composition of the exhaust gas, you cannot simply
 # combine these two mixtures. In this case, you use the ``get_EGR_mole_fraction()`` method to estimate
 # the major components of the exhaust gas from the combustion of the fresh fuel-air mixture. The
@@ -205,7 +205,7 @@ MyMZEngine.list_composition(mode="mole", bound=1.0e-8)
 # Set the required engine parameters as shown in the following code. These
 # engine parameters are used to describe the cylinder volume during the
 # simulation. The ``starting_CA`` argument should be the crank angle corresponding
-# to the cylinder IVC. The ``ending_CA`` is typically the EVC crank angle.
+# to the cylinder IVC. The ``ending_CA`` is typically the EVO crank angle.
 
 # cylinder bore diameter [cm]
 MyMZEngine.bore = 12.065
@@ -444,7 +444,7 @@ print(f"90% heat release CA = {HR90} [degree].\n")
 #   simulation.
 #
 thiszone = 1
-MyMZEngine.process_engine_solution(zoneID=thiszone)
+iErr = MyMZEngine.process_engine_solution(zoneID=thiszone)
 plottitle = "Zone " + str(thiszone) + " Solution"
 # get the number of solution time points
 solutionpoints = MyMZEngine.getnumbersolutionpoints()
@@ -476,7 +476,7 @@ for i in range(solutionpoints):
 
 # post-process cylinder-averged solution
 # do NOT set the zoneID parameter
-MyMZEngine.process_average_engine_solution()
+iErr = MyMZEngine.process_average_engine_solution()
 # get the cylinder volume profile
 cylindervolprofile = MyMZEngine.get_solution_variable_profile("volume")
 # create arrays for cylinder-averaged mixture density

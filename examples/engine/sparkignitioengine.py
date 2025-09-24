@@ -105,7 +105,7 @@ print(f"Number of gas reactions = {MyGasMech.IIGas:d}.")
 # Set up the stoichiometric gasoline-air mixture
 # ==============================================
 # You must set up the stoichiometric gasoline-air mixture for the subsequent
-# SI engine calculations. Here the ``X_by_Equivalence_Ratio()``method is used.
+# SI engine calculations. Here the ``X_by_Equivalence_Ratio()`` method is used.
 # You create the ``fuel`` and the ``air`` mixtures first. You then define the
 # *complete combustion product species* and provide the *additives* composition if applicable.
 # Finally, you simply set ``equivalenceratio=1`` to create the stoichiometric
@@ -168,7 +168,7 @@ fresh.pressure = fuelmixture.pressure
 # Many engines have the configuration for exhaust gas recirculation (EGR). Chemkin
 # engine models let you add the EGR mixture to the fresh fuel-air mixture entering
 # the cylinder. If the engine you are modeling has EGR, you should have the EGR ratio, which
-# is generally the volume ratio between the EGR mixture and the fresh fuel-air ratio.
+# is generally the volume ratio of the EGR mixture and the fresh fuel-air mixture.
 # However, because you know nothing about the composition of the exhaust gas, you cannot simply
 # combine these two mixtures. In this case, you use the ``get_EGR_mole_fraction()`` method to estimate
 # the major components of the exhaust gas from the combustion of the fresh fuel-air mixture. The
@@ -212,7 +212,7 @@ MyEngine.list_composition(mode="mole", bound=1.0e-8)
 # Set the required engine parameters as shown in the following code. These
 # engine parameters are used to describe the cylinder volume during the
 # simulation. The ``starting_CA`` argument should be the crank angle corresponding
-# to the cylinder IVC. The ``ending_CA`` argument is typically the EVC crank angle.
+# to the cylinder IVC. The ``ending_CA`` argument is typically the EVO crank angle.
 
 # cylinder bore diameter [cm]
 MyEngine.bore = 8.5
@@ -425,7 +425,7 @@ unburnedzone = 1
 burnedzone = 2
 zonestrings = ["Unburned Zone", "Burned Zone"]
 thiszone = burnedzone
-MyEngine.process_engine_solution(zoneID=thiszone)
+iErr = MyEngine.process_engine_solution(zoneID=thiszone)
 plottitle = zonestrings[thiszone - 1] + " Solution"
 # get the number of solution time points
 solutionpoints = MyEngine.getnumbersolutionpoints()
@@ -457,7 +457,7 @@ for i in range(solutionpoints):
     COprofile[i] = solutionmixture.X[COindex]
 
 # postprocess cylinder-averged solution
-MyEngine.process_average_engine_solution()
+iErr = MyEngine.process_average_engine_solution()
 # get the cylinder volume profile
 cylindervolprofile = MyEngine.get_solution_variable_profile("volume")
 # create arrays for cylinder-averaged mixture temperature

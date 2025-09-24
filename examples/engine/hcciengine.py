@@ -162,7 +162,7 @@ fresh.pressure = 1.065 * ck.Patm
 # Many engines have the configuration for exhaust gas recirculation (EGR). Chemkin
 # engine models allow you to add the EGR mixture to the fresh fuel-air mixture entered
 # the cylinder. If the engine that you are modeling has EGR, you should have the EGR ratio, which
-# is generally the volume ratio between the EGR mixture and the fresh fuel-air ratio.
+# is generally the volume ratio of the EGR mixture and the fresh fuel-air mixture.
 # However, you know nothing about the composition of the exhaust gas so you cannot simply combine
 # these two mixtures. In this case, you can use the ``get_EGR_mole_fraction()`` method to estimate
 # the major components of the exhaust gas from the combustion of the fresh fuel-air mixture. The
@@ -206,7 +206,7 @@ MyEngine.list_composition(mode="mole", bound=1.0e-8)
 # Set the required engine parameters as shown in the following code. These
 # engine parameters are used to describe the cylinder volume during the
 # simulation. The ``starting_CA`` should be the crank angle corresponding
-# to the cylinder IVC. The ``ending_CA`` is typically the EVC crank angle.
+# to the cylinder IVC. The ``ending_CA`` is typically the EVO crank angle.
 
 # cylinder bore diameter [cm]
 MyEngine.bore = 12.065
@@ -393,7 +393,7 @@ print(f"90% heat release CA = {HR90} [degree].\n")
 #
 
 # postprocess the solutions
-MyEngine.process_engine_solution()
+iErr = MyEngine.process_engine_solution()
 # get the number of solution time points
 solutionpoints = MyEngine.getnumbersolutionpoints()
 print(f"Number of solution points = {solutionpoints}.")

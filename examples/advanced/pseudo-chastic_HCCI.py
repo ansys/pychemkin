@@ -1,0 +1,640 @@
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+"""
+.. _ref_pseudo_HCCI_engine:
+
+==================================================================================================
+A multi-zone pseudo stochastic scheme to simulate a stratified-charged compression-ignition engine
+==================================================================================================
+
+For stratified-charge compression ignition (SCCI) engines, the multi-zone homogeneous charged
+compression ignition (HCCI) model can be applied to address the composition and temperature variations
+of the initial gas charge. The incylinder gas mixture at IVC is "grouped" to form several imaginary
+"fluid material zones" based on the local gas temperature and composition. Note that the "fluid material
+zone" does not have to form a single continuous volume of gas mass, rather it can be a collection of many
+small gas masses through out the cylinder.
+
+The multi-zone HCCI engine model assumes that fluid flow would simply relocate, distort, and break down
+(into smaller volumes) a "fluid material zone", and there is no mass or energy exchange between
+the zones. That is, the gas mass in a "fluid zone" will remain in the same zone during the course of
+the simulation. The only interaction allowed between the "fluid zones" is the pressure work that
+eliminates any pressure differences in the zones by changing the zonal volumes.
+
+The figure below provides a graphical overview of different variations of the HCCI engine model.
+
+ .. figure:: HCCI_evolution.png
+   :scale: 60 %
+   :alt: HCCI engine model evolution
+
+The pseudo-chastic SCCI (PSCCI) engine model described in this example assumes that the turbulence scalar
+mixing processes should act as the mechanism to facilitate the gas species and enthalpy exchange between
+different "fluid material zones". That is, the zonal masses remain the same but the gas species are
+allowed to move across the zone boundaries by turbulence diffusion. The turbulence diffusion effect is
+imitated by the stochastic micro mixing process. The micro mixing process will be perform at preset "pause"
+crank angles. The PSCCI engine model will stop at every "pause" crank angle to perform the micro mixing
+process and restart the simulation till the last "pause" crank angle (which should be the EVO) is reached.
+The micro mixing sub-model of the PSCCI engine has three model parameters: the micro mixing time step size
+(delta_time), the characteristic turbulence scalar mixing time scale (tau), and the mixing model parameter (Cmix). 
+The PSCCI engine model is termed "pseudo-chastic" instead of "stochastic" because it performs the micro mixing
+events less frequently than what is typically required for a stochastic simulation to reduce the simulation time.
+By increasing the number of the "pauses", the PSCCI engine model should behave more closely to a "true"
+stochastic model.
+
+This example intends to showcase the use of *PyChemkin* for fast prototyping a new model. The description emphasizes
+on the process of setting up the micro mixing model. You can refer to the multi-zone HCCI engine example for
+the steps of setting up the initial zonal properties of the PSCCI model. You can also compare the
+results from the PSCCI engine model in this example to the results from the multi-zone HCCI engine model to "extract"
+the impacts of the micro mixing process.
+
+Detailed descriptions of the micro-mixing model, for example, the modified Curl's model, and the HCCI engine model can
+be found in the "Partially stirred reactor model (PaSR)" and the "0-D engine model" sections of the
+"Chemkin Theory" manual, respectively. You can use the ``ansys.chemkin.manuals()`` method to get to the latest
+version of the Chemkin online manuals.
+"""
+
+# sphinx_gallery_thumbnail_path = '_static/plot_pseudo_HCCI_engine.png'
+
+################################################
+# Import PyChemkin packages and start the logger
+# ==============================================
+import copy
+import os
+
+import ansys.chemkin as ck  # Chemkin
+from ansys.chemkin import Color
+
+# Chemkin homogeneous charge compression ignition (HCCI) engine model (transient)
+from ansys.chemkin.engines.HCCI import HCCIengine
+from ansys.chemkin.logger import logger
+from ansys.chemkin.microprocess import MicroMixing
+from ansys.chemkin.utilities import random_pick_integers
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
+
+# check working directory
+current_dir = os.getcwd()
+logger.debug("working directory: " + current_dir)
+# set verbose mode
+ck.set_verbose(True)
+# set interactive mode for plotting the results
+# interactive = True: display plot
+# interactive = False: save plot as a PNG file
+global interactive
+interactive = True
+
+########################
+# Create a chemistry set
+# ======================
+# The mechanism to load is the GRI 3.0 mechanism for methane combustion.
+# This mechanism and its associated data files come with the standard Ansys Chemkin
+# installation in the ``/reaction/data`` directory.
+
+# set mechanism directory (the default Chemkin mechanism data directory)
+data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+mechanism_dir = data_dir
+# create a chemistry set based on the GRI mechanism
+MyGasMech = ck.Chemistry(label="GRI 3.0")
+# set mechanism input files
+# including the full file path is recommended
+MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
+MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
+MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+
+##############################
+# Preprocess the chemistry set
+# ============================
+
+# preprocess the mechanism files
+iError = MyGasMech.preprocess()
+
+#############################
+# Set up the fuel-air mixture
+# ============================
+# You must set up the fuel-air mixture inside the engine cylinder
+# right after the intake valve is closed. Here the ``X_by_Equivalence_Ratio()``
+# method is used. You create the ``fuelmixture`` and the ``air`` mixtures first.
+# You then define the *complete combustion product species* and provide the
+# *additives* composition if there is any. Finally, you set
+# the ``equivalenceratio`` value to create the fuel-air mixture. In this case,
+# the fuel mixture consists of methane, ethane, and propane as the simulated natural gas.
+# Because HCCI engines generally run on lean fuel-air mixtures, the equivalence ratio is
+# set to 0.8.
+
+# create the fuel mixture
+fuelmixture = ck.Mixture(MyGasMech)
+# set fuel composition
+fuelmixture.X = [("CH4", 0.9), ("C3H8", 0.05), ("C2H6", 0.05)]
+# setting pressure and temperature is not required in this case
+fuelmixture.pressure = 1.5 * ck.Patm
+fuelmixture.temperature = 400.0
+# create the oxidizer mixture: air
+air = ck.Mixture(MyGasMech)
+air.X = [("O2", 0.21), ("N2", 0.79)]
+# setting pressure and temperature is not required in this case
+air.pressure = 1.5 * ck.Patm
+air.temperature = 400.0
+# create the unburned fuel-air mixture
+fresh = ck.Mixture(MyGasMech)
+# products from the complete combustion of the fuel mixture and air
+products = ["CO2", "H2O", "N2"]
+# species mole fractions of added/inert mixture. can also create an additives mixture here
+add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
+# mean equivalence ratio
+equiv = 0.8
+iError = fresh.X_by_Equivalence_Ratio(
+    MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=equiv
+)
+# check fuel-oxidizer mixture creation status
+if iError != 0:
+    print("Error: Failed to create the fuel-oxidizer mixture.")
+    exit()
+
+# list the composition of the unburned fuel-air mixture
+fresh.list_composition(mode="mole")
+
+##########################################################
+# Specify pressure and temperature of the fuel-air mixture
+# ========================================================
+# Since you are going to use the ``fresh`` fuel-air mixture to instantiate the engine object later,
+# setting the mixture pressure and temperature is equivalent to setting
+# the initial temperature and pressure of the engine cylinder.
+fresh.temperature = 447.0
+fresh.pressure = 1.065 * ck.Patm
+
+#######################################
+# Add EGR to the fresh fuel-air mixture
+# =====================================
+# Many engines have the configuration for exhaust gas recirculation (EGR). Chemkin
+# engine models allow you to add the EGR mixture to the fresh fuel-air mixture entered
+# the cylinder. If the engine you are modeling has EGR, you should have the EGR ratio, which
+# is generally the volume ratio of the EGR mixture and the fresh fuel-air mixture.
+# However, because you know nothing about the composition of the exhaust gas, you cannot simply
+# combine these two mixtures. In this case, you use the ``get_EGR_mole_fraction()`` method to estimate
+# the major components of the exhaust gas from the combustion of the fresh fuel-air mixture. The
+# ``threshold=1.0e-8`` parameter tells the method to ignore any species with a mole fraction below
+# the threshold value. Once you have the EGR mixture composition, use the ``X_by_Equivalence_Ratio()``
+# method a second time to re-create the ``fresh`` fuel-air mixture  with the original
+# ``fuelmixture`` and ``air`` mixtures along with the EGR composition you just got as the
+# *"additives"*.
+EGRratio = 0.3
+# compute the EGR stream composition in mole fractions
+add_frac = fresh.get_EGR_mole_fraction(EGRratio, threshold=1.0e-8)
+# recreate the initial mixture with EGR
+iError = fresh.X_by_Equivalence_Ratio(
+    MyGasMech,
+    fuelmixture.X,
+    air.X,
+    add_frac,
+    products,
+    equivalenceratio=equiv,
+    threshold=1.0e-8,
+)
+
+# list the composition of the fuel+air+EGR mixture for verification
+fresh.list_composition(mode="mole", bound=1.0e-8)
+
+################################
+# Set up the HCCI engine reactor
+# ==============================
+# Use the ``HCCIengine()`` method to create a multi-zone HCCI engine named ``MyMZEngine``
+# and make the new ``fresh`` mixture as the initial incylinder gas mixture at IVC.
+# Set the ``nzones`` parameter to the number of zones in your multi-zone HCCI engine model.
+
+# create a five-zone HCCI engine
+numbzones = 5
+MyMZEngine = HCCIengine(reactor_condition=fresh, nzones=numbzones)
+# show initial gas composition inside the reactor
+MyMZEngine.list_composition(mode="mole", bound=1.0e-8)
+
+#############################
+# Set basic engine parameters
+# ===========================
+# Set the required engine parameters as shown in the following code. These
+# engine parameters are used to describe the cylinder volume during the
+# simulation. The ``starting_CA`` argument should be the crank angle corresponding
+# to the cylinder IVC. The ``ending_CA`` is typically the EVO crank angle.
+
+# cylinder bore diameter [cm]
+MyMZEngine.bore = 12.065
+# engine stroke [cm]
+MyMZEngine.stroke = 14.005
+# connecting rod length [cm]
+MyMZEngine.connecting_rod_length = 26.0093
+# compression ratio [-]
+MyMZEngine.compression_ratio = 16.5
+# engine speed [RPM]
+MyMZEngine.RPM = 1000
+
+# set other parameters
+# simulation start CA [degree]
+MyMZEngine.starting_CA = -142.0
+# simulation end CA [degree]
+MyMZEngine.ending_CA = 116.0
+
+# list the engine parameters
+MyMZEngine.list_engine_parameters()
+print(f"engine displacement volume {MyMZEngine.get_displacement_volume()} [cm3]")
+print(f"engine clearance volume {MyMZEngine.get_clearance_volume()} [cm3]")
+print(f"number of zone(s) = {MyMZEngine.get_number_of_zones()}")
+
+############################################
+# Set up the engine wall heat transfer model
+# ==========================================
+# By default, the engine cylinder is adiabatic. You must set up a
+# wall heat transfer model to include the heat loss effects in your
+# engine simulation. Chemkin support three widely used engine wall
+# heat transfer models. The models and their parameters follow.
+#
+# - ``dimensionless``: [<a> <b> <c> <Twall>]
+# - ``dimensional``: [<a> <b> <c> <Twall>]
+# - ``hohenburg``: [<a> <b> <c> <d> <e> <Twall>]
+#
+# There is also the in-cylinder gas velocity correlation
+# (the Woschni correlation) that is associated with the engine
+# wall heat transfer models. Here are the parameters of the Woschni
+# correlation:
+#
+# ``[<C11> <C12> <C2> <swirl ratio>]``
+#
+# You can also specify the surface areas of the piston head and the cylinder head
+# for more precision heat transfer wall area. By default, both the piston head and
+# the cylinder head surfaces are flat.
+
+heattransferparameters = [0.035, 0.71, 0.0]
+# set cylinder wall temperature [K]
+Twall = 400.0
+MyMZEngine.set_wall_heat_transfer("dimensionless", heattransferparameters, Twall)
+# in-cylinder gas velocity correlation parameter (Woschni)
+# [<C11> <C12> <C2> <swirl ratio>]
+GVparameters = [2.28, 0.308, 3.24, 0.0]
+MyMZEngine.set_gas_velocity_correlation(GVparameters)
+# set piston head top surface area [cm2]
+MyMZEngine.set_piston_head_area(area=124.75)
+# set cylinder clearance surface area [cm2]
+MyMZEngine.set_cylinder_head_area(area=123.5)
+
+######################
+# Set zonal properties
+# ====================
+# By default, all zones in the multi-zone HCCI engine model have the same
+# properties. You can artificially stratify the temperature and/or the equivalence
+# ratio distribution in the cylinder at the IVC by utilizing the ``set_zonal``
+# methods of the ``HCCI`` object.
+
+# initial zonal temperatures [K]
+ztemperature = [447.5, 447.5, 447, 447, 447]
+MyMZEngine.set_zonal_temperature(zonetemp=ztemperature)
+# initial zonal volume fractions
+zvolumefrac = [0.3, 0.25, 0.2, 0.2, 0.05]
+MyMZEngine.set_zonal_volume_fraction(zonevol=zvolumefrac)
+# initial wall heat transfer area fractions
+zHTarea = [0.0, 0.15, 0.2, 0.25, 0.4]
+MyMZEngine.set_zonal_heat_transfer_area_fraction(zonearea=zHTarea)
+# initial zonal equivalence ratios
+zphi = [equiv, equiv, equiv, equiv, equiv]
+MyMZEngine.set_zonal_equivalence_ratio(zonephi=zphi)
+# zonal EGR ratios
+zEGRR = [0.3, 0.3, 0.3, 0.35, 0.35]
+MyMZEngine.set_zonal_EGR_ratio(zoneegr=zEGRR)
+# set fuel "molar" composition
+MyMZEngine.define_fuel_composition([("CH4", 0.9), ("C3H8", 0.05), ("C2H6", 0.05)])
+# set oxidizer "molar' composition
+MyMZEngine.define_oxid_composition([("O2", 0.21), ("N2", 0.79)])
+# set products
+MyMZEngine.define_product_composition(["CO2", "H2O", "N2"])
+# set EGR composition in mole fractions
+zadd = [add_frac, add_frac, add_frac, add_frac, add_frac]
+MyMZEngine.define_additive_fractions(addfrac=zadd)
+
+####################
+# Set output options
+# ==================
+# You can turn on the adaptive solution saving to resolve the steep variations in the solution
+# profile. Here additional solution data points are saved for every 20*solver internal steps.
+# You must include the ``set_ignition_delay()`` method for the engine model to
+# report the ignition delay crank angle after the simulation is done. If ``method="T_inflection"`` is
+# set, the reactor model treats the inflection points in the predicted gas temperature profile
+# as the indication of an auto-ignition. You can choose a different auto-ignition definition.
+#
+# .. note::
+#
+#   - Type ``ansys.chemkin.show_ignition_definitions()`` to get the list of all available ignition
+#     delay time definitions in Chemkin.
+#
+#   - The ``set_ignition_delay()`` method is required for the engine model to report the ignition
+#     delay time for each zone as well as the cylinder averaged ignition delay time derived from
+#     the cylinder averaged temperature profile.
+#
+#   - By default, time/crank angle intervals for both print and save solution are 1/100 of the
+#     simulation duration, which in this case is :math:`dCA=(EVO-IVC)/100=2.58`\ . You can make
+#     the model report more frequently by using the ``CAstep_for_saving_solution()`` or the
+#     ``CAstep_for_printing_solution()`` method to set different interval values in the crank angle.
+#
+
+# set the number of crank angles between saving solution
+MyMZEngine.CAstep_for_saving_solution = 0.5
+# set the number of crank angles between printing solution
+MyMZEngine.CAstep_for_printing_solution = 10.0
+# turn on adaptive solution saving
+MyMZEngine.adaptive_solution_saving(mode=True, steps=20)
+# specify the ignition definitions
+MyMZEngine.set_ignition_delay(method="T_inflection")
+
+#####################
+# Set solver controls
+# ===================
+# You can overwrite the default solver controls by using solver-related methods, such as
+# those for tolerances.
+
+# set tolerances in tuple: (absolute tolerance, relative tolerance)
+MyMZEngine.tolerances = (1.0e-12, 1.0e-10)
+# get solver parameters
+ATOL, RTOL = MyMZEngine.tolerances
+print(f"Default absolute tolerance = {ATOL}.")
+print(f"Default relative tolerance = {RTOL}.")
+# turn on the force non-negative solutions option in the solver
+MyMZEngine.force_nonnegative = True
+# show solver and output options
+# show the number of crank angles between printing solution
+print(
+    f"Crank angles between solution printing: {MyMZEngine.CAstep_for_printing_solution}"
+)
+# show other transient solver setup
+print(f"Forced non-negative solution values: {MyMZEngine.force_nonnegative}")
+
+#########################################
+# Display the added parameters (keywords)
+# =======================================
+# Use the ``showkeywordinputlines()`` method to verify that the preceding parameters
+# are correctly assigned to the engine model.
+#
+MyMZEngine.showkeywordinputlines()
+
+################################################
+# Set up the 'pseudo-cgastic' micro mixing model
+# ==============================================
+# The 'pseudo-chastic' micro mixing model option is turned on by setting the flag ``do_micromixing``
+# to 'True'. Then you should set the 'pause' points for performing the 'stochastic' micro mixing process.
+# This can be achieved by using either the simulation intervals in crank angles or by specifying a series
+# of 'pause' crank angles. In this example, a series of 'pause points' are defined by the ``CAstops`` list.
+# The second steps is to set the parameters of the micro mixing model. The micro mixing model currently
+# available in the PSCCI engine model is the 'modified Curls model' which requires four parameters.
+# The micro mixing time step size is the time during for the micro mixing process, ``delta_time``. Typically,
+# this time step size should be kept comparable to the solver time step size. Since Chemkin transient solver works
+# differently from typical CFD solvers, the PSCCI engine model allows ``delta_time`` to be set independently of
+# the time step size used by the solver. Subsequently the PSCCI engine model performs the micro mixing process less
+# frequently and hence introduces larger bias and errors. In this example, ``delta_time`` is set to
+# the crank angle interval between the 'pause points'. The second parameter is the number of statistical events/particles
+# used in the stochastic process ``numb_particles``. The number of particles is related to the 'statistical error' of the
+# stochastic process. Typically 'statistical error' is inversely proportional to the square-root of the particle number.
+# For the case of multi-zone models, the number of particles should be more than 10 times of the number of zones.
+# The third parameter for the micro mixing model is the 'scalar mixing time scale' ``mixing_time_scale``.
+# This parameter controls the intensity (or the scope) of the molecule-level mixing by flow turbulence, and
+# its value should be set to the 'turbulence scalar mixing time scale' or the 'characteristic turbulence time scale'
+# of the incylinder flow. The last parameter is the mixing model dependent parameters ``Cmix``. For the 'modified Curls model',
+# the default ``Cmix`` value is 1.0. This parameter controls the 'completeness' of the mixing of the particles.
+# The higher the ``Cmix`` value, the closer the  particles resembling to each other after mixing. When ``Cmix`` is large enough,
+# the particles are well-mixed and become identical after mixing.
+#
+# When ``do_micro-mixing`` is set to 'True', the simulation will pause at each 'pause point'. Once the simulation is stopped,
+# the micro mixing process is initiated by instantiating a micro mixing object ``MicroMixing``. You will then specify the number of
+# particles to be used in the micro mixing stochastic process by the``set_numb_particles()`` method. You also have to extract the
+# gas mixture properties of each 'fluid zone' from the multi-zone solution at the 'pause time' by using
+# the ``get_last_zone_mixtures()`` method. You run the modified Curls micro mixing model by using the ``modified_curls()`` method
+# with the model parameters and the zonal mixture objects obtained from the latest multi-zone simulation solution.
+# Afterwards, use the ``restart()`` method with the updated zonal mixture properties from the micro mixing model to
+# run the multi-zone simulation to the next 'pause point'. Repeat these steps till the simulation reaches
+# the designated simulation end time (EVO).
+#
+# .. note::
+#   You can add more complexity to the model by including other processes during the pause. For example, you can imitate the ever-changing
+#   heat transfer area between the zones and the cylinder wall by randomly re-assigning the wall heat transfer area fractions of the zones.
+#   See the ``random_wall_area`` sections below for more details.
+#
+
+# set stopping/restarting CAs
+# the last stop CA should be the actual simulation end time EVO
+CAstops = [-50.0, -20.0, -10.0, -5.0, 0.0, 5.0, 10.0, 20.0, 116.0]
+
+# perform micro mixing process during restarts: set "do_micromixing = True"
+do_micromixing = True
+# do_micromixing = False
+# total number of particles for the pseudo-chastic process
+# the particles are shared among the zones in the HCCI engine
+# it is recommended that the number of partciles should > 10 times of the number of zones
+numb_particles = 400
+# turbulence scalar mixing time scale [sec]
+mixing_time_scale = 0.01
+# mixing model parameter Cmix
+mixing_model_parameter = 1.0
+
+# randomly rearrange zonal wall heat transfer area: set "random_wall_area = True"
+random_wall_area = False
+if random_wall_area:
+    # create a list for random pick
+    area_list: list[int] = []
+    for i in range(numbzones):
+        area_list.append(i+1)
+
+# solution profile sets
+crank_angle_data = []
+pressure_data = []
+temperature_data = []
+volume_data = []
+CO_data = []
+CH4_data = []
+NO_data = []
+
+zone_temperature_data = []
+zone_volume_data = []
+zone_CO_data = []
+
+####################
+# Run the simulation
+# ==================
+# Use the ``run()`` method to start the multi-zone HCCI engine simulation.
+
+runcount = 0
+#
+for endCA in CAstops:
+    # Run the simulation
+    if runcount == 0:
+        # simulation end CA [degree]
+        MyMZEngine.ending_CA = endCA
+        runstatus = MyMZEngine.run()
+        # check run status
+        if runstatus != 0:
+            # Run failed.
+            print(Color.RED + ">>> Run failed. <<<", end=Color.END)
+            exit()
+        # Run succeeded.
+        print(Color.GREEN + ">>> Run completed. <<<", end=Color.END)
+    else:
+        if random_wall_area:
+            # re-assign the zonal wall heat transfer fractions
+            picked, unpicked = random_pick_integers(numbzones, area_list)
+            print(str(picked))
+            this_area = copy.deepcopy(zHTarea)
+            for i, a in enumerate(picked):
+                this_area[i] = zHTarea[a - 1]
+            print(str(this_area))
+            MyMZEngine.set_zonal_heat_transfer_area_fraction(zonearea=this_area)
+        if do_micromixing:
+            # perform random micro mixing between particles
+            # the mixing time step size is the time duration from the previous stop CA
+            delta_time = MyMZEngine.get_Time(MyMZEngine.ending_CA) - MyMZEngine.get_Time(MyMZEngine.starting_CA)
+            # create a mixing instance
+            zonemixing = MicroMixing()
+            # set the total number of particles
+            zonemixing.set_numb_particles(numb_particles)
+            # set the zone mixture
+            zonemixtures = MyMZEngine.get_last_zone_mixtures()
+            zonemixing.set_particle_mixtures(zonemixtures)
+            # use the modified Curl's mixing model
+            mixed_zones = zonemixing.modified_curls(
+                delta_time, mixing_time_scale, mixing_model_parameter,
+            )
+            # restart run(s)
+            # reset the simulation end CA [degree]
+            runstatus = MyMZEngine.restart(endCA=endCA, new_mixtures=mixed_zones)
+        else:
+            # restart run(s)
+            # reset the simulation end CA [degree]
+            runstatus = MyMZEngine.restart(endCA=endCA)
+        # check run status
+        if runstatus != 0:
+            # Run failed.
+            print(Color.RED + ">>> Restart Run failed. <<<", end=Color.END)
+            exit()
+        # Run succeeded.
+        print(Color.GREEN + ">>> Restart Run completed. <<<", end=Color.END)
+
+####################################################
+# Postprocess the solution profiles in selected zone
+# ==================================================
+# The solution of the multi-zone HCCI engine model contains the results of
+# the individual zones plus the cylinder averaged results. This means that
+# if there are n zones in the multi-zone engine model, there are (n+1) solution
+# records: n zonal results and the cylinder averaged results.
+#
+# To process the result of the zone number :math:`j`\ , :math:`(1 \leq j \leq n)`\ , set the parameter
+# value of ``zoneID`` to :math:`j` when you call the engine postprocessor with the
+# ``process_engine_solution()`` method. Otherwise, the cylinder averaged results are
+# postprocessed by default, that is, when the ``zoneID`` parameter is omitted.
+#
+# .. note ::
+#   Because The ``process_engine_solution()`` method can process only one set of results at
+#   a time (one zonal result or the cylinder averaged result), you must
+#   postprocess the zones one by one to obtain all solution data of the multi-zone
+#   simulation.
+#
+    thiszone = 1
+    iErr = MyMZEngine.process_engine_solution(zoneID=thiszone)
+    plottitle = "Zone " + str(thiszone) + " Solution"
+    # get the number of solution time points
+    solutionpoints = MyMZEngine.getnumbersolutionpoints()
+    print(f"Number of solution points = {solutionpoints}.")
+    # get the time profile
+    timeprofile = MyMZEngine.get_solution_variable_profile("time")
+    # convert time to crank angle
+    CAprofile = np.zeros_like(timeprofile, dtype=np.double)
+    count = 0
+    for t in timeprofile:
+        CAprofile[count] = MyMZEngine.get_CA(timeprofile[count])
+        count += 1
+    # get the cylinder pressure profile
+    presprofile = MyMZEngine.get_solution_variable_profile("pressure")
+    presprofile *= 1.0e-6
+    # create arrays for cylinder-averaged mixture temperature
+    tempprofile = MyMZEngine.get_solution_variable_profile("temperature")
+    # get the zonal volume profile
+    volprofile = MyMZEngine.get_solution_variable_profile("volume")
+    # get the zonal CO mass fraction profile
+    COprofile = MyMZEngine.get_solution_variable_profile("CO")
+
+    # post-process cylinder-averged solution
+    # do NOT set the zoneID parameter
+    iErr = MyMZEngine.process_average_engine_solution()
+    # get the cylinder volume profile
+    cylindervolprofile = MyMZEngine.get_solution_variable_profile("volume")
+    # create arrays for cylinder-averaged mixture temperature
+    cylindertempprofile = MyMZEngine.get_solution_variable_profile("temperature")
+    # get the cylinder-averaged CO mass fraction profile
+    cylinderCOprofile = MyMZEngine.get_solution_variable_profile("CO")
+    # get the cylinder-averaged CH4 mass fraction profile
+    cylinderCH4profile = MyMZEngine.get_solution_variable_profile("CH4")
+    # get the cylinder-averaged NO mass fraction profile
+    cylinderNOprofile = MyMZEngine.get_solution_variable_profile("NO")
+
+    # store solution profiles
+    crank_angle_data.append(copy.deepcopy(CAprofile))
+    pressure_data.append(copy.deepcopy(presprofile))
+    volume_data.append(copy.deepcopy(cylindervolprofile))
+    temperature_data.append(copy.deepcopy(cylindertempprofile))
+    CO_data.append(copy.deepcopy(cylinderCOprofile))
+    CH4_data.append(copy.deepcopy(cylinderCH4profile))
+    NO_data.append(copy.deepcopy(cylinderNOprofile))
+    zone_volume_data.append(copy.deepcopy(volprofile))
+    zone_temperature_data.append(copy.deepcopy(tempprofile))
+    zone_CO_data.append(copy.deepcopy(COprofile))
+    # increase the run count
+    runcount += 1
+
+###################################
+# Plot the engine solution profiles
+# =================================
+# Plot the zonal and the cylinder averaged profiles from
+# the multi-zone HCCI engine simulation.
+#
+# .. note ::
+#   You can get profiles of the thermodynamic and the transport properties
+#   by applying ``Mixture`` utility methods to the solution mixtures.
+#
+plt.subplots(2, 2, sharex="col", figsize=(12, 6))
+plt.suptitle(plottitle, fontsize=16)
+for i in range(len(crank_angle_data)):
+    plt.subplot(221)
+    plt.plot(crank_angle_data[i], pressure_data[i], "r-")
+    plt.ylabel("Pressure [bar]")
+    plt.subplot(222)
+    plt.plot(crank_angle_data[i], zone_volume_data[i], "b-")
+    plt.plot(crank_angle_data[i], volume_data[i], "b--")
+    plt.ylabel("Volume [cm3]")
+    plt.legend(["Zone", "Cylinder"], loc="upper right")
+    plt.subplot(223)
+    plt.plot(crank_angle_data[i], zone_temperature_data[i], "g-")
+    plt.plot(crank_angle_data[i], temperature_data[i], "g--")
+    plt.xlabel("Crank Angle [degree]")
+    plt.ylabel("Temperature [K]")
+    plt.legend(["Zone", "Averaged"], loc="upper left")
+    plt.subplot(224)
+    plt.plot(crank_angle_data[i], zone_CO_data[i], "m-")
+    plt.plot(crank_angle_data[i], CO_data[i], "m--")
+    plt.xlabel("Crank Angle [degree]")
+    plt.ylabel("CO mass fraction [-]")
+    plt.legend(["Zone", "Averaged"], loc="upper left")
+# plot results
+if interactive:
+    plt.show()
+else:
+    plt.savefig("plot_pseudo_HCCI_engine.png", bbox_inches="tight")

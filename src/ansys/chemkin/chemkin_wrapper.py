@@ -424,6 +424,7 @@ chemkin.KINGetDiffusionCoeffs.argtypes = [
     np.ctypeslib.ndpointer(dtype=np.double, flags="F_CONTIGUOUS"),
 ]
 
+# mixture information
 chemkin.KINGetGasMixtureSpecificHeat.restype = ctypes.c_int
 chemkin.KINGetGasMixtureSpecificHeat.argtypes = [
     ctypes.POINTER(ctypes.c_int),
@@ -434,6 +435,32 @@ chemkin.KINGetGasMixtureSpecificHeat.argtypes = [
 chemkin.KINGetGasMixtureEnthalpy.restype = ctypes.c_int
 chemkin.KINGetGasMixtureEnthalpy.argtypes = [
     ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_double),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    ctypes.POINTER(ctypes.c_double),
+]
+chemkin.KINGetGasMixtureThermicity.restype = ctypes.c_int
+chemkin.KINGetGasMixtureThermicity.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    ctypes.POINTER(ctypes.c_double),
+]
+chemkin.KINGetGasMixtureSoundSpeed.restype = ctypes.c_int
+chemkin.KINGetGasMixtureSoundSpeed.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+]
+chemkin.KINGetGasPressure.restype = ctypes.c_int
+chemkin.KINGetGasPressure.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_double),
     ctypes.POINTER(ctypes.c_double),
     np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
     ctypes.POINTER(ctypes.c_double),
@@ -586,6 +613,16 @@ chemkin.KINGetGamma.argtypes = [
     np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
     ctypes.POINTER(ctypes.c_double),
 ]
+chemkin.KINRealGas_GetMixtureThermicity.restype = ctypes.c_int
+chemkin.KINRealGas_GetMixtureThermicity.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    ctypes.POINTER(ctypes.c_double),
+]
+
 # Batch reactor interfaces
 chemkin.KINAll0D_Setup.restype = ctypes.c_int
 chemkin.KINAll0D_Setup.argtypes = [
@@ -706,6 +743,11 @@ chemkin.KINAll0D_SetHeatTransfer.argtypes = [
 ]
 chemkin.KINAll0D_SetHeatTransferArea.restype = ctypes.c_int
 chemkin.KINAll0D_SetHeatTransferArea.argtypes = [ctypes.POINTER(ctypes.c_double)]
+chemkin.KINAll0D_SetMaxInletSize.restype = ctypes.c_int
+chemkin.KINAll0D_SetMaxInletSize.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_int),
+]
 # profile
 chemkin.KINAll0D_SetProfilePoints.restype = ctypes.c_int
 chemkin.KINAll0D_SetProfilePoints.argtypes = [ctypes.POINTER(ctypes.c_int)]
@@ -743,6 +785,13 @@ chemkin.KINAll0D_GetSolution.argtypes = [
     ctypes.POINTER(ctypes.c_double),
     np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
 ]
+chemkin.KINAll0D_GetSolution_perPSR.restype = ctypes.c_int
+chemkin.KINAll0D_GetSolution_perPSR.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+]
 chemkin.KINAll0D_GetSolnResponseSize.restype = ctypes.c_int
 chemkin.KINAll0D_GetSolnResponseSize.argtypes = [
     ctypes.POINTER(ctypes.c_int),
@@ -758,6 +807,13 @@ chemkin.KINAll0D_GetGasSolnResponse.argtypes = [
     np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
     np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
     np.ctypeslib.ndpointer(dtype=np.double, flags="F_CONTIGUOUS"),
+]
+chemkin.KINAll0D_GetGasHeatReleaseRate.restype = ctypes.c_int
+chemkin.KINAll0D_GetGasHeatReleaseRate.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_int),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
 ]
 chemkin.KINAll0D_GetIgnitionDelay.restype = ctypes.c_int
 chemkin.KINAll0D_GetIgnitionDelay.argtypes = [ctypes.POINTER(ctypes.c_double)]
@@ -777,6 +833,17 @@ chemkin.KINAll0D_GetEngineHeatRelease.argtypes = [
 ]
 chemkin.KINAll0D_GetExitMassFlowRate.restype = ctypes.c_int
 chemkin.KINAll0D_GetExitMassFlowRate.argtypes = [ctypes.POINTER(ctypes.c_double)]
+chemkin.KINAll0D_GetExitMassFlowRate_perPSR.restype = ctypes.c_int
+chemkin.KINAll0D_GetExitMassFlowRate_perPSR.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_double),
+]
+chemkin.KINAll0D_GetEngineIMEP.restype = ctypes.c_int
+chemkin.KINAll0D_GetEngineIMEP.argtypes = [ctypes.POINTER(ctypes.c_double)]
+chemkin.KINAll0D_GetSIEngineKnockCA.restype = ctypes.c_int
+chemkin.KINAll0D_GetSIEngineKnockCA.argtypes = [ctypes.POINTER(ctypes.c_double)]
+chemkin.KINAll0D_SuppressOutput.restype = ctypes.c_int
+chemkin.KINAll0D_SuppressOutput.argtypes = []
 # Premix interfaces
 chemkin.KINPremix_SetParameter.restype = ctypes.c_int
 chemkin.KINPremix_SetParameter.argtypes = [
@@ -811,10 +878,6 @@ chemkin.KINPremix_GetFlameMassFlux.argtypes = [
 ]
 # Oppdif interfaces
 chemkin.KINOppdif_SetInlet.restype = ctypes.c_int
-chemkin.KINOppdif_SetParameter.restype = ctypes.c_int
-chemkin.KINOppdif_CalculateFlame.restype = ctypes.c_int
-chemkin.KINOppdif_GetSolutionGridPoints.restype = ctypes.c_int
-chemkin.KINOppdif_GetSolution.restype = ctypes.c_int
 chemkin.KINOppdif_SetInlet.argtypes = [
     ctypes.POINTER(ctypes.c_char),
     ctypes.POINTER(ctypes.c_int),
@@ -823,35 +886,195 @@ chemkin.KINOppdif_SetInlet.argtypes = [
     ctypes.POINTER(ctypes.c_double),
     ctypes.POINTER(ctypes.c_int),
 ]
+chemkin.KINOppdif_SetStagWallTemp.restype = ctypes.c_int
+chemkin.KINOppdif_SetStagWallTemp.argtypes = [
+    ctypes.POINTER(ctypes.c_double),
+]
+chemkin.KINOppdif_SetParameter.restype = ctypes.c_int
 chemkin.KINOppdif_SetParameter.argtypes = [
     ctypes.POINTER(ctypes.c_char),
     ctypes.POINTER(ctypes.c_double),
 ]
-
+chemkin.KINOppdif_CalculateFlame.restype = ctypes.c_int
 chemkin.KINOppdif_CalculateFlame.argtypes = [
     ctypes.POINTER(ctypes.c_int),
     ctypes.POINTER(ctypes.c_int),
     ctypes.POINTER(ctypes.c_double),
     ctypes.POINTER(ctypes.c_double),
 ]
-chemkin.KINOppdif_GetSolutionGridPoints.argtypes = [ctypes.POINTER(ctypes.c_int)]
+chemkin.KINOppdif_GetSolutionGridPoints.restype = ctypes.c_int
+chemkin.KINOppdif_GetSolutionGridPoints.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+]
+chemkin.KINOppdif_GetSolution.restype = ctypes.c_int
 chemkin.KINOppdif_GetSolution.argtypes = [
     ctypes.POINTER(ctypes.c_int),
     ctypes.POINTER(ctypes.c_int),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="F_CONTIGUOUS"),
+]
+chemkin.KINOppdif_GetGlobalStrainRate.restype = ctypes.c_int
+chemkin.KINOppdif_GetGlobalStrainRate.argtypes = [
     ctypes.POINTER(ctypes.c_double),
     ctypes.POINTER(ctypes.c_double),
-    ctypes.POINTER(ctypes.POINTER(ctypes.c_double)),
-]  # np.ctypeslib.ndpointer(dtype=np.double, ndim=2, flags='C')]
-
+    ctypes.POINTER(ctypes.c_double),
+]
+chemkin.KINOppdif_GetMaxTemperature.restype = ctypes.c_int
+chemkin.KINOppdif_GetMaxTemperature.argtypes = [
+    ctypes.POINTER(ctypes.c_double),
+]
+chemkin.KINOppdif_GetMixtureFraction.restype = ctypes.c_int
+chemkin.KINOppdif_GetMixtureFraction.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+]
+chemkin.KINOppdif_GetAxialVelocity.restype = ctypes.c_int
+chemkin.KINOppdif_GetAxialVelocity.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+]
+chemkin.KINOppdif_GetStrainRates.restype = ctypes.c_int
+chemkin.KINOppdif_GetStrainRates.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+]
+chemkin.KINOppdif_GetVelocityField.restype = ctypes.c_int
+chemkin.KINOppdif_GetVelocityField.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+]
 chemkin.KINOppdif_GetSolnSpeciesIntegratedROP.restype = ctypes.c_int
 chemkin.KINOppdif_GetSolnSpeciesIntegratedROP.argtypes = [
     ctypes.POINTER(ctypes.c_int),
     ctypes.POINTER(ctypes.c_int),
     ctypes.POINTER(ctypes.c_int),
+    np.ctypeslib.ndpointer(dtype=np.int32, flags="C_CONTIGUOUS"),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+]
+# shock tube interfaces
+chemkin.KINShock_CalcIncidentShockWithBoundaryLayerCorrection.restype = ctypes.c_int
+chemkin.KINShock_CalcIncidentShockWithBoundaryLayerCorrection.argtypes = [
     ctypes.POINTER(ctypes.c_int),
-    ctypes.POINTER(ctypes.POINTER(ctypes.c_double)),
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+]
+chemkin.KINShock_CalcIncidentShockWithoutBoundaryLayerCorrection.restype = ctypes.c_int
+chemkin.KINShock_CalcIncidentShockWithoutBoundaryLayerCorrection.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+]
+chemkin.KINShock_CalcZNDWithBoundaryLayerCorrection.restype = ctypes.c_int
+chemkin.KINShock_CalcZNDWithBoundaryLayerCorrection.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+]
+chemkin.KINShock_CalcZNDWithoutBoundaryLayerCorrection.restype = ctypes.c_int
+chemkin.KINShock_CalcZNDWithoutBoundaryLayerCorrection.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+]
+chemkin.KINShock_CalcReflectedShock.restype = ctypes.c_int
+chemkin.KINShock_CalcReflectedShock.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+]
+chemkin.KINShock_SetParameter.restype = ctypes.c_int
+chemkin.KINShock_SetParameter.argtypes = [
+    ctypes.POINTER(ctypes.c_char),
+    ctypes.POINTER(ctypes.c_double),
+]
+chemkin.KINShock_GetSolution.restype = ctypes.c_int
+chemkin.KINShock_GetSolution.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+]
+chemkin.KINShock_GetSolnResponseSize.restype = ctypes.c_int
+chemkin.KINShock_GetSolnResponseSize.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+]
+chemkin.KINShock_GetGasSolnResponse.restype = ctypes.c_int
+chemkin.KINShock_GetGasSolnResponse.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_int),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="F_CONTIGUOUS"),
+]
+chemkin.KINShock_GetInductLengthSize.restype = ctypes.c_int
+chemkin.KINShock_GetInductLengthSize.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+]
+chemkin.KINShock_GetInductLengths.restype = ctypes.c_int
+chemkin.KINShock_GetInductLengths.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
+]
+chemkin.KINShock_GetGasStates.restype = ctypes.c_int
+chemkin.KINShock_GetGasStates.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_double),
 ]
 
+# other
 chemkin.KINGetMassFractionFromMoleFraction.restype = ctypes.c_int
 chemkin.KINGetMassFractionFromMoleFraction.argtypes = [
     ctypes.POINTER(ctypes.c_int),

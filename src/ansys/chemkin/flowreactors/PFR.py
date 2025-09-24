@@ -706,6 +706,9 @@ class PlugFlowReactor(BatchReactors):
         msg = [Color.YELLOW, "running reactor simulation ...", Color.END]
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
+        # suppress text output to file
+        if self.suppress_output:
+            iErr = chemkin_wrapper.chemkin.KINAll0D_SuppressOutput()
         if Keyword.noFullKeyword:
             # use API calls
             retVal = self.__run_model()
@@ -762,6 +765,10 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
         self._ambient_temperature = 3.0e2
         # external heat transfer area per reactor length [cm2/cm]
         self._heat_transfer_area = 0.0e0
+        # raw solution data structure
+        # GasHRR: heat release rate [erg/sec] due to gas-phase chemsitry
+        # GasHeatRelease: accumulated heat release [erg] due to gas-phase chemistry
+        self._solution_tags.append(["GasHRR", "GasHeatRelease"])
         # set up basic PFR parameters
         iErr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,

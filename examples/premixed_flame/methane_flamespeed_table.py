@@ -326,7 +326,7 @@ data_speed = [
 ###########################################
 # Plot the premixed flame solution profiles
 # =========================================
-# Plot the predicted flame speeds against the experimental data
+# Plot the predicted flame speeds against the experimental data.
 #
 
 plt.plot(data_equiv, data_speed, label="data", linestyle="", marker="^", color="blue")

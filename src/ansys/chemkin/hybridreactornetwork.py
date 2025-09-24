@@ -121,6 +121,15 @@ class ReactorNetwork:
         self.relaxation_factor = 1.0
         # convergence status of tear iteration
         self.tear_converged = False
+        # heat exchange between PSRs in the network
+        # number of heat exchange reactor pairs
+        self.numb_heat_exchange_pairs = 0
+        # heat exchange PSR pairs
+        self.heat_exchange_pair: list[tuple[int, int]] = []
+        # heat exchange apparent/effective heat transfer coefficients [cal/K-sec]
+        self.heat_exchange_coeffcients: list[float] = []
+        # heat loss from PSR due to heat exchange [cal/sec]
+        self.heat_exchange_rate_out: dict[int, float] = {}
         # run status
         self.network_run_status = -100
 
@@ -866,6 +875,121 @@ class ReactorNetwork:
             self.network_run_status = sum_status
         return self.network_run_status
 
+    def add_heat_exchange(
+        self,
+        reactor1: str,
+        reactor2: str,
+        heat_transfer_coeff: float,
+        heat_transfer_area: float,
+    ):
+        """
+        Add heat exchange connection between two PSRs in the network
+
+        Parameters
+        ----------
+            reactor1: string
+                label of the first PSR of the pairing
+            reactor2: string
+                label of the second PSR of the pairing
+            heat_transfer_coeff: double
+                apparent/effective heat transfer coefficient between the two PSRs [cal/cm2-K-sec]
+            heat_transfer_aree: double
+                effective heat transfer surface area between the two PSRs [cm2]
+        """
+        # find the reactor index from its label
+        idr1 = self.reactor_map.get(reactor1, 0)
+        idr2 = self.reactor_map.get(reactor2, 0)
+        # create heat exchange pair
+        this_pair = (idr1, idr2)
+        # check
+        iErr = 0
+        for count in range(2):
+            id = this_pair[count]
+            if id > 0:
+                if not isinstance(self.reactor_objects[id], PSR):
+                    # heat exchange is between PSRs only
+                    iErr += 1
+                    msg = [
+                        Color.PURPLE,
+                        "heat exchange is limited to PSR only,",
+                        self.get_reactor_label(id),
+                        "is not a PSR.",
+                        Color.END,
+                    ]
+                    this_msg = Color.SPACE.join(msg)
+                    logger.error(this_msg)
+            else:
+                # reactor named does not exist in the network
+                iErr += 1
+                msg = [
+                    Color.PURPLE,
+                    "cannot find reactor",
+                    self.get_reactor_label(id),
+                    "in the network.",
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+        # check heat tansfer coefficient
+        if heat_transfer_coeff < 0.0:
+            iErr += 1
+            msg = [
+                Color.PURPLE,
+                "heat transfer coefficient must >= 0.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+        # check heat transfer area
+        if heat_transfer_area < 0.0:
+            iErr += 1
+            msg = [
+                Color.PURPLE,
+                "heat transfer area must >= 0.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+        if iErr > 0:
+            exit()
+        # set up the heat exchange pair
+        self.numb_heat_exchange_pairs += 1
+        self.heat_exchange_pair.append(this_pair)
+        # heat transfer parameter between reactor 1 and reactor 2 [cal/K-sec]
+        self.heat_exchange_coeffcients.append(heat_transfer_coeff * heat_transfer_area)
+        self.heat_exchange_rate_out[idr1] = 0.0e0
+        self.heat_exchange_rate_out[idr2] = 0.0e0
+
+    def calculate_heat_exchange(self):
+        """
+        Calculate the net heat loss rates due to heat exchange
+        """
+        for count in range(self.numb_heat_exchange_pairs):
+            p = self.heat_exchange_pair[count]
+            idr1 = p[0]
+            idr2 = p[1]
+            rxtor1 = self.reactor_objects[idr1]
+            rxtor2 = self.reactor_objects[idr2]
+            # heat loss from reactor idr1 due to heat exchange with reactor idr2
+            h = self.heat_exchange_coeffcients[count]
+            q = (rxtor1.temperature - rxtor2.temperature) * h
+            # heat loss for reactor r1 [cal/sec]
+            q_ex = self.heat_exchange_rate_out.get(idr1, 0.0e0)
+            self.heat_exchange_rate_out[idr1] = q_ex + q
+            # heat addition (negative heat loss) for reactor r2 [cal/sec]
+            q_ex = self.heat_exchange_rate_out.get(idr2, 0.0e0)
+            self.heat_exchange_rate_out[idr2] = q_ex - q
+        # adjust the heat loss values of the affected PSRs by heat exchange
+        for id, q_ex in self.heat_exchange_rate_out.items():
+            #
+            rxtor = self.reactor_objects[id]
+            # get the existing user defined heat loss rate from the reactor [cal/sec]
+            q_loss = rxtor.heat_loss_rate
+            # add the heat loss due to heat exchange
+            q_loss += q_ex
+            # update the total reactor heat loss rate [cal/sec]
+            rxtor.heat_loss_rate = q_loss
+
     def run(self) -> int:
         """
         Solve the hybrid reactor network by solving the individual reactors in
@@ -882,10 +1006,24 @@ class ReactorNetwork:
         if self.outflow_altered:
             self.set_reactor_outflow()
         #
-        if self.numb_tearpoints == 0:
-            # there is no recycling tear stream in the network
+        if self.numb_tearpoints == 0 and self.numb_heat_exchange_pairs == 0:
+            # there is no recycling tear stream or heat exchange in the network
             run_status = self.run_without_tearstream()
         else:
+            # there are tearing points and/or heat exchange in the network
+            if self.numb_tearpoints == 0:
+                # no recycling stream but has heat exchange
+                # create a tear point for heat exchange from the first pairing
+                first_pair = self.heat_exchange_pair[0]
+                if first_pair[0] == 1:
+                    tear_psr = first_pair[1]
+                else:
+                    tear_psr = first_pair[0]
+                print(
+                    f"heat exchange {self.get_reactor_label(first_pair[0])} <=> {self.get_reactor_label(first_pair[1])}"
+                )
+                print(f"adding tear point at {self.get_reactor_label(tear_psr)}")
+                self.add_tearingpoint(self.get_reactor_label(tear_psr))
             # there are tear streams in the network
             run_status = self.run_with_tearstream()
         return run_status
@@ -1112,6 +1250,10 @@ class ReactorNetwork:
                         this_msg = Color.SPACE.join(msg)
                         logger.error(this_msg)
                         exit()
+                # update the heat transfer rates between the reactors due to heat exchange
+                if self.numb_heat_exchange_pairs > 0:
+                    # compute the heat exchange rates and assign them to the proper reactor
+                    self.calculate_heat_exchange()
                 # run the individual reactor model in order
                 reactor_run_status = rxtor.run()
                 # check status
