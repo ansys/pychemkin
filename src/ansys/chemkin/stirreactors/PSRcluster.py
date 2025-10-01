@@ -81,7 +81,7 @@ class PSRCluster(openreactor):
         # total external inlet mass flow rate into the PSR chain
         self.total_mass_flow_rate = 0.0
         # number of inlets per PSR
-        self._ninlets = np.zeros(len(config), dtype=int)
+        self._ninlets = np.zeros(len(config), dtype=np.int32)
         for psr in config:
             # check valid PSR objects
             if not isinstance(psr, PSR):
