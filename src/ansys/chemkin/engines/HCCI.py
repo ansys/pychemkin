@@ -111,7 +111,9 @@ class HCCIengine(Engine):
         # zonal wall heat transfer area fraction
         self.zoneHTarea: list[float] = []
         # zonal gas compositions in mole fraction (for zonalsetupmode =1)
-        self.zonemolefrac: list[npt.NDArray[np.double]] = []  # list of mole fraction arrays
+        self.zonemolefrac: list[
+            npt.NDArray[np.double]
+        ] = []  # list of mole fraction arrays
         # zonal equivalence ratios (for zonalsetupmode =2)
         self.zoneequivalenceratio: list[float] = []
         # fuel composition for all zones
@@ -961,7 +963,10 @@ class HCCIengine(Engine):
         # connecting rod length to crank radius ratio
         lolr = c_double(self.connectrodlength / self.crankradius)
         # set reactor initial conditions and geometry parameters
-        if self._reactortype.value == self.ReactorTypes.get("HCCI") and not self.restartrun:
+        if (
+            self._reactortype.value == self.ReactorTypes.get("HCCI")
+            and not self.restartrun
+        ):
             iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupHCCIInputs(
                 self._chemset_index,
                 c_double(self.IVCCA),
@@ -1381,6 +1386,10 @@ class HCCIengine(Engine):
         # suppress text output to file
         if self.suppress_output:
             iErr = chemkin_wrapper.chemkin.KINAll0D_SuppressOutput()
+            if iErr != 0:
+                msg = [Color.YELLOW, "failed to turn off text output.", Color.END]
+                this_msg = Color.SPACE.join(msg)
+                logger.info(this_msg)
         if self._nzones.value == 1 and Keyword.noFullKeyword:
             # single-zone HCCI
             # use API calls
@@ -1403,7 +1412,9 @@ class HCCIengine(Engine):
 
         return return_value
 
-    def restart(self, endCA: float, new_mixtures: Union[list[Stream], None] = None) -> int:
+    def restart(
+        self, endCA: float, new_mixtures: Union[list[Stream], None] = None
+    ) -> int:
         """
         Restart the engine simulation from the solution at the previous ending crank angle
 
@@ -1436,11 +1447,14 @@ class HCCIengine(Engine):
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
             exit()
+        zonemixtures: list[Stream] = []
         if new_mixtures is None:
             # set up the "new" initial conditions for this run
             zonemixtures = self.get_last_zone_mixtures()
         else:
-            if isinstance(new_mixtures[0], Union[Stream, Mixture]):
+            if isinstance(new_mixtures[0], Stream) or isinstance(
+                new_mixtures[0], Mixture
+            ):
                 if len(new_mixtures) != self._nzones.value:
                     msg = [
                         Color.PURPLE,
@@ -1455,9 +1469,8 @@ class HCCIengine(Engine):
                     exit()
                 else:
                     # set up the "new" initial conditions from the input parameter
-                    zonemixtures: list[Stream] = []
                     for m in new_mixtures:
-                       zonemixtures.append(copy.deepcopy(m))
+                        zonemixtures.append(copy.deepcopy(m))
             else:
                 msg = [
                     Color.PURPLE,
@@ -1479,7 +1492,7 @@ class HCCIengine(Engine):
         self.set_zonal_mixtures(zonemixtures)
         # set restart run flag
         self.restartrun = True
-        # clean all exisitng keywords
+        # clean all existing keywords
         self.clear_all_keywords()
         # run the "new" simulation
         return_value = self.run()

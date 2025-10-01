@@ -709,6 +709,10 @@ class PlugFlowReactor(BatchReactors):
         # suppress text output to file
         if self.suppress_output:
             iErr = chemkin_wrapper.chemkin.KINAll0D_SuppressOutput()
+            if iErr != 0:
+                msg = [Color.YELLOW, "failed to turn off text output.", Color.END]
+                this_msg = Color.SPACE.join(msg)
+                logger.info(this_msg)
         if Keyword.noFullKeyword:
             # use API calls
             retVal = self.__run_model()

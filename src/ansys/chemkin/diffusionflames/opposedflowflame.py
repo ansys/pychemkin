@@ -33,9 +33,9 @@ from ansys.chemkin.chemistry import (
     check_chemistryset,
     chemistryset_initialized,
     force_activate_chemistryset,
+    verify_version,
 )
 from ansys.chemkin.color import Color as Color
-from ansys.chemkin.chemistry import verify_version
 from ansys.chemkin.flame import Flame
 from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
@@ -243,7 +243,7 @@ class OpposedFlame(Flame):
         tag = "TPRO"
         if tag in self._profiles_index:
             # user temperature profile is provided
-            msg =[
+            msg = [
                 Color.PURPLE,
                 "a user temperature profile is already given,",
                 "this maximum temperature setting is ignored.",
@@ -255,7 +255,7 @@ class OpposedFlame(Flame):
         #
         if max_temp <= 200.0:
             # max temperature is too small
-            msg =[Color.PURPLE, "max temperature value must > 200K.", Color.END]
+            msg = [Color.PURPLE, "max temperature value must > 200K.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
             exit()
@@ -263,7 +263,7 @@ class OpposedFlame(Flame):
             # set maximum flame temperature value
             self.setkeyword("TMAX", max_temp)
 
-    def set_inlet_keywords(self,inlet: Stream) -> int:
+    def set_inlet_keywords(self, inlet: Stream) -> int:
         """
         Set the properties of the inlet stream
 
@@ -310,7 +310,6 @@ class OpposedFlame(Flame):
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
         return iErr
-
 
     def __run_model(self) -> int:
         """
@@ -385,7 +384,9 @@ class OpposedFlame(Flame):
                         # string type value: just assign the keyword value to 0.0
                         this_value = c_double(0.0)
                     # set the keyword
-                    iErrc = chemkin_wrapper.chemkin.KINOppdif_SetParameter(this_key, this_value)
+                    iErrc = chemkin_wrapper.chemkin.KINOppdif_SetParameter(
+                        this_key, this_value
+                    )
                     if iErrc == 2:
                         # keyword is not available
                         msg = [
@@ -539,7 +540,7 @@ class OpposedFlame(Flame):
             logger.error(this_msg)
             exit()
         # insert the continuation keyword
-        key_continue = bytes("CNTN", "utf-8") 
+        key_continue = bytes("CNTN", "utf-8")
         this_value = c_double(0.0)
         iErr = chemkin_wrapper.chemkin.KINOppdif_SetParameter(key_continue, this_value)
         status += iErr
@@ -708,7 +709,8 @@ class OpposedFlame(Flame):
         npoint = c_int(npoints)
         mix_frac = np.zeros_like(pos, dtype=np.double)
         iErr = chemkin_wrapper.chemkin.KINOppdif_GetMixtureFraction(
-            npoint, mix_frac,
+            npoint,
+            mix_frac,
         )
         if iErr != 0:
             msg = [
@@ -832,7 +834,7 @@ class OpposedFlame(Flame):
         frac = np.zeros(self.numbspecies, dtype=np.double)
         # get solution variable profile from the raw solution arrays
         temp = self.get_solution_variable_profile("temperature")
-        # get the 
+        # get the
         axial_vel = self.get_solution_variable_profile("axial_velocity")
         # loop over all species
         for sp in self._specieslist:
@@ -1004,7 +1006,7 @@ class OpposedFlame_Planar(OpposedFlame):
                 reactor name
         """
         # initialization
-        OpposedFlame.__init__(fuel_stream=fuel_stream, label=label)
+        super().__init__(fuel_stream=fuel_stream, label=label)
         # define coordinates
         self._geomkey = "PLAN"
         # FORTRAN file unit of the text output file

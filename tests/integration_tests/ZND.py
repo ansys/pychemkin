@@ -24,11 +24,11 @@ import time
 
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
+from ansys.chemkin.inlet import Stream
+from ansys.chemkin.logger import logger
 
 # chemkin plug flow reactor model
 from ansys.chemkin.shock.shocktubereactors import ZNDCalculator as ZND
-from ansys.chemkin.inlet import Stream
-from ansys.chemkin.logger import logger
 from ansys.chemkin.utilities import find_file
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
@@ -43,7 +43,9 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data", "ModelFuelLibrary", "Skeletal")
+data_dir = os.path.join(
+    ck.ansys_dir, "reaction", "data", "ModelFuelLibrary", "Skeletal"
+)
 mechanism_dir = data_dir
 # create a chemistry set based on the MFL 2021 hydrogen mechanism
 MyGasMech = ck.Chemistry(label="hydrogen")

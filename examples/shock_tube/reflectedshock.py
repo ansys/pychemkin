@@ -59,11 +59,11 @@ import time
 
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
+from ansys.chemkin.inlet import Stream
+from ansys.chemkin.logger import logger
 
 # chemkin plug flow reactor model
 from ansys.chemkin.shock.shocktubereactors import ReflectedShock
-from ansys.chemkin.inlet import Stream
-from ansys.chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 
 # check working directory
@@ -150,7 +150,9 @@ n2o_mixture.X = [("AR", 0.9899), ("N2O", 0.0101)]
 state3_den = 0.00015937
 n2o_mixture.set_pressure_by_density(rho=state3_den)
 # check the pressure value
-print(f"Gas pressure after the reflected shock = {n2o_mixture.pressure / ck.Patm} [atm].")
+print(
+    f"Gas pressure after the reflected shock = {n2o_mixture.pressure / ck.Patm} [atm]."
+)
 #
 ######################################
 # Create the shock tube reactor object

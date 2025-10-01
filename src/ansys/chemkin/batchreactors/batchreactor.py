@@ -1279,6 +1279,10 @@ class BatchReactors(reactor):
         # suppress text output to file
         if self.suppress_output:
             iErr = chemkin_wrapper.chemkin.KINAll0D_SuppressOutput()
+            if iErr != 0:
+                msg = [Color.YELLOW, "failed to turn off text output.", Color.END]
+                this_msg = Color.SPACE.join(msg)
+                logger.info(this_msg)
         # reset run status
         self.setrunstatus(code=-100)
         if Keyword.noFullKeyword:
@@ -1917,7 +1921,7 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
         # raw solution data structure
         # GasHRR: heat release rate [erg/sec] due to gas-phase chemsitry
         # GasHeatRelease: accumulated heat release [erg] due to gas-phase chemistry
-        self._solution_tags.append("gashrr") 
+        self._solution_tags.append("gashrr")
         self._solution_tags.append("gasheatrelease")
         # set up basic batch reactor parameters
         iErr = chemkin_wrapper.chemkin.KINAll0D_Setup(
@@ -2343,7 +2347,7 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
         # raw solution data structure
         # GasHRR: heat release rate [erg/sec] due to gas-phase chemsitry
         # GasHeatRelease: accumulated heat release [erg] due to gas-phase chemistry
-        self._solution_tags.append("gashrr") 
+        self._solution_tags.append("gashrr")
         self._solution_tags.append("gasheatrelease")
         # set up basic batch reactor parameters
         iErr = chemkin_wrapper.chemkin.KINAll0D_Setup(
@@ -2599,13 +2603,12 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
             return iErr
 
 
-@staticmethod
 def calculate_effective_activation_energy(
     initial_mixture: Mixture,
     duration: float = 0.01,
     perturb: float = 0.02,
     model: str = "CONV",
-    ) -> tuple[float, float]:
+) -> tuple[float, float]:
     """
     Estimate the effective reduced activation energy of a gas-phase combustion mechanism
     at the given mixture condition.
@@ -2616,7 +2619,7 @@ def calculate_effective_activation_energy(
             the condition of the reference gas mixture
         duration: double, optional, default = 0.01 [sec]
             reactor simulation time [sec]
-        pertub: double, optional, default = 0.02 (2%)
+        perturb: double, optional, default = 0.02 (2%)
             the size (fraction) of the perturbation
         model: string, {"CONP", "CONV"}
             the reactor model to be used to estimate the activation energy
@@ -2645,7 +2648,9 @@ def calculate_effective_activation_energy(
     if model.upper() == "CONV":
         rxtor = GivenVolumeBatchReactor_EnergyConservation(initial_mixture, label=model)
     elif model.upper() == "CONP":
-        rxtor = GivenPressureBatchReactor_EnergyConservation(initial_mixture, label=model)
+        rxtor = GivenPressureBatchReactor_EnergyConservation(
+            initial_mixture, label=model
+        )
     else:
         msg = [
             Color.PURPLE,
@@ -2664,7 +2669,7 @@ def calculate_effective_activation_energy(
     temp_base = initial_mixture.temperature
     dtemp = temp_base * perturb
     # set the run parameters
-    temps: float = []
+    temps: list[float] = []
     temps.append(temp_base + dtemp)
     temps.append(temp_base - dtemp)
     # reactor set up
@@ -2679,7 +2684,7 @@ def calculate_effective_activation_energy(
     # tolerances are given in tuple: (absolute tolerance, relative tolerance)
     rxtor.tolerances = (1.0e-10, 1.0e-8)
     # run the parameter study
-    delaytime: float = []
+    delaytime: list[float] = []
     for t in temps:
         # reset the initial reactor temperature
         rxtor.temperature = t
@@ -2721,11 +2726,11 @@ def calculate_effective_activation_energy(
             exit()
     # estimate the effective reduced activation energy
     termn = np.log(delaytime[0]) - np.log(delaytime[1])
-    termd = (1.0e0/temps[0] - 1.0e0/temps[1])
+    termd = 1.0e0 / temps[0] - 1.0e0 / temps[1]
     reduced_Eact = termn / termd / temp_base
     reduced_Eact = max(reduced_Eact, 0.0e0)
     # effect activation energy [cal/mol]
-    activation_energy =  reduced_Eact * RGas_Cal * temp_base
+    activation_energy = reduced_Eact * RGas_Cal * temp_base
     # clean up
     del rxtor
     return reduced_Eact, activation_energy

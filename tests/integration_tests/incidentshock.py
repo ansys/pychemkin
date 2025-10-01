@@ -24,11 +24,11 @@ import time
 
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
+from ansys.chemkin.inlet import Stream
+from ansys.chemkin.logger import logger
 
 # chemkin plug flow reactor model
 from ansys.chemkin.shock.shocktubereactors import IncidentShock
-from ansys.chemkin.inlet import Stream
-from ansys.chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 
 # check working directory

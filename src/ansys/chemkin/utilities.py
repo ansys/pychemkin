@@ -523,7 +523,9 @@ def random(range: Union[None, tuple[float, float]] = None) -> float:
         return range[0] + ck_rng.random() * width
 
 
-def random_pick_integers(numb_picks: int, source_integers: list[int]) -> tuple[list[int], list[int]]:
+def random_pick_integers(
+    numb_picks: int, source_integers: list[int]
+) -> tuple[list[int], list[int]]:
     """
     Return a list of unique integers randomly selected from the source integer list
     The total number of the random integers to be picked, numb_picks, must be
@@ -580,7 +582,7 @@ def random_pick_integers(numb_picks: int, source_integers: list[int]) -> tuple[l
         # add the value of the slot to the picked list
         picked_list.append(source_integers[slot - 1])
         if slot != arrow:
-            # swap the values of the picked slot and the last avaiable slot
+            # swap the values of the picked slot and the last available slot
             id1 = slot - 1
             id2 = arrow - 1
             replaced = source_integers[id1]
@@ -625,7 +627,7 @@ def find_file(filepath: str, partialfilename: str, fileext: str) -> str:
 def interpolate_point(
     x_value: float,
     x_array: Union[list[float], npt.NDArray[np.double]],
-    y_array: Union[list[float], npt.NDArray[np.double]]
+    y_array: Union[list[float], npt.NDArray[np.double]],
 ) -> tuple[int, float]:
     """
     Get the y value from the given x value based on the given
@@ -645,7 +647,7 @@ def interpolate_point(
         indexJP: integer
             the x_array index where x(indexJP - 1) < x_value <= x(indexJP)
         y_value: double
-            the interpolated y value: y_value = f(x_value) 
+            the interpolated y value: y_value = f(x_value)
     """
     # check array lengths
     if len(x_array) != len(y_array):
@@ -677,11 +679,12 @@ def interpolate_point(
         logger.error(this_msg)
         exit()
     # find the x range and verify x_array is monotonic
-    # ascending order: up = Ture
+    # ascending order: up = True
     change = xlast - x0
     not_good = np.isclose(np.abs(change), 0.0, atol=1.0e-8)
     if not not_good:
         up = change > 0.0
+        x_old = xlast
         #
         for j, x in enumerate(x_array):
             if j > 0:
@@ -721,6 +724,7 @@ def interpolate_point(
                 y_value = (1.0e0 - frac) * y_array[j] + frac * y_array[j - 1]
                 return j, y_value
     return -1, 0.0
+
 
 class workingFolders:
     def __init__(self, dir_name: str, root_dir: str):
@@ -780,7 +784,7 @@ class workingFolders:
 
     def done(self):
         """
-        Change back to the root direcory
+        Change back to the root directory
         """
         # change to the working directory for this run
         os.chdir(self.root_dir)

@@ -24,13 +24,13 @@ import time
 
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
-from ansys.chemkin.stirreactors.PSRcluster import PSRCluster as ERN
 from ansys.chemkin.inlet import Mixture
 from ansys.chemkin.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.logger import logger
 
 # Chemkin PSR model (steady-state)
 from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
+from ansys.chemkin.stirreactors.PSRcluster import PSRCluster as ERN
 import numpy as np  # number crunching
 
 # check working directory
@@ -179,8 +179,12 @@ print()
 iErr = PSRcluster.process_cluster_solution()
 
 # verify the mass flow rate in and out of the PSR cluster
-print(f"net external inlet mass flow rate = {PSRcluster.total_inlet_mass_flow_rate} [g/sec].")
-print(f"net outlet mass flow rate = {PSRcluster.get_cluster_outlet_flowrate()} [g/sec].")
+print(
+    f"net external inlet mass flow rate = {PSRcluster.total_inlet_mass_flow_rate} [g/sec]."
+)
+print(
+    f"net outlet mass flow rate = {PSRcluster.get_cluster_outlet_flowrate()} [g/sec]."
+)
 
 # display the reactor solutions
 print("=" * 10)

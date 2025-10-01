@@ -94,11 +94,11 @@ phi = 0.6
 # create mixture by using the equivalence ratio
 iError = premixed.X_by_Equivalence_Ratio(
     MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=phi
-    )
+)
 # check fuel-oxidizer mixture creation status
 if iError != 0:
     print(
-        + "Error: failed to create the methane-air mixture "
+        +"Error: failed to create the methane-air mixture "
         + "for equivalence ratio = "
         + str(phi)
     )
@@ -146,7 +146,7 @@ for i in range(points):
     flamespeed[i] = flamespeedcalculator.get_flame_speed()
     # print the predicted laminar flame speed
     print(
-        f"methane-air equivalance ratio = {phi} :\n"
+        f"methane-air equivalence ratio = {phi} :\n"
         + f"the predicted laminar flame speed = {flamespeed[i]} [cm/sec]"
     )
     #

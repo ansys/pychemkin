@@ -51,17 +51,17 @@ study can be run in parallel with each case running on a designated CPU core.
 # Import PyChemkin packages and start the logger
 # ==============================================
 
+from concurrent.futures import ProcessPoolExecutor
 import os
 import time
 
 import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.logger import logger
-from ansys.chemkin.utilities import workingFolders
 
 # chemkin spark ignition (SI) engine model (transient)
 from ansys.chemkin.engines.SI import SIengine
-from concurrent.futures import ProcessPoolExecutor
+from ansys.chemkin.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.logger import logger
+from ansys.chemkin.utilities import workingFolders
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
@@ -94,6 +94,7 @@ class SIengineCalculator:
     """
     SI engine calculator with fixed set up parameters
     """
+
     def __init__(self, fresh_mixture: Stream, index: int, start_combustion: float):
         """
         SI engine calculator that instantiates an SI engine object with
@@ -110,7 +111,7 @@ class SIengineCalculator:
                 start of combustion crank angle [CA]
         """
         # instantiate an SI engine object
-        # set up the run and working direcotry name
+        # set up the run and working directory name
         self.name = "SI_engine_" + str(index)
         # instantiate the SIengine object for this run
         self.SIcalculator = SIengine(fresh_mixture, label=self.name)
@@ -129,7 +130,7 @@ class SIengineCalculator:
         # set burn profile
         # use fixed Wiebe function
         wiebe_b = 7.0
-        wiebe_n = 4.0 
+        wiebe_n = 4.0
         duration = 45.6  # degrees
         self.set_burn_profile(start_combustion, duration, wiebe_n, wiebe_b)
 
@@ -143,15 +144,19 @@ class SIengineCalculator:
         if self.runstatus == 0:
             # postprocess the unburned zone solution
             unburnedzone = 1
-            burnedzone = 2
+            # burnedzone = 2
             iErr = self.SIcalculator.process_engine_solution(zoneID=unburnedzone)
             if iErr == 0:
                 # get the engine knock (end-gas auto-ignition) occurrence crank angle [CA]
                 # if no engine knock, the value = -720 CA
                 # because the memory is shared, it must be done as soon as the run is finished
                 self.knock_CA = self.SIcalculator.check_engine_knock()
-                temperature = self.SIcalculator.get_solution_variable_profile("temperature")
-                thermicity = self.SIcalculator.get_solution_variable_profile("thermicity")
+                temperature = self.SIcalculator.get_solution_variable_profile(
+                    "temperature"
+                )
+                thermicity = self.SIcalculator.get_solution_variable_profile(
+                    "thermicity"
+                )
                 self.max_temp = np.max(temperature)
                 self.max_sigma = np.max(thermicity)
                 self.IMEP = self.SIcalculator.get_engine_IMEP()
@@ -186,7 +191,9 @@ class SIengineCalculator:
         heattransferparameters = [0.1, 0.8, 0.0]
         # set cylinder wall temperature [K]
         Twall = 434.0
-        self.SIcalculator.set_wall_heat_transfer("dimensionless", heattransferparameters, Twall)
+        self.SIcalculator.set_wall_heat_transfer(
+            "dimensionless", heattransferparameters, Twall
+        )
         # in-cylinder gas velocity correlation parameter (Woschni)
         # [<C11> <C12> <C2> <swirl ratio>]
         GVparameters = [2.28, 0.318, 0.324, 0.0]
@@ -215,7 +222,13 @@ class SIengineCalculator:
         # suppress text output
         self.SIcalculator.stop_output()
 
-    def set_burn_profile(self, start_combustion: float, burn_duration: float, wiebe_n: float, wiebe_b: float):
+    def set_burn_profile(
+        self,
+        start_combustion: float,
+        burn_duration: float,
+        wiebe_n: float,
+        wiebe_b: float,
+    ):
         """
         Set up the fuel burn rate profile
 
@@ -242,6 +255,7 @@ class SIengineCalculator:
 # Each object represents one parameter study case and will be run on an designated cpu core
 # when the parameter study is executed.
 
+
 def SIengine_run(case: tuple[int, float]) -> tuple[float, float, float, float, float]:
     """
     Set up the parameter study runs for multi-processing.
@@ -264,16 +278,16 @@ def SIengine_run(case: tuple[int, float]) -> tuple[float, float, float, float, f
         IMEP: double
             indicated mean effective pressure [bar]
     """
-##########################################
-# Create an instance of the Chemistry Set
-# ========================================
-# For PRF, the encrypted 14-component gasoline mechanism, ``gasoline_14comp_WBencrypted.inp``,
-# is used. The chemistry set is named ``gasoline``.
-#
-# .. note::
-#   Because this gasoline mechanism does not come with any transport data, you do not need to provide
-#   a transport data file.
-#
+    ##########################################
+    # Create an instance of the Chemistry Set
+    # ========================================
+    # For PRF, the encrypted 14-component gasoline mechanism, ``gasoline_14comp_WBencrypted.inp``,
+    # is used. The chemistry set is named ``gasoline``.
+    #
+    # .. note::
+    #   Because this gasoline mechanism does not come with any transport data, you do not need to provide
+    #   a transport data file.
+    #
     # case index
     index = case[0]
     # start of combustion crank angle
@@ -290,24 +304,24 @@ def SIengine_run(case: tuple[int, float]) -> tuple[float, float, float, float, f
     # including the full file path is recommended
     MyGasMech.chemfile = os.path.join(mechanism_dir, "gasoline_14comp_WBencrypt.inp")
 
-#######################################
-# Preprocess the gasoline chemistry set
-# =====================================
+    #######################################
+    # Preprocess the gasoline chemistry set
+    # =====================================
 
     # preprocess the mechanism files
     iError = MyGasMech.preprocess()
 
-################################################
-# Set up the stoichiometric gasoline-air mixture
-# ==============================================
-# You must set up the stoichiometric gasoline-air mixture for the subsequent
-# SI engine calculations. Here the ``X_by_Equivalence_Ratio()`` method is used.
-# You create the ``fuel`` and the ``air`` mixtures first. You then define the
-# *complete combustion product species* and provide the *additives* composition if applicable.
-# Finally, you simply set ``equivalenceratio=1`` to create the stoichiometric
-# gasoline-air mixture.
-#
-# For PRF 90 gasoline, the recipe is ``[("ic8h18", 0.9), ("nc7h16", 0.1)]``.
+    ################################################
+    # Set up the stoichiometric gasoline-air mixture
+    # ==============================================
+    # You must set up the stoichiometric gasoline-air mixture for the subsequent
+    # SI engine calculations. Here the ``X_by_Equivalence_Ratio()`` method is used.
+    # You create the ``fuel`` and the ``air`` mixtures first. You then define the
+    # *complete combustion product species* and provide the *additives* composition if applicable.
+    # Finally, you simply set ``equivalenceratio=1`` to create the stoichiometric
+    # gasoline-air mixture.
+    #
+    # For PRF 90 gasoline, the recipe is ``[("ic8h18", 0.9), ("nc7h16", 0.1)]``.
 
     # create the fuel mixture
     fuelmixture = ck.Mixture(MyGasMech)
@@ -338,31 +352,31 @@ def SIengine_run(case: tuple[int, float]) -> tuple[float, float, float, float, f
         MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=equiv
     )
 
-##########################################################
-# Specify pressure and temperature of the fuel-air mixture
-# ========================================================
-# Since you are going to use ``fresh`` fuel-air mixture to instantiate
-# the engine object later, setting the mixture pressure and temperature
-# is equivalent to setting the initial temperature and pressure of the
-# engine cylinder.
+    ##########################################################
+    # Specify pressure and temperature of the fuel-air mixture
+    # ========================================================
+    # Since you are going to use ``fresh`` fuel-air mixture to instantiate
+    # the engine object later, setting the mixture pressure and temperature
+    # is equivalent to setting the initial temperature and pressure of the
+    # engine cylinder.
     fresh.temperature = fuelmixture.temperature
     fresh.pressure = fuelmixture.pressure
 
-###########################################
-# Add EGR to the fresh fuel-air mixture
-# =========================================
-# Many engines have the configuration for exhaust gas recirculation (EGR). Chemkin
-# engine models let you add the EGR mixture to the fresh fuel-air mixture entering
-# the cylinder. If the engine you are modeling has EGR, you should have the EGR ratio, which
-# is generally the volume ratio of the EGR mixture and the fresh fuel-air mixture.
-# However, because you know nothing about the composition of the exhaust gas, you cannot simply
-# combine these two mixtures. In this case, you use the ``get_EGR_mole_fraction()`` method to estimate
-# the major components of the exhaust gas from the combustion of the fresh fuel-air mixture. The
-# ``threshold=1.0e-8`` parameter tells the method to ignore any species with a mole fraction below
-# the threshold value. Once you have the EGR mixture composition, use the ``X_by_Equivalence_Ratio()``
-# method a second time to re-create the fuel-air mixture ``fresh`` with the original
-# ``fuelmixture`` and ``air`` mixtures, along with the EGR composition that you just got as the
-# *additives*.
+    ###########################################
+    # Add EGR to the fresh fuel-air mixture
+    # =========================================
+    # Many engines have the configuration for exhaust gas recirculation (EGR). Chemkin
+    # engine models let you add the EGR mixture to the fresh fuel-air mixture entering
+    # the cylinder. If the engine you are modeling has EGR, you should have the EGR ratio, which
+    # is generally the volume ratio of the EGR mixture and the fresh fuel-air mixture.
+    # However, because you know nothing about the composition of the exhaust gas, you cannot simply
+    # combine these two mixtures. In this case, you use the ``get_EGR_mole_fraction()`` method to estimate
+    # the major components of the exhaust gas from the combustion of the fresh fuel-air mixture. The
+    # ``threshold=1.0e-8`` parameter tells the method to ignore any species with a mole fraction below
+    # the threshold value. Once you have the EGR mixture composition, use the ``X_by_Equivalence_Ratio()``
+    # method a second time to re-create the fuel-air mixture ``fresh`` with the original
+    # ``fuelmixture`` and ``air`` mixtures, along with the EGR composition that you just got as the
+    # *additives*.
     EGRratio = 0.25
     # compute the EGR stream composition in mole fractions
     add_frac = fresh.get_EGR_mole_fraction(EGRratio, threshold=1.0e-8)
@@ -376,16 +390,26 @@ def SIengine_run(case: tuple[int, float]) -> tuple[float, float, float, float, f
         equivalenceratio=equiv,
         threshold=1.0e-8,
     )
-##############################
-# Set up the SI engine knock case
-# ============================
+    if iError != 0:
+        print("error...creating the initial fuel-oxidizer mixture.")
+        exit()
+    ##############################
+    # Set up the SI engine knock case
+    # ============================
     # create an SI engine calculation instance
     this_run = SIengineCalculator(fresh, index=index, start_combustion=startCA)
     # run the case
     this_run.run()
     # change back to the original top folder
     work_folder.done()
-    return startCA, this_run.knock_CA, this_run.max_sigma, this_run.max_temp, this_run.IMEP
+    return (
+        startCA,
+        this_run.knock_CA,
+        this_run.max_sigma,
+        this_run.max_temp,
+        this_run.IMEP,
+    )
+
 
 #########################################
 # Set up and start the multi-process runs
@@ -401,7 +425,7 @@ def SIengine_run(case: tuple[int, float]) -> tuple[float, float, float, float, f
 #   package is used.
 #
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # number of available cpu cores
     numb_cores = max(os.cpu_count(), 1)
     # set the number of worker cpu cores to be used by the parameter study
@@ -420,7 +444,7 @@ if __name__ == '__main__':
     for i in range(numb_cases):
         SI_cases.append((i, startCA))
         startCA += dCA
-     # set the start wall time
+    # set the start wall time
     start_time = time.time()
     #
     numb_workers = min(numb_workers, numb_cases)
@@ -451,11 +475,11 @@ if __name__ == '__main__':
     print()
     print(f"total simulation duration: {runtime} [sec]")
     print()
-        
-###########################################
-# Plot the premixed flame solution profiles
-# =========================================
-# Plot the predicted flame speeds against the experimental data.
+
+    ###########################################
+    # Plot the premixed flame solution profiles
+    # =========================================
+    # Plot the predicted flame speeds against the experimental data.
     plt.subplots(2, 2, sharex="col", figsize=(12, 6))
     plt.subplot(221)
     plt.plot(knock_CA_soc, knock_CA, linestyle="-", marker="^", color="blue")

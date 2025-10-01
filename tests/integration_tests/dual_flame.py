@@ -24,15 +24,12 @@ import time
 
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.logger import logger
 
 # Chemkin 1-D opposed-flow flame model (steady-state)
-from ansys.chemkin.diffusionflames.opposedflowflame import (
-    OpposedFlame as Flame,
-)
+from ansys.chemkin.diffusionflames.opposedflowflame import OpposedFlame as Flame
+from ansys.chemkin.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()
@@ -126,7 +123,11 @@ start_time = time.time()
 
 status = dual_flame.run()
 if status != 0:
-    print(Color.RED + "Failed to get a converged solution of the opposed flow flame!" + Color.END)
+    print(
+        Color.RED
+        + "Failed to get a converged solution of the opposed flow flame!"
+        + Color.END
+    )
     exit()
 
 # compute the total runtime

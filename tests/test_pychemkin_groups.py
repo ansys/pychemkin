@@ -245,6 +245,7 @@ class TestClassERN:
         )
         assert 0 == iErr, "run failed."
 
+
 @pytest.mark.group("premixed", "all")
 @pytest.mark.premixed
 class TestClassPremixed:
@@ -269,6 +270,7 @@ class TestClassPremixed:
         )
         assert 0 == iErr, "run failed."
 
+
 @pytest.mark.group("opposed", "all")
 @pytest.mark.opposed
 class TestClassOpposedFlame:
@@ -292,6 +294,7 @@ class TestClassOpposedFlame:
             get_working_dir, get_source_dir, get_result_dir, test_file
         )
         assert 0 == iErr, "run failed."
+
 
 @pytest.mark.group("shock", "all")
 @pytest.mark.shock

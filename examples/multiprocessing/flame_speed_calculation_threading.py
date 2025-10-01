@@ -83,10 +83,12 @@ interactive = True
 # to make the setup of the multi-thread flame speed calculation parameter study
 # more convenient.
 
+
 class FlameSpeedCalculator:
     """
     Laminar flame speed calculator with fixed set up parameters
     """
+
     def __init__(self, fresh_mixture: Stream, index: int):
         """
         Laminar flame speed calculator that instantiates a FlameSpeed object with
@@ -100,7 +102,7 @@ class FlameSpeedCalculator:
                 run index of this flame speed calculator
         """
         # instantiate a flame speed object
-        # set up the run and working direcotry name
+        # set up the run and working directory name
         name = "Flame_Speed_" + str(index)
         # instantiate the FlameSpeed object for this run
         self.FScalculator = FlameSpeed(fresh_mixture, label=name)
@@ -171,6 +173,7 @@ class FlameSpeedCalculator:
 # represents one parameter study case and will be assigned to its own thread
 # when the parameter study is executed.
 
+
 def prepare_multi_thread_runs() -> dict[float, FlameSpeedCalculator]:
     """
     Set up the parameter study runs for multi-threading.
@@ -180,13 +183,13 @@ def prepare_multi_thread_runs() -> dict[float, FlameSpeedCalculator]:
         flame_speed_runs: list of FlameSpeedCalculator objects
             flame speed calculation cases
     """
-##########################################
-# Create an instance of the Chemistry Set
-# ========================================
-# The mechanism loaded is the GRI 3.0 mechanism for methane combustion.
-# The mechanism and its associated data files come with the standard Ansys Chemkin
-# installation under the subdirectory *"/reaction/data"*.
-#
+    ##########################################
+    # Create an instance of the Chemistry Set
+    # ========================================
+    # The mechanism loaded is the GRI 3.0 mechanism for methane combustion.
+    # The mechanism and its associated data files come with the standard Ansys Chemkin
+    # installation under the subdirectory *"/reaction/data"*.
+    #
 
     # set mechanism directory (the default Chemkin mechanism data directory)
     data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
@@ -196,11 +199,13 @@ def prepare_multi_thread_runs() -> dict[float, FlameSpeedCalculator]:
     thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
     tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
     # create a chemistry set based on GRI 3.0
-    MyGasMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="GRI 3.0")
+    MyGasMech = ck.Chemistry(
+        chem=chemfile, therm=thermfile, tran=tranfile, label="GRI 3.0"
+    )
 
-##############################
-# Preprocess the Chemistry Set
-# ============================
+    ##############################
+    # Preprocess the Chemistry Set
+    # ============================
 
     # preprocess the mechanism files
     iError = MyGasMech.preprocess()
@@ -209,18 +214,18 @@ def prepare_multi_thread_runs() -> dict[float, FlameSpeedCalculator]:
         print(f"       error code = {iError}")
         exit()
 
-########################################################################
-# Set up the CH\ :sub:`4`\ -air mixture for the flame speed calculation
-# ======================================================================
-# Instantiate a stream named ``premixed`` for the inlet gas mixture.
-# This stream  is a mixture with the addition of the
-# inlet flow rate. You can specify the inlet gas properties the same way you
-# set up a ``Mixture``. Here the ``X_by_Equivalence_Ratio`` method is used.
-# You create the ``fuel`` and the ``air`` mixtures first. Then define the
-# *complete combustion product species* and provide the *additives* composition
-# if applicable. And finally, during the parameter iteration runs, you can simply set
-# different values to ``equivalenceratio`` to create different methane-air mixtures.
-#
+    ########################################################################
+    # Set up the CH\ :sub:`4`\ -air mixture for the flame speed calculation
+    # ======================================================================
+    # Instantiate a stream named ``premixed`` for the inlet gas mixture.
+    # This stream  is a mixture with the addition of the
+    # inlet flow rate. You can specify the inlet gas properties the same way you
+    # set up a ``Mixture``. Here the ``X_by_Equivalence_Ratio`` method is used.
+    # You create the ``fuel`` and the ``air`` mixtures first. Then define the
+    # *complete combustion product species* and provide the *additives* composition
+    # if applicable. And finally, during the parameter iteration runs, you can simply set
+    # different values to ``equivalenceratio`` to create different methane-air mixtures.
+    #
 
     # create the fuel mixture
     fuel = ck.Mixture(MyGasMech)

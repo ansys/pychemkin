@@ -38,11 +38,11 @@ from ansys.chemkin.chemistry import (
     verify_version,
 )
 from ansys.chemkin.color import Color as Color
-from ansys.chemkin.logger import logger
 from ansys.chemkin.inlet import Stream
+from ansys.chemkin.logger import logger
 from ansys.chemkin.reactormodel import Keyword
-from ansys.chemkin.stirreactors.openreactor import openreactor
 from ansys.chemkin.stirreactors.PSR import perfectlystirredreactor as PSR
+from ansys.chemkin.stirreactors.openreactor import openreactor
 import numpy as np
 
 
@@ -85,7 +85,13 @@ class PSRCluster(openreactor):
         for psr in config:
             # check valid PSR objects
             if not isinstance(psr, PSR):
-                msg = [Color.RED, "Object #", str(ireac+1), "is NOT a PSR object.", Color.END]
+                msg = [
+                    Color.RED,
+                    "Object #",
+                    str(ireac + 1),
+                    "is NOT a PSR object.",
+                    Color.END,
+                ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
                 ierror += 1
@@ -94,26 +100,44 @@ class PSRCluster(openreactor):
                 # check external inlet for PSR #1 (the leading PSR)
                 n = psr.number_external_inlets
                 if ireac == 0 and n == 0:
-                    msg = [Color.RED, "Leading PSR must have at least 1 external inlet.", Color.END]
+                    msg = [
+                        Color.RED,
+                        "Leading PSR must have at least 1 external inlet.",
+                        Color.END,
+                    ]
                     this_msg = Color.SPACE.join(msg)
                     logger.critical(this_msg)
                     ierror += 1
                     continue
                 elif ireac == 0:
                     # initialize the entire PSR network as an open PSR
-                    openreactor.__init__(self, guessedmixture=psr.reactormixture, label=label)
+                    openreactor.__init__(
+                        self, guessedmixture=psr.reactormixture, label=label
+                    )
                     # use the leading PSR to set the problem type and the energy type of the network
                     self._problemtype = psr._problemtype
                     self._energytype = psr._energytype
                 else:
                     # PSR problem type and energy type must be consistent within the network
                     if psr._problemtype.value != self._problemtype.value:
-                        msg = [Color.RED, "PSR #", str(ireac+1), "has a different problem type.", Color.END]
+                        msg = [
+                            Color.RED,
+                            "PSR #",
+                            str(ireac + 1),
+                            "has a different problem type.",
+                            Color.END,
+                        ]
                         this_msg = Color.SPACE.join(msg)
                         logger.error(this_msg)
                         ierror += 1
                     if psr._energytype.value != self._energytype.value:
-                        msg = [Color.RED, "PSR #", str(ireac+1), "has a different energy type.", Color.END]
+                        msg = [
+                            Color.RED,
+                            "PSR #",
+                            str(ireac + 1),
+                            "has a different energy type.",
+                            Color.END,
+                        ]
                         this_msg = Color.SPACE.join(msg)
                         logger.error(this_msg)
                         ierror += 1
@@ -150,7 +174,7 @@ class PSRCluster(openreactor):
         # array size = number of PSRs in the network
         # {PSR index : outflow Stream object}
         self.psr_solutions: dict[int, Stream] = {}
-        # ouput unit
+        # output unit
         self._myLOUT = c_int(159)
         # no zone
         self._nzones = c_int(0)
@@ -161,8 +185,8 @@ class PSRCluster(openreactor):
         self._solvertype = c_int(self.SolverTypes.get("SteadyState", 2))
         # recycling stream connectivity
         self.numb_recycling_streams = 0
-        # PSR recycling connection dictionary: {psr index: [(target psr index, outflow fraction), (...)]}
-        self.recycling_conections: dict[int, tuple[int, float]] = {}
+        # PSR recycling connection dictionary: {psr index: [(target psr label, outflow fraction), (...)]}
+        self.recycling_connections: dict[int, list[tuple[str, float]]] = {}
         # run status
         self.cluster_run_status = -100
         # PSR solution streams
@@ -178,8 +202,8 @@ class PSRCluster(openreactor):
         self.heat_exchange_coeffcients: list[float] = []
         # heat exchange apparent/effective heat transfer surface area [cm2]
         self.heat_exchange_areas: list[float] = []
-        #
-        print(f"number reactors in the network =  {self.npsrs}")
+        # print cluster information
+        print(f"number reactors in the network = {self.npsrs}")
         print(f"total number of external inlets = {self.total_external_inlets}")
 
     @property
@@ -194,7 +218,6 @@ class PSRCluster(openreactor):
         """
         return self.npsrs
 
-    @property
     def numb_external_inlet(self, name: str) -> int:
         """
         Get the number of external inlet to given reactor
@@ -273,9 +296,11 @@ class PSRCluster(openreactor):
         logger.warning(this_msg)
         return ""
 
-    def set_recycling_stream(self, source_psr: str, connections: list[tuple[str, float]]):
+    def set_recycling_stream(
+        self, source_psr: str, connections: list[tuple[str, float]]
+    ):
         """
-        Set outflowing stream conectivity of the given PSR
+        Set outflowing stream connectivity of the given PSR
 
         Parameters
         ----------
@@ -291,7 +316,7 @@ class PSRCluster(openreactor):
             exit()
 
         this_psr = self.psr_map[source_psr]
-        if this_psr in self.recycling_conections:
+        if this_psr in self.recycling_connections.keys():
             # nullify the existing connections
             msg = [
                 Color.YELLOW,
@@ -304,7 +329,7 @@ class PSRCluster(openreactor):
             this_msg = Color.SPACE.join(msg)
             logger.info(this_msg)
             #
-            self.recycling_conections[this_psr] = []
+            self.recycling_connections[this_psr] = []
             self.numb_recycling_streams -= 1
         # check connections
         sum = 0.0
@@ -319,7 +344,7 @@ class PSRCluster(openreactor):
                 logger.error(this_msg)
                 exit()
             else:
-                id  = self.psr_map[psr_name]
+                id = self.psr_map[psr_name]
             #
             if id == this_psr:
                 msg = [
@@ -387,7 +412,7 @@ class PSRCluster(openreactor):
                         Color.PURPLE,
                         "total outflow mass fraction",
                         str(sum),
-                        "< 1.0 with throught flow",
+                        "< 1.0 with through flow",
                         Color.END,
                     ]
                     this_msg = Color.SPACE.join(msg)
@@ -415,7 +440,7 @@ class PSRCluster(openreactor):
                     this_msg = Color.SPACE.join(msg)
                     logger.info(this_msg)
         # set the outflow connection of this PSR
-        self.recycling_conections[this_psr] = copy.deepcopy(connections)
+        self.recycling_connections[this_psr] = copy.deepcopy(connections)
         self.numb_recycling_streams += 1
 
     def set_recycling_keywords(self):
@@ -424,16 +449,22 @@ class PSRCluster(openreactor):
         """
         tag = "RECY"
         fourspaces = "    "
-        for ipsr, connections in self.recycling_conections.items():
+        for ipsr, connections in self.recycling_connections.items():
             # construct the recycling keyword lines
             keyline = tag + fourspaces + str(ipsr)
             for name, frac in connections:
                 id = self.psr_map[name]
                 addtarget = str(id) + fourspaces + str(frac)
                 this_line = keyline + fourspaces + addtarget
-                self.setkeyword(key=this_line, value=True)              
+                self.setkeyword(key=this_line, value=True)
 
-    def add_heat_exchange(self, reactor1: str, reactor2: str, heat_transfer_coeff: float, heat_transfer_area: float):
+    def add_heat_exchange(
+        self,
+        reactor1: str,
+        reactor2: str,
+        heat_transfer_coeff: float,
+        heat_transfer_area: float,
+    ):
         """
         Add heat exchange connection between two PSRs in the network
 
@@ -444,7 +475,7 @@ class PSRCluster(openreactor):
             reactor2: string
                 label of the second PSR of the pairing
             heat_transfer_coeff: double
-                apperant/effective heat transfer coefficient between the two PSRs [cal/cm2-K-sec]
+                apparent/effective heat transfer coefficient between the two PSRs [cal/cm2-K-sec]
             heat_transfer_aree: double
                 effective heat transfer surface area between the two PSRs [cm2]
         """
@@ -515,7 +546,7 @@ class PSRCluster(openreactor):
             keyline = tag + twospaces + str(idr1) + twospaces + str(idr2)
             addtarget = str(h) + twospaces + str(area)
             this_line = keyline + twospaces + addtarget
-            self.setkeyword(key=this_line, value=True) 
+            self.setkeyword(key=this_line, value=True)
 
     def __process_keywords(self) -> int:
         """
@@ -556,9 +587,11 @@ class PSRCluster(openreactor):
         iErrInputs = abs(ipsr - self.npsrs)
         iErr += iErrInputs
         # set maximum number of inlets per PSR
-        max_PSR_inlets =int(np.max(self._ninlets))
+        max_PSR_inlets = int(np.max(self._ninlets))
         max_PSR_inlets += self.npsrs
-        iErrInputs = chemkin_wrapper.chemkin.KINAll0D_SetMaxInletSize(self._chemset_index, c_int(max_PSR_inlets))
+        iErrInputs = chemkin_wrapper.chemkin.KINAll0D_SetMaxInletSize(
+            self._chemset_index, c_int(max_PSR_inlets)
+        )
         # flow connectivity other than the through-flow
         if self.numb_recycling_streams > 0:
             self.set_recycling_keywords()
@@ -923,7 +956,7 @@ class PSRCluster(openreactor):
                 smixture.X = frac
             # get reactor outlet mass flow rate [g/sec]
             # this is the total mass flow rate of PSR (n) and may not be the same as
-            # the mass flow rate of the through flow that goes to PSR (n+1) 
+            # the mass flow rate of the through flow that goes to PSR (n+1)
             exitmassflowrate = c_double(0.0)
             iErr = chemkin_wrapper.chemkin.KINAll0D_GetExitMassFlowRate_perPSR(
                 ipsr, exitmassflowrate
@@ -965,7 +998,7 @@ class PSRCluster(openreactor):
         Returns
         -------
             out_massflowrate: double
-                total outlet mass flow rate [g/sec] 
+                total outlet mass flow rate [g/sec]
         """
         # validate solution
         if self.get_cluster_run_status() != 0:

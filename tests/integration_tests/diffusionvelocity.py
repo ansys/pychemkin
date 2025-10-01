@@ -22,8 +22,8 @@
 import os
 
 import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin.mixture import Mixture, species_diffusion_velocity
 from ansys.chemkin.logger import logger
+from ansys.chemkin.mixture import Mixture, species_diffusion_velocity
 
 # check working directory
 current_dir = os.getcwd()
@@ -81,7 +81,9 @@ print("\nspecies mass diffusion velocity without thermal diffusivity:\n")
 k = 0
 for v in YV:
     if mixtureJ.X[k] + mixtureJP1.X[k] > 1.0e-8:
-        print(f"species index = {k+1} {specieslist[k]}: diffusion velocity = {-v/dX} [cm/sec]")
+        print(
+            f"species index = {k+1} {specieslist[k]}: diffusion velocity = {-v/dX} [cm/sec]"
+        )
     k += 1
 
 # compute species diffusion velocities with thermal diffusivity from J to J + 1
@@ -90,7 +92,9 @@ YV_withTDIFF = species_diffusion_velocity(mixtureJP1, mixtureJ, mode="mix", tdif
 k = 0
 for v in YV_withTDIFF:
     if mixtureJ.X[k] + mixtureJP1.X[k] > 1.0e-8:
-        print(f"species index = {k+1} {specieslist[k]}: diffusion velocity = {-v/dX} [cm/sec]")
+        print(
+            f"species index = {k+1} {specieslist[k]}: diffusion velocity = {-v/dX} [cm/sec]"
+        )
     k += 1
 
 # return results for comparisons

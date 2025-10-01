@@ -41,6 +41,7 @@ class MicroMixing:
     """
     Micro mixing process
     """
+
     def __init__(self):
         """
         Stochastic micro mixing process module
@@ -68,7 +69,7 @@ class MicroMixing:
         # number of particles per mixture [number of particles per mixture]
         # by default, [1, 1, ...]
         self.mixture_particles: list[int] = []
-        # mixtures of which some particles' properties are changed {mixture index: list of changed mixture objects} 
+        # mixtures of which some particles' properties are changed {mixture index: list of changed mixture objects}
         self.changed_mixtures: dict[int, list[Stream]] = {}
         # unit mass of the particle
         self.particle_unit_mass = 0.0e0
@@ -246,8 +247,10 @@ class MicroMixing:
                     self.mixture_particles.append(p)
                     sum_particles += p
                 zone_index += 1
-            # assign any particle count distribution error to the largest mixture 
-            self.mixture_particles[largest_zone_index] = self.numb_particles - sum_particles
+            # assign any particle count distribution error to the largest mixture
+            self.mixture_particles[largest_zone_index] = (
+                self.numb_particles - sum_particles
+            )
             # map the particles
             self.map_mixture_particles()
 
@@ -369,9 +372,11 @@ class MicroMixing:
             # update the zone mixture properties
             self.mixture_map[mixture_index] = copy.deepcopy(zone_mixture)
             # clean up
-            del y_sum, zone_mixture       
+            del y_sum, zone_mixture
 
-    def modified_curls(self, delta_time: float, tau: float, cmix: float = 1.0) -> list[Stream]:
+    def modified_curls(
+        self, delta_time: float, tau: float, cmix: float = 1.0
+    ) -> list[Stream]:
         """
         Modified Curl's mixing model
 
@@ -429,7 +434,6 @@ class MicroMixing:
         # create source integer list
         min_integer = 1
         max_integer = self.numb_particles
-        max_picks = (max_integer - min_integer) + 1
         source_list = self.get_source_integer(min_integer, max_integer)
         # determine the number of subprocesses for the mixing process
         # total number of pairs of particles to be mixed
@@ -437,7 +441,9 @@ class MicroMixing:
         # max number of mixing pairs per mixing process
         mixing_pairs_limit = int(self.mixing_fraction_limit * self.numb_particles)
         # the mixing process must be divided into subprocesses to maintain stability
-        total_count_mixing_subprocess = total_numb_mixing_pairs // mixing_pairs_limit + 1
+        total_count_mixing_subprocess = (
+            total_numb_mixing_pairs // mixing_pairs_limit + 1
+        )
         # leftover pairs for the last mixing subprocess
         if total_count_mixing_subprocess > 1:
             # number of particle pairs can be mixed per mixing subprocess
@@ -505,13 +511,13 @@ class MicroMixing:
                 change = 0.5 * random()
                 # find the mean mixtue of the two particles
                 mixtureAVE = interpolate_mixtures(mixtureB, mixtureA, ratio=0.5)
-                #print(f"inter T: {mixtureA.temperature} {mixtureB.temperature} {mixtureAVE.temperature}")
-                #print(f"inter X: {mixtureA.X[13]} {mixtureB.X[13]} {mixtureAVE.X[13]}")
+                # print(f"inter T: {mixtureA.temperature} {mixtureB.temperature} {mixtureAVE.temperature}")
+                # print(f"inter X: {mixtureA.X[13]} {mixtureB.X[13]} {mixtureAVE.X[13]}")
                 # modify the properties of the first particle A of the pair
                 mixture_new = interpolate_mixtures(mixtureAVE, mixtureA, change)
-                #print(f"change = {change}")
-                #print(f"interA T: {mixtureA.temperature} {mixtureAVE.temperature} {mixture_new.temperature}")
-                #print(f"interA X: {mixtureA.X[13]} {mixtureAVE.X[13]} {mixture_new.X[13]}")
+                # print(f"change = {change}")
+                # print(f"interA T: {mixtureA.temperature} {mixtureAVE.temperature} {mixture_new.temperature}")
+                # print(f"interA X: {mixtureA.X[13]} {mixtureAVE.X[13]} {mixture_new.X[13]}")
                 # store the modified properties in the changed dictionary
                 this_list = self.changed_mixtures.get(mixture_id_A, [])
                 this_list.append(copy.deepcopy(mixture_new))

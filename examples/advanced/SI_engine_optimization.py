@@ -64,18 +64,18 @@ import multiprocessing
 import os
 
 import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.logger import logger
-from ansys.chemkin.utilities import workingFolders
 
 # chemkin spark ignition (SI) engine model (transient)
 from ansys.chemkin.engines.SI import SIengine
+from ansys.chemkin.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.logger import logger
+from ansys.chemkin.utilities import workingFolders
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
+
 # pymoo: multi-objective optimization in Python
 from pymoo.algorithms.moo.nsga2 import NSGA2
-from pymoo.core.problem import ElementwiseProblem
-from pymoo.core.problem import StarmapParallelization
+from pymoo.core.problem import ElementwiseProblem, StarmapParallelization
 from pymoo.decomposition.asf import ASF
 from pymoo.operators.sampling.lhs import LHS
 from pymoo.optimize import minimize
@@ -107,6 +107,7 @@ class SIengineCalculator:
     """
     SI engine calculator with fixed set up parameters
     """
+
     def __init__(self, fresh_mixture: Stream):
         """
         SI engine calculator that instantiates an SI engine object with
@@ -119,7 +120,7 @@ class SIengineCalculator:
                 the initial/fresh/unburnt condition
         """
         # instantiate an SI engine object
-        # set up the run and working direcotry name
+        # set up the run and working directory name
         self.name = "SI_engine"
         self.SIcalculator = SIengine(fresh_mixture, self.name)
         # run status
@@ -154,21 +155,26 @@ class SIengineCalculator:
         if self.runstatus == 0:
             # postprocess the unburned zone solution
             unburnedzone = 1
-            burnedzone = 2
+            # burnedzone = 2
             # because the memory is shared, it must be done as soon as the run is finished
             # get solution variables from the unburned zone
             iErr = self.SIcalculator.process_engine_solution(zoneID=unburnedzone)
             if iErr == 0:
-                temperature = self.SIcalculator.get_solution_variable_profile("temperature")
-                thermicity = self.SIcalculator.get_solution_variable_profile("thermicity")
+                temperature = self.SIcalculator.get_solution_variable_profile(
+                    "temperature"
+                )
+                thermicity = self.SIcalculator.get_solution_variable_profile(
+                    "thermicity"
+                )
                 self.IMEP = self.SIcalculator.get_engine_IMEP()
                 self.max_temp = np.max(temperature)
                 self.max_sigma = np.max(thermicity)
                 # get the cylinder-averaged solution variables
-                iErr_a = self.SIcalculator.process_average_engine_solution()
+                iErr = self.SIcalculator.process_average_engine_solution()
                 NO_mass_frac = self.SIcalculator.get_solution_variable_profile("no")
                 self.max_NO = np.max(NO_mass_frac)
                 del thermicity, temperature, NO_mass_frac
+                self.runstatus = iErr
             else:
                 self.runstatus = iErr
         return self.runstatus
@@ -200,7 +206,9 @@ class SIengineCalculator:
         heattransferparameters = [0.15, 0.8, 0.0]
         # set cylinder wall temperature [K]
         Twall = 434.0
-        self.SIcalculator.set_wall_heat_transfer("dimensionless", heattransferparameters, Twall)
+        self.SIcalculator.set_wall_heat_transfer(
+            "dimensionless", heattransferparameters, Twall
+        )
         # in-cylinder gas velocity correlation parameter (Woschni)
         # [<C11> <C12> <C2> <swirl ratio>]
         GVparameters = [2.28, 0.318, 0.324, 0.0]
@@ -211,7 +219,7 @@ class SIengineCalculator:
         self.SIcalculator.set_cylinder_head_area(area=56.75)
         # other engine model parameters
         # set tolerances in tuple: (absolute tolerance, relative tolerance)
-        self.SIcalculator.tolerances = (1.0e-12, 1.0e-6)
+        self.SIcalculator.tolerances = (1.0e-12, 1.0e-8)
         # turn on the force non-negative solutions option in the solver
         self.SIcalculator.force_nonnegative = False
         # set minimum zonal mass [g]
@@ -231,7 +239,13 @@ class SIengineCalculator:
         # suppress text output from the SI engine model
         self.SIcalculator.stop_output()
 
-    def set_burn_profile(self, start_combustion: float, burn_duration: float, wiebe_n: float, wiebe_b: float):
+    def set_burn_profile(
+        self,
+        start_combustion: float,
+        burn_duration: float,
+        wiebe_n: float,
+        wiebe_b: float,
+    ):
         """
         Set up the fuel burn rate profile
 
@@ -252,7 +266,7 @@ class SIengineCalculator:
 
     def get_solution_parameters(self) -> tuple[float, float, float]:
         """
-        Get the SI engire solution varibles to be optimized
+        Get the SI engire solution variables to be optimized
 
         Returns
         -------
@@ -266,14 +280,16 @@ class SIengineCalculator:
         return self.IMEP, self.max_NO, self.max_sigma
 
 
-
 ##########################################
 # Create an instance of the Chemistry Set
 # ========================================
 # For PRF, the encrypted 14-component gasoline mechanism, ``gasoline_14comp_WBencrypted.inp``,
 # is used. The chemistry set is named ``gasoline``.
 
-def setup_fresh_mixture(fuel_compo: list[tuple[str, float]], phi: float, egr_rate: float) -> Stream:
+
+def setup_fresh_mixture(
+    fuel_compo: list[tuple[str, float]], phi: float, egr_rate: float
+) -> Stream:
     """
     Set up the chemistry set and create the fresh fuel-air mixture at the intake valve closing (IVC).
 
@@ -300,30 +316,30 @@ def setup_fresh_mixture(fuel_compo: list[tuple[str, float]], phi: float, egr_rat
     # including the full file path is recommended
     MyGasMech.chemfile = os.path.join(mechanism_dir, "gasoline_14comp_WBencrypt.inp")
 
-#######################################
-# Preprocess the gasoline chemistry set
-# =====================================
+    #######################################
+    # Preprocess the gasoline chemistry set
+    # =====================================
 
     # preprocess the mechanism files
     iError = MyGasMech.preprocess()
 
-################################################
-# Set up the stoichiometric gasoline-air mixture
-# ==============================================
-# You must set up the stoichiometric gasoline-air mixture for the subsequent
-# SI engine calculations. Here the ``X_by_Equivalence_Ratio()`` method is used.
-# You create the ``fuel`` and the ``air`` mixtures first. You then define the
-# *complete combustion product species* and provide the *additives* composition if applicable.
-# Finally, you simply set ``equivalenceratio=1`` to create the stoichiometric
-# gasoline-air mixture.
-#
-# For PRF 90 gasoline, the recipe is ``[("ic8h18", 0.9), ("nc7h16", 0.1)]``.
-#
-# .. note::
-#   The "surrogate blend utility" from the Chemkin "reaction workbench" can be
-#   used to create a surrogate that matches the properties (heating value, distillation curve,
-#   density, viscosity, etc.) of an actual fuel.
-#
+    ################################################
+    # Set up the stoichiometric gasoline-air mixture
+    # ==============================================
+    # You must set up the stoichiometric gasoline-air mixture for the subsequent
+    # SI engine calculations. Here the ``X_by_Equivalence_Ratio()`` method is used.
+    # You create the ``fuel`` and the ``air`` mixtures first. You then define the
+    # *complete combustion product species* and provide the *additives* composition if applicable.
+    # Finally, you simply set ``equivalenceratio=1`` to create the stoichiometric
+    # gasoline-air mixture.
+    #
+    # For PRF 90 gasoline, the recipe is ``[("ic8h18", 0.9), ("nc7h16", 0.1)]``.
+    #
+    # .. note::
+    #   The "surrogate blend utility" from the Chemkin "reaction workbench" can be
+    #   used to create a surrogate that matches the properties (heating value, distillation curve,
+    #   density, viscosity, etc.) of an actual fuel.
+    #
 
     # create the fuel mixture
     fuelmixture = ck.Mixture(MyGasMech)
@@ -360,31 +376,31 @@ def setup_fresh_mixture(fuel_compo: list[tuple[str, float]], phi: float, egr_rat
         MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=equiv
     )
 
-##########################################################
-# Specify pressure and temperature of the fuel-air mixture
-# ========================================================
-# Since you are going to use ``fresh`` fuel-air mixture to instantiate
-# the engine object later, setting the mixture pressure and temperature
-# is equivalent to setting the initial temperature and pressure of the
-# engine cylinder.
+    ##########################################################
+    # Specify pressure and temperature of the fuel-air mixture
+    # ========================================================
+    # Since you are going to use ``fresh`` fuel-air mixture to instantiate
+    # the engine object later, setting the mixture pressure and temperature
+    # is equivalent to setting the initial temperature and pressure of the
+    # engine cylinder.
     fresh.pressure = fuelmixture.pressure
     fresh.temperature = fuelmixture.temperature
 
-###########################################
-# Add EGR to the fresh fuel-air mixture
-# =========================================
-# Many engines have the configuration for exhaust gas recirculation (EGR). Chemkin
-# engine models let you add the EGR mixture to the fresh fuel-air mixture entering
-# the cylinder. If the engine you are modeling has EGR, you should have the EGR ratio, which
-# is generally the volume ratio of the EGR mixture and the fresh fuel-air mixture.
-# However, because you know nothing about the composition of the exhaust gas, you cannot simply
-# combine these two mixtures. In this case, you use the ``get_EGR_mole_fraction()`` method to estimate
-# the major components of the exhaust gas from the combustion of the fresh fuel-air mixture. The
-# ``threshold=1.0e-8`` parameter tells the method to ignore any species with a mole fraction below
-# the threshold value. Once you have the EGR mixture composition, use the ``X_by_Equivalence_Ratio()``
-# method a second time to re-create the fuel-air mixture ``fresh`` with the original
-# ``fuelmixture`` and ``air`` mixtures, along with the EGR composition that you just got as the
-# *additives*.
+    ###########################################
+    # Add EGR to the fresh fuel-air mixture
+    # =========================================
+    # Many engines have the configuration for exhaust gas recirculation (EGR). Chemkin
+    # engine models let you add the EGR mixture to the fresh fuel-air mixture entering
+    # the cylinder. If the engine you are modeling has EGR, you should have the EGR ratio, which
+    # is generally the volume ratio of the EGR mixture and the fresh fuel-air mixture.
+    # However, because you know nothing about the composition of the exhaust gas, you cannot simply
+    # combine these two mixtures. In this case, you use the ``get_EGR_mole_fraction()`` method to estimate
+    # the major components of the exhaust gas from the combustion of the fresh fuel-air mixture. The
+    # ``threshold=1.0e-8`` parameter tells the method to ignore any species with a mole fraction below
+    # the threshold value. Once you have the EGR mixture composition, use the ``X_by_Equivalence_Ratio()``
+    # method a second time to re-create the fuel-air mixture ``fresh`` with the original
+    # ``fuelmixture`` and ``air`` mixtures, along with the EGR composition that you just got as the
+    # *additives*.
     EGRratio = egr_rate
     # compute the EGR stream composition in mole fractions
     add_frac = fresh.get_EGR_mole_fraction(EGRratio, threshold=1.0e-8)
@@ -398,7 +414,8 @@ def setup_fresh_mixture(fuel_compo: list[tuple[str, float]], phi: float, egr_rat
         equivalenceratio=equiv,
         threshold=1.0e-8,
     )
-
+    if iError != 0:
+        print("error...creating the initial fuel-oxidizer mixture.")
     return fresh
 
 
@@ -417,7 +434,7 @@ def setup_fresh_mixture(fuel_compo: list[tuple[str, float]], phi: float, egr_rat
 # the constraint values come from the result of the SI engine simulation. The first objective is the negative value of IMEP,
 # the second objective is the peak NO mass fraction in the cylinder, and the constraint value is the knock intensity
 # as indicated by the total thermicity of the endgas.
-# 
+#
 # In *pymoo*, the objectives are "minimized" so the objective of maximizing the IMEP must be reformulated into minimizing the negative value
 # of IMEP, and the constraint must be written in the form of "g <= 0.0".
 #
@@ -425,7 +442,14 @@ def setup_fresh_mixture(fuel_compo: list[tuple[str, float]], phi: float, egr_rat
 #   See the *pymoo* documentation for details about how the optimization problem is set up and evaluated.
 #
 class SI_engine_opt(ElementwiseProblem):
-    def __init__(self, numb_vars: int, numb_objs: int, fuel: list[tuple[str, float]], phi: float, **kwargs):
+    def __init__(
+        self,
+        numb_vars: int,
+        numb_objs: int,
+        fuel: list[tuple[str, float]],
+        phi: float,
+        **kwargs,
+    ):
         """
         Set up the SI engine optimization.
         The objective is to find the optimal fuel mass burn profile to
@@ -448,24 +472,26 @@ class SI_engine_opt(ElementwiseProblem):
         # number of inequality constraints
         numb_constrs = 1
         # lower bounds for the variables
-        lower_bounds = np.zeros (numb_vars, dtype=np.double)
-        upper_bounds = np.zeros (numb_vars, dtype=np.double)
+        lower_bounds = np.zeros(numb_vars, dtype=np.double)
+        upper_bounds = np.zeros(numb_vars, dtype=np.double)
         lower_bounds[0] = -15.0
         lower_bounds[1] = 0.0
         # upper bounds for the variables
         upper_bounds[0] = 10.0
         upper_bounds[1] = 0.60
-        # initializa the "Probelm" object
-        super().__init__(n_var=numb_vars,
-                         n_obj=numb_objs,
-                         n_ieq_constr=numb_constrs,
-                         n_eq_constr=0,
-                         xl=lower_bounds,
-                         xu=upper_bounds,
-                         )
+        # initialize the "Problem" object
+        super().__init__(
+            n_var=numb_vars,
+            n_obj=numb_objs,
+            n_ieq_constr=numb_constrs,
+            n_eq_constr=0,
+            xl=lower_bounds,
+            xu=upper_bounds,
+        )
         # number of evaluation calls
         self.call_count = 0
         self.fail_count = 0
+        self.failed_cases: list[int] = []
         # initial gas charge parameters
         # fuel composition
         self.fuel = fuel
@@ -476,7 +502,7 @@ class SI_engine_opt(ElementwiseProblem):
         """
         Evaluate the objective function values with the given
         set of variable values
-    
+
         Parameters
         ----------
             x: list[float]
@@ -487,7 +513,7 @@ class SI_engine_opt(ElementwiseProblem):
         # initialize "bad" return values to drive the search away from this state point
         f1 = 0.0
         f2 = 1.0
-        # 
+        #
         g1 = 5.0e4
         # variables
         # x[0]: start of combustion crank angle
@@ -497,7 +523,7 @@ class SI_engine_opt(ElementwiseProblem):
         sub_work_folder = workingFolders(name, top_dir)
         # set up the unburned mixture of the SI engine at IVC
         init_mixture = setup_fresh_mixture(self.fuel, self.phi, x[1])
-        # instatiate the SI engine
+        # instantiate the SI engine
         engine_case = SIengineCalculator(init_mixture)
         # set the burned mass fraction profile
         # use two sets of Wiebe function parameters to describe the burned mass fraction profile
@@ -532,6 +558,7 @@ class SI_engine_opt(ElementwiseProblem):
         else:
             # tally the number of failed runs
             self.fail_count += 1
+            self.failed_cases.append(self.call_count)
         # clean up
         del engine_case
         sub_work_folder.done()
@@ -553,11 +580,13 @@ class SI_engine_opt(ElementwiseProblem):
 # optimization problem.
 #
 # The ``StarmapParallelization()`` method from *pymoo* is used to parallelize the
-# SI engine simulation runs during the optimization process. 
+# SI engine simulation runs during the optimization process.
 #
-def run_optimization(numb_vars: int, numb_objs: int, fuel: list[tuple[str, float]], phi: float):
+def run_optimization(
+    numb_vars: int, numb_objs: int, fuel: list[tuple[str, float]], phi: float
+):
     """
-    Runing the optimization project
+    Running the optimization project
 
     Parameters
      ----------
@@ -580,10 +609,10 @@ def run_optimization(numb_vars: int, numb_objs: int, fuel: list[tuple[str, float
     # NSGA: Non-dominated Sorting Genetic Algorithm
     # LHS: Latin Hypercube Sampling
     algorithm = NSGA2(
-                    pop_size=50,
-                    sampling=LHS(),
-                    eliminate_duplications=True,
-                )
+        pop_size=50,
+        sampling=LHS(),
+        eliminate_duplications=True,
+    )
     # set up the thermination condition
     # run the optimization
     run_parallel = True
@@ -597,10 +626,18 @@ def run_optimization(numb_vars: int, numb_objs: int, fuel: list[tuple[str, float
         pool = multiprocessing.Pool(numb_workers)
         runner = StarmapParallelization(pool.starmap)
         # define the problem by passing the starmap interface of the thread pool
-        problem = SI_engine_opt(numb_vars=numb_vars, numb_objs=numb_objs, fuel=fuel, phi=phi, elementwise_runner=runner)
+        problem = SI_engine_opt(
+            numb_vars=numb_vars,
+            numb_objs=numb_objs,
+            fuel=fuel,
+            phi=phi,
+            elementwise_runner=runner,
+        )
     else:
         # series mode
-        problem = SI_engine_opt(numb_vars=numb_vars, numb_objs=numb_objs, fuel=fuel, phi=phi)
+        problem = SI_engine_opt(
+            numb_vars=numb_vars, numb_objs=numb_objs, fuel=fuel, phi=phi
+        )
 
     res = minimize(problem, algorithm, termination=("n_gen", 1), seed=1)
     # run summary
@@ -608,18 +645,22 @@ def run_optimization(numb_vars: int, numb_objs: int, fuel: list[tuple[str, float
     print(f"Total wall time: {datetime.timedelta(seconds=res.exec_time)}")
     # run statistics
     print(f"Failed runs: {problem.fail_count}/{problem.call_count}")
-############################
-# Post-process the solutions
-# ==========================
-# Parse the solutions from the optimization process and display them with the best solution
-# marked by a green cross mark. The variable values are stored in the ``Result.X`` array and the
-# corresponding objective values are in the ``Result.F`` array. Because the objective of maximizing
-# the "IMEP" has to be converted to a minimization objective in *pymoo*, an alternative objective
-# of minimizing "-IMEP" is adopted. Consequently, the raw -IMEP objective solution must be converted back
-# to IMEP to make sense of the optimization and the subsequent "decision-making" results.
-#
-# In this project, the decomposition function ``ASF()`` is applied to retrieve the best solution. Weight factors
-# are used to make the IMEP objective slightly more important than the NO emission objective.
+    if problem.fail_count > 0:
+        print("failed cases")
+        for n in problem.failed_cases:
+            print(f"run # {n}")
+    ############################
+    # Post-process the solutions
+    # ==========================
+    # Parse the solutions from the optimization process and display them with the best solution
+    # marked by a green cross mark. The variable values are stored in the ``Result.X`` array and the
+    # corresponding objective values are in the ``Result.F`` array. Because the objective of maximizing
+    # the "IMEP" has to be converted to a minimization objective in *pymoo*, an alternative objective
+    # of minimizing "-IMEP" is adopted. Consequently, the raw -IMEP objective solution must be converted back
+    # to IMEP to make sense of the optimization and the subsequent "decision-making" results.
+    #
+    # In this project, the decomposition function ``ASF()`` is applied to retrieve the best solution. Weight factors
+    # are used to make the IMEP objective slightly more important than the NO emission objective.
 
     # process the results
     X = res.X
@@ -655,8 +696,8 @@ def run_optimization(numb_vars: int, numb_objs: int, fuel: list[tuple[str, float
     xl, xu = problem.bounds()
     plt.figure(figsize=(7, 5))
     plt.title("Design Space")
-    plt.scatter(X[:, 0], X[:, 1], s=30, facecolors='none', edgecolors='b')
-    plt.scatter(X[i, 0], X[i, 1], color='green', marker="x", s=75, label="Best")
+    plt.scatter(X[:, 0], X[:, 1], s=30, facecolors="none", edgecolors="b")
+    plt.scatter(X[i, 0], X[i, 1], color="green", marker="x", s=75, label="Best")
     plt.xlim(xl[0], xu[0])
     plt.ylim(xl[1], xu[1])
     plt.ylabel("EGR ratio [-]")
@@ -665,17 +706,33 @@ def run_optimization(numb_vars: int, numb_objs: int, fuel: list[tuple[str, float
     if interactive:
         plt.show()
     else:
-        plt.savefig("plot_SI_engine_optimization_designspace.png",bbox_inches="tight")
+        plt.savefig("plot_SI_engine_optimization_designspace.png", bbox_inches="tight")
 
     # plot the objective space to show the Pareto frontier
     plt.figure(figsize=(7, 5))
-    plt.scatter(IMEP, F[:, 1], s=30, facecolors='none', edgecolors='b')
+    plt.scatter(IMEP, F[:, 1], s=30, facecolors="none", edgecolors="b")
     # note that because IMEP = -F[:, 0], approx_ideal[0] and approx_nadir[0] must be modified accordingly
     ideal_IMEP = -1.0 * approx_ideal[0]
     nadir_IMEP = -1.0 * approx_nadir[0]
-    plt.scatter(ideal_IMEP, approx_ideal[1], facecolors='none', edgecolors='red', marker="*", s=100, label="Ideal Point (Approx)")
-    plt.scatter(nadir_IMEP, approx_nadir[1], facecolors='none', edgecolors='black', marker="p", s=100, label="Nadir Point (Approx)")
-    plt.scatter(IMEP[i], F[i, 1], color='green', marker="x", s=75, label="Best")
+    plt.scatter(
+        ideal_IMEP,
+        approx_ideal[1],
+        facecolors="none",
+        edgecolors="red",
+        marker="*",
+        s=100,
+        label="Ideal Point (Approx)",
+    )
+    plt.scatter(
+        nadir_IMEP,
+        approx_nadir[1],
+        facecolors="none",
+        edgecolors="black",
+        marker="p",
+        s=100,
+        label="Nadir Point (Approx)",
+    )
+    plt.scatter(IMEP[i], F[i, 1], color="green", marker="x", s=75, label="Best")
     plt.title("Objective Space - Power & Emission")
     plt.xlabel("IMEP [bar]")
     plt.ylabel("Peak NO mass fraction [-]")
@@ -683,22 +740,23 @@ def run_optimization(numb_vars: int, numb_objs: int, fuel: list[tuple[str, float
     if interactive:
         plt.show()
     else:
-        plt.savefig("plot_SI_engine_optimization_objspace.png",bbox_inches="tight")
+        plt.savefig("plot_SI_engine_optimization_objspace.png", bbox_inches="tight")
     #
     del IMEP, nF, xl, xu
     #
     return res
 
+
 ####################################################
 # Set up the main driver of the optimization process
 # ==================================================
-# A main method for the optimization process is necessary especially with the intension to run the
+# A main method for the optimization process is necessary especially with the intention to run the
 # design point cases in parallel.
-# 
+#
 # You can further post-process the results from the optimization process. Here the correlations between
 # the design variables (SOC and EGR ratio) and the objectives (IMEP and NO emission)
 # are explored. You can consult *pymoo* online API document to find out additional information offered by
-# the ``Result`` object. 
+# the ``Result`` object.
 #
 if __name__ == "__main__":
     # properties of the initial gas charge
@@ -721,21 +779,21 @@ if __name__ == "__main__":
     IMEP = -1.0 * F[:, 0]
     # plot correlations between the variable/parameter and the objectives
     plt.figure(figsize=(7, 5))
-    plt.scatter(X[:, 0], IMEP, s=30, facecolors='none', edgecolors='r')
+    plt.scatter(X[:, 0], IMEP, s=30, facecolors="none", edgecolors="r")
     plt.title("Correlation - SOC & Power")
     plt.ylabel("IMEP [bar]")
     plt.xlabel("Start of combustion [CA]")
     if interactive:
         plt.show()
     else:
-        plt.savefig("plot_SI_engine_optimization_correlation1.png",bbox_inches="tight")
+        plt.savefig("plot_SI_engine_optimization_correlation1.png", bbox_inches="tight")
     #
     plt.figure(figsize=(7, 5))
-    plt.scatter(X[:, 1], IMEP, s=30, facecolors='none', edgecolors='r')
+    plt.scatter(X[:, 1], IMEP, s=30, facecolors="none", edgecolors="r")
     plt.title("Correlation - EGR & Power")
     plt.ylabel("IMEP [bar]")
     plt.xlabel("EGR ratio [-]")
     if interactive:
         plt.show()
     else:
-        plt.savefig("plot_SI_engine_optimization_correlation2.png",bbox_inches="tight")
+        plt.savefig("plot_SI_engine_optimization_correlation2.png", bbox_inches="tight")

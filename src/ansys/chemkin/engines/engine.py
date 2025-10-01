@@ -228,7 +228,9 @@ class Engine(BatchReactors):
         """
         return self.IVCCA + time * self.degpersec
 
-    def convert_time_array_to_CA(self, time_array: npt.NDArray[np.double]) -> npt.NDArray[np.double]:
+    def convert_time_array_to_CA(
+        self, time_array: npt.NDArray[np.double]
+    ) -> npt.NDArray[np.double]:
         """
         Convert time array to crank angle array
 
@@ -243,7 +245,7 @@ class Engine(BatchReactors):
                 crank angles [degrees]
         """
         #
-        CA_array = np.zeros_like (time_array, dtype=np.double)
+        CA_array = np.zeros_like(time_array, dtype=np.double)
         for i, t in enumerate(time_array):
             CA_array[i] = self.get_CA(t)
         return CA_array
@@ -1312,7 +1314,16 @@ class Engine(BatchReactors):
         # total thermicity
         self._solution_rawarray["thermicity"] = copy.deepcopy(thermicity)
         # clean up
-        del time, pres, temp, vol, thermicity, gas_heatrelease, gas_heatrealease_rate, frac
+        del (
+            time,
+            pres,
+            temp,
+            vol,
+            thermicity,
+            gas_heatrelease,
+            gas_heatrealease_rate,
+            frac,
+        )
         return iErr
 
     def process_average_engine_solution(self) -> int:
@@ -1348,6 +1359,15 @@ class Engine(BatchReactors):
         for n in range(nzones):
             # create solution mixtures
             iErr = self.process_engine_solution(zoneID=n + 1)
+            if iErr != 0:
+                msg = [
+                    Color.MAGENTA,
+                    "failed to process solution of zone",
+                    str(n + 1),
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.info(this_msg)
             # set index to the last solution point
             solution_index = self._numbsolutionpoints - 1
             # get the last solution mixture

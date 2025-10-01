@@ -28,6 +28,9 @@ import copy
 from ctypes import c_double, c_int
 
 from ansys.chemkin import chemkin_wrapper
+from ansys.chemkin.batchreactors.batchreactor import (
+    calculate_effective_activation_energy,
+)
 from ansys.chemkin.chemistry import (
     check_chemistryset,
     chemistryset_initialized,
@@ -40,7 +43,6 @@ from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
 from ansys.chemkin.mixture import equilibrium, interpolate_mixtures
 from ansys.chemkin.reactormodel import ReactorModel as reactor
-from ansys.chemkin.batchreactors.batchreactor import calculate_effective_activation_energy
 from ansys.chemkin.utilities import find_interpolate_parameters, interpolate_point
 import numpy as np
 import numpy.typing as npt
@@ -50,6 +52,7 @@ class ShockTubeReactors(reactor):
     """
     Generic Chemkin 0-D transient shock tube reactor models
     """
+
     def __init__(self, reactor_condition: Stream, label: str):
         """
         Initialize a generic Shock Tube Reactor object
@@ -423,7 +426,7 @@ class ShockTubeReactors(reactor):
         # total thermicity
         self._solution_rawarray["thermicity"] = copy.deepcopy(thermicity)
         # set up single point solution parameters
-        # gas state proeprties at the three reference locations
+        # gas state properties at the three reference locations
         # 1 = before incident shock
         # 2 = after incident shock
         # 3 = after reflected shock
@@ -465,7 +468,7 @@ class ShockTubeReactors(reactor):
             else:
                 msg = [
                     Color.RED,
-                    "failed to fetch the signle point solution data from memory,",
+                    "failed to fetch the single point solution data from memory,",
                     "error code =",
                     str(iErr),
                     Color.END,
@@ -483,7 +486,9 @@ class ShockTubeReactors(reactor):
             if len(sigma) > 1:
                 sigma_max = max(sigma)
                 self._solution_parameters["max_thermicity"] = sigma_max
-                self._solution_parameters["induction_length"] = indlen[sigma.index(sigma_max)]
+                self._solution_parameters["induction_length"] = indlen[
+                    sigma.index(sigma_max)
+                ]
             else:
                 self._solution_parameters["max_thermicity"] = sigma[0]
                 self._solution_parameters["induction_length"] = indlen[0]
@@ -582,7 +587,7 @@ class ShockTubeReactors(reactor):
         pres = self.get_solution_variable_profile("pressure")
         temp = self.get_solution_variable_profile("temperature")
         vel = self.get_solution_variable_profile("velocity")
-        # for the case both the initial gas and the simulation domain are entirely after the reflected shock 
+        # for the case both the initial gas and the simulation domain are entirely after the reflected shock
         if self.PFR_like:
             # set the velocities to a constant value of 1.0 [cm/sec]
             vel[:] = 1.0
@@ -665,7 +670,9 @@ class ShockTubeReactors(reactor):
             mixturetarget = interpolate_mixtures(mixtureleft, mixtureright, ratio)
             # set velocity
             ratiom = 1.0e0 - ratio
-            mixturetarget.velocity = ratiom * mixtureleft.velocity + ratio * mixtureright.velocity
+            mixturetarget.velocity = (
+                ratiom * mixtureleft.velocity + ratio * mixtureright.velocity
+            )
             # clean up
             del mixtureleft, mixtureright
             #
@@ -770,7 +777,9 @@ class ShockTubeReactors(reactor):
             logger.info(this_msg)
         return npoints.value
 
-    def get_induction_lengths(self, npoints: int) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
+    def get_induction_lengths(
+        self, npoints: int
+    ) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
         """
         Get induction lengths and local maximum total thermicities
 
@@ -807,10 +816,12 @@ class ShockTubeReactors(reactor):
         # number of time points in the solution
         npts = c_int(npoints)
         # create data lists
-        induct_length = np.zeros (npoints, dtype=np.double)
-        sigmamax = np.zeros_like (induct_length, dtype=np.double)
+        induct_length = np.zeros(npoints, dtype=np.double)
+        sigmamax = np.zeros_like(induct_length, dtype=np.double)
         # get solution size of the batch reactor
-        iErr = chemkin_wrapper.chemkin.KINShock_GetInductLengths(npts, induct_length, sigmamax)
+        iErr = chemkin_wrapper.chemkin.KINShock_GetInductLengths(
+            npts, induct_length, sigmamax
+        )
         if iErr != 0:
             msg = [
                 Color.PURPLE,
@@ -864,10 +875,12 @@ class ShockTubeReactors(reactor):
         else:
             return this_value
 
+
 class IncidentShock(ShockTubeReactors):
     """
     Chemkin incident shock reactor models
     """
+
     def __init__(self, mixture_condition: Stream, location: int, label: str):
         """
         Initialize a generic Shock Tube Reactor object
@@ -876,7 +889,7 @@ class IncidentShock(ShockTubeReactors):
         ----------
             mixture_condition: Stream object
                 a stream representing the initial gas mixture and velocity
-                at the location speficied by the "location" parameter
+                at the location specified by the "location" parameter
             location: integer, {1, 2}
                 location of the initial gas mixture relative to the incident shock; 1 = before, 2 = behind
             label: string, optional
@@ -918,7 +931,9 @@ class IncidentShock(ShockTubeReactors):
                     # string type value: just assign the keyword value to 0.0
                     this_value = c_double(0.0)
                 # set the keyword
-                iErrc = chemkin_wrapper.chemkin.KINShock_SetParameter(this_key, this_value)
+                iErrc = chemkin_wrapper.chemkin.KINShock_SetParameter(
+                    this_key, this_value
+                )
                 if iErrc == 2:
                     # keyword is not available
                     msg = [
@@ -964,7 +979,7 @@ class IncidentShock(ShockTubeReactors):
         y_init = self.reactormixture.Y
         #
         if self.BL_correction == 0:
-            # without bounday layer correction
+            # without boundary layer correction
             iErr = chemkin_wrapper.chemkin.KINShock_CalcIncidentShockWithoutBoundaryLayerCorrection(
                 self._myLOUT,
                 self._chemset_index,
@@ -1111,6 +1126,7 @@ class ReflectedShock(ShockTubeReactors):
     """
     Chemkin reflected shock reactor models
     """
+
     def __init__(self, mixture_condition: Stream, location: int, label: str):
         """
         Initialize a generic Shock Tube Reactor object
@@ -1119,7 +1135,7 @@ class ReflectedShock(ShockTubeReactors):
         ----------
             mixture_condition: Stream object
                 a stream representing the gas mixture and velocity
-                at the location speficied by the "location" parameter
+                at the location specified by the "location" parameter
             location: integer, {1, 2}
                 location of the initial gas mixture; 1 = before incident shock, 2 = behind reflected shock
             label: string, optional
@@ -1172,7 +1188,9 @@ class ReflectedShock(ShockTubeReactors):
                     # string type value: just assign the keyword value to 0.0
                     this_value = c_double(0.0)
                 # set the keyword
-                iErrc = chemkin_wrapper.chemkin.KINShock_SetParameter(this_key, this_value)
+                iErrc = chemkin_wrapper.chemkin.KINShock_SetParameter(
+                    this_key, this_value
+                )
                 if iErrc == 2:
                     # keyword is not available
                     msg = [
@@ -1338,6 +1356,7 @@ class ZNDCalculator(ShockTubeReactors):
     """
     Chemkin Zeldovich-von Neumann-Doering (ZND) model for the detonation wave behind the incident shock
     """
+
     def __init__(self, mixture_condition: Stream, label: str):
         """
         Initialize a generic Shock Tube Reactor object
@@ -1346,7 +1365,7 @@ class ZNDCalculator(ShockTubeReactors):
         ----------
             mixture_condition: Stream object
                 a mixture representing the initial gas properties
-                at the location speficied by the "location" parameter
+                at the location specified by the "location" parameter
             label: string, optional
                 reactor name
         """
@@ -1387,7 +1406,9 @@ class ZNDCalculator(ShockTubeReactors):
                     # string type value: just assign the keyword value to 0.0
                     this_value = c_double(0.0)
                 # set the keyword
-                iErrc = chemkin_wrapper.chemkin.KINShock_SetParameter(this_key, this_value)
+                iErrc = chemkin_wrapper.chemkin.KINShock_SetParameter(
+                    this_key, this_value
+                )
                 if iErrc == 2:
                     # keyword is not available
                     msg = [
@@ -1432,15 +1453,17 @@ class ZNDCalculator(ShockTubeReactors):
         y_init = self.reactormixture.Y
         #
         if self.BL_correction == 0:
-            # without bounday layer correction
-            iErr = chemkin_wrapper.chemkin.KINShock_CalcZNDWithoutBoundaryLayerCorrection(
-                self._myLOUT,
-                self._chemset_index,
-                temp,
-                pres,
-                y_init,
-                self._start_time,
-                self._end_time,
+            # without boundary layer correction
+            iErr = (
+                chemkin_wrapper.chemkin.KINShock_CalcZNDWithoutBoundaryLayerCorrection(
+                    self._myLOUT,
+                    self._chemset_index,
+                    temp,
+                    pres,
+                    y_init,
+                    self._start_time,
+                    self._end_time,
+                )
             )
         else:
             if self.BL_correction < 2:
@@ -1461,16 +1484,18 @@ class ZNDCalculator(ShockTubeReactors):
                 exit()
             else:
                 # with boundary layer correction
-                iErr = chemkin_wrapper.chemkin.KINShock_CalcZNDWithBoundaryLayerCorrection(
-                    self._myLOUT,
-                    self._chemset_index,
-                    temp,
-                    pres,
-                    y_init,
-                    self._start_time,
-                    self._end_time,
-                    self.reactor_diameter,
-                    self.init_visc,
+                iErr = (
+                    chemkin_wrapper.chemkin.KINShock_CalcZNDWithBoundaryLayerCorrection(
+                        self._myLOUT,
+                        self._chemset_index,
+                        temp,
+                        pres,
+                        y_init,
+                        self._start_time,
+                        self._end_time,
+                        self.reactor_diameter,
+                        self.init_visc,
+                    )
                 )
 
         return iErr
@@ -1594,7 +1619,7 @@ class ZNDCalculator(ShockTubeReactors):
         temp2 = self.get_single_point_solution("T2")
         # gas velocity behind the incident shock [cm/sec]
         vel2 = self.get_single_point_solution("V2")
-        # change the intial condition from 'before incident shock' to 'behind incident shock'
+        # change the initial condition from 'before incident shock' to 'behind incident shock'
         location1_mixture.pressure = pres2
         location1_mixture.temperature = temp2
         # induction length where the maximum thermicity is located
@@ -1607,7 +1632,7 @@ class ZNDCalculator(ShockTubeReactors):
             model="CONV",
         )
         # reaction zone length
-        if np.isclose(sigma_max, 0.00e0, atol=1.0e-8): 
+        if np.isclose(sigma_max, 0.00e0, atol=1.0e-8):
             msg = [
                 Color.PURPLE,
                 "Maximum thermicity ~ 0.0.",
@@ -1698,11 +1723,13 @@ class ZNDCalculator(ShockTubeReactors):
         temp2 = self.get_single_point_solution("T2")
         # pressure behind the incident shock [dynes/cm2]
         pres2 = self.get_single_point_solution("P2")
-        # change the intial condition from 'before incident shock' to 'behind incident shock'
+        # change the initial condition from 'before incident shock' to 'behind incident shock'
         location1_mixture.pressure = pres2
         location1_mixture.temperature = temp2
         # calculate the reduce activation energy
-        reduced_EA, act_energy = calculate_effective_activation_energy(location1_mixture, model="CONV")
+        reduced_EA, act_energy = calculate_effective_activation_energy(
+            location1_mixture, model="CONV"
+        )
         if reduced_EA <= 0.0e0:
             msg = [
                 Color.PURPLE,
@@ -1719,7 +1746,7 @@ class ZNDCalculator(ShockTubeReactors):
         # index of the limiting species
         limit_index = equil_mixture.get_specindex(limiting_species)
         # the mole fraction profile of the limiting species
-        molfractions: float = []
+        molfractions: list[float] = []
         for m in self._solution_mixturearray:
             molfractions.append(m.X[limit_index])
         # the initial mole fraction of the limiting species
@@ -1750,14 +1777,14 @@ class ZNDCalculator(ShockTubeReactors):
         #
         r1 = reduced_EA
         r2 = temp2 / temp1
-        r3 = r1 ** exponent
+        r3 = r1**exponent
         term = r2 * (a * r2 - b)
-        term += r1 * (c * r1 - d + r2 * (e - f * r2 ))
+        term += r1 * (c * r1 - d + r2 * (e - f * r2))
         term += g * np.log(r2)
         term += h * np.log(r1)
         term += r2 * (i / r1 - k * r2 / r3)
         term -= j
-        width = 1.0e1 ** term
+        width = 1.0e1**term
         width *= dist_50
         # clean up
         del location1_mixture, distance, molfractions

@@ -54,7 +54,7 @@ imitated by the stochastic micro mixing process. The micro mixing process will b
 crank angles. The PSCCI engine model will stop at every "pause" crank angle to perform the micro mixing
 process and restart the simulation till the last "pause" crank angle (which should be the EVO) is reached.
 The micro mixing sub-model of the PSCCI engine has three model parameters: the micro mixing time step size
-(delta_time), the characteristic turbulence scalar mixing time scale (tau), and the mixing model parameter (Cmix). 
+(delta_time), the characteristic turbulence scalar mixing time scale (tau), and the mixing model parameter (Cmix).
 The PSCCI engine model is termed "pseudo-chastic" instead of "stochastic" because it performs the micro mixing
 events less frequently than what is typically required for a stochastic simulation to reduce the simulation time.
 By increasing the number of the "pauses", the PSCCI engine model should behave more closely to a "true"
@@ -454,7 +454,7 @@ if random_wall_area:
     # create a list for random pick
     area_list: list[int] = []
     for i in range(numbzones):
-        area_list.append(i+1)
+        area_list.append(i + 1)
 
 # solution profile sets
 crank_angle_data = []
@@ -502,7 +502,9 @@ for endCA in CAstops:
         if do_micromixing:
             # perform random micro mixing between particles
             # the mixing time step size is the time duration from the previous stop CA
-            delta_time = MyMZEngine.get_Time(MyMZEngine.ending_CA) - MyMZEngine.get_Time(MyMZEngine.starting_CA)
+            delta_time = MyMZEngine.get_Time(
+                MyMZEngine.ending_CA
+            ) - MyMZEngine.get_Time(MyMZEngine.starting_CA)
             # create a mixing instance
             zonemixing = MicroMixing()
             # set the total number of particles
@@ -512,7 +514,9 @@ for endCA in CAstops:
             zonemixing.set_particle_mixtures(zonemixtures)
             # use the modified Curl's mixing model
             mixed_zones = zonemixing.modified_curls(
-                delta_time, mixing_time_scale, mixing_model_parameter,
+                delta_time,
+                mixing_time_scale,
+                mixing_model_parameter,
             )
             # restart run(s)
             # reset the simulation end CA [degree]
@@ -529,25 +533,25 @@ for endCA in CAstops:
         # Run succeeded.
         print(Color.GREEN + ">>> Restart Run completed. <<<", end=Color.END)
 
-####################################################
-# Postprocess the solution profiles in selected zone
-# ==================================================
-# The solution of the multi-zone HCCI engine model contains the results of
-# the individual zones plus the cylinder averaged results. This means that
-# if there are n zones in the multi-zone engine model, there are (n+1) solution
-# records: n zonal results and the cylinder averaged results.
-#
-# To process the result of the zone number :math:`j`\ , :math:`(1 \leq j \leq n)`\ , set the parameter
-# value of ``zoneID`` to :math:`j` when you call the engine postprocessor with the
-# ``process_engine_solution()`` method. Otherwise, the cylinder averaged results are
-# postprocessed by default, that is, when the ``zoneID`` parameter is omitted.
-#
-# .. note ::
-#   Because The ``process_engine_solution()`` method can process only one set of results at
-#   a time (one zonal result or the cylinder averaged result), you must
-#   postprocess the zones one by one to obtain all solution data of the multi-zone
-#   simulation.
-#
+    ####################################################
+    # Postprocess the solution profiles in selected zone
+    # ==================================================
+    # The solution of the multi-zone HCCI engine model contains the results of
+    # the individual zones plus the cylinder averaged results. This means that
+    # if there are n zones in the multi-zone engine model, there are (n+1) solution
+    # records: n zonal results and the cylinder averaged results.
+    #
+    # To process the result of the zone number :math:`j`\ , :math:`(1 \leq j \leq n)`\ , set the parameter
+    # value of ``zoneID`` to :math:`j` when you call the engine postprocessor with the
+    # ``process_engine_solution()`` method. Otherwise, the cylinder averaged results are
+    # postprocessed by default, that is, when the ``zoneID`` parameter is omitted.
+    #
+    # .. note ::
+    #   Because The ``process_engine_solution()`` method can process only one set of results at
+    #   a time (one zonal result or the cylinder averaged result), you must
+    #   postprocess the zones one by one to obtain all solution data of the multi-zone
+    #   simulation.
+    #
     thiszone = 1
     iErr = MyMZEngine.process_engine_solution(zoneID=thiszone)
     plottitle = "Zone " + str(thiszone) + " Solution"

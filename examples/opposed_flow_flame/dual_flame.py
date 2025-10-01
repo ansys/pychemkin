@@ -82,15 +82,12 @@ import time
 
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.logger import logger
 
 # Chemkin 1-D opposed-flow flame model (steady-state)
-from ansys.chemkin.diffusionflames.opposedflowflame import (
-    OpposedFlame as Flame,
-)
+from ansys.chemkin.diffusionflames.opposedflowflame import OpposedFlame as Flame
+from ansys.chemkin.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()
@@ -143,8 +140,8 @@ if iError != 0:
 # Conventionally the "fuel" inlet is located at x = 0, and the "oxidizer" inlet is at the
 # opposite end of the separation (in reality the nozzles are arranged vertically).
 # A strained non-premixed flame (or diffusion flame) can be established in the gap between
-# the inlets by tuning the velocities and the mixture properties of the two inlet streams. 
-# 
+# the inlets by tuning the velocities and the mixture properties of the two inlet streams.
+#
 # This stream is a mixture with the addition of the
 # *inlet flow rate*. You can specify the inlet gas properties the same way you
 # set up a mixture. Here the recipe is used to set up the species
@@ -236,9 +233,9 @@ dual_flame.set_max_flame_temperature(2200.0)
 #
 # .. note::
 #   There are two ways to set up the initial mesh for the opposed-flow flame calculations:
-#   
+#
 #   1. ``set_numb_grid_points`` method to create a uniform mesh of the given number of grid points.
-#   
+#
 #   2. ``set_grid_profile`` method to specify the initial grid point profile.
 #
 
@@ -309,7 +306,11 @@ start_time = time.time()
 
 status = dual_flame.run()
 if status != 0:
-    print(Color.RED + "Failed to get a converged solution of the opposed flow flame!" + Color.END)
+    print(
+        Color.RED
+        + "Failed to get a converged solution of the opposed flow flame!"
+        + Color.END
+    )
     exit()
 
 # compute the total runtime

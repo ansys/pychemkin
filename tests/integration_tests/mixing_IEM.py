@@ -22,8 +22,8 @@
 import os
 
 import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin.mixture import Mixture, mixing_by_exchange_with_the_mean
 from ansys.chemkin.logger import logger
+from ansys.chemkin.mixture import Mixture, mixing_by_exchange_with_the_mean
 
 # check working directory
 current_dir = os.getcwd()

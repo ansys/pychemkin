@@ -1439,7 +1439,7 @@ class Mixture:
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
             exit()
-        
+
         # initialization
         pres = c_double(0.0)
         if mode.lower() == "mole":
@@ -1496,7 +1496,7 @@ class Mixture:
             t: double
                 mixture temperature in [K]
             rho: double
-                mixture desnity in [g/cm3]
+                mixture density in [g/cm3]
             frac: 1-D double array, dimension = number_species
                 mixture composition given by either mass or mole fractions as specified by mode
             wt: 1-D double array, dimension = number_species
@@ -1572,15 +1572,23 @@ class Mixture:
             # real-gas cubic EOS is active, set current pressure that is required by the chemkin real-gas module
             set_current_pressure(chemID, p)
             # compute total thermicity from mass fraction
-            iErr = ck_wrapper.chemkin.KINRealGas_GetMixtureThermicity(chemset_index, pp, tt, rr, yy, sigma)
+            iErr = ck_wrapper.chemkin.KINRealGas_GetMixtureThermicity(
+                chemset_index, pp, tt, rr, yy, sigma
+            )
         else:
             # compute total thermicity from mass fraction
-            iErr = ck_wrapper.chemkin.KINGetGasMixtureThermicity(chemset_index, pp, tt, rr, yy, sigma)
+            iErr = ck_wrapper.chemkin.KINGetGasMixtureThermicity(
+                chemset_index, pp, tt, rr, yy, sigma
+            )
         if iErr == 0:
             return sigma.value
         else:
             # failed to compute mixture total thermicity
-            msg = [Color.PURPLE, "failed to compute mixture total thermicity.", Color.END]
+            msg = [
+                Color.PURPLE,
+                "failed to compute mixture total thermicity.",
+                Color.END,
+            ]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
             exit()
@@ -1670,7 +1678,9 @@ class Mixture:
         tt = c_double(t)  # temperature scalar
         yy = np.ctypeslib.as_array(y)  # mass fraction array
         # compute speed of sound from mass fraction
-        iErr = ck_wrapper.chemkin.KINGetGasMixtureSoundSpeed(chemset_index, pp, tt, yy, gamma, soundspeed)
+        iErr = ck_wrapper.chemkin.KINGetGasMixtureSoundSpeed(
+            chemset_index, pp, tt, yy, gamma, soundspeed
+        )
         if iErr == 0:
             return soundspeed.value
         else:
@@ -3291,8 +3301,6 @@ class Mixture:
         self._molefrac[:] = 0.0e0
 
 
-
-
 # mixture mixing
 def verify_mixture(this_mixture: Mixture) -> bool:
     """
@@ -3990,7 +3998,7 @@ def species_diffusion_velocity(
         delta_temp = mixtureA.temperature - mixtureB.temperature
         factor = delta_temp / temp_ave / rho_ave
         for k in range(nspecies):
-           YV[k] += DTk[k] * factor
+            YV[k] += DTk[k] * factor
         # clean up
         del DTk
 
