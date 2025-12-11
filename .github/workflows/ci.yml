@@ -133,26 +133,33 @@ jobs:
     name: Release
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     needs: build-library
-    runs-on: windows-latest
+    environment: release
+    runs-on: ubuntu-latest
     steps:
-      # Upload first to the private PyPi, at least up until we release
-      - name: Release to the private PyPI repository
-        uses: ansys/actions/release-pypi-private@v10
-        with:
-          library-name: ${{ env.PACKAGE_NAME }}
-          twine-token: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
 
-      - name: Release to the public PyPI repository
-        uses: ansys/actions/release-pypi-public@v10
+      - name: "Download the library artifacts from build-library step"
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
-          library-name: ${{ env.PACKAGE_NAME }}
-          twine-username: "__token__"
-          twine-token: ${{ secrets.PYPI_TOKEN }}
+          name: ${{ env.PACKAGE_NAME }}-artifacts
+          path: ${{ env.PACKAGE_NAME }}-artifacts
 
-      - name: Release to GitHub
-        uses: ansys/actions/release-github@v10
+      - name: "Upload artifacts to PyPI using trusted publisher"
+        uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # v1.13.0
+        with:
+          repository-url: "https://upload.pypi.org/legacy/"
+          print-hash: true
+          packages-dir: ${{ env.PACKAGE_NAME }}-artifacts
+          skip-existing: false
+
+      - name: "Release to GitHub"
+        uses: ansys/actions/release-github@eb7d0fc873deeee6d4740774675ce1741cb6f154 # v10.2.2
         with:
           library-name: ${{ env.PACKAGE_NAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          changelog-release-notes: true
+          only-code: true
+          add-artifact-attestation-notes: true
+          generate_release_notes: false
 
   doc-deploy-stable:
     name: "Deploy stable documentation"
