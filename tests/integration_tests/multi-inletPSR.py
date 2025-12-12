@@ -62,7 +62,7 @@ fuel = Stream(MyGasMech, label="Fuel")
 # set fuel composition
 fuel.X = [("h2", 0.21), ("n2", 0.79)]
 # setting pressure and temperature is not required in this case
-fuel.pressure = ck.Patm
+fuel.pressure = ck.P_ATM
 fuel.temperature = 450.0  # inlet temperature
 # set inlet volumetric flow rate [cm3/sec]
 fuel.vol_flowrate = 25.0

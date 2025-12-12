@@ -55,13 +55,13 @@ fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition
 fuelmixture.X = [("CH4", 1.0)]
 # setting pressure and temperature is not required in this case
-fuelmixture.pressure = 5.0 * ck.Patm
+fuelmixture.pressure = 5.0 * ck.P_ATM
 fuelmixture.temperature = 1500.0
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
 air.X = [("O2", 0.21), ("N2", 0.79)]
 # setting pressure and temperature is not required in this case
-air.pressure = 5.0 * ck.Patm
+air.pressure = 5.0 * ck.P_ATM
 air.temperature = 1500.0
 # create the premixed mixture to be defined
 premixed = ck.Mixture(MyGasMech)
@@ -80,7 +80,7 @@ premixed.list_composition(mode="mole")
 # compute reaction rates
 #
 # temperature and pressure are requires to compute the reaction rates
-premixed.pressure = 5.0 * ck.Patm
+premixed.pressure = 5.0 * ck.P_ATM
 premixed.temperature = 1600.0
 # get the net species molar rates of production [mole/cm3-sec]
 rop = premixed.ROP()

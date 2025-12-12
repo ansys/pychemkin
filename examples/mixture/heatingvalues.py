@@ -77,7 +77,7 @@ logger.debug("working directory: " + current_dir)
 data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
 logger.debug("data directory: " + data_dir)
 # set pressure & temperature condition of the standard state
-thispressure = ck.Patm
+thispressure = ck.P_ATM
 thistemperature = 298.15
 
 ####################################
@@ -371,8 +371,8 @@ for f in fuels:
 print(f"Fuel Heating Values at {thistemperature} [K] and {thispressure*1.0e-6} [bar]\n")
 for i in range(len(fuels)):
     print(f"fuel composition:  {fuels[i]}")
-    print(f" LHV [kJ/g-fuel]:  {LHV[i] / ck.ergs_per_joule / 1.0e3}")
-    print(f" HHV [kJ/g-fuel]:  {HHV[i] / ck.ergs_per_joule / 1.0e3}\n")
+    print(f" LHV [kJ/g-fuel]:  {LHV[i] / ck.ERGS_PER_JOULE / 1.0e3}")
+    print(f" HHV [kJ/g-fuel]:  {HHV[i] / ck.ERGS_PER_JOULE / 1.0e3}\n")
 
 ##########
 # Clean up

@@ -119,7 +119,7 @@ exhaust = Stream(MyGasMech)
 # set inlet temperature [K]
 exhaust.temperature = 1750.0
 # set inlet/PFR pressure [atm]
-exhaust.pressure = 0.83 * ck.Patm
+exhaust.pressure = 0.83 * ck.P_ATM
 # set inlet molar composition directly
 exhaust.X = [
     ("CO", 0.0145),

@@ -45,16 +45,16 @@ from ansys.chemkin.chemistry import (
 from ansys.chemkin.color import Color
 from ansys.chemkin.constants import (
     Air,
-    Patm,
-    Ptorrs,
-    RGas,
-    RGas_Cal,
+    P_ATM,
+    P_TORRS,
+    R_GAS,
+    R_GAS_CAL,
     air,
-    avogadro,
-    boltzmann,
-    ergs_per_calorie,
-    ergs_per_joule,
-    joules_per_calorie,
+    AVOGADRO,
+    BOLTZMANN,
+    ERGS_PER_CALORIE,
+    ERGS_PER_JOULE,
+    JOULES_PER_CALORIE,
     water_heat_vaporization,
 )
 from ansys.chemkin.info import (

@@ -99,7 +99,7 @@ fuel = ck.Mixture(MyMech)
 # set mole fraction
 fuel.X = [("CH4", 0.8), ("C2H6", 0.2)]
 fuel.temperature = 290.0
-fuel.pressure = 40.0 * ck.Patm
+fuel.pressure = 40.0 * ck.P_ATM
 # create the air mixture
 air = ck.Mixture(MyMech)
 # set mass fraction
@@ -157,7 +157,7 @@ premixed.list_composition(mode="mole")
 # *real-gas model* if the mechanism contains the real-gas parameters in the EOS block.
 # Use the ``use_idealgas_law()`` method to reactivate the ideal-gas law assumption.
 points = 5
-dpres = 10.0 * ck.Patm
+dpres = 10.0 * ck.P_ATM
 pres = fuel.pressure
 P = np.zeros(points, dtype=np.double)
 Det = np.zeros_like(P, dtype=np.double)
@@ -170,7 +170,7 @@ for i in range(points):
     speed, CJstate = ck.detonation(premixed)
     # update plot data
     # convert pressure to atm
-    P[i] = pres / ck.Patm
+    P[i] = pres / ck.P_ATM
     # convert speed to m/sec
     Det[i] = speed[1] / 1.0e2
     # update pressure value
@@ -209,7 +209,7 @@ for i in range(points):
     # compute the C-J state corresponding to the initial mixture
     speed, CJstate = ck.detonation(premixed)
     # update plot data
-    P[i] = pres / ck.Patm
+    P[i] = pres / ck.P_ATM
     Det[i] = speed[1] / 1.0e2
     # update pressure value
     pres += dpres

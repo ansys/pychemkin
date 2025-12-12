@@ -63,7 +63,7 @@ fuel = ck.Mixture(MyGasMech)
 # set fuel composition
 fuel.X = [("h2", 0.8), ("n2", 0.2)]
 # setting pressure and temperature is not required in this case
-fuel.pressure = ck.Patm
+fuel.pressure = ck.P_ATM
 fuel.temperature = 298.0  # inlet temperature
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)

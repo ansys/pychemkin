@@ -59,13 +59,13 @@ fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition
 fuelmixture.X = [("CH4", 0.9), ("C3H8", 0.05), ("C2H6", 0.05)]
 # setting pressure and temperature is not required in this case
-fuelmixture.pressure = 1.5 * ck.Patm
+fuelmixture.pressure = 1.5 * ck.P_ATM
 fuelmixture.temperature = 400.0
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
 air.X = [("O2", 0.21), ("N2", 0.79)]
 # setting pressure and temperature is not required in this case
-air.pressure = 1.5 * ck.Patm
+air.pressure = 1.5 * ck.P_ATM
 air.temperature = 400.0
 # create the unburned fuel-air mixture
 fresh = ck.Mixture(MyGasMech)
@@ -84,7 +84,7 @@ if iError != 0:
 fresh.list_composition(mode="mole")
 # set mixture temperature and pressure (equivalent to setting the initial temperature and pressure of the reactor)
 fresh.temperature = 447.0
-fresh.pressure = 1.065 * ck.Patm
+fresh.pressure = 1.065 * ck.P_ATM
 # set exhaust gas recirculation (EGR) ratio with volume fraction
 EGRratio = 0.3
 # compute the EGR stream composition in mole fractions

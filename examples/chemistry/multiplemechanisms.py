@@ -106,7 +106,7 @@ mymixture1 = ck.Mixture(My1stMech)
 # set mixture temperature [K]
 mymixture1.temperature = 1000.0
 # set mixture pressure [dynes/cm2]
-mymixture1.pressure = ck.Patm
+mymixture1.pressure = ck.P_ATM
 # use the "X" property to specify the molar compositions of the mixture
 mymixture1.X = [("CH4", 0.1), ("O2", 0.21), ("N2", 0.79)]
 
@@ -190,7 +190,7 @@ mymixture2 = ck.Mixture(My2ndMech)
 # set mixture temperature [K]
 mymixture2.temperature = 500.0
 # set mixture pressure [dynes/cm2]
-mymixture2.pressure = 2.0 * ck.Patm
+mymixture2.pressure = 2.0 * ck.P_ATM
 # set mixture molar composition
 mymixture2.X = [("H2", 0.02), ("O2", 0.2), ("N2", 0.8)]
 

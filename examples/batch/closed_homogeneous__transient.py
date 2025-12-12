@@ -121,7 +121,7 @@ fuelmixture = ck.Mixture(MyGasMech)
 fuelmixture.X = [("H2", 2.0), ("N2", 3.76), ("O2", 1.0)]
 # setting the mixture pressure and temperature is equivalent to setting
 # the initial temperature and pressure of the reactor in this case
-fuelmixture.pressure = ck.Patm
+fuelmixture.pressure = ck.P_ATM
 fuelmixture.temperature = 1000
 
 # list the composition of the premixed mixture

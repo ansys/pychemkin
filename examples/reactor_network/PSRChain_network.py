@@ -123,14 +123,14 @@ iError = MyGasMech.preprocess()
 # fuel is pure methane
 fuel = Stream(MyGasMech)
 fuel.temperature = 300.0  # [K]
-fuel.pressure = 2.1 * ck.Patm  # [atm] => [dyne/cm2]
+fuel.pressure = 2.1 * ck.P_ATM  # [atm] => [dyne/cm2]
 fuel.X = [("CH4", 1.0)]
 fuel.mass_flowrate = 3.275  # [g/sec]
 
 # air is modeled as a mixture of oxygen and nitrogen
 air = Stream(MyGasMech)
 air.temperature = 550.0  # [K]
-air.pressure = 2.1 * ck.Patm
+air.pressure = 2.1 * ck.P_ATM
 # use predefined "air" recipe in mole fractions (with upper cased symbols)
 air.X = ck.Air.X()
 air.mass_flowrate = 45.0  # [g/sec]
@@ -154,7 +154,7 @@ print(f"Premixed stream mass flow rate = {premixed.mass_flowrate} [g/sec].")
 # additional fuel injection for the reburning zone
 reburn_fuel = Stream(MyGasMech)
 reburn_fuel.temperature = 300.0  # [K]
-reburn_fuel.pressure = 2.1 * ck.Patm  # [atm] => [dyne/cm2]
+reburn_fuel.pressure = 2.1 * ck.P_ATM  # [atm] => [dyne/cm2]
 reburn_fuel.X = [("CH4", 0.6), ("CO2", 0.4)]
 reburn_fuel.mass_flowrate = 0.12  # [g/sec]
 

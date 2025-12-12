@@ -117,14 +117,14 @@ fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition
 fuelmixture.X = [("CH4", 0.9), ("C3H8", 0.05), ("C2H6", 0.05)]
 # setting pressure and temperature is not required in this case
-fuelmixture.pressure = 1.5 * ck.Patm
+fuelmixture.pressure = 1.5 * ck.P_ATM
 fuelmixture.temperature = 400.0
 
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
 air.X = [("O2", 0.21), ("N2", 0.79)]
 # setting pressure and temperature is not required in this case
-air.pressure = 1.5 * ck.Patm
+air.pressure = 1.5 * ck.P_ATM
 air.temperature = 400.0
 
 # products from the complete combustion of the fuel mixture and air
@@ -154,7 +154,7 @@ fresh.list_composition(mode="mole")
 # setting the mixture pressure and temperature is equivalent to setting
 # the initial temperature and pressure of the engine cylinder.
 fresh.temperature = 447.0
-fresh.pressure = 1.065 * ck.Patm
+fresh.pressure = 1.065 * ck.P_ATM
 
 ###########################################
 # Add EGR to the fresh fuel-air mixture
@@ -420,7 +420,7 @@ for i in range(solutionpoints):
     # get gas density [g/cm3]
     denprofile[i] = solutionmixture.RHO
     # get mixture-specific heat capacity profile [erg/mole-K]
-    Cpprofile[i] = solutionmixture.CPBL() / ck.ergs_per_joule * 1.0e-3
+    Cpprofile[i] = solutionmixture.CPBL() / ck.ERGS_PER_JOULE * 1.0e-3
 
 ###################################
 # Plot the engine solution profiles

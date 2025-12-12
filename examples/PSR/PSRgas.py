@@ -138,7 +138,7 @@ fuel = ck.Mixture(MyGasMech)
 # set fuel composition: hydrogen diluted by nitrogen
 fuel.X = [("h2", 0.8), ("n2", 0.2)]
 # setting the pressure and temperature is not required in this case
-fuel.pressure = ck.Patm
+fuel.pressure = ck.P_ATM
 fuel.temperature = 298.0  # inlet temperature
 
 # create the oxidizer mixture: air

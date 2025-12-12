@@ -113,7 +113,7 @@ premixed = ck.Mixture(MyGasMech)
 # set mixture pressure [dynes/cm2]
 mixpressure = 2.0  # given in atm
 # convert to dynes/cm2
-premixed.pressure = mixpressure * ck.Patm
+premixed.pressure = mixpressure * ck.P_ATM
 # set mixture temperature [K]
 premixed.temperature = 500.0
 # create a recipe for the molar composition of the mixture
@@ -199,13 +199,13 @@ for j in range(len(press)):
     # loop over temperature data points
     for i in range(points):
         # set mixture pressure [dynes/cm2]
-        premixed.pressure = press[j] * ck.Patm
+        premixed.pressure = press[j] * ck.P_ATM
         # set mixture temperature [K]
         premixed.temperature = temp
         # get mixture density [gm/cm3]
         rho[i] = premixed.RHO
         # get mixture enthalpy [ergs/mol] and convert it to [kJ/mol]
-        enthalpy[i] = premixed.HML() * 1.0e-3 / ck.ergs_per_joule
+        enthalpy[i] = premixed.HML() * 1.0e-3 / ck.ERGS_PER_JOULE
         # get mixture viscosity [gm/cm-sec]
         visc[i] = premixed.mixture_viscosity()
         # get mixture-averaged diffusion coefficient of CH4 [cm2/sec]

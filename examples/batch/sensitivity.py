@@ -135,7 +135,7 @@ oxid = ck.Mixture(MyGasMech)
 # set mole fraction
 oxid.X = [("O2", 1.0), ("N2", 3.76)]
 oxid.temperature = 900
-oxid.pressure = ck.Patm  # 1 atm
+oxid.pressure = ck.P_ATM  # 1 atm
 
 fuel = ck.Mixture(MyGasMech)
 # set mole fraction

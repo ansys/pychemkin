@@ -31,7 +31,7 @@ from typing import Dict, List, Union
 
 from ansys.chemkin import chemkin_wrapper as ck_wrapper
 from ansys.chemkin.color import Color
-from ansys.chemkin.constants import RGas
+from ansys.chemkin.constants import R_GAS
 from ansys.chemkin.info import clear_hints
 from ansys.chemkin.logger import logger
 from ansys.chemkin.realgaseos import check_realgas_status, set_current_pressure
@@ -1166,7 +1166,7 @@ class Chemistry:
             logger.error(this_msg)
             exit()
         Cv = self.SpeciesCp(temp, pres)
-        R = RGas
+        R = R_GAS
         # for k in range(len(Cp)):
         #    Cv[k] = Cp[k] - R
         Cv -= R

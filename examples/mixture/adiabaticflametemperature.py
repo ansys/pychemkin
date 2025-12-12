@@ -98,7 +98,7 @@ oxid = ck.Mixture(MyGasMech)
 # the "oxid" mixture consists of 100% O2
 oxid.X = [("O2", 1.0)]
 oxid.temperature = 295.15  # [K]
-oxid.pressure = ck.Patm  # 1 atm
+oxid.pressure = ck.P_ATM  # 1 atm
 
 # create the "fuel" mixture
 fuel = ck.Mixture(MyGasMech)

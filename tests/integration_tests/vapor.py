@@ -62,7 +62,7 @@ mist = ck.Mixture(MyMech)
 # set mole fraction
 mist.X = [("H2O", 2.0), ("O2", 1.0), ("N2", 3.76)]
 mist.temperature = 500.0  # [K]
-mist.pressure = 100.0 * ck.Patm
+mist.pressure = 100.0 * ck.P_ATM
 # set mixture mixing rule to Van der Waals (default)
 # mist.set_realgas_mixing_rule(rule=0)
 # create a constant pressure batch reactor (with given temperature)
@@ -130,7 +130,7 @@ for i in range(solutionpoints):
     # get mixture density profile
     denprofile[i] = solutionmixture.RHO
     # get mixture enthalpy profile
-    Hprofile[i] = solutionmixture.HML() / ck.ergs_per_joule * 1.0e-3
+    Hprofile[i] = solutionmixture.HML() / ck.ERGS_PER_JOULE * 1.0e-3
 
 #
 # turn off real-gas cubic equation of state
@@ -164,12 +164,12 @@ for i in range(solutionpoints):
     # get mixture density profile
     denprofile_IG[i] = solutionmixture.RHO
     # get mixture enthalpy profile
-    Hprofile_IG[i] = solutionmixture.HML() / ck.ergs_per_joule * 1.0e-3
+    Hprofile_IG[i] = solutionmixture.HML() / ck.ERGS_PER_JOULE * 1.0e-3
 
 ck.done()
 # plot the profiles
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))
-thispres = str(mist.pressure / ck.Patm)
+thispres = str(mist.pressure / ck.P_ATM)
 thistitle = "Cooling Vapor + Air at " + thispres + " atm"
 plt.suptitle(thistitle, fontsize=16)
 plt.subplot(221)

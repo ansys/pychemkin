@@ -93,7 +93,7 @@ for s in plotspeclist:
         ID = MyGasMech.get_specindex(s)
         T[i] = Temp
         # convert ergs to joules
-        Cv[i] = HeatCapacity[ID] / ck.ergs_per_joule
+        Cv[i] = HeatCapacity[ID] / ck.ERGS_PER_JOULE
         Temp += dTemp
     plt.subplot(121)
     plt.plot(T, Cv, curvelist[k])
@@ -117,7 +117,7 @@ for s in plotspeclist:
         ID = MyGasMech.get_specindex(s)
         T[i] = Temp
         # convert ergs to joules
-        kappa[i] = conductivity[ID] / ck.ergs_per_joule
+        kappa[i] = conductivity[ID] / ck.ERGS_PER_JOULE
         Temp += dTemp
     plt.subplot(122)
     plt.plot(T, kappa, curvelist[k])
@@ -128,7 +128,7 @@ plt.ylabel("Conductivity [J/cm-K-sec]")
 plt.legend(plotspeclist, loc="upper left")
 # calculate species binary diffusion coefficients
 # at 2 atm and 500K
-diffcoef = MyGasMech.SpeciesDiffusionCoeffs(2.0 * ck.Patm, 500.0)
+diffcoef = MyGasMech.SpeciesDiffusionCoeffs(2.0 * ck.P_ATM, 500.0)
 ID1 = MyGasMech.get_specindex(plotspeclist[0])
 ID2 = MyGasMech.get_specindex(plotspeclist[1])
 c = diffcoef[ID1][ID2]

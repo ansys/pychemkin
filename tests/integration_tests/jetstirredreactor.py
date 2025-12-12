@@ -63,7 +63,7 @@ feed = Stream(MyGasMech)
 # set H2-O2-N2 composition
 feed.X = [("h2", 1.1e-2), ("n2", 9.62e-1), ("o2", 2.75e-2)]
 # setting reactor pressure [dynes/cm2]
-feed.pressure = ck.Patm
+feed.pressure = ck.P_ATM
 # set inlet gas temperature [K]
 temp = 800.0
 feed.temperature = temp

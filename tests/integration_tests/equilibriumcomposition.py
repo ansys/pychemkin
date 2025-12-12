@@ -54,13 +54,13 @@ fuel = ck.Mixture(MyGasMech)
 # set mole fraction
 fuel.X = [("CH4", 0.8), ("H2", 0.2)]
 fuel.temperature = 300.0
-fuel.pressure = ck.Patm  # 1 atm
+fuel.pressure = ck.P_ATM  # 1 atm
 # create the air mixture
 air = ck.Mixture(MyGasMech)
 # set mass fraction
 air.Y = [("O2", 0.23), ("N2", 0.77)]
 air.temperature = 300.0
-air.pressure = ck.Patm  # 1 atm
+air.pressure = ck.P_ATM  # 1 atm
 # mix the fuel and the air with an air-fuel ratio of 17.19 (almost stoichiometric?)
 mixture_recipe = [(fuel, 1.0), (air, 17.19)]
 # create the new mixture (the air-fuel ratio is by mass)
