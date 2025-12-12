@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-    Chemkin open reactor utilities.
+"""Chemkin open reactor utilities.
 """
 
 from ctypes import c_int
@@ -36,13 +35,11 @@ from ansys.chemkin.steadystatesolver import SteadyStateSolver
 
 
 class openreactor(ReactorModel, SteadyStateSolver):
-    """
-    Generic open reactor model
+    """Generic open reactor model
     """
 
     def __init__(self, guessedmixture: Stream, label: Union[str, None] = None):
-        """
-        Create a steady-state flow reactor object
+        """Create a steady-state flow reactor object
 
         Parameters
         ----------
@@ -50,6 +47,7 @@ class openreactor(ReactorModel, SteadyStateSolver):
                 guessed/estimate reactor condition
             label: string, optional
                 reactor name
+
         """
         # check reactor Mixture object
         if isinstance(guessedmixture, (Stream, Mixture)):
@@ -88,13 +86,13 @@ class openreactor(ReactorModel, SteadyStateSolver):
         self.ProblemTypes = {"SETVOL": 1, "SETTAU": 2}
 
     def set_inlet(self, extinlet: Stream):
-        """
-        Add an external inlet to the reactor
+        """Add an external inlet to the reactor
 
         Parameters
         ----------
             extinlet: Stream object
                 external inlet to the open reactor
+
         """
         # check Inlet
         if not isinstance(extinlet, Stream):
@@ -164,13 +162,13 @@ class openreactor(ReactorModel, SteadyStateSolver):
         logger.info(this_msg)
 
     def reset_inlet(self, new_stream: Stream):
-        """
-        Reset the properties of an existing external inlet from the reactor by the inlet name
+        """Reset the properties of an existing external inlet from the reactor by the inlet name
 
         Parameters
         ----------
             new_stream: Stream object
                 the updated inlet properties with the same stream label
+
         """
         # check input
         if not isinstance(new_stream, Stream):
@@ -201,13 +199,13 @@ class openreactor(ReactorModel, SteadyStateSolver):
             exit()
 
     def remove_inlet(self, name: str):
-        """
-        Delete an existing external inlet from the reactor by the inlet name
+        """Delete an existing external inlet from the reactor by the inlet name
 
         Parameters
         ----------
             name: string
                 external inlet name/label
+
         """
         # check input
         if not isinstance(name, str):
@@ -257,25 +255,25 @@ class openreactor(ReactorModel, SteadyStateSolver):
 
     @property
     def net_mass_flowrate(self) -> float:
-        """
-        Get the net external inlet mass flow rate
+        """Get the net external inlet mass flow rate
 
         Returns
         -------
             massflowrate: double
                 net/total external mass flow rate into the reactor [g/sec]
+
         """
         return self.totalmassflowrate
 
     @property
     def net_vol_flowrate(self) -> float:
-        """
-        Get the net external volumetric flow rate
+        """Get the net external volumetric flow rate
 
         Returns
         -------
             volflowrate: double
                 net/total external volumetric flow rate into the reactor [cm3/sec]
+
         """
         vrate = 0.0e0
         inletlist = list(self.externalinlets.keys())
@@ -287,12 +285,12 @@ class openreactor(ReactorModel, SteadyStateSolver):
 
     @property
     def number_external_inlets(self) -> int:
-        """
-        Get the number of external inlets to the reactor
+        """Get the number of external inlets to the reactor
 
         Returns
         -------
             ninlet: integer
                 total number of external inlets to the reactor
+
         """
         return self.numbexternalinlets

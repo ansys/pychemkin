@@ -20,28 +20,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-pychemkin utilities
+"""pychemkin utilities
 """
 import os
 import re
 import secrets
 from typing import Union
 
+import numpy as np
+import numpy.typing as npt
+
 from ansys.chemkin.chemistry import Chemistry
 from ansys.chemkin.color import Color
 from ansys.chemkin.logger import logger
-import numpy as np
-import numpy.typing as npt
 
 ck_rng = None  # random number generator
 
 
 def where_element_in_array_1D(
-    arr: Union[npt.NDArray[np.double], npt.NDArray[np.int32]], target: Union[int, float]
+    arr: Union[npt.NDArray[np.double], npt.NDArray[np.int32]], target: float
 ) -> tuple[int, npt.NDArray[np.int32]]:
-    """
-    Find the number of occurrence and the element index in the 1D arr array that matches the target value.
+    """Find the number of occurrence and the element index in the 1D arr array that matches the target value.
     Using numpy.argwhere might be more efficient. However, the numpy method returns a list of lists of occurrence indices
     while this might be necessary for general applications, it is an overkill for simple 1D array cases.
 
@@ -56,6 +55,7 @@ def where_element_in_array_1D(
     -------
         number_of_occurrences: integer
         occurrence_index: integer array
+
     """
     count = 0
     # check arr array size
@@ -79,8 +79,7 @@ def where_element_in_array_1D(
 
 
 def bisect(ileft: int, iright: int, x: float, xarray) -> int:
-    """
-    Use bisectional method to find the largest index in the xarray of which its value is small or equal to the target x value
+    """Use bisectional method to find the largest index in the xarray of which its value is small or equal to the target x value
 
     Parameters
     ----------
@@ -97,6 +96,7 @@ def bisect(ileft: int, iright: int, x: float, xarray) -> int:
     -------
         itarget: integer
             the largest index in the xarray of which its value is small or equal to the target x value
+
     """
     if (iright - ileft) > 1:
         ihalf = int((ileft + iright) / 2)
@@ -114,8 +114,7 @@ def bisect(ileft: int, iright: int, x: float, xarray) -> int:
 def find_interpolate_parameters(
     x: float, xarray: npt.NDArray[np.double]
 ) -> tuple[int, float]:
-    """
-    Find the index ileft that
+    """Find the index ileft that
        xarray[ileft] <= x <= xarray[iright] where iright = ileft + 1
 
     Parameters
@@ -131,6 +130,7 @@ def find_interpolate_parameters(
         the largest index in the xarray of which its value is small or equal to the target x value
     ratio: double
         the distance ratio = (x - xarray[ileft])/(xarray[ileft+1] - xarray[ileft])
+
     """
     iarraysize = len(xarray)
     if x == xarray[0]:
@@ -169,8 +169,7 @@ def find_interpolate_parameters(
 def interpolate_array(
     x: float, x_array: npt.NDArray[np.double], y_array: npt.NDArray[np.double]
 ) -> float:
-    """
-    Find the value in the y_array from the interpolation parameters ileft and ratio
+    """Find the value in the y_array from the interpolation parameters ileft and ratio
         y = (1-ratio)* y_array[ileft] + ratio * y_array[ileft+1]
         where ileft and ratio are determined from the target x value and the xarray
 
@@ -187,6 +186,7 @@ def interpolate_array(
     -------
         y: double
             the interpolated dependent variable value corresponding the given x value
+
     """
     # find the interpolation parameters
     ileft, ratio = find_interpolate_parameters(x, x_array)
@@ -199,8 +199,7 @@ def interpolate_array(
 def create_mixture_recipe_from_fractions(
     chemistry_set: Chemistry, frac: npt.NDArray[np.double]
 ) -> tuple[int, list[tuple[str, float]]]:
-    """
-    Build a PyChemkin mixture recipe/formula from a species fraction array (i.e., mixture mole/mass composition).
+    """Build a PyChemkin mixture recipe/formula from a species fraction array (i.e., mixture mole/mass composition).
     This mixture recipe can then be used to create the corresponding Mixture object.
 
     Parameters
@@ -216,6 +215,7 @@ def create_mixture_recipe_from_fractions(
             the size of the recipe list containing [gas species, mole/mass fraction] tuples
         recipe: list of tuples, [(species_symbol, fraction), ... ]
             non-zero mixture composition corresponding to the given mole/mass fraction array
+
     """
     # initialization
     count = 0
@@ -258,8 +258,7 @@ def create_mixture_recipe_from_fractions(
 def _nonzero_element_in_array_1D(
     arr: Union[npt.NDArray[np.int32], npt.NDArray[np.double]], threshold: float = 0.0
 ) -> tuple[int, npt.NDArray[np.int32]]:
-    """
-    Find the number of occurrence and the indices of the non-zero (> 0) element in the array arr.
+    """Find the number of occurrence and the indices of the non-zero (> 0) element in the array arr.
     Using numpy.nonzero might be more efficient. However, the numpy method returns a list of lists of occurrence indices
     while this might be necessary for general applications, it is an overkill for simple 1D array cases.
 
@@ -276,6 +275,7 @@ def _nonzero_element_in_array_1D(
             number_of_occurrences
         nonzero_index: 1-D integer array
             occurrence_index
+
     """
     # find the number of non-zero counts
     nonzero_count = np.count_nonzero(arr)
@@ -298,8 +298,7 @@ def calculate_stoichiometrics(
     oxid_molefrac: npt.NDArray[np.double],
     prod_index: npt.NDArray[np.int32],
 ) -> tuple[float, npt.NDArray[np.double]]:
-    """
-    calculate the stoichiometric coefficients of the complete combustion reaction of the given fuel and oxidizer mixtures.
+    """Calculate the stoichiometric coefficients of the complete combustion reaction of the given fuel and oxidizer mixtures.
     Consider the complete combustion of the fuel + oxidizer mixture
     ::
         (fuel species) + alpha*(oxidizer species) <=> nu(1)*prod(1) + ... + nu(numb_prod)*prod(numb_prod)
@@ -333,6 +332,7 @@ def calculate_stoichiometrics(
             oxidizer_coefficient_multiplier
         nu: 1-D double array
             stoichiometric_coefficients_of_products
+
     """
     # check the Chemistry object
     if not isinstance(chemistryset, Chemistry):
@@ -489,8 +489,7 @@ def calculate_stoichiometrics(
 
 
 def random(range: Union[None, tuple[float, float]] = None) -> float:
-    """
-    Generate a (reproducible) random floating number value >= 0.0 and < 1.0
+    """Generate a (reproducible) random floating number value >= 0.0 and < 1.0
     by using the Numpy pseudo-random number generator.
     If the range tuple (a, b) is given, the random number will
     have a value >= a and < b.
@@ -504,6 +503,7 @@ def random(range: Union[None, tuple[float, float]] = None) -> float:
     -------
         random: float
             random number
+
     """
     global ck_rng
     if ck_rng is None:
@@ -524,8 +524,7 @@ def random(range: Union[None, tuple[float, float]] = None) -> float:
 
 
 def find_file(filepath: str, partialfilename: str, fileext: str) -> str:
-    """
-    Find the correct version of the given partial file name.
+    """Find the correct version of the given partial file name.
     This is mostly to handle the different years/versions of the
     MFL mechanisms that come with the Ansys Chemkin installation.
 
@@ -542,6 +541,7 @@ def find_file(filepath: str, partialfilename: str, fileext: str) -> str:
     -------
         thefile: string
             full path name of the file, = "" if no file matches the 'partialname' in the 'filepath'
+
     """
     thefile = ""
     for file in os.listdir(filepath):

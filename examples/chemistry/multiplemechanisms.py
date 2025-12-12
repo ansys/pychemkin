@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_multiple_mechanism:
+""".. _ref_multiple_mechanism:
 
 =============================
 Work with multiple mechanisms
@@ -206,7 +205,7 @@ mymixture2.X = [("H2", 0.02), ("O2", 0.2), ("N2", 0.8)]
 speeds_mix2, CJ_mix2 = ck.detonation(mymixture2)
 #  print the detonation calculation results
 print(f"Detonation mymixture2 temperature: {CJ_mix2.temperature} [K]")
-print(f"Detonation wave speed = {speeds_mix2[1]/100.0} [m/sec]")
+print(f"Detonation wave speed = {speeds_mix2[1] / 100.0} [m/sec]")
 
 
 ###################################################
@@ -231,4 +230,4 @@ My1stMech.activate()
 speeds_mix1, CJ_mix1 = ck.detonation(mymixture1)
 # print the detonation calculation results
 print(f"Detonation 'mymixture1' temperature: {CJ_mix1.temperature} [K]")
-print(f"Detonation wave speed = {speeds_mix1[1]/100.0} [m/sec]")
+print(f"Detonation wave speed = {speeds_mix1[1] / 100.0} [m/sec]")

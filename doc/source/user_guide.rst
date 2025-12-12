@@ -57,14 +57,16 @@ This code example computes the density of a mixture named ``air``:
       therm_file = os.path.join(mech_dir, "grimech30_thermo.dat")
       tran_file = os.path.join(mech_dir, "grimech30_transport.dat")
       # instantiate a chemistry set named 'GasMech'
-      GasMech = chemkin.Chemistry(chem=mech_file, therm=therm_file,  tran=tran_file,  label='GRI 3.0')
+      GasMech = chemkin.Chemistry(
+          chem=mech_file, therm=therm_file, tran=tran_file, label="GRI 3.0"
+      )
       # preprocess the chemistry set
       status = GasMech.preprocess()
       # check preprocess status
       if status != 0:
           # failed
-          print(f'Preprocessing: Error encountered. Code = {status:d}.')
-          print(f'See the summary file {GasMech.summaryfile} for details.')
+          print(f"Preprocessing: Error encountered. Code = {status:d}.")
+          print(f"See the summary file {GasMech.summaryfile} for details.")
           exit()
       # create a mixture named 'air' based on the 'GasMech' chemistry set
       air = chemkin.Mixture(GasMech)
@@ -74,12 +76,12 @@ This code example computes the density of a mixture named ``air``:
       # mixture temperature in [K]
       air.temperature = 300.0
       # mixture composition in mole fractions
-      air.X = [('O2', 0.21), ('N2', 0.79)]
+      air.X = [("O2", 0.21), ("N2", 0.79)]
       #
       print(f"Pressure    = {air.pressure/chemkin.P_ATM} [atm].")
       print(f"Temperature = {air.temperature} [K].")
       # print the 'air' composition in mass fractions
-      air.list_composition(mode='mass')
+      air.list_composition(mode="mass")
       # get 'air' mixture density [g/cm3]
       print(f"Mixture density = {air.RHO} [g/cm3].")
 

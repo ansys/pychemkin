@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_equivalent_reactor_network:
+""".. _ref_equivalent_reactor_network:
 
 ==============================================================================
 Simulate a combustor using an equivalent reactor network with stream recycling
@@ -76,16 +75,19 @@ the recycling streams from PSR #3 to PSR #1 and PSR #2 are *"tear streams"*.
 import os
 import time
 
+import numpy as np  # number crunching
+
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
 from ansys.chemkin.hybridreactornetwork import ReactorNetwork as ERN
-from ansys.chemkin.inlet import Mixture
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.inlet import (
+    Mixture,
+    Stream,  # external gaseous inlet
+)
 from ansys.chemkin.logger import logger
 
 # Chemkin PSR model (steady-state)
 from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
-import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()

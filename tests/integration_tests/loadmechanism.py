@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_load_mechanism:
+""".. _ref_load_mechanism:
 
 =================================
 Pre-Process a Gas-Phase Mechanism

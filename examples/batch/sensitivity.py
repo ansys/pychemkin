@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_brute_force_sensitivity:
+""".. _ref_brute_force_sensitivity:
 
 ========================================
 Perform brute-force sensitivity analysis
@@ -68,6 +67,9 @@ disturbance
 import os
 import time
 
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
+
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
 
@@ -76,8 +78,6 @@ from ansys.chemkin.batchreactors.batchreactor import (
     GivenPressureBatchReactor_EnergyConservation,
 )
 from ansys.chemkin.logger import logger
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()

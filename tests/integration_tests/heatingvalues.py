@@ -21,10 +21,11 @@
 # SOFTWARE.
 import os
 
+import numpy as np  # number crunching
+
 import ansys.chemkin as ck
 from ansys.chemkin import Color
 from ansys.chemkin.logger import logger
-import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()
@@ -39,8 +40,7 @@ thistemperature = 298.15
 
 #
 def getwaterheatofvaporization(temp):
-    """
-    Compute water heat of vaporization [erg/g-water] at the given temperature
+    """Compute water heat of vaporization [erg/g-water] at the given temperature
     Use the enthalpy difference between water vapor and liquid water at the temperature
     Enthalpy data depend on temperature only
     There are empirical formulas for heat of vaporization, for example, DIPPR EQ

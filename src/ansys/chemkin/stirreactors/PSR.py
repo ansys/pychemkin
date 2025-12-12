@@ -20,13 +20,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-    Perfectly stirred reactor (PSR) model
+"""Perfectly stirred reactor (PSR) model
 """
 
 import copy
 from ctypes import c_double, c_int
 from typing import Union
+
+import numpy as np
+import numpy.typing as npt
 
 from ansys.chemkin import chemkin_wrapper
 from ansys.chemkin.chemistry import (
@@ -41,18 +43,14 @@ from ansys.chemkin.logger import logger
 from ansys.chemkin.mixture import equilibrium
 from ansys.chemkin.reactormodel import Keyword
 from ansys.chemkin.stirreactors.openreactor import openreactor
-import numpy as np
-import numpy.typing as npt
 
 
 class perfectlystirredreactor(openreactor):
-    """
-    Generic perfectly-stirred reactor model
+    """Generic perfectly-stirred reactor model
     """
 
     def __init__(self, guessedmixture: Stream, label: Union[str, None] = None):
-        """
-        Initialize a steady-state constant pressure perfectly-stirred reactor (PSR) object
+        """Initialize a steady-state constant pressure perfectly-stirred reactor (PSR) object
 
         Parameters
         ----------
@@ -60,6 +58,7 @@ class perfectlystirredreactor(openreactor):
                 a mixture representing the estimated/guessed gas properties of the PSR
             label: string, optional
                 reactor name
+
         """
         if label is None:
             label = "PSR"
@@ -108,25 +107,25 @@ class perfectlystirredreactor(openreactor):
 
     @property
     def area(self) -> float:
-        """
-        Get reactive surface area
+        """Get reactive surface area
 
         Returns
         -------
             reactive_area: double
                 reactive surace area [cm2]
+
         """
         return self._reactivearea.value
 
     @area.setter
     def area(self, value: float = 0.0e0):
-        """
-        Set reactive surface area (optional)
+        """Set reactive surface area (optional)
 
         Parameters
         ----------
             value: double, default = 0.0
                 reactive surface area [cm2]
+
         """
         if value < 0.0e0:
             msg = [Color.PURPLE, "reactive surface area must >= 0.", Color.END]
@@ -138,25 +137,25 @@ class perfectlystirredreactor(openreactor):
 
     @property
     def volume(self) -> float:
-        """
-        Get reactor volume
+        """Get reactor volume
 
         Returns
         -------
             volume: douoble
                 reactor volume [cm3]
+
         """
         return self._volume.value
 
     @volume.setter
     def volume(self, value: float):
-        """
-        Set reactor volume (required)
+        """Set reactor volume (required)
 
         Parameters
         ----------
             value: double, default = 1.0
                 reactor volume [cm3]
+
         """
         if value > 0.0e0:
             # set reactor volume
@@ -171,25 +170,25 @@ class perfectlystirredreactor(openreactor):
 
     @property
     def residence_time(self) -> float:
-        """
-        Get reactor residence time
+        """Get reactor residence time
 
         Returns
         -------
             residence_time: double
                 apparent PSR residence time [sec]
+
         """
         return self._residencetime.value
 
     @residence_time.setter
     def residence_time(self, value: float):
-        """
-        Set reactor residence time (required)
+        """Set reactor residence time (required)
 
         Parameters
         ----------
             value: double
                 reactor residence time [sec]
+
         """
         if value > 0.0e0:
             # set reactor residence time
@@ -201,12 +200,12 @@ class perfectlystirredreactor(openreactor):
             exit()
 
     def set_inlet_keywords(self) -> int:
-        """
-        set up inlet keywords
+        """Set up inlet keywords
 
         Returns
         -------
             error code: integer
+
         """
         iErr = 0
         # loop over all external inlets into the reactor
@@ -284,8 +283,7 @@ class perfectlystirredreactor(openreactor):
         return iErr
 
     def set_reactor_index(self, reactorindex: int):
-        """
-        Assign the reactor index/number of the current reactor in the reactor network
+        """Assign the reactor index/number of the current reactor in the reactor network
         This method should be called by the PSR cluster/network Class/Module
         For single PSR the reactor index is always 1 (default)
 
@@ -293,6 +291,7 @@ class perfectlystirredreactor(openreactor):
         ----------
             reactorindex: integer, default = 1
                 reactor index/number in the reactor network
+
         """
         if reactorindex > 0:
             self.ireac = c_int(reactorindex)
@@ -301,8 +300,7 @@ class perfectlystirredreactor(openreactor):
     def set_estimate_conditions(
         self, option: str, guess_temp: Union[float, None] = None
     ):
-        """
-        Reset the initial/guessed reactor gas mixture properties to
+        """Reset the initial/guessed reactor gas mixture properties to
         improve the steady-state solution finding performance.
 
         Parameters
@@ -318,6 +316,7 @@ class perfectlystirredreactor(openreactor):
                 coomposition but at the new given guess_temp
             guess_temp: double, optional
                 new mixture temperature [K] used by options "TP" and "TT"
+
         """
         if option.upper() == "HP":
             # use the constant enthalpy equilibirum mixture as the new guess
@@ -365,13 +364,13 @@ class perfectlystirredreactor(openreactor):
                 del newmixture
 
     def reset_estimate_temperature(self, temp: float):
-        """
-        Reset the estimated reactor gas temperature.
+        """Reset the estimated reactor gas temperature.
 
         Parameters
         ----------
             temp: double
                 estimated reactor gas temperature [K]
+
         """
         if temp < 250.0:
             # bad value, use the current mixture temperature
@@ -396,8 +395,7 @@ class perfectlystirredreactor(openreactor):
         fraction: Union[npt.NDArray[np.double], list[tuple[str, float]]],
         mode: str = "mole",
     ):
-        """
-        Reset the estimated reactor gas composition.
+        """Reset the estimated reactor gas composition.
 
         Parameters
         ----------
@@ -405,6 +403,7 @@ class perfectlystirredreactor(openreactor):
                 estimated reactor gas composition
             mode: string, {"mole", "mass"}
                 the given fractions are mole or mass fractions
+
         """
         if mode.lower() == "mole":
             # set mole fraction
@@ -425,12 +424,12 @@ class perfectlystirredreactor(openreactor):
             exit()
 
     def validate_inputs(self) -> int:
-        """
-        Validate the keywords specified by the user before running the simulation
+        """Validate the keywords specified by the user before running the simulation
 
         Returns
         -------
             error code: integer
+
         """
         iErr = 0
         # required inputs:
@@ -452,8 +451,7 @@ class perfectlystirredreactor(openreactor):
             return iErr
 
     def set_SSsolver_keywords(self):
-        """
-        add steady-state solver parameter keywoprds to the keyword list
+        """Add steady-state solver parameter keywoprds to the keyword list
         """
         # steady-state solver parameter given
         if len(self.SSsolverkeywords) > 0:
@@ -462,23 +460,23 @@ class perfectlystirredreactor(openreactor):
                 self.setkeyword(k, v)
 
     def cluster_process_keywords(self) -> int:
-        """
-        Process input keywords for the reactor model in cluster network mode
+        """Process input keywords for the reactor model in cluster network mode
 
         Returns
         -------
             Error code: integer
+
         """
         iErr = self.__process_keywords()
         return iErr
 
     def __process_keywords(self) -> int:
-        """
-        Process input keywords for the reactor model
+        """Process input keywords for the reactor model
 
         Returns
         -------
             Error code: integer
+
         """
         iErr = 0
         iErrc = 0
@@ -629,24 +627,24 @@ class perfectlystirredreactor(openreactor):
         return iErr
 
     def __run_model(self) -> int:
-        """
-        Run the reactor model after the keywords are processed
+        """Run the reactor model after the keywords are processed
 
         Returns
         -------
             Error code: integer
+
         """
         # run the simulation without keyword inputs
         iErr = chemkin_wrapper.chemkin.KINAll0D_Calculate(self._chemset_index)
         return iErr
 
     def run(self) -> int:
-        """
-        Generic Chemkin run reactor model method
+        """Generic Chemkin run reactor model method
 
         Returns
         -------
             Error code: integer
+
         """
         # initialize the PSR model
         # set up basic PSR parameters
@@ -785,14 +783,14 @@ class perfectlystirredreactor(openreactor):
         return retVal
 
     def process_solution(self) -> Stream:
-        """
-        Post-process solution to extract the raw solution variable data
+        """Post-process solution to extract the raw solution variable data
         package the steady-state solution into a mixture object
 
         Returns
         -------
             smixture: Stream object
                 gas stream representing the steady-state solution
+
         """
         # check existing raw data
         if self.getrawsolutionstatus():
@@ -864,8 +862,7 @@ class perfectlystirredreactor(openreactor):
 
 
 class PSR_SetResTime_EnergyConservation(perfectlystirredreactor):
-    """
-    PSR model with given reactor reasidence time (CONP)
+    """PSR model with given reactor reasidence time (CONP)
     and solve energy equation (ENERGY)
     rho_PSR * Vol_PSR / residence_time = mass_flow_rate
     The reactor pressure and the inlet mass flow rate are always given (fixed)
@@ -873,8 +870,7 @@ class PSR_SetResTime_EnergyConservation(perfectlystirredreactor):
     """
 
     def __init__(self, guessedmixture: Stream, label: Union[str, None] = None):
-        """
-        Create a steady-state constant pressure perfectly-stirred reactor (PSR)
+        """Create a steady-state constant pressure perfectly-stirred reactor (PSR)
 
         Parameters
         ----------
@@ -882,6 +878,7 @@ class PSR_SetResTime_EnergyConservation(perfectlystirredreactor):
                 a mixture representing the estimated/guessed gas properties of the PSR
             label: string, optional
                 inlet name/label
+
         """
         if label is None:
             label = "PSR"
@@ -899,49 +896,49 @@ class PSR_SetResTime_EnergyConservation(perfectlystirredreactor):
 
     @property
     def heat_loss_rate(self) -> float:
-        """
-        Get heat loss rate from the reactor to the surroundings
+        """Get heat loss rate from the reactor to the surroundings
 
         Returns
         -------
             Qloss: double
                 heat loss rate to the surroundings [cal/sec]
+
         """
         return self._heat_loss_rate.value
 
     @heat_loss_rate.setter
     def heat_loss_rate(self, value: float):
-        """
-        Set the heat loss rate from the reactor to the surroundings
+        """Set the heat loss rate from the reactor to the surroundings
 
         Parameters
         ----------
             value: double, default = 0.0
                 heat loss rate [cal/sec]
+
         """
         self._heat_loss_rate = c_double(value)
 
     @property
     def heat_transfer_coefficient(self) -> float:
-        """
-        Get heat transfer coefficient between the reactor and the surroundings
+        """Get heat transfer coefficient between the reactor and the surroundings
 
         Returns
         -------
             heat_transfer_coefficient: double
                 heat transfer coefficient [cal/cm2-K-sec]
+
         """
         return self._heat_transfer_coefficient
 
     @heat_transfer_coefficient.setter
     def heat_transfer_coefficient(self, value: float = 0.0e0):
-        """
-        Set heat transfer coefficient between the reactor and the surroundings
+        """Set heat transfer coefficient between the reactor and the surroundings
 
         Parameters
         ----------
             value: double, default = 0.0
                 heat transfer coefficient [cal/cm2-K-sec]
+
         """
         if value < 0.0e0:
             msg = [Color.PURPLE, "heat transfer coefficient must > 0.", Color.END]
@@ -955,25 +952,25 @@ class PSR_SetResTime_EnergyConservation(perfectlystirredreactor):
 
     @property
     def ambient_temperature(self) -> float:
-        """
-        Get ambient temperature
+        """Get ambient temperature
 
         Returns
         -------
             ambient_temperature: double
                 ambient temperature [K]
+
         """
         return self._ambient_temperature
 
     @ambient_temperature.setter
     def ambient_temperature(self, value: float = 0.0e0):
-        """
-        Set ambient temperature
+        """Set ambient temperature
 
         Parameters
         ----------
             value: double, default = 300.0
                 ambient temperature [K]
+
         """
         if value <= 0.0e0:
             msg = [Color.PURPLE, "ambient temperature must > 0.", Color.END]
@@ -987,25 +984,25 @@ class PSR_SetResTime_EnergyConservation(perfectlystirredreactor):
 
     @property
     def heat_transfer_area(self) -> float:
-        """
-        Get heat transfer area between the reactor and the surroundings
+        """Get heat transfer area between the reactor and the surroundings
 
         Returns
         -------
             heat_transfer_area: double
                 heat transfer area [cm2]
+
         """
         return self._heat_transfer_area
 
     @heat_transfer_area.setter
     def heat_transfer_area(self, value: float = 0.0e0):
-        """
-        Set heat transfer area between the reactor and the surroundings
+        """Set heat transfer area between the reactor and the surroundings
 
         Parameters
         ----------
             value: double, default = 0.0
                 heat transfer area [cm2]
+
         """
         if value < 0.0e0:
             msg = [Color.PURPLE, "heat transfer area must >= 0.", Color.END]
@@ -1019,8 +1016,7 @@ class PSR_SetResTime_EnergyConservation(perfectlystirredreactor):
 
 
 class PSR_SetVolume_EnergyConservation(perfectlystirredreactor):
-    """
-    PSR model with given reactor volume (CONV)
+    """PSR model with given reactor volume (CONV)
     and solve energy equation (ENERGY)
     rho_PSR * Vol_PSR / residence_time = mass_flow_rate
     The reactor pressure and the inlet mass flow rate are always given (fixed)
@@ -1028,8 +1024,7 @@ class PSR_SetVolume_EnergyConservation(perfectlystirredreactor):
     """
 
     def __init__(self, guessedmixture: Stream, label: Union[str, None] = None):
-        """
-        Create a steady-state constant pressure perfectly-stirred reactor (PSR)
+        """Create a steady-state constant pressure perfectly-stirred reactor (PSR)
 
         Parameters
         ----------
@@ -1037,6 +1032,7 @@ class PSR_SetVolume_EnergyConservation(perfectlystirredreactor):
                 a mixture representing the estimated/guessed gas properties of the PSR
             label: string, optional
                 inlet name/label
+
         """
         if label is None:
             label = "PSR"
@@ -1054,49 +1050,49 @@ class PSR_SetVolume_EnergyConservation(perfectlystirredreactor):
 
     @property
     def heat_loss_rate(self) -> float:
-        """
-        Get heat loss rate from the reactor to the surroundings
+        """Get heat loss rate from the reactor to the surroundings
 
         Returns
         -------
             Qloss: double
                 heat loss rate [cal/sec-cm]
+
         """
         return self._heat_loss_rate.value
 
     @heat_loss_rate.setter
     def heat_loss_rate(self, value: float):
-        """
-        Set the heat loss rate from the reactor to the surroundings
+        """Set the heat loss rate from the reactor to the surroundings
 
         Parameters
         ----------
             value: double, default = 0.0
                 heat loss rate [cal/sec-cm]
+
         """
         self._heat_loss_rate = c_double(value)
 
     @property
     def heat_transfer_coefficient(self) -> float:
-        """
-        Get heat transfer coefficient between the reactor and the surroundings
+        """Get heat transfer coefficient between the reactor and the surroundings
 
         Returns
         -------
             heat_transfer_coefficient: double
                 heat transfer coefficient [cal/cm2-K-sec]
+
         """
         return self._heat_transfer_coefficient
 
     @heat_transfer_coefficient.setter
     def heat_transfer_coefficient(self, value: float = 0.0e0):
-        """
-        Set heat transfer coefficient between the reactor and the surroundings
+        """Set heat transfer coefficient between the reactor and the surroundings
 
         Parameters
         ----------
             value: double, default = 0.0
                 heat transfer coefficient [cal/cm2-K-sec]
+
         """
         if value < 0.0e0:
             msg = [Color.PURPLE, "heat transfer coefficient must > 0.", Color.END]
@@ -1110,25 +1106,25 @@ class PSR_SetVolume_EnergyConservation(perfectlystirredreactor):
 
     @property
     def ambient_temperature(self) -> float:
-        """
-        Get ambient temperature
+        """Get ambient temperature
 
         Returns
         -------
             ambient_temperature: double
                 ambient temperature [K]
+
         """
         return self._ambient_temperature
 
     @ambient_temperature.setter
     def ambient_temperature(self, value: float = 0.0e0):
-        """
-        Set ambient temperature
+        """Set ambient temperature
 
         Parameters
         ----------
             value: double, default = 300.0
                 ambient temperature [K]
+
         """
         if value <= 0.0e0:
             msg = [Color.PURPLE, "ambient temperature must > 0.", Color.END]
@@ -1142,25 +1138,25 @@ class PSR_SetVolume_EnergyConservation(perfectlystirredreactor):
 
     @property
     def heat_transfer_area(self) -> float:
-        """
-        Get heat transfer area between the reactor and the surroundings
+        """Get heat transfer area between the reactor and the surroundings
 
         Returns
         -------
             heat_transfer_area: double
                 heat transfer area [cm2]
+
         """
         return self._heat_transfer_area
 
     @heat_transfer_area.setter
     def heat_transfer_area(self, value: float = 0.0e0):
-        """
-        Set heat transfer area between the reactor and the surroundings
+        """Set heat transfer area between the reactor and the surroundings
 
         Parameters
         ----------
             value: double, default = 0.0
                 heat transfer area [cm2]
+
         """
         if value < 0.0e0:
             msg = [Color.PURPLE, "heat transfer area must >= 0.", Color.END]
@@ -1174,8 +1170,7 @@ class PSR_SetVolume_EnergyConservation(perfectlystirredreactor):
 
 
 class PSR_SetResTime_FixedTemperature(perfectlystirredreactor):
-    """
-    PSR model with given reactor reasidence time (CONP)
+    """PSR model with given reactor reasidence time (CONP)
     and reactor temperature (GivenT)
     rho_PSR * Vol_PSR / residence_time = mass_flow_rate
     The reactor pressure and the inlet mass flow rate are always given (fixed)
@@ -1183,8 +1178,7 @@ class PSR_SetResTime_FixedTemperature(perfectlystirredreactor):
     """
 
     def __init__(self, guessedmixture: Stream, label: Union[str, None] = None):
-        """
-        Create a steady-state constant pressure perfectly-stirred reactor (PSR)
+        """Create a steady-state constant pressure perfectly-stirred reactor (PSR)
 
         Parameters
         ----------
@@ -1192,6 +1186,7 @@ class PSR_SetResTime_FixedTemperature(perfectlystirredreactor):
                 a mixture representing the estimated/guessed gas properties of the PSR
             label: string, optional
                 inlet name/label
+
         """
         if label is None:
             label = "PSR"
@@ -1203,8 +1198,7 @@ class PSR_SetResTime_FixedTemperature(perfectlystirredreactor):
 
 
 class PSR_SetVolume_FixedTemperature(perfectlystirredreactor):
-    """
-    PSR model with given reactor volume (CONV)
+    """PSR model with given reactor volume (CONV)
     and reactor temperature (GivenT)
     rho_PSR * Vol_PSR / residence_time = mass_flow_rate
     The reactor pressure and the inlet mass flow rate are always given (fixed)
@@ -1212,8 +1206,7 @@ class PSR_SetVolume_FixedTemperature(perfectlystirredreactor):
     """
 
     def __init__(self, guessedmixture: Stream, label: Union[str, None] = None):
-        """
-        Create a steady-state constant pressure perfectly-stirred reactor (PSR)
+        """Create a steady-state constant pressure perfectly-stirred reactor (PSR)
 
         Parameters
         ----------
@@ -1221,6 +1214,7 @@ class PSR_SetVolume_FixedTemperature(perfectlystirredreactor):
                 a mixture representing the estimated/guessed gas properties of the PSR
             label: string, optional
                 inlet name/label
+
         """
         if label is None:
             label = "PSR"

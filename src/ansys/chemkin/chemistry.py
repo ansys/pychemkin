@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-    Chemkin Chemistry utilities.
+"""Chemkin Chemistry utilities.
 """
 
 import ctypes
@@ -29,14 +28,15 @@ from ctypes import POINTER, c_char_p, c_double, c_int
 import os
 from typing import Dict, List, Union
 
+import numpy as np
+import numpy.typing as npt
+
 from ansys.chemkin import chemkin_wrapper as ck_wrapper
 from ansys.chemkin.color import Color
 from ansys.chemkin.constants import R_GAS
 from ansys.chemkin.info import clear_hints
 from ansys.chemkin.logger import logger
 from ansys.chemkin.realgaseos import check_realgas_status, set_current_pressure
-import numpy as np
-import numpy.typing as npt
 
 _symbol_length = 16  # Chemkin element/species symbol length
 MAX_SPECIES_LENGTH = _symbol_length + 1  # Chemkin element/species symbol length + 1
@@ -63,6 +63,7 @@ def verbose() -> bool:
     -------
         mode: boolean, {True, False}, default = True
             the verbose mode
+
     """
     global chemkin_verbose
     return chemkin_verbose
@@ -76,6 +77,7 @@ def set_verbose(OnOff: bool):
     ----------
         OnOff: boolean, {True, False}
             the verbose mode
+
     """
     global chemkin_verbose
     chemkin_verbose = OnOff
@@ -89,6 +91,7 @@ def chemkin_version() -> int:
     -------
         version: integer
             Chemkin-CFD-API version number
+
     """
     return ck_wrapper._ansys_ver
 
@@ -106,6 +109,7 @@ def verify_version(min_version: int) -> bool:
     Returns
     -------
         status: boolean
+
     """
     status = chemkin_version() >= min_version
     if not status:
@@ -166,6 +170,7 @@ def check_chemistryset(chem_index: int) -> bool:
     -------
         status: boolean
             the initialization status of the Chemistry set associated with the given Chemistry set index
+
     """
     global _CKInitialized
     status = _CKInitialized.get(chem_index, False)
@@ -173,8 +178,7 @@ def check_chemistryset(chem_index: int) -> bool:
 
 
 def activate_chemistryset(chem_index: int) -> int:
-    """
-    Switch to (re-activate) the work spaces of the current Chemistry Set
+    """Switch to (re-activate) the work spaces of the current Chemistry Set
     when there are multiple Chemistry Sets in the same project
 
     Parameters
@@ -185,6 +189,7 @@ def activate_chemistryset(chem_index: int) -> int:
     Returns
     -------
         error flag: integer
+
     """
     iErr = ck_wrapper.chemkin.KINSwitchChemistrySet(c_int(chem_index))
     if iErr == 0:
@@ -204,13 +209,13 @@ def activate_chemistryset(chem_index: int) -> int:
 
 
 def force_activate_chemistryset(chem_index: int):
-    """
-    activate the Chemistry Set automatically and silently.
+    """Activate the Chemistry Set automatically and silently.
 
     Parameters
     ----------
         chem_index: integer
             chemistry set index associated with the Chemistry Set
+
     """
     if not check_active_chemistryset(chem_index):
         # the Chemistry Set is not currently active
@@ -220,13 +225,13 @@ def force_activate_chemistryset(chem_index: int):
 
 
 def chemistryset_new(chem_index: int):
-    """
-    Create a new Chemistry Set initialization flag and set the value to False
+    """Create a new Chemistry Set initialization flag and set the value to False
 
     Parameters
     ----------
         chem_index: integer
             chemistry set index associated with the Chemistry Set
+
     """
     global _CKInitialized
     _CKInitialized[chem_index] = False
@@ -234,13 +239,13 @@ def chemistryset_new(chem_index: int):
 
 
 def chemistryset_initialized(chem_index: int):
-    """
-    Set the Chemistry Set Initialization flag to True
+    """Set the Chemistry Set Initialization flag to True
 
     Parameters
     ----------
         chem_index: integer
             chemistry set index associated with the Chemistry Set
+
     """
     global _CKInitialized
     _CKInitialized[chem_index] = True
@@ -248,8 +253,7 @@ def chemistryset_initialized(chem_index: int):
 
 
 def check_active_chemistryset(chem_index: int) -> bool:
-    """
-    Verify if the chemistry set is currently activated.
+    """Verify if the chemistry set is currently activated.
 
     Parameters
     ----------
@@ -260,14 +264,14 @@ def check_active_chemistryset(chem_index: int) -> bool:
     -------
         status: boolean
             active status of the Chemistry Set
+
     """
     global _active_chemistry_set
     return _active_chemistry_set == chem_index
 
 
 class Chemistry:
-    """
-    define and preprocess Chemkin chemistry set
+    """define and preprocess Chemkin chemistry set
     """
 
     realgas_CuEOS = [
@@ -288,8 +292,7 @@ class Chemistry:
         tran: str = "",
         label: str = "",
     ):
-        """
-        Create a Chemistry object based on given Chemkin mechanism input files, thermodynamic data file,
+        """Create a Chemistry object based on given Chemkin mechanism input files, thermodynamic data file,
         and transport data file.
 
         Parameters
@@ -304,6 +307,7 @@ class Chemistry:
                 Full path and name of the Chemkin transport data file
             label: string, optional
                 label/name of the chemistry set
+
         """
         # set flags
         self._index_surf = c_int(0)
@@ -359,6 +363,7 @@ class Chemistry:
         -------
             chemfile: string
                 Full path and name of the Chemkin gas-phase mechanism input file
+
         """
         return self._gas_file
 
@@ -371,54 +376,55 @@ class Chemistry:
         ----------
             filename: string
                 name of the gas-phase mechanism file with the full path
+
         """
         self._gas_file = filename
 
     @property
     def thermfile(self) -> str:
-        """
-        Get thermodynamic data filename of this chemistry set
+        """Get thermodynamic data filename of this chemistry set
 
         Returns
         -------
             thermfile: string
                 Full path and name of the Chemkin thermodynamic data file
+
         """
         return self._therm_file
 
     @thermfile.setter
     def thermfile(self, filename: str):
-        """
-        Assign the thermodynamic data filename
+        """Assign the thermodynamic data filename
 
         Parameters
         ----------
             filename: string
                 name of the thermodynamic data file with the full path
+
         """
         self._therm_file = filename
 
     @property
     def tranfile(self) -> str:
-        """
-        Get transport data filename of this chemistry set
+        """Get transport data filename of this chemistry set
 
         Returns
         -------
             tranfile: string
                 Full path and name of the Chemkin thransport data file
+
         """
         return self._tran_file
 
     @tranfile.setter
     def tranfile(self, filename: str):
-        """
-        Assign the transport data filename
+        """Assign the transport data filename
 
         Parameters
         ----------
             filename: string
                 name of the transport data file with the full path
+
         """
         self._tran_file = filename
         if os.path.isfile(self._tran_file):
@@ -438,19 +444,18 @@ class Chemistry:
 
     @property
     def summaryfile(self) -> str:
-        """
-        Get the name of the summary file from the preprocessor
+        """Get the name of the summary file from the preprocessor
 
         Returns
         -------
             tranfile: string
                 Full path and name of the preprocessing summary file
+
         """
         return self._summary_out
 
     def preprocess_transportdata(self):
-        """
-        Instruct the preprocessor to include the transport data
+        """Instruct the preprocessor to include the transport data
         """
         if self._index_tran.value == 0:
             # send a warning message
@@ -487,25 +492,25 @@ class Chemistry:
 
     @property
     def surffile(self) -> str:
-        """
-        Get surface mechanism filename of this chemistry set
+        """Get surface mechanism filename of this chemistry set
 
         Returns
         -------
             tranfile: string
                 Full path and name of the Chemkin surface mechanism input file
+
         """
         return self._surf_file
 
     @surffile.setter
     def surffile(self, filename: str):
-        """
-        Assign the surface mechanism filename
+        """Assign the surface mechanism filename
 
         Parameters
         ----------
             filename: string
                 name of the surface mechanism file with the full path
+
         """
         self._surf_file = filename
         if os.path.isfile(self._surf_file):
@@ -530,8 +535,7 @@ class Chemistry:
         therm: str = "",
         tran: str = "",
     ):
-        """
-        Assign all input files of the chemistry set
+        """Assign all input files of the chemistry set
 
         Parameters
         ----------
@@ -543,6 +547,7 @@ class Chemistry:
                 name of the thermodynamic data file with the full path
             tran: string, optional
                 name of the transport data file with the full path
+
         """
         self._chemset_index = c_int(-1)
         if len(chem) > 1:
@@ -593,12 +598,12 @@ class Chemistry:
             self._index_tran = c_int(0)
 
     def preprocess(self) -> int:
-        """
-        Run Chemkin preprocessor
+        """Run Chemkin preprocessor
 
         Returns
         -------
             Error code: integer
+
         """
         # check minimum set of required files
         if not os.path.isfile(self._gas_file):
@@ -753,8 +758,7 @@ class Chemistry:
         return self._error_code
 
     def verify_realgas_model(self):
-        """
-        Verify the availability of real-gas data in the mechanism
+        """Verify the availability of real-gas data in the mechanism
         """
         EOSModel = ctypes.create_string_buffer(MAX_SPECIES_LENGTH)
         try:
@@ -792,13 +796,13 @@ class Chemistry:
             logger.info(this_msg)
 
     def verify_transport_data(self) -> bool:
-        """
-        Verify the availability of transport property data in the mechanism
+        """Verify the availability of transport property data in the mechanism
 
         Returns
         -------
             availability: boolean
                 True = the transport property is available
+
         """
         if self._index_tran.value == 0:
             # no transport data
@@ -807,13 +811,13 @@ class Chemistry:
         return True
 
     def verify_surface_mechanism(self) -> bool:
-        """
-        Verify the availability of surface chemistry data in the mechanism
+        """Verify the availability of surface chemistry data in the mechanism
 
         Returns
         -------
             availability: boolean
                 True = the surface chemistry data is available
+
         """
         if self._index_surf.value == 0:
             # no surface chemistry data
@@ -823,13 +827,13 @@ class Chemistry:
 
     @property
     def species_symbols(self):
-        """
-        Get list of gas species symbols
+        """Get list of gas species symbols
 
         Returns
         -------
             Ksymbol: list of strings
                 list of species symbols in the gas-phase mechanism
+
         """
         global MAX_SPECIES_LENGTH
         if self._KSYMdone == 0:
@@ -863,13 +867,13 @@ class Chemistry:
 
     @property
     def element_symbols(self):
-        """
-        Get the list of element symbols
+        """Get the list of element symbols
 
         Returns
         -------
             Esymbol: list of strings
                 list of element symbols in the mechanism
+
         """
         if self._ESYMdone == 0:
             buff_ele = (LP_c_char * self._num_elements.value)()
@@ -900,13 +904,13 @@ class Chemistry:
         return self.ESymbol
 
     def get_specindex(self, specname: str) -> int:
-        """
-        Get index of the gas species
+        """Get index of the gas species
 
         Returns
         -------
             specindex: integer
                 index of the given species symbols in the gas-phase mechanism
+
         """
         specindex = self._gas_species.get(specname, -1)
         if specindex <= 0:
@@ -918,13 +922,13 @@ class Chemistry:
 
     @property
     def chemID(self) -> int:
-        """
-        Get chemistry set index
+        """Get chemistry set index
 
         Returns
         -------
             chemIDx: integer
                 index of the Chemistry set
+
         """
         if self._chemset_index.value >= 0:
             return self._chemset_index.value
@@ -933,8 +937,7 @@ class Chemistry:
 
     @property
     def surfchem(self) -> int:
-        """
-        Get surface chemistry status
+        """Get surface chemistry status
 
         Returns
         -------
@@ -942,18 +945,19 @@ class Chemistry:
                 indicating whether the Chemistry set includes a surface mechanism
                 0 = this chemistry set does NOT include a surface chemistry
                 1 = this chemistry set includes a  surface chemistry
+
         """
         return self._index_surf.value
 
     @property
     def KK(self) -> int:
-        """
-        Get number of gas species
+        """Get number of gas species
 
         Returns
         -------
             KK: integer
                 total number of gas-phase species in the Chemistry set
+
         """
         return self._num_gas_species.value
 
@@ -962,13 +966,13 @@ class Chemistry:
 
     @property
     def MM(self) -> int:
-        """
-        Get number of elements in the chemistry set
+        """Get number of elements in the chemistry set
 
         Returns
         -------
             MM: integer
                 total number of elements in the Chemistry set
+
         """
         return self._num_elements.value
 
@@ -977,13 +981,13 @@ class Chemistry:
 
     @property
     def IIGas(self) -> int:
-        """
-        Get number of gas-phase reactions
+        """Get number of gas-phase reactions
 
         Returns
         -------
             IIGas: integer
                 total number of gas-phase reactions in the Chemistry set
+
         """
         return self._num_gas_reactions.value
 
@@ -992,13 +996,13 @@ class Chemistry:
 
     @property
     def AWT(self) -> npt.NDArray[np.double]:
-        """
-        compute atomic masses
+        """Compute atomic masses
 
         Returns
         -------
             AWT: 1-D double array
                 masses of the elements in the Chemistry set [g/mole]
+
         """
         if self._AWTdone == 1:
             return self._AWT
@@ -1029,13 +1033,13 @@ class Chemistry:
 
     @property
     def WT(self) -> npt.NDArray[np.double]:
-        """
-        compute gas species molecular masses
+        """Compute gas species molecular masses
 
         Returns
         -------
             WT: 1-D double array
                 molecular masses of the gas-phase species in the Chemistry set [g/mole]
+
         """
         if self._WTdone == 1:
             return self._WT
@@ -1069,8 +1073,7 @@ class Chemistry:
     def SpeciesCp(
         self, temp: float = 0.0, pres: Union[float, None] = None
     ) -> npt.NDArray[np.double]:
-        """
-        Get species specific heat capacity at constant pressure
+        """Get species specific heat capacity at constant pressure
 
         Parameters
         ----------
@@ -1083,6 +1086,7 @@ class Chemistry:
         -------
             Cp: 1-D double array
                 species specific heat capacities at constant pressure [ergs/mol-K]
+
         """
         if self._chemset_index.value < 0:
             msg = [
@@ -1137,8 +1141,7 @@ class Chemistry:
     def SpeciesCv(
         self, temp: float = 0.0, pres: Union[float, None] = None
     ) -> npt.NDArray[np.double]:
-        """
-        Get species specific heat capacity at constant volume (ideal gas only)
+        """Get species specific heat capacity at constant volume (ideal gas only)
 
         Parameters
         ----------
@@ -1151,6 +1154,7 @@ class Chemistry:
         -------
             Cv: 1-D double array
                 species specific heat capacities at constant volume [ergs/mol-K]
+
         """
         if check_realgas_status(self.chemID) and pres is None:
             # pressure is not assigned
@@ -1176,8 +1180,7 @@ class Chemistry:
     def SpeciesH(
         self, temp: float = 0.0, pres: Union[float, None] = None
     ) -> npt.NDArray[np.double]:
-        """
-        Get species enthalpy
+        """Get species enthalpy
 
         Parameters
         ----------
@@ -1190,6 +1193,7 @@ class Chemistry:
         -------
             H: 1-D double array
                 species enthalpy [ergs/mol]
+
         """
         if self._chemset_index.value < 0:
             msg = [
@@ -1243,8 +1247,7 @@ class Chemistry:
     def SpeciesU(
         self, temp: float = 0.0, pres: Union[float, None] = None
     ) -> npt.NDArray[np.double]:
-        """
-        Get species internal energy
+        """Get species internal energy
 
         Parameters
         ----------
@@ -1257,6 +1260,7 @@ class Chemistry:
         -------
             U: 1-D double array
                 species internal energy [ergs/mol]
+
         """
         if self._chemset_index.value < 0:
             msg = [
@@ -1314,8 +1318,7 @@ class Chemistry:
         return U
 
     def SpeciesVisc(self, temp: float = 0.0) -> npt.NDArray[np.double]:
-        """
-        Get species viscosity
+        """Get species viscosity
 
         Parameters
         ----------
@@ -1326,6 +1329,7 @@ class Chemistry:
         -------
             visc: 1-D double array
                 species viscosity [gm/cm-sec]
+
         """
         if self._chemset_index.value < 0:
             msg = [
@@ -1359,8 +1363,7 @@ class Chemistry:
         return visc
 
     def SpeciesCond(self, temp: float = 0.0) -> npt.NDArray[np.double]:
-        """
-        Get species conductivity
+        """Get species conductivity
 
         Parameters
         ----------
@@ -1371,6 +1374,7 @@ class Chemistry:
         -------
             cond: 1-D double array
                 species conductivity [ergs/cm-K-sec]
+
         """
         if self._chemset_index.value < 0:
             msg = [
@@ -1410,8 +1414,7 @@ class Chemistry:
     def SpeciesDiffusionCoeffs(
         self, press: float = 0.0, temp: float = 0.0
     ) -> npt.NDArray[np.double]:
-        """
-        Get species diffusion coefficients
+        """Get species diffusion coefficients
 
         Parameters
         ----------
@@ -1424,6 +1427,7 @@ class Chemistry:
         -------
             diffusioncoeffs: 2-D double array, dimension = [number_species, number_species]
                 species diffusion coefficients [cm2/sec]
+
         """
         if self._chemset_index.value < 0:
             msg = [
@@ -1470,8 +1474,7 @@ class Chemistry:
         return diffusioncoeffs
 
     def SpeciesComposition(self, elemindex: int = -1, specindex: int = -1) -> int:
-        """
-        Get elemental composition of a species
+        """Get elemental composition of a species
 
         Parameters
         ----------
@@ -1484,6 +1487,7 @@ class Chemistry:
         -------
             count: integer
                 number of the element in the given gas species
+
         """
         if self._NCFdone == 0:
             # initialize the NCF matrix
@@ -1522,19 +1526,18 @@ class Chemistry:
 
     @property
     def EOS(self) -> int:
-        """
-        Get the available real-gas EOS model
+        """Get the available real-gas EOS model
 
         Returns
         -------
         count: integer
             number of available cubic EOS models in Chemkin
+
         """
         return self._EOS.value
 
     def use_realgas_cubicEOS(self):
-        """
-        Turn ON the real-gas cubic EOS to compute mixture properties if the mechanism contains necessary data
+        """Turn ON the real-gas cubic EOS to compute mixture properties if the mechanism contains necessary data
         """
         if self._EOS.value < 1:
             # no real gas EOS data in the mechanism
@@ -1571,8 +1574,7 @@ class Chemistry:
             self.userealgas = False
 
     def use_idealgas_law(self):
-        """
-        Turn on the ideal gas law to compute mixture properties
+        """Turn on the ideal gas law to compute mixture properties
         """
         if self._EOS.value < 1:
             # no real gas EOS data in the mechanism
@@ -1604,8 +1606,7 @@ class Chemistry:
     def get_reaction_parameters(
         self,
     ) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double], npt.NDArray[np.double]]:
-        """
-        Get the Arrhenius reaction rate parameters of all gas-phase reactions
+        """Get the Arrhenius reaction rate parameters of all gas-phase reactions
 
         Returns
         -------
@@ -1615,6 +1616,7 @@ class Chemistry:
                 Arrhenius temperature exponent [-]
             AEnergy: 1-D double array
                 activation temperature [K]
+
         """
         reactionsize = self.IIGas
         # pre-exponent A factor of all gas-phase reactions in the mechanism in cgs units [mole-cm3-sec-K]
@@ -1634,8 +1636,7 @@ class Chemistry:
         return AFactor, TBeta, AEnergy
 
     def set_reaction_AFactor(self, reaction_index: int, AFactor: float):
-        """
-        (Re)set the Arrhenius A-Factor of the given reaction
+        """(Re)set the Arrhenius A-Factor of the given reaction
 
         Parameters
         ----------
@@ -1643,6 +1644,7 @@ class Chemistry:
                 index of the gas-phase reaction of which the A-Factor to be reset
             AFctor: double
                 new A-Factor value in [mole-cm3-sec-K]
+
         """
         # check inputs
         if reaction_index > self.IIGas or reaction_index < 1:
@@ -1678,8 +1680,7 @@ class Chemistry:
             exit()
 
     def get_reaction_AFactor(self, reaction_index: int) -> float:
-        """
-        get the Arrhenius A-Factor of the given reaction
+        """Get the Arrhenius A-Factor of the given reaction
 
         Parameters
         ----------
@@ -1690,6 +1691,7 @@ class Chemistry:
         -------
             AFactor: double
                 Arrhenius A-Factor of the given reaction in [mole-cm3-sec-K]
+
         """
         # initialization
         AFactor = c_double(0.0e0)
@@ -1724,8 +1726,7 @@ class Chemistry:
         return AFactor.value
 
     def get_gas_reaction_string(self, reaction_index: int) -> str:
-        """
-        Get the reaction string of the gas-phase reaction specified by the reaction index.
+        """Get the reaction string of the gas-phase reaction specified by the reaction index.
 
         Parameters
         ----------
@@ -1736,6 +1737,7 @@ class Chemistry:
         -------
             reactionstring: string
                 reaction string of the given reaction
+
         """
         # initialization
         reactionstring = ""
@@ -1780,8 +1782,7 @@ class Chemistry:
         return reactionstring
 
     def save(self):
-        """
-        Store the work spaces of the current Chemistry Set
+        """Store the work spaces of the current Chemistry Set
         if new Chemistry Set will be created later in the same project
         """
         iErr = ck_wrapper.chemkin.KINUpdateChemistrySet(self._chemset_index)
@@ -1803,8 +1804,7 @@ class Chemistry:
             logger.error(this_msg)
 
     def activate(self):
-        """
-        Switch to (re-activate) the work spaces of the current Chemistry Set
+        """Switch to (re-activate) the work spaces of the current Chemistry Set
         when there are multiple Chemistry Sets in the same project
         """
         iErr = activate_chemistryset(self._chemset_index.value)

@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-    Chemkin-CFD-API python interfaces.
+"""Chemkin-CFD-API python interfaces.
 """
 
 import ctypes
@@ -30,9 +29,10 @@ import datetime
 import os
 import platform
 
+import numpy as np
+
 from ansys.chemkin.color import Color
 from ansys.chemkin.logger import logger
-import numpy as np
 
 # set ansys version number
 _min_version = 251
@@ -63,8 +63,7 @@ logger.debug(this_msg)
 
 
 def __setwindows():
-    """
-    Set up PyChemkin environment on Windows platforms
+    """Set up PyChemkin environment on Windows platforms
     """
     global _ansys_ver
     global _ansys_dir
@@ -125,8 +124,7 @@ def __setwindows():
 
 
 def __setlinux():
-    """
-    Set up PyChemkin environment on Linux platforms
+    """Set up PyChemkin environment on Linux platforms
     """
     global _ansys_ver
     global _ansys_dir

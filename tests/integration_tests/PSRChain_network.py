@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_chain_reactor_network:
+""".. _ref_chain_reactor_network:
 
 ==============================================================
 Use a chain reactor network to model a fictional gas combustor
@@ -62,8 +61,10 @@ import time
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
 from ansys.chemkin.hybridreactornetwork import ReactorNetwork as ERN
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.inlet import adiabatic_mixing_streams
+from ansys.chemkin.inlet import (
+    Stream,  # external gaseous inlet
+    adiabatic_mixing_streams,
+)
 from ansys.chemkin.logger import logger
 
 # Chemkin PSR model (steady-state)

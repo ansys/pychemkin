@@ -22,6 +22,9 @@
 import os
 import time
 
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
+
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
 from ansys.chemkin.inlet import Stream  # external gaseous inlet
@@ -29,8 +32,6 @@ from ansys.chemkin.logger import logger
 
 # Chemkin PSR model (steady-state)
 from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_FixedTemperature as PSR
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()

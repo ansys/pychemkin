@@ -1,12 +1,10 @@
-"""
-PyTest settings for PyChemkin test runs.
+"""PyTest settings for PyChemkin test runs.
 """
 import pytest
 
 
 def pytest_addoption(parser):
-    """
-    Register custom command line options.
+    """Register custom command line options.
     """
     # select test groups to run
     parser.addoption(
@@ -52,8 +50,7 @@ def pytest_addoption(parser):
 
 
 def pytest_configure(config):
-    """
-    Register custom markers.
+    """Register custom markers.
     """
     # configure marker: @pytest.mark.group(GROUPNAME) for each group class
     config.addinivalue_line("markers", "group(groupname): mark test groups to run.")
@@ -61,8 +58,7 @@ def pytest_configure(config):
 
 
 def pytest_runtest_setup(item):
-    """
-    Skip PyChemkin test groups that is not specified by the '--group' option.
+    """Skip PyChemkin test groups that is not specified by the '--group' option.
     By default, pytest will run all test groups (i.e., --group="all").
     """
     # run group if option "--group" is given and the group name appears in the option argument
@@ -75,8 +71,7 @@ def pytest_runtest_setup(item):
 
 
 def pytest_collection_modifyitems(items):
-    """
-    Modifies test items in place to ensure the result comparison test module runs last.
+    """Modifies test items in place to ensure the result comparison test module runs last.
     """
     CLASS_ORDER = [
         "TestClassBasic",

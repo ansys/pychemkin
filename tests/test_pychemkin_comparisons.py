@@ -1,5 +1,4 @@
-"""
-Validate PyChemkin test results.
+"""Validate PyChemkin test results.
 """
 import os
 
@@ -9,8 +8,7 @@ from .tools import PyCKtools
 
 
 class TestCompareResults:
-    """
-    Perform test validation.
+    """Perform test validation.
     """
 
     line_length = 42
@@ -22,8 +20,7 @@ class TestCompareResults:
         get_result_dir,
         get_compare,
     ):
-        """
-        Compare current test results against the baselines.
+        """Compare current test results against the baselines.
         """
         if not get_compare:
             pytest.skip("no --compare option set.")

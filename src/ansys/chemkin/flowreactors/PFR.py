@@ -20,12 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-Plug Flow Reactor (PFR) model.
+"""Plug Flow Reactor (PFR) model.
 """
 
 import copy
 from ctypes import c_double, c_int
+
+import numpy as np
+import numpy.typing as npt
 
 from ansys.chemkin import chemkin_wrapper
 from ansys.chemkin.batchreactors.batchreactor import BatchReactors
@@ -39,18 +41,14 @@ from ansys.chemkin.color import Color as Color
 from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
 from ansys.chemkin.reactormodel import Keyword
-import numpy as np
-import numpy.typing as npt
 
 
 class PlugFlowReactor(BatchReactors):
-    """
-    Generic Plug Flow Reactor (PFR) model with energy equation
+    """Generic Plug Flow Reactor (PFR) model with energy equation
     """
 
     def __init__(self, inlet: Stream, label: str = "PFR"):
-        """
-        Initialize a generic PFR object
+        """Initialize a generic PFR object
 
         Parameters
         ----------
@@ -58,6 +56,7 @@ class PlugFlowReactor(BatchReactors):
                 an inlet stream representing the gas properties and the flow rate at the PFR entrance
             label: string, optional
                 reactor name
+
         """
         # check Inlet
         if isinstance(inlet, Stream):
@@ -150,25 +149,25 @@ class PlugFlowReactor(BatchReactors):
 
     @property
     def length(self) -> float:
-        """
-        Get reactor length
+        """Get reactor length
 
         Returns
         -------
             length: double
                 reactor length [cm]
+
         """
         return self.reactorlength.value
 
     @length.setter
     def length(self, length: float = 0.0e0):
-        """
-        Set reactor length
+        """Set reactor length
 
         Parameters
         ----------
             length: double
                 reactor length [cm]
+
         """
         if length <= 0.0e0:
             msg = [Color.PURPLE, "reactor length must > 0.0.", Color.END]
@@ -180,14 +179,14 @@ class PlugFlowReactor(BatchReactors):
             self.reactorlength = c_double(length)
 
     def set_start_position(self, x0: float):
-        """
-        Set the PFR simulation starting position
+        """Set the PFR simulation starting position
         default reactor inlet: x0 = 0.0
 
         Parameters
         ----------
             x0: double, default = 0.0
                 starting position
+
         """
         if x0 >= self.reactorlength.value:
             msg = [Color.PURPLE, "starting position must < reactor length.", Color.END]
@@ -204,25 +203,25 @@ class PlugFlowReactor(BatchReactors):
 
     @property
     def diameter(self) -> float:
-        """
-        Get reactor diameter
+        """Get reactor diameter
 
         Returns
         -------
             diam: double
                 Reactor diameter [cm]
+
         """
         return self.reactordiameter.value
 
     @diameter.setter
     def diameter(self, diam: float):
-        """
-        Set the PFR diameter
+        """Set the PFR diameter
 
         Parameters
         ----------
             diam: double
                 reactor diameter [cm]
+
         """
         if diam <= 0.0:
             msg = [Color.PURPLE, "reactor diameter must > 0.0.", Color.END]
@@ -241,8 +240,7 @@ class PlugFlowReactor(BatchReactors):
     def set_diameter_profile(
         self, x: npt.NDArray[np.double], diam: npt.NDArray[np.double]
     ) -> int:
-        """
-        Specify plug-flow reactor diameter profile
+        """Specify plug-flow reactor diameter profile
 
         Parameters
         ----------
@@ -254,6 +252,7 @@ class PlugFlowReactor(BatchReactors):
         Returns
         -------
             error code: integer
+
         """
         keyword = "DPRO"
         iErr = self.setprofile(key=keyword, x=x, y=diam)
@@ -269,25 +268,25 @@ class PlugFlowReactor(BatchReactors):
 
     @property
     def flowarea(self) -> float:
-        """
-        Cross-sectional flow area of the PFR [cm2]
+        """Cross-sectional flow area of the PFR [cm2]
 
         Returns
         -------
             area: double
                 cross-sectional flow rate [cm2]
+
         """
         return self.reactorflowarea
 
     @flowarea.setter
     def flowarea(self, area: float):
-        """
-        Set the cross-sectional flow area of the PFR
+        """Set the cross-sectional flow area of the PFR
 
         Parameters
         ----------
             area: double
                 cross-sectional flow area [cm2]
+
         """
         if area <= 0.0:
             msg = [Color.PURPLE, "cross-sectional flow area must > 0.0.", Color.END]
@@ -308,8 +307,7 @@ class PlugFlowReactor(BatchReactors):
     def set_flowarea_profile(
         self, x: npt.NDArray[np.double], area: npt.NDArray[np.double]
     ) -> int:
-        """
-        Specify plug-flow reactor cross-sectional flow area profile
+        """Specify plug-flow reactor cross-sectional flow area profile
 
         Parameters
         ----------
@@ -321,6 +319,7 @@ class PlugFlowReactor(BatchReactors):
         Returns
         -------
             error code: integer
+
         """
         keyword = "AFLO"
         iErr = self.setprofile(key=keyword, x=x, y=area)
@@ -336,13 +335,13 @@ class PlugFlowReactor(BatchReactors):
         return iErr
 
     def set_inlet_viscosity(self, visc: float):
-        """
-        Set the gas mixture viscocity at the PFR inlet
+        """Set the gas mixture viscocity at the PFR inlet
 
         Parameters
         ----------
             visc: double, default = 0.0
                 mixture viscosity [g/cm-sec] or [Poise]
+
         """
         if visc <= 0.0:
             msg = [Color.PURPLE, "gas mixture viscosity must > 0.0.", Color.END]
@@ -354,13 +353,13 @@ class PlugFlowReactor(BatchReactors):
             self.setkeyword(key="VISC", value=visc)
 
     def set_solver_max_timestep_size(self, size: float):
-        """
-        Set the maximum time step size allowed by the transient solver
+        """Set the maximum time step size allowed by the transient solver
 
         Parameters
         ----------
             size: double
                 maximum solver step size [cm]
+
         """
         if size > 0.0e0:
             self.setkeyword(key="DXMX", value=size)
@@ -371,8 +370,7 @@ class PlugFlowReactor(BatchReactors):
             exit()
 
     def set_pseudo_surface_velocity(self, vel: float):
-        """
-        Set the pseudo surface velocity at the reactive surface
+        """Set the pseudo surface velocity at the reactive surface
         to improve convergence due to surface chemistry stiffness
         Note: set this parameter only when having convergence issue with surface chemistry
 
@@ -380,6 +378,7 @@ class PlugFlowReactor(BatchReactors):
         ----------
             vel: double, default = 0.0
                 pseudo surface velocity [cm/sec]
+
         """
         if vel > 0.0e0:
             self.setkeyword(key="PSV", value=vel)
@@ -391,59 +390,59 @@ class PlugFlowReactor(BatchReactors):
 
     @property
     def mass_flowrate(self) -> float:
-        """
-        Get plug flow reactor inlet mass flow rate [g/sec]
+        """Get plug flow reactor inlet mass flow rate [g/sec]
 
         Returns
         -------
             massflowrate: double
                 mass flow rate [g/sec]
+
         """
         return self.reactormixture.mass_flowrate
 
     @property
     def velocity(self) -> float:
-        """
-        Get plug flow reactor inlet velocity [cm/sec]
+        """Get plug flow reactor inlet velocity [cm/sec]
 
         Returns
         -------
             vel: double
                 inlet velocity [cm/sec]
+
         """
         return self.reactormixture.velocity
 
     @property
     def vol_flowrate(self) -> float:
-        """
-        Get plug flow reactor inlet volumetric flow rate [cm3/sec]
+        """Get plug flow reactor inlet volumetric flow rate [cm3/sec]
 
         Returns
         -------
             volflowrate: double
                 volumetric flow rate [cm3/sec]
+
         """
         return self.reactormixture.vol_flowrate
 
     @property
     def sccm(self) -> float:
-        """
-        Get plug flow reactor inlet volumetric flow rate in SCCM [standard cm3/min]
+        """Get plug flow reactor inlet volumetric flow rate in SCCM [standard cm3/min]
 
         Returns
         -------
             volflowrate: double
                 volumetric flow rate in SCCM [standard cm3/min]
+
         """
         return self.reactormixture.sccm
 
     def __process_keywords(self) -> int:
-        """
-        Process input keywords for the PFR model
+        """Process input keywords for the PFR model
 
         Returns
         -------
             error code: integer
+
         """
         iErr = 0
         iErrc = 0
@@ -613,24 +612,24 @@ class PlugFlowReactor(BatchReactors):
         return iErr
 
     def __run_model(self) -> int:
-        """
-        Run the PFR model after the keywords are processed
+        """Run the PFR model after the keywords are processed
 
         Returns
         -------
             error code: integer
+
         """
         # run the simulation without keyword inputs
         iErr = chemkin_wrapper.chemkin.KINAll0D_Calculate(self._chemset_index)
         return iErr
 
     def run(self) -> int:
-        """
-        Generic Chemkin run PFR model method
+        """Generic Chemkin run PFR model method
 
         Returns
         -------
             error code: integer
+
         """
         # activate the Chemistry set associated with the Reactor instance
         force_activate_chemistryset(self._chemset_index.value)
@@ -728,13 +727,11 @@ class PlugFlowReactor(BatchReactors):
 
 
 class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
-    """
-    Plug Flow Reactor (PFR) model with energy equation
+    """Plug Flow Reactor (PFR) model with energy equation
     """
 
     def __init__(self, inlet, label: str = "PFR"):
-        """
-        Initialize a PFR object that solves the Energy Equation
+        """Initialize a PFR object that solves the Energy Equation
 
         Parameters
         ----------
@@ -742,6 +739,7 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
                 an inlet stream representing the gas properties and the flow rate at the PFR entrance
             label: string, optional
                 reactor name
+
         """
         # check Inlet
         if isinstance(inlet, Stream):
@@ -796,25 +794,25 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
 
     @property
     def heat_loss_rate(self) -> float:
-        """
-        Get heat loss rate from the reactor to the surroundings
+        """Get heat loss rate from the reactor to the surroundings
 
         Returns
         -------
             Qloss: double
                 heat loss rate [cal/sec-cm]
+
         """
         return self._heat_loss_rate.value
 
     @heat_loss_rate.setter
     def heat_loss_rate(self, value: float):
-        """
-        Set the heat loss rate per length from the reactor to the surroundings (required)
+        """Set the heat loss rate per length from the reactor to the surroundings (required)
 
         Parameters
         ----------
             value: double, default = 0.0
                 heat loss rate [cal/sec-cm]
+
         """
         self._heat_loss_rate = c_double(value)
         if not Keyword.noFullKeyword:
@@ -822,25 +820,25 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
 
     @property
     def heat_transfer_coefficient(self) -> float:
-        """
-        Get heat transfer coefficient between the reactor and the surroundings
+        """Get heat transfer coefficient between the reactor and the surroundings
 
         Returns
         -------
             heat_transfer_coefficient: double
                 heat transfer coefficient [cal/cm2-K-sec]
+
         """
         return self._heat_transfer_coefficient
 
     @heat_transfer_coefficient.setter
     def heat_transfer_coefficient(self, value: float = 0.0e0):
-        """
-        Set heat transfer coefficient between the reactor and the surroundings
+        """Set heat transfer coefficient between the reactor and the surroundings
 
         Parameters
         ----------
             value: double, default = 0.0
                 heat transfer coefficient [cal/cm2-K-sec]
+
         """
         if value < 0.0e0:
             msg = [Color.PURPLE, "heat transfer coefficient must >= 0.", Color.END]
@@ -854,25 +852,25 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
 
     @property
     def ambient_temperature(self) -> float:
-        """
-        Get ambient temperature
+        """Get ambient temperature
 
         Returns
         -------
             ambient_temperature: double
                 ambient temperature [K]
+
         """
         return self._ambient_temperature
 
     @ambient_temperature.setter
     def ambient_temperature(self, value: float = 0.0e0):
-        """
-        Set ambient temperature
+        """Set ambient temperature
 
         Parameters
         ----------
             value: double, default = 300.0
                 ambient temperature [K]
+
         """
         if value <= 0.0e0:
             msg = [Color.PURPLE, "ambient temperature must > 0.", Color.END]
@@ -886,25 +884,25 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
 
     @property
     def heat_transfer_area(self) -> float:
-        """
-        Get heat transfer area per length between the reactor and the surroundings
+        """Get heat transfer area per length between the reactor and the surroundings
 
         Returns
         -------
             heat_transfer_area: double
                 heat transfer area [cm2/cm]
+
         """
         return self._heat_transfer_area
 
     @heat_transfer_area.setter
     def heat_transfer_area(self, value: float = 0.0e0):
-        """
-        Set heat transfer area per length between the reactor and the surroundings
+        """Set heat transfer area per length between the reactor and the surroundings
 
         Parameters
         ----------
             value: double, default = 0.0
                 heat transfer area [cm2/cm]
+
         """
         if value < 0.0e0:
             msg = [Color.PURPLE, "heat transfer area must >= 0.", Color.END]
@@ -919,8 +917,7 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
     def set_heat_transfer_area_profile(
         self, x: npt.NDArray[np.double], area: npt.NDArray[np.double]
     ) -> int:
-        """
-        Specify reactor heat transfer area per reactor length profile
+        """Specify reactor heat transfer area per reactor length profile
 
         Parameters
         ----------
@@ -932,6 +929,7 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
         Returns
         -------
             error code: integer
+
         """
         keyword = "AEXT"
         iErr = self.setprofile(key=keyword, x=x, y=area)
@@ -940,8 +938,7 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
     def set_heat_loss_profile(
         self, x: npt.NDArray[np.double], Qloss: npt.NDArray[np.double]
     ) -> int:
-        """
-        Specify reactor heat loss rate per length profile
+        """Specify reactor heat loss rate per length profile
 
         Parameters
         ----------
@@ -953,6 +950,7 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
         Returns
         -------
             error code: integer
+
         """
         keyword = "QPRO"
         iErr = self.setprofile(key=keyword, x=x, y=Qloss)
@@ -961,8 +959,7 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
     def set_velocity_profile(
         self, x: npt.NDArray[np.double], vel: npt.NDArray[np.double]
     ) -> int:
-        """
-        Specify axial velocity profile along the plug-flow reactor
+        """Specify axial velocity profile along the plug-flow reactor
 
         Parameters
         ----------
@@ -974,6 +971,7 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
         Returns
         -------
             error code: integer
+
         """
         keyword = "VELPRO"
         iErr = self.setprofile(key=keyword, x=x, y=vel)
@@ -981,13 +979,11 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
 
 
 class PlugFlowReactor_FixedTemperature(PlugFlowReactor):
-    """
-    Plug Flow Reactor (PFR) model with given temperature
+    """Plug Flow Reactor (PFR) model with given temperature
     """
 
     def __init__(self, inlet, label: str = "PFR"):
-        """
-        Initialize a PFR object with given temperature profile along the length pf the reactor
+        """Initialize a PFR object with given temperature profile along the length pf the reactor
 
         Parameters
         ----------
@@ -995,6 +991,7 @@ class PlugFlowReactor_FixedTemperature(PlugFlowReactor):
                 an inlet stream representing the gas properties and the flow rate at the PFR entrance
             label: string, optional
                 reactor name
+
         """
         # check Inlet
         if isinstance(inlet, Stream):
@@ -1048,8 +1045,7 @@ class PlugFlowReactor_FixedTemperature(PlugFlowReactor):
     def set_temperature_profile(
         self, x: npt.NDArray[np.double], temp: npt.NDArray[np.double]
     ) -> int:
-        """
-        Specify reactor temperature profile
+        """Specify reactor temperature profile
 
         Parameters
         ----------
@@ -1061,6 +1057,7 @@ class PlugFlowReactor_FixedTemperature(PlugFlowReactor):
         Returns
         -------
             error code: integer
+
         """
         keyword = "TPRO"
         iErr = self.setprofile(key=keyword, x=x, y=temp)

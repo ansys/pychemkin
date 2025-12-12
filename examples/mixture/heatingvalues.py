@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_heating_values:
+""".. _ref_heating_values:
 
 =============================================
 Calculate the heating values of fuel mixtures
@@ -64,11 +63,12 @@ the known values from a trusty database.
 
 import os
 
+import numpy as np  # number crunching
+
 import ansys.chemkin as ck
 from ansys.chemkin import Color
 from ansys.chemkin.logger import logger
 from ansys.chemkin.utilities import find_file
-import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()
@@ -94,8 +94,7 @@ thistemperature = 298.15
 
 
 def getwaterheatofvaporization(temp: float) -> float:
-    """
-    Compute water heat of vaporization [erg/g-water] at the given temperature
+    """Compute water heat of vaporization [erg/g-water] at the given temperature
     Use the enthalpy difference between water vapor and liquid water at the temperature
     Enthalpy data depend on temperature only
     There are empirical formulas for heat of vaporization, for example, DIPPR EQ.
@@ -109,6 +108,7 @@ def getwaterheatofvaporization(temp: float) -> float:
     -------
         enthalpy: double
             water enthalpy of vaporization [erg/g-water]
+
     """
     # compute water heat of vaporization
     # create a chemistry set object
@@ -368,7 +368,9 @@ for f in fuels:
 # ==========================
 # List the fuel mixtures and their LHV and HHV. The heating values are converted
 # from the cgs units [erg/g] to [kJ/g].
-print(f"Fuel Heating Values at {thistemperature} [K] and {thispressure*1.0e-6} [bar]\n")
+print(
+    f"Fuel Heating Values at {thistemperature} [K] and {thispressure * 1.0e-6} [bar]\n"
+)
 for i in range(len(fuels)):
     print(f"fuel composition:  {fuels[i]}")
     print(f" LHV [kJ/g-fuel]:  {LHV[i] / ck.ERGS_PER_JOULE / 1.0e3}")
