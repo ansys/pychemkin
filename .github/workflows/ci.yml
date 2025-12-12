@@ -135,6 +135,10 @@ jobs:
     needs: build-library
     environment: release
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Required for OIDC authentication with PyPI
+      contents: write # Required for OIDC authentication with PyPI
+      attestations: write # Write attestation for uploaded distribution artifacts
     steps:
 
       - name: "Download the library artifacts from build-library step"
@@ -173,6 +177,5 @@ jobs:
         with:
             cname: ${{ env.DOCUMENTATION_CNAME }}
             token: ${{ secrets.GITHUB_TOKEN }}
-
 
 
