@@ -43,9 +43,7 @@ MAX_SPECIES_LENGTH = _symbol_length + 1  # Chemkin element/species symbol length
 LP_c_char = ctypes.POINTER(ctypes.c_char)  # pointer to C type character array
 COMPLETE = 0
 
-_chemset_identifiers: List = (
-    []
-)  # string used to identify different chemistry sets in the same project
+_chemset_identifiers: List = []  # string used to identify different chemistry sets in the same project
 _active_chemistry_set = -10
 chemkin_verbose = True  # verbose mode to turn ON/OFF the print statements that do not have the leading '**' characters
 _CKInitialized: Dict = {}  # Chemkin-CFD-API initialization flag for every Chemistry Set
@@ -57,7 +55,7 @@ _CKInitialized: Dict = {}  # Chemkin-CFD-API initialization flag for every Chemi
 #
 def verbose() -> bool:
     """
-    return the global verbose mode indicating the status (ON/OFF) of printing statements that do not have the leading '**' characters
+    Return the global verbose mode indicating the status (ON/OFF) of printing statements that do not have the leading '**' characters.
 
     Returns
     -------
@@ -70,7 +68,7 @@ def verbose() -> bool:
 
 def set_verbose(OnOff: bool):
     """
-    set the global verbose mode to turn ON(True) or OFF(False) of printing statements that do not have the leading '**' characters
+    Set the global verbose mode to turn ON(True) or OFF(False) of printing statements that do not have the leading '**' characters.
 
     Parameters
     ----------
@@ -83,7 +81,7 @@ def set_verbose(OnOff: bool):
 
 def chemkin_version() -> int:
     """
-    Return the Chemkin-CFD-API version number currently in use
+    Return the Chemkin-CFD-API version number currently in use.
 
     Returns
     -------
@@ -96,7 +94,7 @@ def chemkin_version() -> int:
 def verify_version(min_version: int) -> bool:
     """
     Check if the version of Chemkin-CFD-API currently in use meets
-    the minimum version required by certain operations
+    the minimum version required by certain operations.
 
     Parameters
     ----------
@@ -125,7 +123,7 @@ def verify_version(min_version: int) -> bool:
 
 def done():
     """
-    Release Chemkin license and reset the Chemistry sets
+    Release Chemkin license and reset the Chemistry sets.
     """
     # terminate
     ck_wrapper.chemkin.KINFinish()
@@ -155,7 +153,7 @@ def done():
 # utilities
 def check_chemistryset(chem_index: int) -> bool:
     """
-    check whether the Chemistry Set is initialized in Chemkin-CFD-API
+    Check whether the Chemistry Set is initialized in Chemkin-CFD-API.
 
     Parameters
     ----------
@@ -353,7 +351,7 @@ class Chemistry:
     @property
     def chemfile(self) -> str:
         """
-        Get gas-phase mechanism file name of this chemistry set
+        Get gas-phase mechanism file name of this chemistry set.
 
         Returns
         -------
@@ -365,7 +363,7 @@ class Chemistry:
     @chemfile.setter
     def chemfile(self, filename: str):
         """
-        Assign the gas-phase mechanism filename
+        Assign the gas-phase mechanism filename.
 
         Parameters
         ----------

@@ -131,8 +131,7 @@ class Stream(Mixture):
             exit()
 
     def convert_to_vol_flowrate(self) -> float:
-        """
-        convert different types of flow rate value to volumetric flow rate
+        """Convert different types of flow rate value to volumetric flow rate.
 
         Returns
         -------
