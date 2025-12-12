@@ -20,9 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-Constants used by Chemkin utilities and models.
-"""
+"""Constants used by Chemkin utilities and models."""
 
 # == Chemkin module global parameters -- DO NOT MODIFY without asking Chemkin development team members
 boltzmann = 1.3806504e-16  # Boltzmann constant [ergs/K] (double scalar)

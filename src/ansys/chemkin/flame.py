@@ -20,9 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-Chemkin utilities for steady state, 1-D flame models.
-"""
+"""Chemkin utilities for steady state, 1-D flame models."""
 
 from ctypes import c_int
 

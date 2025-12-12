@@ -20,9 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-    Chemkin general reactor model utilities.
-"""
+"""Chemkin general reactor model utilities."""
 
 import copy
 import ctypes
@@ -51,7 +49,7 @@ from .mixture import Mixture
 #
 class Keyword:
     """
-    A Chemkin keyword
+    A Chemkin keyword.
     """
 
     # supported Chemkin keyword data types
