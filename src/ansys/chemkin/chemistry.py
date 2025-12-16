@@ -43,7 +43,9 @@ MAX_SPECIES_LENGTH = _symbol_length + 1  # Chemkin element/species symbol length
 LP_c_char = ctypes.POINTER(ctypes.c_char)  # pointer to C type character array
 COMPLETE = 0
 
-_chemset_identifiers: List = []  # string used to identify different chemistry sets in the same project
+_chemset_identifiers: List = (
+    []
+)  # string used to identify different chemistry sets in the same project
 _active_chemistry_set = -10
 chemkin_verbose = True  # verbose mode to turn ON/OFF the print statements that do not have the leading '**' characters
 _CKInitialized: Dict = {}  # Chemkin-CFD-API initialization flag for every Chemistry Set
