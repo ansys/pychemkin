@@ -40,7 +40,7 @@ from .chemistry import (
     verbose,
 )
 from .color import Color
-from .constants import Patm
+from .constants import P_ATM
 from .inlet import Stream
 from .logger import logger
 from .mixture import Mixture
@@ -652,7 +652,7 @@ class Profile:
                 pass
             else:
                 # use Full Keywords: pressure units = atm
-                factor = Patm
+                factor = P_ATM
         # assembly the profile keyword lines
         for i in range(self._size):
             thisline = ""

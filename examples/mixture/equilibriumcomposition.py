@@ -108,7 +108,7 @@ fuel = ck.Mixture(MyGasMech)
 # set mole fraction
 fuel.X = [("CH4", 0.8), ("H2", 0.2)]
 fuel.temperature = 300.0
-fuel.pressure = ck.Patm  # 1 atm
+fuel.pressure = ck.P_ATM  # 1 atm
 
 #######################
 # Create an air mixture
@@ -119,7 +119,7 @@ air = ck.Mixture(MyGasMech)
 # set mass fraction
 air.Y = [("O2", 0.23), ("N2", 0.77)]
 air.temperature = 300.0
-air.pressure = ck.Patm  # 1 atm
+air.pressure = ck.P_ATM  # 1 atm
 
 
 #####################################

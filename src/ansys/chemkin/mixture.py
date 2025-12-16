@@ -39,7 +39,7 @@ from ansys.chemkin.chemistry import (
     verbose,
 )
 from ansys.chemkin.color import Color
-from ansys.chemkin.constants import Patm
+from ansys.chemkin.constants import P_ATM
 from ansys.chemkin.logger import logger
 from ansys.chemkin.utilities import calculate_stoichiometrics, where_element_in_array_1D
 import numpy as np
@@ -3486,7 +3486,7 @@ def compare_mixtures(
     # find relative difference
     pres_var = pres_diff / mixtureA.pressure
     # convert the difference to [atm]
-    pres_diff /= Patm
+    pres_diff /= P_ATM
     # check tolerances
     issame = pres_diff <= atol
     issame = issame or pres_var <= rtol

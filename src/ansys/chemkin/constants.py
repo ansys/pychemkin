@@ -25,20 +25,20 @@ Constants used by Chemkin utilities and models.
 """
 
 # == Chemkin module global parameters -- DO NOT MODIFY without asking Chemkin development team members
-boltzmann = 1.3806504e-16  # Boltzmann constant [ergs/K] (double scalar)
-avogadro = 6.02214179e23  # Avogadro number [1/mole] (double scalar)
-Patm = 1.01325e06  # atmospheric pressure [dynes/cm2] (double scalar)
-Ptorrs = Patm / 760.0  # 1 torr in [dynes/cm2] (double scalar)
-ergs_per_joule = 1.0e7  # ergs per joule [ergs/J] (double scalar)
-joules_per_calorie = 4.184e0  # joules per calorie [J/cal] (double scalar)
-ergs_per_calorie = (
-    joules_per_calorie * ergs_per_joule
+BOLTZMANN = 1.3806504e-16  # BOLTZMANN constant [ergs/K] (double scalar)
+AVOGADRO = 6.02214179e23  # AVOGADRO number [1/mole] (double scalar)
+P_ATM = 1.01325e06  # atmospheric pressure [dynes/cm2] (double scalar)
+P_TORRS = P_ATM / 760.0  # 1 torr in [dynes/cm2] (double scalar)
+ERGS_PER_JOULE = 1.0e7  # ergs per joule [ergs/J] (double scalar)
+JOULES_PER_CALORIE = 4.184e0  # joules per calorie [J/cal] (double scalar)
+ERGS_PER_CALORIE = (
+    JOULES_PER_CALORIE * ERGS_PER_JOULE
 )  # ergs per calorie [erg/cal] (double scalar)
-ergs_per_eV = 1.602176487e-12  # ergs per eV [erg/volt] (double scalar)
-eV_per_K = ergs_per_eV / boltzmann  # eV per K [volt/K] (double scalar)
-RGas = boltzmann * avogadro  # universal gas constant R [ergs/mol-K] (double scalar)
-RGas_Cal = (
-    RGas * 1.0e-7 / joules_per_calorie
+ERGS_PER_EV = 1.602176487e-12  # ergs per eV [erg/volt] (double scalar)
+EV_PER_K = ERGS_PER_EV / BOLTZMANN  # eV per K [volt/K] (double scalar)
+R_GAS = BOLTZMANN * AVOGADRO  # universal gas constant R [ergs/mol-K] (double scalar)
+R_GAS_CAL = (
+    R_GAS * 1.0e-7 / JOULES_PER_CALORIE
 )  # universal gas constant R [cal/mol-K] (double scalar)
 # == end of global constants
 

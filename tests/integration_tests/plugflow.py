@@ -58,7 +58,7 @@ feedstock = Stream(MyGasMech)
 # set inlet temperature [K]
 feedstock.temperature = 1444.48
 # set inlet/PFR pressure [atm]
-feedstock.pressure = 0.83 * ck.Patm
+feedstock.pressure = 0.83 * ck.P_ATM
 # set inlet composition
 feedstock.X = [
     ("AR", 0.8433),

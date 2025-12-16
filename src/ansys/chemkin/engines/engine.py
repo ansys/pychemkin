@@ -31,7 +31,7 @@ from typing import Union
 from ansys.chemkin import chemkin_wrapper
 from ansys.chemkin.batchreactors.batchreactor import BatchReactors
 from ansys.chemkin.color import Color as Color
-from ansys.chemkin.constants import Patm
+from ansys.chemkin.constants import P_ATM
 from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
 from ansys.chemkin.reactormodel import Keyword
@@ -941,7 +941,7 @@ class Engine(BatchReactors):
         """
         Set engine initial condition keywords under the Full-Keywords mode
         """
-        self.setkeyword(key="PRES", value=self._pressure.value / Patm)
+        self.setkeyword(key="PRES", value=self._pressure.value / P_ATM)
         self.setkeyword(key="TEMP", value=self._temperature.value)
         # initial mole fraction
         nspecieslines, species_lines = self.createspeciesinputlines(

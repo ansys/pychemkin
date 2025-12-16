@@ -47,13 +47,13 @@ if status != 0:
 air = ansys.chemkin.Mixture(GasMech)
 # set 'air' condition
 # mixture pressure in [dynes/cm2]
-air.pressure = 1.0 * ansys.chemkin.Patm
+air.pressure = 1.0 * ansys.chemkin.P_ATM
 # mixture temperature in [K]
 air.temperature = 300.0
 # mixture composition in mole fractions
 air.X = [("O2", 0.21), ("N2", 0.79)]
 #
-print(f"pressure    = {air.pressure/ansys.chemkin.Patm} [atm]")
+print(f"pressure    = {air.pressure/ansys.chemkin.P_ATM} [atm]")
 print(f"temperature = {air.temperature} [K]")
 # print the 'air' composition in mass fractions
 air.list_composition(mode="mass")

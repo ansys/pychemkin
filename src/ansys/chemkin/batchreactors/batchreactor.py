@@ -37,7 +37,7 @@ from ansys.chemkin.chemistry import (
     verbose,
 )
 from ansys.chemkin.color import Color as Color
-from ansys.chemkin.constants import Patm
+from ansys.chemkin.constants import P_ATM
 from ansys.chemkin.info import show_ignition_definitions
 from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
@@ -781,7 +781,7 @@ class BatchReactors(reactor):
         """
         Set reactor initial/estimated condition keywords under the Full-Keywords mode
         """
-        self.setkeyword(key="PRES", value=self._pressure.value / Patm)
+        self.setkeyword(key="PRES", value=self._pressure.value / P_ATM)
         self.setkeyword(key="TEMP", value=self._temperature.value)
         self.setkeyword(key="TIME", value=self._endtime.value)
         # initial mole fraction

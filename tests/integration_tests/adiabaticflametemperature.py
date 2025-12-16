@@ -56,7 +56,7 @@ oxid = ck.Mixture(MyGasMech)
 # set mass fraction
 oxid.X = [("O2", 1.0)]
 oxid.temperature = 295.15
-oxid.pressure = ck.Patm  # 1 atm
+oxid.pressure = ck.P_ATM  # 1 atm
 # mix the fuel and the air with an air-fuel ratio of 17.19 (almost stoichiometric?
 
 fuel = ck.Mixture(MyGasMech)
