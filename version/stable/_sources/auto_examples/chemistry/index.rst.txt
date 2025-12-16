@@ -1,0 +1,108 @@
+
+
+.. _sphx_glr_auto_examples_chemistry:
+
+Chemistry
+=========
+
+PyChemkin examples to demonstrate basic operations for
+instantiating *Chemistry Set* from the gas-phase mechanism
+and the thermodynamic/transport data files.
+
+The examples walk through the steps about how to pre-process the
+*Chemistry Set*, retrieve mechanism information and the species properties,
+as well as how to handle multiple *Chemistry Sets* in a **Python Chemkin**
+project.
+
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Before you can run a Chemkin simulation, you must load and preprocess the reaction mechanism data. The mechanism data consists of a reaction mechanism input file, a thermodynamic data file, and an optional transport data file.">
+
+.. only:: html
+
+  .. image:: /auto_examples/chemistry/images/thumb/sphx_glr_loadmechanism_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_chemistry_loadmechanism.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Preprocess a gas-phase mechanism</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="PyChemkin can facilitate multiple mechanisms in one project. However, only one chemistry set can be active at a time. This example shows how to use the activate() method to switch between multiple chemistry sets (mechanisms) in the same Python project. You can use this method to compare results from two different mechanisms, such as the base and reduced mechanisms.">
+
+.. only:: html
+
+  .. image:: /auto_examples/chemistry/images/thumb/sphx_glr_multiplemechanisms_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_chemistry_multiplemechanisms.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Work with multiple mechanisms</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to set up a PyChemkin project and start to use PyChemkin features. You begin by importing the PyChemkin package, which is named ansys.chemkin, and optionally the PyChemkin logger package, which is named ansys.chemkin.logger.">
+
+.. only:: html
+
+  .. image:: /auto_examples/chemistry/images/thumb/sphx_glr_simple_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_chemistry_simple.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Set up a PyChemkin project</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="PyChemkin inherits many Ansys Chemkin utilities for evaluating species properties in a mechanism. Most tools for calculating the species properties are part of the PyChemkin Chemistry() methods. This example shows how use some of these methods to evaluate species thermodynamic and transport properties.">
+
+.. only:: html
+
+  .. image:: /auto_examples/chemistry/images/thumb/sphx_glr_speciesproperties_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_chemistry_speciesproperties.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Evaluate gas species properties</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/chemistry/loadmechanism
+   /auto_examples/chemistry/multiplemechanisms
+   /auto_examples/chemistry/simple
+   /auto_examples/chemistry/speciesproperties
+

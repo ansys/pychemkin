@@ -1,0 +1,78 @@
+
+
+
+
+
+
+The ``ansys.chemkin.hybridreactornetwork`` library
+==================================================
+
+.. py:module:: ansys.chemkin.hybridreactornetwork
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: hybridreactornetwork
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.hybridreactornetwork.ReactorNetwork`
+            - The hybrid reactor network allows internal recycling stream and reactor outflow splitting.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> ReactorNetwork</api/ansys/chemkin/hybridreactornetwork/ReactorNetwork>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Hybrid reactor network comprised of a mix of open reactors such as PSR and PFR.
+
+
+
+
+
+
+
+

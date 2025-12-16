@@ -1,0 +1,431 @@
+
+
+:class:`BatchReactors`
+======================
+
+.. py:class:: ansys.chemkin.batchreactors.batchreactor.BatchReactors(reactor_condition: ansys.chemkin.inlet.Stream, label: str)
+
+   Bases: :py:obj:`ansys.chemkin.reactormodel.ReactorModel`
+
+
+   Generic Chemkin 0-D transient closed homogeneous reactor model
+
+
+
+.. py:currentmodule:: BatchReactors
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_solver_initial_timestep_size`
+            - Set the initial time step size to be used by the solver
+          * - :py:attr:`~set_solver_max_timestep_size`
+            - Set the maximum time step size allowed by the solver
+          * - :py:attr:`~adaptive_solution_saving`
+            - Set up adaptive solution data saving
+          * - :py:attr:`~set_ignition_delay`
+            - Set ignition detection criterion
+          * - :py:attr:`~stop_after_ignition`
+            - Set the option to stop the simulation after ignition is detected
+          * - :py:attr:`~get_ignition_delay`
+            - Get the predicted ignition delay time from the transient reactor simulation
+          * - :py:attr:`~set_volume_profile`
+            - Specify reactor volume profile
+          * - :py:attr:`~set_pressure_profile`
+            - Specify reactor pressure profile
+          * - :py:attr:`~set_surfacearea_profile`
+            - Specify reactor reactive surface area profile
+          * - :py:attr:`~set_reactortype_keywords`
+            - Set reactor type keywords under the Full-Keywords mode
+          * - :py:attr:`~set_reactorcondition_keywords`
+            - Set reactor initial/estimated condition keywords under the Full-Keywords mode
+          * - :py:attr:`~validate_inputs`
+            - Check the required inputs before running the reactor simulation
+          * - :py:attr:`~run`
+            - Generic Chemkin run reactor model method
+          * - :py:attr:`~get_solution_size`
+            - Get the number of reactors and the number of solution points
+          * - :py:attr:`~process_solution`
+            - Post-process solution to extract the raw solution variable data
+          * - :py:attr:`~get_solution_variable_profile`
+            - Get the profile of the solution variable specified
+          * - :py:attr:`~create_solution_mixtures`
+            - Create a list of Mixtures that represent the gas inside the reactor at a solution point
+          * - :py:attr:`~get_solution_mixture`
+            - Get the mixture representing the solution state inside the reactor at the given time
+          * - :py:attr:`~get_solution_mixture_at_index`
+            - Get the mixture representing the solution state inside the reactor at the given solution point index
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~volume`
+            - Get reactor volume
+          * - :py:attr:`~area`
+            - Get reactive surface area
+          * - :py:attr:`~tolerances`
+            - Get transient solver tolerances
+          * - :py:attr:`~force_nonnegative`
+            - Get the status of the forcing non-negative option of the transient solver
+          * - :py:attr:`~timestep_for_saving_solution`
+            - Get the timestep size between saving the solution data
+          * - :py:attr:`~timestep_for_printing_solution`
+            - Get the timestep size between printing the solution data to the text output file
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~ReactorTypes`
+            - 
+          * - :py:attr:`~SolverTypes`
+            - 
+          * - :py:attr:`~EnergyTypes`
+            - 
+          * - :py:attr:`~ProblemTypes`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.batchreactors.batchreactor import BatchReactors
+
+Property detail
+---------------
+.. py:property:: volume
+   :type: float
+
+
+   Get reactor volume
+
+   Returns
+   -------
+       volume: double
+           reactor volume [cm3]
+
+
+.. py:property:: area
+   :type: float
+
+
+   Get reactive surface area
+
+   Returns
+   -------
+       area: double
+           surface area [cm2]
+
+
+.. py:property:: tolerances
+   :type: tuple
+
+
+   Get transient solver tolerances
+
+   Returns
+   -------
+       tolerances: tuple, [absolute_tolerance, relative_tolerance]
+           absolute_tolerance: double
+               absolute tolerance
+           relative_tolerance: double
+               relative tolerance
+
+
+.. py:property:: force_nonnegative
+   :type: bool
+
+
+   Get the status of the forcing non-negative option of the transient solver
+
+   Returns
+   -------
+       mode: boolean
+           status of the non-negative solver option
+
+
+.. py:property:: timestep_for_saving_solution
+   :type: float
+
+
+   Get the timestep size between saving the solution data
+
+   Returns
+   -------
+       delta_time: double
+           timestep size between saving solution data [sec]
+
+
+.. py:property:: timestep_for_printing_solution
+   :type: float
+
+
+   Get the timestep size between printing the solution data to the text output file
+
+   Returns
+   -------
+       delta_time: double
+           timestep size between printing solution data [sec]
+
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: ReactorTypes
+   :type:  dict[str, int]
+
+.. py:attribute:: SolverTypes
+   :type:  dict
+
+.. py:attribute:: EnergyTypes
+   :type:  dict
+
+.. py:attribute:: ProblemTypes
+   :type:  dict
+
+
+
+Method detail
+-------------
+.. py:method:: set_solver_initial_timestep_size(size: float)
+
+   Set the initial time step size to be used by the solver
+
+   Parameters
+   ----------
+       size: double, default = determined by the solver
+           step size [sec] or [cm]
+
+
+.. py:method:: set_solver_max_timestep_size(size: float)
+
+   Set the maximum time step size allowed by the solver
+
+   Parameters
+   ----------
+       size: double, default = 1/100 of the simulation duration
+           step size [sec] or [cm]
+
+
+.. py:method:: adaptive_solution_saving(mode: bool, value_change: Union[float, None] = None, target: Union[str, None] = None, steps: Union[int, None] = None)
+
+   Set up adaptive solution data saving
+
+   Parameters
+   ----------
+       mode: boolean
+           switch adaptive solution saving ON/OFF
+       value_change: double, optional
+           change in solution variable value between saving additional solution data
+       target: string, optional
+           the target variable that is used by the value_change option
+       steps: integer, optional
+           number of solver time steps between saving additional solution data
+
+
+.. py:method:: set_ignition_delay(method: str = 'T_inflection', val: float = 0.0, target: str = '')
+
+   Set ignition detection criterion
+
+   Parameters
+   ----------
+       method: string
+           ignition definition/detection method
+       val: double, optional
+           temperature or temperature rise value associated with the ignition detection method specified
+       target: string, optional
+           target species symbol if the 'Species_peak' method is used
+
+
+.. py:method:: stop_after_ignition()
+
+   Set the option to stop the simulation after ignition is detected
+
+
+.. py:method:: get_ignition_delay() -> float
+
+   Get the predicted ignition delay time from the transient reactor simulation
+
+   Returns
+   -------
+       ignition_delay_time: double
+           ignition delay time [msec] or [CA]
+
+
+.. py:method:: set_volume_profile(x: numpy.typing.NDArray[numpy.double], vol: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify reactor volume profile
+
+   Parameters
+   ----------
+       x: 1D double array
+           position value of the profile data [cm or sec]
+       vol: 1D double array
+           volume value of the profile data [cm3]
+
+   Returns
+   -------
+       error code: integer
+
+
+.. py:method:: set_pressure_profile(x: numpy.typing.NDArray[numpy.double], pres: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify reactor pressure profile
+
+   Parameters
+   ----------
+       x: 1D double array
+           position value of the profile data [cm or sec]
+       pres: 1D double array
+           pressure value of the profile data [dynes/cm2]
+
+   Returns
+   -------
+       error code: integer
+
+
+.. py:method:: set_surfacearea_profile(x: numpy.typing.NDArray[numpy.double], area: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify reactor reactive surface area profile
+
+   Parameters
+   ----------
+       x: 1D double array
+           position value of the profile data [cm or sec]
+       area: 1D double array
+           reactive surface area value of the profile data [cm2]
+
+   Returns
+   -------
+       error code: integer
+
+
+.. py:method:: set_reactortype_keywords()
+
+   Set reactor type keywords under the Full-Keywords mode
+
+
+.. py:method:: set_reactorcondition_keywords()
+
+   Set reactor initial/estimated condition keywords under the Full-Keywords mode
+
+
+.. py:method:: validate_inputs() -> int
+
+   Check the required inputs before running the reactor simulation
+
+   Returns
+   -------
+       error code: integer
+
+
+.. py:method:: run() -> int
+
+   Generic Chemkin run reactor model method
+
+   Returns
+   -------
+       error code: integer
+
+
+.. py:method:: get_solution_size() -> tuple[int, int]
+
+   Get the number of reactors and the number of solution points
+
+   Returns
+   -------
+       nreactor: integer
+           number of reactors
+       npoints: integer
+           number of solution points
+
+
+.. py:method:: process_solution()
+
+   Post-process solution to extract the raw solution variable data
+
+
+.. py:method:: get_solution_variable_profile(varname: str) -> numpy.typing.NDArray[numpy.double]
+
+   Get the profile of the solution variable specified
+
+   Parameters
+   ----------
+       varname: string
+           name of the solution variable
+
+   Returns
+   -------
+       solution value profile: 1D double array
+
+
+.. py:method:: create_solution_mixtures(specfrac: numpy.typing.NDArray[numpy.double]) -> int
+
+   Create a list of Mixtures that represent the gas inside the reactor at a solution point
+
+   Parameters
+   ----------
+       specfrac: 2D double array, dimensions = [number_species, numb_solution_point]
+           species fractions of all time points [species_fraction, time_point]
+
+   Returns
+   -------
+       iError: integer
+            error code
+
+
+.. py:method:: get_solution_mixture(time: float) -> ansys.chemkin.mixture.Mixture
+
+   Get the mixture representing the solution state inside the reactor at the given time
+
+   Parameters
+   ----------
+       time: double
+           time point value [sec]
+
+   Returns
+   -------
+       mixturetarget: Mixture object
+           a Mixture representing the gas properties in the reactor at the specific time
+
+
+.. py:method:: get_solution_mixture_at_index(solution_index: int) -> ansys.chemkin.mixture.Mixture
+
+   Get the mixture representing the solution state inside the reactor at the given solution point index
+
+   Parameters
+   ----------
+       solution_index: integer
+           0-base solution time point index
+
+   Returns
+   -------
+       mixturetarget: Mixture object
+           a Mixture representing the gas properties in the reactor at the specific time
+
+
+

@@ -1,0 +1,283 @@
+
+
+:class:`PlugFlowReactor`
+========================
+
+.. py:class:: ansys.chemkin.flowreactors.PFR.PlugFlowReactor(inlet: ansys.chemkin.inlet.Stream, label: str = 'PFR')
+
+   Bases: :py:obj:`ansys.chemkin.batchreactors.batchreactor.BatchReactors`
+
+
+   Generic Plug Flow Reactor (PFR) model with energy equation
+
+
+
+.. py:currentmodule:: PlugFlowReactor
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_start_position`
+            - Set the PFR simulation starting position
+          * - :py:attr:`~set_diameter_profile`
+            - Specify plug-flow reactor diameter profile
+          * - :py:attr:`~set_flowarea_profile`
+            - Specify plug-flow reactor cross-sectional flow area profile
+          * - :py:attr:`~set_inlet_viscosity`
+            - Set the gas mixture viscocity at the PFR inlet
+          * - :py:attr:`~set_solver_max_timestep_size`
+            - Set the maximum time step size allowed by the transient solver
+          * - :py:attr:`~set_pseudo_surface_velocity`
+            - Set the pseudo surface velocity at the reactive surface
+          * - :py:attr:`~run`
+            - Generic Chemkin run PFR model method
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~length`
+            - Get reactor length
+          * - :py:attr:`~diameter`
+            - Get reactor diameter
+          * - :py:attr:`~flowarea`
+            - Cross-sectional flow area of the PFR [cm2]
+          * - :py:attr:`~mass_flowrate`
+            - Get plug flow reactor inlet mass flow rate [g/sec]
+          * - :py:attr:`~velocity`
+            - Get plug flow reactor inlet velocity [cm/sec]
+          * - :py:attr:`~vol_flowrate`
+            - Get plug flow reactor inlet volumetric flow rate [cm3/sec]
+          * - :py:attr:`~sccm`
+            - Get plug flow reactor inlet volumetric flow rate in SCCM [standard cm3/min]
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~startposition`
+            - 
+          * - :py:attr:`~reactorlength`
+            - 
+          * - :py:attr:`~reactordiameter`
+            - 
+          * - :py:attr:`~reactorflowarea`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.flowreactors.PFR import PlugFlowReactor
+
+Property detail
+---------------
+.. py:property:: length
+   :type: float
+
+
+   Get reactor length
+
+   Returns
+   -------
+       length: double
+           reactor length [cm]
+
+
+.. py:property:: diameter
+   :type: float
+
+
+   Get reactor diameter
+
+   Returns
+   -------
+       diam: double
+           Reactor diameter [cm]
+
+
+.. py:property:: flowarea
+   :type: float
+
+
+   Cross-sectional flow area of the PFR [cm2]
+
+   Returns
+   -------
+       area: double
+           cross-sectional flow rate [cm2]
+
+
+.. py:property:: mass_flowrate
+   :type: float
+
+
+   Get plug flow reactor inlet mass flow rate [g/sec]
+
+   Returns
+   -------
+       massflowrate: double
+           mass flow rate [g/sec]
+
+
+.. py:property:: velocity
+   :type: float
+
+
+   Get plug flow reactor inlet velocity [cm/sec]
+
+   Returns
+   -------
+       vel: double
+           inlet velocity [cm/sec]
+
+
+.. py:property:: vol_flowrate
+   :type: float
+
+
+   Get plug flow reactor inlet volumetric flow rate [cm3/sec]
+
+   Returns
+   -------
+       volflowrate: double
+           volumetric flow rate [cm3/sec]
+
+
+.. py:property:: sccm
+   :type: float
+
+
+   Get plug flow reactor inlet volumetric flow rate in SCCM [standard cm3/min]
+
+   Returns
+   -------
+       volflowrate: double
+           volumetric flow rate in SCCM [standard cm3/min]
+
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: startposition
+
+.. py:attribute:: reactorlength
+
+.. py:attribute:: reactordiameter
+
+.. py:attribute:: reactorflowarea
+   :value: 0.0
+
+
+
+
+Method detail
+-------------
+.. py:method:: set_start_position(x0: float)
+
+   Set the PFR simulation starting position
+   default reactor inlet: x0 = 0.0
+
+   Parameters
+   ----------
+       x0: double, default = 0.0
+           starting position
+
+
+.. py:method:: set_diameter_profile(x: numpy.typing.NDArray[numpy.double], diam: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify plug-flow reactor diameter profile
+
+   Parameters
+   ----------
+       x: 1-D double array
+           position value of the profile data [cm]
+       diam: 1-D double array
+           PFR diameter value of the profile data [cm]
+
+   Returns
+   -------
+       error code: integer
+
+
+.. py:method:: set_flowarea_profile(x: numpy.typing.NDArray[numpy.double], area: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify plug-flow reactor cross-sectional flow area profile
+
+   Parameters
+   ----------
+       x: 1-D double array
+           position value of the profile data [cm]
+       area: 1-D double array
+           PFR cross-sectional flow area value of the profile data [cm2]
+
+   Returns
+   -------
+       error code: integer
+
+
+.. py:method:: set_inlet_viscosity(visc: float)
+
+   Set the gas mixture viscocity at the PFR inlet
+
+   Parameters
+   ----------
+       visc: double, default = 0.0
+           mixture viscosity [g/cm-sec] or [Poise]
+
+
+.. py:method:: set_solver_max_timestep_size(size: float)
+
+   Set the maximum time step size allowed by the transient solver
+
+   Parameters
+   ----------
+       size: double
+           maximum solver step size [cm]
+
+
+.. py:method:: set_pseudo_surface_velocity(vel: float)
+
+   Set the pseudo surface velocity at the reactive surface
+   to improve convergence due to surface chemistry stiffness
+   Note: set this parameter only when having convergence issue with surface chemistry
+
+   Parameters
+   ----------
+       vel: double, default = 0.0
+           pseudo surface velocity [cm/sec]
+
+
+.. py:method:: run() -> int
+
+   Generic Chemkin run PFR model method
+
+   Returns
+   -------
+       error code: integer
+
+
+

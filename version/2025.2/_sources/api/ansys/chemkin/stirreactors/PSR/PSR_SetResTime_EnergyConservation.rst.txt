@@ -1,0 +1,111 @@
+
+
+:class:`PSR_SetResTime_EnergyConservation`
+==========================================
+
+.. py:class:: ansys.chemkin.stirreactors.PSR.PSR_SetResTime_EnergyConservation(guessedmixture: ansys.chemkin.inlet.Stream, label: Union[str, None] = None)
+
+   Bases: :py:obj:`perfectlystirredreactor`
+
+
+   PSR model with given reactor reasidence time (CONP)
+   and solve energy equation (ENERGY)
+   rho_PSR * Vol_PSR / residence_time = mass_flow_rate
+   The reactor pressure and the inlet mass flow rate are always given (fixed)
+   so the reactor volume and density are varying in this case.
+
+
+
+.. py:currentmodule:: PSR_SetResTime_EnergyConservation
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~heat_loss_rate`
+            - Get heat loss rate from the reactor to the surroundings
+          * - :py:attr:`~heat_transfer_coefficient`
+            - Get heat transfer coefficient between the reactor and the surroundings
+          * - :py:attr:`~ambient_temperature`
+            - Get ambient temperature
+          * - :py:attr:`~heat_transfer_area`
+            - Get heat transfer area between the reactor and the surroundings
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation
+
+Property detail
+---------------
+.. py:property:: heat_loss_rate
+   :type: float
+
+
+   Get heat loss rate from the reactor to the surroundings
+
+   Returns
+   -------
+       Qloss: double
+           heat loss rate to the surroundings [cal/sec]
+
+
+.. py:property:: heat_transfer_coefficient
+   :type: float
+
+
+   Get heat transfer coefficient between the reactor and the surroundings
+
+   Returns
+   -------
+       heat_transfer_coefficient: double
+           heat transfer coefficient [cal/cm2-K-sec]
+
+
+.. py:property:: ambient_temperature
+   :type: float
+
+
+   Get ambient temperature
+
+   Returns
+   -------
+       ambient_temperature: double
+           ambient temperature [K]
+
+
+.. py:property:: heat_transfer_area
+   :type: float
+
+
+   Get heat transfer area between the reactor and the surroundings
+
+   Returns
+   -------
+       heat_transfer_area: double
+           heat transfer area [cm2]
+
+
+
+
+
+
+

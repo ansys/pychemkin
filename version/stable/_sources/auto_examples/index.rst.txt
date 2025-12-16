@@ -1,0 +1,776 @@
+:orphan:
+
+.. _examples:
+
+Examples
+========
+
+This section shows how to use PyChemkin utilities and reactor models to perform different types of simulations. Early examples demonstrate how to perform essential operations, such as loading and preprocessing the chemistry set. Later examples explain how to tackle more complex simulations, such as running an ignition delay parameter study. Thus, you should go through the examples in the order listed.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+Chemistry
+=========
+
+PyChemkin examples to demonstrate basic operations for
+instantiating *Chemistry Set* from the gas-phase mechanism
+and the thermodynamic/transport data files.
+
+The examples walk through the steps about how to pre-process the
+*Chemistry Set*, retrieve mechanism information and the species properties,
+as well as how to handle multiple *Chemistry Sets* in a **Python Chemkin**
+project.
+
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Before you can run a Chemkin simulation, you must load and preprocess the reaction mechanism data. The mechanism data consists of a reaction mechanism input file, a thermodynamic data file, and an optional transport data file.">
+
+.. only:: html
+
+  .. image:: /auto_examples/chemistry/images/thumb/sphx_glr_loadmechanism_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_chemistry_loadmechanism.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Preprocess a gas-phase mechanism</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="PyChemkin can facilitate multiple mechanisms in one project. However, only one chemistry set can be active at a time. This example shows how to use the activate() method to switch between multiple chemistry sets (mechanisms) in the same Python project. You can use this method to compare results from two different mechanisms, such as the base and reduced mechanisms.">
+
+.. only:: html
+
+  .. image:: /auto_examples/chemistry/images/thumb/sphx_glr_multiplemechanisms_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_chemistry_multiplemechanisms.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Work with multiple mechanisms</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to set up a PyChemkin project and start to use PyChemkin features. You begin by importing the PyChemkin package, which is named ansys.chemkin, and optionally the PyChemkin logger package, which is named ansys.chemkin.logger.">
+
+.. only:: html
+
+  .. image:: /auto_examples/chemistry/images/thumb/sphx_glr_simple_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_chemistry_simple.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Set up a PyChemkin project</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="PyChemkin inherits many Ansys Chemkin utilities for evaluating species properties in a mechanism. Most tools for calculating the species properties are part of the PyChemkin Chemistry() methods. This example shows how use some of these methods to evaluate species thermodynamic and transport properties.">
+
+.. only:: html
+
+  .. image:: /auto_examples/chemistry/images/thumb/sphx_glr_speciesproperties_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_chemistry_speciesproperties.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Evaluate gas species properties</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+Mixture
+=======
+
+*Mixture* is the "core" token in **PyChemkin**. It represents a gas-phase mixture by storing
+its pressure, temperature, and species composition. *Stream* is an extended "Class" of *Mixture*
+with the additional attribute of "mass/volumetric flow rate". *Mixture* and *Stream* include utilities
+that can be used to evaluate the mixture properties (density, mixture enthalpy, mixture viscosity, ...)
+and the reaction rates. There are also methods to manipulate the *Mixture*/*Stream* such as merging two mixtures
+adiabatically.
+
+The examples demonstrate how to instantiate the *Mixture*/*Stream* objects, how to extract information and properties
+of a *Mixture*/*Stream*, and how to manipulate *Mixture*/*Stream* objects.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to find the equilibrium state of a mixture. It uses the equilibrium() method with the constant pressure and enthalpy option to estimate the adiabatic flame temperature of a methane-oxygen mixture. This example also explores the influence of the equivalence ratio on the predicted adiabatic flame temperature.">
+
+.. only:: html
+
+  .. image:: /auto_examples/mixture/images/thumb/sphx_glr_adiabaticflametemperature_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_mixture_adiabaticflametemperature.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Estimate the adiabatic flame temperature of a gas mixture</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A mixture is a core component of the PyChemkin framework. In addition to getting mixture thermodynamic and transport properties, such as density, heat capacity, and viscosity, you can combine two mixtures, find the equilibrium state of a mixture, or use a mixture to define the initial state of a reactor. A PyChemkin reactor model is a black box that transforms a mixture from its initial state to a new one.">
+
+.. only:: html
+
+  .. image:: /auto_examples/mixture/images/thumb/sphx_glr_createmixture_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_mixture_createmixture.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Create a mixture</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Calculate the detonation wave speed of a real-gas mixture">
+
+.. only:: html
+
+  .. image:: /auto_examples/mixture/images/thumb/sphx_glr_detonation_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_mixture_detonation.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Calculate the detonation wave speed of a real-gas mixture</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to quickly estimate the steady-state NO level that is formed by the combustion of a fuel-air mixture at a given temperature. Without needing any reaction, the NO concentration gets to its steady state (or the maximum level) when the product mixture from the fuel-air combustion reaches the equilibrium state at the given temperature. To find the equilibrium state of the fresh fuel-air mixture, the equilibrium() method is used with the fixed pressure and fixed temperature options.">
+
+.. only:: html
+
+  .. image:: /auto_examples/mixture/images/thumb/sphx_glr_equilibriumcomposition_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_mixture_equilibriumcomposition.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Estimate the steady-state NO emission level of a complete burned fuel-air mixture</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="One of the advantages of PyChemkin is flexibility. You can establish your own workflow with PyChemkin to meet your simulation goals. This tutorial is an example of building a specialized algorithm to calculate the heating values, the lower heating value (LHV) and the higher heating value (HHV), of fuel mixtures.">
+
+.. only:: html
+
+  .. image:: /auto_examples/mixture/images/thumb/sphx_glr_heatingvalues_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_mixture_heatingvalues.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Calculate the heating values of fuel mixtures</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="PyChemkin provides a set of basic mixture utilities enabling the creation of new mixtures from existing ones. The mixing methods let you combine two mixtures at constant pressure with specific constraints.">
+
+.. only:: html
+
+  .. image:: /auto_examples/mixture/images/thumb/sphx_glr_mixturemixing_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_mixture_mixturemixing.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Combine gas mixtures</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="- Set up from scratch. - Obtained from certain mixture operations. - Based on a point (time or grid) solution of a reactor simulation.">
+
+.. only:: html
+
+  .. image:: /auto_examples/mixture/images/thumb/sphx_glr_reactionrates_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_mixture_reactionrates.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Rank reaction rates</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+Batch reactor
+=============
+
+The *batch reactor* is an idealized 0-D transient closed reactor model in which the gas inside
+the reactor is assumed to be homogeneous. When the pressure of the *batch reactor* is constrained,
+the reactor volume would vary to conserve the total gas mass. Likewise, the reactor pressure might
+change when the reactor volume is "given". The gas temperature can be "given" by piecewise linear
+profile data or solved by the energy equation.
+
+The examples consist of projects that utilize the *batch reactor* model to perform simulations of
+various complexities, from tracking the evolution of the mixture properties to the A-factor sensitivity
+analysis.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized reactor models commonly used for studying chemical processes and for developing reaction mechanisms. The batch reactor is a transient 0-D numerical portrayal of the closed homogeneous/perfectly mixed gas-phase reactor. There are two basic types of batch reactor models:">
+
+.. only:: html
+
+  .. image:: /auto_examples/batch/images/thumb/sphx_glr_closed_homogeneous__transient_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_batch_closed_homogeneous__transient.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Simulate hydrogen combustion in a constant-pressure reactor</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="One of the important properties of hydrocarbon fuels is the ignition delay time. For automobiles, the gasoline, a mixtures of many fuel species, is graded by the octane number which is closely related to the fuel mixture&#x27;s ignition characteristics. Higher octane number fuel tends to ignite more easily. However, this does not mean you should blindly put the highest octane number fuel into your car. Car engines are designed for specific operating conditions, and you should always use the gasoline grades recommended by the car/engine manufacturer to prevent damages to the engine.">
+
+.. only:: html
+
+  .. image:: /auto_examples/batch/images/thumb/sphx_glr_ignitiondelay_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_batch_ignitiondelay.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Predict the ignition delay time of a combustible mixture</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized reactor models commonly used for studying chemical processes and for developing reaction mechanisms. The batch reactor is a transient 0-D numerical portrayal of the closed homogeneous/perfectly mixed gas-phase reactor. There are two basic types of batch reactor models:">
+
+.. only:: html
+
+  .. image:: /auto_examples/batch/images/thumb/sphx_glr_rcm_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_batch_rcm.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Simulate a rapid compression machine</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="One of the advantages of PyChemkin is customizability. You can easily build a specialized workflow to facilitate your simulation goals.">
+
+.. only:: html
+
+  .. image:: /auto_examples/batch/images/thumb/sphx_glr_sensitivity_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_batch_sensitivity.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Perform brute-force sensitivity analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="How does the volume of water vapor evolves when it is cooled from a temperature above the boiling point to a temperature that is just above the freezing point at constant pressure? How fast does the vapor volume drop? This example uses the GivenPressureBatchReactor_FixedTemperature model to explore the different behaviors between an ideal gas water vapor and its real gas counterpart.">
+
+.. only:: html
+
+  .. image:: /auto_examples/batch/images/thumb/sphx_glr_vapor_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_batch_vapor.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Explore cooling water vapor</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+0-D engine models
+=================
+
+**PyChemkin** offers two types of 0-D engine models: the *Homogeneous Charged Compression Ignition (HCCI)* engine model
+and the *Spark Ignition (SI)* engine model. These 0-D engine models simulate the combustion process (or the lack of, in case of a misfire)
+inside an engine cylinder between the *Intake Valve Close (IVC)* and the *Exhaust Valve Open (EVO)* when the
+cylinder is considered as a closed system. The Chemkin *Theory* manual has detailed descriptions of these 0-D engine models.
+
+The examples show the steps of setting up simulations with different *Chemkin* engine models.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized internal combustion (IC) engine models commonly used for fuel combustion and engine performance research. The Chemkin IC engine model is a specialized transient 0-D closed gas-phase reactor that mainly performs combustion simulation between the intake valve closing (IVC) and the exhaust valve opening (EVO), that is, when the engine cylinder resembles a closed chamber. The cylinder volume is derived from the piston motion as a function of the engine crank angle (CA) and engine parameters such as engine speed (RPM) and stroke. The energy equation is always solved, and there are several wall heat transfer models specifically designed for engine simulations.">
+
+.. only:: html
+
+  .. image:: /auto_examples/engine/images/thumb/sphx_glr_hcciengine_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_engine_hcciengine.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Simulate a single-zone HCCI engine</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized internal combustion (IC) engine models commonly used for fuel combustion and engine performance research. The Chemkin IC engine model is a specialized transient 0-D closed gas-phase reactor that mainly performs combustion simulation between the intake valve closing (IVC) and the exhaust valve opening (EVO), that is, when the engine cylinder resembles a closed chamber. The cylinder volume is derived from the piston motion as a function of the engine crank angle (CA) and engine parameters such as engine speed (RPM) and stroke. The energy equation is always solved and there are several wall heat transfer models specifically designed for engine simulations.">
+
+.. only:: html
+
+  .. image:: /auto_examples/engine/images/thumb/sphx_glr_multizone_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_engine_multizone.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Simulate a multi-zone HCCI engine</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Ansys chemkin offers some idealized internal combustion (IC) engine models commonly used for fuel combustion and engine performance research. The Chemkin IC engine model is a specialized transient 0-D closed gas-phase reactor that mainly performs combustion simulation between the intake valve closing (IVC) and the exhaust valve opening (EVO), that is, when the engine cylinder resembles a closed chamber. The cylinder volume is derived from the piston motion as a function of the engine crank angle (CA) and engine parameters such as engine speed (RPM) and stroke. The energy equation is always solved. There are several wall heat transfer models specifically designed for engine simulations.">
+
+.. only:: html
+
+  .. image:: /auto_examples/engine/images/thumb/sphx_glr_sparkignitioengine_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_engine_sparkignitioengine.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Simulate a spark ignition engine</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+Perfectly stirred reactor
+=========================
+
+The *perfectly Stirred reactor (PSR)* model is a 0-D steady-state reactor.
+This ideal reactor model assumes the gas mixture inside is uniform and
+the properties of the outlet stream are exactly the same as the gas properties
+inside the reactor. A PSR can have either its pressure or its volume "specified",
+and the reactor temperature can either be solved from the energy equation or
+be "given" as an input parameter.
+
+The examples will show the procedures of setting up single PSR simulations with
+different constraints and with multiple inlet streams.
+
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized reactor models commonly used for studying chemical processes and for developing reaction mechanisms. The PSR (perfectly stirred reactor) model is a steady-state 0-D model of the open perfectly mixed gas-phase reactor. There is no limit on the number of inlets to the PSR. As soon as the inlet gases enter the reactor, they are thoroughly mixed with the gas mixture inside. The PSR has only one outlet, and the outlet gas is assumed to be exactly the same as the gas mixture in the PSR.">
+
+.. only:: html
+
+  .. image:: /auto_examples/PSR/images/thumb/sphx_glr_PSRgas_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_PSR_PSRgas.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Set up a PSR parameter study for the inlet stream equivalence ratio</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized reactor models commonly used for studying chemical processes and for developing reaction mechanisms. The PSR (perfectly stirred reactor) model is a steady-state 0-D model of the open perfectly mixed gas-phase reactor. There is no limit on the number of inlets to the PSR. As soon as the inlet gases enter the reactor, they are thoroughly mixed with the gas mixture inside. The PSR has only one outlet, and the outlet gas is assumed to be exactly the same as the gas mixture in the PSR.">
+
+.. only:: html
+
+  .. image:: /auto_examples/PSR/images/thumb/sphx_glr_jetstirredreactor_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_PSR_jetstirredreactor.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Run PSR calculations for mechanism validation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized reactor models commonly used for studying chemical processes and for developing reaction mechanisms. The PSR (perfectly stirred reactor) model is a steady-state 0-D model of the open perfectly mixed gas-phase reactor. There is no limit on the number of inlets to the PSR. As soon as the inlet gases enter the reactor, they are thoroughly mixed with the gas mixture inside. The PSR has only one outlet, and the outlet gas is assumed to be exactly the same as the gas mixture in the PSR. There are two basic types of PSR models:">
+
+.. only:: html
+
+  .. image:: /auto_examples/PSR/images/thumb/sphx_glr_multi-inletPSR_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_PSR_multi-inletPSR.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Determine the impact of residence time on combustion in a PSR</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+Plug-flow reactor
+=================
+
+*Plug-Flow Reactor (PFR)* model is an idealized 1-D steady-state flow reactor model with single
+inlet stream. The reactor pressure is assumed to be given, and the mass (flow rate) conservation
+is maintained by the velocity change. The gas temperature along the reactor can be either specified
+or solved by the energy equation.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The PFR (plug flow reactor) model is widely adopted in the chemical kinetic studies of emission abatement processes because of its simplicity in flow treatment as well as its resemblance of an exhaust duct or a tailpipe.">
+
+.. only:: html
+
+  .. image:: /auto_examples/PFR/images/thumb/sphx_glr_plugflow_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_PFR_plugflow.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Simulate NO reduction in combustion exhaust</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+PSR network
+===========
+
+**PyChemkin** can be used to create an *Equivalence Reactor Network (ERN)* as a reduced-order
+(in geometry) model for complex combustion applications such as gas turbine combustor.
+Each reactor in the network represents a sub-region (zone) in the actual equipment. Normally these zones
+are created according to specific criteria such as temperature, equivalence ratio, or location; and the gas flow
+(mean, turbulent, and diffusive) between the zones becomes the internal streams between the reactors.
+
+There are several ways to build an *ERN* in **PyChemkin**. The first method is to create and solve the reactors one-by-one
+starting from the most upstream (first) reactor. Adjust/manipulate the external and outlet streams from connected reactors
+(that is, solutions from the reactors) using the *Mixture*/*Stream* utilities and apply the desired stream as the inlet for
+the downstream reactors. The second method takes advantage of the *hybridreactornetwork* "model" of **PyChemkin**.
+Simply defined the reactors with the associated external inlets and add the reactors to the *hybridreactornetwork*.
+If there are *recycling* streams from the downstream reactor to the upstream ones, the *hybridreactornetwork* will solve the
+entire *ERN* iteratively. In this case, a *tear point* must be explicitly specified. The last method, the coupled method,
+is to create the network and its connectivity first, and the entire *ERN* will be solved in a coupled manner. This method
+is the default method in Chemkin GUI and is available as the *PSRCluster* "model" in **PyChemkin**.
+
+Chemkin *ERN* has a few limitations:
+    * The first reactor of the reactor network must have at least one external inlet.
+    * when using the *coupled* model, the entire reactor network can have only one outlet to the surroundings, and the outlet must be attached to
+      the last reactor in the network.
+    * PSR is the only reactor model allowed in the *PSRCluster* and the *hybridreactornetwork* reactor networks.
+
+The *PSRChain_xxx* examples show the two methods to build and run a series of linked PSRs (no stream recycling) can be modeled in **PyChemkin**.
+The *PSRnetwork* example goes over the steps of creating and running an *ERN* with recycling streams by using the *hybridreactornetwork* method.
+The *PSRnetwork_coupled* example solves the same *ERN* as the *PSRnetwork* example but utilizes the *coupled* method. Because the sole outlet from
+the *coupled ERN* must be attached to the last reactor, the order of the downstream zones is different from the *PSRnetwork* example.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to set up and solve a series of linked PSRs (perfectly-stirred reactors). This is the simplest reactor network as it does not contain any recycling streams or outflow splittings.">
+
+.. only:: html
+
+  .. image:: /auto_examples/reactor_network/images/thumb/sphx_glr_PSRChain_declustered_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_reactor_network_PSRChain_declustered.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Use a chain of individual reactors to model a gas combustor</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to set up and solve a series of linked PSRs (perfectly-stirred reactors). This is the simplest reactor network as it does not contain any recycling streams or outflow splittings.">
+
+.. only:: html
+
+  .. image:: /auto_examples/reactor_network/images/thumb/sphx_glr_PSRChain_network_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_reactor_network_PSRChain_network.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Use a chain reactor network to model a gas combustor</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to set up and solve an ERN (equivalent reactor network) in PyChemkin.">
+
+.. only:: html
+
+  .. image:: /auto_examples/reactor_network/images/thumb/sphx_glr_PSRnetwork_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_reactor_network_PSRnetwork.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Simulate a combustor using an equivalent reactor network with stream recycling</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+Premixed flame models
+=====================
+
+The *Premixed Flame* model is a 1-D steady-state application, and it contains two sub-models:
+*"flame speed calculator"* (or the freely propagating flame model) and *"flat flame"* model.
+The *flame speed calculator* is commonly used to calculate the laminar flame speed of a premixed
+fuel-oxidizer mixture. The predicted/computed flame speeds can be used to validate a combustion
+mechanism or can serve as a prre-processor to construct a "flame speed table" or a
+"combustion progress table" for other applications. The *flat flame* burner-stablized model is
+primarily used to study the flame chemistry in conjunction with the flat flame experiments.
+
+The examples show different ways to perform the "premixed flame" calculations.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The freely propagating premixed flame model can be utilized to obtain the laminar flame speed of a gas mixture at given initial temperature and pressure. The premixed flame model will calculate the temperature and species composition profiles across the flame, and the laminar flame speed will be derived from the mass flow rate of the gas mixture, a constant across the entire calculation domain because of the mass conservation.">
+
+.. only:: html
+
+  .. image:: /auto_examples/premixed_flame/images/thumb/sphx_glr_flamespeed_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_premixed_flame_flamespeed.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Compute the laminar flame speed of diluted hydrogen at low pressure</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="One of the prevailing use case of the freely propagating premixed flame model is to build a flame speed table to be imported by another combustion simulation tools. PyChemkin provides the flexibility to customize the data structure of the flame speed table depending on the simulation goals and the tool. Furthermore, over the years, the chemkin flame speed calculator has derived a set of default solver settings that would greatly improve the convergence performance, especially for those widely adopted hydrocarbon fuel combustion mechanisms. The required input parameters the flame speed calculator are reduced to the composition of the fuel-oxidizer mixture, the initial/inlet pressure and temperature, and the calculation domain.">
+
+.. only:: html
+
+  .. image:: /auto_examples/premixed_flame/images/thumb/sphx_glr_methane_flamespeed_table_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_premixed_flame_methane_flamespeed_table.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Construct atmospheric  methane-air flame speed versus equivalence ratio table</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The burner stabilized premixed flame model is frequently used as a numerical tool to develop and to validate combustion mechanisms in the context of a burner stabilized flat flame. The premixed burner stabilized flat flame experiments are important because, in addition to the reaction pathways and rate parameters, they provide opportunities to learn about the impact of the transport processes on the combustion chemistry and flame structure. The premixed burner stabilized flame model calculates the temperature and the species concentrations along the burner centerline, and the results will be compared against the measurements. The burner stabilized flame model assumes that the flow is laminar and the temperature at the burner rim is constant (in order to anchor the flame).">
+
+.. only:: html
+
+  .. image:: /auto_examples/premixed_flame/images/thumb/sphx_glr_premixedburnerflame_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_premixed_flame_premixedburnerflame.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Simulate a burner stabilized premixed flame</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+   :includehidden:
+
+
+   /auto_examples/chemistry/index.rst
+   /auto_examples/mixture/index.rst
+   /auto_examples/batch/index.rst
+   /auto_examples/engine/index.rst
+   /auto_examples/PSR/index.rst
+   /auto_examples/PFR/index.rst
+   /auto_examples/reactor_network/index.rst
+   /auto_examples/premixed_flame/index.rst
+
+
+.. only:: html
+
+  .. container:: sphx-glr-footer sphx-glr-footer-gallery
+
+    .. container:: sphx-glr-download sphx-glr-download-python
+
+      :download:`Download all examples in Python source code: auto_examples_python.zip </auto_examples/auto_examples_python.zip>`
+
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
+
+      :download:`Download all examples in Jupyter notebooks: auto_examples_jupyter.zip </auto_examples/auto_examples_jupyter.zip>`
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.github.io>`_

@@ -1,0 +1,78 @@
+
+
+
+
+
+
+The ``engine.py`` module
+========================
+
+.. py:module:: ansys.chemkin.engines.engine
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: engine
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.engines.engine.Engine`
+            - Generic engine cylinder model
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Engine</api/ansys/chemkin/engines/engine/Engine>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin Engine Utilities.
+
+
+
+
+
+
+
+

@@ -1,0 +1,49 @@
+
+
+.. _sphx_glr_auto_examples_PFR:
+
+Plug-flow reactor
+=================
+
+*Plug-Flow Reactor (PFR)* model is an idealized 1-D steady-state flow reactor model with single
+inlet stream. The reactor pressure is assumed to be given, and the mass (flow rate) conservation
+is maintained by the velocity change. The gas temperature along the reactor can be either specified
+or solved by the energy equation.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The PFR (plug flow reactor) model is widely adopted in the chemical kinetic studies of emission abatement processes because of its simplicity in flow treatment as well as its resemblance of an exhaust duct or a tailpipe.">
+
+.. only:: html
+
+  .. image:: /auto_examples/PFR/images/thumb/sphx_glr_plugflow_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_PFR_plugflow.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Simulate NO reduction in combustion exhaust</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/PFR/plugflow
+

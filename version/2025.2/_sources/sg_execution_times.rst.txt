@@ -1,0 +1,121 @@
+
+:orphan:
+
+.. _sphx_glr_sg_execution_times:
+
+
+Computation times
+=================
+**00:00.000** total execution time for 29 files **from all galleries**:
+
+.. container::
+
+  .. raw:: html
+
+    <style scoped>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script type="text/javascript" class="init">
+    $(document).ready( function () {
+        $('table.sg-datatable').DataTable({order: [[1, 'desc']]});
+    } );
+    </script>
+
+  .. list-table::
+   :header-rows: 1
+   :class: table table-striped sg-datatable
+
+   * - Example
+     - Time
+     - Mem (MB)
+   * - :ref:`sphx_glr_auto_examples_PFR_plugflow.py` (``../../examples/PFR/plugflow.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_PSR_PSRgas.py` (``../../examples/PSR/PSRgas.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_PSR_jetstirredreactor.py` (``../../examples/PSR/jetstirredreactor.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_PSR_multi-inletPSR.py` (``../../examples/PSR/multi-inletPSR.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_batch_closed_homogeneous__transient.py` (``../../examples/batch/closed_homogeneous__transient.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_batch_ignitiondelay.py` (``../../examples/batch/ignitiondelay.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_batch_rcm.py` (``../../examples/batch/rcm.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_batch_sensitivity.py` (``../../examples/batch/sensitivity.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_batch_vapor.py` (``../../examples/batch/vapor.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_chemistry_loadmechanism.py` (``../../examples/chemistry/loadmechanism.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_chemistry_multiplemechanisms.py` (``../../examples/chemistry/multiplemechanisms.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_chemistry_simple.py` (``../../examples/chemistry/simple.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_chemistry_speciesproperties.py` (``../../examples/chemistry/speciesproperties.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_engine_hcciengine.py` (``../../examples/engine/hcciengine.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_engine_multizone.py` (``../../examples/engine/multizone.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_engine_sparkignitioengine.py` (``../../examples/engine/sparkignitioengine.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_mixture_adiabaticflametemperature.py` (``../../examples/mixture/adiabaticflametemperature.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_mixture_createmixture.py` (``../../examples/mixture/createmixture.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_mixture_detonation.py` (``../../examples/mixture/detonation.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_mixture_equilibriumcomposition.py` (``../../examples/mixture/equilibriumcomposition.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_mixture_heatingvalues.py` (``../../examples/mixture/heatingvalues.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_mixture_mixturemixing.py` (``../../examples/mixture/mixturemixing.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_mixture_reactionrates.py` (``../../examples/mixture/reactionrates.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_premixed_flame_flamespeed.py` (``../../examples/premixed_flame/flamespeed.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_premixed_flame_methane_flamespeed_table.py` (``../../examples/premixed_flame/methane_flamespeed_table.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_premixed_flame_premixedburnerflame.py` (``../../examples/premixed_flame/premixedburnerflame.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_reactor_network_PSRChain_declustered.py` (``../../examples/reactor_network/PSRChain_declustered.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_reactor_network_PSRChain_network.py` (``../../examples/reactor_network/PSRChain_network.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_reactor_network_PSRnetwork.py` (``../../examples/reactor_network/PSRnetwork.py``)
+     - 00:00.000
+     - 0.0

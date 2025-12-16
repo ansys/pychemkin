@@ -1,0 +1,73 @@
+
+
+
+
+
+
+The ``ansys.chemkin.color`` library
+===================================
+
+.. py:module:: ansys.chemkin.color
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: color
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.color.Color`
+            - Define colors used by PyChemkin for printing text messages
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Color</api/ansys/chemkin/color/Color>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

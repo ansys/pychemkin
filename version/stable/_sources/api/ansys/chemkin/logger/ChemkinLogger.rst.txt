@@ -1,0 +1,117 @@
+
+
+:class:`ChemkinLogger`
+======================
+
+.. py:class:: ansys.chemkin.logger.ChemkinLogger(level: int = logging.ERROR, logger_name: str = 'PyChemkin')
+
+   Bases: :py:obj:`object`
+
+
+   Provides the singleton logger for the PyChemkin.
+
+   Parameters
+   ----------
+   to_file : bool, default: False
+       Whether to include the logs in a file.
+
+
+
+
+.. py:currentmodule:: ChemkinLogger
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_logger`
+            - Get the logger.
+          * - :py:attr:`~set_level`
+            - Set the logger output level.
+          * - :py:attr:`~enable_output`
+            - Enable logger output to a given stream.
+          * - :py:attr:`~add_file_handler`
+            - Save logs to a file in addition to printing them to the standard output.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.logger import ChemkinLogger
+
+
+
+
+
+Method detail
+-------------
+.. py:method:: get_logger() -> logging.Logger
+
+   Get the logger.
+
+   Returns
+   -------
+   Logger
+       Logger.
+
+
+
+.. py:method:: set_level(level: int) -> None
+
+   Set the logger output level.
+
+   Parameters
+   ----------
+   level : int, {0, 10, 20, 30, 40, 50}
+       Output Level of the logger.
+       0 = NOTSET
+       10 = DEBUG
+       20 = INFO
+       30 = WARNING
+       40 = ERROR
+       50 = CRITICAL
+
+
+
+.. py:method:: enable_output(stream=None)
+
+   Enable logger output to a given stream.
+
+   If a stream is not specified, ``sys.stderr`` is used.
+
+   Parameters
+   ----------
+   stream: TextIO, default: ``sys.stderr``
+       Stream to output the log output to.
+
+
+
+.. py:method:: add_file_handler(logs_dir: str = './.log')
+
+   Save logs to a file in addition to printing them to the standard output.
+
+   Parameters
+   ----------
+   logs_dir : str, default: ``"./.log"``
+       Directory of the logs.
+
+
+
+

@@ -1,0 +1,1149 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Simulate a single-zone HCCI engine &#8212; PyChemkin</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/ansys_sphinx_theme.css?v=d2ac875c" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+ 
+<link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script src="../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/engine/hcciengine';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Simulate a multi-zone HCCI engine" href="multizone.html" />
+    <link rel="prev" title="0-D engine models" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/auto_examples/engine/hcciengine.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+  <!-- If there is no MeiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+   
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <script>document.write(`<img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark" alt="PyChemkin - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/dev/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/dev/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../chemistry/index.html">Chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mixture/index.html">Mixture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../batch/index.html">Batch reactor</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">0-D engine models</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Simulate a single-zone HCCI engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multizone.html">Simulate a multi-zone HCCI engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparkignitioengine.html">Simulate a spark ignition engine</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSR/index.html">Perfectly stirred reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PFR/index.html">Plug-flow reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reactor_network/index.html">PSR network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../premixed_flame/index.html">Premixed flame models</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">0-D engine models</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page">Simulate a single-zone HCCI engine</li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-engine-hcciengine-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="simulate-a-single-zone-hcci-engine">
+<span id="ref-hcci-engine"></span><span id="sphx-glr-auto-examples-engine-hcciengine-py"></span><h1>Simulate a single-zone HCCI engine<a class="headerlink" href="#simulate-a-single-zone-hcci-engine" title="Link to this heading">#</a></h1>
+<p>Ansys Chemkin offers some idealized internal combustion (IC) engine models commonly used
+for fuel combustion and engine performance research. The Chemkin IC engine model is a specialized
+transient 0-D <em>closed</em> gas-phase reactor that mainly performs combustion simulation between the
+intake valve closing (IVC) and the exhaust valve opening (EVO), that is, when the engine cylinder resembles a closed chamber. The cylinder volume is derived from the piston motion as a function of the engine crank angle (CA) and engine parameters such as engine speed (RPM) and stroke. The energy equation is always solved, and there are several wall heat transfer models specifically designed for engine simulations.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For additional information on Chemkin IC engine models, use the
+<code class="docutils literal notranslate"><span class="pre">ansys.chemkin.manuals()</span></code> method to view the online <strong>Theory</strong> manual.</p>
+</div>
+<p>This example shows how to set up and run the simplest Chemkin IC engine model:
+the single-zone homogeneous charged compression ignition (HCCI) engine model. In addition to the basic engine parameters, many engine model-specific features such as the <em>exhaust gas recirculation</em> and <em>wall heat transfer</em> can be included in the engine simulation.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<section id="import-pychemkin-packages-and-start-the-logger">
+<h2>Import PyChemkin packages and start the logger<a class="headerlink" href="#import-pychemkin-packages-and-start-the-logger" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ansys.chemkin</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ck</span>  <span class="c1"># Chemkin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin</span><span class="w"> </span><span class="kn">import</span> <span class="n">Color</span>
+
+<span class="c1"># chemkin homonegeous charge compression ignition (HCCI) engine model (transient)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.engines.HCCI</span><span class="w"> </span><span class="kn">import</span> <span class="n">HCCIengine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># plotting</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>  <span class="c1"># number crunching</span>
+
+<span class="c1"># check working directory</span>
+<span class="n">current_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;working directory: &quot;</span> <span class="o">+</span> <span class="n">current_dir</span><span class="p">)</span>
+<span class="c1"># set verbose mode</span>
+<span class="n">ck</span><span class="o">.</span><span class="n">set_verbose</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># set interactive mode for plotting the results</span>
+<span class="c1"># interactive = True: display plot</span>
+<span class="c1"># interactive = False: save plot as a PNG file</span>
+<span class="k">global</span> <span class="n">interactive</span>
+<span class="n">interactive</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+<section id="create-a-chemistry-set">
+<h2>Create a chemistry set<a class="headerlink" href="#create-a-chemistry-set" title="Link to this heading">#</a></h2>
+<p>The mechanism to load is the GRI 3.0 mechanism for methane combustion.
+This mechanism and its associated data files come with the standard Ansys Chemkin
+installation in the <code class="docutils literal notranslate"><span class="pre">/reaction/data</span></code> directory.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set mechanism directory (the default Chemkin mechanism data directory)</span>
+<span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ck</span><span class="o">.</span><span class="n">ansys_dir</span><span class="p">,</span> <span class="s2">&quot;reaction&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
+<span class="n">mechanism_dir</span> <span class="o">=</span> <span class="n">data_dir</span>
+<span class="c1"># create a chemistry set based on the GRI mechanism</span>
+<span class="n">MyGasMech</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Chemistry</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;GRI 3.0&quot;</span><span class="p">)</span>
+<span class="c1"># set mechanism input files</span>
+<span class="c1"># including the full file path is recommended</span>
+<span class="n">MyGasMech</span><span class="o">.</span><span class="n">chemfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mechanism_dir</span><span class="p">,</span> <span class="s2">&quot;grimech30_chem.inp&quot;</span><span class="p">)</span>
+<span class="n">MyGasMech</span><span class="o">.</span><span class="n">thermfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mechanism_dir</span><span class="p">,</span> <span class="s2">&quot;grimech30_thermo.dat&quot;</span><span class="p">)</span>
+<span class="n">MyGasMech</span><span class="o">.</span><span class="n">tranfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mechanism_dir</span><span class="p">,</span> <span class="s2">&quot;grimech30_transport.dat&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="preprocess-the-chemistry-set">
+<h2>Preprocess the chemistry set<a class="headerlink" href="#preprocess-the-chemistry-set" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># preprocess the mechanism files</span>
+<span class="n">iError</span> <span class="o">=</span> <span class="n">MyGasMech</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">iError</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;preprocess failed&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;msg&quot;</span><span class="p">)</span>
+    <span class="n">Color</span><span class="o">.</span><span class="n">ckprint</span><span class="p">(</span><span class="s2">&quot;critical&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">msg</span><span class="p">,</span> <span class="s2">&quot;!!!&quot;</span><span class="p">])</span>
+    <span class="n">exit</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-the-fuel-air-mixture">
+<h2>Set up the fuel-air mixture<a class="headerlink" href="#set-up-the-fuel-air-mixture" title="Link to this heading">#</a></h2>
+<p>You must set up the fuel-air mixture inside the engine cylinder
+right after the intake valve is closed. Here the <code class="docutils literal notranslate"><span class="pre">X_by_Equivalence_Ratio()</span></code>
+method is used. You create the <code class="docutils literal notranslate"><span class="pre">fuelmixture</span></code> and <code class="docutils literal notranslate"><span class="pre">air</span></code> mixtures first.
+You then define the <em>complete combustion product species</em> and provide the
+<em>additives</em> composition if there is any. And finally, you can simply set
+the value of <code class="docutils literal notranslate"><span class="pre">equivalenceratio</span></code> to create the fuel-air mixture. In this case,
+the fuel mixture consists of methane, ethane, and propane as the simulated natural gas.
+Because HCCI engines typically run on lean fuel-air mixtures, the equivalence ratio is
+set to 0.8.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># create a premixed fuel-oxidizer mixture by assigning the equivalence ratio</span>
+<span class="c1"># create the fuel mixture</span>
+<span class="n">fuelmixture</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">)</span>
+<span class="c1"># set fuel composition</span>
+<span class="n">fuelmixture</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;CH4&quot;</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;C3H8&quot;</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;C2H6&quot;</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)]</span>
+<span class="c1"># setting pressure and temperature is not required in this case</span>
+<span class="n">fuelmixture</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">ck</span><span class="o">.</span><span class="n">P_ATM</span>
+<span class="n">fuelmixture</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">400.0</span>
+
+<span class="c1"># create the oxidizer mixture: air</span>
+<span class="n">air</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">)</span>
+<span class="n">air</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;O2&quot;</span><span class="p">,</span> <span class="mf">0.21</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;N2&quot;</span><span class="p">,</span> <span class="mf">0.79</span><span class="p">)]</span>
+<span class="c1"># setting pressure and temperature is not required in this case</span>
+<span class="n">air</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">ck</span><span class="o">.</span><span class="n">P_ATM</span>
+<span class="n">air</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">400.0</span>
+
+<span class="c1"># products from the complete combustion of the fuel mixture and air</span>
+<span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CO2&quot;</span><span class="p">,</span> <span class="s2">&quot;H2O&quot;</span><span class="p">,</span> <span class="s2">&quot;N2&quot;</span><span class="p">]</span>
+<span class="c1"># species mole fractions of added/inert mixture. You can also create an additives mixture here.</span>
+<span class="n">add_frac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">MyGasMech</span><span class="o">.</span><span class="n">KK</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>  <span class="c1"># no additives: all zeros</span>
+
+<span class="c1"># create the unburned fuel-air mixture</span>
+<span class="n">fresh</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">)</span>
+<span class="c1"># mean equivalence ratio</span>
+<span class="n">equiv</span> <span class="o">=</span> <span class="mf">0.8</span>
+<span class="n">iError</span> <span class="o">=</span> <span class="n">fresh</span><span class="o">.</span><span class="n">X_by_Equivalence_Ratio</span><span class="p">(</span>
+    <span class="n">MyGasMech</span><span class="p">,</span> <span class="n">fuelmixture</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">air</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">add_frac</span><span class="p">,</span> <span class="n">products</span><span class="p">,</span> <span class="n">equivalenceratio</span><span class="o">=</span><span class="n">equiv</span>
+<span class="p">)</span>
+<span class="c1"># check fuel-oxidizer mixture creation status</span>
+<span class="k">if</span> <span class="n">iError</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: Failed to create the fuel-oxidizer mixture.&quot;</span><span class="p">)</span>
+    <span class="n">exit</span><span class="p">()</span>
+
+<span class="c1"># list the composition of the unburned fuel-air mixture</span>
+<span class="n">fresh</span><span class="o">.</span><span class="n">list_composition</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;mole&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="specify-pressure-and-temperature-of-the-fuel-air-mixture">
+<h2>Specify pressure and temperature of the fuel-air mixture<a class="headerlink" href="#specify-pressure-and-temperature-of-the-fuel-air-mixture" title="Link to this heading">#</a></h2>
+<p>Since you are going to use <code class="docutils literal notranslate"><span class="pre">fresh</span></code> to instantiate the engine object later,
+setting the mixture pressure and temperature is equivalent to setting
+the initial temperature and pressure of the engine cylinder.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">fresh</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">447.0</span>
+<span class="n">fresh</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="mf">1.065</span> <span class="o">*</span> <span class="n">ck</span><span class="o">.</span><span class="n">P_ATM</span>
+</pre></div>
+</div>
+</section>
+<section id="add-egr-to-the-fresh-fuel-air-mixture">
+<h2>Add EGR to the fresh fuel-air mixture<a class="headerlink" href="#add-egr-to-the-fresh-fuel-air-mixture" title="Link to this heading">#</a></h2>
+<p>Many engines have the configuration for exhaust gas recirculation (EGR). Chemkin
+engine models allow you to add the EGR mixture to the fresh fuel-air mixture entered
+the cylinder. If the engine that you are modeling has EGR, you should have the EGR ratio, which
+is generally the volume ratio between the EGR mixture and the fresh fuel-air ratio.
+However, you know nothing about the composition of the exhaust gas so you cannot simply combine
+these two mixtures. In this case, you can use the <code class="docutils literal notranslate"><span class="pre">get_EGR_mole_fraction()</span></code> method to estimate
+the major components of the exhaust gas from the combustion of the fresh fuel-air mixture. The
+parameter <code class="docutils literal notranslate"><span class="pre">threshold=1.0e-8</span></code> tells the method to ignore any species with mole fractions below
+the threshold value. Once you have the EGR mixture composition, use the <code class="docutils literal notranslate"><span class="pre">X_by_Equivalence_Ratio()</span></code>
+method a second time to re-create the fuel-air mixture fresh with the original
+<code class="docutils literal notranslate"><span class="pre">fuelmixture</span></code> and <code class="docutils literal notranslate"><span class="pre">air</span></code> mixtures along with the EGR composition that you just got as the
+<em>additives</em>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">EGRratio</span> <span class="o">=</span> <span class="mf">0.3</span>
+<span class="c1"># compute the EGR stream composition in mole fractions</span>
+<span class="n">add_frac</span> <span class="o">=</span> <span class="n">fresh</span><span class="o">.</span><span class="n">get_EGR_mole_fraction</span><span class="p">(</span><span class="n">EGRratio</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">)</span>
+<span class="c1"># re-create the initial mixture with EGR</span>
+<span class="n">iError</span> <span class="o">=</span> <span class="n">fresh</span><span class="o">.</span><span class="n">X_by_Equivalence_Ratio</span><span class="p">(</span>
+    <span class="n">MyGasMech</span><span class="p">,</span>
+    <span class="n">fuelmixture</span><span class="o">.</span><span class="n">X</span><span class="p">,</span>
+    <span class="n">air</span><span class="o">.</span><span class="n">X</span><span class="p">,</span>
+    <span class="n">add_frac</span><span class="p">,</span>
+    <span class="n">products</span><span class="p">,</span>
+    <span class="n">equivalenceratio</span><span class="o">=</span><span class="n">equiv</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># list the composition of the fuel+air+EGR mixture for verification</span>
+<span class="n">fresh</span><span class="o">.</span><span class="n">list_composition</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;mole&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-the-hcci-engine-reactor">
+<h2>Set up the HCCI engine reactor<a class="headerlink" href="#set-up-the-hcci-engine-reactor" title="Link to this heading">#</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">HCCIengine()</span></code> method to create a single-zone HCCI engine named <code class="docutils literal notranslate"><span class="pre">MyEngine</span></code>
+and make the <em>new</em> <code class="docutils literal notranslate"><span class="pre">fresh</span></code> mixture the initial
+in-cylinder gas mixture at IVC. Set the <code class="docutils literal notranslate"><span class="pre">nzones</span></code> parameter to <code class="docutils literal notranslate"><span class="pre">1</span></code> for
+the <em>single-zone</em> HCCI simulation.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">MyEngine</span> <span class="o">=</span> <span class="n">HCCIengine</span><span class="p">(</span><span class="n">reactor_condition</span><span class="o">=</span><span class="n">fresh</span><span class="p">,</span> <span class="n">nzones</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1"># show initial gas composition inside the reactor</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">list_composition</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;mole&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-basic-engine-parameters">
+<h2>Set up basic engine parameters<a class="headerlink" href="#set-up-basic-engine-parameters" title="Link to this heading">#</a></h2>
+<p>Set the required engine parameters as shown in the following code. These
+engine parameters are used to describe the cylinder volume during the
+simulation. The <code class="docutils literal notranslate"><span class="pre">starting_CA</span></code> should be the crank angle corresponding
+to the cylinder IVC. The <code class="docutils literal notranslate"><span class="pre">ending_CA</span></code> is typically the EVC crank angle.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># cylinder bore diameter [cm]</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">bore</span> <span class="o">=</span> <span class="mf">12.065</span>
+<span class="c1"># engine stroke [cm]</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">stroke</span> <span class="o">=</span> <span class="mf">14.005</span>
+<span class="c1"># connecting rod length [cm]</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">connecting_rod_length</span> <span class="o">=</span> <span class="mf">26.0093</span>
+<span class="c1"># compression ratio [-]</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">compression_ratio</span> <span class="o">=</span> <span class="mf">16.5</span>
+<span class="c1"># engine speed [RPM]</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">RPM</span> <span class="o">=</span> <span class="mi">1000</span>
+
+<span class="c1"># set piston pin offset distance [cm] (optional)</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">set_piston_pin_offset</span><span class="p">(</span><span class="n">offset</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="c1"># set other required parameters</span>
+<span class="c1"># simulation start CA [degree]</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">starting_CA</span> <span class="o">=</span> <span class="o">-</span><span class="mf">142.0</span>
+<span class="c1"># simulation end CA [degree]</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">ending_CA</span> <span class="o">=</span> <span class="mf">116.0</span>
+
+<span class="c1"># list the engine parameters for verification</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">list_engine_parameters</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Engine displacement volume = </span><span class="si">{</span><span class="n">MyEngine</span><span class="o">.</span><span class="n">get_displacement_volume</span><span class="p">()</span><span class="si">}</span><span class="s2"> [cm3].&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Engine clearance volume = </span><span class="si">{</span><span class="n">MyEngine</span><span class="o">.</span><span class="n">get_clearance_volume</span><span class="p">()</span><span class="si">}</span><span class="s2"> [cm3].&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of zones = </span><span class="si">{</span><span class="n">MyEngine</span><span class="o">.</span><span class="n">get_number_of_zones</span><span class="p">()</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-engine-wall-heat-transfer-model">
+<h2>Set up engine wall heat transfer model<a class="headerlink" href="#set-up-engine-wall-heat-transfer-model" title="Link to this heading">#</a></h2>
+<p>By default, the engine cylinder is adiabatic. You must set up a
+wall heat transfer model to include the heat loss effects in your
+engine simulation. Chemkin supports three widely used engine wall
+heat transfer models. These models and their parameters follow:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dimensionless</span></code>: [&lt;a&gt; &lt;b&gt; &lt;c&gt; &lt;Twall&gt;]</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dimensional</span></code>: [&lt;a&gt; &lt;b&gt; &lt;c&gt; &lt;Twall&gt;]</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hohenburg</span></code>: [&lt;a&gt; &lt;b&gt; &lt;c&gt; &lt;d&gt; &lt;e&gt; &lt;Twall&gt;]</p></li>
+</ul>
+<p>There is also the incylinder gas velocity correlation
+(the Woschni correlation) that is associated with the engine
+wall heat transfer models. Here are the parameters of the Woschni correlation:</p>
+<p><code class="docutils literal notranslate"><span class="pre">[&lt;C11&gt;</span> <span class="pre">&lt;C12&gt;</span> <span class="pre">&lt;C2&gt;</span> <span class="pre">&lt;swirl</span> <span class="pre">ratio&gt;]</span></code></p>
+<p>You can also specify the surface areas of the piston head and the cylinder head
+for more precision heat transfer wall area. By default, both the piston head and
+the cylinder head surfaces are flat.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">heattransferparameters</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.035</span><span class="p">,</span> <span class="mf">0.71</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+<span class="c1"># set cylinder wall temperature [K]</span>
+<span class="n">Twall</span> <span class="o">=</span> <span class="mf">400.0</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">set_wall_heat_transfer</span><span class="p">(</span><span class="s2">&quot;dimensionless&quot;</span><span class="p">,</span> <span class="n">heattransferparameters</span><span class="p">,</span> <span class="n">Twall</span><span class="p">)</span>
+<span class="c1"># in-cylinder gas velocity correlation parameter (Woschni)</span>
+<span class="c1"># [&lt;C11&gt; &lt;C12&gt; &lt;C2&gt; &lt;swirl ratio&gt;]</span>
+<span class="n">GVparameters</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.28</span><span class="p">,</span> <span class="mf">0.308</span><span class="p">,</span> <span class="mf">3.24</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">set_gas_velocity_correlation</span><span class="p">(</span><span class="n">GVparameters</span><span class="p">)</span>
+<span class="c1"># set piston head top surface area [cm2]</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">set_piston_head_area</span><span class="p">(</span><span class="n">area</span><span class="o">=</span><span class="mf">124.75</span><span class="p">)</span>
+<span class="c1"># set cylinder clearance surface area [cm2]</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">set_cylinder_head_area</span><span class="p">(</span><span class="n">area</span><span class="o">=</span><span class="mf">123.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-output-options">
+<h2>Set output options<a class="headerlink" href="#set-output-options" title="Link to this heading">#</a></h2>
+<p>You can turn on adaptive solution saving to resolve the steep variations in the solution
+profile. Here additional solution data points are saved for every 20 solver internal steps.
+You must include the <code class="docutils literal notranslate"><span class="pre">set_ignition_delay()</span></code> method for the engine model to
+report the ignition delay crank angle after the simulation is done. If <code class="docutils literal notranslate"><span class="pre">method=&quot;T_inflection&quot;</span></code> is
+set, the reactor model treats the inflection points in the predicted gas temperature profile
+as the indication of an auto-ignition. You can choose a different auto-ignition definition.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Type <code class="docutils literal notranslate"><span class="pre">ansys.chemkin.show_ignition_definitions()</span></code> to get the list of all available ignition
+delay time definitions in Chemkin.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>By default, time/crank angle intervals for both print and save solution are 1/100 of the
+simulation duration, which is in this case <span class="math notranslate nohighlight">\(dCA=(EVO-IVC)/100=2.58\)</span>. You can make the
+model report more frequently by using the <code class="docutils literal notranslate"><span class="pre">CAstep_for_saving_solution()</span></code> or
+<code class="docutils literal notranslate"><span class="pre">CAstep_for_printing_solution()</span></code> method to set different interval values in the crank angle.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set the number of crank angles between saving solution</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">CAstep_for_saving_solution</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="c1"># set the number of crank angles between printing solution</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">CAstep_for_printing_solution</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="c1"># turn on adaptive solution saving</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">adaptive_solution_saving</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="c1"># specify the ignition definitions</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">set_ignition_delay</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;T_inflection&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-solver-controls">
+<h2>Set solver controls<a class="headerlink" href="#set-solver-controls" title="Link to this heading">#</a></h2>
+<p>You can overwrite the default solver controls by using solver-related methods, such as
+those for tolerances.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set tolerances in tuple: (absolute tolerance, relative tolerance)</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">tolerances</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0e-12</span><span class="p">,</span> <span class="mf">1.0e-10</span><span class="p">)</span>
+<span class="c1"># get solver parameters</span>
+<span class="n">ATOL</span><span class="p">,</span> <span class="n">RTOL</span> <span class="o">=</span> <span class="n">MyEngine</span><span class="o">.</span><span class="n">tolerances</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Default absolute tolerance = </span><span class="si">{</span><span class="n">ATOL</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Default relative tolerance = </span><span class="si">{</span><span class="n">RTOL</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<span class="c1"># turn on the force non-negative solutions option in the solver</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">force_nonnegative</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="c1"># show solver and output options</span>
+<span class="c1"># show the number of crank angles between printing solution</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Crank angles between solution printing: </span><span class="si">{</span><span class="n">MyEngine</span><span class="o">.</span><span class="n">CAstep_for_printing_solution</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+<span class="c1"># show other transient solver setup</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Forced non-negative solution values: </span><span class="si">{</span><span class="n">MyEngine</span><span class="o">.</span><span class="n">force_nonnegative</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="display-the-added-parameters-keywords">
+<h2>Display the added parameters (keywords)<a class="headerlink" href="#display-the-added-parameters-keywords" title="Link to this heading">#</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">showkeywordinputlines()</span></code> method to verify that the preceding
+parameters are correctly assigned to the engine model.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">MyEngine</span><span class="o">.</span><span class="n">showkeywordinputlines</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="run-the-simulation">
+<h2>Run the simulation<a class="headerlink" href="#run-the-simulation" title="Link to this heading">#</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">run()</span></code> method to start the single-zone HCCI engine simulation.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">runstatus</span> <span class="o">=</span> <span class="n">MyEngine</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="c1"># check run status</span>
+<span class="k">if</span> <span class="n">runstatus</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="c1"># Run failed.</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="s2">&quot;&gt;&gt;&gt; Run failed. &lt;&lt;&lt;&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Run failed.&quot;</span><span class="p">)</span>
+    <span class="n">exit</span><span class="p">()</span>
+<span class="c1"># Run succeeded.</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">GREEN</span> <span class="o">+</span> <span class="s2">&quot;&gt;&gt;&gt; Run completed. &lt;&lt;&lt;&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Run Completed.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="get-the-ignition-delay-crank-angle-from-the-solution">
+<h2>Get the ignition delay crank angle from the solution<a class="headerlink" href="#get-the-ignition-delay-crank-angle-from-the-solution" title="Link to this heading">#</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">get_ignition_delay()</span></code> method to extract the ignition delay
+crank angle (CA) after the run is completed.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># get ignition delay &quot;time&quot;</span>
+<span class="n">delayCA</span> <span class="o">=</span> <span class="n">MyEngine</span><span class="o">.</span><span class="n">get_ignition_delay</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ignition delay CA = </span><span class="si">{</span><span class="n">delayCA</span><span class="si">}</span><span class="s2"> [degree].&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="get-the-heat-release-crank-angles">
+<h2>Get the heat release crank angles<a class="headerlink" href="#get-the-heat-release-crank-angles" title="Link to this heading">#</a></h2>
+<p>The engine models also report the crank angles when the accumulated heat
+release reaches 10%, 50%, and 90% of the total heat release. Use the
+<code class="docutils literal notranslate"><span class="pre">get_engine_heat_release_CAs</span></code> method to extract these heat release
+crank angles (CA).</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># get heat release information</span>
+<span class="n">HR10</span><span class="p">,</span> <span class="n">HR50</span><span class="p">,</span> <span class="n">HR90</span> <span class="o">=</span> <span class="n">MyEngine</span><span class="o">.</span><span class="n">get_engine_heat_release_CAs</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Engine Heat Release Information&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;10% heat release CA = </span><span class="si">{</span><span class="n">HR10</span><span class="si">}</span><span class="s2"> [degree].&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;50% heat release CA = </span><span class="si">{</span><span class="n">HR50</span><span class="si">}</span><span class="s2"> [degree].&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;90% heat release CA = </span><span class="si">{</span><span class="n">HR90</span><span class="si">}</span><span class="s2"> [degree].</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="postprocess-the-solution">
+<h2>Postprocess the solution<a class="headerlink" href="#postprocess-the-solution" title="Link to this heading">#</a></h2>
+<p>The postprocessing step parses the solution and packages the solution values at each
+time point into a <code class="docutils literal notranslate"><span class="pre">Mixture</span></code> object. There are two ways to access the solution profiles:</p>
+<ul class="simple">
+<li><p>The raw solution profiles (value as a function of time) are available for time,
+temperature, pressure, volume, and species mass fractions.</p></li>
+<li><p>The mixtures permit the use of all property and rate utilities to extract
+information such as viscosity, density, and mole fractions.</p></li>
+</ul>
+<p>You can use the <code class="docutils literal notranslate"><span class="pre">get_solution_variable_profile()</span></code> method to get the raw solution profiles. You
+can get solution mixtures using either the <code class="docutils literal notranslate"><span class="pre">get_solution_mixture_at_index()</span></code> method for the
+solution mixture at a given time point or the <code class="docutils literal notranslate"><span class="pre">get_solution_mixture()</span></code> method for the
+solution mixture at a given time. (In this case, the mixture is constructed by interpolation.)</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>For engine models, use the <code class="docutils literal notranslate"><span class="pre">process_engine_solution()</span></code> method to postprocess the solutions.</p></li>
+<li><p>Use the <code class="docutils literal notranslate"><span class="pre">getnumbersolutionpoints()</span></code> method to get the size of the solution profiles before
+creating the arrays.</p></li>
+<li><p>Use the <code class="docutils literal notranslate"><span class="pre">get_CA()</span></code> method to convert the time values reported in the solution to crank angles.</p></li>
+</ul>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># postprocess the solutions</span>
+<span class="n">MyEngine</span><span class="o">.</span><span class="n">process_engine_solution</span><span class="p">()</span>
+<span class="c1"># get the number of solution time points</span>
+<span class="n">solutionpoints</span> <span class="o">=</span> <span class="n">MyEngine</span><span class="o">.</span><span class="n">getnumbersolutionpoints</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of solution points = </span><span class="si">{</span><span class="n">solutionpoints</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<span class="c1"># get the time profile</span>
+<span class="n">timeprofile</span> <span class="o">=</span> <span class="n">MyEngine</span><span class="o">.</span><span class="n">get_solution_variable_profile</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+<span class="c1"># convert time to crank angle</span>
+<span class="n">CAprofile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">timeprofile</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">timeprofile</span><span class="p">:</span>
+    <span class="n">CAprofile</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="n">MyEngine</span><span class="o">.</span><span class="n">get_CA</span><span class="p">(</span><span class="n">timeprofile</span><span class="p">[</span><span class="n">count</span><span class="p">])</span>
+    <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="c1"># get the cylinder pressure profile</span>
+<span class="n">presprofile</span> <span class="o">=</span> <span class="n">MyEngine</span><span class="o">.</span><span class="n">get_solution_variable_profile</span><span class="p">(</span><span class="s2">&quot;pressure&quot;</span><span class="p">)</span>
+<span class="n">presprofile</span> <span class="o">*=</span> <span class="mf">1.0e-6</span>
+<span class="c1"># get the volume profile</span>
+<span class="n">volprofile</span> <span class="o">=</span> <span class="n">MyEngine</span><span class="o">.</span><span class="n">get_solution_variable_profile</span><span class="p">(</span><span class="s2">&quot;volume&quot;</span><span class="p">)</span>
+<span class="c1"># create arrays for mixture density, NO mole fraction, and mixture-specific heat capacity</span>
+<span class="n">denprofile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">timeprofile</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">Cpprofile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">timeprofile</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="c1"># loop over all solution time points</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">solutionpoints</span><span class="p">):</span>
+    <span class="c1"># get the mixture at the time point</span>
+    <span class="n">solutionmixture</span> <span class="o">=</span> <span class="n">MyEngine</span><span class="o">.</span><span class="n">get_solution_mixture_at_index</span><span class="p">(</span><span class="n">solution_index</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+    <span class="c1"># get gas density [g/cm3]</span>
+    <span class="n">denprofile</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">solutionmixture</span><span class="o">.</span><span class="n">RHO</span>
+    <span class="c1"># get mixture-specific heat capacity profile [erg/mole-K]</span>
+    <span class="n">Cpprofile</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">solutionmixture</span><span class="o">.</span><span class="n">CPBL</span><span class="p">()</span> <span class="o">/</span> <span class="n">ck</span><span class="o">.</span><span class="n">ERGS_PER_JOULE</span> <span class="o">*</span> <span class="mf">1.0e-3</span>
+</pre></div>
+</div>
+</section>
+<section id="plot-the-engine-solution-profiles">
+<h2>Plot the engine solution profiles<a class="headerlink" href="#plot-the-engine-solution-profiles" title="Link to this heading">#</a></h2>
+<p>Plot the profiles from the HCCI engine simulation.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can get profiles of the thermodynamic and the transport properties
+by applying <code class="docutils literal notranslate"><span class="pre">Mixture</span></code> utility methods to the solution mixtures.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="s2">&quot;col&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">221</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">CAprofile</span><span class="p">,</span> <span class="n">presprofile</span><span class="p">,</span> <span class="s2">&quot;r-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Pressure [bar]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">222</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">CAprofile</span><span class="p">,</span> <span class="n">volprofile</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Volume [cm3]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">223</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">CAprofile</span><span class="p">,</span> <span class="n">denprofile</span><span class="p">,</span> <span class="s2">&quot;g-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Crank Angle [degree]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Mixture Density [g/cm3]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">224</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">CAprofile</span><span class="p">,</span> <span class="n">Cpprofile</span><span class="p">,</span> <span class="s2">&quot;m-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Crank Angle [degree]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Mixture Cp [kJ/mole]&quot;</span><span class="p">)</span>
+<span class="c1"># plot results</span>
+<span class="k">if</span> <span class="n">interactive</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;plot_HCCI_engine.png&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-engine-hcciengine-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/0e2032208d4072adf8579beb3a6a394b/hcciengine.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">hcciengine.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/213213a9810b1dfcd18944f2d83eddb8/hcciengine.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">hcciengine.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/fcf3ea22d7995b52e54397835004d7c1/hcciengine.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">hcciengine.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-pychemkin-packages-and-start-the-logger">Import PyChemkin packages and start the logger</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-chemistry-set">Create a chemistry set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preprocess-the-chemistry-set">Preprocess the chemistry set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-the-fuel-air-mixture">Set up the fuel-air mixture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#specify-pressure-and-temperature-of-the-fuel-air-mixture">Specify pressure and temperature of the fuel-air mixture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#add-egr-to-the-fresh-fuel-air-mixture">Add EGR to the fresh fuel-air mixture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-the-hcci-engine-reactor">Set up the HCCI engine reactor</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-basic-engine-parameters">Set up basic engine parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-engine-wall-heat-transfer-model">Set up engine wall heat transfer model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-output-options">Set output options</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-solver-controls">Set solver controls</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#display-the-added-parameters-keywords">Display the added parameters (keywords)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-the-simulation">Run the simulation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-the-ignition-delay-crank-angle-from-the-solution">Get the ignition delay crank angle from the solution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-the-heat-release-crank-angles">Get the heat release crank angles</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#postprocess-the-solution">Postprocess the solution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-the-engine-solution-profiles">Plot the engine solution profiles</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item"> 
+<div class="tocsection editthispage">
+  <a href="https://github.com/ansys/pychemkin/edit/main/doc/source/auto_examples/engine/hcciengine.rst">
+    <i class="fa-solid fa-pencil"></i>
+       Edit
+    on GitHub  
+  </a>
+</div>
+
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/auto_examples/engine/hcciengine.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2025 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.0.11. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

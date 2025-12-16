@@ -1,0 +1,1008 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>The ansys.chemkin.utilities library &#8212; PyChemkin</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/ansys_sphinx_theme.css?v=d2ac875c" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+ 
+<link href="../../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script src="../../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/ansys/chemkin/utilities/index';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="The ansys.chemkin.chemistry library" href="../chemistry/index.html" />
+    <link rel="prev" title="Mixture" href="../mixture/Mixture.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/api/ansys/chemkin/utilities/index.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+  <!-- If there is no MeiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+   
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <script>document.write(`<img src="../../../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark" alt="PyChemkin - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../user_guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../index.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/dev/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../user_guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../index.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/dev/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../grid/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../info/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.info</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../flame/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.flame</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../color/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.color</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inlet/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.inlet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../logger/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mixture/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.mixture</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#"><span class="nf nf-md-package"></span> ansys.chemkin.utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chemistry/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../constants/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../realgaseos/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.realgaseos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reactormodel/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.reactormodel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chemkin_wrapper/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.chemkin_wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../steadystatesolver/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.steadystatesolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hybridreactornetwork/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.hybridreactornetwork</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../../index.html" class="nav-link">API reference</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page">The <code class="docutils literal notranslate"><span class="pre">ansys.chemkin.utilities</span></code> library</li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-ansys.chemkin.utilities">
+<span id="the-ansys-chemkin-utilities-library"></span><h1>The <code class="docutils literal notranslate"><span class="pre">ansys.chemkin.utilities</span></code> library<a class="headerlink" href="#module-ansys.chemkin.utilities" title="Link to this heading">#</a></h1>
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+Functions</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#utilities.where_element_in_array_1D" title="utilities.where_element_in_array_1D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where_element_in_array_1D</span></code></a></p></td>
+<td><p>Find the number of occurrence and the element index in the 1D arr array that matches the target value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#utilities.bisect" title="utilities.bisect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bisect</span></code></a></p></td>
+<td><p>Use bisectional method to find the largest index in the xarray of which its value is small or equal to the target x value</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#utilities.find_interpolate_parameters" title="utilities.find_interpolate_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_interpolate_parameters</span></code></a></p></td>
+<td><p>Find the index ileft that</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#utilities.interpolate_array" title="utilities.interpolate_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpolate_array</span></code></a></p></td>
+<td><p>Find the value in the y_array from the interpolation parameters ileft and ratio</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#utilities.create_mixture_recipe_from_fractions" title="utilities.create_mixture_recipe_from_fractions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_mixture_recipe_from_fractions</span></code></a></p></td>
+<td><p>Build a PyChemkin mixture recipe/formula from a species fraction array (i.e., mixture mole/mass composition).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#utilities.calculate_stoichiometrics" title="utilities.calculate_stoichiometrics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_stoichiometrics</span></code></a></p></td>
+<td><p>calculate the stoichiometric coefficients of the complete combustion reaction of the given fuel and oxidizer mixtures.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#utilities.random" title="utilities.random"><code class="xref py py-obj docutils literal notranslate"><span class="pre">random</span></code></a></p></td>
+<td><p>Generate a (reproducible) random floating number value >= 0.0 and < 1.0</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#utilities.find_file" title="utilities.find_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_file</span></code></a></p></td>
+<td><p>Find the correct version of the given partial file name.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Attributes</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#utilities.ck_rng" title="utilities.ck_rng"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ck_rng</span></code></a></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
+<p>pychemkin utilities</p>
+</section>
+<section id="module-detail">
+<h2>Module detail<a class="headerlink" href="#module-detail" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="utilities.where_element_in_array_1D">
+<span class="sig-prename descclassname"><span class="pre">utilities.</span></span><span class="sig-name descname"><span class="pre">where_element_in_array_1D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.int32</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.int32</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#utilities.where_element_in_array_1D" title="Link to this definition">#</a></dt>
+<dd><p>Find the number of occurrence and the element index in the 1D arr array that matches the target value.
+Using numpy.argwhere might be more efficient. However, the numpy method returns a list of lists of occurrence indices
+while this might be necessary for general applications, it is an overkill for simple 1D array cases.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>arr: integer or double array</dt><dd><p>the reference 1D integer or double array</p>
+</dd>
+<dt>target: integer or double scalar</dt><dd><p>the target value to be matched</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p>number_of_occurrences: integer
+occurrence_index: integer array</p>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utilities.bisect">
+<span class="sig-prename descclassname"><span class="pre">utilities.</span></span><span class="sig-name descname"><span class="pre">bisect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ileft</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iright</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#utilities.bisect" title="Link to this definition">#</a></dt>
+<dd><p>Use bisectional method to find the largest index in the xarray of which its value is small or equal to the target x value</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>ileft: integer</dt><dd><p>index of xarray that represents the current lower bound</p>
+</dd>
+<dt>iright: integer</dt><dd><p>index of xarray that represents the current upper bound</p>
+</dd>
+<dt>x: double</dt><dd><p>target value</p>
+</dd>
+<dt>xarray: double array</dt><dd><p>a sorted array containing all x values in strictly ascending order x[i] < x[i+1]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id2">
+<h3>Returns<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>itarget: integer</dt><dd><p>the largest index in the xarray of which its value is small or equal to the target x value</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utilities.find_interpolate_parameters">
+<span class="sig-prename descclassname"><span class="pre">utilities.</span></span><span class="sig-name descname"><span class="pre">find_interpolate_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xarray</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#utilities.find_interpolate_parameters" title="Link to this definition">#</a></dt>
+<dd><dl class="simple">
+<dt>Find the index ileft that</dt><dd><p>xarray[ileft] <= x <= xarray[iright] where iright = ileft + 1</p>
+</dd>
+</dl>
+<section id="id3">
+<h3>Parameters<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>x: double</dt><dd><p>target value</p>
+</dd>
+<dt>xarray: double array</dt><dd><p>a sorted array containing all x values in strictly ascending order x[i] < x[i+1]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id4">
+<h3>Returns<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>itarget: integer</dt><dd><p>the largest index in the xarray of which its value is small or equal to the target x value</p>
+</dd>
+<dt>ratio: double</dt><dd><p>the distance ratio = (x - xarray[ileft])/(xarray[ileft+1] - xarray[ileft])</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utilities.interpolate_array">
+<span class="sig-prename descclassname"><span class="pre">utilities.</span></span><span class="sig-name descname"><span class="pre">interpolate_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#utilities.interpolate_array" title="Link to this definition">#</a></dt>
+<dd><dl class="simple">
+<dt>Find the value in the y_array from the interpolation parameters ileft and ratio</dt><dd><p>y = (1-ratio)* y_array[ileft] + ratio * y_array[ileft+1]
+where ileft and ratio are determined from the target x value and the xarray</p>
+</dd>
+</dl>
+<section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>x: double</dt><dd><p>target value</p>
+</dd>
+<dt>x_array: double array</dt><dd><p>a sorted array containing all x values in strictly ascending order x[i] < x[i+1]</p>
+</dd>
+<dt>y_array: double array</dt><dd><p>dependent variable array</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id6">
+<h3>Returns<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>y: double</dt><dd><p>the interpolated dependent variable value corresponding the given x value</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utilities.create_mixture_recipe_from_fractions">
+<span class="sig-prename descclassname"><span class="pre">utilities.</span></span><span class="sig-name descname"><span class="pre">create_mixture_recipe_from_fractions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chemistry_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../chemistry/Chemistry.html#ansys.chemkin.chemistry.Chemistry" title="ansys.chemkin.chemistry.Chemistry"><span class="pre">ansys.chemkin.chemistry.Chemistry</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#utilities.create_mixture_recipe_from_fractions" title="Link to this definition">#</a></dt>
+<dd><p>Build a PyChemkin mixture recipe/formula from a species fraction array (i.e., mixture mole/mass composition).
+This mixture recipe can then be used to create the corresponding Mixture object.</p>
+<section id="id7">
+<h3>Parameters<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>chemistry_set: Chemistry object</dt><dd><p>the Chemistry object will be used to create the mixture</p>
+</dd>
+<dt>frac: double array</dt><dd><p>mole or mass fractions of the mixture</p>
+</dd>
+</dl>
+</section>
+<section id="id8">
+<h3>Returns<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>count: integer</dt><dd><p>the size of the recipe list containing [gas species, mole/mass fraction] tuples</p>
+</dd>
+<dt>recipe: list of tuples, [(species_symbol, fraction), … ]</dt><dd><p>non-zero mixture composition corresponding to the given mole/mass fraction array</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utilities.calculate_stoichiometrics">
+<span class="sig-prename descclassname"><span class="pre">utilities.</span></span><span class="sig-name descname"><span class="pre">calculate_stoichiometrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chemistryset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../chemistry/Chemistry.html#ansys.chemkin.chemistry.Chemistry" title="ansys.chemkin.chemistry.Chemistry"><span class="pre">ansys.chemkin.chemistry.Chemistry</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">fuel_molefrac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oxid_molefrac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.int32</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#utilities.calculate_stoichiometrics" title="Link to this definition">#</a></dt>
+<dd><p>calculate the stoichiometric coefficients of the complete combustion reaction of the given fuel and oxidizer mixtures.
+Consider the complete combustion of the fuel + oxidizer mixture</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">fuel</span> <span class="n">species</span><span class="p">)</span> <span class="o">+</span> <span class="n">alpha</span><span class="o">*</span><span class="p">(</span><span class="n">oxidizer</span> <span class="n">species</span><span class="p">)</span> <span class="o"><=></span> <span class="n">nu</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">prod</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="o">...</span> <span class="o">+</span> <span class="n">nu</span><span class="p">(</span><span class="n">numb_prod</span><span class="p">)</span><span class="o">*</span><span class="n">prod</span><span class="p">(</span><span class="n">numb_prod</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The number of unknowns is equal to the number of elements that make of all the fuel and oxidizer species. And the
+number of product species must be one less than the number of unknowns.
+The unknowns</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">alpha</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">stoichiometric</span> <span class="n">coefficient</span> <span class="n">multiplier</span> <span class="n">of</span> <span class="n">the</span> <span class="n">oxidizer</span> <span class="n">species</span>
+<span class="n">nu</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="o">...</span> <span class="n">nu</span><span class="p">(</span><span class="n">numb_prod</span><span class="p">)</span> <span class="n">are</span> <span class="n">the</span> <span class="n">stoichiometric</span> <span class="n">coefficients</span> <span class="n">of</span> <span class="n">the</span> <span class="n">product</span> <span class="n">species</span>
+</pre></div>
+</div>
+<p>The conservation of elements yields a set of linear algebraic equations</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="n">x</span> <span class="o">=</span> <span class="n">b</span>
+</pre></div>
+</div>
+<p>in which x = [ -alpha | nu(1), …., nu(numb_prod) ]  (a vector of size numb_elem ) can be obtained.</p>
+<section id="id9">
+<h3>Parameters<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>chemistryset: Chemistry object</dt><dd><p>the Chemistry object used to create the fuel and the oxidizer mixtures</p>
+</dd>
+<dt>fuel_molefrac: 1-D double array</dt><dd><p>mole fractions of the fuel mixture</p>
+</dd>
+<dt>oxid_molefrac: 1-D double array</dt><dd><p>mole fractions of the oxidizer mixture</p>
+</dd>
+<dt>prod_index: 1-D integer array</dt><dd><p>the species indices of the complete combustion products</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id10">
+<h3>Returns<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>alpha: double</dt><dd><p>oxidizer_coefficient_multiplier</p>
+</dd>
+<dt>nu: 1-D double array</dt><dd><p>stoichiometric_coefficients_of_products</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utilities.random">
+<span class="sig-prename descclassname"><span class="pre">utilities.</span></span><span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#utilities.random" title="Link to this definition">#</a></dt>
+<dd><p>Generate a (reproducible) random floating number value >= 0.0 and < 1.0
+by using the Numpy pseudo-random number generator.
+If the range tuple (a, b) is given, the random number will
+have a value >= a and < b.</p>
+<section id="id11">
+<h3>Parameters<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>range: tuple of floats (a, b) and b > a, default = (0.0, 1.0)</dt><dd><p>the range of the random number values</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id12">
+<h3>Returns<a class="headerlink" href="#id12" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>random: float</dt><dd><p>random number</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utilities.find_file">
+<span class="sig-prename descclassname"><span class="pre">utilities.</span></span><span class="sig-name descname"><span class="pre">find_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partialfilename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fileext</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#utilities.find_file" title="Link to this definition">#</a></dt>
+<dd><p>Find the correct version of the given partial file name.
+This is mostly to handle the different years/versions of the
+MFL mechanisms that come with the Ansys Chemkin installation.</p>
+<section id="id13">
+<h3>Parameters<a class="headerlink" href="#id13" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>filepath: string</dt><dd><p>the directory where the file is located</p>
+</dd>
+<dt>partialfilename: string</dt><dd><p>the leading portion of the file name</p>
+</dd>
+<dt>fileext: string</dt><dd><p>file extension</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id14">
+<h3>Returns<a class="headerlink" href="#id14" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>thefile: string</dt><dd><p>full path name of the file, = “” if no file matches the ‘partialname’ in the ‘filepath’</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="utilities.ck_rng">
+<span class="sig-prename descclassname"><span class="pre">utilities.</span></span><span class="sig-name descname"><span class="pre">ck_rng</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#utilities.ck_rng" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#description">Description</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-detail">Module detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#utilities.where_element_in_array_1D"><code class="docutils literal notranslate"><span class="pre">where_element_in_array_1D()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#utilities.bisect"><code class="docutils literal notranslate"><span class="pre">bisect()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#utilities.find_interpolate_parameters"><code class="docutils literal notranslate"><span class="pre">find_interpolate_parameters()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#utilities.interpolate_array"><code class="docutils literal notranslate"><span class="pre">interpolate_array()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#utilities.create_mixture_recipe_from_fractions"><code class="docutils literal notranslate"><span class="pre">create_mixture_recipe_from_fractions()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#utilities.calculate_stoichiometrics"><code class="docutils literal notranslate"><span class="pre">calculate_stoichiometrics()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#utilities.random"><code class="docutils literal notranslate"><span class="pre">random()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#utilities.find_file"><code class="docutils literal notranslate"><span class="pre">find_file()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#utilities.ck_rng"><code class="docutils literal notranslate"><span class="pre">ck_rng</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item"> 
+<div class="tocsection editthispage">
+  <a href="http://github.com/ansys/pychemkin/edit/main/where_element_in_array_1D.py">
+    <i class="fa-solid fa-pencil"></i>
+       Edit
+    on GitHub  
+  </a>
+</div>
+
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../../_sources/api/ansys/chemkin/utilities/index.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2025 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.0.11. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

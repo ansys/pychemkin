@@ -1,0 +1,120 @@
+
+
+
+
+
+
+The ``ansys.chemkin.reactormodel`` library
+==========================================
+
+.. py:module:: ansys.chemkin.reactormodel
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: reactormodel
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.reactormodel.Keyword`
+            - A Chemkin keyword
+
+
+          * - :py:obj:`~ansys.chemkin.reactormodel.BooleanKeyword`
+            - Chemkin boolean keyword
+
+
+          * - :py:obj:`~ansys.chemkin.reactormodel.IntegerKeyword`
+            - A Chemkin integer keyword
+
+
+          * - :py:obj:`~ansys.chemkin.reactormodel.RealKeyword`
+            - A Chemkin real keyword
+
+
+          * - :py:obj:`~ansys.chemkin.reactormodel.StringKeyword`
+            - A Chemkin string keyword
+
+
+          * - :py:obj:`~ansys.chemkin.reactormodel.Profile`
+            - Generic Chemkin profile keyword class
+
+
+          * - :py:obj:`~ansys.chemkin.reactormodel.ReactorModel`
+            - A generic Chemkin reactor model framework
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Keyword</api/ansys/chemkin/reactormodel/Keyword>
+    <span class="nf nf-cod-symbol_class"></span> BooleanKeyword</api/ansys/chemkin/reactormodel/BooleanKeyword>
+    <span class="nf nf-cod-symbol_class"></span> IntegerKeyword</api/ansys/chemkin/reactormodel/IntegerKeyword>
+    <span class="nf nf-cod-symbol_class"></span> RealKeyword</api/ansys/chemkin/reactormodel/RealKeyword>
+    <span class="nf nf-cod-symbol_class"></span> StringKeyword</api/ansys/chemkin/reactormodel/StringKeyword>
+    <span class="nf nf-cod-symbol_class"></span> Profile</api/ansys/chemkin/reactormodel/Profile>
+    <span class="nf nf-cod-symbol_class"></span> ReactorModel</api/ansys/chemkin/reactormodel/ReactorModel>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin general reactor model utilities.
+
+
+
+
+
+
+
+

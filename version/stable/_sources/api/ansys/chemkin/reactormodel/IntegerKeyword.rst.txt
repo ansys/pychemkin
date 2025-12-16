@@ -1,0 +1,27 @@
+
+
+:class:`IntegerKeyword`
+=======================
+
+.. py:class:: ansys.chemkin.reactormodel.IntegerKeyword(phrase: str, value: int = 0)
+
+   Bases: :py:obj:`Keyword`
+
+
+   A Chemkin integer keyword
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.reactormodel import IntegerKeyword
+
+
+
+
+
+

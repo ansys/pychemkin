@@ -1,0 +1,27 @@
+
+
+:class:`RealKeyword`
+====================
+
+.. py:class:: ansys.chemkin.reactormodel.RealKeyword(phrase: str, value: float = 0.0)
+
+   Bases: :py:obj:`Keyword`
+
+
+   A Chemkin real keyword
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.reactormodel import RealKeyword
+
+
+
+
+
+

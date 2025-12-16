@@ -1,0 +1,178 @@
+
+
+
+
+
+
+The ``ansys.chemkin.info`` library
+==================================
+
+.. py:module:: ansys.chemkin.info
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: info
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~setup_hints`
+            - Set up Chemkin keyword hints.
+
+
+          * - :py:obj:`~clear_hints`
+            - Clear the Chemkin keyword data.
+
+
+          * - :py:obj:`~keyword_hints`
+            - Get hints about the Chemkin keyword.
+
+
+          * - :py:obj:`~phrase_hints`
+            - Get keyword hints by using key phrase in the description.
+
+
+          * - :py:obj:`~help`
+            - Provide assistance on finding information about Chemkin keywords.
+
+
+          * - :py:obj:`~show_realgas_usage`
+            - Show Chemkin real-gas model usage and options.
+
+
+          * - :py:obj:`~show_equilibrium_options`
+            - Show the equilibrium calculation usage and options.
+
+
+          * - :py:obj:`~show_ignition_definitions`
+            - Show the ignition definitions available in Chemkin.
+
+
+          * - :py:obj:`~manuals`
+            - Access the Chemkin manuals page on the Ansys Help portal.
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~CKdict`
+            - 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin help menu for keywords and key phrases.
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: setup_hints()
+
+   Set up Chemkin keyword hints.
+
+
+.. py:function:: clear_hints()
+
+   Clear the Chemkin keyword data.
+
+
+.. py:function:: keyword_hints(mykey: str)
+
+   Get hints about the Chemkin keyword.
+
+   Parameters
+   ----------
+       mykey: string
+           keyword phrase
+
+
+.. py:function:: phrase_hints(phrase: str)
+
+   Get keyword hints by using key phrase in the description.
+
+   Parameters
+   ----------
+   phrase: string
+       search phrase
+
+
+.. py:function:: help(topic: Union[str, None] = None)
+
+   Provide assistance on finding information about Chemkin keywords.
+
+   Parameters
+   ----------
+       topic: string
+           the keyword topic of which additional hints are requested
+
+
+.. py:function:: show_realgas_usage()
+
+   Show Chemkin real-gas model usage and options.
+
+
+.. py:function:: show_equilibrium_options()
+
+   Show the equilibrium calculation usage and options.
+
+
+.. py:function:: show_ignition_definitions()
+
+   Show the ignition definitions available in Chemkin.
+
+
+.. py:function:: manuals()
+
+   Access the Chemkin manuals page on the Ansys Help portal.
+
+
+.. py:data:: CKdict
+
+
+

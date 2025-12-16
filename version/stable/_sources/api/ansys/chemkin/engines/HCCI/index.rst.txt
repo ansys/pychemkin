@@ -1,0 +1,78 @@
+
+
+
+
+
+
+The ``HCCI.py`` module
+======================
+
+.. py:module:: ansys.chemkin.engines.HCCI
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: HCCI
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.engines.HCCI.HCCIengine`
+            - Single or multi- zone homogeneous charge compression ignition (HCCI) engine model
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> HCCIengine</api/ansys/chemkin/engines/HCCI/HCCIengine>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Single or multi- zone homogeneous charge compression ignition (HCCI) engine model.
+
+
+
+
+
+
+
+

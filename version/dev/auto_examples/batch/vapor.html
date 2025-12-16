@@ -1,0 +1,1037 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Explore cooling water vapor &#8212; PyChemkin</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/ansys_sphinx_theme.css?v=d2ac875c" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+ 
+<link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script src="../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/batch/vapor';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="0-D engine models" href="../engine/index.html" />
+    <link rel="prev" title="Perform brute-force sensitivity analysis" href="sensitivity.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/auto_examples/batch/vapor.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+  <!-- If there is no MeiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+   
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <script>document.write(`<img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark" alt="PyChemkin - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/dev/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/dev/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../chemistry/index.html">Chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mixture/index.html">Mixture</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Batch reactor</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="closed_homogeneous__transient.html">Simulate hydrogen combustion in a constant-pressure reactor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ignitiondelay.html">Predict the ignition delay time of a combustible mixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rcm.html">Simulate a rapid compression machine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sensitivity.html">Perform brute-force sensitivity analysis</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Explore cooling water vapor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../engine/index.html">0-D engine models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSR/index.html">Perfectly stirred reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PFR/index.html">Plug-flow reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reactor_network/index.html">PSR network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../premixed_flame/index.html">Premixed flame models</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Batch reactor</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page">Explore cooling water vapor</li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-batch-vapor-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="explore-cooling-water-vapor">
+<span id="ref-cooling-vapor"></span><span id="sphx-glr-auto-examples-batch-vapor-py"></span><h1>Explore cooling water vapor<a class="headerlink" href="#explore-cooling-water-vapor" title="Link to this heading">#</a></h1>
+<p>How does the volume of water vapor evolves when it is cooled from a temperature above the boiling point
+to a temperature that is just above the freezing point at constant pressure? How fast does the vapor
+volume drop? This example uses the <code class="docutils literal notranslate"><span class="pre">GivenPressureBatchReactor_FixedTemperature</span></code> model to explore
+the different behaviors between an <em>ideal gas</em> water vapor and its <em>real gas</em> counterpart.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<section id="import-pychemkin-packages-and-start-the-logger">
+<h2>Import PyChemkin packages and start the logger<a class="headerlink" href="#import-pychemkin-packages-and-start-the-logger" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ansys.chemkin</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ck</span>  <span class="c1"># Chemkin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin</span><span class="w"> </span><span class="kn">import</span> <span class="n">Color</span>
+
+<span class="c1"># chemkin batch reactor model (transient)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.batchreactors.batchreactor</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">GivenPressureBatchReactor_FixedTemperature</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># plotting</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>  <span class="c1"># number crunching</span>
+
+<span class="c1"># check working directory</span>
+<span class="n">current_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;working directory: &quot;</span> <span class="o">+</span> <span class="n">current_dir</span><span class="p">)</span>
+<span class="c1"># set interactive mode for plotting the results</span>
+<span class="c1"># interactive = True: display plot</span>
+<span class="c1"># interactive = False: save plot as a PNG file</span>
+<span class="k">global</span> <span class="n">interactive</span>
+<span class="n">interactive</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+<section id="create-a-chemistry-set">
+<h2>Create a chemistry set<a class="headerlink" href="#create-a-chemistry-set" title="Link to this heading">#</a></h2>
+<p>To compare the different behaviors of the water vapor under the ideal gas and real gas
+assumptions, you must use a <em>real gas EOS-enabled gas mechanism. The ‘C2 NOx’ mechanism that
+includes information about the *Soave</em> cubic Equation of State (EOS) is suitable for this endeavor.
+Therefore, the <code class="docutils literal notranslate"><span class="pre">MyMech</span></code> chemistry set is created from this gas phase mechanism.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set mechanism directory (the default Chemkin mechanism data directory)</span>
+<span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ck</span><span class="o">.</span><span class="n">ansys_dir</span><span class="p">,</span> <span class="s2">&quot;reaction&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
+<span class="n">mechanism_dir</span> <span class="o">=</span> <span class="n">data_dir</span>
+<span class="c1"># create a chemistry set based on C2_NOx using an alternative method</span>
+<span class="n">MyMech</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Chemistry</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;C2 NOx&quot;</span><span class="p">)</span>
+<span class="c1"># set mechanism input files individually</span>
+<span class="c1"># this mechanism file contains all the necessary thermodynamic and transport data</span>
+<span class="c1"># thus, there is no need to specify thermodynamic and transport data files</span>
+<span class="n">MyMech</span><span class="o">.</span><span class="n">chemfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mechanism_dir</span><span class="p">,</span> <span class="s2">&quot;C2_NOx_SRK.inp&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="preprocess-the-c2-nox-chemistry-set">
+<h2>Preprocess the C2 NOx chemistry set<a class="headerlink" href="#preprocess-the-c2-nox-chemistry-set" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># preprocess the mechanism file</span>
+<span class="n">iError</span> <span class="o">=</span> <span class="n">MyMech</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">iError</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">GREEN</span> <span class="o">+</span> <span class="s2">&quot;&gt;&gt;&gt; Preprocessing succeeded.&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="s2">&quot;&gt;&gt;&gt; Preprocessing failed.&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+    <span class="n">exit</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-the-air-water-vapor-mixture">
+<h2>Set up the air/water vapor mixture<a class="headerlink" href="#set-up-the-air-water-vapor-mixture" title="Link to this heading">#</a></h2>
+<p>Create the mixture of air and water vapor inside the imaginary strong but elastic container.
+The initial gas temperature is set to 500 [K] and at a constant pressure of 100 [atm]. At this
+temperature and pressure, the mixture should be entirely in gas form.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">mist</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">MyMech</span><span class="p">)</span>
+<span class="c1"># set mole fraction</span>
+<span class="n">mist</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;H2O&quot;</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;O2&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;N2&quot;</span><span class="p">,</span> <span class="mf">3.76</span><span class="p">)]</span>
+<span class="n">mist</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">500.0</span>  <span class="c1"># [K]</span>
+<span class="n">mist</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="n">ck</span><span class="o">.</span><span class="n">P_ATM</span>
+</pre></div>
+</div>
+</section>
+<section id="create-the-reactor-tank-to-perform-the-vapor-cooling-simulation">
+<h2>Create the reactor <code class="docutils literal notranslate"><span class="pre">tank</span></code> to perform the vapor cooling simulation<a class="headerlink" href="#create-the-reactor-tank-to-perform-the-vapor-cooling-simulation" title="Link to this heading">#</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">GivenPressureBatchReactor_FixedTemperature()</span></code> method to create
+a constant-pressure batch reactor (with a given temperature). Use the <code class="docutils literal notranslate"><span class="pre">mist</span></code> mixture
+that you just created to set the initial gas condition inside the <code class="docutils literal notranslate"><span class="pre">tank</span></code>
+reactor.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">tank</span> <span class="o">=</span> <span class="n">GivenPressureBatchReactor_FixedTemperature</span><span class="p">(</span><span class="n">mist</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;tank&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-additional-reactor-model-parameters">
+<h2>Set up additional reactor model parameters<a class="headerlink" href="#set-up-additional-reactor-model-parameters" title="Link to this heading">#</a></h2>
+<p>You must provide reactor parameters, solver controls, and output instructions
+before running the simulations. For a batch reactor, the initial volume and
+simulation end time are required inputs.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># verify initial gas composition inside the reactor</span>
+<span class="n">tank</span><span class="o">.</span><span class="n">list_composition</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;mole&quot;</span><span class="p">)</span>
+
+<span class="c1"># set other reactor properties</span>
+<span class="n">tank</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="mf">10.0</span>  <span class="c1"># cm3</span>
+<span class="n">tank</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># sec</span>
+</pre></div>
+</div>
+</section>
+<section id="set-the-gas-temperature-profile-of-the-tank-reactor">
+<h2>Set the gas temperature profile of the <code class="docutils literal notranslate"><span class="pre">tank</span></code> reactor<a class="headerlink" href="#set-the-gas-temperature-profile-of-the-tank-reactor" title="Link to this heading">#</a></h2>
+<p>Create a time-temperature profile by using two arrays. Use the <code class="docutils literal notranslate"><span class="pre">set_temperature_profile()</span></code>
+method to add the profile to the reactor model.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># number of profile data points</span>
+<span class="n">npoints</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="c1"># position array of the profile data</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">npoints</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="c1"># value array of the profile data</span>
+<span class="n">TPROprofile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="c1"># set tank temperature data points</span>
+<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span>  <span class="c1"># [sec]</span>
+<span class="n">TPROprofile</span> <span class="o">=</span> <span class="p">[</span><span class="mf">500.0</span><span class="p">,</span> <span class="mf">275.0</span><span class="p">,</span> <span class="mf">275.0</span><span class="p">]</span>  <span class="c1"># [K]</span>
+<span class="c1"># set the temperature profile</span>
+<span class="n">tank</span><span class="o">.</span><span class="n">set_temperature_profile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">TPROprofile</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="switch-on-the-real-gas-eos-model">
+<h2>Switch on the real-gas EOS model<a class="headerlink" href="#switch-on-the-real-gas-eos-model" title="Link to this heading">#</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">use_realgas_cubicEOS()</span></code> method to turn on the real-gas EOS model. For more
+information, type either <code class="docutils literal notranslate"><span class="pre">ansys.chemkin.help(&quot;real</span> <span class="pre">gas&quot;)</span></code> for information on real-gas model
+usage or <code class="docutils literal notranslate"><span class="pre">ansys.chemkin.help(&quot;manuals&quot;)</span></code> to access the online <strong>Chemkin Theory</strong>
+manual for descriptions of the real-gas EOS models.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>By default the <em>Van der Waals</em> mixing rule is applied to evaluate thermodynamic properties
+of a real-gas mixture. You can use <code class="docutils literal notranslate"><span class="pre">set_realgas_mixing_rule</span></code> to switch to a different
+mixing rule.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">tank</span><span class="o">.</span><span class="n">userealgasEOS</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-output-options">
+<h2>Set output options<a class="headerlink" href="#set-output-options" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set timestep between saving solution</span>
+<span class="n">tank</span><span class="o">.</span><span class="n">timestep_for_saving_solution</span> <span class="o">=</span> <span class="mf">0.01</span>
+</pre></div>
+</div>
+</section>
+<section id="set-solver-controls">
+<h2>Set solver controls<a class="headerlink" href="#set-solver-controls" title="Link to this heading">#</a></h2>
+<p>You can overwrite the default solver controls by using solver related methods, for example,
+<code class="docutils literal notranslate"><span class="pre">tolerances</span></code>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set tolerances in tuple: (absolute tolerance, relative tolerance)</span>
+<span class="n">tank</span><span class="o">.</span><span class="n">tolerances</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0e-10</span><span class="p">,</span> <span class="mf">1.0e-8</span><span class="p">)</span>
+<span class="c1"># get solver parameters</span>
+<span class="n">ATOL</span><span class="p">,</span> <span class="n">RTOL</span> <span class="o">=</span> <span class="n">tank</span><span class="o">.</span><span class="n">tolerances</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;default absolute tolerance = </span><span class="si">{</span><span class="n">ATOL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;default relative tolerance = </span><span class="si">{</span><span class="n">RTOL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># turn on the force non-negative solutions option in the solver</span>
+<span class="n">tank</span><span class="o">.</span><span class="n">force_nonnegative</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+<section id="run-the-vapor-cooling-simulation-with-the-real-gas-eos">
+<h2>Run the vapor cooling simulation with the <em>real gas EOS</em><a class="headerlink" href="#run-the-vapor-cooling-simulation-with-the-real-gas-eos" title="Link to this heading">#</a></h2>
+<p>Run the CONP reactor model with given temperature profile with the <em>real gas EOS</em>
+model switched <em>ON</em>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">runstatus</span> <span class="o">=</span> <span class="n">tank</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1"># check run status</span>
+<span class="k">if</span> <span class="n">runstatus</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="c1"># run failed!</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="s2">&quot;&gt;&gt;&gt; Run failed. &lt;&lt;&lt;&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+    <span class="n">exit</span><span class="p">()</span>
+<span class="c1"># run success!</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">GREEN</span> <span class="o">+</span> <span class="s2">&quot;&gt;&gt;&gt; Run completed. &lt;&lt;&lt;&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="postprocess-the-solution">
+<h2>Postprocess the solution<a class="headerlink" href="#postprocess-the-solution" title="Link to this heading">#</a></h2>
+<p>The postprocessing step parses the solution and packages the solution values at each
+time point into a mixture. There are two ways to access the solution profiles:</p>
+<ul class="simple">
+<li><p>The raw solution profiles (value as a function of distance) are available for distance,
+temperature, pressure, volume, and species mass fractions.</p></li>
+</ul>
+<blockquote>
+<div><dl class="simple">
+<dt>-The mixtures permit the use of all property and rate utilities to extract</dt><dd><p>information such as viscosity, density, and mole fractions.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>You can use the <code class="docutils literal notranslate"><span class="pre">get_solution_variable_profile()</span></code> method to get the raw solution profiles. You
+can get solution mixtures using either the <code class="docutils literal notranslate"><span class="pre">get_solution_mixture_at_index()</span></code> method for the
+solution mixture at the given saved location or the <code class="docutils literal notranslate"><span class="pre">get_solution_mixture()</span></code> method for the
+solution mixture at the given distance. (In this case, the mixture is constructed by interpolation.)</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">getnumbersolutionpoints()</span></code> method to get the size of the solution profiles before
+creating the arrays.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">tank</span><span class="o">.</span><span class="n">process_solution</span><span class="p">()</span>
+<span class="c1"># get the number of solution time points</span>
+<span class="n">solutionpoints</span> <span class="o">=</span> <span class="n">tank</span><span class="o">.</span><span class="n">getnumbersolutionpoints</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;number of solution points = </span><span class="si">{</span><span class="n">solutionpoints</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># get the time profile</span>
+<span class="n">timeprofile</span> <span class="o">=</span> <span class="n">tank</span><span class="o">.</span><span class="n">get_solution_variable_profile</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+<span class="c1"># get the temperature profile</span>
+<span class="n">tempprofile</span> <span class="o">=</span> <span class="n">tank</span><span class="o">.</span><span class="n">get_solution_variable_profile</span><span class="p">(</span><span class="s2">&quot;temperature&quot;</span><span class="p">)</span>
+<span class="c1"># get the volume profile</span>
+<span class="n">volprofile</span> <span class="o">=</span> <span class="n">tank</span><span class="o">.</span><span class="n">get_solution_variable_profile</span><span class="p">(</span><span class="s2">&quot;volume&quot;</span><span class="p">)</span>
+<span class="c1"># create array for mixture density</span>
+<span class="n">denprofile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">timeprofile</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="c1"># create array for mixture enthalpy</span>
+<span class="n">Hprofile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">timeprofile</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="c1"># loop over all solution time points</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">solutionpoints</span><span class="p">):</span>
+    <span class="c1"># get the mixture at the time point</span>
+    <span class="n">solutionmixture</span> <span class="o">=</span> <span class="n">tank</span><span class="o">.</span><span class="n">get_solution_mixture_at_index</span><span class="p">(</span><span class="n">solution_index</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+    <span class="c1"># get mixture density profile</span>
+    <span class="n">denprofile</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">solutionmixture</span><span class="o">.</span><span class="n">RHO</span>
+    <span class="c1"># get mixture enthalpy profile</span>
+    <span class="n">Hprofile</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">solutionmixture</span><span class="o">.</span><span class="n">HML</span><span class="p">()</span> <span class="o">/</span> <span class="n">ck</span><span class="o">.</span><span class="n">ERGS_PER_JOULE</span> <span class="o">*</span> <span class="mf">1.0e-3</span>
+</pre></div>
+</div>
+</section>
+<section id="turn-off-the-real-gas-eos-model">
+<h2>Turn off the real gas EOS model<a class="headerlink" href="#turn-off-the-real-gas-eos-model" title="Link to this heading">#</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">use_realgas_cubicEOS()</span></code> method to turn off the real gas EOS model.
+Alternatively, use the <code class="docutils literal notranslate"><span class="pre">use_idealgas_law()</span></code> method to turn on the ideal
+gas law.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">tank</span><span class="o">.</span><span class="n">userealgasEOS</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="run-the-vapor-cooling-simulation-with-the-ideal-gas-law">
+<h2>Run the vapor cooling simulation with the ideal gas law<a class="headerlink" href="#run-the-vapor-cooling-simulation-with-the-ideal-gas-law" title="Link to this heading">#</a></h2>
+<p>Run the CONP reactor model with given temperature profile with the
+<em>ideal gas law</em> turned back on.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">runstatus</span> <span class="o">=</span> <span class="n">tank</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1"># check run status</span>
+<span class="k">if</span> <span class="n">runstatus</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="c1"># run failed!</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="s2">&quot;&gt;&gt;&gt; Run failed. &lt;&lt;&lt;&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+    <span class="n">exit</span><span class="p">()</span>
+<span class="c1"># run success!</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">GREEN</span> <span class="o">+</span> <span class="s2">&quot;&gt;&gt;&gt; Run completed. &lt;&lt;&lt;&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="postprocess-the-ideal-gas-solution">
+<h2>Postprocess the ideal gas solution<a class="headerlink" href="#postprocess-the-ideal-gas-solution" title="Link to this heading">#</a></h2>
+<p>postprocess the solutions</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">tank</span><span class="o">.</span><span class="n">process_solution</span><span class="p">()</span>
+<span class="c1"># get the number of solution time points</span>
+<span class="n">solutionpoints</span> <span class="o">=</span> <span class="n">tank</span><span class="o">.</span><span class="n">getnumbersolutionpoints</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;number of solution points = </span><span class="si">{</span><span class="n">solutionpoints</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># get the time profile</span>
+<span class="n">timeprofile_IG</span> <span class="o">=</span> <span class="n">tank</span><span class="o">.</span><span class="n">get_solution_variable_profile</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+<span class="c1"># get the volume profile</span>
+<span class="n">volprofile_IG</span> <span class="o">=</span> <span class="n">tank</span><span class="o">.</span><span class="n">get_solution_variable_profile</span><span class="p">(</span><span class="s2">&quot;volume&quot;</span><span class="p">)</span>
+<span class="c1"># create array for mixture density</span>
+<span class="n">denprofile_IG</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">timeprofile</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="c1"># create array for mixture enthalpy</span>
+<span class="n">Hprofile_IG</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">timeprofile</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="c1"># loop over all solution time points</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">solutionpoints</span><span class="p">):</span>
+    <span class="c1"># get the mixture at the time point</span>
+    <span class="n">solutionmixture</span> <span class="o">=</span> <span class="n">tank</span><span class="o">.</span><span class="n">get_solution_mixture_at_index</span><span class="p">(</span><span class="n">solution_index</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+    <span class="c1"># get mixture density profile</span>
+    <span class="n">denprofile_IG</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">solutionmixture</span><span class="o">.</span><span class="n">RHO</span>
+    <span class="c1"># get mixture enthalpy profile</span>
+    <span class="n">Hprofile_IG</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">solutionmixture</span><span class="o">.</span><span class="n">HML</span><span class="p">()</span> <span class="o">/</span> <span class="n">ck</span><span class="o">.</span><span class="n">ERGS_PER_JOULE</span> <span class="o">*</span> <span class="mf">1.0e-3</span>
+
+<span class="n">ck</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="plot-the-rcm-solution-profiles">
+<h2>Plot the RCM solution profiles<a class="headerlink" href="#plot-the-rcm-solution-profiles" title="Link to this heading">#</a></h2>
+<p>You should observe that the mixture volume obtained by the real gas model is
+noticeably lower than the ideal gas volume. When water vapor is cooled below
+the boiling point, formation of liquid water is expected due to condensation.
+The ideal gas law assumes that the mixture is always in gas phase and is unable to
+address the phase change phenomenon. The real gas EOS, on the other hand, can
+capture the formation of the liquid water as indicated by the sharper rise of the
+mixture density during the cooling process. The real gas mixture also has a lower
+enthalpy level than that of the ideal gas mixture. The enthalpy differences
+should largely represent the heat of vaporization of water at the temperature.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># plot the profiles</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="s2">&quot;col&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">thispres</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mist</span><span class="o">.</span><span class="n">pressure</span> <span class="o">/</span> <span class="n">ck</span><span class="o">.</span><span class="n">P_ATM</span><span class="p">)</span>
+<span class="n">thistitle</span> <span class="o">=</span> <span class="s2">&quot;Cooling Vapor + Air at &quot;</span> <span class="o">+</span> <span class="n">thispres</span> <span class="o">+</span> <span class="s2">&quot; atm&quot;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">thistitle</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">221</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeprofile</span><span class="p">,</span> <span class="n">tempprofile</span><span class="p">,</span> <span class="s2">&quot;r-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Temperature [K]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">222</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeprofile</span><span class="p">,</span> <span class="n">volprofile</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;real gas&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeprofile_IG</span><span class="p">,</span> <span class="n">volprofile_IG</span><span class="p">,</span> <span class="s2">&quot;b--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;ideal gas&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Volume [cm3]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">223</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeprofile</span><span class="p">,</span> <span class="n">Hprofile</span><span class="p">,</span> <span class="s2">&quot;g-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;real gas&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeprofile_IG</span><span class="p">,</span> <span class="n">Hprofile_IG</span><span class="p">,</span> <span class="s2">&quot;g--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;ideal gas&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;time [sec]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Mixture Enthalpy [kJ/mole]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">224</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeprofile</span><span class="p">,</span> <span class="n">denprofile</span><span class="p">,</span> <span class="s2">&quot;m-&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;real gas&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">timeprofile_IG</span><span class="p">,</span> <span class="n">denprofile_IG</span><span class="p">,</span> <span class="s2">&quot;m--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;ideal gas&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;time [sec]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Mixture Density [g/cm3]&quot;</span><span class="p">)</span>
+<span class="c1"># plot results</span>
+<span class="k">if</span> <span class="n">interactive</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;plot_vapor_condensation.png&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-batch-vapor-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/002c94febfd031ab495b997f8f827026/vapor.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">vapor.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/e895c024ad1340a626dc5e87fe695889/vapor.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">vapor.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/49e05ea2b589282fa7094c5b5fda0f39/vapor.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">vapor.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-pychemkin-packages-and-start-the-logger">Import PyChemkin packages and start the logger</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-chemistry-set">Create a chemistry set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preprocess-the-c2-nox-chemistry-set">Preprocess the C2 NOx chemistry set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-the-air-water-vapor-mixture">Set up the air/water vapor mixture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-the-reactor-tank-to-perform-the-vapor-cooling-simulation">Create the reactor <code class="docutils literal notranslate"><span class="pre">tank</span></code> to perform the vapor cooling simulation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-additional-reactor-model-parameters">Set up additional reactor model parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-the-gas-temperature-profile-of-the-tank-reactor">Set the gas temperature profile of the <code class="docutils literal notranslate"><span class="pre">tank</span></code> reactor</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#switch-on-the-real-gas-eos-model">Switch on the real-gas EOS model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-output-options">Set output options</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-solver-controls">Set solver controls</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-the-vapor-cooling-simulation-with-the-real-gas-eos">Run the vapor cooling simulation with the <em>real gas EOS</em></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#postprocess-the-solution">Postprocess the solution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#turn-off-the-real-gas-eos-model">Turn off the real gas EOS model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-the-vapor-cooling-simulation-with-the-ideal-gas-law">Run the vapor cooling simulation with the ideal gas law</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#postprocess-the-ideal-gas-solution">Postprocess the ideal gas solution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-the-rcm-solution-profiles">Plot the RCM solution profiles</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item"> 
+<div class="tocsection editthispage">
+  <a href="https://github.com/ansys/pychemkin/edit/main/doc/source/auto_examples/batch/vapor.rst">
+    <i class="fa-solid fa-pencil"></i>
+       Edit
+    on GitHub  
+  </a>
+</div>
+
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/auto_examples/batch/vapor.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2025 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.0.11. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

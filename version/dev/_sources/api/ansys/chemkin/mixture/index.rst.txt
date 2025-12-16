@@ -1,0 +1,328 @@
+
+
+
+
+
+
+The ``ansys.chemkin.mixture`` library
+=====================================
+
+.. py:module:: ansys.chemkin.mixture
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: mixture
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.mixture.Mixture`
+            - define a mixture based on the gas species in the given chemistry set
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~isothermal_mixing`
+            - Find the resulting gas mixture properties from mixing a number of gas mixtures at the given mixture temperature
+
+
+          * - :py:obj:`~adiabatic_mixing`
+            - Find the resulting gas mixture properties from mixing a number of gas mixtures with constant total enthalpy
+
+
+          * - :py:obj:`~calculate_mixture_temperature_from_enthalpy`
+            - Compute the mixture temperature from the given mixture enthalpy,
+
+
+          * - :py:obj:`~interpolate_mixtures`
+            - Create a new mixture object by interpolating the two mixture objects with a specific weight ratio
+
+
+          * - :py:obj:`~compare_mixtures`
+            - Compare properties of mixture B against those of mixture A. The mixture properties
+
+
+          * - :py:obj:`~calculate_equilibrium`
+            - Get the equilibrium mixture composition corresponding to the given initial mixture composition at the given pressure and temperature
+
+
+          * - :py:obj:`~equilibrium`
+            - Find the equilibrium state mixture corresponding to the given mixture
+
+
+          * - :py:obj:`~detonation`
+            - Find the Chapman-Jouguet state mixture and detonation wave speed corresponding to the given mixture
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Mixture</api/ansys/chemkin/mixture/Mixture>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin Mixture utilities.
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: isothermal_mixing(recipe: list[tuple[Mixture, float]], mode: str, finaltemperature: float) -> Mixture
+
+   Find the resulting gas mixture properties from mixing a number of gas mixtures at the given mixture temperature
+
+   Parameters
+   ----------
+       recipe: list of tuples, [(Mixture object, fraction), ... ]
+           non-zero mixture composition corresponding to the given mole/mass fraction array
+       mode: string, {'mass', 'mole'}, default = 'mole'
+           indicting the fractions given in the recipe are in 'mole' or 'mass' ratios
+       finaltemperature: double
+           temperature of the resulting gas mixture after mixing
+
+   Returns
+   -------
+       finalmixture: Mixture object
+           the resulting gas mixture after mixing
+
+
+.. py:function:: adiabatic_mixing(recipe: list[tuple[Mixture, float]], mode: str) -> Mixture
+
+   Find the resulting gas mixture properties from mixing a number of gas mixtures with constant total enthalpy
+
+   Parameters
+   ----------
+       recipe: list of tuples, [(Mixture object, fraction), ... ]
+           non-zero mixture composition corresponding to the given mole/mass fraction array
+       mode: string, {'mass', 'mole'}, default = 'mole'
+           indicting the fractions given in the recipe are in 'mole' or 'mass' ratios
+
+   Returns
+   -------
+       finalmixture: Mixture object
+           the resulting gas mixture after mixing
+
+
+.. py:function:: calculate_mixture_temperature_from_enthalpy(mixture: Mixture, mixtureH: float, guesstemperature: float = 0.0) -> int
+
+   Compute the mixture temperature from the given mixture enthalpy,
+   the solved mixture temperature is stored as the temperature attribute of the given gas mixture (i.e., as mixture.temperature)
+
+   Parameters
+   ----------
+       mixture: Mixture object
+           gas mixture of interest
+       mixtureH: double
+           mixture enthalpy of the given gas mixture [erg/mol]
+       guesstemperature: double, optional
+           a guessed value for the mixture temperature at the start of the iteration process
+
+   Returns
+   -------
+       error code: integer
+
+
+.. py:function:: interpolate_mixtures(mixtureleft: Mixture, mixtureright: Mixture, ratio: float) -> Mixture
+
+   Create a new mixture object by interpolating the two mixture objects with a specific weight ratio
+
+   ::
+       mixture_new = (1 - ratio) * mixtureleft + ratio * mixtureright
+
+   Parameters
+   ----------
+       mixtureleft: Mixture object
+           mixture A to be mixed
+       mixtureright: Mixture object
+           mixture B to be mixed
+       ratio: double
+           the weight parameters for interpolation, 0 <= ratio <= 1
+
+   Returns
+   -------
+       mixturenew: Mixture object
+           the resulting gas mixture
+
+
+.. py:function:: compare_mixtures(mixtureA: Mixture, mixtureB: Mixture, atol: float = 1e-10, rtol: float = 0.001, mode: str = 'mass') -> tuple[bool, float, float]
+
+   Compare properties of mixture B against those of mixture A. The mixture properties
+   include pressure [atm], temperature [K], and species mass/mole fractions. When the
+   differences in the property values satisfy both the absolute and the relative
+   tolerances, this method will return "True", that is, mixture B is essentially
+   identical to mixture A; otherwise, "False" will be returned.
+
+   Parameters
+   ----------
+       mixtureA: Mixture object
+           mixture A, the target mixture
+       mixtureB: Mixture object
+           mixture B, the sample mixture
+       atol: double, default = 1.0e-10
+           the absolute tolerance for the max property differences
+       rtol: double, default = 1.0e-3
+           the relative tolerance for the max property differences
+       mode: string {"mass", "mole"}, default = "mass"
+           compare species "mass" or "mole" fractions
+
+   Returns
+   -------
+       issame: boolean
+           the equivalence of the two mixtures
+       atol_max: double
+           the max absolute difference value
+       rtol_max: double
+           the max relative difference value
+
+
+.. py:function:: calculate_equilibrium(chemID: int, p: float, t: float, frac: numpy.typing.NDArray[numpy.double], wt: numpy.typing.NDArray[numpy.double], mode_in: str, mode_out: str, EQOption: int = 1, useRealGas: int = 0) -> tuple[list[float], numpy.typing.NDArray[numpy.double]]
+
+   Get the equilibrium mixture composition corresponding to the given initial mixture composition at the given pressure and temperature
+
+   Parameters
+   ----------
+       chemID: integer
+           chemistry set index associated with the mixture
+       p: double
+           initial mixture pressure in [dynes/cm2]
+       t: double
+           initial mixture temperature in [K]
+       frac: 1-D double array
+           initial mixture composition given by either mass or mole fractions as specified by mode_in
+       wt: 1-D double arrays
+           molar masses of the species in the mixture in [gm/mol]
+       mode_in: string, {'mass', 'mole'}, default = 'mole'
+           flag indicates the frac array is 'mass' or 'mole' fractions
+       mode_out: string, {'mass', 'mole'}, default = 'mole'
+           flag to indicate the returning composition is in 'mole' or 'mass' fraction
+       EQOption: integer, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+           equilibrium type (see below)
+
+           ::
+               1.  SPECIFIED T AND P
+               2.  SPECIFIED T AND V
+               3.  SPECIFIED T AND S
+               4.  SPECIFIED P AND V
+               5.  SPECIFIED P AND H
+               6.  SPECIFIED P AND S
+               7.  SPECIFIED V AND U
+               8.  SPECIFIED V AND H
+               9.  SPECIFIED V AND S
+               10. CHAPMAN-JOUGUET DETONATION
+       useRealGas: integer, {0, 1}
+           option to turned ON/OFF (1/0) the real-gas cubic EOS if available
+
+   Returns
+   -------
+       state_variables_equilibrium: list of doubles,
+           equilibrium pressure [dynes/cm2],
+           equilibrium temperature [K],
+           speed of sound at equilibrium [cm/sec],
+           detonation wave speed [cm/sec].
+           Note: if Chapmen-Jouguet option is not used,
+           both speed of sound and detonation wave speed are set to 0.0
+       equilibrium composition: 1-D double array
+           given in fractions indicated by the parameter mode_out
+
+
+.. py:function:: equilibrium(mixture: Mixture, opt: int = 1) -> Mixture
+
+   Find the equilibrium state mixture corresponding to the given mixture
+
+   Parameters
+   ----------
+       mixture: Mixture object
+           initial gas mixture
+       opt: integer, {1, 2, 4, 5, 7, 8}
+           equilibrium type
+
+           ::
+               1.  SPECIFIED T AND P
+               2.  SPECIFIED T AND V
+               3.  SPECIFIED T AND S (*)
+               4.  SPECIFIED P AND V
+               5.  SPECIFIED P AND H
+               6.  SPECIFIED P AND S (*)
+               7.  SPECIFIED V AND U
+               8.  SPECIFIED V AND H
+               9.  SPECIFIED V AND S (*)
+               10. CHAPMAN-JOUGUET DETONATION (*)
+
+               (*) indicates the options are not available
+
+   Returns
+   -------
+       finalmixture: Mixture object
+           gas mixture at the equilibrium state
+
+
+.. py:function:: detonation(mixture: Mixture) -> tuple[list[float], Mixture]
+
+   Find the Chapman-Jouguet state mixture and detonation wave speed corresponding to the given mixture
+
+   Parameters
+   ----------
+       mixture: Mixture object
+           initial gas mixture
+
+   Returns
+   -------
+       speed_values: list of doubles
+           speed of sound [cm/sec],
+           detonation wave speed [cm/sec].
+       finalmixture: Mixture object
+           gas mixture at the equilibrium state
+
+
+
+

@@ -1,0 +1,78 @@
+
+
+
+
+
+
+The ``SI.py`` module
+====================
+
+.. py:module:: ansys.chemkin.engines.SI
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: SI
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.engines.SI.SIengine`
+            - Spark Ignition (SI) engine model
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> SIengine</api/ansys/chemkin/engines/SI/SIengine>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Spark Ignition (SI) engine model.
+
+
+
+
+
+
+
+

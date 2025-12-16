@@ -1,0 +1,106 @@
+
+
+
+
+
+
+The ``batchreactor.py`` module
+==============================
+
+.. py:module:: ansys.chemkin.batchreactors.batchreactor
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: batchreactor
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.batchreactors.batchreactor.BatchReactors`
+            - Generic Chemkin 0-D transient closed homogeneous reactor model
+
+
+          * - :py:obj:`~ansys.chemkin.batchreactors.batchreactor.GivenPressureBatchReactor_FixedTemperature`
+            - Chemkin 0-D transient closed homogeneous reactor model
+
+
+          * - :py:obj:`~ansys.chemkin.batchreactors.batchreactor.GivenPressureBatchReactor_EnergyConservation`
+            - Chemkin 0-D transient closed homogeneous reactor model
+
+
+          * - :py:obj:`~ansys.chemkin.batchreactors.batchreactor.GivenVolumeBatchReactor_FixedTemperature`
+            - Chemkin 0-D transient closed homogeneous reactor model
+
+
+          * - :py:obj:`~ansys.chemkin.batchreactors.batchreactor.GivenVolumeBatchReactor_EnergyConservation`
+            - Chemkin 0-D transient closed homogeneous reactor model
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> BatchReactors</api/ansys/chemkin/batchreactors/batchreactor/BatchReactors>
+    <span class="nf nf-cod-symbol_class"></span> GivenPressureBatchReactor_FixedTemperature</api/ansys/chemkin/batchreactors/batchreactor/GivenPressureBatchReactor_FixedTemperature>
+    <span class="nf nf-cod-symbol_class"></span> GivenPressureBatchReactor_EnergyConservation</api/ansys/chemkin/batchreactors/batchreactor/GivenPressureBatchReactor_EnergyConservation>
+    <span class="nf nf-cod-symbol_class"></span> GivenVolumeBatchReactor_FixedTemperature</api/ansys/chemkin/batchreactors/batchreactor/GivenVolumeBatchReactor_FixedTemperature>
+    <span class="nf nf-cod-symbol_class"></span> GivenVolumeBatchReactor_EnergyConservation</api/ansys/chemkin/batchreactors/batchreactor/GivenVolumeBatchReactor_EnergyConservation>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin closed homogeneous reactor model.
+
+
+
+
+
+
+
+

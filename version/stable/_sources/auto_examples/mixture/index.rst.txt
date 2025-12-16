@@ -1,0 +1,162 @@
+
+
+.. _sphx_glr_auto_examples_mixture:
+
+Mixture
+=======
+
+*Mixture* is the "core" token in **PyChemkin**. It represents a gas-phase mixture by storing
+its pressure, temperature, and species composition. *Stream* is an extended "Class" of *Mixture*
+with the additional attribute of "mass/volumetric flow rate". *Mixture* and *Stream* include utilities
+that can be used to evaluate the mixture properties (density, mixture enthalpy, mixture viscosity, ...)
+and the reaction rates. There are also methods to manipulate the *Mixture*/*Stream* such as merging two mixtures
+adiabatically.
+
+The examples demonstrate how to instantiate the *Mixture*/*Stream* objects, how to extract information and properties
+of a *Mixture*/*Stream*, and how to manipulate *Mixture*/*Stream* objects.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to find the equilibrium state of a mixture. It uses the equilibrium() method with the constant pressure and enthalpy option to estimate the adiabatic flame temperature of a methane-oxygen mixture. This example also explores the influence of the equivalence ratio on the predicted adiabatic flame temperature.">
+
+.. only:: html
+
+  .. image:: /auto_examples/mixture/images/thumb/sphx_glr_adiabaticflametemperature_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_mixture_adiabaticflametemperature.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Estimate the adiabatic flame temperature of a gas mixture</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A mixture is a core component of the PyChemkin framework. In addition to getting mixture thermodynamic and transport properties, such as density, heat capacity, and viscosity, you can combine two mixtures, find the equilibrium state of a mixture, or use a mixture to define the initial state of a reactor. A PyChemkin reactor model is a black box that transforms a mixture from its initial state to a new one.">
+
+.. only:: html
+
+  .. image:: /auto_examples/mixture/images/thumb/sphx_glr_createmixture_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_mixture_createmixture.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Create a mixture</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Calculate the detonation wave speed of a real-gas mixture">
+
+.. only:: html
+
+  .. image:: /auto_examples/mixture/images/thumb/sphx_glr_detonation_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_mixture_detonation.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Calculate the detonation wave speed of a real-gas mixture</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to quickly estimate the steady-state NO level that is formed by the combustion of a fuel-air mixture at a given temperature. Without needing any reaction, the NO concentration gets to its steady state (or the maximum level) when the product mixture from the fuel-air combustion reaches the equilibrium state at the given temperature. To find the equilibrium state of the fresh fuel-air mixture, the equilibrium() method is used with the fixed pressure and fixed temperature options.">
+
+.. only:: html
+
+  .. image:: /auto_examples/mixture/images/thumb/sphx_glr_equilibriumcomposition_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_mixture_equilibriumcomposition.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Estimate the steady-state NO emission level of a complete burned fuel-air mixture</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="One of the advantages of PyChemkin is flexibility. You can establish your own workflow with PyChemkin to meet your simulation goals. This tutorial is an example of building a specialized algorithm to calculate the heating values, the lower heating value (LHV) and the higher heating value (HHV), of fuel mixtures.">
+
+.. only:: html
+
+  .. image:: /auto_examples/mixture/images/thumb/sphx_glr_heatingvalues_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_mixture_heatingvalues.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Calculate the heating values of fuel mixtures</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="PyChemkin provides a set of basic mixture utilities enabling the creation of new mixtures from existing ones. The mixing methods let you combine two mixtures at constant pressure with specific constraints.">
+
+.. only:: html
+
+  .. image:: /auto_examples/mixture/images/thumb/sphx_glr_mixturemixing_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_mixture_mixturemixing.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Combine gas mixtures</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="- Set up from scratch. - Obtained from certain mixture operations. - Based on a point (time or grid) solution of a reactor simulation.">
+
+.. only:: html
+
+  .. image:: /auto_examples/mixture/images/thumb/sphx_glr_reactionrates_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_mixture_reactionrates.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Rank reaction rates</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/mixture/adiabaticflametemperature
+   /auto_examples/mixture/createmixture
+   /auto_examples/mixture/detonation
+   /auto_examples/mixture/equilibriumcomposition
+   /auto_examples/mixture/heatingvalues
+   /auto_examples/mixture/mixturemixing
+   /auto_examples/mixture/reactionrates
+

@@ -1,0 +1,164 @@
+
+
+:class:`Profile`
+================
+
+.. py:class:: ansys.chemkin.reactormodel.Profile(key: str, x: numpy.typing.NDArray[numpy.double], y: numpy.typing.NDArray[numpy.double])
+
+   Generic Chemkin profile keyword class
+
+
+
+.. py:currentmodule:: Profile
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~show`
+            - Show the profile data
+          * - :py:attr:`~resetprofile`
+            - Reset the profile data
+          * - :py:attr:`~getprofile_as_string_list`
+            - Create the keyword input lines as a list for Chemkin applications
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~size`
+            - Get number of data points in the profile
+          * - :py:attr:`~status`
+            - Get the validity of the profile object
+          * - :py:attr:`~pos`
+            - Get position values of profiles data
+          * - :py:attr:`~value`
+            - Get variable values of profile data
+          * - :py:attr:`~profilekey`
+            - Get profile keyword
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.reactormodel import Profile
+
+Property detail
+---------------
+.. py:property:: size
+   :type: int
+
+
+   Get number of data points in the profile
+
+   Returns
+   -------
+       size: integer
+           number of profile data points
+
+
+.. py:property:: status
+   :type: int
+
+
+   Get the validity of the profile object
+
+   Returns
+   -------
+       status: integer
+           profile status
+
+
+.. py:property:: pos
+   :type: numpy.typing.NDArray[numpy.double]
+
+
+   Get position values of profiles data
+
+   Returns
+   -------
+       pos: 1-D double array
+           position [sec, cm]
+
+
+.. py:property:: value
+   :type: numpy.typing.NDArray[numpy.double]
+
+
+   Get variable values of profile data
+
+   Returns
+   -------
+       val: 1-D double array
+           variable value
+
+
+.. py:property:: profilekey
+   :type: str
+
+
+   Get profile keyword
+
+   Returns
+   -------
+       profilekeyword: string
+           keyword associated with the profile data
+
+
+
+
+
+
+Method detail
+-------------
+.. py:method:: show()
+
+   Show the profile data
+
+
+.. py:method:: resetprofile(size: int, x: numpy.typing.NDArray[numpy.double], y: numpy.typing.NDArray[numpy.double])
+
+   Reset the profile data
+
+   Parameters
+   ----------
+       size: integer
+           number of points of the new profile data
+       x: 1-D double array
+           position of the new profile data points
+       y:1-D double array
+           variable value of the new profile data
+
+
+.. py:method:: getprofile_as_string_list() -> tuple[int, list[str]]
+
+   Create the keyword input lines as a list for Chemkin applications
+
+   Returns
+   -------
+       size: integer
+           number of profile lines
+       line: list of strings
+           list of profile related keywords
+
+
+

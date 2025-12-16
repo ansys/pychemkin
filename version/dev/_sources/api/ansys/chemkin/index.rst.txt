@@ -1,0 +1,212 @@
+
+
+
+
+
+
+The ``chemkin`` package
+===========================
+
+.. py:module:: ansys.chemkin
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: chemkin
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.chemistry`
+            - Chemkin Chemistry utilities.
+
+
+          * - :py:obj:`~ansys.chemkin.chemkin_wrapper`
+            - Chemkin-CFD-API python interfaces.
+
+
+          * - :py:obj:`~ansys.chemkin.color`
+            - 
+
+
+          * - :py:obj:`~ansys.chemkin.constants`
+            - Constants used by Chemkin utilities and models.
+
+
+          * - :py:obj:`~ansys.chemkin.flame`
+            - Chemkin utilities for steady state, 1-D flame models.
+
+
+          * - :py:obj:`~ansys.chemkin.grid`
+            - Chemkin grid quality control parameters.
+
+
+          * - :py:obj:`~ansys.chemkin.hybridreactornetwork`
+            - Hybrid reactor network comprised of a mix of open reactors such as PSR and PFR.
+
+
+          * - :py:obj:`~ansys.chemkin.info`
+            - Chemkin help menu for keywords and key phrases.
+
+
+          * - :py:obj:`~ansys.chemkin.inlet`
+            - Chemkin reactor inlet/stream utilities.
+
+
+          * - :py:obj:`~ansys.chemkin.logger`
+            - Provides the singleton helper class for the logger.
+
+
+          * - :py:obj:`~ansys.chemkin.mixture`
+            - Chemkin Mixture utilities.
+
+
+          * - :py:obj:`~ansys.chemkin.reactormodel`
+            - Chemkin general reactor model utilities.
+
+
+          * - :py:obj:`~ansys.chemkin.realgaseos`
+            - Real-gas cubic EOS model.
+
+
+          * - :py:obj:`~ansys.chemkin.steadystatesolver`
+            - Chemkin steady-state solver controlling parameters.
+
+
+          * - :py:obj:`~ansys.chemkin.utilities`
+            - pychemkin utilities
+
+
+
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~msg`
+            - 
+
+
+          * - :py:obj:`~this_msg`
+            - 
+
+
+          * - :py:obj:`~ansys_dir`
+            - 
+
+
+          * - :py:obj:`~ansys_version`
+            - 
+
+
+          * - :py:obj:`~chemkin_dir`
+            - 
+
+
+          * - :py:obj:`~unit_code`
+            - 
+
+
+          * - :py:obj:`~iError`
+            - 
+
+
+          * - :py:obj:`~frm`
+            - 
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> chemistry</api/ansys/chemkin/chemistry/index>
+    <span class="nf nf-fa-file"></span> chemkin_wrapper</api/ansys/chemkin/chemkin_wrapper/index>
+    <span class="nf nf-fa-file"></span> color</api/ansys/chemkin/color/index>
+    <span class="nf nf-fa-file"></span> constants</api/ansys/chemkin/constants/index>
+    <span class="nf nf-fa-file"></span> flame</api/ansys/chemkin/flame/index>
+    <span class="nf nf-fa-file"></span> grid</api/ansys/chemkin/grid/index>
+    <span class="nf nf-fa-file"></span> hybridreactornetwork</api/ansys/chemkin/hybridreactornetwork/index>
+    <span class="nf nf-fa-file"></span> info</api/ansys/chemkin/info/index>
+    <span class="nf nf-fa-file"></span> inlet</api/ansys/chemkin/inlet/index>
+    <span class="nf nf-fa-file"></span> logger</api/ansys/chemkin/logger/index>
+    <span class="nf nf-fa-file"></span> mixture</api/ansys/chemkin/mixture/index>
+    <span class="nf nf-fa-file"></span> reactormodel</api/ansys/chemkin/reactormodel/index>
+    <span class="nf nf-fa-file"></span> realgaseos</api/ansys/chemkin/realgaseos/index>
+    <span class="nf nf-fa-file"></span> steadystatesolver</api/ansys/chemkin/steadystatesolver/index>
+    <span class="nf nf-fa-file"></span> utilities</api/ansys/chemkin/utilities/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin module for Python
+core
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: msg
+
+.. py:data:: this_msg
+   :value: ''
+
+
+.. py:data:: ansys_dir
+   :value: ''
+
+
+.. py:data:: ansys_version
+   :value: 251
+
+
+.. py:data:: chemkin_dir
+
+.. py:data:: unit_code
+
+.. py:data:: iError
+
+.. py:data:: frm
+
+
+

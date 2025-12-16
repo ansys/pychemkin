@@ -1,0 +1,87 @@
+
+
+.. _sphx_glr_auto_examples_engine:
+
+0-D engine models
+=================
+
+**PyChemkin** offers two types of 0-D engine models: the *Homogeneous Charged Compression Ignition (HCCI)* engine model
+and the *Spark Ignition (SI)* engine model. These 0-D engine models simulate the combustion process (or the lack of, in case of a misfire)
+inside an engine cylinder between the *Intake Valve Close (IVC)* and the *Exhaust Valve Open (EVO)* when the
+cylinder is considered as a closed system. The Chemkin *Theory* manual has detailed descriptions of these 0-D engine models.
+
+The examples show the steps of setting up simulations with different *Chemkin* engine models.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized internal combustion (IC) engine models commonly used for fuel combustion and engine performance research. The Chemkin IC engine model is a specialized transient 0-D closed gas-phase reactor that mainly performs combustion simulation between the intake valve closing (IVC) and the exhaust valve opening (EVO), that is, when the engine cylinder resembles a closed chamber. The cylinder volume is derived from the piston motion as a function of the engine crank angle (CA) and engine parameters such as engine speed (RPM) and stroke. The energy equation is always solved, and there are several wall heat transfer models specifically designed for engine simulations.">
+
+.. only:: html
+
+  .. image:: /auto_examples/engine/images/thumb/sphx_glr_hcciengine_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_engine_hcciengine.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Simulate a single-zone HCCI engine</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized internal combustion (IC) engine models commonly used for fuel combustion and engine performance research. The Chemkin IC engine model is a specialized transient 0-D closed gas-phase reactor that mainly performs combustion simulation between the intake valve closing (IVC) and the exhaust valve opening (EVO), that is, when the engine cylinder resembles a closed chamber. The cylinder volume is derived from the piston motion as a function of the engine crank angle (CA) and engine parameters such as engine speed (RPM) and stroke. The energy equation is always solved and there are several wall heat transfer models specifically designed for engine simulations.">
+
+.. only:: html
+
+  .. image:: /auto_examples/engine/images/thumb/sphx_glr_multizone_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_engine_multizone.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Simulate a multi-zone HCCI engine</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Ansys chemkin offers some idealized internal combustion (IC) engine models commonly used for fuel combustion and engine performance research. The Chemkin IC engine model is a specialized transient 0-D closed gas-phase reactor that mainly performs combustion simulation between the intake valve closing (IVC) and the exhaust valve opening (EVO), that is, when the engine cylinder resembles a closed chamber. The cylinder volume is derived from the piston motion as a function of the engine crank angle (CA) and engine parameters such as engine speed (RPM) and stroke. The energy equation is always solved. There are several wall heat transfer models specifically designed for engine simulations.">
+
+.. only:: html
+
+  .. image:: /auto_examples/engine/images/thumb/sphx_glr_sparkignitioengine_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_engine_sparkignitioengine.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Simulate a spark ignition engine</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/engine/hcciengine
+   /auto_examples/engine/multizone
+   /auto_examples/engine/sparkignitioengine
+

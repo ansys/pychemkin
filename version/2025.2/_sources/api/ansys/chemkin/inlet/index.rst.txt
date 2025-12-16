@@ -1,0 +1,189 @@
+
+
+
+
+
+
+The ``ansys.chemkin.inlet`` library
+===================================
+
+.. py:module:: ansys.chemkin.inlet
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: inlet
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.inlet.Stream`
+            - Generic inlet stream consists of the gas species defined in the given chemistry set
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~clone_stream`
+            - Copy the properties of the source Stream to the target Stream.
+
+
+          * - :py:obj:`~compare_streams`
+            - Compare properties of stream B against those of stream A. The stream properties
+
+
+          * - :py:obj:`~adiabatic_mixing_streams`
+            - Create a new Stream object by mixing two streams adiabatically. The
+
+
+          * - :py:obj:`~create_stream_from_mixture`
+            - Create a new Stream object from the given Mixture object.
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Stream</api/ansys/chemkin/inlet/Stream>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin reactor inlet/stream utilities.
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: clone_stream(source: Stream, target: Stream)
+
+   Copy the properties of the source Stream to the target Stream.
+
+   Parameters
+   ----------
+       source: Stream object
+           the "source" Stream to be cloned
+       target: Stream object
+           the "target" Stream to get new properties
+
+
+.. py:function:: compare_streams(streamA: Stream, streamB: Stream, atol: float = 1e-10, rtol: float = 0.001, mode: str = 'mass') -> tuple[bool, float, float]
+
+   Compare properties of stream B against those of stream A. The stream properties
+   include mixture properties such as pressure [atm], temperature [K], and
+   species mass/mole fractions and the stream mass flow rate. When the
+   differences in the property values satisfy both the absolute and the relative
+   tolerances, this method will return "True", that is, stream B is essentially
+   identical to stream A; otherwise, "False" will be returned.
+
+   Parameters
+   ----------
+       streamA: Stream object
+           mixture A, the target stream
+       streamB: Stream object
+           stream B, the sample stream
+       atol: double, default = 1.0e-10
+           the absolute tolerance for the max property differences
+       rtol: double, default = 1.0e-3
+           the relative tolerance for the max property differences
+       mode: string {"mass", "mole"}, default = "mass"
+           compare species "mass" or "mole" fractions
+
+   Returns
+   -------
+       issame: boolean
+           the equivalence of the two mixtures
+       atol_max: double
+           the max absolute difference value
+       rtol_max: double
+           the max relative difference value
+
+
+.. py:function:: adiabatic_mixing_streams(streamA: Stream, streamB: Stream) -> Stream
+
+   Create a new Stream object by mixing two streams adiabatically. The
+   enthalpy of the final stream is the sum of the enthalpies of
+   the two streams, and so is the final mass flow rate.
+
+   Parameters
+   ----------
+       streamA: Stream object
+           mixture A, the target stream
+       streamB: Stream object
+           stream B, the sample stream
+
+   Returns
+   -------
+       final_stream: Stream object
+           the final stream from combining steamA and streamB
+
+
+.. py:function:: create_stream_from_mixture(chem: ansys.chemkin.chemistry.Chemistry, mixture: ansys.chemkin.mixture.Mixture, flow_rate: float = 0.0, mode: str = 'mass') -> Stream
+
+   Create a new Stream object from the given Mixture object.
+
+   Parameters
+   ----------
+       chem: Chemistry object
+           the Chemistry Set used to instantiate the mixture
+       mixture: Mixture object
+           the Mixture whose properties will be used to set up the new Stream
+       flow_rate: double, >= 0.0, default = 0.0
+           the flow rate/velocity of the new Stream, [g/sec], [cm3/sec], [cm/sec], [standard cm3/minute]
+       mode: string, {"mass", "vol", "vel", "sccm"}
+           the type of flow rate data is given by the flow_rate parameter
+
+   Returns
+   -------
+       new_stream: Stream object
+           the new Stream based on the given Mixture
+
+
+
+

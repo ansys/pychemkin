@@ -1,0 +1,210 @@
+
+
+
+
+
+
+The ``ansys.chemkin.constants`` library
+=======================================
+
+.. py:module:: ansys.chemkin.constants
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: constants
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.constants.Air`
+            - define the "air" composition in PyChemkin with a fixed mixture "recipe".
+
+
+          * - :py:obj:`~ansys.chemkin.constants.air`
+            - define the "air" composition in PyChemkin with a fixed mixture "recipe".
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~water_heat_vaporization`
+            - Get the heat if vporization of water at the given temperature [K]
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~BOLTZMANN`
+            - 
+
+
+          * - :py:obj:`~AVOGADRO`
+            - 
+
+
+          * - :py:obj:`~P_ATM`
+            - 
+
+
+          * - :py:obj:`~P_TORRS`
+            - 
+
+
+          * - :py:obj:`~ERGS_PER_JOULE`
+            - 
+
+
+          * - :py:obj:`~JOULES_PER_CALORIE`
+            - 
+
+
+          * - :py:obj:`~ERGS_PER_CALORIE`
+            - 
+
+
+          * - :py:obj:`~ERGS_PER_EV`
+            - 
+
+
+          * - :py:obj:`~EV_PER_K`
+            - 
+
+
+          * - :py:obj:`~R_GAS`
+            - 
+
+
+          * - :py:obj:`~R_GAS_CAL`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Air</api/ansys/chemkin/constants/Air>
+    <span class="nf nf-cod-symbol_class"></span> air</api/ansys/chemkin/constants/air>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Constants used by Chemkin utilities and models.
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: water_heat_vaporization(temperature: float) -> float
+
+   Get the heat if vporization of water at the given temperature [K]
+
+   Parameters
+   ----------
+       temperature: double
+           water temperature [K]
+
+   Returns
+   -------
+       enthalpy: double
+           enthalpy of vaporization of water at the given temperature [erg/g-water]
+
+
+.. py:data:: BOLTZMANN
+   :value: 1.3806504e-16
+
+
+.. py:data:: AVOGADRO
+   :value: 6.02214179e+23
+
+
+.. py:data:: P_ATM
+   :value: 1013250.0
+
+
+.. py:data:: P_TORRS
+   :value: 1333.2236842105262
+
+
+.. py:data:: ERGS_PER_JOULE
+   :value: 10000000.0
+
+
+.. py:data:: JOULES_PER_CALORIE
+   :value: 4.184
+
+
+.. py:data:: ERGS_PER_CALORIE
+   :value: 41840000.0
+
+
+.. py:data:: ERGS_PER_EV
+   :value: 1.602176487e-12
+
+
+.. py:data:: EV_PER_K
+   :value: 11604.505289680863
+
+
+.. py:data:: R_GAS
+   :value: 83144724.71220216
+
+
+.. py:data:: R_GAS_CAL
+   :value: 1.9872066135803572
+
+
+
+

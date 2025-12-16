@@ -1,0 +1,653 @@
+
+
+:class:`Chemistry`
+==================
+
+.. py:class:: ansys.chemkin.chemistry.Chemistry(chem: str = '', surf: str = '', therm: str = '', tran: str = '', label: str = '')
+
+   define and preprocess Chemkin chemistry set
+
+
+
+.. py:currentmodule:: Chemistry
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~preprocess_transportdata`
+            - Instruct the preprocessor to include the transport data
+          * - :py:attr:`~set_file_names`
+            - Assign all input files of the chemistry set
+          * - :py:attr:`~preprocess`
+            - Run Chemkin preprocessor
+          * - :py:attr:`~verify_realgas_model`
+            - Verify the availability of real-gas data in the mechanism
+          * - :py:attr:`~verify_transport_data`
+            - Verify the availability of transport property data in the mechanism
+          * - :py:attr:`~verify_surface_mechanism`
+            - Verify the availability of surface chemistry data in the mechanism
+          * - :py:attr:`~get_specindex`
+            - Get index of the gas species
+          * - :py:attr:`~SpeciesCp`
+            - Get species specific heat capacity at constant pressure
+          * - :py:attr:`~SpeciesCv`
+            - Get species specific heat capacity at constant volume (ideal gas only)
+          * - :py:attr:`~SpeciesH`
+            - Get species enthalpy
+          * - :py:attr:`~SpeciesU`
+            - Get species internal energy
+          * - :py:attr:`~SpeciesVisc`
+            - Get species viscosity
+          * - :py:attr:`~SpeciesCond`
+            - Get species conductivity
+          * - :py:attr:`~SpeciesDiffusionCoeffs`
+            - Get species diffusion coefficients
+          * - :py:attr:`~SpeciesComposition`
+            - Get elemental composition of a species
+          * - :py:attr:`~use_realgas_cubicEOS`
+            - Turn ON the real-gas cubic EOS to compute mixture properties if the mechanism contains necessary data
+          * - :py:attr:`~use_idealgas_law`
+            - Turn on the ideal gas law to compute mixture properties
+          * - :py:attr:`~get_reaction_parameters`
+            - Get the Arrhenius reaction rate parameters of all gas-phase reactions
+          * - :py:attr:`~set_reaction_AFactor`
+            - (Re)set the Arrhenius A-Factor of the given reaction
+          * - :py:attr:`~get_reaction_AFactor`
+            - get the Arrhenius A-Factor of the given reaction
+          * - :py:attr:`~get_gas_reaction_string`
+            - Get the reaction string of the gas-phase reaction specified by the reaction index.
+          * - :py:attr:`~save`
+            - Store the work spaces of the current Chemistry Set
+          * - :py:attr:`~activate`
+            - Switch to (re-activate) the work spaces of the current Chemistry Set
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~chemfile`
+            - Get gas-phase mechanism file name of this chemistry set
+          * - :py:attr:`~thermfile`
+            - Get thermodynamic data filename of this chemistry set
+          * - :py:attr:`~tranfile`
+            - Get transport data filename of this chemistry set
+          * - :py:attr:`~summaryfile`
+            - Get the name of the summary file from the preprocessor
+          * - :py:attr:`~surffile`
+            - Get surface mechanism filename of this chemistry set
+          * - :py:attr:`~species_symbols`
+            - Get list of gas species symbols
+          * - :py:attr:`~element_symbols`
+            - Get the list of element symbols
+          * - :py:attr:`~chemID`
+            - Get chemistry set index
+          * - :py:attr:`~surfchem`
+            - Get surface chemistry status
+          * - :py:attr:`~KK`
+            - Get number of gas species
+          * - :py:attr:`~MM`
+            - Get number of elements in the chemistry set
+          * - :py:attr:`~IIGas`
+            - Get number of gas-phase reactions
+          * - :py:attr:`~AWT`
+            - compute atomic masses
+          * - :py:attr:`~WT`
+            - compute gas species molecular masses
+          * - :py:attr:`~EOS`
+            - Get the available real-gas EOS model
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~realgas_CuEOS`
+            - 
+          * - :py:attr:`~realgas_mixing_rules`
+            - 
+          * - :py:attr:`~userealgas`
+            - 
+          * - :py:attr:`~KSymbol`
+            - 
+          * - :py:attr:`~ESymbol`
+            - 
+          * - :py:attr:`~label`
+            - 
+          * - :py:attr:`~number_species`
+            - 
+          * - :py:attr:`~number_elements`
+            - 
+          * - :py:attr:`~number_gas_reactions`
+            - 
+          * - :py:attr:`~atomic_weight`
+            - 
+          * - :py:attr:`~species_molar_weight`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.chemistry import Chemistry
+
+Property detail
+---------------
+.. py:property:: chemfile
+   :type: str
+
+
+   Get gas-phase mechanism file name of this chemistry set
+
+   Returns
+   -------
+       chemfile: string
+           Full path and name of the Chemkin gas-phase mechanism input file
+
+
+.. py:property:: thermfile
+   :type: str
+
+
+   Get thermodynamic data filename of this chemistry set
+
+   Returns
+   -------
+       thermfile: string
+           Full path and name of the Chemkin thermodynamic data file
+
+
+.. py:property:: tranfile
+   :type: str
+
+
+   Get transport data filename of this chemistry set
+
+   Returns
+   -------
+       tranfile: string
+           Full path and name of the Chemkin thransport data file
+
+
+.. py:property:: summaryfile
+   :type: str
+
+
+   Get the name of the summary file from the preprocessor
+
+   Returns
+   -------
+       tranfile: string
+           Full path and name of the preprocessing summary file
+
+
+.. py:property:: surffile
+   :type: str
+
+
+   Get surface mechanism filename of this chemistry set
+
+   Returns
+   -------
+       tranfile: string
+           Full path and name of the Chemkin surface mechanism input file
+
+
+.. py:property:: species_symbols
+
+   Get list of gas species symbols
+
+   Returns
+   -------
+       Ksymbol: list of strings
+           list of species symbols in the gas-phase mechanism
+
+
+.. py:property:: element_symbols
+
+   Get the list of element symbols
+
+   Returns
+   -------
+       Esymbol: list of strings
+           list of element symbols in the mechanism
+
+
+.. py:property:: chemID
+   :type: int
+
+
+   Get chemistry set index
+
+   Returns
+   -------
+       chemIDx: integer
+           index of the Chemistry set
+
+
+.. py:property:: surfchem
+   :type: int
+
+
+   Get surface chemistry status
+
+   Returns
+   -------
+       status: integer, {0, 1}
+           indicating whether the Chemistry set includes a surface mechanism
+           0 = this chemistry set does NOT include a surface chemistry
+           1 = this chemistry set includes a  surface chemistry
+
+
+.. py:property:: KK
+   :type: int
+
+
+   Get number of gas species
+
+   Returns
+   -------
+       KK: integer
+           total number of gas-phase species in the Chemistry set
+
+
+.. py:property:: MM
+   :type: int
+
+
+   Get number of elements in the chemistry set
+
+   Returns
+   -------
+       MM: integer
+           total number of elements in the Chemistry set
+
+
+.. py:property:: IIGas
+   :type: int
+
+
+   Get number of gas-phase reactions
+
+   Returns
+   -------
+       IIGas: integer
+           total number of gas-phase reactions in the Chemistry set
+
+
+.. py:property:: AWT
+   :type: numpy.typing.NDArray[numpy.double]
+
+
+   compute atomic masses
+
+   Returns
+   -------
+       AWT: 1-D double array
+           masses of the elements in the Chemistry set [g/mole]
+
+
+.. py:property:: WT
+   :type: numpy.typing.NDArray[numpy.double]
+
+
+   compute gas species molecular masses
+
+   Returns
+   -------
+       WT: 1-D double array
+           molecular masses of the gas-phase species in the Chemistry set [g/mole]
+
+
+.. py:property:: EOS
+   :type: int
+
+
+   Get the available real-gas EOS model
+
+   Returns
+   -------
+   count: integer
+       number of available cubic EOS models in Chemkin
+
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: realgas_CuEOS
+   :value: ['ideal gas', 'Van der Waals', 'Redlich-Kwong', 'Soave', 'Aungier', 'Peng-Robinson']
+
+
+.. py:attribute:: realgas_mixing_rules
+   :value: ['Van der Waals', 'pseudocritical']
+
+
+.. py:attribute:: userealgas
+   :value: False
+
+
+.. py:attribute:: KSymbol
+   :type:  list[str]
+   :value: []
+
+
+.. py:attribute:: ESymbol
+   :type:  list[str]
+   :value: []
+
+
+.. py:attribute:: label
+   :value: ' '
+
+
+.. py:attribute:: number_species
+
+.. py:attribute:: number_elements
+
+.. py:attribute:: number_gas_reactions
+
+.. py:attribute:: atomic_weight
+
+.. py:attribute:: species_molar_weight
+
+
+
+Method detail
+-------------
+.. py:method:: preprocess_transportdata()
+
+   Instruct the preprocessor to include the transport data
+
+
+.. py:method:: set_file_names(chem: str = '', surf: str = '', therm: str = '', tran: str = '')
+
+   Assign all input files of the chemistry set
+
+   Parameters
+   ----------
+       chem: string, optional
+           name of the gas mechanism file with the full path
+       surf: string, optional
+           name of the surface mechanism file with the full path
+       therm: string, optional
+           name of the thermodynamic data file with the full path
+       tran: string, optional
+           name of the transport data file with the full path
+
+
+.. py:method:: preprocess() -> int
+
+   Run Chemkin preprocessor
+
+   Returns
+   -------
+       Error code: integer
+
+
+.. py:method:: verify_realgas_model()
+
+   Verify the availability of real-gas data in the mechanism
+
+
+.. py:method:: verify_transport_data() -> bool
+
+   Verify the availability of transport property data in the mechanism
+
+   Returns
+   -------
+       availability: boolean
+           True = the transport property is available
+
+
+.. py:method:: verify_surface_mechanism() -> bool
+
+   Verify the availability of surface chemistry data in the mechanism
+
+   Returns
+   -------
+       availability: boolean
+           True = the surface chemistry data is available
+
+
+.. py:method:: get_specindex(specname: str) -> int
+
+   Get index of the gas species
+
+   Returns
+   -------
+       specindex: integer
+           index of the given species symbols in the gas-phase mechanism
+
+
+.. py:method:: SpeciesCp(temp: float = 0.0, pres: Union[float, None] = None) -> numpy.typing.NDArray[numpy.double]
+
+   Get species specific heat capacity at constant pressure
+
+   Parameters
+   ----------
+       temp: double
+           Temperature [K]
+       pres: double, optional
+           Pressure [dynes/cm2] required when real gas model is activated
+
+   Returns
+   -------
+       Cp: 1-D double array
+           species specific heat capacities at constant pressure [ergs/mol-K]
+
+
+.. py:method:: SpeciesCv(temp: float = 0.0, pres: Union[float, None] = None) -> numpy.typing.NDArray[numpy.double]
+
+   Get species specific heat capacity at constant volume (ideal gas only)
+
+   Parameters
+   ----------
+       temp: double
+           Temperature [K]
+       pres: double, optional
+           Pressure [dynes/cm2] required when real gas model is activated
+
+   Returns
+   -------
+       Cv: 1-D double array
+           species specific heat capacities at constant volume [ergs/mol-K]
+
+
+.. py:method:: SpeciesH(temp: float = 0.0, pres: Union[float, None] = None) -> numpy.typing.NDArray[numpy.double]
+
+   Get species enthalpy
+
+   Parameters
+   ----------
+       temp: double
+           Temperature [K]
+       pres: double, optional
+           Pressure [dynes/cm2] required when real gas model is activated
+
+   Returns
+   -------
+       H: 1-D double array
+           species enthalpy [ergs/mol]
+
+
+.. py:method:: SpeciesU(temp: float = 0.0, pres: Union[float, None] = None) -> numpy.typing.NDArray[numpy.double]
+
+   Get species internal energy
+
+   Parameters
+   ----------
+       temp: double
+           Temperature [K]
+       pres: double, optional
+           Pressure [dynes/cm2] required when real gas model is activated
+
+   Returns
+   -------
+       U: 1-D double array
+           species internal energy [ergs/mol]
+
+
+.. py:method:: SpeciesVisc(temp: float = 0.0) -> numpy.typing.NDArray[numpy.double]
+
+   Get species viscosity
+
+   Parameters
+   ----------
+       temp: double
+           Temperature [K]
+
+   Returns
+   -------
+       visc: 1-D double array
+           species viscosity [gm/cm-sec]
+
+
+.. py:method:: SpeciesCond(temp: float = 0.0) -> numpy.typing.NDArray[numpy.double]
+
+   Get species conductivity
+
+   Parameters
+   ----------
+       temp: double
+           Temperature [K]
+
+   Returns
+   -------
+       cond: 1-D double array
+           species conductivity [ergs/cm-K-sec]
+
+
+.. py:method:: SpeciesDiffusionCoeffs(press: float = 0.0, temp: float = 0.0) -> numpy.typing.NDArray[numpy.double]
+
+   Get species diffusion coefficients
+
+   Parameters
+   ----------
+       press: double
+           Pressure [dynes/cm2]
+       temp: double
+           Temperature [K]
+
+   Returns
+   -------
+       diffusioncoeffs: 2-D double array, dimension = [number_species, number_species]
+           species diffusion coefficients [cm2/sec]
+
+
+.. py:method:: SpeciesComposition(elemindex: int = -1, specindex: int = -1) -> int
+
+   Get elemental composition of a species
+
+   Parameters
+   ----------
+       elemindex: integer
+           index of the element
+       specindex: integer
+           index of the gas species
+
+   Returns
+   -------
+       count: integer
+           number of the element in the given gas species
+
+
+.. py:method:: use_realgas_cubicEOS()
+
+   Turn ON the real-gas cubic EOS to compute mixture properties if the mechanism contains necessary data
+
+
+.. py:method:: use_idealgas_law()
+
+   Turn on the ideal gas law to compute mixture properties
+
+
+.. py:method:: get_reaction_parameters() -> tuple[numpy.typing.NDArray[numpy.double], numpy.typing.NDArray[numpy.double], numpy.typing.NDArray[numpy.double]]
+
+   Get the Arrhenius reaction rate parameters of all gas-phase reactions
+
+   Returns
+   -------
+       AFactor: 1-D double array
+           Arrhenius pre-exponent A-Factor of reaction in [mole-cm3-sec-K]
+       TBeta: 1-D double array
+           Arrhenius temperature exponent [-]
+       AEnergy: 1-D double array
+           activation temperature [K]
+
+
+.. py:method:: set_reaction_AFactor(reaction_index: int, AFactor: float)
+
+   (Re)set the Arrhenius A-Factor of the given reaction
+
+   Parameters
+   ----------
+       reaction_index: integer
+           index of the gas-phase reaction of which the A-Factor to be reset
+       AFctor: double
+           new A-Factor value in [mole-cm3-sec-K]
+
+
+.. py:method:: get_reaction_AFactor(reaction_index: int) -> float
+
+   get the Arrhenius A-Factor of the given reaction
+
+   Parameters
+   ----------
+       reaction_index: integer
+           index of the reaction
+
+   Returns
+   -------
+       AFactor: double
+           Arrhenius A-Factor of the given reaction in [mole-cm3-sec-K]
+
+
+.. py:method:: get_gas_reaction_string(reaction_index: int) -> str
+
+   Get the reaction string of the gas-phase reaction specified by the reaction index.
+
+   Parameters
+   ----------
+       reaction_index: integer
+           (base-1) gas-phase reaction index
+
+   Returns
+   -------
+       reactionstring: string
+           reaction string of the given reaction
+
+
+.. py:method:: save()
+
+   Store the work spaces of the current Chemistry Set
+   if new Chemistry Set will be created later in the same project
+
+
+.. py:method:: activate()
+
+   Switch to (re-activate) the work spaces of the current Chemistry Set
+   when there are multiple Chemistry Sets in the same project
+
+
+

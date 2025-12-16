@@ -1,0 +1,126 @@
+
+
+.. _sphx_glr_auto_examples_batch:
+
+Batch reactor
+=============
+
+The *batch reactor* is an idealized 0-D transient closed reactor model in which the gas inside
+the reactor is assumed to be homogeneous. When the pressure of the *batch reactor* is constrained,
+the reactor volume would vary to conserve the total gas mass. Likewise, the reactor pressure might
+change when the reactor volume is "given". The gas temperature can be "given" by piecewise linear
+profile data or solved by the energy equation.
+
+The examples consist of projects that utilize the *batch reactor* model to perform simulations of
+various complexities, from tracking the evolution of the mixture properties to the A-factor sensitivity
+analysis.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized reactor models commonly used for studying chemical processes and for developing reaction mechanisms. The batch reactor is a transient 0-D numerical portrayal of the closed homogeneous/perfectly mixed gas-phase reactor. There are two basic types of batch reactor models:">
+
+.. only:: html
+
+  .. image:: /auto_examples/batch/images/thumb/sphx_glr_closed_homogeneous__transient_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_batch_closed_homogeneous__transient.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Simulate hydrogen combustion in a constant-pressure reactor</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="One of the important properties of hydrocarbon fuels is the ignition delay time. For automobiles, the gasoline, a mixtures of many fuel species, is graded by the octane number which is closely related to the fuel mixture&#x27;s ignition characteristics. Higher octane number fuel tends to ignite more easily. However, this does not mean you should blindly put the highest octane number fuel into your car. Car engines are designed for specific operating conditions, and you should always use the gasoline grades recommended by the car/engine manufacturer to prevent damages to the engine.">
+
+.. only:: html
+
+  .. image:: /auto_examples/batch/images/thumb/sphx_glr_ignitiondelay_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_batch_ignitiondelay.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Predict the ignition delay time of a combustible mixture</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized reactor models commonly used for studying chemical processes and for developing reaction mechanisms. The batch reactor is a transient 0-D numerical portrayal of the closed homogeneous/perfectly mixed gas-phase reactor. There are two basic types of batch reactor models:">
+
+.. only:: html
+
+  .. image:: /auto_examples/batch/images/thumb/sphx_glr_rcm_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_batch_rcm.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Simulate a rapid compression machine</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="One of the advantages of PyChemkin is customizability. You can easily build a specialized workflow to facilitate your simulation goals.">
+
+.. only:: html
+
+  .. image:: /auto_examples/batch/images/thumb/sphx_glr_sensitivity_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_batch_sensitivity.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Perform brute-force sensitivity analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="How does the volume of water vapor evolves when it is cooled from a temperature above the boiling point to a temperature that is just above the freezing point at constant pressure? How fast does the vapor volume drop? This example uses the GivenPressureBatchReactor_FixedTemperature model to explore the different behaviors between an ideal gas water vapor and its real gas counterpart.">
+
+.. only:: html
+
+  .. image:: /auto_examples/batch/images/thumb/sphx_glr_vapor_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_batch_vapor.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Explore cooling water vapor</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/batch/closed_homogeneous__transient
+   /auto_examples/batch/ignitiondelay
+   /auto_examples/batch/rcm
+   /auto_examples/batch/sensitivity
+   /auto_examples/batch/vapor
+

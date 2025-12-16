@@ -1,0 +1,168 @@
+
+
+:class:`GivenVolumeBatchReactor_EnergyConservation`
+===================================================
+
+.. py:class:: ansys.chemkin.batchreactors.batchreactor.GivenVolumeBatchReactor_EnergyConservation(reactor_condition: ansys.chemkin.inlet.Stream, label: str = 'CONV')
+
+   Bases: :py:obj:`BatchReactors`
+
+
+   Chemkin 0-D transient closed homogeneous reactor model
+   with given reactor volume (CONV) and
+   solving the energy equation (ENRG)
+
+
+
+.. py:currentmodule:: GivenVolumeBatchReactor_EnergyConservation
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_heat_transfer_area_profile`
+            - Specify reactor heat transfer area profile
+          * - :py:attr:`~set_heat_loss_profile`
+            - Specify reactor heat loss rate profile
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~time`
+            - Get simulation end time (required)
+          * - :py:attr:`~heat_loss_rate`
+            - Get heat loss rate from the reactor to the surroundings
+          * - :py:attr:`~heat_transfer_coefficient`
+            - Get heat transfer coefficient between the reactor and the surroundings
+          * - :py:attr:`~ambient_temperature`
+            - Get ambient temperature
+          * - :py:attr:`~heat_transfer_area`
+            - Get heat transfer area between the reactor and the surroundings
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.batchreactors.batchreactor import GivenVolumeBatchReactor_EnergyConservation
+
+Property detail
+---------------
+.. py:property:: time
+   :type: float
+
+
+   Get simulation end time (required)
+
+   Returns
+   -------
+       endtime: double
+           simulation duration or simulation end time [sec]
+
+
+.. py:property:: heat_loss_rate
+   :type: float
+
+
+   Get heat loss rate from the reactor to the surroundings
+
+   Returns
+   -------
+       heat_loss_rate: double
+           heat loss rate [cal/sec]
+
+
+.. py:property:: heat_transfer_coefficient
+   :type: float
+
+
+   Get heat transfer coefficient between the reactor and the surroundings
+
+   Returns
+   -------
+       heat_transfer_coefficient: double
+           heat transfer coefficient [cal/cm2-K-sec]
+
+
+.. py:property:: ambient_temperature
+   :type: float
+
+
+   Get ambient temperature
+
+   Returns
+   -------
+       temperature: double
+           ambient temperature [K]
+
+
+.. py:property:: heat_transfer_area
+   :type: float
+
+
+   Get heat transfer area between the reactor and the surroundings
+
+   Returns
+   -------
+       area: double, optional, default = 0.0
+           heat transfer area [cm2]
+
+
+
+
+
+
+Method detail
+-------------
+.. py:method:: set_heat_transfer_area_profile(x: numpy.typing.NDArray[numpy.double], area: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify reactor heat transfer area profile
+
+   Parameters
+   ----------
+       x: 1D double array
+           position value of the profile data [cm or sec]
+       area: 1D double array
+           heat transfer area value of the profile data [cm2]
+
+   Returns
+   -------
+       error code: integer
+
+
+.. py:method:: set_heat_loss_profile(x: numpy.typing.NDArray[numpy.double], Qloss: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify reactor heat loss rate profile
+
+   Parameters
+   ----------
+       x: 1D double array
+           position value of the profile data [cm or sec]
+       Qloss: 1D double array
+           heat loss rate value of the profile data [cal/sec]
+
+   Returns
+   -------
+       error code: integer
+
+
+

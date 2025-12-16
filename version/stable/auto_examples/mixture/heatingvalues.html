@@ -1,0 +1,1069 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Calculate the heating values of fuel mixtures &#8212; PyChemkin</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/ansys_sphinx_theme.css?v=d2ac875c" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+ 
+<link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script src="../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/mixture/heatingvalues';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Combine gas mixtures" href="mixturemixing.html" />
+    <link rel="prev" title="Estimate the steady-state NO emission level of a complete burned fuel-air mixture" href="equilibriumcomposition.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/auto_examples/mixture/heatingvalues.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+  <!-- If there is no MeiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+   
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <script>document.write(`<img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark" alt="PyChemkin - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/dev/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/dev/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../chemistry/index.html">Chemistry</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Mixture</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="adiabaticflametemperature.html">Estimate the adiabatic flame temperature of a gas mixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="createmixture.html">Create a mixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="detonation.html">Calculate the detonation wave speed of a real-gas mixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="equilibriumcomposition.html">Estimate the steady-state NO emission level of a complete burned fuel-air mixture</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Calculate the heating values of fuel mixtures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixturemixing.html">Combine gas mixtures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reactionrates.html">Rank reaction rates</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../batch/index.html">Batch reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../engine/index.html">0-D engine models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSR/index.html">Perfectly stirred reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PFR/index.html">Plug-flow reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reactor_network/index.html">PSR network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../premixed_flame/index.html">Premixed flame models</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Mixture</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page">Calculate the heating values of fuel mixtures</li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-mixture-heatingvalues-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="calculate-the-heating-values-of-fuel-mixtures">
+<span id="ref-heating-values"></span><span id="sphx-glr-auto-examples-mixture-heatingvalues-py"></span><h1>Calculate the heating values of fuel mixtures<a class="headerlink" href="#calculate-the-heating-values-of-fuel-mixtures" title="Link to this heading">#</a></h1>
+<p>One of the advantages of PyChemkin is flexibility. You can establish your own
+workflow with PyChemkin to meet your simulation goals. This tutorial is an example
+of building a specialized algorithm to calculate the <em>heating values</em>, the lower heating
+value (LHV) and the higher heating value (HHV), of fuel mixtures.</p>
+<p>The <strong>heating value</strong> is the net heat release from the complete combustion of a hydrocarbon
+(HC) in oxygen at the standard state condition (298.15 [K] and 1 [atm]). The combustion products
+are mainly CO<sub>2</sub> and H<sub>2</sub>O, and are assumed to be cooled back to the standard state
+condition in the heating value calculation. The difference between the lower heating value
+and the higher heating value is the final form of the H<sub>2</sub>O; the water is in <em>gas phase</em>
+for the <em>lower</em> heating value, and in <em>liquid phase</em> for the <em>higher</em> heating value. You can
+see that the higher heating value can be obtained by adding the water <em>heat of vaporization</em> to the
+lower heating value. Thus, the workflow for calculating the heating values of any HC fuels consists of
+two main steps:</p>
+<blockquote>
+<div><p>1. Calculating the water heat of vaporization at the standard state condition: this can be done
+by getting the value from a well trusted database or by using the <strong>chemkin</strong> trick described below.</p>
+<p>2. Calculating the heat of combustion of the fuel mixture in pure oxygen: here you will use the
+<code class="docutils literal notranslate"><span class="pre">Find_Equilibrium</span></code> method with the <em>fixed pressure</em> and <em>fixed temperature</em> option (the default setting).</p>
+</div></blockquote>
+<p>The lower heating value is the enthalpy different between the fresh fuel and oxygen mixture and the final product
+mixture. Adding the heat of vaporization to the lower heating value, and you get the higher heating value.</p>
+<p>In this tutorial, you will compute the heating values of some pure fuel species such as methane and n-butane
+as well as some fuel mixtures such as PRF RON 80 and biodiesel. You can compare the values you get here with
+the known values from a trusty database.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<section id="import-pychemkin-package-and-start-the-logger">
+<h2>Import PyChemkin package and start the logger<a class="headerlink" href="#import-pychemkin-package-and-start-the-logger" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ansys.chemkin</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ck</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin</span><span class="w"> </span><span class="kn">import</span> <span class="n">Color</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_file</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>  <span class="c1"># number crunching</span>
+
+<span class="c1"># check working directory</span>
+<span class="n">current_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;working directory: &quot;</span> <span class="o">+</span> <span class="n">current_dir</span><span class="p">)</span>
+<span class="c1"># set mechanism directory (the default Chemkin mechanism data directory)</span>
+<span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ck</span><span class="o">.</span><span class="n">ansys_dir</span><span class="p">,</span> <span class="s2">&quot;reaction&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;data directory: &quot;</span> <span class="o">+</span> <span class="n">data_dir</span><span class="p">)</span>
+<span class="c1"># set pressure &amp; temperature condition of the standard state</span>
+<span class="n">thispressure</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Patm</span>
+<span class="n">thistemperature</span> <span class="o">=</span> <span class="mf">298.15</span>
+</pre></div>
+</div>
+</section>
+<section id="calculate-the-heat-of-vaporization">
+<h2>Calculate the heat of vaporization<a class="headerlink" href="#calculate-the-heat-of-vaporization" title="Link to this heading">#</a></h2>
+<p>Because the thermodynamic data (mainly the enthalpy) of both the vapor and the
+liquid water are available in the standard thermodynamic data file <code class="docutils literal notranslate"><span class="pre">therm.dat</span></code>
+that comes with the Ansys Chemkin in the <em>reaction/data</em> directory, you can, in theory,
+compute the water heat of vaporization at a given temperature by finding the enthalpy
+difference between the water vapor and its liquid counterpart. In the <code class="docutils literal notranslate"><span class="pre">getwaterheatofvaporization</span></code>
+method, a mechanism with just the water vapor <code class="docutils literal notranslate"><span class="pre">H2O</span></code> and the liquid water <code class="docutils literal notranslate"><span class="pre">H2O(L)</span></code> is created
+in situ. Simply find and return the enthalpy difference of the two species by using the <code class="docutils literal notranslate"><span class="pre">SpecisH</span></code>
+method after preprocessing the <code class="docutils literal notranslate"><span class="pre">WaterMech</span></code> <code class="docutils literal notranslate"><span class="pre">Chemistry</span> <span class="pre">Set</span></code>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">getwaterheatofvaporization</span><span class="p">(</span><span class="n">temp</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute water heat of vaporization [erg/g-water] at the given temperature</span>
+<span class="sd">    Use the enthalpy difference between water vapor and liquid water at the temperature</span>
+<span class="sd">    Enthalpy data depend on temperature only</span>
+<span class="sd">    There are empirical formulas for heat of vaporization, for example, DIPPR EQ.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        temp: double scalar</span>
+<span class="sd">            water temperature [K]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        enthalpy: double</span>
+<span class="sd">            water enthalpy of vaporization [erg/g-water]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># compute water heat of vaporization</span>
+    <span class="c1"># create a chemistry set object</span>
+    <span class="n">WaterMech</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Chemistry</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Water Only&quot;</span><span class="p">)</span>
+    <span class="c1">#</span>
+    <span class="c1"># create a new mechanism input file</span>
+    <span class="c1">#</span>
+    <span class="n">waterfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">current_dir</span><span class="p">,</span> <span class="s2">&quot;water_chem.inp&quot;</span><span class="p">)</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">waterfile</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="c1"># the water mechanism contains two species:</span>
+    <span class="c1"># water vapor (H2O) and liquid water (H2O(L))</span>
+    <span class="c1"># decalre elements</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;ELEMENT H O END</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SPECIES</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;H2O   H2O(L)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;END</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># no reaction is needed for thermodynamic property calculation</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;REACTION</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;END</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># close the mechnaism file</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="c1"># set mechanism input files</span>
+    <span class="c1"># including the full file path is recommended</span>
+    <span class="n">WaterMech</span><span class="o">.</span><span class="n">chemfile</span> <span class="o">=</span> <span class="n">waterfile</span>
+    <span class="n">WaterMech</span><span class="o">.</span><span class="n">thermfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">data_dir</span><span class="p">,</span>
+        <span class="s2">&quot;therm.dat&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># pre-process</span>
+    <span class="n">iError</span> <span class="o">=</span> <span class="n">WaterMech</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">iError</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="c1"># get species enthalpies [erg/mol] at 298.15 [K]</span>
+    <span class="n">waterenthalpies</span> <span class="o">=</span> <span class="n">WaterMech</span><span class="o">.</span><span class="n">SpeciesH</span><span class="p">(</span><span class="n">thistemperature</span><span class="p">)</span>
+    <span class="c1"># compute heat of vaporization of water [erg/g-water]</span>
+    <span class="c1"># H_water_vapor - H_liquid_water</span>
+    <span class="n">heatvaporization</span> <span class="o">=</span> <span class="p">(</span><span class="n">waterenthalpies</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">waterenthalpies</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">WaterMech</span><span class="o">.</span><span class="n">WT</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># remove the temporary water mechanism file</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">waterfile</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">heatvaporization</span>
+</pre></div>
+</div>
+</section>
+<section id="create-your-own-fuel-library">
+<h2>Create your own fuel library<a class="headerlink" href="#create-your-own-fuel-library" title="Link to this heading">#</a></h2>
+<p>You can create a fuel “library” mechanism that contains typical fuel species, oxygen, and
+the complete combustion products o(carbon dioxide and water <em>vapor</em>) only. No reaction is
+needed for this purpose as you will perform equilibrium calculation to get the complete
+combustion product mixture.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>It is recommended <strong>not</strong> to include any intermediate species such as CH3 or OH in the
+fuel library as these species might interfere with the equilibrium calculation used to
+determine the complete combustion products.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The thermodynamic data file <code class="docutils literal notranslate"><span class="pre">Gasoline-Diesel-Biodiesel_PAH_NOx_therm_MFL2024.dat</span></code> should
+have the property data of most commonly seen fuel species. This encrypted data file is developed
+under the <em>Model Fuel Library</em> project and is available in the <em>reaction/data/ModelFuelLibrary</em>.</p>
+</div>
+</section>
+<section id="instantiate-the-fuel-chemistry-set">
+<h2>Instantiate the <strong>fuel</strong> <code class="docutils literal notranslate"><span class="pre">Chemistry</span> <span class="pre">Set</span></code><a class="headerlink" href="#instantiate-the-fuel-chemistry-set" title="Link to this heading">#</a></h2>
+<p>Create the chemistry set object <code class="docutils literal notranslate"><span class="pre">MyGasMech</span></code>. The mechanism input file <code class="docutils literal notranslate"><span class="pre">fuel_chem.inp</span></code> will
+be created below.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can keep this file for later uses, for example, by adding more fuel species. (remember to
+remove the``remove(mymechfile))`` command at the end of this project).</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">MyGasMech</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Chemistry</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;EQ&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="create-the-fuel-mechanism-file">
+<h2>Create the <strong>fuel</strong> mechanism file<a class="headerlink" href="#create-the-fuel-mechanism-file" title="Link to this heading">#</a></h2>
+<p>create a new mechanism input file</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">mymechfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">current_dir</span><span class="p">,</span> <span class="s2">&quot;fuels_chem.inp&quot;</span><span class="p">)</span>
+<span class="n">m</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">mymechfile</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="c1"># the mechanism contains only the necessary species (fuel, oxygen, and major combustion products)</span>
+<span class="c1"># decalre elements</span>
+<span class="n">m</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;ELEMENT c h o END</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># declare species</span>
+<span class="c1"># ch4: Methane                  c4h10: n-Butane</span>
+<span class="c1"># nc5h12: n-Pentane             nc7h16: n-Heptane</span>
+<span class="c1"># ic8h18: iso-Octane            nc9h20: n-Nonane</span>
+<span class="c1"># nc10h22: n-Decane             hmn: Heptamethylnonane</span>
+<span class="c1"># c6h5ch3: Toluene              c6h5c2h5: Ethylbenzene</span>
+<span class="c1"># chx: Cyclohexane              mch: Methylcyclohexane</span>
+<span class="c1"># decalin: Decalin              ch3oh: Methanol</span>
+<span class="c1"># c2h5oh: Alcohol               ch3och3: Dimethyl ether (DME)</span>
+<span class="c1"># nc4h9oh: n-Butanol            mb: Mythyl butanoate</span>
+<span class="c1"># md: Methyl decanoate          mhd: Methyl stearate</span>
+<span class="n">m</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;SPECIES</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;ch4 c4h10 nc5h12 nc7h16 ic8h18 nc9h20 nc10h22</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;hmn c6h5ch3 c6h5c2h5 chx mch decalin</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;ch3oh c2h5oh ch3och3 nc4h9oh</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;mb md mhd</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;o2 co2 h2o</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;END</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># no reaction is needed for equilibrium calculation</span>
+<span class="n">m</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;REACTION</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;END</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># close the mechnaism file</span>
+<span class="n">m</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="c1">#</span>
+<span class="c1"># set mechanism input files</span>
+<span class="c1"># including the full file path is recommended</span>
+<span class="c1"># note that the &quot;year&quot; in thermodynamic data file name could be different.</span>
+<span class="c1"># it&#39;s MFL2023 for Ansys Chemkin 2025R1, MFL2024 for 2025R2, ...</span>
+<span class="n">MyGasMech</span><span class="o">.</span><span class="n">chemfile</span> <span class="o">=</span> <span class="n">mymechfile</span>
+<span class="n">therm_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+    <span class="n">data_dir</span><span class="p">,</span>
+    <span class="s2">&quot;ModelFuelLibrary&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Full&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">MyGasMech</span><span class="o">.</span><span class="n">thermfile</span> <span class="o">=</span> <span class="n">find_file</span><span class="p">(</span>
+    <span class="n">therm_dir</span><span class="p">,</span>
+    <span class="s2">&quot;Gasoline-Diesel-Biodiesel_PAH_NOx_therm_MFL&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dat&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="pre-process-the-fuel-chemistry-set">
+<h2>Pre-process the <strong>fuel</strong> <code class="docutils literal notranslate"><span class="pre">Chemistry</span> <span class="pre">Set</span></code><a class="headerlink" href="#pre-process-the-fuel-chemistry-set" title="Link to this heading">#</a></h2>
+<p>preprocess the fuel mechanism “MyGasMech`` just created.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">iError</span> <span class="o">=</span> <span class="n">MyGasMech</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">iError</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">GREEN</span> <span class="o">+</span> <span class="s2">&quot;&gt;&gt;&gt; preprocess OK&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="s2">&quot;&gt;&gt;&gt; preprocess failed!&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+    <span class="n">exit</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="find-the-water-heat-of-vaporization">
+<h2>Find the water heat of vaporization<a class="headerlink" href="#find-the-water-heat-of-vaporization" title="Link to this heading">#</a></h2>
+<p>Set the fresh fuel-oygen mixture pressure &amp; temperature to the standard state condition for the
+heating value calculations. Since the difference between the <em>lower heating value (LHV)</em> and the
+<em>higher heating value (HHV)</em> is the final form of the water. You will calculate the LHV
+first and get the HHV by adding the water heat of vaporization to the LHV. Use the <code class="docutils literal notranslate"><span class="pre">get_specindex</span></code>
+method to find the species index of water <code class="docutils literal notranslate"><span class="pre">MyGasMech</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The water heat of vaporization is computed by the <code class="docutils literal notranslate"><span class="pre">getwaterheatofvaporization</span></code> method you
+created earlier in this project. Reactivate <code class="docutils literal notranslate"><span class="pre">MyGasMech</span></code> (<code class="docutils literal notranslate"><span class="pre">MyGasMech.activate</span></code>) after calling
+<code class="docutils literal notranslate"><span class="pre">getwaterheatofvaporization</span></code> because another <code class="docutils literal notranslate"><span class="pre">Chemistry</span> <span class="pre">Set</span></code> <code class="docutils literal notranslate"><span class="pre">WaterMech</span></code> is used there.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># find the index for water vapor</span>
+<span class="n">watervaporID</span> <span class="o">=</span> <span class="n">MyGasMech</span><span class="o">.</span><span class="n">get_specindex</span><span class="p">(</span><span class="s2">&quot;h2o&quot;</span><span class="p">)</span>
+
+<span class="c1"># water heat of vaporization [erg/g-water] at 298.15 [K]</span>
+<span class="c1"># either call this method before creating the current Chemistry Set</span>
+<span class="c1"># or use the activate method to switch back to the current Chemistry Set after the call</span>
+<span class="n">heatvaporization</span> <span class="o">=</span> <span class="n">getwaterheatofvaporization</span><span class="p">(</span><span class="n">thistemperature</span><span class="p">)</span>
+
+<span class="c1"># switch back to MyGasMech</span>
+<span class="n">MyGasMech</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-the-unburned-fuel-oxygen-mixture">
+<h2>Set up the unburned <strong>fuel-oxygen</strong> mixture<a class="headerlink" href="#set-up-the-unburned-fuel-oxygen-mixture" title="Link to this heading">#</a></h2>
+<p>Set up the <em>unburned</em> “fuel-oxygen” mixture for the heating value calculations. Here the
+<code class="docutils literal notranslate"><span class="pre">X_by_Equivalence_Ratio</span></code> method with <span class="math notranslate nohighlight">\(\phi = 1\)</span> is employed to generate a
+stoichiometric fuel-oxygen mixture. The advantage of using this method is that you do not
+need to calculate the “fuel-oxygen” composition for every fuel mixture. You can use a <em>lean</em>
+“fuel-oxygen” mixture, too, because the standard heat of formation of O<sub>2</sub> is zero
+by definition.</p>
+<p>Here you will compute the heating values of four fuel mixtures: CH<sub>4</sub>,C<sub>4</sub>H<sub>10</sub>,
+PRF 80 (20% C<sub>7</sub>H<sub>16</sub> + 80% C<sub>8</sub>H<sub>18</sub>), and a mock-up biodiesel mixture (
+90% C<sub>19</sub>H<sub>38</sub>O<sub>2</sub> + 10% CH<sub>3</sub>OH).</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># prepare the fuel mixtures</span>
+<span class="n">fuel</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">)</span>
+<span class="n">fuel</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">thispressure</span>
+<span class="n">fuel</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">thistemperature</span>
+<span class="c1"># list of fuel compositions (mole/volume fractions) of which the heating values will be computed</span>
+<span class="c1"># [Methane, n-Butane, PRF RON 80, biodiesel]</span>
+<span class="n">fuels</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[(</span><span class="s2">&quot;ch4&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)],</span>
+    <span class="p">[(</span><span class="s2">&quot;c4h10&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)],</span>
+    <span class="p">[(</span><span class="s2">&quot;nc7h16&quot;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;ic8h18&quot;</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)],</span>
+    <span class="p">[(</span><span class="s2">&quot;mhd&quot;</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;ch3oh&quot;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)],</span>
+<span class="p">]</span>
+
+<span class="c1"># specify oxidizers = pure oxygen</span>
+<span class="n">oxid</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">)</span>
+<span class="n">oxid</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;o2&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]</span>
+<span class="n">oxid</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">thispressure</span>
+<span class="n">oxid</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">thistemperature</span>
+<span class="c1"># get o2 index</span>
+<span class="n">oxyID</span> <span class="o">=</span> <span class="n">MyGasMech</span><span class="o">.</span><span class="n">get_specindex</span><span class="p">(</span><span class="s2">&quot;o2&quot;</span><span class="p">)</span>
+
+<span class="c1"># specify the complete combustion product species</span>
+<span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;co2&quot;</span><span class="p">,</span> <span class="s2">&quot;h2o&quot;</span><span class="p">]</span>
+<span class="c1"># no added species</span>
+<span class="n">add_frac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">MyGasMech</span><span class="o">.</span><span class="n">KK</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+
+<span class="c1"># instantiate the unburned fuel-oxygen mixture</span>
+<span class="n">unburned</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">)</span>
+<span class="n">unburned</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">thispressure</span>
+<span class="n">unburned</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">thistemperature</span>
+</pre></div>
+</div>
+</section>
+<section id="compute-the-fuel-heating-value-of-the-fuel-mixtures">
+<h2>Compute the fuel heating value of the fuel mixtures<a class="headerlink" href="#compute-the-fuel-heating-value-of-the-fuel-mixtures" title="Link to this heading">#</a></h2>
+<p>Now compute the heating values: LHV and HHV, from the enthalpy different
+between the unburned stoichiometric fuel-oxygen mixture <code class="docutils literal notranslate"><span class="pre">unburned</span></code> and the complete
+combustion product mixture <code class="docutils literal notranslate"><span class="pre">burned</span></code>. The complete combustion product mixture
+is found by using the <code class="docutils literal notranslate"><span class="pre">Find_Equilibrium</span></code> method with the default
+<em>fixed pressure</em> and <em>fixed temperature</em> option, that is, the product
+mixture is also at the standard state condition.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">LHV</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fuels</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">HHV</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">LHV</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">fuelcount</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fuels</span><span class="p">:</span>
+    <span class="c1"># re-set the fuel composition (mole/volume fractions)</span>
+    <span class="n">fuel</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">f</span>
+    <span class="c1"># create a soichiometric fuel-oxygen mixture</span>
+    <span class="n">iError</span> <span class="o">=</span> <span class="n">unburned</span><span class="o">.</span><span class="n">X_by_Equivalence_Ratio</span><span class="p">(</span>
+        <span class="n">MyGasMech</span><span class="p">,</span> <span class="n">fuel</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">oxid</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">add_frac</span><span class="p">,</span> <span class="n">products</span><span class="p">,</span> <span class="n">equivalenceratio</span><span class="o">=</span><span class="mf">1.0</span>
+    <span class="p">)</span>
+    <span class="c1"># get the mixture enthalpy of the initial mixture [erg/g]</span>
+    <span class="n">Hunburned</span> <span class="o">=</span> <span class="n">unburned</span><span class="o">.</span><span class="n">HML</span><span class="p">()</span> <span class="o">/</span> <span class="n">unburned</span><span class="o">.</span><span class="n">WTM</span>
+
+    <span class="c1"># compute the complete combustion state (fixed temperature and pressure)</span>
+    <span class="c1"># this step mimics the complete burning of the initial fuel-oxygen mixture at constant pressure</span>
+    <span class="c1"># and the subsequent cooling of the combustion prodcts back to the original temperature</span>
+    <span class="n">burned</span> <span class="o">=</span> <span class="n">unburned</span><span class="o">.</span><span class="n">Find_Equilibrium</span><span class="p">()</span>
+    <span class="c1"># get the mixture enthalpy of the final mixture [erg/g]</span>
+    <span class="n">Hburned</span> <span class="o">=</span> <span class="n">burned</span><span class="o">.</span><span class="n">HML</span><span class="p">()</span> <span class="o">/</span> <span class="n">burned</span><span class="o">.</span><span class="n">WTM</span>
+
+    <span class="c1"># get total fuel mass fraction</span>
+    <span class="n">fmass</span> <span class="o">=</span> <span class="mf">0.0e0</span>
+    <span class="n">bmassfrac</span> <span class="o">=</span> <span class="n">unburned</span><span class="o">.</span><span class="n">Y</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">MyGasMech</span><span class="o">.</span><span class="n">KK</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">oxyID</span><span class="p">:</span>
+            <span class="n">fmass</span> <span class="o">+=</span> <span class="n">bmassfrac</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="c1"># water vapor mass fraction in the urned mixture</span>
+    <span class="n">wmass</span> <span class="o">=</span> <span class="n">burned</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">watervaporID</span><span class="p">]</span>
+    <span class="c1">#</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">fmass</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.0e-10</span><span class="p">):</span>
+        <span class="c1"># no fuel species exists in the unburned mixture</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&gt;&gt;&gt; error no fuel species in the unburned mixture </span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">()</span>
+
+    <span class="c1"># compute the heating values [erg/g-fuel]</span>
+    <span class="n">LHV</span><span class="p">[</span><span class="n">fuelcount</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">Hburned</span> <span class="o">-</span> <span class="n">Hunburned</span><span class="p">)</span> <span class="o">/</span> <span class="n">fmass</span>
+    <span class="n">HHV</span><span class="p">[</span><span class="n">fuelcount</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">Hburned</span> <span class="o">-</span> <span class="p">(</span><span class="n">Hunburned</span> <span class="o">+</span> <span class="n">heatvaporization</span> <span class="o">*</span> <span class="n">wmass</span><span class="p">))</span> <span class="o">/</span> <span class="n">fmass</span>
+    <span class="n">fuelcount</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</section>
+<section id="display-the-heating-values">
+<h2>Display the heating values<a class="headerlink" href="#display-the-heating-values" title="Link to this heading">#</a></h2>
+<p>List the fuel mixtures and their LHV and HHV. The heating values are converted
+from the cgs units [erg/g] to [kJ/g].</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fuel Heating Values at </span><span class="si">{</span><span class="n">thistemperature</span><span class="si">}</span><span class="s2"> [K] and </span><span class="si">{</span><span class="n">thispressure</span><span class="o">*</span><span class="mf">1.0e-6</span><span class="si">}</span><span class="s2"> [bar]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fuels</span><span class="p">)):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;fuel composition:  </span><span class="si">{</span><span class="n">fuels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; LHV [kJ/g-fuel]:  </span><span class="si">{</span><span class="n">LHV</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">ck</span><span class="o">.</span><span class="n">ergs_per_joule</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1.0e3</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; HHV [kJ/g-fuel]:  </span><span class="si">{</span><span class="n">HHV</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">ck</span><span class="o">.</span><span class="n">ergs_per_joule</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1.0e3</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1">##########</span>
+<span class="c1"># Clean up</span>
+<span class="c1"># ========</span>
+<span class="c1"># Delete arrays, mixture objects, and temporary files no longer needed.</span>
+<span class="k">del</span> <span class="n">HHV</span><span class="p">,</span> <span class="n">LHV</span>
+<span class="k">del</span> <span class="n">fuel</span><span class="p">,</span> <span class="n">oxid</span><span class="p">,</span> <span class="n">unburned</span><span class="p">,</span> <span class="n">burned</span>
+<span class="c1"># delete the local mechanism file just created</span>
+<span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">mymechfile</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-mixture-heatingvalues-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/eea50b401c35479262026e1a7bb7d088/heatingvalues.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">heatingvalues.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/cb1c25aa15025b40bbe3227f1ba7141d/heatingvalues.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">heatingvalues.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/0f94d702629177aa46ca5f4bf0ccb03c/heatingvalues.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">heatingvalues.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-pychemkin-package-and-start-the-logger">Import PyChemkin package and start the logger</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculate-the-heat-of-vaporization">Calculate the heat of vaporization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-your-own-fuel-library">Create your own fuel library</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instantiate-the-fuel-chemistry-set">Instantiate the <strong>fuel</strong> <code class="docutils literal notranslate"><span class="pre">Chemistry</span> <span class="pre">Set</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-the-fuel-mechanism-file">Create the <strong>fuel</strong> mechanism file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-process-the-fuel-chemistry-set">Pre-process the <strong>fuel</strong> <code class="docutils literal notranslate"><span class="pre">Chemistry</span> <span class="pre">Set</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#find-the-water-heat-of-vaporization">Find the water heat of vaporization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-the-unburned-fuel-oxygen-mixture">Set up the unburned <strong>fuel-oxygen</strong> mixture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-the-fuel-heating-value-of-the-fuel-mixtures">Compute the fuel heating value of the fuel mixtures</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#display-the-heating-values">Display the heating values</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item"> 
+<div class="tocsection editthispage">
+  <a href="https://github.com/ansys/pychemkin/edit/main/doc/source/auto_examples/mixture/heatingvalues.rst">
+    <i class="fa-solid fa-pencil"></i>
+       Edit
+    on GitHub  
+  </a>
+</div>
+
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/auto_examples/mixture/heatingvalues.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2025 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.0.11. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

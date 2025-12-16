@@ -1,0 +1,111 @@
+
+
+
+
+
+
+The ``ansys.chemkin.chemkin_wrapper`` library
+=============================================
+
+.. py:module:: ansys.chemkin.chemkin_wrapper
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: chemkin_wrapper
+.. tab-set::
+
+
+
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~status`
+            - 
+
+
+          * - :py:obj:`~this_date`
+            - 
+
+
+          * - :py:obj:`~msg`
+            - 
+
+
+          * - :py:obj:`~this_msg`
+            - 
+
+
+          * - :py:obj:`~status`
+            - 
+
+
+          * - :py:obj:`~chemkin`
+            - 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin-CFD-API python interfaces.
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: status
+   :value: 0
+
+
+.. py:data:: this_date
+
+.. py:data:: msg
+
+.. py:data:: this_msg
+   :value: ''
+
+
+.. py:data:: status
+   :value: 1
+
+
+.. py:data:: chemkin
+
+
+

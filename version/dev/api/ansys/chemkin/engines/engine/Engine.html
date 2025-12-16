@@ -1,0 +1,1555 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Engine &#8212; PyChemkin</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/ansys_sphinx_theme.css?v=d2ac875c" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+ 
+<link href="../../../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script src="../../../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/ansys/chemkin/engines/engine/Engine';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/api/ansys/chemkin/engines/engine/Engine.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+  <!-- If there is no MeiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+   
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <script>document.write(`<img src="../../../../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark" alt="PyChemkin - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../getting_started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user_guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../index.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/dev/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../getting_started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user_guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../index.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/dev/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><code class="xref py py-class docutils literal notranslate"><span class="pre">Engine</span></code></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="engine">
+<h1><code class="xref py py-class docutils literal notranslate"><span class="pre">Engine</span></code><a class="headerlink" href="#engine" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.chemkin.engines.engine.Engine">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.chemkin.engines.engine.</span></span><span class="sig-name descname"><span class="pre">Engine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reactor_condition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../inlet/Stream.html#ansys.chemkin.inlet.Stream" title="ansys.chemkin.inlet.Stream"><span class="pre">ansys.chemkin.inlet.Stream</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.chemkin.engines.engine.Engine" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../batchreactors/batchreactor/BatchReactors.html#ansys.chemkin.batchreactors.batchreactor.BatchReactors" title="ansys.chemkin.batchreactors.batchreactor.BatchReactors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ansys.chemkin.batchreactors.batchreactor.BatchReactors</span></code></a></p>
+<p>Generic engine cylinder model</p>
+</dd></dl>
+
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+Methods</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.get_Time" title="Engine.get_Time"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_Time</span></code></a></p></td>
+<td><p>Convert the current crank angle value to simulation time</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.get_CA" title="Engine.get_CA"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_CA</span></code></a></p></td>
+<td><p>Convert the current time to crank angle</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.set_cylinder_head_area" title="Engine.set_cylinder_head_area"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_cylinder_head_area</span></code></a></p></td>
+<td><p>Set the cylinder head clearance surface area</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.set_piston_head_area" title="Engine.set_piston_head_area"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_piston_head_area</span></code></a></p></td>
+<td><p>Set the piston head top surface area</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.set_piston_pin_offset" title="Engine.set_piston_pin_offset"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_piston_pin_offset</span></code></a></p></td>
+<td><p>Set the piston pin off-set distance</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.get_clearance_volume" title="Engine.get_clearance_volume"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_clearance_volume</span></code></a></p></td>
+<td><p>Get the clearance volume</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.get_displacement_volume" title="Engine.get_displacement_volume"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_displacement_volume</span></code></a></p></td>
+<td><p>Get the displacement volume</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.list_engine_parameters" title="Engine.list_engine_parameters"><code class="xref py py-attr docutils literal notranslate"><span class="pre">list_engine_parameters</span></code></a></p></td>
+<td><p>List engine parameters for verification</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.set_minimum_zone_mass" title="Engine.set_minimum_zone_mass"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_minimum_zone_mass</span></code></a></p></td>
+<td><p>Set the minimum mass in a zone (for Spark Ignition and Direct Injection engine models)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.set_zonal_gas_rate_multiplier" title="Engine.set_zonal_gas_rate_multiplier"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_zonal_gas_rate_multiplier</span></code></a></p></td>
+<td><p>Set the value of the gas-phase reaction rate multiplier</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.set_wall_heat_transfer" title="Engine.set_wall_heat_transfer"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_wall_heat_transfer</span></code></a></p></td>
+<td><p>Set cylinder wall heat transfer model and parameters</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.set_gas_velocity_correlation" title="Engine.set_gas_velocity_correlation"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_gas_velocity_correlation</span></code></a></p></td>
+<td><p>Set the cylinder gas velocity correlation parameters</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.set_heat_transfer_keywords" title="Engine.set_heat_transfer_keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_heat_transfer_keywords</span></code></a></p></td>
+<td><p>Set the engine wall heat transfer related keywords</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.set_engine_keywords" title="Engine.set_engine_keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_engine_keywords</span></code></a></p></td>
+<td><p>Set engine parameter keywords under the Full-Keywords mode</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.set_enginecondition_keywords" title="Engine.set_enginecondition_keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_enginecondition_keywords</span></code></a></p></td>
+<td><p>Set engine initial condition keywords under the Full-Keywords mode</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.get_engine_heat_release_CAs" title="Engine.get_engine_heat_release_CAs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_engine_heat_release_CAs</span></code></a></p></td>
+<td><p>Get heat release crank angles from the engine solution</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.get_engine_solution_size" title="Engine.get_engine_solution_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_engine_solution_size</span></code></a></p></td>
+<td><p>Get the number of zones and the number of solution points</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.process_engine_solution" title="Engine.process_engine_solution"><code class="xref py py-attr docutils literal notranslate"><span class="pre">process_engine_solution</span></code></a></p></td>
+<td><p>Post-process solution to extract the raw solution variable data from</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.process_average_engine_solution" title="Engine.process_average_engine_solution"><code class="xref py py-attr docutils literal notranslate"><span class="pre">process_average_engine_solution</span></code></a></p></td>
+<td><p>Post-process the ylinder averaged solution profiles from</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Properties</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.starting_CA" title="Engine.starting_CA"><code class="xref py py-attr docutils literal notranslate"><span class="pre">starting_CA</span></code></a></p></td>
+<td><p>Get the simulation starting crank angle [degree]</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.ending_CA" title="Engine.ending_CA"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ending_CA</span></code></a></p></td>
+<td><p>Get the simulation ending crank angle [degree]</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.duration_CA" title="Engine.duration_CA"><code class="xref py py-attr docutils literal notranslate"><span class="pre">duration_CA</span></code></a></p></td>
+<td><p>Get the simulation duration in number of crank angles [degree]</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.bore" title="Engine.bore"><code class="xref py py-attr docutils literal notranslate"><span class="pre">bore</span></code></a></p></td>
+<td><p>Get the engine cylinder bore diameter</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.stroke" title="Engine.stroke"><code class="xref py py-attr docutils literal notranslate"><span class="pre">stroke</span></code></a></p></td>
+<td><p>Get the engine stroke</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.connecting_rod_length" title="Engine.connecting_rod_length"><code class="xref py py-attr docutils literal notranslate"><span class="pre">connecting_rod_length</span></code></a></p></td>
+<td><p>Get the connecting rod length</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.compression_ratio" title="Engine.compression_ratio"><code class="xref py py-attr docutils literal notranslate"><span class="pre">compression_ratio</span></code></a></p></td>
+<td><p>Get the engine compression ratio</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.RPM" title="Engine.RPM"><code class="xref py py-attr docutils literal notranslate"><span class="pre">RPM</span></code></a></p></td>
+<td><p>Get the engine speed in RPM</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.CAstep_for_saving_solution" title="Engine.CAstep_for_saving_solution"><code class="xref py py-attr docutils literal notranslate"><span class="pre">CAstep_for_saving_solution</span></code></a></p></td>
+<td><p>Get the number of crank angles between saving the solution data</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.CAstep_for_printing_solution" title="Engine.CAstep_for_printing_solution"><code class="xref py py-attr docutils literal notranslate"><span class="pre">CAstep_for_printing_solution</span></code></a></p></td>
+<td><p>Get the number of crank angles between printing the solution data to the text output file</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
+Attributes</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.borediam" title="Engine.borediam"><code class="xref py py-attr docutils literal notranslate"><span class="pre">borediam</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.borearea" title="Engine.borearea"><code class="xref py py-attr docutils literal notranslate"><span class="pre">borearea</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.enginestroke" title="Engine.enginestroke"><code class="xref py py-attr docutils literal notranslate"><span class="pre">enginestroke</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.crankradius" title="Engine.crankradius"><code class="xref py py-attr docutils literal notranslate"><span class="pre">crankradius</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.connectrodlength" title="Engine.connectrodlength"><code class="xref py py-attr docutils literal notranslate"><span class="pre">connectrodlength</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.pistonoffset" title="Engine.pistonoffset"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pistonoffset</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.cylinderheadarea" title="Engine.cylinderheadarea"><code class="xref py py-attr docutils literal notranslate"><span class="pre">cylinderheadarea</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.pistonheadarea" title="Engine.pistonheadarea"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pistonheadarea</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.headareas" title="Engine.headareas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">headareas</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.compressratio" title="Engine.compressratio"><code class="xref py py-attr docutils literal notranslate"><span class="pre">compressratio</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.enginespeed" title="Engine.enginespeed"><code class="xref py py-attr docutils literal notranslate"><span class="pre">enginespeed</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.degpersec" title="Engine.degpersec"><code class="xref py py-attr docutils literal notranslate"><span class="pre">degpersec</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.radpersec" title="Engine.radpersec"><code class="xref py py-attr docutils literal notranslate"><span class="pre">radpersec</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.IVCCA" title="Engine.IVCCA"><code class="xref py py-attr docutils literal notranslate"><span class="pre">IVCCA</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.EVOCA" title="Engine.EVOCA"><code class="xref py py-attr docutils literal notranslate"><span class="pre">EVOCA</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.rundurationCA" title="Engine.rundurationCA"><code class="xref py py-attr docutils literal notranslate"><span class="pre">rundurationCA</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.numbHTmodelparameters" title="Engine.numbHTmodelparameters"><code class="xref py py-attr docutils literal notranslate"><span class="pre">numbHTmodelparameters</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.heattransfermodel" title="Engine.heattransfermodel"><code class="xref py py-attr docutils literal notranslate"><span class="pre">heattransfermodel</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.heattransferparameters" title="Engine.heattransferparameters"><code class="xref py py-attr docutils literal notranslate"><span class="pre">heattransferparameters</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.cylinderwalltemperature" title="Engine.cylinderwalltemperature"><code class="xref py py-attr docutils literal notranslate"><span class="pre">cylinderwalltemperature</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.gasvelocity" title="Engine.gasvelocity"><code class="xref py py-attr docutils literal notranslate"><span class="pre">gasvelocity</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.HuberIMEP" title="Engine.HuberIMEP"><code class="xref py py-attr docutils literal notranslate"><span class="pre">HuberIMEP</span></code></a></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-3" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-3">
+Static methods</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Engine.convert_CA_to_Time" title="Engine.convert_CA_to_Time"><code class="xref py py-attr docutils literal notranslate"><span class="pre">convert_CA_to_Time</span></code></a></p></td>
+<td><p>Convert the current crank angle value to simulation time</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Engine.convert_Time_to_CA" title="Engine.convert_Time_to_CA"><code class="xref py py-attr docutils literal notranslate"><span class="pre">convert_Time_to_CA</span></code></a></p></td>
+<td><p>Convert the current time to crank angle</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="import-detail">
+<h2>Import detail<a class="headerlink" href="#import-detail" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.engines.engine</span><span class="w"> </span><span class="kn">import</span> <span class="n">Engine</span>
+</pre></div>
+</div>
+</section>
+<section id="property-detail">
+<h2>Property detail<a class="headerlink" href="#property-detail" title="Link to this heading">#</a></h2>
+<dl class="py property">
+<dt class="sig sig-object py" id="Engine.starting_CA">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">starting_CA</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#Engine.starting_CA" title="Link to this definition">#</a></dt>
+<dd><p>Get the simulation starting crank angle [degree]
+usually the starting CA ~ the intake valve close (IVC) timing</p>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>IVCCA: double</dt><dd><p>intake valve closing (IVC) crank angle [degree]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Engine.ending_CA">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">ending_CA</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#Engine.ending_CA" title="Link to this definition">#</a></dt>
+<dd><p>Get the simulation ending crank angle [degree]
+usually the ending CA ~ the exhaust valve open (EVO) timing</p>
+<section id="id1">
+<h3>Returns<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>EVOCA: double</dt><dd><p>exhaust valve opening (EVO) crank angle [degree]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Engine.duration_CA">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">duration_CA</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#Engine.duration_CA" title="Link to this definition">#</a></dt>
+<dd><p>Get the simulation duration in number of crank angles [degree]</p>
+<section id="id2">
+<h3>Returns<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>CA: double</dt><dd><p>simulation duration in crank angles [degree]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Engine.bore">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">bore</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#Engine.bore" title="Link to this definition">#</a></dt>
+<dd><p>Get the engine cylinder bore diameter</p>
+<section id="id3">
+<h3>Returns<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>diameter: double</dt><dd><p>bore diameter [cm]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Engine.stroke">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">stroke</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#Engine.stroke" title="Link to this definition">#</a></dt>
+<dd><p>Get the engine stroke</p>
+<section id="id4">
+<h3>Returns<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>stroke: double</dt><dd><p>engine stroke [cm]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Engine.connecting_rod_length">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">connecting_rod_length</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#Engine.connecting_rod_length" title="Link to this definition">#</a></dt>
+<dd><p>Get the connecting rod length</p>
+<section id="id5">
+<h3>Returns<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>length: double</dt><dd><p>connecting rod length [cm]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Engine.compression_ratio">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">compression_ratio</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#Engine.compression_ratio" title="Link to this definition">#</a></dt>
+<dd><p>Get the engine compression ratio</p>
+<section id="id6">
+<h3>Returns<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>cratio: double</dt><dd><p>compression ratio [-]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Engine.RPM">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">RPM</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#Engine.RPM" title="Link to this definition">#</a></dt>
+<dd><p>Get the engine speed in RPM</p>
+<section id="id7">
+<h3>Returns<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>speed: double</dt><dd><p>engine speed [RPM]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Engine.CAstep_for_saving_solution">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">CAstep_for_saving_solution</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#Engine.CAstep_for_saving_solution" title="Link to this definition">#</a></dt>
+<dd><p>Get the number of crank angles between saving the solution data</p>
+<section id="id8">
+<h3>Returns<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>delta_CA: double</dt><dd><p>solution saving interval in crank angles [degree]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Engine.CAstep_for_printing_solution">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">CAstep_for_printing_solution</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#Engine.CAstep_for_printing_solution" title="Link to this definition">#</a></dt>
+<dd><p>Get the number of crank angles between printing the solution data to the text output file</p>
+<section id="id9">
+<h3>Returns<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>delta_CA: double</dt><dd><p>solution printing interval in crank angles [degree]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+</section>
+<section id="attribute-detail">
+<h2>Attribute detail<a class="headerlink" href="#attribute-detail" title="Link to this heading">#</a></h2>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.borediam">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">borediam</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#Engine.borediam" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.borearea">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">borearea</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#Engine.borearea" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.enginestroke">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">enginestroke</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#Engine.enginestroke" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.crankradius">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">crankradius</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#Engine.crankradius" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.connectrodlength">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">connectrodlength</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#Engine.connectrodlength" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.pistonoffset">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">pistonoffset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#Engine.pistonoffset" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.cylinderheadarea">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">cylinderheadarea</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#Engine.cylinderheadarea" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.pistonheadarea">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">pistonheadarea</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#Engine.pistonheadarea" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.headareas">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">headareas</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#Engine.headareas" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.compressratio">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">compressratio</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></em><a class="headerlink" href="#Engine.compressratio" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.enginespeed">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">enginespeed</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></em><a class="headerlink" href="#Engine.enginespeed" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.degpersec">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">degpersec</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#Engine.degpersec" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.radpersec">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">radpersec</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#Engine.radpersec" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.IVCCA">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">IVCCA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">-180.0</span></em><a class="headerlink" href="#Engine.IVCCA" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.EVOCA">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">EVOCA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">180.0</span></em><a class="headerlink" href="#Engine.EVOCA" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.rundurationCA">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">rundurationCA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">360.0</span></em><a class="headerlink" href="#Engine.rundurationCA" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.numbHTmodelparameters">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">numbHTmodelparameters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[3,</span> <span class="pre">3,</span> <span class="pre">5]</span></em><a class="headerlink" href="#Engine.numbHTmodelparameters" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.heattransfermodel">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">heattransfermodel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">-1</span></em><a class="headerlink" href="#Engine.heattransfermodel" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.heattransferparameters">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">heattransferparameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#Engine.heattransferparameters" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.cylinderwalltemperature">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">cylinderwalltemperature</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">298.15</span></em><a class="headerlink" href="#Engine.cylinderwalltemperature" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.gasvelocity">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">gasvelocity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#Engine.gasvelocity" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Engine.HuberIMEP">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">HuberIMEP</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#Engine.HuberIMEP" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="method-detail">
+<h2>Method detail<a class="headerlink" href="#method-detail" title="Link to this heading">#</a></h2>
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.convert_CA_to_Time">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">convert_CA_to_Time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CA</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startCA</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RPM</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Engine.convert_CA_to_Time" title="Link to this definition">#</a></dt>
+<dd><p>Convert the current crank angle value to simulation time</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>CA: double</dt><dd><p>engine crank angle [degree]</p>
+</dd>
+<dt>startCA: double</dt><dd><p>starting crank angle, IVC timing [degree]</p>
+</dd>
+<dt>RPM: double</dt><dd><p>engine speed RPM [revolutions per minute]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id10">
+<h3>Returns<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>time: double</dt><dd><p>simulation time [sec]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.convert_Time_to_CA">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">convert_Time_to_CA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startCA</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RPM</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Engine.convert_Time_to_CA" title="Link to this definition">#</a></dt>
+<dd><p>Convert the current time to crank angle</p>
+<section id="id11">
+<h3>Parameters<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>time: double</dt><dd><p>current simulation time [sec]</p>
+</dd>
+<dt>startCA: double</dt><dd><p>starting crank angle, IVC timing [degree]</p>
+</dd>
+<dt>RPM: double</dt><dd><p>engine speed RPM [revolutions per minute]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id12">
+<h3>Returns<a class="headerlink" href="#id12" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>CA: double</dt><dd><p>engine crank angle [degree]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.get_Time">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">get_Time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CA</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Engine.get_Time" title="Link to this definition">#</a></dt>
+<dd><p>Convert the current crank angle value to simulation time</p>
+<section id="id13">
+<h3>Parameters<a class="headerlink" href="#id13" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>CA: double</dt><dd><p>current engine crank angle [degree]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id14">
+<h3>Returns<a class="headerlink" href="#id14" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>time: double</dt><dd><p>simulation time [sec]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.get_CA">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">get_CA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Engine.get_CA" title="Link to this definition">#</a></dt>
+<dd><p>Convert the current time to crank angle</p>
+<section id="id15">
+<h3>Parameters<a class="headerlink" href="#id15" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>time: double</dt><dd><p>current simulation time [sec]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id16">
+<h3>Returns<a class="headerlink" href="#id16" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>CA: double</dt><dd><p>engine crank angle [degree]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.set_cylinder_head_area">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">set_cylinder_head_area</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">area</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Engine.set_cylinder_head_area" title="Link to this definition">#</a></dt>
+<dd><p>Set the cylinder head clearance surface area</p>
+<section id="id17">
+<h3>Parameters<a class="headerlink" href="#id17" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>area: double</dt><dd><p>area [cm2]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.set_piston_head_area">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">set_piston_head_area</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">area</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Engine.set_piston_head_area" title="Link to this definition">#</a></dt>
+<dd><p>Set the piston head top surface area</p>
+<section id="id18">
+<h3>Parameters<a class="headerlink" href="#id18" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>area: double</dt><dd><p>piston head top surface area [cm2]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.set_piston_pin_offset">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">set_piston_pin_offset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Engine.set_piston_pin_offset" title="Link to this definition">#</a></dt>
+<dd><p>Set the piston pin off-set distance</p>
+<section id="id19">
+<h3>Parameters<a class="headerlink" href="#id19" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>offset: double</dt><dd><p>piston pin offset distance [cm]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.get_clearance_volume">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">get_clearance_volume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Engine.get_clearance_volume" title="Link to this definition">#</a></dt>
+<dd><p>Get the clearance volume</p>
+<section id="id20">
+<h3>Returns<a class="headerlink" href="#id20" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>cvolume: double</dt><dd><p>cylinder clearance/minimum volume [cm3]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.get_displacement_volume">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">get_displacement_volume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Engine.get_displacement_volume" title="Link to this definition">#</a></dt>
+<dd><p>Get the displacement volume</p>
+<section id="id21">
+<h3>Returns<a class="headerlink" href="#id21" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>dvolume: double</dt><dd><p>piston displacement/sweeping volume [cm3]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.list_engine_parameters">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">list_engine_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Engine.list_engine_parameters" title="Link to this definition">#</a></dt>
+<dd><p>List engine parameters for verification</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.set_minimum_zone_mass">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">set_minimum_zone_mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">minmass</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Engine.set_minimum_zone_mass" title="Link to this definition">#</a></dt>
+<dd><p>Set the minimum mass in a zone (for Spark Ignition and Direct Injection engine models)</p>
+<section id="id22">
+<h3>Parameters<a class="headerlink" href="#id22" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>minmass: double, default = 1.0e-6</dt><dd><p>minimum zonal mass [g]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.set_zonal_gas_rate_multiplier">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">set_zonal_gas_rate_multiplier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoneID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Engine.set_zonal_gas_rate_multiplier" title="Link to this definition">#</a></dt>
+<dd><p>Set the value of the gas-phase reaction rate multiplier</p>
+<section id="id23">
+<h3>Parameters<a class="headerlink" href="#id23" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>value: double, default = 1.0</dt><dd><p>gas-phase reaction rate multiplier</p>
+</dd>
+<dt>zoneID: integer, optional</dt><dd><p>zone index to which the multiplier will be applied
+if not provided, the multiplier will be applied to all zones</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.set_wall_heat_transfer">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">set_wall_heat_transfer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">HTparameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walltemperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Engine.set_wall_heat_transfer" title="Link to this definition">#</a></dt>
+<dd><p>Set cylinder wall heat transfer model and parameters
+engine wall heat transfer models
+ICHX: dimensionless correlation “ICHX <a> <b> <c> <Twall>”
+ICHW: dimensional correlation “ICHW <a> <b> <c> <Twall>”
+ICHH: Hohenburg correlation “ICHH <a> <b> <c> <d> <e> <Twall>”</p>
+<section id="id24">
+<h3>Parameters<a class="headerlink" href="#id24" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>model: string</dt><dd><p>engine wall heat transfer model</p>
+</dd>
+<dt>HTparmeters: list of double</dt><dd><p>model parameters correspond to the specified heat transfer model</p>
+</dd>
+<dt>walltemperature: double</dt><dd><p>cylinder wall/cooling oil temperature [K]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.set_gas_velocity_correlation">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">set_gas_velocity_correlation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gasvelparameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">IMEP</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Engine.set_gas_velocity_correlation" title="Link to this definition">#</a></dt>
+<dd><p>Set the cylinder gas velocity correlation parameters
+Woschni: “GVEL <C11> <C12> <C2> <swirling ratio>”
+Huber: IMEP “HIMP <IMEP>”</p>
+<section id="id25">
+<h3>Parameters<a class="headerlink" href="#id25" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>gasvelparameters: list of double</dt><dd><p>cylinder gas velocity correlation parameters</p>
+</dd>
+<dt>IMEP: double, optional, default = 0.0</dt><dd><p>indicated mean effective pressure used by the Huber gas velocity correlation [atm]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.set_heat_transfer_keywords">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">set_heat_transfer_keywords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Engine.set_heat_transfer_keywords" title="Link to this definition">#</a></dt>
+<dd><p>Set the engine wall heat transfer related keywords</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.set_engine_keywords">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">set_engine_keywords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Engine.set_engine_keywords" title="Link to this definition">#</a></dt>
+<dd><p>Set engine parameter keywords under the Full-Keywords mode</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.set_enginecondition_keywords">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">set_enginecondition_keywords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Engine.set_enginecondition_keywords" title="Link to this definition">#</a></dt>
+<dd><p>Set engine initial condition keywords under the Full-Keywords mode</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.get_engine_heat_release_CAs">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">get_engine_heat_release_CAs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Engine.get_engine_heat_release_CAs" title="Link to this definition">#</a></dt>
+<dd><p>Get heat release crank angles from the engine solution</p>
+<section id="id26">
+<h3>Returns<a class="headerlink" href="#id26" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>CA10: double</dt><dd><p>Crank rotation angle corresponding to 10% of total heat release</p>
+</dd>
+<dt>CA50: double</dt><dd><p>Crank rotation angle corresponding to 50% of total heat release</p>
+</dd>
+<dt>CA90: double</dt><dd><p>Crank rotation angle corresponding to 90% of total heat release</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.get_engine_solution_size">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">get_engine_solution_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expected</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Engine.get_engine_solution_size" title="Link to this definition">#</a></dt>
+<dd><p>Get the number of zones and the number of solution points</p>
+<section id="id27">
+<h3>Parameters<a class="headerlink" href="#id27" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>expected: integer</dt><dd><p>expected number of zonal + mean solution records</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id28">
+<h3>Returns<a class="headerlink" href="#id28" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>nzones: integer</dt><dd><p>number of zones</p>
+</dd>
+<dt>npoints: integer</dt><dd><p>number of solution points</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.process_engine_solution">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">process_engine_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zoneID</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Engine.process_engine_solution" title="Link to this definition">#</a></dt>
+<dd><p>Post-process solution to extract the raw solution variable data from
+engine simulation results</p>
+<section id="id29">
+<h3>Parameters<a class="headerlink" href="#id29" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>zoneID: integer</dt><dd><p>zone index</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Engine.process_average_engine_solution">
+<span class="sig-prename descclassname"><span class="pre">Engine.</span></span><span class="sig-name descname"><span class="pre">process_average_engine_solution</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Engine.process_average_engine_solution" title="Link to this definition">#</a></dt>
+<dd><p>Post-process the ylinder averaged solution profiles from
+multi-zone engine models</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.chemkin.engines.engine.Engine"><code class="docutils literal notranslate"><span class="pre">ansys.chemkin.engines.engine.Engine</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-detail">Import detail</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#property-detail">Property detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.starting_CA"><code class="docutils literal notranslate"><span class="pre">starting_CA</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.ending_CA"><code class="docutils literal notranslate"><span class="pre">ending_CA</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.duration_CA"><code class="docutils literal notranslate"><span class="pre">duration_CA</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.bore"><code class="docutils literal notranslate"><span class="pre">bore</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.stroke"><code class="docutils literal notranslate"><span class="pre">stroke</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.connecting_rod_length"><code class="docutils literal notranslate"><span class="pre">connecting_rod_length</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.compression_ratio"><code class="docutils literal notranslate"><span class="pre">compression_ratio</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.RPM"><code class="docutils literal notranslate"><span class="pre">RPM</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.CAstep_for_saving_solution"><code class="docutils literal notranslate"><span class="pre">CAstep_for_saving_solution</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.CAstep_for_printing_solution"><code class="docutils literal notranslate"><span class="pre">CAstep_for_printing_solution</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attribute-detail">Attribute detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.borediam"><code class="docutils literal notranslate"><span class="pre">borediam</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.borearea"><code class="docutils literal notranslate"><span class="pre">borearea</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.enginestroke"><code class="docutils literal notranslate"><span class="pre">enginestroke</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.crankradius"><code class="docutils literal notranslate"><span class="pre">crankradius</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.connectrodlength"><code class="docutils literal notranslate"><span class="pre">connectrodlength</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.pistonoffset"><code class="docutils literal notranslate"><span class="pre">pistonoffset</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.cylinderheadarea"><code class="docutils literal notranslate"><span class="pre">cylinderheadarea</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.pistonheadarea"><code class="docutils literal notranslate"><span class="pre">pistonheadarea</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.headareas"><code class="docutils literal notranslate"><span class="pre">headareas</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.compressratio"><code class="docutils literal notranslate"><span class="pre">compressratio</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.enginespeed"><code class="docutils literal notranslate"><span class="pre">enginespeed</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.degpersec"><code class="docutils literal notranslate"><span class="pre">degpersec</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.radpersec"><code class="docutils literal notranslate"><span class="pre">radpersec</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.IVCCA"><code class="docutils literal notranslate"><span class="pre">IVCCA</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.EVOCA"><code class="docutils literal notranslate"><span class="pre">EVOCA</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.rundurationCA"><code class="docutils literal notranslate"><span class="pre">rundurationCA</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.numbHTmodelparameters"><code class="docutils literal notranslate"><span class="pre">numbHTmodelparameters</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.heattransfermodel"><code class="docutils literal notranslate"><span class="pre">heattransfermodel</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.heattransferparameters"><code class="docutils literal notranslate"><span class="pre">heattransferparameters</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.cylinderwalltemperature"><code class="docutils literal notranslate"><span class="pre">cylinderwalltemperature</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.gasvelocity"><code class="docutils literal notranslate"><span class="pre">gasvelocity</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.HuberIMEP"><code class="docutils literal notranslate"><span class="pre">HuberIMEP</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-detail">Method detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.convert_CA_to_Time"><code class="docutils literal notranslate"><span class="pre">convert_CA_to_Time()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.convert_Time_to_CA"><code class="docutils literal notranslate"><span class="pre">convert_Time_to_CA()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.get_Time"><code class="docutils literal notranslate"><span class="pre">get_Time()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.get_CA"><code class="docutils literal notranslate"><span class="pre">get_CA()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.set_cylinder_head_area"><code class="docutils literal notranslate"><span class="pre">set_cylinder_head_area()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.set_piston_head_area"><code class="docutils literal notranslate"><span class="pre">set_piston_head_area()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.set_piston_pin_offset"><code class="docutils literal notranslate"><span class="pre">set_piston_pin_offset()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.get_clearance_volume"><code class="docutils literal notranslate"><span class="pre">get_clearance_volume()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.get_displacement_volume"><code class="docutils literal notranslate"><span class="pre">get_displacement_volume()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.list_engine_parameters"><code class="docutils literal notranslate"><span class="pre">list_engine_parameters()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.set_minimum_zone_mass"><code class="docutils literal notranslate"><span class="pre">set_minimum_zone_mass()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.set_zonal_gas_rate_multiplier"><code class="docutils literal notranslate"><span class="pre">set_zonal_gas_rate_multiplier()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.set_wall_heat_transfer"><code class="docutils literal notranslate"><span class="pre">set_wall_heat_transfer()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.set_gas_velocity_correlation"><code class="docutils literal notranslate"><span class="pre">set_gas_velocity_correlation()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.set_heat_transfer_keywords"><code class="docutils literal notranslate"><span class="pre">set_heat_transfer_keywords()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.set_engine_keywords"><code class="docutils literal notranslate"><span class="pre">set_engine_keywords()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.set_enginecondition_keywords"><code class="docutils literal notranslate"><span class="pre">set_enginecondition_keywords()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.get_engine_heat_release_CAs"><code class="docutils literal notranslate"><span class="pre">get_engine_heat_release_CAs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.get_engine_solution_size"><code class="docutils literal notranslate"><span class="pre">get_engine_solution_size()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.process_engine_solution"><code class="docutils literal notranslate"><span class="pre">process_engine_solution()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Engine.process_average_engine_solution"><code class="docutils literal notranslate"><span class="pre">process_average_engine_solution()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item"> 
+<div class="tocsection editthispage">
+  <a href="http://github.com/ansys/pychemkin/edit/main/ansys/chemkin/engines/engine/Engine.py">
+    <i class="fa-solid fa-pencil"></i>
+       Edit
+    on GitHub  
+  </a>
+</div>
+
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../../../_sources/api/ansys/chemkin/engines/engine/Engine.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2025 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.0.11. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

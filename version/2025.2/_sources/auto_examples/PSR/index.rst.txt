@@ -1,0 +1,91 @@
+
+
+.. _sphx_glr_auto_examples_PSR:
+
+Perfectly stirred reactor
+=========================
+
+The *perfectly Stirred reactor (PSR)* model is a 0-D steady-state reactor.
+This ideal reactor model assumes the gas mixture inside is uniform and
+the properties of the outlet stream are exactly the same as the gas properties
+inside the reactor. A PSR can have either its pressure or its volume "specified",
+and the reactor temperature can either be solved from the energy equation or
+be "given" as an input parameter.
+
+The examples will show the procedures of setting up single PSR simulations with
+different constraints and with multiple inlet streams.
+
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized reactor models commonly used for studying chemical processes and for developing reaction mechanisms. The PSR (perfectly stirred reactor) model is a steady-state 0-D model of the open perfectly mixed gas-phase reactor. There is no limit on the number of inlets to the PSR. As soon as the inlet gases enter the reactor, they are thoroughly mixed with the gas mixture inside. The PSR has only one outlet, and the outlet gas is assumed to be exactly the same as the gas mixture in the PSR.">
+
+.. only:: html
+
+  .. image:: /auto_examples/PSR/images/thumb/sphx_glr_PSRgas_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_PSR_PSRgas.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Set up a PSR parameter study for the inlet stream equivalence ratio</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized reactor models commonly used for studying chemical processes and for developing reaction mechanisms. The PSR (perfectly stirred reactor) model is a steady-state 0-D model of the open perfectly mixed gas-phase reactor. There is no limit on the number of inlets to the PSR. As soon as the inlet gases enter the reactor, they are thoroughly mixed with the gas mixture inside. The PSR has only one outlet, and the outlet gas is assumed to be exactly the same as the gas mixture in the PSR.">
+
+.. only:: html
+
+  .. image:: /auto_examples/PSR/images/thumb/sphx_glr_jetstirredreactor_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_PSR_jetstirredreactor.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Run PSR calculations for mechanism validation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized reactor models commonly used for studying chemical processes and for developing reaction mechanisms. The PSR (perfectly stirred reactor) model is a steady-state 0-D model of the open perfectly mixed gas-phase reactor. There is no limit on the number of inlets to the PSR. As soon as the inlet gases enter the reactor, they are thoroughly mixed with the gas mixture inside. The PSR has only one outlet, and the outlet gas is assumed to be exactly the same as the gas mixture in the PSR. There are two basic types of PSR models:">
+
+.. only:: html
+
+  .. image:: /auto_examples/PSR/images/thumb/sphx_glr_multi-inletPSR_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_PSR_multi-inletPSR.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Determine the impact of residence time on combustion in a PSR</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/PSR/PSRgas
+   /auto_examples/PSR/jetstirredreactor
+   /auto_examples/PSR/multi-inletPSR
+

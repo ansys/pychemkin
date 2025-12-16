@@ -1,0 +1,608 @@
+
+
+:class:`ReactorNetwork`
+=======================
+
+.. py:class:: ansys.chemkin.hybridreactornetwork.ReactorNetwork(chem: ansys.chemkin.chemistry.Chemistry)
+
+   The hybrid reactor network allows internal recycling stream and reactor outflow splitting.
+   The reactors are solved individually in terms. For network with complex internal
+   connections, "Tearing points" can be manually defined and "tear stream" method is
+   applied to solve the entire network iteratively.
+
+
+
+.. py:currentmodule:: ReactorNetwork
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_reactor_label`
+            - Get the name/label of the reactor corresponding to the reactor index in the
+          * - :py:attr:`~add_reactor`
+            - Add a reactor to the network in order.
+          * - :py:attr:`~add_reactor_list`
+            - Add a list of reactors to the network in order.
+          * - :py:attr:`~show_reactors`
+            - Show the reactor labels in the network.
+          * - :py:attr:`~show_internal_outflow_connections`
+            - Show the ouflow connections to other reactors in the network.
+          * - :py:attr:`~show_internal_inflow_connections`
+            - Show the incoming flow connections from other reactors in the network.
+          * - :py:attr:`~add_outflow_connections`
+            - Add outflow connections to other reactors in the network. The connection is given
+          * - :py:attr:`~clear_connections`
+            - Clear the internal connection configurations.
+          * - :py:attr:`~remove_reactor`
+            - Remove the named reactor from the network.
+          * - :py:attr:`~set_reactor_outflow`
+            - Set up and verify the the outlet flow connections from this reactor
+          * - :py:attr:`~set_inflow_connections`
+            - Set up the sources of the internal network inlet stream to the reactor.
+          * - :py:attr:`~set_external_outlet`
+            - Add a new network external outlet to the reactor.
+          * - :py:attr:`~calculate_incoming_streams`
+            - Calculate the combined internal incoming streams from other reactors in the network.
+          * - :py:attr:`~set_internal_inlet`
+            - Create or update the merged inlet stream to the reactor from the rest of
+          * - :py:attr:`~create_internal_inlet`
+            - Create a new inlet stream that combines all incoming streams from the other
+          * - :py:attr:`~get_network_run_status`
+            - Get network run status
+          * - :py:attr:`~run`
+            - Solve the hybrid reactor network by solving the individual reactors in
+          * - :py:attr:`~get_reactor_stream`
+            - Get the solution Stream object of the given reactor name/label.
+          * - :py:attr:`~set_external_streams`
+            - Set up external outlet streams.
+          * - :py:attr:`~get_external_stream`
+            - Get the list of external outlet Stream objects.
+          * - :py:attr:`~run_without_tearstream`
+            - Run the individual reactors in the network one by one without using
+          * - :py:attr:`~run_with_tearstream`
+            - Run the individual reactors in the network one by one with
+          * - :py:attr:`~remove_tearpoint`
+            - Remove the tear point from the list.
+          * - :py:attr:`~add_tearingpoint`
+            - Add a new tear point to the list.
+          * - :py:attr:`~set_tear_tolerance`
+            - Set the relative tolerance to test the tear stream convergencce.
+          * - :py:attr:`~set_tear_iteration_limit`
+            - Set the maximum number of tear loop iterations.
+          * - :py:attr:`~check_iteration_count`
+            - Check the iteration count for over the set limit.
+          * - :py:attr:`~set_relaxation_factor`
+            - Set the relaxation factor when updating the tear stream
+          * - :py:attr:`~check_tearstream_convergence`
+            - Compare the last and the current reactor solution at the tear point.
+          * - :py:attr:`~update_tear_solution`
+            - Update the old/temporary tear point stream properties (with the used of a relaxation factor).
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~number_reactors`
+            - Get the number of reactors in the network
+          * - :py:attr:`~number_external_outlets`
+            - Get the number of external outlets from the network
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~numb_reactors`
+            - 
+          * - :py:attr:`~last_reactor`
+            - 
+          * - :py:attr:`~numb_external_outlet`
+            - 
+          * - :py:attr:`~external_outlets`
+            - 
+          * - :py:attr:`~external_outlet_streams`
+            - 
+          * - :py:attr:`~reactor_map`
+            - 
+          * - :py:attr:`~reactor_objects`
+            - 
+          * - :py:attr:`~reactor_solutions`
+            - 
+          * - :py:attr:`~outflow_targets`
+            - 
+          * - :py:attr:`~outflow_altered`
+            - 
+          * - :py:attr:`~external_connections`
+            - 
+          * - :py:attr:`~inflow_sources`
+            - 
+          * - :py:attr:`~internal_inflow`
+            - 
+          * - :py:attr:`~internal_inflow_ready`
+            - 
+          * - :py:attr:`~numb_tearpoints`
+            - 
+          * - :py:attr:`~tearpoint`
+            - 
+          * - :py:attr:`~max_tearloop_count`
+            - 
+          * - :py:attr:`~tolerance`
+            - 
+          * - :py:attr:`~relaxation_factor`
+            - 
+          * - :py:attr:`~tear_converged`
+            - 
+          * - :py:attr:`~network_run_status`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.hybridreactornetwork import ReactorNetwork
+
+Property detail
+---------------
+.. py:property:: number_reactors
+   :type: int
+
+
+   Get the number of reactors in the network
+
+   Returns
+   -------
+       numb_reactors: integer
+           number of reactors in the network
+
+
+.. py:property:: number_external_outlets
+   :type: int
+
+
+   Get the number of external outlets from the network
+
+   Returns
+   -------
+       numb_outlets: integer
+           number of external outlets from the network
+
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: numb_reactors
+   :value: 0
+
+
+.. py:attribute:: last_reactor
+   :value: 0
+
+
+.. py:attribute:: numb_external_outlet
+   :value: 0
+
+
+.. py:attribute:: external_outlets
+   :type:  dict[int, int]
+
+.. py:attribute:: external_outlet_streams
+   :type:  dict[int, ansys.chemkin.inlet.Stream]
+
+.. py:attribute:: reactor_map
+   :type:  dict[str, int]
+
+.. py:attribute:: reactor_objects
+   :type:  dict[int, Union[ansys.chemkin.stirreactors.PSR.perfectlystirredreactor, ansys.chemkin.flowreactors.PFR.PlugFlowReactor]]
+
+.. py:attribute:: reactor_solutions
+   :type:  dict[int, ansys.chemkin.inlet.Stream]
+
+.. py:attribute:: outflow_targets
+   :type:  dict[int, list[tuple[int, float]]]
+
+.. py:attribute:: outflow_altered
+   :value: True
+
+
+.. py:attribute:: external_connections
+   :type:  dict[int, int]
+
+.. py:attribute:: inflow_sources
+   :type:  dict[int, list[tuple[int, float]]]
+
+.. py:attribute:: internal_inflow
+   :type:  dict[int, ansys.chemkin.inlet.Stream]
+
+.. py:attribute:: internal_inflow_ready
+   :type:  dict[int, bool]
+
+.. py:attribute:: numb_tearpoints
+   :value: 0
+
+
+.. py:attribute:: tearpoint
+   :type:  list[int]
+   :value: []
+
+
+.. py:attribute:: max_tearloop_count
+   :value: 200
+
+
+.. py:attribute:: tolerance
+   :value: 1e-06
+
+
+.. py:attribute:: relaxation_factor
+   :value: 1.0
+
+
+.. py:attribute:: tear_converged
+   :value: False
+
+
+.. py:attribute:: network_run_status
+   :value: -100
+
+
+
+
+Method detail
+-------------
+.. py:method:: get_reactor_label(reactor_index: int) -> str
+
+   Get the name/label of the reactor corresponding to the reactor index in the
+   reactor network.
+
+   Parameters
+   ----------
+       reactor_index: integer
+           reactor index
+
+   Returns
+   -------
+       name: string
+           reactor name/label
+
+
+.. py:method:: add_reactor(reactor: Union[ansys.chemkin.stirreactors.PSR.perfectlystirredreactor, ansys.chemkin.flowreactors.PFR.PlugFlowReactor])
+
+   Add a reactor to the network in order.
+   Plan the order (sequence) of reactor addition carefully. The order of the reactors is
+   somewhat important as it might affect the convergence rate of the network, especially with
+   the presence of any "tearing stream".
+
+   Parameters
+   ----------
+       reactor: open reactor (PSR or PFR) object
+           the reactor object to be added to the network
+
+
+.. py:method:: add_reactor_list(reactor_list: list[Union[ansys.chemkin.stirreactors.PSR.perfectlystirredreactor, ansys.chemkin.flowreactors.PFR.PlugFlowReactor]])
+
+   Add a list of reactors to the network in order.
+   Plan the order (sequence) of reactor addition carefully. The order of the reactors is
+   somewhat important as it might affect the convergence rate of the network, especially with
+   the presence of any "tearing stream".
+
+   Parameters
+   ----------
+       reactor: list of open reactor (PSR or PFR) object
+           the reactor objects to be added to the network
+
+
+.. py:method:: show_reactors()
+
+   Show the reactor labels in the network.
+
+
+.. py:method:: show_internal_outflow_connections()
+
+   Show the ouflow connections to other reactors in the network.
+
+
+.. py:method:: show_internal_inflow_connections()
+
+   Show the incoming flow connections from other reactors in the network.
+
+
+.. py:method:: add_outflow_connections(source_label: str, outflow_split: list[tuple[str, float]])
+
+   Add outflow connections to other reactors in the network. The connection is given
+   by a tuple consistinig of the target reactor name and the mass flow rate split fraction.
+   The connection to the immediate downstream reactor (through flow) is optional.
+
+   Parameters
+   ----------
+       source_label: string
+           name/label of the source reactor
+       outflow_split: list of tuples of (target reactor name, split fraction)
+           outflow connections from the source reactor.
+           target reactor name: string
+           split fraction: double, <= 1.0
+
+
+.. py:method:: clear_connections()
+
+   Clear the internal connection configurations.
+
+
+.. py:method:: remove_reactor(name: str)
+
+   Remove the named reactor from the network.
+
+   Parameters
+   ----------
+       name: string
+           reactor name/label
+
+
+.. py:method:: set_reactor_outflow()
+
+   Set up and verify the the outlet flow connections from this reactor
+   to the target reactors in the network.
+
+
+.. py:method:: set_inflow_connections()
+
+   Set up the sources of the internal network inlet stream to the reactor.
+
+
+.. py:method:: set_external_outlet(reactor_index: int)
+
+   Add a new network external outlet to the reactor.
+
+   Parameters
+   ----------
+       reactor_index: integer
+           reactor index
+
+
+.. py:method:: calculate_incoming_streams(reactor_index: int) -> Union[ansys.chemkin.inlet.Stream, None]
+
+   Calculate the combined internal incoming streams from other reactors in the network.
+
+   Parameters
+   ----------
+       reactor_index: integer
+           index of the current (target) reactor
+
+   Returns
+   -------
+       incoming_stream: Stream object
+           the total internal stream going into the current PSR
+
+
+.. py:method:: set_internal_inlet(reactor_index: int) -> int
+
+   Create or update the merged inlet stream to the reactor from the rest of
+   the reactors in the network.
+
+   Parameters
+   ----------
+       reactor_index: integer
+           reactor index
+
+   Returns
+   -------
+       status: integer
+           error code
+
+
+.. py:method:: create_internal_inlet(reactor_index: int)
+
+   Create a new inlet stream that combines all incoming streams from the other
+   reactor network to the current reactor.
+
+   Parameters
+   ----------
+       reactor_index: integer
+           index of the current reactor
+
+
+.. py:method:: get_network_run_status() -> int
+
+   Get network run status
+
+   Returns
+   -------
+       status: integer
+           run status, 0=all reactor success; <-100=not run; other=failed
+
+
+.. py:method:: run() -> int
+
+   Solve the hybrid reactor network by solving the individual reactors in
+   the sequence as they are added to the network. If there is any "tear stream"
+   in the network, the solution process will be repeated till the properties of the
+   "tear stream" are converged.
+
+   Returns
+   -------
+       run status: integer
+
+
+.. py:method:: get_reactor_stream(reactor_name: str) -> ansys.chemkin.inlet.Stream
+
+   Get the solution Stream object of the given reactor name/label.
+
+   Parameters
+   ----------
+       reactor_name: string
+           reactor name
+
+   Returns
+   -------
+       solution_stream: Stream object
+           solution of the reactor specified
+
+
+.. py:method:: set_external_streams()
+
+   Set up external outlet streams.
+
+
+.. py:method:: get_external_stream(stream_index: int) -> list[ansys.chemkin.inlet.Stream]
+
+   Get the list of external outlet Stream objects.
+
+   Parameters
+   ----------
+       stream_index: integer
+           the index of the external outlet
+
+   Returns
+   -------
+       external_stream: Stream object
+           external outlet stream properties
+
+
+.. py:method:: run_without_tearstream() -> int
+
+   Run the individual reactors in the network one by one without using
+   tear stream iteration.
+
+   Returns
+   -------
+       run_status: integer
+           error code
+
+
+.. py:method:: run_with_tearstream() -> int
+
+   Run the individual reactors in the network one by one with
+   tear stream iteration.
+
+   Returns
+   -------
+       run_status: integer
+           error code
+
+
+.. py:method:: remove_tearpoint(reactor_name: str)
+
+   Remove the tear point from the list.
+
+   Parameters
+   ----------
+       reactor_name: string
+           reactor name/label
+
+
+.. py:method:: add_tearingpoint(reactor_name: str)
+
+   Add a new tear point to the list.
+
+   Parameters
+   ----------
+       reactor_name: string
+           reactor name/label
+
+
+.. py:method:: set_tear_tolerance(tol: float = 1e-06)
+
+   Set the relative tolerance to test the tear stream convergencce.
+
+   Parameters
+   ----------
+       tol: double, default = 1.0e-6
+           relative tolerance
+
+
+.. py:method:: set_tear_iteration_limit(max_count: int)
+
+   Set the maximum number of tear loop iterations.
+
+   Parameters
+   ----------
+       max_count: integer
+           tear loop iteration limit
+
+
+.. py:method:: check_iteration_count(count: int) -> bool
+
+   Check the iteration count for over the set limit.
+
+   Parameters
+   ----------
+       count: integer
+           current tear loop iteration count
+
+   Returns
+   -------
+       status: boolean
+           True=the current count is under the limit
+           False=the current count is over the limit
+
+
+.. py:method:: set_relaxation_factor(relax: float)
+
+   Set the relaxation factor when updating the tear stream
+   properties from their values of the previous iteration step.
+
+   Parameters
+   ----------
+       relax: double
+           iteration relaxation factor
+
+
+.. py:method:: check_tearstream_convergence(streamA, streamB) -> tuple[bool, float]
+
+   Compare the last and the current reactor solution at the tear point.
+
+   Parameters
+   ----------
+       streamA: Stream object
+           reactor solution to be compared against
+       streamB: Stream object
+           reactor solution used for the comparison
+
+   Returns
+   -------
+       converged: boolean
+           True=the two streams are close within the relative tolerance
+           False=the differences of the two streams are greater than the relative tolerance
+       residual: double
+           the maximum relative difference between the properties of the streams
+
+
+.. py:method:: update_tear_solution(new_stream: ansys.chemkin.inlet.Stream, old_stream: ansys.chemkin.inlet.Stream) -> ansys.chemkin.inlet.Stream
+
+   Update the old/temporary tear point stream properties (with the used of a relaxation factor).
+
+   Parameters
+   ----------
+       new_stream: Stream object
+           tear point stream properties from the current iteration step
+       old_stream: Stream object
+           tear point stream properties from the last iteration step
+
+   Returns
+   -------
+       updated_stream: Stream object
+           updated tear point stream properties
+
+
+

@@ -1,0 +1,78 @@
+
+
+
+
+
+
+The ``ansys.chemkin.flame`` library
+===================================
+
+.. py:module:: ansys.chemkin.flame
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: flame
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.flame.Flame`
+            - Generic steady state, one dimensional flame model
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Flame</api/ansys/chemkin/flame/Flame>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin utilities for steady state, 1-D flame models.
+
+
+
+
+
+
+
+

@@ -1,0 +1,92 @@
+
+
+
+
+
+
+The ``PFR.py`` module
+=====================
+
+.. py:module:: ansys.chemkin.flowreactors.PFR
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: PFR
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.flowreactors.PFR.PlugFlowReactor`
+            - Generic Plug Flow Reactor (PFR) model with energy equation
+
+
+          * - :py:obj:`~ansys.chemkin.flowreactors.PFR.PlugFlowReactor_EnergyConservation`
+            - Plug Flow Reactor (PFR) model with energy equation
+
+
+          * - :py:obj:`~ansys.chemkin.flowreactors.PFR.PlugFlowReactor_FixedTemperature`
+            - Plug Flow Reactor (PFR) model with given temperature
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> PlugFlowReactor</api/ansys/chemkin/flowreactors/PFR/PlugFlowReactor>
+    <span class="nf nf-cod-symbol_class"></span> PlugFlowReactor_EnergyConservation</api/ansys/chemkin/flowreactors/PFR/PlugFlowReactor_EnergyConservation>
+    <span class="nf nf-cod-symbol_class"></span> PlugFlowReactor_FixedTemperature</api/ansys/chemkin/flowreactors/PFR/PlugFlowReactor_FixedTemperature>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Plug Flow Reactor (PFR) model.
+
+
+
+
+
+
+
+

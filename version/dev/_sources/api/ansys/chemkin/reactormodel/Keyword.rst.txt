@@ -1,0 +1,204 @@
+
+
+:class:`Keyword`
+================
+
+.. py:class:: ansys.chemkin.reactormodel.Keyword(phrase: str, value: Union[int, float, bool, str], data_type: str)
+
+   A Chemkin keyword.
+
+
+
+
+.. py:currentmodule:: Keyword
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~show`
+            - display the Chemkin keyword and its parameter value
+          * - :py:attr:`~resetvalue`
+            - Reset the parameter value of an existing keyword
+          * - :py:attr:`~parametertype`
+            - get parameter type of the keyword
+          * - :py:attr:`~getvalue_as_string`
+            - Create the keyword input line for Chemkin applications
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~value`
+            - Get parameter value of the keyword
+          * - :py:attr:`~keyphrase`
+            - Get the phrase of the keyword
+          * - :py:attr:`~keyprefix`
+            - Get the status of the keyword
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~gasspecieskeywords`
+            - 
+          * - :py:attr:`~flowratekeywords`
+            - 
+          * - :py:attr:`~profilekeywords`
+            - 
+          * - :py:attr:`~fourspaces`
+            - 
+          * - :py:attr:`~noFullKeyword`
+            - 
+
+
+   .. tab-item:: Static methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~setfullkeywords`
+            - All keywords and their parameters must be specified by using the setkeyword method
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.reactormodel import Keyword
+
+Property detail
+---------------
+.. py:property:: value
+   :type: Union[int, float, bool, str]
+
+
+   Get parameter value of the keyword
+
+   Returns
+   -------
+       parameter value: {integer, floating, string, or boolean}
+
+
+.. py:property:: keyphrase
+   :type: str
+
+
+   Get the phrase of the keyword
+
+   Returns
+   -------
+       keyword phrase: string
+
+
+.. py:property:: keyprefix
+   :type: bool
+
+
+   Get the status of the keyword
+
+   Returns
+   -------
+       status: boolean
+           keyword is ON/OFF
+
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: gasspecieskeywords
+   :value: ['REAC', 'XEST', 'FUEL', 'OXID']
+
+
+.. py:attribute:: flowratekeywords
+   :value: ['FLRT', 'VDOT', 'VEL', 'SCCM']
+
+
+.. py:attribute:: profilekeywords
+   :value: ['TPRO', 'PPRO', 'VPRO', 'QPRO', 'AINT', 'AEXT', 'DPRO', 'FPRO', 'SCCMPRO', 'VDOTPRO', 'VELPRO',...
+
+
+.. py:attribute:: fourspaces
+   :value: '    '
+
+
+.. py:attribute:: noFullKeyword
+   :value: True
+
+
+
+
+Method detail
+-------------
+.. py:method:: setfullkeywords(mode: bool)
+   :staticmethod:
+
+
+   All keywords and their parameters must be specified by using the setkeyword method
+   and will be passed to the reactor model for further processing
+
+   Parameters
+   ----------
+       mode: boolean
+           turn the full keyword mode ON/OFF
+
+
+.. py:method:: show()
+
+   display the Chemkin keyword and its parameter value
+
+
+.. py:method:: resetvalue(value: Union[int, float, bool, str])
+
+   Reset the parameter value of an existing keyword
+
+   Parameters
+   ----------
+       value: indicated by the data_type, {int, float, string, bool}
+           keyword parameter
+
+
+.. py:method:: parametertype() -> type
+
+   get parameter type of the keyword
+
+   Returns
+   -------
+       parameter_data_type: string, {'int', 'float', 'string', 'bool'}
+           parameter data type
+
+
+.. py:method:: getvalue_as_string() -> tuple[int, str]
+
+   Create the keyword input line for Chemkin applications
+
+   Returns
+   -------
+       linelength: integer
+           line length
+       line: string
+           keyword value
+
+
+

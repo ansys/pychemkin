@@ -1,0 +1,253 @@
+
+
+:class:`perfectlystirredreactor`
+================================
+
+.. py:class:: ansys.chemkin.stirreactors.PSR.perfectlystirredreactor(guessedmixture: ansys.chemkin.inlet.Stream, label: Union[str, None] = None)
+
+   Bases: :py:obj:`ansys.chemkin.stirreactors.openreactor.openreactor`
+
+
+   Generic perfectly-stirred reactor model
+
+
+
+.. py:currentmodule:: perfectlystirredreactor
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_inlet_keywords`
+            - set up inlet keywords
+          * - :py:attr:`~set_reactor_index`
+            - Assign the reactor index/number of the current reactor in the reactor network
+          * - :py:attr:`~set_estimate_conditions`
+            - Reset the initial/guessed reactor gas mixture properties to
+          * - :py:attr:`~reset_estimate_temperature`
+            - Reset the estimated reactor gas temperature.
+          * - :py:attr:`~reset_estimate_composition`
+            - Reset the estimated reactor gas composition.
+          * - :py:attr:`~validate_inputs`
+            - Validate the keywords specified by the user before running the simulation
+          * - :py:attr:`~set_SSsolver_keywords`
+            - add steady-state solver parameter keywoprds to the keyword list
+          * - :py:attr:`~cluster_process_keywords`
+            - Process input keywords for the reactor model in cluster network mode
+          * - :py:attr:`~run`
+            - Generic Chemkin run reactor model method
+          * - :py:attr:`~process_solution`
+            - Post-process solution to extract the raw solution variable data
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~area`
+            - Get reactive surface area
+          * - :py:attr:`~volume`
+            - Get reactor volume
+          * - :py:attr:`~residence_time`
+            - Get reactor residence time
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~HTarea`
+            - 
+          * - :py:attr:`~standalone`
+            - 
+          * - :py:attr:`~ireac`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.stirreactors.PSR import perfectlystirredreactor
+
+Property detail
+---------------
+.. py:property:: area
+   :type: float
+
+
+   Get reactive surface area
+
+   Returns
+   -------
+       reactive_area: double
+           reactive surace area [cm2]
+
+
+.. py:property:: volume
+   :type: float
+
+
+   Get reactor volume
+
+   Returns
+   -------
+       volume: douoble
+           reactor volume [cm3]
+
+
+.. py:property:: residence_time
+   :type: float
+
+
+   Get reactor residence time
+
+   Returns
+   -------
+       residence_time: double
+           apparent PSR residence time [sec]
+
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: HTarea
+   :value: 0.0
+
+
+.. py:attribute:: standalone
+   :value: True
+
+
+.. py:attribute:: ireac
+
+
+
+Method detail
+-------------
+.. py:method:: set_inlet_keywords() -> int
+
+   set up inlet keywords
+
+   Returns
+   -------
+       error code: integer
+
+
+.. py:method:: set_reactor_index(reactorindex: int)
+
+   Assign the reactor index/number of the current reactor in the reactor network
+   This method should be called by the PSR cluster/network Class/Module
+   For single PSR the reactor index is always 1 (default)
+
+   Parameters
+   ----------
+       reactorindex: integer, default = 1
+           reactor index/number in the reactor network
+
+
+.. py:method:: set_estimate_conditions(option: str, guess_temp: Union[float, None] = None)
+
+   Reset the initial/guessed reactor gas mixture properties to
+   improve the steady-state solution finding performance.
+
+   Parameters
+   ----------
+       option: str, {"TP", "HP", "TT"}
+           options for additional transformation of the
+           guessed mixture composition.
+           "HP" indicates the new guessed mixture is the
+           equilibrium state with the same enthalpy.
+           "TP" indicates the new guessed mixture is the
+           equilibrium state at the new given guess_temp
+           "TT" indicates the new guessed mixture has the
+           coomposition but at the new given guess_temp
+       guess_temp: double, optional
+           new mixture temperature [K] used by options "TP" and "TT"
+
+
+.. py:method:: reset_estimate_temperature(temp: float)
+
+   Reset the estimated reactor gas temperature.
+
+   Parameters
+   ----------
+       temp: double
+           estimated reactor gas temperature [K]
+
+
+.. py:method:: reset_estimate_composition(fraction: Union[numpy.typing.NDArray[numpy.double], list[tuple[str, float]]], mode: str = 'mole')
+
+   Reset the estimated reactor gas composition.
+
+   Parameters
+   ----------
+       fraction: 1-D double array, dimension = number_species or PyChemkin recipe
+           estimated reactor gas composition
+       mode: string, {"mole", "mass"}
+           the given fractions are mole or mass fractions
+
+
+.. py:method:: validate_inputs() -> int
+
+   Validate the keywords specified by the user before running the simulation
+
+   Returns
+   -------
+       error code: integer
+
+
+.. py:method:: set_SSsolver_keywords()
+
+   add steady-state solver parameter keywoprds to the keyword list
+
+
+.. py:method:: cluster_process_keywords() -> int
+
+   Process input keywords for the reactor model in cluster network mode
+
+   Returns
+   -------
+       Error code: integer
+
+
+.. py:method:: run() -> int
+
+   Generic Chemkin run reactor model method
+
+   Returns
+   -------
+       Error code: integer
+
+
+.. py:method:: process_solution() -> ansys.chemkin.inlet.Stream
+
+   Post-process solution to extract the raw solution variable data
+   package the steady-state solution into a mixture object
+
+   Returns
+   -------
+       smixture: Stream object
+           gas stream representing the steady-state solution
+
+
+

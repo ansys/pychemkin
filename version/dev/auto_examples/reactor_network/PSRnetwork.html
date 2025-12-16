@@ -1,0 +1,1114 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Simulate a combustor using an equivalent reactor network with stream recycling &#8212; PyChemkin</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/ansys_sphinx_theme.css?v=d2ac875c" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+ 
+<link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script src="../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/reactor_network/PSRnetwork';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Premixed flame models" href="../premixed_flame/index.html" />
+    <link rel="prev" title="Use a chain reactor network to model a gas combustor" href="PSRChain_network.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/auto_examples/reactor_network/PSRnetwork.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+  <!-- If there is no MeiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+   
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <script>document.write(`<img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark" alt="PyChemkin - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/dev/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/dev/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../chemistry/index.html">Chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mixture/index.html">Mixture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../batch/index.html">Batch reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../engine/index.html">0-D engine models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSR/index.html">Perfectly stirred reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PFR/index.html">Plug-flow reactor</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">PSR network</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="PSRChain_declustered.html">Use a chain of individual reactors to model a gas combustor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PSRChain_network.html">Use a chain reactor network to model a gas combustor</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Simulate a combustor using an equivalent reactor network with stream recycling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../premixed_flame/index.html">Premixed flame models</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">PSR network</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page">Simulate a combustor using an equivalent reactor network with stream recycling</li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-reactor-network-psrnetwork-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="simulate-a-combustor-using-an-equivalent-reactor-network-with-stream-recycling">
+<span id="ref-equivalent-reactor-network"></span><span id="sphx-glr-auto-examples-reactor-network-psrnetwork-py"></span><h1>Simulate a combustor using an equivalent reactor network with stream recycling<a class="headerlink" href="#simulate-a-combustor-using-an-equivalent-reactor-network-with-stream-recycling" title="Link to this heading">#</a></h1>
+<p>This example shows how to set up and solve an ERN (equivalent reactor network) in PyChemkin.</p>
+<p>An ERN is employed as a reduced-order model to simulate the steady-state
+combustion process inside a gas turbine combustor chamber. This reduced-order
+reactor network model retains the complexity of the combustion chemistry
+by sacrificing details of the combustor geometries, the spatial resolution,
+and the mass and energy transfer processes. An ERN usually comprises PSRs
+(perfectly-stirred reactors) and PFRs (plug-flow reactors).
+The network configuration and connectivity, the reactor parameters,
+and the mass flow rates can be determined from “hot” steady-state CFD simulation results
+and/or from observations and measured data of the actual/similar devices.
+Once a reactor network is calibrated against the experimental data of a gas combustor,
+it becomes a handy tool for quickly estimating the emissions from the combustor
+when it is subjected to certain variations in the fuel compositions.</p>
+<p>This figure shows a proposed ERN model of a fictional gas turbine combustor.</p>
+<blockquote>
+<div><figure class="align-default">
+<a class="reference internal image-reference" href="../../_images/combustor_ERN.png"><img alt="Combustor reactor network" src="../../_images/combustor_ERN.png" style="width: 503.20000000000005px; height: 271.2px;" />
+</a>
+</figure>
+</div></blockquote>
+<p>The <em>primary fuel</em> is mixed with the incoming air to form a <em>fuel-lean</em> mixture
+before entering the chamber through the primary inlet. Additional air, the <em>primary air</em>,
+is introduced to the combustion chamber separately through openings surrounding the primary inlet.
+The <em>secondary air</em> is entrained into the combustion chamber through well-placed holes
+on the liners at a location slightly downstream from the primary inlet.</p>
+<p>The first PSR (reactor #1) represents the <em>mixing zone</em> around the main injector
+where the cool <em>premixed fuel-air</em> stream and the <em>primary air</em> stream are preheated
+by mixing with the hot combustion products from the <em>recirculation zone</em>.</p>
+<p>Downstream from PSR #1, PSR #2, the <em>flame zone</em> is where the combustion of
+the heated fuel-air mixture takes place. The secondary air is injected here to cool down
+the combustion exhaust before it exits the combustion chamber. A portion of the exhaust gas
+coming out of PSR #2 does not leave the combustion chamber directly and is diverted to PSR #3,
+the <em>recirculation zone</em>.</p>
+<p>The majority of the outlet flow from PSR #3 is recirculated back to the flame zone to
+sustain the fuel-lean premixed flame there. The rest of the hot gas from PSR #3 travels
+further back to PSR #1, the mixing zone, to preheat the fuel-lean mixture just entering the combustion chamber.
+Finally, the cooled flue gas leaves the chamber in a stream-like manner. Typically, a PFR is applied to simulation of the outflow.</p>
+<p>The reactors in the network are solved individually one by one. When there is a <em>tear stream</em> in the network,
+the ERN should be solved iteratively. A tear stream is usually a <em>recycle” stream</em> that can serve as
+a pivot point for solving the recycle network iteratively. The convergence of the ERN is then determined
+by the absence of the per-iteration variation of the computed tear stream properties, such as species composition.
+In the current project, the recycling streams from PSR #3 to PSR #1 and PSR #2 are tear streams.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<p>Import PyChemkin packages and start the logger
+=======================================+======</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ansys.chemkin</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ck</span>  <span class="c1"># Chemkin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin</span><span class="w"> </span><span class="kn">import</span> <span class="n">Color</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.hybridreactornetwork</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReactorNetwork</span> <span class="k">as</span> <span class="n">ERN</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.inlet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mixture</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.inlet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stream</span>  <span class="c1"># external gaseous inlet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+<span class="c1"># Chemkin PSR model (steady-state)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.stirreactors.PSR</span><span class="w"> </span><span class="kn">import</span> <span class="n">PSR_SetResTime_EnergyConservation</span> <span class="k">as</span> <span class="n">PSR</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>  <span class="c1"># number crunching</span>
+
+<span class="c1"># check working directory</span>
+<span class="n">current_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;working directory: &quot;</span> <span class="o">+</span> <span class="n">current_dir</span><span class="p">)</span>
+<span class="c1"># set verbose mode</span>
+<span class="n">ck</span><span class="o">.</span><span class="n">set_verbose</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># set interactive mode for plotting the results</span>
+<span class="c1"># interactive = True: display plot</span>
+<span class="c1"># interactive = False: save plot as a PNG file</span>
+<span class="k">global</span> <span class="n">interactive</span>
+<span class="n">interactive</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<section id="create-a-chemistry-set">
+<h2>Create a chemistry set<a class="headerlink" href="#create-a-chemistry-set" title="Link to this heading">#</a></h2>
+<p>The mechanism to load is the GRI 3.0 mechanism for methane combustion.
+This mechanism and its associated data files come with the standard Ansys Chemkin
+installation in the <code class="docutils literal notranslate"><span class="pre">/reaction/data</span></code> directory.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set mechanism directory (the default Chemkin mechanism data directory)</span>
+<span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ck</span><span class="o">.</span><span class="n">ansys_dir</span><span class="p">,</span> <span class="s2">&quot;reaction&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
+<span class="n">mechanism_dir</span> <span class="o">=</span> <span class="n">data_dir</span>
+<span class="c1"># create a chemistry set based on the GRI mechanism</span>
+<span class="n">MyGasMech</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Chemistry</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;GRI 3.0&quot;</span><span class="p">)</span>
+<span class="c1"># set mechanism input files</span>
+<span class="c1"># including the full file path is recommended</span>
+<span class="n">MyGasMech</span><span class="o">.</span><span class="n">chemfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mechanism_dir</span><span class="p">,</span> <span class="s2">&quot;grimech30_chem.inp&quot;</span><span class="p">)</span>
+<span class="n">MyGasMech</span><span class="o">.</span><span class="n">thermfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mechanism_dir</span><span class="p">,</span> <span class="s2">&quot;grimech30_thermo.dat&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="preprocess-the-gasoline-chemistry-set">
+<h2>Preprocess the gasoline chemistry set<a class="headerlink" href="#preprocess-the-gasoline-chemistry-set" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># preprocess the mechanism files</span>
+<span class="n">iError</span> <span class="o">=</span> <span class="n">MyGasMech</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-gas-mixtures-based-on-the-species-in-this-chemistry-set">
+<h2>Set up gas mixtures based on the species in this chemistry set<a class="headerlink" href="#set-up-gas-mixtures-based-on-the-species-in-this-chemistry-set" title="Link to this heading">#</a></h2>
+<p>Create the “fuel” and the “air” mixtures to initialize the external
+inlet streams. The fuel for this case is pure methane.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># fuel is pure methane</span>
+<span class="n">fuel</span> <span class="o">=</span> <span class="n">Mixture</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">)</span>
+<span class="n">fuel</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">650.0</span>  <span class="c1"># [K]</span>
+<span class="n">fuel</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="n">ck</span><span class="o">.</span><span class="n">P_ATM</span>  <span class="c1"># [atm] =&gt; [dyne/cm2]</span>
+<span class="n">fuel</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;CH4&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]</span>
+
+<span class="c1"># air is modeled as a mixture of oxygen and nitrogen</span>
+<span class="n">air</span> <span class="o">=</span> <span class="n">Mixture</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">)</span>
+<span class="n">air</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">650.0</span>  <span class="c1"># [K]</span>
+<span class="n">air</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="n">ck</span><span class="o">.</span><span class="n">P_ATM</span>
+<span class="n">air</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Air</span><span class="o">.</span><span class="n">X</span><span class="p">()</span>  <span class="c1"># mole fractions</span>
+</pre></div>
+</div>
+</section>
+<section id="create-external-inlet-streams-from-the-mixtures">
+<h2>Create external inlet streams from the mixtures<a class="headerlink" href="#create-external-inlet-streams-from-the-mixtures" title="Link to this heading">#</a></h2>
+<p>Create the <code class="docutils literal notranslate"><span class="pre">fuel</span></code> and the <code class="docutils literal notranslate"><span class="pre">air</span></code> streams/mixtures before setting up the
+external inlet streams. The fuel in this case is pure methane. The
+<code class="docutils literal notranslate"><span class="pre">X_by_Equivalence_Ratio()</span></code> method is used to form the main
+<code class="docutils literal notranslate"><span class="pre">premixed</span></code> inlet stream to the <em>mixing zone</em> reactor. The external inlets
+to the first reactor, the <em>mixing zone</em>, and the second reactor, the <em>flame zone</em>, are simply
+<code class="docutils literal notranslate"><span class="pre">air</span></code> mixtures with different mass flow rates and temperatures.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>PyChemkin has <em>air</em> redefined as a convenient way to set up the air
+stream/mixture in the simulations. Use the <code class="docutils literal notranslate"><span class="pre">ansys.chemkin.Air.X()</span></code> or
+<code class="docutils literal notranslate"><span class="pre">ansys.chemkin.Air.Y()</span></code> method when the mechanism uses <code class="docutils literal notranslate"><span class="pre">O2</span></code> and <code class="docutils literal notranslate"><span class="pre">N2</span></code> for
+oxygen and nitrogen. Use the <code class="docutils literal notranslate"><span class="pre">ansys.chemkin.air.X()</span></code> or <code class="docutils literal notranslate"><span class="pre">ansys.chemkin.air.Y()</span></code>
+method when oxygen and nitrogen are represented by <code class="docutils literal notranslate"><span class="pre">o2</span></code> and <code class="docutils literal notranslate"><span class="pre">n2</span></code>.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># primary fuel-air mixture</span>
+<span class="c1"># products from the complete combustion of the fuel mixture and air</span>
+<span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CO2&quot;</span><span class="p">,</span> <span class="s2">&quot;H2O&quot;</span><span class="p">,</span> <span class="s2">&quot;N2&quot;</span><span class="p">]</span>
+<span class="c1"># species mole fractions of added/inert mixture. (You can also create an additives mixture here.)</span>
+<span class="n">add_frac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">MyGasMech</span><span class="o">.</span><span class="n">KK</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>  <span class="c1"># no additives: all zeros</span>
+
+<span class="c1"># create the unburned fuel-air mixture</span>
+<span class="n">premixed</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">)</span>
+<span class="c1"># mean equivalence ratio</span>
+<span class="n">equiv</span> <span class="o">=</span> <span class="mf">0.6</span>
+<span class="n">iError</span> <span class="o">=</span> <span class="n">premixed</span><span class="o">.</span><span class="n">X_by_Equivalence_Ratio</span><span class="p">(</span>
+    <span class="n">MyGasMech</span><span class="p">,</span> <span class="n">fuel</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">air</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">add_frac</span><span class="p">,</span> <span class="n">products</span><span class="p">,</span> <span class="n">equivalenceratio</span><span class="o">=</span><span class="n">equiv</span>
+<span class="p">)</span>
+<span class="c1"># check fuel-oxidizer mixture creation status</span>
+<span class="k">if</span> <span class="n">iError</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: Failed to create the fuel-oxidizer mixture.&quot;</span><span class="p">)</span>
+    <span class="n">exit</span><span class="p">()</span>
+
+<span class="c1"># list the composition of the unburned fuel-air mixture</span>
+<span class="n">premixed</span><span class="o">.</span><span class="n">list_composition</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;mole&quot;</span><span class="p">)</span>
+
+<span class="c1"># set premixed fuel-air inlet temperature and mass flow rate</span>
+<span class="n">premixed</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">fuel</span><span class="o">.</span><span class="n">temperature</span>
+<span class="n">premixed</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">fuel</span><span class="o">.</span><span class="n">pressure</span>
+<span class="n">premixed</span><span class="o">.</span><span class="n">mass_flowrate</span> <span class="o">=</span> <span class="mf">500.0</span>  <span class="c1"># [g/sec]</span>
+
+<span class="c1"># primary air stream to mix with the primary fuel-air stream</span>
+<span class="n">primary_air</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Primary_Air&quot;</span><span class="p">)</span>
+<span class="n">primary_air</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">air</span><span class="o">.</span><span class="n">X</span>
+<span class="n">primary_air</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">air</span><span class="o">.</span><span class="n">pressure</span>
+<span class="n">primary_air</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">air</span><span class="o">.</span><span class="n">temperature</span>
+<span class="n">primary_air</span><span class="o">.</span><span class="n">mass_flowrate</span> <span class="o">=</span> <span class="mf">50.0</span>  <span class="c1"># [g/sec]</span>
+
+<span class="c1"># secondary bypass air stream</span>
+<span class="n">secondary_air</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Secondary_Air&quot;</span><span class="p">)</span>
+<span class="n">secondary_air</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">air</span><span class="o">.</span><span class="n">X</span>
+<span class="n">secondary_air</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">air</span><span class="o">.</span><span class="n">pressure</span>
+<span class="n">secondary_air</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">670.0</span>  <span class="c1"># [K]</span>
+<span class="n">secondary_air</span><span class="o">.</span><span class="n">mass_flowrate</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># [g/sec]</span>
+
+<span class="c1"># find the species index</span>
+<span class="n">CH4_index</span> <span class="o">=</span> <span class="n">MyGasMech</span><span class="o">.</span><span class="n">get_specindex</span><span class="p">(</span><span class="s2">&quot;CH4&quot;</span><span class="p">)</span>
+<span class="n">O2_index</span> <span class="o">=</span> <span class="n">MyGasMech</span><span class="o">.</span><span class="n">get_specindex</span><span class="p">(</span><span class="s2">&quot;O2&quot;</span><span class="p">)</span>
+<span class="n">NO_index</span> <span class="o">=</span> <span class="n">MyGasMech</span><span class="o">.</span><span class="n">get_specindex</span><span class="p">(</span><span class="s2">&quot;NO&quot;</span><span class="p">)</span>
+<span class="n">CO_index</span> <span class="o">=</span> <span class="n">MyGasMech</span><span class="o">.</span><span class="n">get_specindex</span><span class="p">(</span><span class="s2">&quot;CO&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="define-reactors-in-the-reactor-network">
+<h2>Define reactors in the reactor network<a class="headerlink" href="#define-reactors-in-the-reactor-network" title="Link to this heading">#</a></h2>
+<p>Set up the PSR for each zone one by one with <em>external inlets only</em>.
+For PSRs, use the <code class="docutils literal notranslate"><span class="pre">set_inlet()</span></code> method to add the external inlets to the
+reactor. A PFR always requires one external inlet when it is instantiated.
+From upstream to downstream, they are <code class="docutils literal notranslate"><span class="pre">premix</span> <span class="pre">zone</span></code>, <code class="docutils literal notranslate"><span class="pre">flame</span> <span class="pre">zone</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">recirculation</span> <span class="pre">zone</span></code>. The <code class="docutils literal notranslate"><span class="pre">recirculation</span> <span class="pre">zone</span></code> does not have an external inlet.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>PyChemkin requires that the first reactor/zone must have at least
+one external inlet. Because the rest of the reactors have at least the
+through-flow from the immediate upstream reactor, they do not require
+an external inlet.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The stream parameter used to instantiate a PSR is used to establish
+the <em>guessed reactor solution</em> and is modified when the network is solved by
+the ERN.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># PSR #1: mixing zone</span>
+<span class="n">mix</span> <span class="o">=</span> <span class="n">PSR</span><span class="p">(</span><span class="n">premixed</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;mixing zone&quot;</span><span class="p">)</span>
+<span class="c1"># use different guess temperature</span>
+<span class="n">mix</span><span class="o">.</span><span class="n">set_estimate_conditions</span><span class="p">(</span><span class="n">option</span><span class="o">=</span><span class="s2">&quot;TP&quot;</span><span class="p">,</span> <span class="n">guess_temp</span><span class="o">=</span><span class="mf">800.0</span><span class="p">)</span>
+<span class="c1"># set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model</span>
+<span class="n">mix</span><span class="o">.</span><span class="n">residence_time</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="mf">1.0e-3</span>
+<span class="c1"># add external inlets</span>
+<span class="n">mix</span><span class="o">.</span><span class="n">set_inlet</span><span class="p">(</span><span class="n">premixed</span><span class="p">)</span>
+<span class="n">mix</span><span class="o">.</span><span class="n">set_inlet</span><span class="p">(</span><span class="n">primary_air</span><span class="p">)</span>
+
+
+<span class="c1"># PSR #2: flame zone</span>
+<span class="n">flame</span> <span class="o">=</span> <span class="n">PSR</span><span class="p">(</span><span class="n">premixed</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;flame zone&quot;</span><span class="p">)</span>
+<span class="c1"># use the equilibrium state of the inlet gas mixture as the guessed solution</span>
+<span class="n">flame</span><span class="o">.</span><span class="n">set_estimate_conditions</span><span class="p">(</span><span class="n">option</span><span class="o">=</span><span class="s2">&quot;TP&quot;</span><span class="p">,</span> <span class="n">guess_temp</span><span class="o">=</span><span class="mf">1600.0</span><span class="p">)</span>
+<span class="c1"># set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model</span>
+<span class="n">flame</span><span class="o">.</span><span class="n">residence_time</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="mf">1.0e-3</span>
+<span class="c1"># add external inlet</span>
+<span class="n">flame</span><span class="o">.</span><span class="n">set_inlet</span><span class="p">(</span><span class="n">secondary_air</span><span class="p">)</span>
+
+<span class="c1"># PSR #3: recirculation zone</span>
+<span class="n">recirculation</span> <span class="o">=</span> <span class="n">PSR</span><span class="p">(</span><span class="n">premixed</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;recirculation zone&quot;</span><span class="p">)</span>
+<span class="c1"># use the equilibrium state of the inlet gas mixture as the guessed solution</span>
+<span class="n">recirculation</span><span class="o">.</span><span class="n">set_estimate_conditions</span><span class="p">(</span><span class="n">option</span><span class="o">=</span><span class="s2">&quot;TP&quot;</span><span class="p">,</span> <span class="n">guess_temp</span><span class="o">=</span><span class="mf">1600.0</span><span class="p">)</span>
+<span class="c1"># set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model</span>
+<span class="n">recirculation</span><span class="o">.</span><span class="n">residence_time</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="mf">1.0e-3</span>
+</pre></div>
+</div>
+</section>
+<section id="create-the-reactor-network">
+<h2>Create the reactor network<a class="headerlink" href="#create-the-reactor-network" title="Link to this heading">#</a></h2>
+<p>Create a hybrid reactor network named <code class="docutils literal notranslate"><span class="pre">PSRnetwork</span></code> and add the reactors one
+by one from upstream to downstream using the <code class="docutils literal notranslate"><span class="pre">add_reactor()</span></code> method. For a
+simple chain network you do not need to define the connectivity among the reactors.
+The reactor network model automatically figures out the through-flow connections.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Use the <code class="docutils literal notranslate"><span class="pre">show_reactors()</span></code> method to get the list of reactors in the network in
+the order that they are added.</p></li>
+<li><p>Use the <code class="docutils literal notranslate"><span class="pre">remove_reactor()</span></code> method to remove an existing reactor from the
+network by the reactor <code class="docutils literal notranslate"><span class="pre">name/label</span></code>. Similarly, use the <code class="docutils literal notranslate"><span class="pre">clear_connections()</span></code>
+method to undo the network connectivity.</p></li>
+<li><p>The order of the reactor addition is important as it dictates the solution
+sequence and thus the convergence rate.</p></li>
+</ul>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># instantiate the PSR network as a hybrid reactor network</span>
+<span class="n">PSRnetwork</span> <span class="o">=</span> <span class="n">ERN</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">)</span>
+
+<span class="c1"># add the reactors from upstream to downstream</span>
+<span class="n">PSRnetwork</span><span class="o">.</span><span class="n">add_reactor</span><span class="p">(</span><span class="n">mix</span><span class="p">)</span>
+<span class="n">PSRnetwork</span><span class="o">.</span><span class="n">add_reactor</span><span class="p">(</span><span class="n">flame</span><span class="p">)</span>
+<span class="n">PSRnetwork</span><span class="o">.</span><span class="n">add_reactor</span><span class="p">(</span><span class="n">recirculation</span><span class="p">)</span>
+
+<span class="c1"># list the reactors in the network</span>
+<span class="n">PSRnetwork</span><span class="o">.</span><span class="n">show_reactors</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="define-the-psr-connectivity">
+<h2>Define the PSR connectivity<a class="headerlink" href="#define-the-psr-connectivity" title="Link to this heading">#</a></h2>
+<p>Because the current reactor network contains recycling streams, for example, from PSR #3 to
+PSR #1 and PSR #2, you must explicitly specify the network connectivity. To do this, you use
+a <em>split</em> dictionary to define the outflow connections among the PSRs in the network.
+The <em>key</em> of the split dictionary is the label of the <em>originate PSR</em>. The <em>value</em> is a
+list of tuples consisting of the label of the <em>target PSR</em> and its mass flow rate fraction.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="s2">&quot;originate PSR&quot;</span> <span class="p">:</span> <span class="p">[(</span><span class="s2">&quot;target PSR1&quot;</span><span class="p">,</span> <span class="n">fraction</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;target PSR2&quot;</span><span class="p">,</span> <span class="n">fraction</span><span class="p">)],</span>
+  <span class="s2">&quot;another originate PSR&quot;</span> <span class="p">:</span> <span class="p">[(</span><span class="s2">&quot;target PSR1&quot;</span><span class="p">,</span> <span class="n">fraction</span><span class="p">),</span> <span class="o">...</span> <span class="p">],</span> <span class="o">...</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>For example, the outflow from reactor <code class="docutils literal notranslate"><span class="pre">PSR1``is</span> <span class="pre">split</span> <span class="pre">into</span> <span class="pre">two</span> <span class="pre">streams.</span> <span class="pre">90%</span> <span class="pre">of</span> <span class="pre">the</span>
+<span class="pre">mass</span> <span class="pre">flow</span> <span class="pre">rate</span> <span class="pre">goes</span> <span class="pre">to</span> <span class="pre">``PSR2</span></code> and the rest is diverted to <code class="docutils literal notranslate"><span class="pre">PSR5</span></code>. The split dictionary entry for
+the outflow split of <code class="docutils literal notranslate"><span class="pre">PSR1</span></code> is as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;PSR1&quot;</span> <span class="p">:</span> <span class="p">[(</span><span class="s2">&quot;PSR2&quot;</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;PSR5&quot;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The outlet flow from a reactor that is leaving the reactor network must be labeled as <code class="docutils literal notranslate"><span class="pre">EXIT&gt;&gt;</span></code>
+when you define the outflow splitting.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># PSR #1 outlet flow splitting</span>
+<span class="n">split_table</span> <span class="o">=</span> <span class="p">[(</span><span class="n">flame</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]</span>
+<span class="n">PSRnetwork</span><span class="o">.</span><span class="n">add_outflow_connections</span><span class="p">(</span><span class="n">mix</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">split_table</span><span class="p">)</span>
+<span class="c1"># PSR #2 outlet flow splitting</span>
+<span class="c1"># part of the outlet flow from PSR #2 exits the reactor network</span>
+<span class="n">split_table</span> <span class="o">=</span> <span class="p">[(</span><span class="n">recirculation</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;EXIT&gt;&gt;&quot;</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)]</span>
+<span class="n">PSRnetwork</span><span class="o">.</span><span class="n">add_outflow_connections</span><span class="p">(</span><span class="n">flame</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">split_table</span><span class="p">)</span>
+<span class="c1"># PSR #3 outlet flow splitting</span>
+<span class="c1"># PSR #3 is the last reactor of the network. However, it does not have an external outlet.</span>
+<span class="n">split_table</span> <span class="o">=</span> <span class="p">[(</span><span class="n">mix</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">),</span> <span class="p">(</span><span class="n">flame</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">)]</span>
+<span class="n">PSRnetwork</span><span class="o">.</span><span class="n">add_outflow_connections</span><span class="p">(</span><span class="n">recirculation</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">split_table</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="define-the-tear-point-for-the-iteration">
+<h2>Define the tear point for the iteration<a class="headerlink" href="#define-the-tear-point-for-the-iteration" title="Link to this heading">#</a></h2>
+<p>Because the reactor network contains recycling streams, it must be
+solved iteratively by applying the <em>tear stream</em> method. You use the
+<code class="docutils literal notranslate"><span class="pre">add_tearingpoint()</span> <span class="pre">``</span> <span class="pre">method</span> <span class="pre">to</span> <span class="pre">explicitly</span> <span class="pre">define</span> <span class="pre">the</span> <span class="pre">*tear</span> <span class="pre">points*</span>
+<span class="pre">of</span> <span class="pre">the</span> <span class="pre">network.</span> <span class="pre">In</span> <span class="pre">this</span> <span class="pre">example,</span> <span class="pre">the</span> <span class="pre">stream</span> <span class="pre">recycling</span>
+<span class="pre">occurs</span> <span class="pre">at</span> <span class="pre">reactor</span> <span class="pre">#3,</span> <span class="pre">where</span> <span class="pre">the</span> <span class="pre">outlet</span> <span class="pre">flow</span> <span class="pre">is</span> <span class="pre">sent</span> <span class="pre">back</span> <span class="pre">to</span>
+<span class="pre">the</span> <span class="pre">upstream</span> <span class="pre">reactors,</span> <span class="pre">reactor</span> <span class="pre">#1</span> <span class="pre">and</span> <span class="pre">reactor</span> <span class="pre">#2.</span> <span class="pre">Therefore,</span> <span class="pre">reactor</span>
+<span class="pre">#3,</span> <span class="pre">the</span> <span class="pre">*recirculation</span> <span class="pre">zone*,</span> <span class="pre">should</span> <span class="pre">be</span> <span class="pre">set</span> <span class="pre">as</span> <span class="pre">the</span> <span class="pre">only</span> <span class="pre">tear</span> <span class="pre">point</span> <span class="pre">of</span>
+<span class="pre">this</span> <span class="pre">reactor</span> <span class="pre">network.</span> <span class="pre">You</span> <span class="pre">use</span> <span class="pre">the</span> <span class="pre">``set_tear_tolerance()</span></code> method
+to set the relative tolerance for the overall reactor network convergence.
+The default tolerance is 1.0e-6.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># define the tear point reactor as reactor #3</span>
+<span class="n">PSRnetwork</span><span class="o">.</span><span class="n">add_tearingpoint</span><span class="p">(</span><span class="n">recirculation</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+
+<span class="c1"># reset the network relative tolerance</span>
+<span class="n">PSRnetwork</span><span class="o">.</span><span class="n">set_tear_tolerance</span><span class="p">(</span><span class="mf">1.0e-5</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="solve-the-reactor-network">
+<h2>Solve the reactor network<a class="headerlink" href="#solve-the-reactor-network" title="Link to this heading">#</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">run()</span></code> method to solve the entire reactor network. The <code class="docutils literal notranslate"><span class="pre">ReactorNetwork</span></code> hybrid
+solves the reactors one by one in the order that they are added to the network.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">set_tear_iteration_limit(count)</span></code> method to change the limit on the number of
+tear loop iterations that can be taken before declaring failure.
+The default limit is 200.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">set_relaxation_factor(factor)</span></code> method can be employed to make solution updating at the
+end of each iteration to be more aggressive (factor &gt; 1.0) or more conservative (factor &lt; 1.0).
+By default, the relaxation factor is set to 1.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set the start wall time</span>
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="c1"># solve the reactor network iteratively</span>
+<span class="n">status</span> <span class="o">=</span> <span class="n">PSRnetwork</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">status</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="s2">&quot;Failed to solve the reactor network.&quot;</span> <span class="o">+</span> <span class="n">Color</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+    <span class="n">exit</span><span class="p">()</span>
+
+<span class="c1"># compute the total runtime</span>
+<span class="n">runtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total simulation duration: </span><span class="si">{</span><span class="n">runtime</span><span class="si">}</span><span class="s2"> [sec].&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="postprocess-the-reactor-network-solutions">
+<h2>Postprocess the reactor network solutions<a class="headerlink" href="#postprocess-the-reactor-network-solutions" title="Link to this heading">#</a></h2>
+<p>There are two ways to process the results from a reactor network. You
+can extract the solution of an individual reactor member as a stream
+by using the <code class="docutils literal notranslate"><span class="pre">get_reactor_stream()</span></code> method with the reactor name. Or,
+you can get the stream properties of a specific network outlet by using the
+<code class="docutils literal notranslate"><span class="pre">get_external_stream()</span></code> method with the outlet index. Once you get the
+solution as a stream, you can use any stream or mixture
+method to further manipulate the solutions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">number_external_outlets()</span></code> method to find out the number of
+external exists of the reactor network.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># get the outlet stream from the reactor network solutions</span>
+<span class="c1"># find the number of external outlet streams from the reactor network</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;number of outlet streams = </span><span class="si">{</span><span class="n">PSRnetwork</span><span class="o">.</span><span class="n">number_external_outlets</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+<span class="c1"># display the external outlet stream properties</span>
+<span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">PSRnetwork</span><span class="o">.</span><span class="n">number_external_outlets</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">network_outflow</span> <span class="o">=</span> <span class="n">PSRnetwork</span><span class="o">.</span><span class="n">get_external_stream</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="c1"># set the stream label</span>
+    <span class="n">network_outflow</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;outflow&quot;</span>
+
+    <span class="c1"># print the desired outlet stream properties</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;outflow # </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temperature = </span><span class="si">{</span><span class="n">network_outflow</span><span class="o">.</span><span class="n">temperature</span><span class="si">}</span><span class="s2"> [K].&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mass flow rate = </span><span class="si">{</span><span class="n">network_outflow</span><span class="o">.</span><span class="n">mass_flowrate</span><span class="si">}</span><span class="s2"> [g/sec].&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CH4 = </span><span class="si">{</span><span class="n">network_outflow</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">CH4_index</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;O2 = </span><span class="si">{</span><span class="n">network_outflow</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">O2_index</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CO = </span><span class="si">{</span><span class="n">network_outflow</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">CO_index</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NO = </span><span class="si">{</span><span class="n">network_outflow</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">NO_index</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># display the reactor solutions</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;reactor/zone&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">stream</span> <span class="ow">in</span> <span class="n">PSRnetwork</span><span class="o">.</span><span class="n">reactor_solutions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">PSRnetwork</span><span class="o">.</span><span class="n">get_reactor_label</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reactor: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temperature = </span><span class="si">{</span><span class="n">stream</span><span class="o">.</span><span class="n">temperature</span><span class="si">}</span><span class="s2"> [K].&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mass flow rate = </span><span class="si">{</span><span class="n">stream</span><span class="o">.</span><span class="n">mass_flowrate</span><span class="si">}</span><span class="s2"> [g/sec].&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CH4 = </span><span class="si">{</span><span class="n">stream</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">CH4_index</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;O2 = </span><span class="si">{</span><span class="n">stream</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">O2_index</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CO = </span><span class="si">{</span><span class="n">stream</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">CO_index</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NO = </span><span class="si">{</span><span class="n">stream</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">NO_index</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-reactor-network-psrnetwork-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/8b2b99ec80d7509fa4818b4eb906c436/PSRnetwork.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">PSRnetwork.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/40e8010ddddf89a3bc9b6779a1133e7b/PSRnetwork.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">PSRnetwork.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/793298d7a459055278603cdf6f240574/PSRnetwork.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">PSRnetwork.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-chemistry-set">Create a chemistry set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preprocess-the-gasoline-chemistry-set">Preprocess the gasoline chemistry set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-gas-mixtures-based-on-the-species-in-this-chemistry-set">Set up gas mixtures based on the species in this chemistry set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-external-inlet-streams-from-the-mixtures">Create external inlet streams from the mixtures</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-reactors-in-the-reactor-network">Define reactors in the reactor network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-the-reactor-network">Create the reactor network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-the-psr-connectivity">Define the PSR connectivity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-the-tear-point-for-the-iteration">Define the tear point for the iteration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solve-the-reactor-network">Solve the reactor network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#postprocess-the-reactor-network-solutions">Postprocess the reactor network solutions</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item"> 
+<div class="tocsection editthispage">
+  <a href="https://github.com/ansys/pychemkin/edit/main/doc/source/auto_examples/reactor_network/PSRnetwork.rst">
+    <i class="fa-solid fa-pencil"></i>
+       Edit
+    on GitHub  
+  </a>
+</div>
+
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/auto_examples/reactor_network/PSRnetwork.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2025 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.0.11. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

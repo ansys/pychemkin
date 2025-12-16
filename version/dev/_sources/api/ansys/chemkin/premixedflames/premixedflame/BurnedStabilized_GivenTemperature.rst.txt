@@ -1,0 +1,27 @@
+
+
+:class:`BurnedStabilized_GivenTemperature`
+==========================================
+
+.. py:class:: ansys.chemkin.premixedflames.premixedflame.BurnedStabilized_GivenTemperature(inlet: ansys.chemkin.inlet.Stream, label: Union[str, None] = None)
+
+   Bases: :py:obj:`PremixedFlame`
+
+
+   Generic steady state, one dimensional flame model
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.premixedflames.premixedflame import BurnedStabilized_GivenTemperature
+
+
+
+
+
+

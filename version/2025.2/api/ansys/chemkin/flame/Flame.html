@@ -1,0 +1,970 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Flame &#8212; PyChemkin</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/ansys_sphinx_theme.css?v=d2ac875c" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+ 
+<link href="../../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script src="../../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/ansys/chemkin/flame/Flame';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="The ansys.chemkin.color library" href="../color/index.html" />
+    <link rel="prev" title="The ansys.chemkin.flame library" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/api/ansys/chemkin/flame/Flame.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+  <!-- If there is no MeiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+   
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <script>document.write(`<img src="../../../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark" alt="PyChemkin - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../user_guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../index.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/dev/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../user_guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../index.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/dev/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../grid/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.grid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../info/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.info</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html"><span class="nf nf-md-package"></span> ansys.chemkin.flame</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#"> <span class="nf nf-cod-symbol_class"></span> Flame</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../color/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.color</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inlet/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.inlet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../logger/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.logger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mixture/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.mixture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utilities/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chemistry/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../constants/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../realgaseos/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.realgaseos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reactormodel/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.reactormodel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chemkin_wrapper/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.chemkin_wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../steadystatesolver/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.steadystatesolver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hybridreactornetwork/index.html"><span class="nf nf-md-package"></span> ansys.chemkin.hybridreactornetwork</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../../index.html" class="nav-link">API reference</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">The <code class="docutils literal notranslate"><span class="pre">ansys.chemkin.flame</span></code> library</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flame</span></code></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="flame">
+<h1><code class="xref py py-class docutils literal notranslate"><span class="pre">Flame</span></code><a class="headerlink" href="#flame" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.chemkin.flame.Flame">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.chemkin.flame.</span></span><span class="sig-name descname"><span class="pre">Flame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fuelstream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../inlet/Stream.html#ansys.chemkin.inlet.Stream" title="ansys.chemkin.inlet.Stream"><span class="pre">ansys.chemkin.inlet.Stream</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.chemkin.flame.Flame" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../reactormodel/ReactorModel.html#ansys.chemkin.reactormodel.ReactorModel" title="ansys.chemkin.reactormodel.ReactorModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ansys.chemkin.reactormodel.ReactorModel</span></code></a>, <a class="reference internal" href="../steadystatesolver/SteadyStateSolver.html#ansys.chemkin.steadystatesolver.SteadyStateSolver" title="ansys.chemkin.steadystatesolver.SteadyStateSolver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ansys.chemkin.steadystatesolver.SteadyStateSolver</span></code></a>, <a class="reference internal" href="../grid/Grid.html#ansys.chemkin.grid.Grid" title="ansys.chemkin.grid.Grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ansys.chemkin.grid.Grid</span></code></a></p>
+<p>Generic steady state, one dimensional flame model</p>
+</dd></dl>
+
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+Methods</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Flame.set_temperature_profile" title="Flame.set_temperature_profile"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_temperature_profile</span></code></a></p></td>
+<td><p>Specify temperature profile</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Flame.use_temp_profiel_initial_mesh" title="Flame.use_temp_profiel_initial_mesh"><code class="xref py py-attr docutils literal notranslate"><span class="pre">use_temp_profiel_initial_mesh</span></code></a></p></td>
+<td><p>Use the grid points in the user defined initial/estimated temperature profile</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Flame.set_convection_differencing_type" title="Flame.set_convection_differencing_type"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_convection_differencing_type</span></code></a></p></td>
+<td><p>Set the finite differencing scheme for the convective terms in the transport equations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Flame.set_mesh_keywords" title="Flame.set_mesh_keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_mesh_keywords</span></code></a></p></td>
+<td><p>Set mesh related keywords</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Flame.set_SSsolver_keywords" title="Flame.set_SSsolver_keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_SSsolver_keywords</span></code></a></p></td>
+<td><p>add steady-state solver parameter keywoprds to the keyword list</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Flame.use_mixture_averaged_transport" title="Flame.use_mixture_averaged_transport"><code class="xref py py-attr docutils literal notranslate"><span class="pre">use_mixture_averaged_transport</span></code></a></p></td>
+<td><p>Use the mixture-averaged transport properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Flame.use_multicomponent_transport" title="Flame.use_multicomponent_transport"><code class="xref py py-attr docutils literal notranslate"><span class="pre">use_multicomponent_transport</span></code></a></p></td>
+<td><p>Use the multi-component transport properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Flame.use_fixed_Lewis_number_transport" title="Flame.use_fixed_Lewis_number_transport"><code class="xref py py-attr docutils literal notranslate"><span class="pre">use_fixed_Lewis_number_transport</span></code></a></p></td>
+<td><p>Use a fixed Lewis number to compute the species diffusion coefficient from mixture conductivity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Flame.use_thermal_diffusion" title="Flame.use_thermal_diffusion"><code class="xref py py-attr docutils literal notranslate"><span class="pre">use_thermal_diffusion</span></code></a></p></td>
+<td><p>Include the thermal diffusion (Doret) effect.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Flame.set_species_boundary_types" title="Flame.set_species_boundary_types"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_species_boundary_types</span></code></a></p></td>
+<td><p>Set the species boundary condition type (at inlet and outlet).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Attributes</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Flame.mass_flow_rate" title="Flame.mass_flow_rate"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mass_flow_rate</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Flame.temp_profile_set" title="Flame.temp_profile_set"><code class="xref py py-attr docutils literal notranslate"><span class="pre">temp_profile_set</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Flame.grid_T_profile" title="Flame.grid_T_profile"><code class="xref py py-attr docutils literal notranslate"><span class="pre">grid_T_profile</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Flame.EnergyTypes" title="Flame.EnergyTypes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">EnergyTypes</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Flame.transport_mode" title="Flame.transport_mode"><code class="xref py py-attr docutils literal notranslate"><span class="pre">transport_mode</span></code></a></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="import-detail">
+<h2>Import detail<a class="headerlink" href="#import-detail" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.flame</span><span class="w"> </span><span class="kn">import</span> <span class="n">Flame</span>
+</pre></div>
+</div>
+</section>
+<section id="attribute-detail">
+<h2>Attribute detail<a class="headerlink" href="#attribute-detail" title="Link to this heading">#</a></h2>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Flame.mass_flow_rate">
+<span class="sig-prename descclassname"><span class="pre">Flame.</span></span><span class="sig-name descname"><span class="pre">mass_flow_rate</span></span><a class="headerlink" href="#Flame.mass_flow_rate" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Flame.temp_profile_set">
+<span class="sig-prename descclassname"><span class="pre">Flame.</span></span><span class="sig-name descname"><span class="pre">temp_profile_set</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#Flame.temp_profile_set" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Flame.grid_T_profile">
+<span class="sig-prename descclassname"><span class="pre">Flame.</span></span><span class="sig-name descname"><span class="pre">grid_T_profile</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#Flame.grid_T_profile" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Flame.EnergyTypes">
+<span class="sig-prename descclassname"><span class="pre">Flame.</span></span><span class="sig-name descname"><span class="pre">EnergyTypes</span></span><a class="headerlink" href="#Flame.EnergyTypes" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Flame.transport_mode">
+<span class="sig-prename descclassname"><span class="pre">Flame.</span></span><span class="sig-name descname"><span class="pre">transport_mode</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#Flame.transport_mode" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="method-detail">
+<h2>Method detail<a class="headerlink" href="#method-detail" title="Link to this heading">#</a></h2>
+<dl class="py method">
+<dt class="sig sig-object py" id="Flame.set_temperature_profile">
+<span class="sig-prename descclassname"><span class="pre">Flame.</span></span><span class="sig-name descname"><span class="pre">set_temperature_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Flame.set_temperature_profile" title="Link to this definition">#</a></dt>
+<dd><p>Specify temperature profile</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>x: 1D double array</dt><dd><p>position value of the profile data [cm]</p>
+</dd>
+<dt>temp: 1D double array</dt><dd><p>temperature value of the profile data [K]</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p>error code: integer</p>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Flame.use_temp_profiel_initial_mesh">
+<span class="sig-prename descclassname"><span class="pre">Flame.</span></span><span class="sig-name descname"><span class="pre">use_temp_profiel_initial_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">on</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Flame.use_temp_profiel_initial_mesh" title="Link to this definition">#</a></dt>
+<dd><p>Use the grid points in the user defined initial/estimated temperature profile
+as the initial/starting grid points.</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>on: boolean, default = False</dt><dd><p>use the grid points of the temperature profile as the initial grid points</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Flame.set_convection_differencing_type">
+<span class="sig-prename descclassname"><span class="pre">Flame.</span></span><span class="sig-name descname"><span class="pre">set_convection_differencing_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Flame.set_convection_differencing_type" title="Link to this definition">#</a></dt>
+<dd><p>Set the finite differencing scheme for the convective terms in the transport equations.</p>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>mode: string, {“central”, “upwind”}</dt><dd><p>finite difference discretizing scheme</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Flame.set_mesh_keywords">
+<span class="sig-prename descclassname"><span class="pre">Flame.</span></span><span class="sig-name descname"><span class="pre">set_mesh_keywords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Flame.set_mesh_keywords" title="Link to this definition">#</a></dt>
+<dd><p>Set mesh related keywords</p>
+<section id="id3">
+<h3>Returns<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p>error code: integer</p>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Flame.set_SSsolver_keywords">
+<span class="sig-prename descclassname"><span class="pre">Flame.</span></span><span class="sig-name descname"><span class="pre">set_SSsolver_keywords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Flame.set_SSsolver_keywords" title="Link to this definition">#</a></dt>
+<dd><p>add steady-state solver parameter keywoprds to the keyword list</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Flame.use_mixture_averaged_transport">
+<span class="sig-prename descclassname"><span class="pre">Flame.</span></span><span class="sig-name descname"><span class="pre">use_mixture_averaged_transport</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Flame.use_mixture_averaged_transport" title="Link to this definition">#</a></dt>
+<dd><p>Use the mixture-averaged transport properties.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Flame.use_multicomponent_transport">
+<span class="sig-prename descclassname"><span class="pre">Flame.</span></span><span class="sig-name descname"><span class="pre">use_multicomponent_transport</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Flame.use_multicomponent_transport" title="Link to this definition">#</a></dt>
+<dd><p>Use the multi-component transport properties.
+Use of the multi-component transport properties is recommended when
+the pressure is low.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Flame.use_fixed_Lewis_number_transport">
+<span class="sig-prename descclassname"><span class="pre">Flame.</span></span><span class="sig-name descname"><span class="pre">use_fixed_Lewis_number_transport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Lewis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Flame.use_fixed_Lewis_number_transport" title="Link to this definition">#</a></dt>
+<dd><p>Use a fixed Lewis number to compute the species diffusion coefficient from mixture conductivity.</p>
+<div class="math notranslate nohighlight">
+\[Le = Sc/Pr = \frac{(\kappa/\rho C_{p})}{D}\]</div>
+<section id="id4">
+<h3>Parameters<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>Lewis: double</dt><dd><p>Lewis number</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Flame.use_thermal_diffusion">
+<span class="sig-prename descclassname"><span class="pre">Flame.</span></span><span class="sig-name descname"><span class="pre">use_thermal_diffusion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Flame.use_thermal_diffusion" title="Link to this definition">#</a></dt>
+<dd><p>Include the thermal diffusion (Doret) effect.
+The inclusion of thermal diffucivity is recommended when there are significant
+amount of “light” species in the system. Species with molecular weight less than 5 g/mol
+is considered a light species, for example, hydrogen.</p>
+<section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>mode: boolean {True, False}</dt><dd><p>ON/OFF</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Flame.set_species_boundary_types">
+<span class="sig-prename descclassname"><span class="pre">Flame.</span></span><span class="sig-name descname"><span class="pre">set_species_boundary_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'comp'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Flame.set_species_boundary_types" title="Link to this definition">#</a></dt>
+<dd><p>Set the species boundary condition type (at inlet and outlet).
+When the species value is fixed at the boundary, the “back” diffusion of the species
+into the inlet stream is not considered. That is, when the species profile is positive
+at the inlet, a fixed species value implies the species concentration in the inlet stream
+is actually lower than its boundary concentration. When the “flux” option is employed,
+species mass flux will be balanced at the inlet. That is, the species concentration at
+the inlet will be slightly varied from its specified boundary value so that the “net”
+species mass flux at the inlet is zero.</p>
+<section id="id6">
+<h3>Parameters<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>mode: string, {“flux”, “comp”}</dt><dd><p>keep the species mole/mass fraction at a fixed value or keep the species mass flux conserved</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.chemkin.flame.Flame"><code class="docutils literal notranslate"><span class="pre">ansys.chemkin.flame.Flame</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-detail">Import detail</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attribute-detail">Attribute detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Flame.mass_flow_rate"><code class="docutils literal notranslate"><span class="pre">mass_flow_rate</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Flame.temp_profile_set"><code class="docutils literal notranslate"><span class="pre">temp_profile_set</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Flame.grid_T_profile"><code class="docutils literal notranslate"><span class="pre">grid_T_profile</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Flame.EnergyTypes"><code class="docutils literal notranslate"><span class="pre">EnergyTypes</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Flame.transport_mode"><code class="docutils literal notranslate"><span class="pre">transport_mode</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-detail">Method detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Flame.set_temperature_profile"><code class="docutils literal notranslate"><span class="pre">set_temperature_profile()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Flame.use_temp_profiel_initial_mesh"><code class="docutils literal notranslate"><span class="pre">use_temp_profiel_initial_mesh()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Flame.set_convection_differencing_type"><code class="docutils literal notranslate"><span class="pre">set_convection_differencing_type()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Flame.set_mesh_keywords"><code class="docutils literal notranslate"><span class="pre">set_mesh_keywords()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Flame.set_SSsolver_keywords"><code class="docutils literal notranslate"><span class="pre">set_SSsolver_keywords()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Flame.use_mixture_averaged_transport"><code class="docutils literal notranslate"><span class="pre">use_mixture_averaged_transport()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Flame.use_multicomponent_transport"><code class="docutils literal notranslate"><span class="pre">use_multicomponent_transport()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Flame.use_fixed_Lewis_number_transport"><code class="docutils literal notranslate"><span class="pre">use_fixed_Lewis_number_transport()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Flame.use_thermal_diffusion"><code class="docutils literal notranslate"><span class="pre">use_thermal_diffusion()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Flame.set_species_boundary_types"><code class="docutils literal notranslate"><span class="pre">set_species_boundary_types()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item"> 
+<div class="tocsection editthispage">
+  <a href="http://github.com/ansys/pychemkin/edit/main/ansys/chemkin/flame/Flame.py">
+    <i class="fa-solid fa-pencil"></i>
+       Edit
+    on GitHub  
+  </a>
+</div>
+
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../../_sources/api/ansys/chemkin/flame/Flame.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2025 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.0.11. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

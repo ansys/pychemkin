@@ -1,0 +1,117 @@
+
+
+:class:`FreelyPropagating`
+==========================
+
+.. py:class:: ansys.chemkin.premixedflames.premixedflame.FreelyPropagating(inlet: ansys.chemkin.inlet.Stream, label: Union[str, None] = None)
+
+   Bases: :py:obj:`PremixedFlame`
+
+
+   Generic steady state, one dimensional flame model
+
+
+
+.. py:currentmodule:: FreelyPropagating
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~skip_fix_T_solution`
+            - Skip the step of finding the intermediate solution with fixed temperature
+          * - :py:attr:`~automatic_temperature_profile_estimate`
+            - Let the premixed flame model to construct an estimated temperature profile
+          * - :py:attr:`~pinned_temperature`
+            - Pin the assigned temperature to the mesh to anchor the freely propagating flame.
+          * - :py:attr:`~get_flame_speed`
+            - Get the computed laminar flame speed
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~flamespeed`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.premixedflames.premixedflame import FreelyPropagating
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: flamespeed
+   :value: -1.0
+
+
+
+
+Method detail
+-------------
+.. py:method:: skip_fix_T_solution(mode: bool = True)
+
+   Skip the step of finding the intermediate solution with fixed temperature
+
+   Parameters
+   ----------
+       mode: boolean {True, False}
+           ON/OFF
+
+
+.. py:method:: automatic_temperature_profile_estimate(mode: bool = True)
+
+   Let the premixed flame model to construct an estimated temperature profile
+   based on the equilibrium state to start the calculation
+
+   Parameters
+   ----------
+       mode: boolean {True, False}
+           ON/OFF
+
+
+.. py:method:: pinned_temperature(temperature: float = 400.0)
+
+   Pin the assigned temperature to the mesh to anchor the freely propagating flame.
+   This temperature should be slightly higher than the inlet/unburnt gas temperature
+   and less than the ignition temperature of the inlet gas mixture.
+
+   Parameters
+   ----------
+       temperature: double, default = 400.0 [K]
+           pinned gas temperature [K]
+
+
+.. py:method:: get_flame_speed() -> float
+
+   Get the computed laminar flame speed
+
+   Returns
+   -------
+       flame_speed: double
+           laminar flame speed [cm/sec]
+
+
+

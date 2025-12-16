@@ -1,0 +1,106 @@
+
+
+
+
+
+
+The ``PSR.py`` module
+=====================
+
+.. py:module:: ansys.chemkin.stirreactors.PSR
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: PSR
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.stirreactors.PSR.perfectlystirredreactor`
+            - Generic perfectly-stirred reactor model
+
+
+          * - :py:obj:`~ansys.chemkin.stirreactors.PSR.PSR_SetResTime_EnergyConservation`
+            - PSR model with given reactor reasidence time (CONP)
+
+
+          * - :py:obj:`~ansys.chemkin.stirreactors.PSR.PSR_SetVolume_EnergyConservation`
+            - PSR model with given reactor volume (CONV)
+
+
+          * - :py:obj:`~ansys.chemkin.stirreactors.PSR.PSR_SetResTime_FixedTemperature`
+            - PSR model with given reactor reasidence time (CONP)
+
+
+          * - :py:obj:`~ansys.chemkin.stirreactors.PSR.PSR_SetVolume_FixedTemperature`
+            - PSR model with given reactor volume (CONV)
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> perfectlystirredreactor</api/ansys/chemkin/stirreactors/PSR/perfectlystirredreactor>
+    <span class="nf nf-cod-symbol_class"></span> PSR_SetResTime_EnergyConservation</api/ansys/chemkin/stirreactors/PSR/PSR_SetResTime_EnergyConservation>
+    <span class="nf nf-cod-symbol_class"></span> PSR_SetVolume_EnergyConservation</api/ansys/chemkin/stirreactors/PSR/PSR_SetVolume_EnergyConservation>
+    <span class="nf nf-cod-symbol_class"></span> PSR_SetResTime_FixedTemperature</api/ansys/chemkin/stirreactors/PSR/PSR_SetResTime_FixedTemperature>
+    <span class="nf nf-cod-symbol_class"></span> PSR_SetVolume_FixedTemperature</api/ansys/chemkin/stirreactors/PSR/PSR_SetVolume_FixedTemperature>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Perfectly stirred reactor (PSR) model
+
+
+
+
+
+
+
+

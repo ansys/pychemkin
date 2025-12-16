@@ -1,0 +1,65 @@
+
+
+:class:`Air`
+============
+
+.. py:class:: ansys.chemkin.constants.Air
+
+   define the "air" composition in PyChemkin with a fixed mixture "recipe".
+   A "recipe" is a list of tuples of ("species symbol", fraction) to define a
+   gas mixture in PyChemkin.
+   This class uses the upper case symbols for oxygen and nitrogen.
+
+
+
+
+
+.. py:currentmodule:: Air
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+
+   .. tab-item:: Static methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~X`
+            - 
+          * - :py:attr:`~Y`
+            - 
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.constants import Air
+
+
+
+
+
+Method detail
+-------------
+.. py:method:: X() -> list[tuple[str, float]]
+   :staticmethod:
+
+
+.. py:method:: Y() -> list[tuple[str, float]]
+   :staticmethod:
+
+
+

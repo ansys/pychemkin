@@ -1,0 +1,343 @@
+
+
+:class:`HCCIengine`
+===================
+
+.. py:class:: ansys.chemkin.engines.HCCI.HCCIengine(reactor_condition: ansys.chemkin.inlet.Stream, label: str = '', nzones: Union[int, None] = None)
+
+   Bases: :py:obj:`ansys.chemkin.engines.engine.Engine`
+
+
+   Single or multi- zone homogeneous charge compression ignition (HCCI) engine model
+
+
+
+.. py:currentmodule:: HCCIengine
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_number_of_zones`
+            - Get the number of zones used by the current HCCI simulation
+          * - :py:attr:`~set_zonal_temperature`
+            - set zonal temperatures for muti-zone HCCI engine simulation
+          * - :py:attr:`~set_zonal_volume_fraction`
+            - set zonal volume fractions for muti-zone HCCI engine simulation
+          * - :py:attr:`~set_zonal_mass_fraction`
+            - set zonal mass fractions for muti-zone HCCI engine simulation
+          * - :py:attr:`~set_zonal_heat_transfer_area_fraction`
+            - set zonal wall heat transfer area fractions for muti-zone HCCI engine simulation
+          * - :py:attr:`~set_zonal_gas_mole_fractions`
+            - set zonal gas mole fractions for muti-zone HCCI engine simulation
+          * - :py:attr:`~define_fuel_composition`
+            - set the fuel composition for setting up zonal gas composition by zonal equivalence ratio
+          * - :py:attr:`~define_oxid_composition`
+            - set the oxidizer composition for setting up zonal gas composition by zonal equivalence ratio
+          * - :py:attr:`~define_product_composition`
+            - set the complete combustion product species for setting up zonal gas composition by zonal equivalence ratio
+          * - :py:attr:`~define_additive_fractions`
+            - set zonal additive gas mole fractions for setting up zonal gas composition by zonal equivalence ratio
+          * - :py:attr:`~set_zonal_equivalence_ratio`
+            - set zonal wall heat transfer area fractions for setting up zonal gas composition by zonal equivalence ratio
+          * - :py:attr:`~set_zonal_EGR_ratio`
+            - set zonal exhaust gas recirculation (EGR) ratios for setting up zonal gas composition by zonal equivalence ratio
+          * - :py:attr:`~set_energy_equation_switch_ON_CA`
+            - Set the crank angle at which the energy equation will be turn ON for
+          * - :py:attr:`~set_zonal_volume_keyword`
+            - Set zonal volume keyword for the multi-zone HCCI engine simulation
+          * - :py:attr:`~set_zonal_mass_keyword`
+            - Set zonal mass keyword for the multi-zone HCCI engine simulation
+          * - :py:attr:`~set_zonal_condition_keywords`
+            - Set zonal initial condition keywords under the Full-Keywords mode
+          * - :py:attr:`~set_zonal_equivalence_ratio_keywords`
+            - Set zonal initial condition keywords under the Full-Keywords mode
+          * - :py:attr:`~run`
+            - Generic Chemkin run HCCI engine model method
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~zonetemperature`
+            - 
+          * - :py:attr:`~zonevolume`
+            - 
+          * - :py:attr:`~usezonemass`
+            - 
+          * - :py:attr:`~zonemass`
+            - 
+          * - :py:attr:`~zoneHTarea`
+            - 
+          * - :py:attr:`~zonemolefrac`
+            - 
+          * - :py:attr:`~zoneequivalenceratio`
+            - 
+          * - :py:attr:`~zonefueldefined`
+            - 
+          * - :py:attr:`~zoneoxiddefined`
+            - 
+          * - :py:attr:`~zoneproductdefined`
+            - 
+          * - :py:attr:`~zoneaddmolefrac`
+            - 
+          * - :py:attr:`~zoneEGRR`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.engines.HCCI import HCCIengine
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: zonetemperature
+   :type:  list[float]
+   :value: []
+
+
+.. py:attribute:: zonevolume
+   :type:  list[float]
+   :value: []
+
+
+.. py:attribute:: usezonemass
+   :value: False
+
+
+.. py:attribute:: zonemass
+   :type:  list[float]
+   :value: []
+
+
+.. py:attribute:: zoneHTarea
+   :type:  list[float]
+   :value: []
+
+
+.. py:attribute:: zonemolefrac
+   :type:  list[float]
+   :value: []
+
+
+.. py:attribute:: zoneequivalenceratio
+   :type:  list[float]
+   :value: []
+
+
+.. py:attribute:: zonefueldefined
+   :type:  list[tuple]
+   :value: []
+
+
+.. py:attribute:: zoneoxiddefined
+   :type:  list[tuple]
+   :value: []
+
+
+.. py:attribute:: zoneproductdefined
+   :type:  list[str]
+   :value: []
+
+
+.. py:attribute:: zoneaddmolefrac
+   :type:  list[float]
+   :value: []
+
+
+.. py:attribute:: zoneEGRR
+   :type:  list[float]
+   :value: []
+
+
+
+
+Method detail
+-------------
+.. py:method:: get_number_of_zones() -> int
+
+   Get the number of zones used by the current HCCI simulation
+
+   Returns
+   -------
+       nzones: integer
+           number of zones in the HCCI engine model
+
+
+.. py:method:: set_zonal_temperature(zonetemp: list[float])
+
+   set zonal temperatures for muti-zone HCCI engine simulation
+
+   Parameters
+   ----------
+       zonetemp: list of doubles, dimension = [nzones]
+           zonal temperatures [K]
+
+
+.. py:method:: set_zonal_volume_fraction(zonevol: list[float])
+
+   set zonal volume fractions for muti-zone HCCI engine simulation
+
+   Parameters
+   ----------
+       zonevol: list of doubles, dimension = [nzones]
+           zonal volume fractions [-]
+
+
+.. py:method:: set_zonal_mass_fraction(zonemass: list[float])
+
+   set zonal mass fractions for muti-zone HCCI engine simulation
+
+   Parameters
+   ----------
+       zonemass: list of doubles, dimension = [nzones]
+           zonal mass fractions [-]
+
+
+.. py:method:: set_zonal_heat_transfer_area_fraction(zonearea: list[float])
+
+   set zonal wall heat transfer area fractions for muti-zone HCCI engine simulation
+
+   Parameters
+   ----------
+       zonearea: list of doubles, dimension = [nzones]
+           zonal heat transfer area fractions [-]
+
+
+.. py:method:: set_zonal_gas_mole_fractions(zonemolefrac: list[float])
+
+   set zonal gas mole fractions for muti-zone HCCI engine simulation
+
+   Parameters
+   ----------
+       zonemolefrac: list of 1-D double arrays (number of gas species), dimension = [nzones]
+           zonal gas mole fractions [-]
+
+
+.. py:method:: define_fuel_composition(recipe: list[tuple[str, float]])
+
+   set the fuel composition for setting up zonal gas composition by zonal equivalence ratio
+
+   Parameters
+   ----------
+       recipe: list of tuples formatted as (species, mole fraction) pairs
+
+
+.. py:method:: define_oxid_composition(recipe: list[tuple[str, float]])
+
+   set the oxidizer composition for setting up zonal gas composition by zonal equivalence ratio
+
+   Parameters
+   ----------
+       recipe: list of tuples formatted as (species, mole fraction) pairs
+
+
+.. py:method:: define_product_composition(products: list[str])
+
+   set the complete combustion product species for setting up zonal gas composition by zonal equivalence ratio
+
+   Parameters
+   ----------
+       products: list of strings
+           product species symbols
+
+
+.. py:method:: define_additive_fractions(addfrac: list[float])
+
+   set zonal additive gas mole fractions for setting up zonal gas composition by zonal equivalence ratio
+
+   Parameters
+   ----------
+       addfrac: 1-D double array, dimension = [number of gas species]
+           additive gas mole fractions [-]
+
+
+.. py:method:: set_zonal_equivalence_ratio(zonephi: list[float])
+
+   set zonal wall heat transfer area fractions for setting up zonal gas composition by zonal equivalence ratio
+
+   Parameters
+   ----------
+       zonephi: 1-D double array, dimension = [nzones]
+           zonal equivalence ratios [-]
+
+
+.. py:method:: set_zonal_EGR_ratio(zoneegr: list[float])
+
+   set zonal exhaust gas recirculation (EGR) ratios for setting up zonal gas composition by zonal equivalence ratio
+
+   Parameters
+   ----------
+       zoneegr: 1-D double array, dimension = [nzones]
+           zonal EGR ratios [-]
+
+
+.. py:method:: set_energy_equation_switch_ON_CA(switchCA: float)
+
+   Set the crank angle at which the energy equation will be turn ON for
+   the rest of the simulation.
+   Before this switch crank angle the given temperature profile(s) or value(s)
+   is used in the multi-zone HCCI simulation.
+
+   Parameters
+   ----------
+       switchCA: double
+           energy equation activation crank angle [degree]
+
+
+.. py:method:: set_zonal_volume_keyword()
+
+   Set zonal volume keyword for the multi-zone HCCI engine simulation
+
+
+.. py:method:: set_zonal_mass_keyword()
+
+   Set zonal mass keyword for the multi-zone HCCI engine simulation
+
+
+.. py:method:: set_zonal_condition_keywords()
+
+   Set zonal initial condition keywords under the Full-Keywords mode
+   and use raw species mole fractions to set up zonal gas compositions
+   for multi-zone HCCI engine simulation
+
+
+.. py:method:: set_zonal_equivalence_ratio_keywords()
+
+   Set zonal initial condition keywords under the Full-Keywords mode
+   and use equivalence ratios to set up zonal gas compositions
+   for multi-zone HCCI engine simulation
+
+
+.. py:method:: run() -> int
+
+   Generic Chemkin run HCCI engine model method
+
+   Returns
+   -------
+       Error code: integer
+
+
+

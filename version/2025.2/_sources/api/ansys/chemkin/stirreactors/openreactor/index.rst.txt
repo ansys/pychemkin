@@ -1,0 +1,78 @@
+
+
+
+
+
+
+The ``openreactor.py`` module
+=============================
+
+.. py:module:: ansys.chemkin.stirreactors.openreactor
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: openreactor
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.stirreactors.openreactor.openreactor`
+            - Generic open reactor model
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> openreactor</api/ansys/chemkin/stirreactors/openreactor/openreactor>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin open reactor utilities.
+
+
+
+
+
+
+
+

@@ -1,0 +1,69 @@
+
+
+:class:`PlugFlowReactor_FixedTemperature`
+=========================================
+
+.. py:class:: ansys.chemkin.flowreactors.PFR.PlugFlowReactor_FixedTemperature(inlet, label: str = 'PFR')
+
+   Bases: :py:obj:`PlugFlowReactor`
+
+
+   Plug Flow Reactor (PFR) model with given temperature
+
+
+
+.. py:currentmodule:: PlugFlowReactor_FixedTemperature
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_temperature_profile`
+            - Specify reactor temperature profile
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.flowreactors.PFR import PlugFlowReactor_FixedTemperature
+
+
+
+
+
+Method detail
+-------------
+.. py:method:: set_temperature_profile(x: numpy.typing.NDArray[numpy.double], temp: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify reactor temperature profile
+
+   Parameters
+   ----------
+       x: 1-D double array
+           position value of the profile data [cm]
+       temp: 1-D double array
+           temperature value of the profile data [K]
+
+   Returns
+   -------
+       error code: integer
+
+
+

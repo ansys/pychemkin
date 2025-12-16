@@ -1,0 +1,109 @@
+
+
+
+
+
+
+The ``ansys.chemkin.realgaseos`` library
+========================================
+
+.. py:module:: ansys.chemkin.realgaseos
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: realgaseos
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~check_realgas_status`
+            - Check whether the real-gas cubic EOS is active
+
+
+          * - :py:obj:`~set_current_pressure`
+            - Set gas mixture pressure for real-gas EOS calculations.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Real-gas cubic EOS model.
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: check_realgas_status(chem_index: int) -> bool
+
+   Check whether the real-gas cubic EOS is active
+
+   Parameters
+   ----------
+       chem_index: integer
+           chemistry set index associated with the Chemistry Set
+
+   Returns
+   -------
+       status: boolean
+           the activation status of the Chemkin real-gas model
+
+
+.. py:function:: set_current_pressure(chem_index: int, pressure: float) -> int
+
+   Set gas mixture pressure for real-gas EOS calculations.
+
+   Parameters
+   ----------
+       chem_index: integer
+           chemistry set index associated with the Chemistry Set
+       pressure: double
+           gas pressure [dynes/cm2]
+
+   Returns
+   -------
+       iErr: integer
+           error code
+
+
+
+

@@ -1,0 +1,25 @@
+API reference
+=============
+
+This section describes PyChemkin endpoints, their capabilities, and how
+to interact with them programmatically.
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   <span class="nf nf-md-package"></span> ansys.chemkin.grid</api/ansys/chemkin/grid/index>
+   <span class="nf nf-md-package"></span> ansys.chemkin.info</api/ansys/chemkin/info/index>
+   <span class="nf nf-md-package"></span> ansys.chemkin.flame</api/ansys/chemkin/flame/index>
+   <span class="nf nf-md-package"></span> ansys.chemkin.color</api/ansys/chemkin/color/index>
+   <span class="nf nf-md-package"></span> ansys.chemkin.inlet</api/ansys/chemkin/inlet/index>
+   <span class="nf nf-md-package"></span> ansys.chemkin.logger</api/ansys/chemkin/logger/index>
+   <span class="nf nf-md-package"></span> ansys.chemkin.mixture</api/ansys/chemkin/mixture/index>
+   <span class="nf nf-md-package"></span> ansys.chemkin.utilities</api/ansys/chemkin/utilities/index>
+   <span class="nf nf-md-package"></span> ansys.chemkin.chemistry</api/ansys/chemkin/chemistry/index>
+   <span class="nf nf-md-package"></span> ansys.chemkin.constants</api/ansys/chemkin/constants/index>
+   <span class="nf nf-md-package"></span> ansys.chemkin.realgaseos</api/ansys/chemkin/realgaseos/index>
+   <span class="nf nf-md-package"></span> ansys.chemkin.reactormodel</api/ansys/chemkin/reactormodel/index>
+   <span class="nf nf-md-package"></span> ansys.chemkin.chemkin_wrapper</api/ansys/chemkin/chemkin_wrapper/index>
+   <span class="nf nf-md-package"></span> ansys.chemkin.steadystatesolver</api/ansys/chemkin/steadystatesolver/index>
+   <span class="nf nf-md-package"></span> ansys.chemkin.hybridreactornetwork</api/ansys/chemkin/hybridreactornetwork/index>

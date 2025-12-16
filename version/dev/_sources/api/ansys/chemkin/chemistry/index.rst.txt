@@ -1,0 +1,302 @@
+
+
+
+
+
+
+The ``ansys.chemkin.chemistry`` library
+=======================================
+
+.. py:module:: ansys.chemkin.chemistry
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: chemistry
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.chemistry.Chemistry`
+            - define and preprocess Chemkin chemistry set
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~verbose`
+            - Return the global verbose mode indicating the status (ON/OFF) of printing statements that do not have the leading '**' characters.
+
+
+          * - :py:obj:`~set_verbose`
+            - Set the global verbose mode to turn ON(True) or OFF(False) of printing statements that do not have the leading '**' characters.
+
+
+          * - :py:obj:`~chemkin_version`
+            - Return the Chemkin-CFD-API version number currently in use.
+
+
+          * - :py:obj:`~verify_version`
+            - Check if the version of Chemkin-CFD-API currently in use meets
+
+
+          * - :py:obj:`~done`
+            - Release Chemkin license and reset the Chemistry sets.
+
+
+          * - :py:obj:`~check_chemistryset`
+            - Check whether the Chemistry Set is initialized in Chemkin-CFD-API.
+
+
+          * - :py:obj:`~activate_chemistryset`
+            - Switch to (re-activate) the work spaces of the current Chemistry Set
+
+
+          * - :py:obj:`~force_activate_chemistryset`
+            - activate the Chemistry Set automatically and silently.
+
+
+          * - :py:obj:`~chemistryset_new`
+            - Create a new Chemistry Set initialization flag and set the value to False
+
+
+          * - :py:obj:`~chemistryset_initialized`
+            - Set the Chemistry Set Initialization flag to True
+
+
+          * - :py:obj:`~check_active_chemistryset`
+            - Verify if the chemistry set is currently activated.
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~LP_c_char`
+            - 
+
+
+          * - :py:obj:`~chemkin_verbose`
+            - 
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~MAX_SPECIES_LENGTH`
+            - 
+
+
+          * - :py:obj:`~COMPLETE`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Chemistry</api/ansys/chemkin/chemistry/Chemistry>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin Chemistry utilities.
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: verbose() -> bool
+
+   Return the global verbose mode indicating the status (ON/OFF) of printing statements that do not have the leading '**' characters.
+
+   Returns
+   -------
+       mode: boolean, {True, False}, default = True
+           the verbose mode
+
+
+.. py:function:: set_verbose(OnOff: bool)
+
+   Set the global verbose mode to turn ON(True) or OFF(False) of printing statements that do not have the leading '**' characters.
+
+   Parameters
+   ----------
+       OnOff: boolean, {True, False}
+           the verbose mode
+
+
+.. py:function:: chemkin_version() -> int
+
+   Return the Chemkin-CFD-API version number currently in use.
+
+   Returns
+   -------
+       version: integer
+           Chemkin-CFD-API version number
+
+
+.. py:function:: verify_version(min_version: int) -> bool
+
+   Check if the version of Chemkin-CFD-API currently in use meets
+   the minimum version required by certain operations.
+
+   Parameters
+   ----------
+       min_version: integer
+           minimum chemkin-CFD-API version required to perform the operation
+
+   Returns
+   -------
+       status: boolean
+
+
+.. py:function:: done()
+
+   Release Chemkin license and reset the Chemistry sets.
+
+
+.. py:function:: check_chemistryset(chem_index: int) -> bool
+
+   Check whether the Chemistry Set is initialized in Chemkin-CFD-API.
+
+   Parameters
+   ----------
+       chem_index: integer
+           chemistry set index associated with the Chemistry Set
+
+   Returns
+   -------
+       status: boolean
+           the initialization status of the Chemistry set associated with the given Chemistry set index
+
+
+.. py:function:: activate_chemistryset(chem_index: int) -> int
+
+   Switch to (re-activate) the work spaces of the current Chemistry Set
+   when there are multiple Chemistry Sets in the same project
+
+   Parameters
+   ----------
+       chem_index: integer
+           chemistry set index associated with the Chemistry Set
+
+   Returns
+   -------
+       error flag: integer
+
+
+.. py:function:: force_activate_chemistryset(chem_index: int)
+
+   activate the Chemistry Set automatically and silently.
+
+   Parameters
+   ----------
+       chem_index: integer
+           chemistry set index associated with the Chemistry Set
+
+
+.. py:function:: chemistryset_new(chem_index: int)
+
+   Create a new Chemistry Set initialization flag and set the value to False
+
+   Parameters
+   ----------
+       chem_index: integer
+           chemistry set index associated with the Chemistry Set
+
+
+.. py:function:: chemistryset_initialized(chem_index: int)
+
+   Set the Chemistry Set Initialization flag to True
+
+   Parameters
+   ----------
+       chem_index: integer
+           chemistry set index associated with the Chemistry Set
+
+
+.. py:function:: check_active_chemistryset(chem_index: int) -> bool
+
+   Verify if the chemistry set is currently activated.
+
+   Parameters
+   ----------
+       chem_index: integer
+           chemistry set index associated with a Chemistry Set
+
+   Returns
+   -------
+       status: boolean
+           active status of the Chemistry Set
+
+
+.. py:data:: MAX_SPECIES_LENGTH
+   :value: 17
+
+
+.. py:data:: COMPLETE
+   :value: 0
+
+
+.. py:data:: LP_c_char
+
+.. py:data:: chemkin_verbose
+   :value: True
+
+
+
+

@@ -1,0 +1,27 @@
+
+
+:class:`BooleanKeyword`
+=======================
+
+.. py:class:: ansys.chemkin.reactormodel.BooleanKeyword(phrase: str)
+
+   Bases: :py:obj:`Keyword`
+
+
+   Chemkin boolean keyword
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.reactormodel import BooleanKeyword
+
+
+
+
+
+

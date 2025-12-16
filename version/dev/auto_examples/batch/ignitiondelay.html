@@ -1,0 +1,996 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Predict the ignition delay time of a combustible mixture &#8212; PyChemkin</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/ansys_sphinx_theme.css?v=d2ac875c" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+ 
+<link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script src="../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/batch/ignitiondelay';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Simulate a rapid compression machine" href="rcm.html" />
+    <link rel="prev" title="Simulate hydrogen combustion in a constant-pressure reactor" href="closed_homogeneous__transient.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/auto_examples/batch/ignitiondelay.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+  <!-- If there is no MeiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+   
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <script>document.write(`<img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark" alt="PyChemkin - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/dev/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/dev/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../chemistry/index.html">Chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mixture/index.html">Mixture</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Batch reactor</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="closed_homogeneous__transient.html">Simulate hydrogen combustion in a constant-pressure reactor</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Predict the ignition delay time of a combustible mixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rcm.html">Simulate a rapid compression machine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sensitivity.html">Perform brute-force sensitivity analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vapor.html">Explore cooling water vapor</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../engine/index.html">0-D engine models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSR/index.html">Perfectly stirred reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PFR/index.html">Plug-flow reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reactor_network/index.html">PSR network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../premixed_flame/index.html">Premixed flame models</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Batch reactor</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page">Predict the ignition delay time of a combustible mixture</li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-batch-ignitiondelay-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="predict-the-ignition-delay-time-of-a-combustible-mixture">
+<span id="ref-ignition-delay"></span><span id="sphx-glr-auto-examples-batch-ignitiondelay-py"></span><h1>Predict the ignition delay time of a combustible mixture<a class="headerlink" href="#predict-the-ignition-delay-time-of-a-combustible-mixture" title="Link to this heading">#</a></h1>
+<p>One of the important properties of hydrocarbon fuels is the <em>ignition delay time</em>.
+For automobiles, the gasoline, a mixtures of many fuel species, is graded by the
+<em>octane number</em> which is closely related to the fuel mixture’s ignition characteristics.
+Higher octane number fuel tends to ignite more easily. However, this does not mean you
+should blindly put the highest octane number fuel into your car. Car engines are designed
+for specific operating conditions, and you should always use the gasoline grades recommended by
+the car/engine manufacturer to prevent damages to the engine.</p>
+<p>This tutorial employs the <strong>constant-pressure batch reactor model</strong> (with the energy equation
+<strong>ON</strong>) to predict the <em>auto-ignition delay time</em> of a <strong>Primary Reference Fuel (PRF)</strong>. PRF
+is created for automobile fuel researches and consists of two major components: n-heptane
+C<sub>7</sub>H<sub>16</sub> and iso-octane C<sub>8</sub>H<sub>18</sub>. By definition, n-heptane
+is assigned with an octane number of 0, and an octane number of 100 for iso-octane. Thus, a PRF
+of 20% n-heptane and 80% iso-octane has an octane number of 80. In this tutorial, a PRF 60 fuel
+is used to show the <strong>negative temperature coefficient (NTC)</strong> behavior in the ignition delay
+curve. The ignition delay curve is constructed by collecting the predicted auto-ignition delay
+times with various initial gas conditions. Here, the initial gas temperature is increased from
+700 to 1080 [K].</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<section id="import-pychemkin-package-and-start-the-logger">
+<h2>Import PyChemkin package and start the logger<a class="headerlink" href="#import-pychemkin-package-and-start-the-logger" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ansys.chemkin</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ck</span>  <span class="c1"># chemkin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin</span><span class="w"> </span><span class="kn">import</span> <span class="n">Color</span>
+
+<span class="c1"># chemkin batch reactor models (transient)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.batchreactors.batchreactor</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">GivenPressureBatchReactor_EnergyConservation</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># plotting</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>  <span class="c1"># number crunching</span>
+
+<span class="c1"># check working directory</span>
+<span class="n">current_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;working directory: &quot;</span> <span class="o">+</span> <span class="n">current_dir</span><span class="p">)</span>
+<span class="c1"># set verbose mode</span>
+<span class="n">ck</span><span class="o">.</span><span class="n">set_verbose</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># set interactive mode for plotting the results</span>
+<span class="c1"># interactive = True: display plot</span>
+<span class="c1"># interactive = False: save plot as a PNG file</span>
+<span class="k">global</span> <span class="n">interactive</span>
+<span class="n">interactive</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+<section id="create-a-chemistry-set">
+<h2>Create a chemistry set<a class="headerlink" href="#create-a-chemistry-set" title="Link to this heading">#</a></h2>
+<p>For PRF, the encrypted 14-component gasoline mechanism, <code class="docutils literal notranslate"><span class="pre">gasoline_14comp_WBencrypted.inp</span></code>,
+is used. <code class="docutils literal notranslate"><span class="pre">gasoline</span></code> is the name given to this <code class="docutils literal notranslate"><span class="pre">Chemistry</span> <span class="pre">Set</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This gasoline mechanism does not come with any transport data so you do not need to provide
+the transport data file.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set mechanism directory (the default Chemkin mechanism data directory)</span>
+<span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ck</span><span class="o">.</span><span class="n">ansys_dir</span><span class="p">,</span> <span class="s2">&quot;reaction&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
+<span class="n">mechanism_dir</span> <span class="o">=</span> <span class="n">data_dir</span>
+<span class="c1"># create a chemistry set based on GRI 3.0</span>
+<span class="n">gasoline</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Chemistry</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;gasoline 14comp&quot;</span><span class="p">)</span>
+<span class="c1"># set mechanism input files</span>
+<span class="c1"># including the full file path is recommended</span>
+<span class="n">gasoline</span><span class="o">.</span><span class="n">chemfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mechanism_dir</span><span class="p">,</span> <span class="s2">&quot;gasoline_14comp_WBencrypt.inp&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="pre-process-the-gasoline-chemistry-set">
+<h2>Pre-process the gasoline <code class="docutils literal notranslate"><span class="pre">Chemistry</span> <span class="pre">Set</span></code><a class="headerlink" href="#pre-process-the-gasoline-chemistry-set" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># preprocess the mechanism files</span>
+<span class="n">iError</span> <span class="o">=</span> <span class="n">gasoline</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-the-stoichiometric-gasoline-air-mixture">
+<h2>Set up the stoichiometric gasoline-air mixture<a class="headerlink" href="#set-up-the-stoichiometric-gasoline-air-mixture" title="Link to this heading">#</a></h2>
+<p>You need to set up the stoichiometric gasoline-air mixture for the subsequent
+ignition delay time calculations. Here the <code class="docutils literal notranslate"><span class="pre">X_by_Equivalence_Ratio``method</span> <span class="pre">is</span> <span class="pre">used.</span>
+<span class="pre">You</span> <span class="pre">create</span> <span class="pre">the</span> <span class="pre">``fuel</span></code> and the <code class="docutils literal notranslate"><span class="pre">air</span></code> mixtures first. Then define the
+<em>complete combustion product species</em> and provide the <em>additives</em> composition if applicable.
+And finally you can simply set <code class="docutils literal notranslate"><span class="pre">equivalenceratio=1</span></code> to create the stoichiometric
+gasoline-air mixture.</p>
+<p>For PRF 60 gasoline, the <code class="docutils literal notranslate"><span class="pre">recipe</span></code> is <code class="docutils literal notranslate"><span class="pre">[(&quot;ic8h18&quot;,</span> <span class="pre">0.6),</span> <span class="pre">(&quot;nc7h16&quot;,</span> <span class="pre">0.4)]</span></code>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># create the fuel mixture</span>
+<span class="n">fuelmixture</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">gasoline</span><span class="p">)</span>
+<span class="c1"># set fuel = composition of PRF 60</span>
+<span class="n">fuelmixture</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;ic8h18&quot;</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;nc7h16&quot;</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)]</span>
+<span class="c1"># setting pressure and temperature</span>
+<span class="n">fuelmixture</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">ck</span><span class="o">.</span><span class="n">P_ATM</span>
+<span class="n">fuelmixture</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">1500.0</span>
+
+<span class="c1"># create the oxidizer mixture: air</span>
+<span class="n">air</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">gasoline</span><span class="p">)</span>
+<span class="n">air</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;o2&quot;</span><span class="p">,</span> <span class="mf">0.21</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;n2&quot;</span><span class="p">,</span> <span class="mf">0.79</span><span class="p">)]</span>
+<span class="c1"># setting pressure and temperature</span>
+<span class="n">air</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">ck</span><span class="o">.</span><span class="n">P_ATM</span>
+<span class="n">air</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">1500.0</span>
+
+<span class="c1"># products from the complete combustion of the fuel mixture and air</span>
+<span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;co2&quot;</span><span class="p">,</span> <span class="s2">&quot;h2o&quot;</span><span class="p">,</span> <span class="s2">&quot;n2&quot;</span><span class="p">]</span>
+<span class="c1"># species mole fractions of added/inert mixture. can also create an additives mixture here</span>
+<span class="n">add_frac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">gasoline</span><span class="o">.</span><span class="n">KK</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>  <span class="c1"># no additives: all zeros</span>
+
+<span class="c1"># create the premixed mixture to be defined</span>
+<span class="n">premixed</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">gasoline</span><span class="p">)</span>
+<span class="c1"># define the composition by the equivalence ratio</span>
+<span class="n">iError</span> <span class="o">=</span> <span class="n">premixed</span><span class="o">.</span><span class="n">X_by_Equivalence_Ratio</span><span class="p">(</span>
+    <span class="n">gasoline</span><span class="p">,</span> <span class="n">fuelmixture</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">air</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">add_frac</span><span class="p">,</span> <span class="n">products</span><span class="p">,</span> <span class="n">equivalenceratio</span><span class="o">=</span><span class="mf">1.0</span>
+<span class="p">)</span>
+<span class="c1"># check fuel-oxidizer mixture creation status</span>
+<span class="k">if</span> <span class="n">iError</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: Failed to create the fuel-oxidizer mixture.&quot;</span><span class="p">)</span>
+    <span class="n">exit</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="list-the-mixture-composition">
+<h2>List the mixture composition<a class="headerlink" href="#list-the-mixture-composition" title="Link to this heading">#</a></h2>
+<p>list the composition of the premixed mixture for verification</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">premixed</span><span class="o">.</span><span class="n">list_composition</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;mole&quot;</span><span class="p">)</span>
+<span class="c1"># set mixture temperature and pressure (equivalent to setting the initial temperature and pressure of the reactor)</span>
+<span class="n">premixed</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="mf">40.0</span> <span class="o">*</span> <span class="n">ck</span><span class="o">.</span><span class="n">P_ATM</span>
+<span class="n">premixed</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">700.0</span>
+</pre></div>
+</div>
+</section>
+<section id="create-the-reactor-object-for-ignition-delay-time-calculations">
+<h2>Create the reactor object for ignition delay time calculations<a class="headerlink" href="#create-the-reactor-object-for-ignition-delay-time-calculations" title="Link to this heading">#</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">GivenPressureBatchReactor_EnergyConservation</span></code> method to instantiate a
+<em>constant pressure batch reactor that also includes the energy equation</em>. This <code class="docutils literal notranslate"><span class="pre">ReactorModel</span></code>
+method requires a <code class="docutils literal notranslate"><span class="pre">Mixture</span></code> object as an input parameter. This <code class="docutils literal notranslate"><span class="pre">Mixture</span></code> input serves two
+purposes: passing the <code class="docutils literal notranslate"><span class="pre">Chemistry</span> <span class="pre">Set</span></code> to be used by the reactor model and setting the
+<em>initial condition</em> (pressure, temperature, and gas composition) of the simulation. You
+should use the <code class="docutils literal notranslate"><span class="pre">premixed</span></code> mixture you just created.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">MyCONP</span> <span class="o">=</span> <span class="n">GivenPressureBatchReactor_EnergyConservation</span><span class="p">(</span><span class="n">premixed</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;CONP&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-additional-reactor-model-parameters">
+<h2>Set up additional reactor model parameters<a class="headerlink" href="#set-up-additional-reactor-model-parameters" title="Link to this heading">#</a></h2>
+<p><em>Reactor parameters</em>, <em>solver controls</em>, and <em>output instructions</em> need to be provided
+before running the simulations. For a batch reactor, the <em>initial volume</em> and the
+<em>simulation end time</em> are required inputs.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># verify initial gas composition inside the reactor</span>
+<span class="n">MyCONP</span><span class="o">.</span><span class="n">list_composition</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;mole&quot;</span><span class="p">)</span>
+
+<span class="c1"># set other reactor parameters</span>
+<span class="c1"># initial reactor volume [cm3]</span>
+<span class="n">MyCONP</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="c1"># simulation end time [sec]</span>
+<span class="n">MyCONP</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="mf">1.0</span>
+</pre></div>
+</div>
+</section>
+<section id="set-output-options">
+<h2>Set output options<a class="headerlink" href="#set-output-options" title="Link to this heading">#</a></h2>
+<p>You can turn on the <em>adaptive solution saving</em> to resolve the steep variations in the solution
+profile. Here additional solution data point will be saved for every <strong>100 [K]</strong> change in gas
+<strong>temperature</strong>. The <code class="docutils literal notranslate"><span class="pre">set_ignition_delay</span></code> method must be included for the reactor model to
+report the <em>ignition delay times</em> after the simulation is done. If <code class="docutils literal notranslate"><span class="pre">method=&quot;T_inflection&quot;</span></code> is
+set, the reactor model will treat the <em>inflection points</em> in the predicted gas temperature profile
+as the indication of an auto-ignition. You can choose a different auto-ignition definition.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Type <code class="docutils literal notranslate"><span class="pre">ansys.chemkin.show_ignition_definitions()</span></code> to get the list of all available ignition
+delay time definitions in Chemkin.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>By default, time intervals for both print and save solution are <strong>1/100</strong> of the
+<em>simulation end time</em>. In this case <span class="math notranslate nohighlight">\(dt=time/100=0.001\)</span>. You can change them
+to different values.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set timestep between saving solution</span>
+<span class="n">MyCONP</span><span class="o">.</span><span class="n">timestep_for_saving_solution</span> <span class="o">=</span> <span class="mf">0.001</span>
+<span class="c1"># change timestep between saving solution</span>
+<span class="n">MyCONP</span><span class="o">.</span><span class="n">timestep_for_saving_solution</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="c1"># turn ON adaptive solution saving</span>
+<span class="n">MyCONP</span><span class="o">.</span><span class="n">adaptive_solution_saving</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">value_change</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;TEMPERATURE&quot;</span><span class="p">)</span>
+<span class="c1"># set ignition delay</span>
+<span class="n">MyCONP</span><span class="o">.</span><span class="n">set_ignition_delay</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;T_inflection&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-solver-controls">
+<h2>Set solver controls<a class="headerlink" href="#set-solver-controls" title="Link to this heading">#</a></h2>
+<p>You can overwrite the default solver controls by using solver related methods, for example,
+<code class="docutils literal notranslate"><span class="pre">tolerances</span></code>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># tolerances are given in tuple: (absolute tolerance, relative tolerance)</span>
+<span class="n">MyCONP</span><span class="o">.</span><span class="n">tolerances</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0e-10</span><span class="p">,</span> <span class="mf">1.0e-8</span><span class="p">)</span>
+<span class="c1"># stop after ignition is detected (not recommended for ignition delay time calculations)</span>
+<span class="c1"># MyCONP.stop_after_ignition()</span>
+<span class="c1"># show solver option</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;timestep between solution printing: </span><span class="si">{</span><span class="n">MyCONP</span><span class="o">.</span><span class="n">timestep_for_printing_solution</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># show timestep between printing solution</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;forced non-negative solution values: </span><span class="si">{</span><span class="n">MyCONP</span><span class="o">.</span><span class="n">force_nonnegative</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="run-the-parameter-study">
+<h2>Run the parameter study<a class="headerlink" href="#run-the-parameter-study" title="Link to this heading">#</a></h2>
+<p>Construct the ignition delay curve by varying the initial reactor temperature in 20 [K]
+increments from 700 to 1080 [K]. Use the <code class="docutils literal notranslate"><span class="pre">get_ignition_delay</span></code> method to extract the ignition
+delay times after finishing each run.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># loop over initial reactor temperature to create an ignition delay time plot</span>
+<span class="n">npoints</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">delta_temp</span> <span class="o">=</span> <span class="mf">20.0</span>
+<span class="n">init_temp</span> <span class="o">=</span> <span class="n">premixed</span><span class="o">.</span><span class="n">temperature</span>
+<span class="n">delaytime</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">npoints</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">temp_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">delaytime</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="c1"># set the start wall time</span>
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="c1"># loop over all cases with different initial gas/reactor temperatures</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">npoints</span><span class="p">):</span>
+    <span class="c1"># update the initial reactor temperature</span>
+    <span class="n">MyCONP</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">init_temp</span>  <span class="c1"># K</span>
+    <span class="c1"># show the additional keywords given by user (verify inputs before running the simulation)</span>
+    <span class="c1"># MyCONP.showkeywordinputlines()</span>
+    <span class="c1"># run the reactor model</span>
+    <span class="n">runstatus</span> <span class="o">=</span> <span class="n">MyCONP</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="c1">#</span>
+    <span class="k">if</span> <span class="n">runstatus</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># plot 1/T instead of T</span>
+        <span class="n">temp_inv</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0e0</span> <span class="o">/</span> <span class="n">init_temp</span>
+        <span class="c1"># get ignition delay time</span>
+        <span class="n">delaytime</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">MyCONP</span><span class="o">.</span><span class="n">get_ignition_delay</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ignition delay time = </span><span class="si">{</span><span class="n">delaytime</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2"> [msec]&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># if get this, most likely the END time is too short</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="s2">&quot;&gt;&gt;&gt; Run failed. &lt;&lt;&lt;&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+    <span class="n">init_temp</span> <span class="o">+=</span> <span class="n">delta_temp</span>
+
+<span class="c1"># compute the total runtime</span>
+<span class="n">runtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;total simulation duration: </span><span class="si">{</span><span class="n">runtime</span><span class="si">}</span><span class="s2"> [sec] for </span><span class="si">{</span><span class="n">npoints</span><span class="si">}</span><span class="s2"> cases&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="plot-the-ignition-delay-curve">
+<h2>Plot the ignition delay curve<a class="headerlink" href="#plot-the-ignition-delay-curve" title="Link to this heading">#</a></h2>
+<p>The ignition delay curve is customarily plotted against the inverse temperature. The corresponding
+temperature values are shown on the top axis.</p>
+<p>Intuitively, you expect that the reactivity increases as the temperature increases. However, as
+you can see, in this case, the ignition delay curve does not vary monotonically with the
+temperature. Between 850 and 950 [K], the ignition delay time actually increases slightly
+(because the reactivity decreases). This is regarded as the
+<strong>Negative Temperature Coefficient (NTC)</strong> behavior which is often observed during
+low-temperature oxidation of large hydrocarbon fuels.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># create an ignition delay versus 1/T plot for the PRF fuel (should exhibit the NTC region)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;figure.autolayout&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">temp_inv</span><span class="p">,</span> <span class="n">delaytime</span><span class="p">,</span> <span class="s2">&quot;bs--&quot;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;1/T [1/K]&quot;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Ignition delay time [msec]&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># Create a secondary x-axis for T (=1/(1/T))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">one_over</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Vectorized 1/x, treating x==0 manually&quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+    <span class="n">near_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">[</span><span class="n">near_zero</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="n">x</span><span class="p">[</span><span class="o">~</span><span class="n">near_zero</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">x</span><span class="p">[</span><span class="o">~</span><span class="n">near_zero</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">x</span>
+
+
+<span class="c1"># the function &quot;1/x&quot; is its own inverse</span>
+<span class="n">inverse</span> <span class="o">=</span> <span class="n">one_over</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">secondary_xaxis</span><span class="p">(</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">functions</span><span class="o">=</span><span class="p">(</span><span class="n">one_over</span><span class="p">,</span> <span class="n">inverse</span><span class="p">))</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;T [K]&quot;</span><span class="p">)</span>
+<span class="c1"># plot results</span>
+<span class="k">if</span> <span class="n">interactive</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;plot_ignition_delay.png&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-batch-ignitiondelay-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/6483d03fefce4c1af9d922d553fc99f7/ignitiondelay.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">ignitiondelay.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/6a13d9eca46af3905ed10dddc6a17bad/ignitiondelay.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">ignitiondelay.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/14a47f1ba8eb9de657f9d766c382ba30/ignitiondelay.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">ignitiondelay.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-pychemkin-package-and-start-the-logger">Import PyChemkin package and start the logger</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-chemistry-set">Create a chemistry set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-process-the-gasoline-chemistry-set">Pre-process the gasoline <code class="docutils literal notranslate"><span class="pre">Chemistry</span> <span class="pre">Set</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-the-stoichiometric-gasoline-air-mixture">Set up the stoichiometric gasoline-air mixture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-the-mixture-composition">List the mixture composition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-the-reactor-object-for-ignition-delay-time-calculations">Create the reactor object for ignition delay time calculations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-additional-reactor-model-parameters">Set up additional reactor model parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-output-options">Set output options</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-solver-controls">Set solver controls</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-the-parameter-study">Run the parameter study</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-the-ignition-delay-curve">Plot the ignition delay curve</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item"> 
+<div class="tocsection editthispage">
+  <a href="https://github.com/ansys/pychemkin/edit/main/doc/source/auto_examples/batch/ignitiondelay.rst">
+    <i class="fa-solid fa-pencil"></i>
+       Edit
+    on GitHub  
+  </a>
+</div>
+
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/auto_examples/batch/ignitiondelay.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2025 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.0.11. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

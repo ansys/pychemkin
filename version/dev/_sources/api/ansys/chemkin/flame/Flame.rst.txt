@@ -1,0 +1,213 @@
+
+
+:class:`Flame`
+==============
+
+.. py:class:: ansys.chemkin.flame.Flame(fuelstream: ansys.chemkin.inlet.Stream, label: str)
+
+   Bases: :py:obj:`ansys.chemkin.reactormodel.ReactorModel`, :py:obj:`ansys.chemkin.steadystatesolver.SteadyStateSolver`, :py:obj:`ansys.chemkin.grid.Grid`
+
+
+   Generic steady state, one dimensional flame model
+
+
+
+.. py:currentmodule:: Flame
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_temperature_profile`
+            - Specify temperature profile
+          * - :py:attr:`~use_temp_profiel_initial_mesh`
+            - Use the grid points in the user defined initial/estimated temperature profile
+          * - :py:attr:`~set_convection_differencing_type`
+            - Set the finite differencing scheme for the convective terms in the transport equations.
+          * - :py:attr:`~set_mesh_keywords`
+            - Set mesh related keywords
+          * - :py:attr:`~set_SSsolver_keywords`
+            - add steady-state solver parameter keywoprds to the keyword list
+          * - :py:attr:`~use_mixture_averaged_transport`
+            - Use the mixture-averaged transport properties.
+          * - :py:attr:`~use_multicomponent_transport`
+            - Use the multi-component transport properties.
+          * - :py:attr:`~use_fixed_Lewis_number_transport`
+            - Use a fixed Lewis number to compute the species diffusion coefficient from mixture conductivity.
+          * - :py:attr:`~use_thermal_diffusion`
+            - Include the thermal diffusion (Doret) effect.
+          * - :py:attr:`~set_species_boundary_types`
+            - Set the species boundary condition type (at inlet and outlet).
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~mass_flow_rate`
+            - 
+          * - :py:attr:`~temp_profile_set`
+            - 
+          * - :py:attr:`~grid_T_profile`
+            - 
+          * - :py:attr:`~EnergyTypes`
+            - 
+          * - :py:attr:`~transport_mode`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.flame import Flame
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: mass_flow_rate
+
+.. py:attribute:: temp_profile_set
+   :value: False
+
+
+.. py:attribute:: grid_T_profile
+   :value: False
+
+
+.. py:attribute:: EnergyTypes
+
+.. py:attribute:: transport_mode
+   :value: 0
+
+
+
+
+Method detail
+-------------
+.. py:method:: set_temperature_profile(x: numpy.typing.NDArray[numpy.double], temp: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify temperature profile
+
+   Parameters
+   ----------
+       x: 1D double array
+           position value of the profile data [cm]
+       temp: 1D double array
+           temperature value of the profile data [K]
+
+   Returns
+   -------
+       error code: integer
+
+
+.. py:method:: use_temp_profiel_initial_mesh(on: bool = False)
+
+   Use the grid points in the user defined initial/estimated temperature profile
+   as the initial/starting grid points.
+
+   Parameters
+   ----------
+       on: boolean, default = False
+           use the grid points of the temperature profile as the initial grid points
+
+
+.. py:method:: set_convection_differencing_type(mode: str)
+
+   Set the finite differencing scheme for the convective terms in the transport equations.
+
+   Parameters
+   ----------
+       mode: string, {"central", "upwind"}
+           finite difference discretizing scheme
+
+
+.. py:method:: set_mesh_keywords() -> int
+
+   Set mesh related keywords
+
+   Returns
+   -------
+       error code: integer
+
+
+.. py:method:: set_SSsolver_keywords()
+
+   add steady-state solver parameter keywoprds to the keyword list
+
+
+.. py:method:: use_mixture_averaged_transport()
+
+   Use the mixture-averaged transport properties.
+
+
+.. py:method:: use_multicomponent_transport()
+
+   Use the multi-component transport properties.
+   Use of the multi-component transport properties is recommended when
+   the pressure is low.
+
+
+.. py:method:: use_fixed_Lewis_number_transport(Lewis: float = 1.0)
+
+   Use a fixed Lewis number to compute the species diffusion coefficient from mixture conductivity.
+
+   .. math::
+
+       Le = Sc/Pr = \frac{(\kappa/\rho C_{p})}{D}
+
+   Parameters
+   ----------
+       Lewis: double
+           Lewis number
+
+
+.. py:method:: use_thermal_diffusion(mode: bool = True)
+
+   Include the thermal diffusion (Doret) effect.
+   The inclusion of thermal diffucivity is recommended when there are significant
+   amount of "light" species in the system. Species with molecular weight less than 5 g/mol
+   is considered a light species, for example, hydrogen.
+
+   Parameters
+   ----------
+       mode: boolean {True, False}
+           ON/OFF
+
+
+.. py:method:: set_species_boundary_types(mode: str = 'comp')
+
+   Set the species boundary condition type (at inlet and outlet).
+   When the species value is fixed at the boundary, the "back" diffusion of the species
+   into the inlet stream is not considered. That is, when the species profile is positive
+   at the inlet, a fixed species value implies the species concentration in the inlet stream
+   is actually lower than its boundary concentration. When the "flux" option is employed,
+   species mass flux will be balanced at the inlet. That is, the species concentration at
+   the inlet will be slightly varied from its specified boundary value so that the "net"
+   species mass flux at the inlet is zero.
+
+   Parameters
+   ----------
+       mode: string, {"flux", "comp"}
+           keep the species mole/mass fraction at a fixed value or keep the species mass flux conserved
+
+
+

@@ -1,0 +1,31 @@
+
+
+:class:`PSR_SetVolume_FixedTemperature`
+=======================================
+
+.. py:class:: ansys.chemkin.stirreactors.PSR.PSR_SetVolume_FixedTemperature(guessedmixture: ansys.chemkin.inlet.Stream, label: Union[str, None] = None)
+
+   Bases: :py:obj:`perfectlystirredreactor`
+
+
+   PSR model with given reactor volume (CONV)
+   and reactor temperature (GivenT)
+   rho_PSR * Vol_PSR / residence_time = mass_flow_rate
+   The reactor pressure and the inlet mass flow rate are always given (fixed)
+   so the reactor residence time and density are varying in this case.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.stirreactors.PSR import PSR_SetVolume_FixedTemperature
+
+
+
+
+
+

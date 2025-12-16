@@ -1,0 +1,90 @@
+
+
+.. _sphx_glr_auto_examples_premixed_flame:
+
+Premixed flame models
+=====================
+
+The *Premixed Flame* model is a 1-D steady-state application, and it contains two sub-models:
+*"flame speed calculator"* (or the freely propagating flame model) and *"flat flame"* model.
+The *flame speed calculator* is commonly used to calculate the laminar flame speed of a premixed
+fuel-oxidizer mixture. The predicted/computed flame speeds can be used to validate a combustion
+mechanism or can serve as a prre-processor to construct a "flame speed table" or a
+"combustion progress table" for other applications. The *flat flame* burner-stablized model is
+primarily used to study the flame chemistry in conjunction with the flat flame experiments.
+
+The examples show different ways to perform the "premixed flame" calculations.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The freely propagating premixed flame model can be utilized to obtain the laminar flame speed of a gas mixture at given initial temperature and pressure. The premixed flame model will calculate the temperature and species composition profiles across the flame, and the laminar flame speed will be derived from the mass flow rate of the gas mixture, a constant across the entire calculation domain because of the mass conservation.">
+
+.. only:: html
+
+  .. image:: /auto_examples/premixed_flame/images/thumb/sphx_glr_flamespeed_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_premixed_flame_flamespeed.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Compute the laminar flame speed of diluted hydrogen at low pressure</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="One of the prevailing use case of the freely propagating premixed flame model is to build a flame speed table to be imported by another combustion simulation tools. PyChemkin provides the flexibility to customize the data structure of the flame speed table depending on the simulation goals and the tool. Furthermore, over the years, the chemkin flame speed calculator has derived a set of default solver settings that would greatly improve the convergence performance, especially for those widely adopted hydrocarbon fuel combustion mechanisms. The required input parameters the flame speed calculator are reduced to the composition of the fuel-oxidizer mixture, the initial/inlet pressure and temperature, and the calculation domain.">
+
+.. only:: html
+
+  .. image:: /auto_examples/premixed_flame/images/thumb/sphx_glr_methane_flamespeed_table_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_premixed_flame_methane_flamespeed_table.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Construct atmospheric  methane-air flame speed versus equivalence ratio table</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The burner stabilized premixed flame model is frequently used as a numerical tool to develop and to validate combustion mechanisms in the context of a burner stabilized flat flame. The premixed burner stabilized flat flame experiments are important because, in addition to the reaction pathways and rate parameters, they provide opportunities to learn about the impact of the transport processes on the combustion chemistry and flame structure. The premixed burner stabilized flame model calculates the temperature and the species concentrations along the burner centerline, and the results will be compared against the measurements. The burner stabilized flame model assumes that the flow is laminar and the temperature at the burner rim is constant (in order to anchor the flame).">
+
+.. only:: html
+
+  .. image:: /auto_examples/premixed_flame/images/thumb/sphx_glr_premixedburnerflame_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_premixed_flame_premixedburnerflame.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Simulate a burner stabilized premixed flame</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/premixed_flame/flamespeed
+   /auto_examples/premixed_flame/methane_flamespeed_table
+   /auto_examples/premixed_flame/premixedburnerflame
+
