@@ -78,6 +78,6 @@ class Color:
         # set color
         color = Color.msg_modes.get(mode.lower(), "WHITE")
         # compile the message
-        messsage = Color.SPACE.join(msg)
+        message = Color.SPACE.join(msg)
         # print
-        print(color + f"** {messsage}", end=Color.END)
+        print(color + f"** {message}", end=Color.END)
