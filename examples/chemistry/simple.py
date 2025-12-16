@@ -115,7 +115,7 @@ if status != 0:
 air = ansys.chemkin.Mixture(GasMech)
 # set 'air' condition
 # mixture pressure in [dynes/cm2]
-air.pressure = 1.0 * ansys.chemkin.Patm
+air.pressure = 1.0 * ansys.chemkin.P_ATM
 # mixture temperature in [K]
 air.temperature = 300.0
 # mixture composition in mole fractions
@@ -128,13 +128,13 @@ air.X = [("O2", 0.21), ("N2", 0.79)]
 # .. note::
 #
 #   - The default units of temperature and pressure are [K] and [dynes/cm\ :sup:`2`\ ], respectively.
-#   - The constant ``Patm`` is a conversion multiplier for pressure.
+#   - The constant ``P_ATM`` is a conversion multiplier for pressure.
 #   - Transport property methods such as ``mixture_viscosity()`` require transport data. You
 #     must include the transport data file when creating the chemistry set.
 #
 
 # print pressure and temperature of the `air` mixture
-print(f"Pressure    = {air.pressure/ansys.chemkin.Patm} [atm]")
+print(f"Pressure    = {air.pressure/ansys.chemkin.P_ATM} [atm]")
 print(f"Temperature = {air.temperature} [K]")
 # print the 'air' composition in mass fractions
 air.list_composition(mode="mass")

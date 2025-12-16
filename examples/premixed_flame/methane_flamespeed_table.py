@@ -124,7 +124,7 @@ fuel = ck.Mixture(MyGasMech)
 # set fuel composition: methane
 fuel.X = [("CH4", 1.0)]
 # setting pressure and temperature condition for the flame speed calculations
-fuel.pressure = 1.0 * ck.Patm
+fuel.pressure = 1.0 * ck.P_ATM
 fuel.temperature = 300.0  # inlet temperature
 
 # create the oxidizer mixture: air

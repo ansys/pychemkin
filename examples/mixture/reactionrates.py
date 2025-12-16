@@ -106,7 +106,7 @@ fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition
 fuelmixture.X = [("CH4", 1.0)]
 # setting pressure and temperature is not required in this case
-fuelmixture.pressure = 5.0 * ck.Patm
+fuelmixture.pressure = 5.0 * ck.P_ATM
 fuelmixture.temperature = 1500.0
 
 
@@ -119,7 +119,7 @@ fuelmixture.temperature = 1500.0
 air = ck.Mixture(MyGasMech)
 air.X = [("O2", 0.21), ("N2", 0.79)]
 # setting pressure and temperature is not required in this case
-air.pressure = 5.0 * ck.Patm
+air.pressure = 5.0 * ck.P_ATM
 air.temperature = 1500.0
 
 
@@ -192,7 +192,7 @@ premixed.list_composition(mode="mole")
 #    Temperature and pressure are required to compute the reaction rates.
 
 # set the temperature and the pressure of the premixed mixture
-premixed.pressure = 5.0 * ck.Patm
+premixed.pressure = 5.0 * ck.P_ATM
 premixed.temperature = 1600.0
 
 ########################################################

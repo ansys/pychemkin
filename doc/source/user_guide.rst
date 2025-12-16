@@ -70,13 +70,13 @@ This code example computes the density of a mixture named ``air``:
       air = chemkin.Mixture(GasMech)
       # set 'air' condition
       # mixture pressure in [dynes/cm2]
-      air.pressure = 1.0 * chemkin.Patm
+      air.pressure = 1.0 * chemkin.P_ATM
       # mixture temperature in [K]
       air.temperature = 300.0
       # mixture composition in mole fractions
       air.X = [('O2', 0.21), ('N2', 0.79)]
       #
-      print(f"Pressure    = {air.pressure/chemkin.Patm} [atm].")
+      print(f"Pressure    = {air.pressure/chemkin.P_ATM} [atm].")
       print(f"Temperature = {air.temperature} [K].")
       # print the 'air' composition in mass fractions
       air.list_composition(mode='mass')

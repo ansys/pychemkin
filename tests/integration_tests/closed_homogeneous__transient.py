@@ -60,7 +60,7 @@ fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition
 fuelmixture.X = [("H2", 2.0), ("N2", 3.76), ("O2", 1.0)]
 # setting pressure and temperature is not required in this case
-fuelmixture.pressure = ck.Patm
+fuelmixture.pressure = ck.P_ATM
 fuelmixture.temperature = 1000
 # products from the complete combustion of the fuel mixture and air
 products = ["H2O", "N2"]

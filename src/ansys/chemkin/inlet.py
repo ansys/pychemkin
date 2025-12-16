@@ -29,7 +29,7 @@ from typing import Union
 
 from ansys.chemkin.chemistry import Chemistry
 from ansys.chemkin.color import Color
-from ansys.chemkin.constants import Patm
+from ansys.chemkin.constants import P_ATM
 from ansys.chemkin.logger import logger
 from ansys.chemkin.mixture import (
     Mixture,
@@ -113,7 +113,7 @@ class Stream(Mixture):
             # SCCM
             chemID = self._chemset_index.value
             # set standard condition
-            p = Patm  # [atm]
+            p = P_ATM  # [atm]
             t = 298.15  # [K]
             # set mass fractions
             frac = copy.deepcopy(self.Y)
@@ -164,7 +164,7 @@ class Stream(Mixture):
             # SCCM
             chemID = self._chemset_index.value
             # set standard condition
-            p = Patm  # [atm]
+            p = P_ATM  # [atm]
             t = 298.15  # [K]
             # set mass fractions
             frac = copy.deepcopy(self.Y)
@@ -194,7 +194,7 @@ class Stream(Mixture):
         #
         chemID = self._chemset_index.value
         # set standard condition
-        p = Patm  # [atm]
+        p = P_ATM  # [atm]
         t = 298.15  # [K]
         # set mass fractions
         frac = copy.deepcopy(self.Y)

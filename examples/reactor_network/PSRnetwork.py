@@ -140,13 +140,13 @@ iError = MyGasMech.preprocess()
 # fuel is pure methane
 fuel = Mixture(MyGasMech)
 fuel.temperature = 650.0  # [K]
-fuel.pressure = 10.0 * ck.Patm  # [atm] => [dyne/cm2]
+fuel.pressure = 10.0 * ck.P_ATM  # [atm] => [dyne/cm2]
 fuel.X = [("CH4", 1.0)]
 
 # air is modeled as a mixture of oxygen and nitrogen
 air = Mixture(MyGasMech)
 air.temperature = 650.0  # [K]
-air.pressure = 10.0 * ck.Patm
+air.pressure = 10.0 * ck.P_ATM
 air.X = ck.Air.X()  # mole fractions
 
 #################################################

@@ -60,13 +60,13 @@ fuelmixture = ck.Mixture(gasoline)
 # set fuel = composition PRF 60
 fuelmixture.X = [("ic8h18", 0.6), ("nc7h16", 0.4)]
 # setting pressure and temperature
-fuelmixture.pressure = 5.0 * ck.Patm
+fuelmixture.pressure = 5.0 * ck.P_ATM
 fuelmixture.temperature = 1500.0
 # create the oxidizer mixture: air
 air = ck.Mixture(gasoline)
 air.X = [("o2", 0.21), ("n2", 0.79)]
 # setting pressure and temperature
-air.pressure = 5.0 * ck.Patm
+air.pressure = 5.0 * ck.P_ATM
 air.temperature = 1500.0
 # create the premixed mixture to be defined
 premixed = ck.Mixture(gasoline)
@@ -82,7 +82,7 @@ if iError != 0:
 # list the composition of the premixed mixture
 premixed.list_composition(mode="mole")
 # set mixture temperature and pressure (equivalent to setting the initial temperature and pressure of the reactor)
-premixed.pressure = 40.0 * ck.Patm
+premixed.pressure = 40.0 * ck.P_ATM
 premixed.temperature = 700.0
 #
 # create a constant pressure batch reactor (with energy equation)

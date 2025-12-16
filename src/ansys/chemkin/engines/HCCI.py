@@ -37,7 +37,7 @@ from ansys.chemkin.chemistry import (
     verbose,
 )
 from ansys.chemkin.color import Color as Color
-from ansys.chemkin.constants import Patm
+from ansys.chemkin.constants import P_ATM
 from ansys.chemkin.engines.engine import Engine
 from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
@@ -658,7 +658,7 @@ class HCCIengine(Engine):
             exit()
 
         # set zonal pressure (same for all zones)
-        self.setkeyword(key="PRES", value=self._pressure.value / Patm)
+        self.setkeyword(key="PRES", value=self._pressure.value / P_ATM)
 
         if self._zonalsetupmode == 0:
             # set zonal setup mode to 'zonal species mole fraction'
@@ -744,7 +744,7 @@ class HCCIengine(Engine):
             exit()
 
         # set zonal pressure (same for all zones)
-        self.setkeyword(key="PRES", value=self._pressure.value / Patm)
+        self.setkeyword(key="PRES", value=self._pressure.value / P_ATM)
 
         if self._zonalsetupmode == 0:
             # set zonal setup mode to 'zonal equivalence ratio'
