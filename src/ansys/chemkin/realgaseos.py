@@ -20,9 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-Real-gas cubic EOS model.
-"""
+"""Real-gas cubic EOS model."""
 
 from ctypes import c_double, c_int
 
@@ -45,7 +43,7 @@ def check_realgas_status(chem_index: int) -> bool:
     """
     # initialization assuming the real-gas EOS is not ON
     status = False
-    #
+
     chemset_index = c_int(chem_index)
     mode = c_int(0)
     iErr = ck_wrapper.chemkin.KINRealGas_CheckRealGasStatus(chemset_index, mode)
@@ -55,8 +53,7 @@ def check_realgas_status(chem_index: int) -> bool:
 
 
 def set_current_pressure(chem_index: int, pressure: float) -> int:
-    """
-    Set gas mixture pressure for real-gas EOS calculations
+    """Set gas mixture pressure for real-gas EOS calculations.
 
     Parameters
     ----------
@@ -67,7 +64,7 @@ def set_current_pressure(chem_index: int, pressure: float) -> int:
 
     Returns
     -------
-        iErr: inetger
+        iErr: integer
             error code
     """
     # convert variables

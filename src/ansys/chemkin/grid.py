@@ -20,9 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-Chemkin grid quality control parameters.
-"""
+"""Chemkin grid quality control parameters."""
 
 import copy
 

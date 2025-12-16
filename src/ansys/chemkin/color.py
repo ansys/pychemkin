@@ -62,7 +62,7 @@ class Color:
     @staticmethod
     def ckprint(mode: str, msg: list = []):
         """
-        Customized text messages
+        Customized text messages.
 
         Parameters
         ----------
@@ -76,8 +76,8 @@ class Color:
             # no message
             return
         # set color
-        this_color = Color.msg_modes.get(mode.lower(), "WHITE")
+        color = Color.msg_modes.get(mode.lower(), "WHITE")
         # compile the message
-        this_msg = Color.SPACE.join(msg)
+        message = Color.SPACE.join(msg)
         # print
-        print(this_color + f"** {this_msg}", end=Color.END)
+        print(color + f"** {message}", end=Color.END)
