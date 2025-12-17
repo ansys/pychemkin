@@ -1,7 +1,7 @@
 .. title:: PyChemkin
 
 .. meta::
-    :description: PyChemkin provides Pythonic access to the Ansys Chemkin for computational fluid dynamics (CFD) models. 
+    :description: PyChemkin provides Pythonic access to the Ansys Chemkin for computational fluid dynamics (CFD) models.
     :keywords: PyChemkin, CDF, Ansys, Chemkin, Python, API, CFD, Combustion, Simulation, Reactor, Thermodynamics, Kinetics, Flame Speed, Equilibrium
 
 .. figure:: _static/logo.png

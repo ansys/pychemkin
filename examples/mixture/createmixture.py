@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_create_mixture:
+""".. _ref_create_mixture:
 
 ================
 Create a mixture
@@ -52,10 +51,11 @@ This example shows different ways to create a mixture in PyChemkin. The use of t
 import copy
 import os
 
-import ansys.chemkin.core as ck  # Chemkin
-from ansys.chemkin.core.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
+
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core.logger import logger
 
 # check working directory
 current_dir = os.getcwd()

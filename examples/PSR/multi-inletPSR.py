@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_multiple_inlets_PSR:
+""".. _ref_multiple_inlets_PSR:
 
 =============================================================
 Determine the impact of residence time on combustion in a PSR
@@ -65,6 +64,9 @@ This example describes a parameter study of the influence of the PSR residence t
 import os
 import time
 
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
 from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
@@ -73,8 +75,6 @@ from ansys.chemkin.core.logger import logger
 # Chemkin PSR model (steady-state)
 from ansys.chemkin.core.stirreactors.PSR import PSR_SetVolume_EnergyConservation as PSR
 from ansys.chemkin.core.utilities import find_file
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()

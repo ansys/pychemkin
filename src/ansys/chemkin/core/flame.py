@@ -24,24 +24,23 @@
 
 from ctypes import c_int
 
+import numpy as np
+import numpy.typing as npt
+
 from ansys.chemkin.core.color import Color as Color
 from ansys.chemkin.core.grid import Grid
 from ansys.chemkin.core.inlet import Stream
 from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.reactormodel import Keyword, ReactorModel
 from ansys.chemkin.core.steadystatesolver import SteadyStateSolver
-import numpy as np
-import numpy.typing as npt
 
 
 class Flame(ReactorModel, SteadyStateSolver, Grid):
-    """
-    Generic steady state, one dimensional flame model
+    """Generic steady state, one dimensional flame model
     """
 
     def __init__(self, fuelstream: Stream, label: str):
-        """
-        Create a 1-D flame object
+        """Create a 1-D flame object
 
         Parameters
         ----------
@@ -49,6 +48,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
                 unburned fuel (or fuel + air) inlet stream
             label: string, optional
                 reactor name
+
         """
         # check Stream object
         if isinstance(fuelstream, Stream):
@@ -99,8 +99,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
     def set_temperature_profile(
         self, x: npt.NDArray[np.double], temp: npt.NDArray[np.double]
     ) -> int:
-        """
-        Specify temperature profile
+        """Specify temperature profile
 
         Parameters
         ----------
@@ -112,6 +111,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         Returns
         -------
             error code: integer
+
         """
         keyword = "TPRO"
         iErr = self.setprofile(key=keyword, x=x, y=temp)
@@ -120,25 +120,25 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         return iErr
 
     def use_temp_profiel_initial_mesh(self, on: bool = False):
-        """
-        Use the grid points in the user defined initial/estimated temperature profile
+        """Use the grid points in the user defined initial/estimated temperature profile
         as the initial/starting grid points.
 
         Parameters
         ----------
             on: boolean, default = False
                 use the grid points of the temperature profile as the initial grid points
+
         """
         self.grid_T_profile = on
 
     def set_convection_differencing_type(self, mode: str):
-        """
-        Set the finite differencing scheme for the convective terms in the transport equations.
+        """Set the finite differencing scheme for the convective terms in the transport equations.
 
         Parameters
         ----------
             mode: string, {"central", "upwind"}
                 finite difference discretizing scheme
+
         """
         if mode.lower() == "central":
             # central differencing scheme
@@ -152,12 +152,12 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
                 self.setkeyword(key="CDIF", value=False)
 
     def set_mesh_keywords(self) -> int:
-        """
-        Set mesh related keywords
+        """Set mesh related keywords
 
         Returns
         -------
             error code: integer
+
         """
         iErr = 0
         # set up initial mesh related keywords
@@ -243,8 +243,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         return iErr
 
     def set_SSsolver_keywords(self):
-        """
-        add steady-state solver parameter keywoprds to the keyword list
+        """Add steady-state solver parameter keywoprds to the keyword list
         """
         # steady-state solver parameter given
         if len(self.SSsolverkeywords) > 0:
@@ -255,8 +254,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
     # mass transport options
 
     def use_mixture_averaged_transport(self):
-        """
-        Use the mixture-averaged transport properties.
+        """Use the mixture-averaged transport properties.
         """
         self.setkeyword(key="MIX", value=True)
         if self.transport_mode == 2:
@@ -265,8 +263,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         self.transport_mode = 1
 
     def use_multicomponent_transport(self):
-        """
-        Use the multi-component transport properties.
+        """Use the multi-component transport properties.
         Use of the multi-component transport properties is recommended when
         the pressure is low.
         """
@@ -277,8 +274,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         self.transport_mode = 2
 
     def use_fixed_Lewis_number_transport(self, Lewis: float = 1.0):
-        """
-        Use a fixed Lewis number to compute the species diffusion coefficient from mixture conductivity.
+        """Use a fixed Lewis number to compute the species diffusion coefficient from mixture conductivity.
 
         .. math::
 
@@ -288,6 +284,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         ----------
             Lewis: double
                 Lewis number
+
         """
         if Lewis > 0.0:
             self.setkeyword(key="LEWIS", value=Lewis)
@@ -303,8 +300,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
             logger.error(this_msg)
 
     def use_thermal_diffusion(self, mode: bool = True):
-        """
-        Include the thermal diffusion (Doret) effect.
+        """Include the thermal diffusion (Doret) effect.
         The inclusion of thermal diffucivity is recommended when there are significant
         amount of "light" species in the system. Species with molecular weight less than 5 g/mol
         is considered a light species, for example, hydrogen.
@@ -313,12 +309,12 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         ----------
             mode: boolean {True, False}
                 ON/OFF
+
         """
         self.setkeyword(key="TDIF", value=mode)
 
     def set_species_boundary_types(self, mode: str = "comp"):
-        """
-        Set the species boundary condition type (at inlet and outlet).
+        """Set the species boundary condition type (at inlet and outlet).
         When the species value is fixed at the boundary, the "back" diffusion of the species
         into the inlet stream is not considered. That is, when the species profile is positive
         at the inlet, a fixed species value implies the species concentration in the inlet stream
@@ -331,6 +327,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         ----------
             mode: string, {"flux", "comp"}
                 keep the species mole/mass fraction at a fixed value or keep the species mass flux conserved
+
         """
         if mode.lower() == "comp":
             # keep the species boundary value fixed at the inlet

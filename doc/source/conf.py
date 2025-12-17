@@ -91,7 +91,7 @@ suppress_warnings = [
     "autoapi.python_import_resolution",
 ]
 
-# -- Sphinx gallery configuration --------------------------------------------
+# -- Sphinx gallery configuration --------------------------------------------
 examples_source = pathlib.Path(__file__).parent.parent / "examples"
 examples_output = pathlib.Path(__file__) / "examples"
 example_subdir_names = ["modeling_features", "workflows", "use_cases"]

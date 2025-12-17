@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-    Hybrid reactor network comprised of a mix of open reactors such as PSR and PFR.
+"""Hybrid reactor network comprised of a mix of open reactors such as PSR and PFR.
 """
 
 import copy
@@ -30,28 +29,31 @@ from typing import Union
 from ansys.chemkin.core.chemistry import Chemistry, verbose
 from ansys.chemkin.core.color import Color as Color
 from ansys.chemkin.core.flowreactors.PFR import PlugFlowReactor as PFR
-from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.core.inlet import adiabatic_mixing_streams, clone_stream, compare_streams
+from ansys.chemkin.core.inlet import (
+    Stream,  # external gaseous inlet
+    adiabatic_mixing_streams,
+    clone_stream,
+    compare_streams,
+)
 from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.stirreactors.PSR import perfectlystirredreactor as PSR
 
 
 class ReactorNetwork:
-    """
-    The hybrid reactor network allows internal recycling stream and reactor outflow splitting.
+    """The hybrid reactor network allows internal recycling stream and reactor outflow splitting.
     The reactors are solved individually in terms. For network with complex internal
     connections, "Tearing points" can be manually defined and "tear stream" method is
     applied to solve the entire network iteratively.
     """
 
     def __init__(self, chem: Chemistry):
-        """
-        Create a hybrid reactor network object in which the reactors are solved individually.
+        """Create a hybrid reactor network object in which the reactors are solved individually.
 
         Parameters
         ----------
             chem: Chemistry set object
                 Chemistry set
+
         """
         # check parameters
         if not isinstance(chem, Chemistry):
@@ -125,8 +127,7 @@ class ReactorNetwork:
         self.network_run_status = -100
 
     def get_reactor_label(self, reactor_index: int) -> str:
-        """
-        Get the name/label of the reactor corresponding to the reactor index in the
+        """Get the name/label of the reactor corresponding to the reactor index in the
         reactor network.
 
         Parameters
@@ -138,6 +139,7 @@ class ReactorNetwork:
         -------
             name: string
                 reactor name/label
+
         """
         if self.numb_reactors > 0:
             # loop over all reactors
@@ -158,8 +160,7 @@ class ReactorNetwork:
         return ""
 
     def add_reactor(self, reactor: Union[PSR, PFR]):
-        """
-        Add a reactor to the network in order.
+        """Add a reactor to the network in order.
         Plan the order (sequence) of reactor addition carefully. The order of the reactors is
         somewhat important as it might affect the convergence rate of the network, especially with
         the presence of any "tearing stream".
@@ -168,6 +169,7 @@ class ReactorNetwork:
         ----------
             reactor: open reactor (PSR or PFR) object
                 the reactor object to be added to the network
+
         """
         # get the reactor name/label
         reactor_label = reactor.label
@@ -221,8 +223,7 @@ class ReactorNetwork:
                 logger.info(this_msg)
 
     def add_reactor_list(self, reactor_list: list[Union[PSR, PFR]]):
-        """
-        Add a list of reactors to the network in order.
+        """Add a list of reactors to the network in order.
         Plan the order (sequence) of reactor addition carefully. The order of the reactors is
         somewhat important as it might affect the convergence rate of the network, especially with
         the presence of any "tearing stream".
@@ -231,14 +232,14 @@ class ReactorNetwork:
         ----------
             reactor: list of open reactor (PSR or PFR) object
                 the reactor objects to be added to the network
+
         """
         # add the reactors one by one in the order given in the list
         for rxtor in reactor_list:
             self.add_reactor(rxtor)
 
     def show_reactors(self):
-        """
-        Show the reactor labels in the network.
+        """Show the reactor labels in the network.
         """
         if self.numb_reactors <= 0:
             msg = [
@@ -254,31 +255,30 @@ class ReactorNetwork:
 
     @property
     def number_reactors(self) -> int:
-        """
-        Get the number of reactors in the network
+        """Get the number of reactors in the network
 
         Returns
         -------
             numb_reactors: integer
                 number of reactors in the network
+
         """
         return self.numb_reactors
 
     @property
     def number_external_outlets(self) -> int:
-        """
-        Get the number of external outlets from the network
+        """Get the number of external outlets from the network
 
         Returns
         -------
             numb_outlets: integer
                 number of external outlets from the network
+
         """
         return self.numb_external_outlet
 
     def show_internal_outflow_connections(self):
-        """
-        Show the ouflow connections to other reactors in the network.
+        """Show the ouflow connections to other reactors in the network.
         """
         if len(self.outflow_targets) > 0:
             for reactor_id, outflows in self.outflow_targets.items():
@@ -313,8 +313,7 @@ class ReactorNetwork:
                 print("-" * 10)
 
     def show_internal_inflow_connections(self):
-        """
-        Show the incoming flow connections from other reactors in the network.
+        """Show the incoming flow connections from other reactors in the network.
         """
         if len(self.inflow_sources) > 0:
             for reactor_id, inflows in self.inflow_sources.items():
@@ -343,8 +342,7 @@ class ReactorNetwork:
     def add_outflow_connections(
         self, source_label: str, outflow_split: list[tuple[str, float]]
     ):
-        """
-        Add outflow connections to other reactors in the network. The connection is given
+        """Add outflow connections to other reactors in the network. The connection is given
         by a tuple consistinig of the target reactor name and the mass flow rate split fraction.
         The connection to the immediate downstream reactor (through flow) is optional.
 
@@ -356,6 +354,7 @@ class ReactorNetwork:
                 outflow connections from the source reactor.
                 target reactor name: string
                 split fraction: double, <= 1.0
+
         """
         # initialization
         ierror = 0
@@ -509,8 +508,7 @@ class ReactorNetwork:
             logger.error(this_msg)
 
     def clear_connections(self):
-        """
-        Clear the internal connection configurations.
+        """Clear the internal connection configurations.
         """
         # clear internal outlet split
         self.outflow_targets.clear()
@@ -523,13 +521,13 @@ class ReactorNetwork:
         self.numb_external_outlet = 0
 
     def remove_reactor(self, name: str):
-        """
-        Remove the named reactor from the network.
+        """Remove the named reactor from the network.
 
         Parameters
         ----------
             name: string
                 reactor name/label
+
         """
         print(f"reactor map {self.reactor_map}")
         id = self.reactor_map.get(name, 0)
@@ -602,8 +600,7 @@ class ReactorNetwork:
             print(f"updated map = {self.reactor_map}")
 
     def set_reactor_outflow(self):
-        """
-        Set up and verify the the outlet flow connections from this reactor
+        """Set up and verify the the outlet flow connections from this reactor
         to the target reactors in the network.
         """
         # configure the outlet flow connections to other reactors in the network
@@ -669,8 +666,7 @@ class ReactorNetwork:
             print("=" * 20)
 
     def set_inflow_connections(self):
-        """
-        Set up the sources of the internal network inlet stream to the reactor.
+        """Set up the sources of the internal network inlet stream to the reactor.
         """
         # initialize the collection
         self.inflow_sources.clear()
@@ -690,13 +686,13 @@ class ReactorNetwork:
                             self.inflow_sources[n] = this_list
 
     def set_external_outlet(self, reactor_index: int):
-        """
-        Add a new network external outlet to the reactor.
+        """Add a new network external outlet to the reactor.
 
         Parameters
         ----------
             reactor_index: integer
                 reactor index
+
         """
         # increase the number of netork external outlets
         self.numb_external_outlet += 1
@@ -704,8 +700,7 @@ class ReactorNetwork:
         self.external_outlets[self.numb_external_outlet] = reactor_index
 
     def calculate_incoming_streams(self, reactor_index: int) -> Union[Stream, None]:
-        """
-        Calculate the combined internal incoming streams from other reactors in the network.
+        """Calculate the combined internal incoming streams from other reactors in the network.
 
         Parameters
         ----------
@@ -716,6 +711,7 @@ class ReactorNetwork:
         -------
             incoming_stream: Stream object
                 the total internal stream going into the current PSR
+
         """
         # initialization
         initialized = False
@@ -781,8 +777,7 @@ class ReactorNetwork:
         return incoming_stream
 
     def set_internal_inlet(self, reactor_index: int) -> int:
-        """
-        Create or update the merged inlet stream to the reactor from the rest of
+        """Create or update the merged inlet stream to the reactor from the rest of
         the reactors in the network.
 
         Parameters
@@ -794,6 +789,7 @@ class ReactorNetwork:
         -------
             status: integer
                 error code
+
         """
         id = reactor_index
         status = 0
@@ -825,14 +821,14 @@ class ReactorNetwork:
         return status
 
     def create_internal_inlet(self, reactor_index: int):
-        """
-        Create a new inlet stream that combines all incoming streams from the other
+        """Create a new inlet stream that combines all incoming streams from the other
         reactor network to the current reactor.
 
         Parameters
         ----------
             reactor_index: integer
                 index of the current reactor
+
         """
         # calculate the total incoming streams from other reactors in the network
         status = self.set_internal_inlet(reactor_index)
@@ -845,13 +841,13 @@ class ReactorNetwork:
             self.internal_inflow_ready[reactor_index] = True
 
     def get_network_run_status(self) -> int:
-        """
-        Get network run status
+        """Get network run status
 
         Returns
         -------
             status: integer
                 run status, 0=all reactor success; <-100=not run; other=failed
+
         """
         sum_status = 0
         for rxtor in self.reactor_objects.values():
@@ -867,8 +863,7 @@ class ReactorNetwork:
         return self.network_run_status
 
     def run(self) -> int:
-        """
-        Solve the hybrid reactor network by solving the individual reactors in
+        """Solve the hybrid reactor network by solving the individual reactors in
         the sequence as they are added to the network. If there is any "tear stream"
         in the network, the solution process will be repeated till the properties of the
         "tear stream" are converged.
@@ -876,6 +871,7 @@ class ReactorNetwork:
         Returns
         -------
             run status: integer
+
         """
         run_status = 0
         # construct the incoming flow connections from the outflow connection table
@@ -891,8 +887,7 @@ class ReactorNetwork:
         return run_status
 
     def get_reactor_stream(self, reactor_name: str) -> Stream:
-        """
-        Get the solution Stream object of the given reactor name/label.
+        """Get the solution Stream object of the given reactor name/label.
 
         Parameters
         ----------
@@ -903,6 +898,7 @@ class ReactorNetwork:
         -------
             solution_stream: Stream object
                 solution of the reactor specified
+
         """
         # validate solution
         if self.get_network_run_status() != 0:
@@ -935,8 +931,7 @@ class ReactorNetwork:
         return self.reactor_solutions[id]
 
     def set_external_streams(self):
-        """
-        Set up external outlet streams.
+        """Set up external outlet streams.
         """
         # initialization
         self.external_outlet_streams.clear()
@@ -980,8 +975,7 @@ class ReactorNetwork:
                 print("-" * 10)
 
     def get_external_stream(self, stream_index: int) -> list[Stream]:
-        """
-        Get the list of external outlet Stream objects.
+        """Get the list of external outlet Stream objects.
 
         Parameters
         ----------
@@ -992,6 +986,7 @@ class ReactorNetwork:
         -------
             external_stream: Stream object
                 external outlet stream properties
+
         """
         # check external oulet setup
         if self.numb_external_outlet <= 0:
@@ -1016,14 +1011,14 @@ class ReactorNetwork:
         return self.external_outlet_streams[stream_index]
 
     def run_without_tearstream(self) -> int:
-        """
-        Run the individual reactors in the network one by one without using
+        """Run the individual reactors in the network one by one without using
         tear stream iteration.
 
         Returns
         -------
             run_status: integer
                 error code
+
         """
         # initialization
         status = 0
@@ -1067,14 +1062,14 @@ class ReactorNetwork:
         return status
 
     def run_with_tearstream(self) -> int:
-        """
-        Run the individual reactors in the network one by one with
+        """Run the individual reactors in the network one by one with
         tear stream iteration.
 
         Returns
         -------
             run_status: integer
                 error code
+
         """
         # initialization
         status = 0
@@ -1244,13 +1239,13 @@ class ReactorNetwork:
 
     # tear stream utilities
     def remove_tearpoint(self, reactor_name: str):
-        """
-        Remove the tear point from the list.
+        """Remove the tear point from the list.
 
         Parameters
         ----------
             reactor_name: string
                 reactor name/label
+
         """
         # check reactor has already joined the network
         #
@@ -1275,13 +1270,13 @@ class ReactorNetwork:
             exit()
 
     def add_tearingpoint(self, reactor_name: str):
-        """
-        Add a new tear point to the list.
+        """Add a new tear point to the list.
 
         Parameters
         ----------
             reactor_name: string
                 reactor name/label
+
         """
         # check reactor has already joined the network
         reactor_index = self.reactor_map.get(reactor_name, 0)
@@ -1326,13 +1321,13 @@ class ReactorNetwork:
             exit()
 
     def set_tear_tolerance(self, tol: float = 1.0e-6):
-        """
-        Set the relative tolerance to test the tear stream convergencce.
+        """Set the relative tolerance to test the tear stream convergencce.
 
         Parameters
         ----------
             tol: double, default = 1.0e-6
                 relative tolerance
+
         """
         if tol > 0.0:
             self.tolerance = tol
@@ -1343,13 +1338,13 @@ class ReactorNetwork:
             exit()
 
     def set_tear_iteration_limit(self, max_count: int):
-        """
-        Set the maximum number of tear loop iterations.
+        """Set the maximum number of tear loop iterations.
 
         Parameters
         ----------
             max_count: integer
                 tear loop iteration limit
+
         """
         if max_count > 0:
             self.max_tearloop_count = max_count
@@ -1360,8 +1355,7 @@ class ReactorNetwork:
             exit()
 
     def check_iteration_count(self, count: int) -> bool:
-        """
-        Check the iteration count for over the set limit.
+        """Check the iteration count for over the set limit.
 
         Parameters
         ----------
@@ -1373,6 +1367,7 @@ class ReactorNetwork:
             status: boolean
                 True=the current count is under the limit
                 False=the current count is over the limit
+
         """
         if count <= self.max_tearloop_count:
             return True
@@ -1380,14 +1375,14 @@ class ReactorNetwork:
             return False
 
     def set_relaxation_factor(self, relax: float):
-        """
-        Set the relaxation factor when updating the tear stream
+        """Set the relaxation factor when updating the tear stream
         properties from their values of the previous iteration step.
 
         Parameters
         ----------
             relax: double
                 iteration relaxation factor
+
         """
         if relax > 0.0:
             self.relaxation_factor = relax
@@ -1398,8 +1393,7 @@ class ReactorNetwork:
             exit()
 
     def check_tearstream_convergence(self, streamA, streamB) -> tuple[bool, float]:
-        """
-        Compare the last and the current reactor solution at the tear point.
+        """Compare the last and the current reactor solution at the tear point.
 
         Parameters
         ----------
@@ -1415,6 +1409,7 @@ class ReactorNetwork:
                 False=the differences of the two streams are greater than the relative tolerance
             residual: double
                 the maximum relative difference between the properties of the streams
+
         """
         # compare the streams
         converged, max_atol, max_rtol = compare_streams(
@@ -1423,8 +1418,7 @@ class ReactorNetwork:
         return converged, max_rtol
 
     def update_tear_solution(self, new_stream: Stream, old_stream: Stream) -> Stream:
-        """
-        Update the old/temporary tear point stream properties (with the used of a relaxation factor).
+        """Update the old/temporary tear point stream properties (with the used of a relaxation factor).
 
         Parameters
         ----------
@@ -1437,6 +1431,7 @@ class ReactorNetwork:
         -------
             updated_stream: Stream object
                 updated tear point stream properties
+
         """
         #
         updated_stream = copy.deepcopy(new_stream)

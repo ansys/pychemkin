@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_ignition_delay:
+""".. _ref_ignition_delay:
 
 ========================================================
 Predict the ignition delay time of a combustible mixture
@@ -56,6 +55,9 @@ times with various initial gas conditions. Here, the initial gas temperature is 
 import os
 import time
 
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
+
 import ansys.chemkin.core as ck  # chemkin
 from ansys.chemkin.core import Color
 
@@ -64,8 +66,6 @@ from ansys.chemkin.core.batchreactors.batchreactor import (
     GivenPressureBatchReactor_EnergyConservation,
 )
 from ansys.chemkin.core.logger import logger
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()

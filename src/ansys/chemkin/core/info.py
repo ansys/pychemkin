@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-Chemkin help menu for keywords and key phrases.
+"""Chemkin help menu for keywords and key phrases.
 """
 
 import importlib.resources
@@ -29,17 +28,17 @@ import os
 from typing import Union
 import webbrowser
 
+import yaml
+
 from ansys.chemkin.core.color import Color
 from ansys.chemkin.core.logger import logger
-import yaml
 
 CKdict = {}  # chemkin hints
 _help_loaded = False
 
 
 def setup_hints():
-    """
-    Set up Chemkin keyword hints.
+    """Set up Chemkin keyword hints.
     """
     # Chemkin keyword help data file in YAML format
     _chemkin_resources_dir = importlib.resources.files("ansys.chemkin.core").joinpath("data")
@@ -54,8 +53,7 @@ def setup_hints():
 
 
 def clear_hints():
-    """
-    Clear the Chemkin keyword data.
+    """Clear the Chemkin keyword data.
     """
     global _help_loaded
     global CKdict
@@ -64,13 +62,13 @@ def clear_hints():
 
 
 def keyword_hints(mykey: str):
-    """
-    Get hints about the Chemkin keyword.
+    """Get hints about the Chemkin keyword.
 
     Parameters
     ----------
         mykey: string
             keyword phrase
+
     """
     # look up the keyword
     global CKdict
@@ -90,13 +88,13 @@ def keyword_hints(mykey: str):
 
 
 def phrase_hints(phrase: str):
-    """
-    Get keyword hints by using key phrase in the description.
+    """Get keyword hints by using key phrase in the description.
 
     Parameters
     ----------
     phrase: string
         search phrase
+
     """
     # initialization
     keys = []
@@ -125,13 +123,13 @@ def phrase_hints(phrase: str):
 
 
 def help(topic: Union[str, None] = None):
-    """
-    Provide assistance on finding information about Chemkin keywords.
+    """Provide assistance on finding information about Chemkin keywords.
 
     Parameters
     ----------
         topic: string
             the keyword topic of which additional hints are requested
+
     """
     #
     if topic is None:
@@ -226,8 +224,7 @@ def help(topic: Union[str, None] = None):
 
 
 def show_realgas_usage():
-    """
-    Show Chemkin real-gas model usage and options.
+    """Show Chemkin real-gas model usage and options.
     """
     print(
         Color.YELLOW
@@ -262,8 +259,7 @@ def show_realgas_usage():
 
 
 def show_equilibrium_options():
-    """
-    Show the equilibrium calculation usage and options.
+    """Show the equilibrium calculation usage and options.
     """
     print(Color.YELLOW + "** equilibrium calculation usage: ")
     print("      EQ_mixture = ansys.chemkin.core.equilibrium(INIT_mixture, opt)")
@@ -288,8 +284,7 @@ def show_equilibrium_options():
 
 
 def show_ignition_definitions():
-    """
-    Show the ignition definitions available in Chemkin.
+    """Show the ignition definitions available in Chemkin.
     """
     # show ignition definition usage
     print(Color.YELLOW + "** ignition definition is assigned as a string, e.g., 'OH' ")
@@ -301,8 +296,7 @@ def show_ignition_definitions():
 
 
 def manuals():
-    """
-    Access the Chemkin manuals page on the Ansys Help portal.
+    """Access the Chemkin manuals page on the Ansys Help portal.
     """
     # Chemkin manual page
     chemkin_manual_url = (

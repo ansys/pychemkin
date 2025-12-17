@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_detonation_wave:
+""".. _ref_detonation_wave:
 
 =========================================================
 Calculate the detonation wave speed of a real-gas mixture
@@ -41,10 +40,11 @@ the experimental data.
 
 import os
 
-import ansys.chemkin.core as ck  # Chemkin
-from ansys.chemkin.core.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
+
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core.logger import logger
 
 # check working directory
 current_dir = os.getcwd()

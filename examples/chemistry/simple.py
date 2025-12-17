@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_simple:
+""".. _ref_simple:
 
 ==========================
 Set up a PyChemkin project
@@ -134,11 +133,11 @@ air.X = [("O2", 0.21), ("N2", 0.79)]
 #
 
 # print pressure and temperature of the `air` mixture
-print(f"Pressure    = {air.pressure/ansys.chemkin.core.P_ATM} [atm]")
+print(f"Pressure    = {air.pressure / ansys.chemkin.core.P_ATM} [atm]")
 print(f"Temperature = {air.temperature} [K]")
 # print the 'air' composition in mass fractions
 air.list_composition(mode="mass")
 # get 'air' mixture density [g/cm3]
 print(f"Mixture density   = {air.RHO} [g/cm3]")
 # get 'air' mixture viscosity [g/cm-sec] or [poise]
-print(f"Mixture viscosity = {air.mixture_viscosity()*100.0} [cP]")
+print(f"Mixture viscosity = {air.mixture_viscosity() * 100.0} [cP]")

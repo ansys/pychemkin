@@ -20,13 +20,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-    Spark Ignition (SI) engine model.
+"""Spark Ignition (SI) engine model.
 """
 
 import copy
 from ctypes import c_double, c_int
 from typing import Union
+
+import numpy as np
+import numpy.typing as npt
 
 from ansys.chemkin.core import chemkin_wrapper
 from ansys.chemkin.core.chemistry import (
@@ -40,18 +42,14 @@ from ansys.chemkin.core.engines.engine import Engine
 from ansys.chemkin.core.inlet import Stream
 from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.reactormodel import Keyword
-import numpy as np
-import numpy.typing as npt
 
 
 class SIengine(Engine):
-    """
-    Spark Ignition (SI) engine model
+    """Spark Ignition (SI) engine model
     """
 
     def __init__(self, reactor_condition: Stream, label: Union[str, None] = None):
-        """
-        Initialize a spark-ignition Engine object
+        """Initialize a spark-ignition Engine object
 
         Parameters
         ----------
@@ -59,6 +57,7 @@ class SIengine(Engine):
                 a mixture representing the initial gas properties inside the engine cylinder/zone
             label: string, optional
                 engine reactor name
+
         """
         # set default number of zone(s)
         # 2 zones: the unburned and the burned zones
@@ -139,8 +138,7 @@ class SIengine(Engine):
             exit()
 
     def wiebe_parameters(self, n: float, b: float):
-        """
-        Set Wiebe function parameters
+        """Set Wiebe function parameters
 
         .. math::
 
@@ -152,6 +150,7 @@ class SIengine(Engine):
                 exponent parameter of the Wiebe function [-]
             b: double
                 multiplier parameter of the Wiebe function [-]
+
         """
         # check input values
         if n <= 0.0 or b <= 0.0:
@@ -178,8 +177,7 @@ class SIengine(Engine):
         self.wiebeb = b
 
     def set_burn_timing(self, SOC: float, duration: float = 0.0):
-        """
-        Set SI engine start of combustion (SOC) timing
+        """Set SI engine start of combustion (SOC) timing
 
         Parameters
         ----------
@@ -187,6 +185,7 @@ class SIengine(Engine):
                 start of combustion in crank angle [degree]
             duration: double
                 burn duration in crank angles [degree]
+
         """
         if SOC <= self.IVCCA:
             msg = [
@@ -208,8 +207,7 @@ class SIengine(Engine):
         self.burnduration = duration
 
     def set_burn_anchor_points(self, CA10: float, CA50: float, CA90: float):
-        """
-        Set the SI mass burned profile using the anchor points
+        """Set the SI mass burned profile using the anchor points
 
         Parameters
         ----------
@@ -219,6 +217,7 @@ class SIengine(Engine):
                 crank angle of 50% mass burned [degree]
             CA90: double
                 crank angle of 90% mass burned [degree]
+
         """
         if CA10 > CA50:
             msg = [
@@ -266,8 +265,7 @@ class SIengine(Engine):
     def set_mass_burned_profile(
         self, crankangles: npt.NDArray[np.double], fractions: npt.NDArray[np.double]
     ) -> int:
-        """
-        Specify SI engine mass burned fraction profile
+        """Specify SI engine mass burned fraction profile
 
         Parameters
         ----------
@@ -280,6 +278,7 @@ class SIengine(Engine):
         Returns
         -------
             error code: integer
+
         """
         # set the mass burned profile
         iError = 0
@@ -301,13 +300,13 @@ class SIengine(Engine):
         return iError
 
     def set_combustion_efficiency(self, efficiency: float):
-        """
-        Set the overall combustion efficiency
+        """Set the overall combustion efficiency
 
         Parameters
         ----------
             efficiency: double, default = 1.0
                 combustion efficiency [-]
+
         """
         # check value
         if efficiency < 0.0 or efficiency > 1.0:
@@ -320,14 +319,14 @@ class SIengine(Engine):
         self.setkeyword(key="BEFF", value=efficiency)
 
     def set_burned_products_minimum_mole_fraction(self, bound: float):
-        """
-        Set the minimum gas species mole fraction value from the flame sheet
+        """Set the minimum gas species mole fraction value from the flame sheet
         to be injected to the burned zone
 
         Parameters
         ----------
             bound: double
                 minimum species mole fraction value [-]
+
         """
         if bound > 0.0:
             # set keyword
@@ -339,12 +338,12 @@ class SIengine(Engine):
             exit()
 
     def set_Wiebe_keywords(self) -> int:
-        """
-        Set the Wiebe function parameters keywords for the SI engine model
+        """Set the Wiebe function parameters keywords for the SI engine model
 
         Returns
         -------
             error code: integer
+
         """
         iError = 0
         if self._burnmode == 1:
@@ -369,12 +368,12 @@ class SIengine(Engine):
         return iError
 
     def set_burn_anchor_points_keywords(self) -> int:
-        """
-        Set the mass burned porfile anchor points keywords for the SI engine model
+        """Set the mass burned porfile anchor points keywords for the SI engine model
 
         Returns
         -------
             error code: integer
+
         """
         iError = 0
         if self._burnmode == 2:
@@ -397,12 +396,12 @@ class SIengine(Engine):
         return iError
 
     def set_burn_profile_keywords(self) -> int:
-        """
-        Set the mass burned fraction profile keywords for the SI engine model
+        """Set the mass burned fraction profile keywords for the SI engine model
 
         Returns
         -------
             error code: integer
+
         """
         iError = 0
         if self._burnmode == 3 and self.MBpoints > 0:
@@ -437,12 +436,12 @@ class SIengine(Engine):
         return iError
 
     def __process_keywords(self) -> int:
-        """
-        Process input keywords for the SI engine model
+        """Process input keywords for the SI engine model
 
         Returns
         -------
             error code: integer
+
         """
         iErr = 0
         iErrc = 0
@@ -680,24 +679,24 @@ class SIengine(Engine):
         return iErr
 
     def __run_model(self) -> int:
-        """
-        Run the SI engine model after the keywords are processed
+        """Run the SI engine model after the keywords are processed
 
         Returns
         -------
             error code: integer
+
         """
         # run the simulation without keyword inputs
         iErr = chemkin_wrapper.chemkin.KINAll0D_Calculate(self._chemset_index)
         return iErr
 
     def run(self) -> int:
-        """
-        Generic Chemkin run SI engine model method
+        """Generic Chemkin run SI engine model method
 
         Returns
         -------
             error code: integer
+
         """
         # activate the Chemistry set associated with the Reactor instance
         force_activate_chemistryset(self._chemset_index.value)

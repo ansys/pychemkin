@@ -22,8 +22,7 @@
 
 
 class Color:
-    """
-    Define colors used by PyChemkin for printing text messages
+    """Define colors used by PyChemkin for printing text messages
     """
 
     # color codes
@@ -61,8 +60,7 @@ class Color:
 
     @staticmethod
     def ckprint(mode: str, msg: list = []):
-        """
-        Customized text messages.
+        """Customized text messages.
 
         Parameters
         ----------
@@ -70,6 +68,7 @@ class Color:
                 message mode/type
             msg: list of strings
                 the message to be printed
+
         """
         # check message to be printed
         if len(msg) <= 0:

@@ -20,13 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-    Single or multi- zone homogeneous charge compression ignition (HCCI) engine model.
+"""Single or multi- zone homogeneous charge compression ignition (HCCI) engine model.
 """
 
 import copy
 from ctypes import c_double, c_int
 from typing import Union
+
+import numpy as np
 
 from ansys.chemkin.core import chemkin_wrapper
 from ansys.chemkin.core.chemistry import (
@@ -42,12 +43,10 @@ from ansys.chemkin.core.engines.engine import Engine
 from ansys.chemkin.core.inlet import Stream
 from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.reactormodel import Keyword
-import numpy as np
 
 
 class HCCIengine(Engine):
-    """
-    Single or multi- zone homogeneous charge compression ignition (HCCI) engine model
+    """Single or multi- zone homogeneous charge compression ignition (HCCI) engine model
     """
 
     def __init__(
@@ -56,8 +55,7 @@ class HCCIengine(Engine):
         label: str = "",
         nzones: Union[int, None] = None,
     ):
-        """
-        Initialize a single- or multi- zone homogeneous charge compression ignition (HCCI) engine object
+        """Initialize a single- or multi- zone homogeneous charge compression ignition (HCCI) engine object
 
         Parameters
         ----------
@@ -67,6 +65,7 @@ class HCCIengine(Engine):
                 HCCI engine name
             nzones: integer, optional, default = 1
                 number of zones in the HCCI engine model
+
         """
         # set default number of zone(s): single-zone
         if nzones is None:
@@ -159,24 +158,24 @@ class HCCIengine(Engine):
             exit()
 
     def get_number_of_zones(self) -> int:
-        """
-        Get the number of zones used by the current HCCI simulation
+        """Get the number of zones used by the current HCCI simulation
 
         Returns
         -------
             nzones: integer
                 number of zones in the HCCI engine model
+
         """
         return self._nzones.value
 
     def set_zonal_temperature(self, zonetemp: list[float]):
-        """
-        set zonal temperatures for muti-zone HCCI engine simulation
+        """Set zonal temperatures for muti-zone HCCI engine simulation
 
         Parameters
         ----------
             zonetemp: list of doubles, dimension = [nzones]
                 zonal temperatures [K]
+
         """
         nzones = self._nzones.value
         if len(zonetemp) != nzones:
@@ -209,13 +208,13 @@ class HCCIengine(Engine):
             self._zonalsetupmode = 1
 
     def set_zonal_volume_fraction(self, zonevol: list[float]):
-        """
-        set zonal volume fractions for muti-zone HCCI engine simulation
+        """Set zonal volume fractions for muti-zone HCCI engine simulation
 
         Parameters
         ----------
             zonevol: list of doubles, dimension = [nzones]
                 zonal volume fractions [-]
+
         """
         nzones = self._nzones.value
         if len(zonevol) != nzones:
@@ -249,13 +248,13 @@ class HCCIengine(Engine):
                 exit()
 
     def set_zonal_mass_fraction(self, zonemass: list[float]):
-        """
-        set zonal mass fractions for muti-zone HCCI engine simulation
+        """Set zonal mass fractions for muti-zone HCCI engine simulation
 
         Parameters
         ----------
             zonemass: list of doubles, dimension = [nzones]
                 zonal mass fractions [-]
+
         """
         nzones = self._nzones.value
         if len(zonemass) != nzones:
@@ -291,13 +290,13 @@ class HCCIengine(Engine):
         self.usezonemass = True
 
     def set_zonal_heat_transfer_area_fraction(self, zonearea: list[float]):
-        """
-        set zonal wall heat transfer area fractions for muti-zone HCCI engine simulation
+        """Set zonal wall heat transfer area fractions for muti-zone HCCI engine simulation
 
         Parameters
         ----------
             zonearea: list of doubles, dimension = [nzones]
                 zonal heat transfer area fractions [-]
+
         """
         nzones = self._nzones.value
         if len(zonearea) != nzones:
@@ -331,13 +330,13 @@ class HCCIengine(Engine):
                 exit()
 
     def set_zonal_gas_mole_fractions(self, zonemolefrac: list[float]):
-        """
-        set zonal gas mole fractions for muti-zone HCCI engine simulation
+        """Set zonal gas mole fractions for muti-zone HCCI engine simulation
 
         Parameters
         ----------
             zonemolefrac: list of 1-D double arrays (number of gas species), dimension = [nzones]
                 zonal gas mole fractions [-]
+
         """
         nzones = self._nzones.value
         if len(zonemolefrac) != nzones:
@@ -375,12 +374,12 @@ class HCCIengine(Engine):
             self.zonemolefrac.append(x)
 
     def define_fuel_composition(self, recipe: list[tuple[str, float]]):
-        """
-        set the fuel composition for setting up zonal gas composition by zonal equivalence ratio
+        """Set the fuel composition for setting up zonal gas composition by zonal equivalence ratio
 
         Parameters
         ----------
             recipe: list of tuples formatted as (species, mole fraction) pairs
+
         """
         if len(self.zonefueldefined) > 0:
             msg = [
@@ -394,12 +393,12 @@ class HCCIengine(Engine):
         self.fuel_composition = copy.deepcopy(recipe)
 
     def define_oxid_composition(self, recipe: list[tuple[str, float]]):
-        """
-        set the oxidizer composition for setting up zonal gas composition by zonal equivalence ratio
+        """Set the oxidizer composition for setting up zonal gas composition by zonal equivalence ratio
 
         Parameters
         ----------
             recipe: list of tuples formatted as (species, mole fraction) pairs
+
         """
         if len(self.zoneoxiddefined) > 0:
             msg = [
@@ -413,13 +412,13 @@ class HCCIengine(Engine):
         self.oxid_composition = copy.deepcopy(recipe)
 
     def define_product_composition(self, products: list[str]):
-        """
-        set the complete combustion product species for setting up zonal gas composition by zonal equivalence ratio
+        """Set the complete combustion product species for setting up zonal gas composition by zonal equivalence ratio
 
         Parameters
         ----------
             products: list of strings
                 product species symbols
+
         """
         if len(self.zoneproductdefined) > 0:
             msg = [
@@ -433,13 +432,13 @@ class HCCIengine(Engine):
         self.product_composition = copy.deepcopy(products)
 
     def define_additive_fractions(self, addfrac: list[float]):
-        """
-        set zonal additive gas mole fractions for setting up zonal gas composition by zonal equivalence ratio
+        """Set zonal additive gas mole fractions for setting up zonal gas composition by zonal equivalence ratio
 
         Parameters
         ----------
             addfrac: 1-D double array, dimension = [number of gas species]
                 additive gas mole fractions [-]
+
         """
         nzones = self._nzones.value
         if len(addfrac) != nzones:
@@ -469,13 +468,13 @@ class HCCIengine(Engine):
             self.zoneaddmolefrac.append(x)
 
     def set_zonal_equivalence_ratio(self, zonephi: list[float]):
-        """
-        set zonal wall heat transfer area fractions for setting up zonal gas composition by zonal equivalence ratio
+        """Set zonal wall heat transfer area fractions for setting up zonal gas composition by zonal equivalence ratio
 
         Parameters
         ----------
             zonephi: 1-D double array, dimension = [nzones]
                 zonal equivalence ratios [-]
+
         """
         nzones = self._nzones.value
         if len(zonephi) != nzones:
@@ -521,13 +520,13 @@ class HCCIengine(Engine):
                 exit()
 
     def set_zonal_EGR_ratio(self, zoneegr: list[float]):
-        """
-        set zonal exhaust gas recirculation (EGR) ratios for setting up zonal gas composition by zonal equivalence ratio
+        """Set zonal exhaust gas recirculation (EGR) ratios for setting up zonal gas composition by zonal equivalence ratio
 
         Parameters
         ----------
             zoneegr: 1-D double array, dimension = [nzones]
                 zonal EGR ratios [-]
+
         """
         nzones = self._nzones.value
         if len(zoneegr) != nzones:
@@ -557,8 +556,7 @@ class HCCIengine(Engine):
                 exit()
 
     def set_energy_equation_switch_ON_CA(self, switchCA: float):
-        """
-        Set the crank angle at which the energy equation will be turn ON for
+        """Set the crank angle at which the energy equation will be turn ON for
         the rest of the simulation.
         Before this switch crank angle the given temperature profile(s) or value(s)
         is used in the multi-zone HCCI simulation.
@@ -567,6 +565,7 @@ class HCCIengine(Engine):
         ----------
             switchCA: double
                 energy equation activation crank angle [degree]
+
         """
         if self._nzones.value == 1:
             msg = [
@@ -594,8 +593,7 @@ class HCCIengine(Engine):
             exit()
 
     def set_zonal_volume_keyword(self):
-        """
-        Set zonal volume keyword for the multi-zone HCCI engine simulation
+        """Set zonal volume keyword for the multi-zone HCCI engine simulation
         """
         if self._nzones.value == 1:
             # single zone is not allowed here
@@ -623,8 +621,7 @@ class HCCIengine(Engine):
             self.setkeyword(key=keyline, value=True)
 
     def set_zonal_mass_keyword(self):
-        """
-        Set zonal mass keyword for the multi-zone HCCI engine simulation
+        """Set zonal mass keyword for the multi-zone HCCI engine simulation
         """
         for izone in range(self._nzones.value):
             # set the zonal number string
@@ -640,8 +637,7 @@ class HCCIengine(Engine):
             self.setkeyword(key=keyline, value=True)
 
     def set_zonal_condition_keywords(self):
-        """
-        Set zonal initial condition keywords under the Full-Keywords mode
+        """Set zonal initial condition keywords under the Full-Keywords mode
         and use raw species mole fractions to set up zonal gas compositions
         for multi-zone HCCI engine simulation
         """
@@ -726,8 +722,7 @@ class HCCIengine(Engine):
                 self.setkeyword(key=line, value=True)
 
     def set_zonal_equivalence_ratio_keywords(self):
-        """
-        Set zonal initial condition keywords under the Full-Keywords mode
+        """Set zonal initial condition keywords under the Full-Keywords mode
         and use equivalence ratios to set up zonal gas compositions
         for multi-zone HCCI engine simulation
         """
@@ -850,12 +845,12 @@ class HCCIengine(Engine):
                 self.setkeyword(key=line, value=True)
 
     def __process_keywords_withFullInputs(self) -> int:
-        """
-        Process input keywords for the HCCI engine model under the Full-Keyword mode
+        """Process input keywords for the HCCI engine model under the Full-Keyword mode
 
         Returns
         -------
             Error code: integer
+
         """
         iErr = 0
         err_profile = 0
@@ -1020,13 +1015,13 @@ class HCCIengine(Engine):
         return iErr
 
     def __run_model_withFullInputs(self) -> int:
-        """
-        Run the HCCI engine model after the keywords are processed under the Full-Keyword mode
+        """Run the HCCI engine model after the keywords are processed under the Full-Keyword mode
         All keywords must be assigned
 
         Returns
         -------
             Error code: integer
+
         """
         # get information about the keyword inputs
         # convert number of keyword lines
@@ -1056,12 +1051,12 @@ class HCCIengine(Engine):
         return iErr
 
     def __process_keywords(self) -> int:
-        """
-        Process input keywords for the HCCI engine model
+        """Process input keywords for the HCCI engine model
 
         Returns
         -------
             Error code: integer
+
         """
         iErr = 0
         iErrc = 0
@@ -1227,24 +1222,24 @@ class HCCIengine(Engine):
         return iErr
 
     def __run_model(self) -> int:
-        """
-        Run the HCCI engine model after the keywords are processed
+        """Run the HCCI engine model after the keywords are processed
 
         Returns
         -------
             Error code: integer
+
         """
         # run the simulation without keyword inputs
         iErr = chemkin_wrapper.chemkin.KINAll0D_Calculate(self._chemset_index)
         return iErr
 
     def run(self) -> int:
-        """
-        Generic Chemkin run HCCI engine model method
+        """Generic Chemkin run HCCI engine model method
 
         Returns
         -------
             Error code: integer
+
         """
         # activate the Chemistry set associated with the Reactor instance
         force_activate_chemistryset(self._chemset_index.value)

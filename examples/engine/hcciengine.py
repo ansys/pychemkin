@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_HCCI_engine:
+""".. _ref_HCCI_engine:
 
 ==================================
 Simulate a single-zone HCCI engine
@@ -48,14 +47,15 @@ the single-zone homogeneous charged compression ignition (HCCI) engine model. In
 
 import os
 
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
 
 # chemkin homonegeous charge compression ignition (HCCI) engine model (transient)
 from ansys.chemkin.core.engines.HCCI import HCCIengine
 from ansys.chemkin.core.logger import logger
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()

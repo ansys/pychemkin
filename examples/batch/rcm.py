@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_rcm:
+""".. _ref_rcm:
 
 ====================================
 Simulate a rapid compression machine
@@ -57,6 +56,9 @@ predetermined time-volume profile.
 
 import os
 
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
 
@@ -65,8 +67,6 @@ from ansys.chemkin.core.batchreactors.batchreactor import (
     GivenVolumeBatchReactor_EnergyConservation,
 )
 from ansys.chemkin.core.logger import logger
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()
