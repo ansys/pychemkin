@@ -3,7 +3,6 @@ updates:
 
   - package-ecosystem: "pip"
     directory: "/"
-    insecure-external-code-execution: allow
     schedule:
       interval: "weekly"
     cooldown:
