@@ -59,6 +59,11 @@ tests = [
     "urllib3==2.6.0",
     "usd-core==25.11",
 ]
+vulnerabilities = [
+  "bandit[toml]==1.9.2",
+  "safety==3.7.0",
+  "typer==0.20.0",
+]
 
 [project.urls]
 Discussions = "https://github.com/ansys/pychemkin/discussions"
