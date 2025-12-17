@@ -31,6 +31,10 @@ html_context = {
     "github_version": "main",
     "doc_path": "doc/source",
 }
+html_theme = "ansys_sphinx_theme"
+html_short_title = html_title = "PyChemkin"
+html_static_path = ["_static"]
+templates_path = ["_templates"]
 html_theme_options = {
     "logo": "pyansys",
     "switcher": {
@@ -63,19 +67,13 @@ html_theme_options = {
     },
 }
 
-
 extensions = [
-    "sphinx.ext.autodoc",
-    "autoapi.extension",
-    "sphinx.ext.autosummary",
     "sphinx.ext.intersphinx",
-    "sphinx_gallery.gen_gallery",
+    "sphinx_copybutton",
     "sphinx_design",
     "sphinx_jinja",
     "ansys_sphinx_theme.extension.autoapi",
 ]
-
-templates_path = ["_templates"]
 
 # The suffix(es) of source filenames.
 source_suffix = {
@@ -92,10 +90,6 @@ suppress_warnings = [
     "autoapi.python_import_resolution",
 ]
 
-# exclude_patterns = []
-nbsphinx_execute = "never"
-autoapi_dirs = ["../../src/ansys/chemkin"]
-autoapi_ignore = ["*wrapper*", "*reactormodel*", "*color*", "*info*", "*utilities*"]
 # explicit order of the example groups
 explicit_order = [
     "../../examples/chemistry",
@@ -120,10 +114,6 @@ sphinx_gallery_conf = {
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
-html_theme = "ansys_sphinx_theme"
-html_short_title = html_title = "PyChemkin"
-html_static_path = ["_static"]
 
 # -- Declare the Jinja context -----------------------------------------------
 exclude_patterns = []
