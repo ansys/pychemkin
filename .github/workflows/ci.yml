@@ -170,9 +170,10 @@ jobs:
         env:
           ANSYSLMD_LICENSE_FILE: "1055@{{ secrets.LICENSE_SERVER }}"
         with:
-          sphinxopts: '-j auto'
-          dependencies: 'libjpeg-dev pandoc'
           add-pdf-html-docs-as-assets: true
+          dependencies: 'libjpeg-dev pandoc'
+          group-dependencies-name: 'doc'
+          sphinxopts: '-j auto'
 
   build-library:
     name: "Build library"
