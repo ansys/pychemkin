@@ -1720,7 +1720,7 @@ class ReactorModel:
         self.runstatus = code
 
     def getrunstatus(self, mode: str = "silent") -> int:
-        """Get the reactor model simuation status
+        """Get the reactor model simulation status
 
         Parameters
         ----------

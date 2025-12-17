@@ -120,7 +120,7 @@ def getwaterheatofvaporization(temp: float) -> float:
     w = open(waterfile, "w")
     # the water mechanism contains two species:
     # water vapor (H2O) and liquid water (H2O(L))
-    # decalre elements
+    # declare elements
     w.write("ELEMENT H O END\n")
     w.write("SPECIES\n")
     w.write("H2O   H2O(L)\n")
@@ -191,7 +191,7 @@ MyGasMech = ck.Chemistry(label="EQ")
 mymechfile = os.path.join(current_dir, "fuels_chem.inp")
 m = open(mymechfile, "w")
 # the mechanism contains only the necessary species (fuel, oxygen, and major combustion products)
-# decalre elements
+# declare elements
 m.write("ELEMENT c h o END\n")
 # declare species
 # ch4: Methane                  c4h10: n-Butane
@@ -339,7 +339,7 @@ for f in fuels:
 
     # compute the complete combustion state (fixed temperature and pressure)
     # this step mimics the complete burning of the initial fuel-oxygen mixture at constant pressure
-    # and the subsequent cooling of the combustion prodcts back to the original temperature
+    # and the subsequent cooling of the combustion products back to the original temperature
     burned = unburned.Find_Equilibrium()
     # get the mixture enthalpy of the final mixture [erg/g]
     Hburned = burned.HML() / burned.WTM

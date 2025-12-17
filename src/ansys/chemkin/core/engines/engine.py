@@ -1188,7 +1188,7 @@ class Engine(BatchReactors):
         """Post-process the ylinder averaged solution profiles from
         multi-zone engine models
         """
-        # set the cylinder averge solution record ("zone") index
+        # set the cylinder average solution record ("zone") index
         meanzoneID = self._nreactors + 1
         # post-process mean solution
         self.process_engine_solution(zoneID=meanzoneID)

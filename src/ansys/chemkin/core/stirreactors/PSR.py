@@ -827,7 +827,7 @@ class perfectlystirredreactor(openreactor):
             exit()
         # set solution mixture
         self._numbsolutionpoints = self._nreactors
-        # steady-state presure solution [dynes/cm2]
+        # steady-state pressure solution [dynes/cm2]
         smixture.pressure = pres.value
         # steady-state temperature solution [K]
         smixture.temperature = temp.value

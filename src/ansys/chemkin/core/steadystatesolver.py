@@ -66,7 +66,7 @@ class SteadyStateSolver:
         self.absolute_perturbation = 0.0e0
         # relative perturbation for Jacobian evaluation
         self.relative_perturbation = 0.0e0
-        # >>> pseudo trasient (time stepping) algorithm:
+        # >>> pseudo transient (time stepping) algorithm:
         # absolute tolerance for the time stepping solution
         self.TRabsolute_tolerance = 1.0e-9
         # relative tolerance for the time stepping solution

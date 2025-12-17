@@ -368,7 +368,7 @@ class SIengine(Engine):
         return iError
 
     def set_burn_anchor_points_keywords(self) -> int:
-        """Set the mass burned porfile anchor points keywords for the SI engine model
+        """Set the mass burned profile anchor points keywords for the SI engine model
 
         Returns
         -------

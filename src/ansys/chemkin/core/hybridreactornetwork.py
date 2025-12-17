@@ -1284,7 +1284,7 @@ class ReactorNetwork:
             # valid reactor name
             # check if the reactor is already declared as a tear point
             if reactor_index in self.tearpoint:
-                # reactor already decalred as a tear point
+                # reactor already declared as a tear point
                 msg = [
                     Color.MAGENTA,
                     "reactor",
