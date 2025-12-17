@@ -122,6 +122,7 @@ sphinx_gallery_conf = {
 
 # -- Lincheck configuration --------------------------------------------------
 linkcheck_ignore = [
+    r"https://www.ansys.com/*",
     r"https://ansys.com/*",
     r"https://ansyshelp.ansys.com/*",
 ]

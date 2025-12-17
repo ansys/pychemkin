@@ -64,7 +64,7 @@ version |version|.
 
    getting-started
    user-guide
-   api
+   api/index
    examples
    contribute
    artifacts
