@@ -34,7 +34,7 @@ intake valve closing (IVC) and the exhaust valve opening (EVO), that is, when th
 
 .. note ::
     For additional information on Chemkin IC engine models, use the
-    ``ansys.chemkin.manuals()`` method to view the online **Theory** manual.
+    ``ansys.chemkin.core.manuals()`` method to view the online **Theory** manual.
 
 The Chemkin spark ignition (SI) engine model offers a simple way to simulate the chemical kinetics taking place in the spark ignition engine. The Chemkin SI engine model does not predict the fuel mass burning rate profile. On the contrary, it requires the burning rate profile as input in the form of the Wiebe function parameters, the burn profile anchor points, or normalized profile data. The main uses of the Chemkin SI engine model are conducting parameter studies of the burning rate profile on engine performance, emissions, and the onset of engine knock due to end gas autoignition.
 
@@ -51,12 +51,12 @@ exhaust gas recirculation and the wall heat transfer can be included in the engi
 import os
 import time
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
 
 # chemkin spark ignition (SI) engine model (transient)
-from ansys.chemkin.engines.SI import SIengine
-from ansys.chemkin.logger import logger
+from ansys.chemkin.core.engines.SI import SIengine
+from ansys.chemkin.core.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 

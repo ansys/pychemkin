@@ -68,14 +68,14 @@ disturbance
 import os
 import time
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
 
 # chemkin batch reactor models (transient)
-from ansys.chemkin.batchreactors.batchreactor import (
+from ansys.chemkin.core.batchreactors.batchreactor import (
     GivenPressureBatchReactor_EnergyConservation,
 )
-from ansys.chemkin.logger import logger
+from ansys.chemkin.core.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 

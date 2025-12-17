@@ -24,8 +24,8 @@
 
 import copy
 
-from ansys.chemkin.color import Color
-from ansys.chemkin.logger import logger
+from ansys.chemkin.core.color import Color
+from ansys.chemkin.core.logger import logger
 import numpy as np
 import numpy.typing as npt
 

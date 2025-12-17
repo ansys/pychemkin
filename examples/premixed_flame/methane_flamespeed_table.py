@@ -52,13 +52,13 @@ calculations, the transport data must be included in the mechanism data and prep
 import os
 import time
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.logger import logger
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
+from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.core.logger import logger
 
 # Chemkin 1-D premixed freely propagating flame model (steady-state)
-from ansys.chemkin.premixedflames.premixedflame import FreelyPropagating as FlameSpeed
+from ansys.chemkin.core.premixedflames.premixedflame import FreelyPropagating as FlameSpeed
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 

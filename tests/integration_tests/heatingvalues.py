@@ -23,9 +23,9 @@ import os
 
 import numpy as np  # number crunching
 
-import ansys.chemkin as ck
-from ansys.chemkin import Color
-from ansys.chemkin.logger import logger
+import ansys.chemkin.core as ck
+from ansys.chemkin.core import Color
+from ansys.chemkin.core.logger import logger
 
 # check working directory
 current_dir = os.getcwd()

@@ -29,8 +29,8 @@ import os
 from typing import Union
 import webbrowser
 
-from ansys.chemkin.color import Color
-from ansys.chemkin.logger import logger
+from ansys.chemkin.core.color import Color
+from ansys.chemkin.core.logger import logger
 import yaml
 
 CKdict = {}  # chemkin hints
@@ -42,7 +42,7 @@ def setup_hints():
     Set up Chemkin keyword hints.
     """
     # Chemkin keyword help data file in YAML format
-    _chemkin_resources_dir = importlib.resources.files("ansys.chemkin").joinpath("data")
+    _chemkin_resources_dir = importlib.resources.files("ansys.chemkin.core").joinpath("data")
     help_file = os.path.join(_chemkin_resources_dir, "ChemkinKeywordTips.yaml")
     global _help_loaded
     if not _help_loaded:
@@ -139,38 +139,38 @@ def help(topic: Union[str, None] = None):
         msg = [
             "For detailed information about all Chemkin keywords and reactor models,\n",
             Color.SPACEx6,
-            "use \"ansys.chemkin.help('manual')\".",
+            "use \"ansys.chemkin.core.help('manual')\".",
         ]
         Color.ckprint("info", msg)
         msg = [
             "For usage of the real-gas cubic EOS",
             "in mixture thermodynamic property calculation,\n",
             Color.SPACEx6,
-            "use \"ansys.chemkin.help('real-gas')\".",
+            "use \"ansys.chemkin.core.help('real-gas')\".",
         ]
         Color.ckprint("normal", msg)
         msg = [
             "For mixture equilibrium calculation options,\n",
             Color.SPACEx6,
-            "use \"ansys.chemkin.help('equilibrium')\".",
+            "use \"ansys.chemkin.core.help('equilibrium')\".",
         ]
         Color.ckprint("normal", msg)
         msg = [
             "For information about a Chemkin reactor model keyword,\n",
             Color.SPACEx6,
-            "use \"ansys.chemkin.help('keyword')\".",
+            "use \"ansys.chemkin.core.help('keyword')\".",
         ]
         Color.ckprint("normal", msg)
         msg = [
             "For batch reactors ignition delay time definitions,\n",
             Color.SPACEx6,
-            "use \"ansys.chemkin.help('ignition')\".",
+            "use \"ansys.chemkin.core.help('ignition')\".",
         ]
         Color.ckprint("normal", msg)
     elif topic.lower() in "manual manuals":
         # information about chemkin manuals
         msg = [
-            "ansys.chemkin.manuals will open the Chemkin manuals page",
+            "ansys.chemkin.core.manuals will open the Chemkin manuals page",
             "of the Ansys Help portal",
             "in a new tab of the default browser.\n",
             Color.SPACEx6,
@@ -187,17 +187,17 @@ def help(topic: Union[str, None] = None):
         msg = [
             "For information about a Chemkin reactor model keyword,\n",
             Color.SPACEx6,
-            "use \"ansys.chemkin.keyhints('<keyword>')\"\n",
+            "use \"ansys.chemkin.core.keyhints('<keyword>')\"\n",
             Color.SPACEx6,
-            "ex: ansys.chemkin.keyhints('HTC')\n",
+            "ex: ansys.chemkin.core.keyhints('HTC')\n",
         ]
         Color.ckprint("normal", msg)
         msg = [
             "For information about keywords related to a phrase,\n",
             Color.SPACEx6,
-            "use \"ansys.chemkin.phrase_hints('<phrase>')\"\n",
+            "use \"ansys.chemkin.core.phrase_hints('<phrase>')\"\n",
             Color.SPACEx6,
-            "ex: ansys.chemkin.phrase_hints('tolerance')\n",
+            "ex: ansys.chemkin.core.phrase_hints('tolerance')\n",
         ]
         Color.ckprint("normal", msg)
     elif topic.lower() in "ignition":
@@ -240,7 +240,7 @@ def show_realgas_usage():
     print("   * for real-gas eligible mechanisms,")
     print("     > using the real-gas EOS with mixtures:")
     print("       to check the current activation status of the real-gas EOS, use")
-    print("           status = ansys.chemkin.check_realgas_status()")
+    print("           status = ansys.chemkin.core.check_realgas_status()")
     print("              status = True means the real-gas EOS is active")
     print("                     = False means the ideal gas law is active")
     print(
@@ -258,7 +258,7 @@ def show_realgas_usage():
     print("              <mixture_object>.use_idealgas_law()")
     print("     > using the real-gas EOS with reactor models:")
     print("       see reactor model keywords: 'RLGAS' and 'RLMIX'")
-    print("              ex: ansys.chemkin.keyword_hints('RLGA'", end=Color.END)
+    print("              ex: ansys.chemkin.core.keyword_hints('RLGA'", end=Color.END)
 
 
 def show_equilibrium_options():
@@ -266,7 +266,7 @@ def show_equilibrium_options():
     Show the equilibrium calculation usage and options.
     """
     print(Color.YELLOW + "** equilibrium calculation usage: ")
-    print("      EQ_mixture = ansys.chemkin.equilibrium(INIT_mixture, opt)")
+    print("      EQ_mixture = ansys.chemkin.core.equilibrium(INIT_mixture, opt)")
     print("      INIT_mixture is the initial mixture (object)")
     print("      EQ_mixture is the final/equilibrium mixture (object)")
     print("      opt is the equilibrium calculation option: ")
@@ -277,7 +277,7 @@ def show_equilibrium_options():
     print("           7: SPECIFIED V AND U")
     print("           8: SPECIFIED V AND H")
     print("** Chapman-Jouguet detonation calculation usage:")
-    print("      speed_list, CJ_mixture = ansys.chemkin.detonation(INIT_mixture)")
+    print("      speed_list, CJ_mixture = ansys.chemkin.core.detonation(INIT_mixture)")
     print("      INIT_mixture is the initial mixture (object)")
     print("      CJ_mixture is the C-J state mixture (object)")
     print("      speed_list is a list consists of two speed values at the C-J state: ")

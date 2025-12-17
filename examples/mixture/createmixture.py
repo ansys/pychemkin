@@ -52,8 +52,8 @@ This example shows different ways to create a mixture in PyChemkin. The use of t
 import copy
 import os
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin.logger import logger
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 

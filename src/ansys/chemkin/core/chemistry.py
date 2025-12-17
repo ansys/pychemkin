@@ -29,12 +29,12 @@ from ctypes import POINTER, c_char_p, c_double, c_int
 import os
 from typing import Dict, List, Union
 
-from ansys.chemkin import chemkin_wrapper as ck_wrapper
-from ansys.chemkin.color import Color
-from ansys.chemkin.constants import R_GAS
-from ansys.chemkin.info import clear_hints
-from ansys.chemkin.logger import logger
-from ansys.chemkin.realgaseos import check_realgas_status, set_current_pressure
+from ansys.chemkin.core import chemkin_wrapper as ck_wrapper
+from ansys.chemkin.core.color import Color
+from ansys.chemkin.core.constants import R_GAS
+from ansys.chemkin.core.info import clear_hints
+from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.realgaseos import check_realgas_status, set_current_pressure
 import numpy as np
 import numpy.typing as npt
 

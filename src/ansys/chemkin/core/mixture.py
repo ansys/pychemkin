@@ -28,8 +28,8 @@ import copy
 import ctypes
 from ctypes import c_double, c_int
 
-from ansys.chemkin import chemkin_wrapper as ck_wrapper
-from ansys.chemkin.chemistry import (
+from ansys.chemkin.core import chemkin_wrapper as ck_wrapper
+from ansys.chemkin.core.chemistry import (
     Chemistry,
     check_active_chemistryset,
     check_chemistryset,
@@ -38,10 +38,10 @@ from ansys.chemkin.chemistry import (
     set_current_pressure,
     verbose,
 )
-from ansys.chemkin.color import Color
-from ansys.chemkin.constants import P_ATM
-from ansys.chemkin.logger import logger
-from ansys.chemkin.utilities import calculate_stoichiometrics, where_element_in_array_1D
+from ansys.chemkin.core.color import Color
+from ansys.chemkin.core.constants import P_ATM
+from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.utilities import calculate_stoichiometrics, where_element_in_array_1D
 import numpy as np
 import numpy.typing as npt
 

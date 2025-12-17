@@ -34,7 +34,7 @@ intake valve closing (IVC) and the exhaust valve opening (EVO), that is, when th
 
 .. note ::
     For additional information on Chemkin IC engine models, use the
-    ``ansys.chemkin.manuals()`` method to view the online **Theory** manual.
+    ``ansys.chemkin.core.manuals()`` method to view the online **Theory** manual.
 
 This example shows how to set up and run the simplest Chemkin IC engine model:
 the single-zone homogeneous charged compression ignition (HCCI) engine model. In addition to the basic engine parameters, many engine model-specific features such as the *exhaust gas recirculation* and *wall heat transfer* can be included in the engine simulation.
@@ -48,12 +48,12 @@ the single-zone homogeneous charged compression ignition (HCCI) engine model. In
 
 import os
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
 
 # chemkin homonegeous charge compression ignition (HCCI) engine model (transient)
-from ansys.chemkin.engines.HCCI import HCCIengine
-from ansys.chemkin.logger import logger
+from ansys.chemkin.core.engines.HCCI import HCCIengine
+from ansys.chemkin.core.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
@@ -279,7 +279,7 @@ MyEngine.set_cylinder_head_area(area=123.5)
 # as the indication of an auto-ignition. You can choose a different auto-ignition definition.
 #
 # .. note::
-#   Type ``ansys.chemkin.show_ignition_definitions()`` to get the list of all available ignition
+#   Type ``ansys.chemkin.core.show_ignition_definitions()`` to get the list of all available ignition
 #   delay time definitions in Chemkin.
 #
 # .. note::

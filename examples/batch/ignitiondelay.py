@@ -56,14 +56,14 @@ times with various initial gas conditions. Here, the initial gas temperature is 
 import os
 import time
 
-import ansys.chemkin as ck  # chemkin
-from ansys.chemkin import Color
+import ansys.chemkin.core as ck  # chemkin
+from ansys.chemkin.core import Color
 
 # chemkin batch reactor models (transient)
-from ansys.chemkin.batchreactors.batchreactor import (
+from ansys.chemkin.core.batchreactors.batchreactor import (
     GivenPressureBatchReactor_EnergyConservation,
 )
-from ansys.chemkin.logger import logger
+from ansys.chemkin.core.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
@@ -196,7 +196,7 @@ MyCONP.time = 1.0
 # as the indication of an auto-ignition. You can choose a different auto-ignition definition.
 #
 # .. note::
-#   Type ``ansys.chemkin.show_ignition_definitions()`` to get the list of all available ignition
+#   Type ``ansys.chemkin.core.show_ignition_definitions()`` to get the list of all available ignition
 #   delay time definitions in Chemkin.
 #
 # .. note::

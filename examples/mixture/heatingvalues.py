@@ -64,10 +64,10 @@ the known values from a trusty database.
 
 import os
 
-import ansys.chemkin as ck
-from ansys.chemkin import Color
-from ansys.chemkin.logger import logger
-from ansys.chemkin.utilities import find_file
+import ansys.chemkin.core as ck
+from ansys.chemkin.core import Color
+from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.utilities import find_file
 import numpy as np  # number crunching
 
 # check working directory

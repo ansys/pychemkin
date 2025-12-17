@@ -30,8 +30,8 @@ import datetime
 import os
 import platform
 
-from ansys.chemkin.color import Color
-from ansys.chemkin.logger import logger
+from ansys.chemkin.core.color import Color
+from ansys.chemkin.core.logger import logger
 import numpy as np
 
 # set ansys version number

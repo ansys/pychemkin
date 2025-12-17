@@ -34,16 +34,16 @@ import platform
 # import Chemkin-CFD-API
 # import all commonly used constants and methods
 # so the users can have easy access to these resources
-from ansys.chemkin import chemkin_wrapper as ck_wrapper
-from ansys.chemkin.chemistry import (
+from ansys.chemkin.core import chemkin_wrapper as ck_wrapper
+from ansys.chemkin.core.chemistry import (
     Chemistry,
     chemkin_version,
     done,
     set_verbose,
     verbose,
 )
-from ansys.chemkin.color import Color
-from ansys.chemkin.constants import (
+from ansys.chemkin.core.color import Color
+from ansys.chemkin.core.constants import (
     AVOGADRO,
     BOLTZMANN,
     ERGS_PER_CALORIE,
@@ -57,7 +57,7 @@ from ansys.chemkin.constants import (
     air,
     water_heat_vaporization,
 )
-from ansys.chemkin.info import (
+from ansys.chemkin.core.info import (
     help,
     keyword_hints,
     manuals,
@@ -67,8 +67,8 @@ from ansys.chemkin.info import (
     show_ignition_definitions,
     show_realgas_usage,
 )
-from ansys.chemkin.logger import logger
-from ansys.chemkin.mixture import (
+from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.mixture import (
     Mixture,
     adiabatic_mixing,
     calculate_equilibrium,
@@ -78,7 +78,7 @@ from ansys.chemkin.mixture import (
     interpolate_mixtures,
     isothermal_mixing,
 )
-from ansys.chemkin.realgaseos import check_realgas_status, set_current_pressure
+from ansys.chemkin.core.realgaseos import check_realgas_status, set_current_pressure
 
 # show ansys (chemkin) version number
 msg = [

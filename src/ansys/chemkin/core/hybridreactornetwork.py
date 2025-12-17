@@ -27,13 +27,13 @@
 import copy
 from typing import Union
 
-from ansys.chemkin.chemistry import Chemistry, verbose
-from ansys.chemkin.color import Color as Color
-from ansys.chemkin.flowreactors.PFR import PlugFlowReactor as PFR
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.inlet import adiabatic_mixing_streams, clone_stream, compare_streams
-from ansys.chemkin.logger import logger
-from ansys.chemkin.stirreactors.PSR import perfectlystirredreactor as PSR
+from ansys.chemkin.core.chemistry import Chemistry, verbose
+from ansys.chemkin.core.color import Color as Color
+from ansys.chemkin.core.flowreactors.PFR import PlugFlowReactor as PFR
+from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.core.inlet import adiabatic_mixing_streams, clone_stream, compare_streams
+from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.stirreactors.PSR import perfectlystirredreactor as PSR
 
 
 class ReactorNetwork:

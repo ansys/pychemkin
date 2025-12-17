@@ -1,6 +1,6 @@
 import os
 
-import ansys.chemkin as ck
+import ansys.chemkin.core as ck
 
 
 class TestClassInstallation:

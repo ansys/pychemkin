@@ -77,17 +77,17 @@ import time
 
 import numpy as np  # number crunching
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
-from ansys.chemkin.hybridreactornetwork import ReactorNetwork as ERN
-from ansys.chemkin.inlet import (
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
+from ansys.chemkin.core.hybridreactornetwork import ReactorNetwork as ERN
+from ansys.chemkin.core.inlet import (
     Mixture,
     Stream,  # external gaseous inlet
 )
-from ansys.chemkin.logger import logger
+from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
 
 # check working directory
 current_dir = os.getcwd()
@@ -154,9 +154,9 @@ air.X = ck.Air.X()  # mole fractions
 #
 # .. note::
 #   PyChemkin has *"air"* redefined as a convenient way to set up the air
-#   stream/mixture in the simulations. Use ``ansys.chemkin.Air.X()`` or
-#   ``ansys.chemkin.Air.Y()`` when the mechanism uses "O2" and "N2" for
-#   oxygen and nitrogen. Use ``ansys.chemkin.air.X()`` or ``ansys.chemkin.air.Y()``
+#   stream/mixture in the simulations. Use ``ansys.chemkin.core.Air.X()`` or
+#   ``ansys.chemkin.core.Air.Y()`` when the mechanism uses "O2" and "N2" for
+#   oxygen and nitrogen. Use ``ansys.chemkin.core.air.X()`` or ``ansys.chemkin.core.air.Y()``
 #   when oxygen and nitrogen are represented by "o2" and "n2".
 #
 

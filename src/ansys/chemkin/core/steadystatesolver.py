@@ -26,9 +26,9 @@ Chemkin steady-state solver controlling parameters.
 
 from typing import Union
 
-from ansys.chemkin.color import Color
-from ansys.chemkin.logger import logger
-from ansys.chemkin.reactormodel import Keyword
+from ansys.chemkin.core.color import Color
+from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.reactormodel import Keyword
 import numpy as np
 
 

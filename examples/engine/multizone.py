@@ -34,7 +34,7 @@ intake valve closing (IVC) and the exhaust valve opening (EVO), that is, when th
 
 .. note ::
     For additional information on the Chemkin IC engine models, use the
-    ``ansys.chemkin.manuals()`` method to view the online **Theory** manual.
+    ``ansys.chemkin.core.manuals()`` method to view the online **Theory** manual.
 
 The multi-zone homogeneous charged compression ignition (HCCI) model is mainly intended to address
 the temperature variation inside the cylinder caused by the wall heat transfer and the imperfect
@@ -55,12 +55,12 @@ initial distributions of zone size, temperature, and composition.
 
 import os
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
 
 # Chemkin homogeneous charge compression ignition (HCCI) engine model (transient)
-from ansys.chemkin.engines.HCCI import HCCIengine
-from ansys.chemkin.logger import logger
+from ansys.chemkin.core.engines.HCCI import HCCIengine
+from ansys.chemkin.core.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
@@ -311,7 +311,7 @@ MyMZEngine.define_additive_fractions(addfrac=zadd)
 #
 # .. note::
 #
-#   - Type ``ansys.chemkin.show_ignition_definitions()`` to get the list of all available ignition
+#   - Type ``ansys.chemkin.core.show_ignition_definitions()`` to get the list of all available ignition
 #     delay time definitions in Chemkin.
 #
 #   - The ``set_ignition_delay()`` method is required for the engine model to report the ignition

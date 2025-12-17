@@ -27,11 +27,11 @@ Chemkin reactor inlet/stream utilities.
 import copy
 from typing import Union
 
-from ansys.chemkin.chemistry import Chemistry
-from ansys.chemkin.color import Color
-from ansys.chemkin.constants import P_ATM
-from ansys.chemkin.logger import logger
-from ansys.chemkin.mixture import (
+from ansys.chemkin.core.chemistry import Chemistry
+from ansys.chemkin.core.color import Color
+from ansys.chemkin.core.constants import P_ATM
+from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.mixture import (
     Mixture,
     calculate_mixture_temperature_from_enthalpy,
     compare_mixtures,

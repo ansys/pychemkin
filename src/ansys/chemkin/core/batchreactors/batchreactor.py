@@ -28,23 +28,23 @@ import copy
 from ctypes import c_double, c_int
 from typing import Union
 
-from ansys.chemkin import chemkin_wrapper
-from ansys.chemkin.chemistry import (
+from ansys.chemkin.core import chemkin_wrapper
+from ansys.chemkin.core.chemistry import (
     check_chemistryset,
     chemistryset_initialized,
     force_activate_chemistryset,
     set_verbose,
     verbose,
 )
-from ansys.chemkin.color import Color as Color
-from ansys.chemkin.constants import P_ATM
-from ansys.chemkin.info import show_ignition_definitions
-from ansys.chemkin.inlet import Stream
-from ansys.chemkin.logger import logger
-from ansys.chemkin.mixture import Mixture, interpolate_mixtures
-from ansys.chemkin.reactormodel import Keyword
-from ansys.chemkin.reactormodel import ReactorModel as reactor
-from ansys.chemkin.utilities import find_interpolate_parameters
+from ansys.chemkin.core.color import Color as Color
+from ansys.chemkin.core.constants import P_ATM
+from ansys.chemkin.core.info import show_ignition_definitions
+from ansys.chemkin.core.inlet import Stream
+from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.mixture import Mixture, interpolate_mixtures
+from ansys.chemkin.core.reactormodel import Keyword
+from ansys.chemkin.core.reactormodel import ReactorModel as reactor
+from ansys.chemkin.core.utilities import find_interpolate_parameters
 import numpy as np
 import numpy.typing as npt
 

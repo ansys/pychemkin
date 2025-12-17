@@ -28,19 +28,19 @@ import copy
 from ctypes import c_double, c_int
 from typing import Union
 
-from ansys.chemkin import chemkin_wrapper
-from ansys.chemkin.chemistry import (
+from ansys.chemkin.core import chemkin_wrapper
+from ansys.chemkin.core.chemistry import (
     check_chemistryset,
     chemistryset_initialized,
     force_activate_chemistryset,
     verbose,
 )
-from ansys.chemkin.color import Color as Color
-from ansys.chemkin.inlet import Stream
-from ansys.chemkin.logger import logger
-from ansys.chemkin.mixture import equilibrium
-from ansys.chemkin.reactormodel import Keyword
-from ansys.chemkin.stirreactors.openreactor import openreactor
+from ansys.chemkin.core.color import Color as Color
+from ansys.chemkin.core.inlet import Stream
+from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.mixture import equilibrium
+from ansys.chemkin.core.reactormodel import Keyword
+from ansys.chemkin.core.stirreactors.openreactor import openreactor
 import numpy as np
 import numpy.typing as npt
 

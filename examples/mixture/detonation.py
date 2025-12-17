@@ -41,8 +41,8 @@ the experimental data.
 
 import os
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin.logger import logger
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
@@ -143,7 +143,7 @@ premixed.list_composition(mode="mole")
 # .. note::
 #
 #    - By default, Chemkin variables are in cgs units.
-#    - You can enter the ``ansys.chemkin.help("equilibrium")`` command at the Python prompt
+#    - You can enter the ``ansys.chemkin.core.help("equilibrium")`` command at the Python prompt
 #      to see the input and output parameters of the ``detonation()`` method.
 #
 
@@ -184,8 +184,8 @@ plt.plot(P, Det, "bo--", label="ideal gas", markersize=5, fillstyle="none")
 # Switch to the real-gas EOS model
 # ================================
 # Use the ``use_realgas_cubicEOS()`` method to turn on the real-gas EOS model. You can
-# enter ``ansys.chemkin.help("real gas")`` to see usage information on real-gas models
-# or ``ansys.chemkin.help("manuals")`` to access the online *Chemkin Theory*
+# enter ``ansys.chemkin.core.help("real gas")`` to see usage information on real-gas models
+# or ``ansys.chemkin.core.help("manuals")`` to access the online *Chemkin Theory*
 # manual for descriptions of the real-gas EOS models.
 #
 # .. note::

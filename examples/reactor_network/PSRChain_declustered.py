@@ -60,14 +60,14 @@ in this configuration, the entire reactor network can be solved in one sweep.
 import os
 import time
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.inlet import adiabatic_mixing_streams
-from ansys.chemkin.logger import logger
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
+from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.core.inlet import adiabatic_mixing_streams
+from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
 
 # check working directory
 current_dir = os.getcwd()

@@ -24,12 +24,12 @@ import os
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
 
 # chemkin homonegeous charge compression ignition (HCCI) engine model (transient)
-from ansys.chemkin.engines.HCCI import HCCIengine
-from ansys.chemkin.logger import logger
+from ansys.chemkin.core.engines.HCCI import HCCIengine
+from ansys.chemkin.core.logger import logger
 
 # check working directory
 current_dir = os.getcwd()

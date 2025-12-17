@@ -28,8 +28,8 @@ Set up a PyChemkin project
 ==========================
 
 This example shows how to set up a PyChemkin project and start to use PyChemkin features.
-You begin by importing the PyChemkin package, which is named ``ansys.chemkin``, and optionally
-the PyChemkin logger package, which is named ``ansys.chemkin.logger``.
+You begin by importing the PyChemkin package, which is named ``ansys.chemkin.core``, and optionally
+the PyChemkin logger package, which is named ``ansys.chemkin.core.logger``.
 
 Next, you use the ``Chemistry()`` method to instantiate and preprocess a chemistry set.
 This requires specifying the file names (with full file paths) of the mechanism file,
@@ -48,13 +48,13 @@ your simulation.
 ###############################################
 # Import PyChemkin packages
 # =========================
-# Import the ``ansys.chemkin`` package to start using PyChemkin in the project.
-# Importing the ``ansys.chemkin.logger`` package is optional.
+# Import the ``ansys.chemkin.core`` package to start using PyChemkin in the project.
+# Importing the ``ansys.chemkin.core.logger`` package is optional.
 
 import os
 
-import ansys.chemkin  # import PyChemkin
-from ansys.chemkin.logger import logger
+import ansys.chemkin.core  # import PyChemkin
+from ansys.chemkin.core.logger import logger
 
 #######################################################
 # Set up the file paths of the mechanism and data files
@@ -71,7 +71,7 @@ from ansys.chemkin.logger import logger
 #
 
 # create GRI 3.0 mechanism from the data directory
-mechanism_dir = os.path.join(ansys.chemkin.ansys_dir, "reaction", "data")
+mechanism_dir = os.path.join(ansys.chemkin.core.ansys_dir, "reaction", "data")
 # set up mechanism file names
 mech_file = os.path.join(mechanism_dir, "grimech30_chem.inp")
 therm_file = os.path.join(mechanism_dir, "grimech30_thermo.dat")
@@ -82,7 +82,7 @@ tran_file = os.path.join(mechanism_dir, "grimech30_transport.dat")
 # =============================
 # Use the ``Chemistry()`` method to instantiate a chemistry set named ``GasMech``.
 
-GasMech = ansys.chemkin.Chemistry(
+GasMech = ansys.chemkin.core.Chemistry(
     chem=mech_file, therm=therm_file, tran=tran_file, label="GRI 3.0"
 )
 
@@ -112,10 +112,10 @@ if status != 0:
 # on the ``GasMech`` chemistry set.
 
 # create 'air' mixture based on 'GasMech' chemistry set
-air = ansys.chemkin.Mixture(GasMech)
+air = ansys.chemkin.core.Mixture(GasMech)
 # set 'air' condition
 # mixture pressure in [dynes/cm2]
-air.pressure = 1.0 * ansys.chemkin.P_ATM
+air.pressure = 1.0 * ansys.chemkin.core.P_ATM
 # mixture temperature in [K]
 air.temperature = 300.0
 # mixture composition in mole fractions
@@ -134,7 +134,7 @@ air.X = [("O2", 0.21), ("N2", 0.79)]
 #
 
 # print pressure and temperature of the `air` mixture
-print(f"Pressure    = {air.pressure/ansys.chemkin.P_ATM} [atm]")
+print(f"Pressure    = {air.pressure/ansys.chemkin.core.P_ATM} [atm]")
 print(f"Temperature = {air.temperature} [K]")
 # print the 'air' composition in mass fractions
 air.list_composition(mode="mass")

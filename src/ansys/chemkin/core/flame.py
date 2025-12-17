@@ -24,12 +24,12 @@
 
 from ctypes import c_int
 
-from ansys.chemkin.color import Color as Color
-from ansys.chemkin.grid import Grid
-from ansys.chemkin.inlet import Stream
-from ansys.chemkin.logger import logger
-from ansys.chemkin.reactormodel import Keyword, ReactorModel
-from ansys.chemkin.steadystatesolver import SteadyStateSolver
+from ansys.chemkin.core.color import Color as Color
+from ansys.chemkin.core.grid import Grid
+from ansys.chemkin.core.inlet import Stream
+from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.reactormodel import Keyword, ReactorModel
+from ansys.chemkin.core.steadystatesolver import SteadyStateSolver
 import numpy as np
 import numpy.typing as npt
 

@@ -62,14 +62,14 @@ This example shows how to use the PSR model to validate the reaction mechanism a
 import os
 import time
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.logger import logger
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
+from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.core.logger import logger
 
 # chemkin perfectly stirred reactor (PSR) model (steady-state)
-from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_FixedTemperature as PSR
-from ansys.chemkin.utilities import find_file
+from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_FixedTemperature as PSR
+from ansys.chemkin.core.utilities import find_file
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 

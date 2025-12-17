@@ -85,15 +85,15 @@ In the current project, the recycling streams from PSR #3 to PSR #1 and PSR #2 a
 import os
 import time
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
-from ansys.chemkin.hybridreactornetwork import ReactorNetwork as ERN
-from ansys.chemkin.inlet import Mixture
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.logger import logger
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
+from ansys.chemkin.core.hybridreactornetwork import ReactorNetwork as ERN
+from ansys.chemkin.core.inlet import Mixture
+from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
 import numpy as np  # number crunching
 
 # check working directory
@@ -161,9 +161,9 @@ air.X = ck.Air.X()  # mole fractions
 #
 # .. note::
 #   PyChemkin has *air* redefined as a convenient way to set up the air
-#   stream/mixture in the simulations. Use the ``ansys.chemkin.Air.X()`` or
-#   ``ansys.chemkin.Air.Y()`` method when the mechanism uses ``O2`` and ``N2`` for
-#   oxygen and nitrogen. Use the ``ansys.chemkin.air.X()`` or ``ansys.chemkin.air.Y()``
+#   stream/mixture in the simulations. Use the ``ansys.chemkin.core.Air.X()`` or
+#   ``ansys.chemkin.core.Air.Y()`` method when the mechanism uses ``O2`` and ``N2`` for
+#   oxygen and nitrogen. Use the ``ansys.chemkin.core.air.X()`` or ``ansys.chemkin.core.air.Y()``
 #   method when oxygen and nitrogen are represented by ``o2`` and ``n2``.
 #
 

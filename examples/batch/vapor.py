@@ -41,14 +41,14 @@ the different behaviors between an *ideal gas* water vapor and its *real gas* co
 
 import os
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
 
 # chemkin batch reactor model (transient)
-from ansys.chemkin.batchreactors.batchreactor import (
+from ansys.chemkin.core.batchreactors.batchreactor import (
     GivenPressureBatchReactor_FixedTemperature,
 )
-from ansys.chemkin.logger import logger
+from ansys.chemkin.core.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
@@ -149,8 +149,8 @@ tank.set_temperature_profile(x, TPROprofile)
 # Switch on the real-gas EOS model
 # ==================================
 # Use the ``use_realgas_cubicEOS()`` method to turn on the real-gas EOS model. For more
-# information, type either ``ansys.chemkin.help("real gas")`` for information on real-gas model
-# usage or ``ansys.chemkin.help("manuals")`` to access the online **Chemkin Theory**
+# information, type either ``ansys.chemkin.core.help("real gas")`` for information on real-gas model
+# usage or ``ansys.chemkin.core.help("manuals")`` to access the online **Chemkin Theory**
 # manual for descriptions of the real-gas EOS models.
 #
 # .. note::
