@@ -138,8 +138,8 @@ def getwaterheatofvaporization(temp: float) -> float:
         "therm.dat",
     )
     # pre-process
-    iError = WaterMech.preprocess()
-    if iError != 0:
+    ierror = WaterMech.preprocess()
+    if ierror != 0:
         return 0.0
     # get species enthalpies [erg/mol] at 298.15 [K]
     waterenthalpies = WaterMech.SpeciesH(thistemperature)
@@ -237,8 +237,8 @@ MyGasMech.thermfile = find_file(
 # Pre-process the **fuel** ``Chemistry Set``
 # ==========================================
 # preprocess the fuel mechanism "MyGasMech`` just created.
-iError = MyGasMech.preprocess()
-if iError == 0:
+ierror = MyGasMech.preprocess()
+if ierror == 0:
     print(Color.GREEN + ">>> preprocess OK", end=Color.END)
 else:
     print(Color.RED + ">>> preprocess failed!", end=Color.END)
@@ -331,7 +331,7 @@ for f in fuels:
     # re-set the fuel composition (mole/volume fractions)
     fuel.X = f
     # create a soichiometric fuel-oxygen mixture
-    iError = unburned.X_by_Equivalence_Ratio(
+    ierror = unburned.X_by_Equivalence_Ratio(
         MyGasMech, fuel.X, oxid.X, add_frac, products, equivalenceratio=1.0
     )
     # get the mixture enthalpy of the initial mixture [erg/g]

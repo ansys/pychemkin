@@ -573,13 +573,13 @@ class BatchReactors(reactor):
             return ignitiondelaytime.value
 
         # get the ignition delay time (batch reactor model [sec], engine model [CA])
-        iErr = chemkin_wrapper.chemkin.KINAll0D_GetIgnitionDelay(ignitiondelaytime)
-        if iErr != 0:
+        ierr = chemkin_wrapper.chemkin.KINAll0D_GetIgnitionDelay(ignitiondelaytime)
+        if ierr != 0:
             msg = [
                 Color.MAGENTA,
                 "potential bad ignition delay time value,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 "\n",
                 Color.SPACEx6,
                 "please check the text output and revisit the reactor/solver settings.",
@@ -667,8 +667,8 @@ class BatchReactors(reactor):
             return 10
         else:
             keyword = "VPRO"
-            iErr = self.setprofile(key=keyword, x=x, y=vol)
-            return iErr
+            ierr = self.setprofile(key=keyword, x=x, y=vol)
+            return ierr
 
     def set_pressure_profile(
         self, x: npt.NDArray[np.double], pres: npt.NDArray[np.double]
@@ -702,8 +702,8 @@ class BatchReactors(reactor):
             return 10
         else:
             keyword = "PPRO"
-            iErr = self.setprofile(key=keyword, x=x, y=pres)
-            return iErr
+            ierr = self.setprofile(key=keyword, x=x, y=pres)
+            return ierr
 
     def set_surfacearea_profile(
         self, x: npt.NDArray[np.double], area: npt.NDArray[np.double]
@@ -723,8 +723,8 @@ class BatchReactors(reactor):
 
         """
         keyword = "AINT"
-        iErr = self.setprofile(key=keyword, x=x, y=area)
-        return iErr
+        ierr = self.setprofile(key=keyword, x=x, y=area)
+        return ierr
 
     def set_reactortype_keywords(self):
         """Set reactor type keywords under the Full-Keywords mode"""
@@ -788,11 +788,11 @@ class BatchReactors(reactor):
             error code: integer
 
         """
-        iErr = 0
+        ierr = 0
         # required inputs:
         if self._numb_requiredinput <= 0:
             # no required input
-            return iErr
+            return ierr
         else:
             if len(self._inputcheck) < self._numb_requiredinput:
                 msg = [Color.PURPLE, "some required inputs are missing.", Color.END]
@@ -801,12 +801,12 @@ class BatchReactors(reactor):
             # verify required inputs one by one
             for k in self._requiredlist:
                 if k not in self._inputcheck:
-                    iErr += 1
+                    ierr += 1
                     msg = [Color.PURPLE, "missing required input:", k, Color.END]
                     this_msg = Color.SPACE.join(msg)
                     logger.error(this_msg)
 
-            return iErr
+            return ierr
 
     def __process_keywords_withFullInputs(self) -> int:
         """Process input keywords for the batch reactor model under the Full-Keyword mode
@@ -816,15 +816,15 @@ class BatchReactors(reactor):
             Error code: integer
 
         """
-        iErr = 0
+        ierr = 0
         set_verbose(True)
         # verify required inputs
-        iErr = self.validate_inputs()
-        if iErr != 0:
+        ierr = self.validate_inputs()
+        if ierr != 0:
             msg = [Color.PURPLE, "missing required input keywords.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            return iErr
+            return ierr
         # re-size work arrays if profile is used
         if self._numbprofiles > 0:
             # find total profile data points
@@ -835,23 +835,23 @@ class BatchReactors(reactor):
                 # re-size work arrays
                 self._profilesize = numbprofilepoints
                 ipoints = c_int(numbprofilepoints)
-                iErrc = chemkin_wrapper.chemkin.KINAll0D_SetProfilePoints(ipoints)
+                ierrc = chemkin_wrapper.chemkin.KINAll0D_SetProfilePoints(ipoints)
                 # setup reactor model working arrays
-                if iErrc == 0:
-                    iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
+                if ierrc == 0:
+                    ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
                         self._myLOUT, self._chemset_index
                     )
-                iErr += iErrc
-        if iErr != 0:
+                ierr += ierrc
+        if ierr != 0:
             msg = [
                 Color.PURPLE,
                 "profile data generation error, error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            return iErr
+            return ierr
         # prepare initial conditions
         # initial mass fraction
         y_init = self.reactormixture.Y
@@ -861,7 +861,7 @@ class BatchReactors(reactor):
         bulk_init = np.zeros_like(site_init, dtype=np.double)
         # set reactor initial conditions and geometry parameters
         if self._reactortype.value == self.ReactorTypes.get("Batch"):
-            iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupBatchInputs(
+            ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupBatchInputs(
                 self._chemset_index,
                 self._endtime,
                 self._temperature,
@@ -873,19 +873,19 @@ class BatchReactors(reactor):
                 site_init,
                 bulk_init,
             )
-            iErr += iErrc
-            if iErrc != 0:
+            ierr += ierrc
+            if ierrc != 0:
                 logger.error("failed to set up basic reactor keywords")
-                return iErrc
+                return ierrc
 
         # set reactor type
         self.set_reactortype_keywords()
         # reactor initial/estimated condition
         self.set_reactorcondition_keywords()
-        if iErr == 0 and self._numbprofiles > 0:
+        if ierr == 0 and self._numbprofiles > 0:
             # get keyword lines of all profiles
             err_profile, nproflines, prof_lines = self.createprofileinputlines()
-            iErr += err_profile
+            ierr += err_profile
             if err_profile == 0:
                 # set the profile keywords
                 for pkey in prof_lines:
@@ -908,8 +908,8 @@ class BatchReactors(reactor):
         # add the END keyword
         self.setkeyword(key="END", value=True)
         # create input lines from additional user-specified keywords
-        iErr, nlines = self.createkeywordinputlines()
-        if iErr == 0:
+        ierr, nlines = self.createkeywordinputlines()
+        if ierr == 0:
             if verbose():
                 msg = [
                     Color.YELLOW,
@@ -928,7 +928,7 @@ class BatchReactors(reactor):
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
 
-        return iErr
+        return ierr
 
     def __run_model_withFullInputs(self) -> int:
         """Run the batch reactor model after the keywords are processed under the Full-Keyword mode
@@ -950,21 +950,21 @@ class BatchReactors(reactor):
         linelength = np.zeros(shape=self._numblines, dtype=np.int32)
         linelength[:] = self._linelength[:]
         # run the simulation with keyword inputs
-        iErr = chemkin_wrapper.chemkin.KINAll0D_CalculateInput(
+        ierr = chemkin_wrapper.chemkin.KINAll0D_CalculateInput(
             self._myLOUT, self._chemset_index, longline, nlines, linelength
         )
-        if iErr != 0:
+        if ierr != 0:
             msg = [
                 Color.PURPLE,
                 "failed to set up reactor keywords in Full mode,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
 
-        return iErr
+        return ierr
 
     def __process_keywords(self) -> int:
         """Process input keywords for the batch reactor model
@@ -974,18 +974,18 @@ class BatchReactors(reactor):
             Error code: integer
 
         """
-        iErr = 0
-        iErrc = 0
+        ierr = 0
+        ierrc = 0
         err_key = 0
         err_inputs = 0
         # set_verbose(True)
         # verify required inputs
-        iErr = self.validate_inputs()
-        if iErr != 0:
+        ierr = self.validate_inputs()
+        if ierr != 0:
             msg = [Color.PURPLE, "missing required input keywords.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            return iErr
+            return ierr
         # re-size work arrays if profile is used
         if self._numbprofiles > 0:
             # find total profile data points
@@ -996,23 +996,23 @@ class BatchReactors(reactor):
                 # re-size work arrays
                 self._profilesize = numbprofilepoints
                 ipoints = c_int(numbprofilepoints)
-                iErrc = chemkin_wrapper.chemkin.KINAll0D_SetProfilePoints(ipoints)
+                ierrc = chemkin_wrapper.chemkin.KINAll0D_SetProfilePoints(ipoints)
                 # setup reactor model working arrays
-                if iErrc == 0:
-                    iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
+                if ierrc == 0:
+                    ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
                         self._myLOUT, self._chemset_index
                     )
-                iErr += iErrc
-        if iErr != 0:
+                ierr += ierrc
+        if ierr != 0:
             msg = [
                 Color.PURPLE,
                 "profile data generation error, error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            return iErr
+            return ierr
         # prepare initial conditions
         # initial mass fraction
         y_init = self.reactormixture.Y
@@ -1022,7 +1022,7 @@ class BatchReactors(reactor):
         bulk_init = np.zeros_like(site_init, dtype=np.double)
         # set reactor initial conditions and geometry parameters
         if self._reactortype.value == self.ReactorTypes.get("Batch"):
-            iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupBatchInputs(
+            ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupBatchInputs(
                 self._chemset_index,
                 self._endtime,
                 self._temperature,
@@ -1034,18 +1034,18 @@ class BatchReactors(reactor):
                 site_init,
                 bulk_init,
             )
-            iErr += iErrc
-            if iErrc != 0:
+            ierr += ierrc
+            if ierrc != 0:
                 msg = [
                     Color.PURPLE,
                     "failed to set up basic reactor keywords,",
                     "error code =",
-                    str(iErrc),
+                    str(ierrc),
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                return iErrc
+                return ierrc
             # heat transfer (use additional keywords)
             # solver parameters (use additional keywords)
             # output controls (use additional keywords)
@@ -1054,21 +1054,21 @@ class BatchReactors(reactor):
             # ignition delay (use additional keywords)
             # solve integrated heat release rate due to chemical reactions
             if self.EnergyTypes.get("ENERGY") == self._energytype.value:
-                iErrc = chemkin_wrapper.chemkin.KINAll0D_IntegrateHeatRelease()
-                iErr += iErrc
-                if iErrc != 0:
+                ierrc = chemkin_wrapper.chemkin.KINAll0D_IntegrateHeatRelease()
+                ierr += ierrc
+                if ierrc != 0:
                     msg = [
                         Color.PURPLE,
                         "failed to set up heat release keyword,",
                         "error code =",
-                        str(iErrc),
+                        str(ierrc),
                         Color.END,
                     ]
                     this_msg = Color.SPACE.join(msg)
                     logger.error(this_msg)
-                    return iErrc
+                    return ierrc
 
-        if iErr == 0 and self._numbprofiles > 0:
+        if ierr == 0 and self._numbprofiles > 0:
             for p in self._profiles_list:
                 key = bytes(p.profilekey, "utf-8")
                 npoints = c_int(p.size)
@@ -1077,7 +1077,7 @@ class BatchReactors(reactor):
                 err_profile = chemkin_wrapper.chemkin.KINAll0D_SetProfileParameter(
                     key, npoints, x, y
                 )
-                iErr += err_profile
+                ierr += err_profile
             if err_profile != 0:
                 msg = [
                     Color.PURPLE,
@@ -1089,7 +1089,7 @@ class BatchReactors(reactor):
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
                 return err_profile
-        if iErr == 0:
+        if ierr == 0:
             # set additional keywords
             # create input lines from additional user-specified keywords
             err_inputs, nlines = self.createkeywordinputlines()
@@ -1131,9 +1131,9 @@ class BatchReactors(reactor):
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
         #
-        iErr = iErr + err_inputs + err_key
+        ierr = ierr + err_inputs + err_key
 
-        return iErr
+        return ierr
 
     def __run_model(self) -> int:
         """Run the batch reactor model after the keywords are processed
@@ -1144,8 +1144,8 @@ class BatchReactors(reactor):
 
         """
         # run the simulation without keyword inputs
-        iErr = chemkin_wrapper.chemkin.KINAll0D_Calculate(self._chemset_index)
-        return iErr
+        ierr = chemkin_wrapper.chemkin.KINAll0D_Calculate(self._chemset_index)
+        return ierr
 
     def run(self) -> int:
         """Generic Chemkin run reactor model method
@@ -1283,9 +1283,9 @@ class BatchReactors(reactor):
         # number of time points in the solution
         npoints = c_int(0)
         # get solution size of the batch reactor
-        iErr = chemkin_wrapper.chemkin.KINAll0D_GetSolnResponseSize(nreac, npoints)
+        ierr = chemkin_wrapper.chemkin.KINAll0D_GetSolnResponseSize(nreac, npoints)
         nreactors = nreac.value
-        if iErr == 0 and nreactors == self._nreactors:
+        if ierr == 0 and nreactors == self._nreactors:
             # return the solution sizes
             self._numbsolutionpoints = (
                 npoints.value
@@ -1297,7 +1297,7 @@ class BatchReactors(reactor):
                 Color.PURPLE,
                 "failed to get the solution size,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -1380,15 +1380,15 @@ class BatchReactors(reactor):
         icreac = c_int(nreac)
         icnpts = c_int(npoints)
         icnspec = c_int(self.numbspecies)
-        iErr = chemkin_wrapper.chemkin.KINAll0D_GetGasSolnResponse(
+        ierr = chemkin_wrapper.chemkin.KINAll0D_GetGasSolnResponse(
             icreac, icnpts, icnspec, time, temp, pres, vol, frac
         )
-        if iErr != 0:
+        if ierr != 0:
             msg = [
                 Color.RED,
                 "failed to fetch the raw solution data from memory,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -1406,13 +1406,13 @@ class BatchReactors(reactor):
         # species mass fractions
         self.parsespeciessolutiondata(frac)
         # create solution mixture
-        iErr = self.create_solution_mixtures(frac)
-        if iErr != 0:
+        ierr = self.create_solution_mixtures(frac)
+        if ierr != 0:
             msg = [
                 Color.PURPLE,
                 "forming solution mixtures",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -1481,7 +1481,7 @@ class BatchReactors(reactor):
 
         Returns
         -------
-            iError: integer
+            ierror: integer
                  error code
 
         """
@@ -1670,7 +1670,7 @@ class GivenPressureBatchReactor_FixedTemperature(BatchReactors):
         self._numb_requiredinput = 1
         self._requiredlist = ["TIME"]
         # set up basic batch reactor parameters
-        iErr = chemkin_wrapper.chemkin.KINAll0D_Setup(
+        ierr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,
             self._reactortype,
             self._problemtype,
@@ -1680,13 +1680,13 @@ class GivenPressureBatchReactor_FixedTemperature(BatchReactors):
             self._ninlets,
             self._nzones,
         )
-        if iErr == 0:
+        if ierr == 0:
             # setup reactor model working arrays
-            iErr = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
+            ierr = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
                 self._myLOUT, self._chemset_index
             )
-            iErr *= 10
-        if iErr != 0:
+            ierr *= 10
+        if ierr != 0:
             msg = [
                 Color.RED,
                 "failed to initialize the reactor model",
@@ -1694,7 +1694,7 @@ class GivenPressureBatchReactor_FixedTemperature(BatchReactors):
                 "\n",
                 Color.SPACEx6,
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -1754,8 +1754,8 @@ class GivenPressureBatchReactor_FixedTemperature(BatchReactors):
 
         """
         keyword = "TPRO"
-        iErr = self.setprofile(key=keyword, x=x, y=temp)
-        return iErr
+        ierr = self.setprofile(key=keyword, x=x, y=temp)
+        return ierr
 
 
 class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
@@ -1799,7 +1799,7 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
         self._numb_requiredinput = 1
         self._requiredlist = ["TIME"]
         # set up basic batch reactor parameters
-        iErr = chemkin_wrapper.chemkin.KINAll0D_Setup(
+        ierr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,
             self._reactortype,
             self._problemtype,
@@ -1809,13 +1809,13 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
             self._ninlets,
             self._nzones,
         )
-        if iErr == 0:
+        if ierr == 0:
             # setup reactor model working arrays
-            iErr = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
+            ierr = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
                 self._myLOUT, self._chemset_index
             )
-            iErr *= 10
-        if iErr != 0:
+            ierr *= 10
+        if ierr != 0:
             msg = [
                 Color.RED,
                 "failed to initialize the batch reactor model",
@@ -1823,7 +1823,7 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
                 "\n",
                 Color.SPACEx6,
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -2016,8 +2016,8 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
             return 10
         else:
             keyword = "AEXT"
-            iErr = self.setprofile(key=keyword, x=x, y=area)
-            return iErr
+            ierr = self.setprofile(key=keyword, x=x, y=area)
+            return ierr
 
     def set_heat_loss_profile(
         self, x: npt.NDArray[np.double], Qloss: npt.NDArray[np.double]
@@ -2048,8 +2048,8 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
             return 10
         else:
             keyword = "QPRO"
-            iErr = self.setprofile(key=keyword, x=x, y=Qloss)
-            return iErr
+            ierr = self.setprofile(key=keyword, x=x, y=Qloss)
+            return ierr
 
 
 class GivenVolumeBatchReactor_FixedTemperature(BatchReactors):
@@ -2089,7 +2089,7 @@ class GivenVolumeBatchReactor_FixedTemperature(BatchReactors):
         self._numb_requiredinput = 1
         self._requiredlist = ["TIME"]
         # set up basic batch reactor parameters
-        iErr = chemkin_wrapper.chemkin.KINAll0D_Setup(
+        ierr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,
             self._reactortype,
             self._problemtype,
@@ -2099,13 +2099,13 @@ class GivenVolumeBatchReactor_FixedTemperature(BatchReactors):
             self._ninlets,
             self._nzones,
         )
-        if iErr == 0:
+        if ierr == 0:
             # setup reactor model working arrays
-            iErr = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
+            ierr = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
                 self._myLOUT, self._chemset_index
             )
-            iErr *= 10
-        if iErr != 0:
+            ierr *= 10
+        if ierr != 0:
             msg = [
                 Color.RED,
                 "failed to initialize the reactor model",
@@ -2113,7 +2113,7 @@ class GivenVolumeBatchReactor_FixedTemperature(BatchReactors):
                 "\n",
                 Color.SPACEx6,
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -2173,8 +2173,8 @@ class GivenVolumeBatchReactor_FixedTemperature(BatchReactors):
 
         """
         keyword = "TPRO"
-        iErr = self.setprofile(key=keyword, x=x, y=temp)
-        return iErr
+        ierr = self.setprofile(key=keyword, x=x, y=temp)
+        return ierr
 
 
 class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
@@ -2218,7 +2218,7 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
         self._numb_requiredinput = 1
         self._requiredlist = ["TIME"]
         # set up basic batch reactor parameters
-        iErr = chemkin_wrapper.chemkin.KINAll0D_Setup(
+        ierr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,
             self._reactortype,
             self._problemtype,
@@ -2228,13 +2228,13 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
             self._ninlets,
             self._nzones,
         )
-        if iErr == 0:
+        if ierr == 0:
             # setup reactor model working arrays
-            iErr = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
+            ierr = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
                 self._myLOUT, self._chemset_index
             )
-            iErr *= 10
-        if iErr != 0:
+            ierr *= 10
+        if ierr != 0:
             msg = [
                 Color.RED,
                 "failed to initialize the reactor model",
@@ -2242,7 +2242,7 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
                 "\n",
                 Color.SPACEx6,
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -2435,8 +2435,8 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
             return 10
         else:
             keyword = "AEXT"
-            iErr = self.setprofile(key=keyword, x=x, y=area)
-            return iErr
+            ierr = self.setprofile(key=keyword, x=x, y=area)
+            return ierr
 
     def set_heat_loss_profile(
         self, x: npt.NDArray[np.double], Qloss: npt.NDArray[np.double]
@@ -2467,5 +2467,5 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
             return 10
         else:
             keyword = "QPRO"
-            iErr = self.setprofile(key=keyword, x=x, y=Qloss)
-            return iErr
+            ierr = self.setprofile(key=keyword, x=x, y=Qloss)
+            return ierr

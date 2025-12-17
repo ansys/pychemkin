@@ -52,7 +52,7 @@ MyGasMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
 # instruct the preprocessor to include the transport properties (when the tran data file is not provided)
 MyGasMech.preprocess_transportdata()
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 # get species molecular masses as numpy 1D double array
 WT = MyGasMech.WT
 # create a mixture called premixed based on the MyGasMech chemistry set

@@ -91,8 +91,8 @@ MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
 # ============================
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
-if iError != 0:
+ierror = MyGasMech.preprocess()
+if ierror != 0:
     msg = "preprocess failed"
     logger.critical("msg")
     Color.ckprint("critical", [msg, "!!!"])
@@ -136,11 +136,11 @@ add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
 fresh = ck.Mixture(MyGasMech)
 # mean equivalence ratio
 equiv = 0.8
-iError = fresh.X_by_Equivalence_Ratio(
+ierror = fresh.X_by_Equivalence_Ratio(
     MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=equiv
 )
 # check fuel-oxidizer mixture creation status
-if iError != 0:
+if ierror != 0:
     print("Error: Failed to create the fuel-oxidizer mixture.")
     exit()
 
@@ -175,7 +175,7 @@ EGRratio = 0.3
 # compute the EGR stream composition in mole fractions
 add_frac = fresh.get_EGR_mole_fraction(EGRratio, threshold=1.0e-8)
 # re-create the initial mixture with EGR
-iError = fresh.X_by_Equivalence_Ratio(
+ierror = fresh.X_by_Equivalence_Ratio(
     MyGasMech,
     fuelmixture.X,
     air.X,

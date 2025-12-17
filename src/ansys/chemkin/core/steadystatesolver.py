@@ -124,20 +124,20 @@ class SteadyStateSolver:
                     relative tolerance for steady-state search algorithm
 
         """
-        iErr = 0
+        ierr = 0
         if tolerances[0] > 0.0:
             self.SSsolverkeywords["ATOL"] = tolerances[0]
             self.SSabsolute_tolerance = tolerances[0]
         else:
-            iErr = 1
+            ierr = 1
 
         if tolerances[1] > 0.0:
             self.SSsolverkeywords["RTOL"] = tolerances[1]
             self.SSrelative_tolerance = tolerances[1]
         else:
-            iErr = 1
+            ierr = 1
 
-        if iErr > 0:
+        if ierr > 0:
             msg = [Color.PURPLE, "tolerance must > 0.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
@@ -171,20 +171,20 @@ class SteadyStateSolver:
                     relative tolerance for the pseudo time stepping
 
         """
-        iErr = 0
+        ierr = 0
         if tolerances[0] > 0.0:
             self.SSsolverkeywords["ATIM"] = tolerances[0]
             self.TRabsolute_tolerance = tolerances[0]
         else:
-            iErr = 1
+            ierr = 1
 
         if tolerances[1] > 0.0:
             self.SSsolverkeywords["RTIM"] = tolerances[1]
             self.TRrelative_tolerance = tolerances[1]
         else:
-            iErr = 1
+            ierr = 1
 
-        if iErr > 0:
+        if ierr > 0:
             msg = [Color.PURPLE, "tolerance must > 0.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
@@ -225,7 +225,8 @@ class SteadyStateSolver:
             logger.error(this_msg)
 
     def set_max_search_iteration(self, maxiteration: int):
-        """Set the maximum number of iterations per search when performing the steady-state search algorithm
+        """Set the maximum number of iterations per search when performing
+        the steady-state search algorithm.
 
         Parameters
         ----------
@@ -243,7 +244,7 @@ class SteadyStateSolver:
 
     def set_initial_timesteps(self, initsteps: int):
         """Set the number of pseudo time steps to be performed to establish a "better"
-        set of guessed solution before start the actual steady-state solution search
+        set of guessed solution before start the actual steady-state solution search.
 
         Parameters
         ----------
@@ -260,7 +261,7 @@ class SteadyStateSolver:
             logger.error(this_msg)
 
     def set_species_floor(self, floor_value: float):
-        """Set the minimum species fraction value allowed during steady-state solution search
+        """Set the minimum species fraction value allowed during steady-state solution search.
 
         Parameters
         ----------
@@ -277,7 +278,7 @@ class SteadyStateSolver:
             logger.error(this_msg)
 
     def set_temperature_ceiling(self, ceilingvalue: float):
-        """Set the maximum temperature value allowed during steady-state solution search
+        """Set the maximum temperature value allowed during steady-state solution search.
 
         Parameters
         ----------
@@ -295,7 +296,7 @@ class SteadyStateSolver:
 
     def set_species_reset_value(self, resetvalue: float):
         """Set the positive value to reset any negative species fraction in
-        intermediate solutions during iterations
+        intermediate solutions during iterations.
 
         Parameters
         ----------
@@ -312,7 +313,7 @@ class SteadyStateSolver:
             logger.error(this_msg)
 
     def set_max_pseudo_timestep_size(self, dtmax: float):
-        """Set the maximum time step sizes allowed by the pseudo time stepping solution
+        """Set the maximum time step sizes allowed by the pseudo time stepping solution.
 
         Parameters
         ----------
@@ -329,7 +330,7 @@ class SteadyStateSolver:
             logger.error(this_msg)
 
     def set_min_pseudo_timestep_size(self, dtmin: float):
-        """Set the minimum time step size allowed by the pseudo time stepping solution
+        """Set the minimum time step size allowed by the pseudo time stepping solution.
 
         Parameters
         ----------
@@ -346,7 +347,7 @@ class SteadyStateSolver:
             logger.error(this_msg)
 
     def set_pseudo_timestep_age(self, age: int):
-        """Set the minimum number of time steps taken before allowing time step size increase
+        """Set the minimum number of time steps taken before allowing time step size increase.
 
         Parameters
         ----------
@@ -363,7 +364,7 @@ class SteadyStateSolver:
             logger.error(this_msg)
 
     def set_Jacobian_age(self, age: int):
-        """Set the number of steady-state searches before re-evaluate the Jacobian matrix
+        """Set the number of steady-state searches before re-evaluate the Jacobian matrix.
 
         Parameters
         ----------
@@ -380,7 +381,7 @@ class SteadyStateSolver:
             logger.error(this_msg)
 
     def set_pseudo_Jacobian_age(self, age: int):
-        """Set the number of time steps taken before re-evaluate the Jacobian matrix
+        """Set the number of time steps taken before re-evaluate the Jacobian matrix.
 
         Parameters
         ----------
@@ -397,7 +398,7 @@ class SteadyStateSolver:
             logger.error(this_msg)
 
     def set_damping_option(self, ON: bool):
-        """Turn ON (True) or OFF (False) the damping option of the steady-state solver
+        """Turn ON (True) or OFF (False) the damping option of the steady-state solver.
 
         Parameters
         ----------
@@ -417,7 +418,7 @@ class SteadyStateSolver:
             logger.error(this_msg)
 
     def set_legacy_option(self, ON: bool):
-        """Turn ON (True) or OFF (False) the legacy steady-state solver
+        """Turn ON (True) or OFF (False) the legacy steady-state solver.
 
         Parameters
         ----------
@@ -436,7 +437,7 @@ class SteadyStateSolver:
 
     def set_print_level(self, level: int):
         """Set the level of information to be provided by the steady-state solver
-        to the text output
+        to the text output.
 
         Parameters
         ----------
@@ -464,7 +465,7 @@ class SteadyStateSolver:
             step_size: double, default = 1.0e-6 [sec]
                 the initial time step size for each time stepping process
             stage: integer, {1, 2}
-                the stage the time stepping process is in.
+                the stage the time stepping process is in
                 1 = fixed temperature stage
                 2 = solving energy equation
 

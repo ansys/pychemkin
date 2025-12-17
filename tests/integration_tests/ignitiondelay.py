@@ -19,6 +19,9 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+"""Ignition delay time test for the closed homogeneous reactor."""
+
 import os
 import time
 
@@ -54,7 +57,7 @@ gasoline = ck.Chemistry(label="gasoline 14comp")
 # including the full file path is recommended
 gasoline.chemfile = os.path.join(mechanism_dir, "gasoline_14comp_WBencrypt.inp")
 # preprocess the mechanism files
-iError = gasoline.preprocess()
+ierror = gasoline.preprocess()
 # create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
 # create the fuel mixture
 fuelmixture = ck.Mixture(gasoline)
@@ -73,16 +76,18 @@ air.temperature = 1500.0
 premixed = ck.Mixture(gasoline)
 # products from the complete combustion of the fuel mixture and air
 products = ["co2", "h2o", "n2"]
-# species mole fractions of added/inert mixture. can also create an additives mixture here
+# species mole fractions of added/inert mixture.
+# can also create an additives mixture here
 add_frac = np.zeros(gasoline.KK, dtype=np.double)  # no additives: all zeros
-iError = premixed.X_by_Equivalence_Ratio(
+ierror = premixed.X_by_Equivalence_Ratio(
     gasoline, fuelmixture.X, air.X, add_frac, products, equivalenceratio=1.0
 )
-if iError != 0:
+if ierror != 0:
     raise RuntimeError
 # list the composition of the premixed mixture
 premixed.list_composition(mode="mole")
-# set mixture temperature and pressure (equivalent to setting the initial temperature and pressure of the reactor)
+# set mixture temperature and pressure
+# (equivalent to setting the initial temperature and pressure of the reactor)
 premixed.pressure = 40.0 * ck.P_ATM
 premixed.temperature = 700.0
 #
@@ -108,7 +113,8 @@ MyCONP.tolerances = (1.0e-10, 1.0e-8)
 # set ignition delay
 # ck.show_ignition_definitions()
 MyCONP.set_ignition_delay(method="T_inflection")
-# stop after ignition is detected (not recommended for ignition delay time calculations)
+# stop after ignition is detected
+# (not recommended for ignition delay time calculations)
 # MyCONP.stop_after_ignition()
 # show solver option
 print(f"timestep between solution printing: {MyCONP.timestep_for_printing_solution}")
@@ -128,7 +134,8 @@ start_time = time.time()
 for i in range(npoints):
     # update the initial reactor temperature
     MyCONP.temperature = init_temp  # K
-    # show the additional keywords given by user (verify inputs before running the simulation)
+    # show the additional keywords given by user
+    # (verify inputs before running the simulation)
     # MyCONP.showkeywordinputlines()
     # run the reactor model
     runstatus = MyCONP.run()
@@ -146,7 +153,8 @@ for i in range(npoints):
 # compute the total runtime
 runtime = time.time() - start_time
 print(f"total simulation duration: {runtime} [sec] for {npoints} cases")
-# create an ignition delay versus 1/T plot for the PRF fuel (should exhibit the NTC region)
+# create an ignition delay versus 1/T plot for the PRF fuel
+# (should exhibit the NTC region)
 plt.rcParams.update({"figure.autolayout": True})
 fig, ax1 = plt.subplots()
 ax1.semilogy(temp_inv, delaytime, "bs--")
@@ -156,7 +164,7 @@ ax1.set_ylabel("Ignition delay time [msec]")
 
 # Create a secondary x-axis for T (=1/(1/T))
 def one_over(x):
-    """Vectorized 1/x, treating x==0 manually"""
+    """Vectorized 1/x, treating x==0 manually."""
     x = np.array(x, float)
     near_zero = np.isclose(x, 0)
     x[near_zero] = np.inf

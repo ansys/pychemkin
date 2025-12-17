@@ -19,6 +19,9 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+"""Heating values test."""
+
 import os
 
 import matplotlib.pyplot as plt  # plotting
@@ -53,8 +56,8 @@ MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
-if iError != 0:
+ierror = MyGasMech.preprocess()
+if ierror != 0:
     msg = "preprocess failed"
     logger.critical("msg")
     Color.ckprint("critical", [msg, "!!!"])
@@ -81,10 +84,10 @@ products = ["CO2", "H2O", "N2"]
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
 # mean equivalence ratio
 equiv = 0.8
-iError = fresh.X_by_Equivalence_Ratio(
+ierror = fresh.X_by_Equivalence_Ratio(
     MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=equiv
 )
-if iError != 0:
+if ierror != 0:
     msg = "mixture creation failed"
     logger.critical(msg)
     raise RuntimeError
@@ -98,7 +101,7 @@ EGRratio = 0.3
 # compute the EGR stream composition in mole fractions
 add_frac = fresh.get_EGR_mole_fraction(EGRratio, threshold=1.0e-8)
 # recreate the initial mixture with EGR
-iError = fresh.X_by_Equivalence_Ratio(
+ierror = fresh.X_by_Equivalence_Ratio(
     MyGasMech,
     fuelmixture.X,
     air.X,

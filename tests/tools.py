@@ -1,8 +1,8 @@
 """Additional tools for running PyChemkin tests."""
 
 import ast
-import glob
 import os
+from pathlib import Path
 import shutil
 import subprocess
 
@@ -10,30 +10,58 @@ import numpy as np
 
 
 class PyCKtools:
+    """Utilities for testing pychemkin features."""
+
     FIRST_PASS = 0
     TARGET_FOLDER = ""
 
-    def check_folder(thisfolder):
-        """Verify the given folder exists."""
-        if not os.path.exists(thisfolder):
+    @staticmethod
+    def check_folder(thisfolder) -> int:
+        """Verify the given folder exists.
+
+        Parameters
+        ----------
+            thisfolder: string
+                current folder name
+
+        Returns
+        -------
+        error: integer
+            error code
+
+        """
+        if not Path(thisfolder).exists():
             print(f"Error: folder {thisfolder} does not exist.")
             return 1
         return 0
 
-    def create_folder(newfolder):
-        """Create or clean up a folder."""
-        if os.path.exists(newfolder):
+    @staticmethod
+    def create_folder(newfolder) -> int:
+        """Create or clean up a folder.
+
+        Parameters
+        ----------
+            newfolder: string
+                new folder name
+
+        Returns
+        -------
+        error: integer
+            error code
+
+        """
+        if Path(newfolder).exists():
             # delete any existing files in this target folder
             print(f"Warning: All files in folder {newfolder:s} will be deleted")
             # first delete any existing files
             for oldfile in os.listdir(newfolder):
                 f = os.path.join(newfolder, oldfile)
                 try:
-                    if os.path.islink(f):
-                        os.unlink(f)
-                    elif os.path.isfile(f):
-                        os.remove(f)
-                    elif os.path.isdir(f):
+                    if Path(f).is_symlink():
+                        Path(f).unlink()
+                    elif Path(f).is_file():
+                        Path(f).unlink()
+                    elif Path(f).is_dir():
                         shutil.rmtree(f)
                 except Exception as e:
                     print(f"error: Fail to delete {oldfile:s}. Reason: {e:s}")
@@ -42,12 +70,13 @@ class PyCKtools:
             # folder not exist, create new folder
             print(f"... Creating a new sub-folder {newfolder:s} to store run results")
             try:
-                os.mkdir(newfolder)
+                Path.mkdir(newfolder)
             except OSError:
                 print(f"Error: Fail to create new folder {newfolder:s}")
                 return 1
         return 0
 
+    @staticmethod
     def run_test(root_dir, source_dir, result_dir, test_file: str) -> int:
         """Run the given PyChemkin test.
 
@@ -70,7 +99,7 @@ class PyCKtools:
         """
         #
         # find the working directory
-        current_dir = os.getcwd()
+        current_dir = Path.cwd()
         # set sources folder
         source_folder = os.path.join(root_dir, source_dir)
         # check if the source folder exists
@@ -99,7 +128,7 @@ class PyCKtools:
         f = test_file + ".out"
         output_folder = os.path.join(current_dir, "outputs")
         f = os.path.join(output_folder, f)
-        fout = open(f, "w")
+        fout = Path.open(f, "w")
         # run test
         # change working directory
         os.chdir(new_working)
@@ -136,51 +165,103 @@ class PyCKtools:
         # close the solution output file
         fout.close()
         # clean up unimportant output files
-        for out_files in glob.glob(os.path.join(new_working, "*.out")):
-            os.remove(out_files)
-        for asc_files in glob.glob(os.path.join(new_working, "*.asc")):
-            os.remove(asc_files)
-        for inp_files in glob.glob(os.path.join(new_working, "*.inp")):
-            os.remove(inp_files)
+        for out_files in Path.glob(os.path.join(new_working, "*.out")):
+            Path.unlink(out_files)
+        for asc_files in Path.glob(os.path.join(new_working, "*.asc")):
+            Path.unlink(asc_files)
+        for inp_files in Path.glob(os.path.join(new_working, "*.inp")):
+            Path.unlink(inp_files)
         # return the return code from the subprocess run
         # change working directory
         os.chdir(current_dir)
         #
         return results.returncode
 
-    def load_results(PyCK_result_file) -> dict:
+    @staticmethod
+    def load_results(pyck_result_file) -> dict:
         """Read PyChemkin result data from the text file.
 
         Returns
         -------
-            PyCK_result: dict
+            pyck_result: dict
                 PyChemkin test result stored in a dictionary
 
         """
-        with open(PyCK_result_file) as f:
+        with Path.open(pyck_result_file) as f:
             data = f.read()
-        PyCK_result = ast.literal_eval(data)
-        return PyCK_result
+        pyck_result = ast.literal_eval(data)
+        return pyck_result
 
+    @staticmethod
     def check_list_size(list1: list, list2: list, expected_diff: int = 0) -> bool:
-        """Verify that the two lists are of the same size."""
+        """Verify that the two lists are of the same size.
+
+        Parameters
+        ----------
+            list1: List
+                the first list of which the size to be compared
+            list2: List
+                the second list of which the size to be compared
+            expected_diff: integer
+                the expected length difference of the two lists
+
+        Returns
+        -------
+            different: bool
+                if the two lists have expected length difference
+
+        """
         return abs(len(list1) - len(list2)) == expected_diff
 
-    def get_file_names(folder_path):
-        """Get a list of all file names in the specified folder."""
+    @staticmethod
+    def get_file_names(folder_path) -> list[str]:
+        """Get a list of all file names in the specified folder.
+
+        Parameters
+        ----------
+            folder_path: string
+                absolute path to the folder
+
+        Returns
+        -------
+            list_files: list of strings
+                names of actual files in the folder
+
+        """
         file_names = []
         for entry in os.scandir(folder_path):
             if entry.is_file():
                 file_names.append(entry.name)
         return file_names
 
+    @staticmethod
     def get_tolerances(
         tolerance_name: str,
         state_tol: list[float],
         species_tol: list[float],
         rate_tol: list[float],
-    ):
-        """Find the tolerance values according to the variable type."""
+    ) -> tuple[float, float]:
+        """Find the tolerance values according to the variable type.
+
+        Parameters
+        ----------
+            tolerancename: string
+                type of variables to be compared
+            stat_tol: list of double
+                tolerance value for state variables
+            species_tol: list of double
+                tolerance for species fractions
+            rate_tol: list of double
+                tolerance for reaction rates
+
+        Returns
+        -------
+            atol: double
+                absolute tolerance to be used
+            rtol: double
+                relative tolerance to be used
+
+        """
         if "species" in tolerance_name:
             atol = species_tol[0]
             rtol = species_tol[1]
@@ -192,23 +273,35 @@ class PyCKtools:
             rtol = state_tol[1]
         return atol, rtol
 
+    @staticmethod
     def compare_list(
         r_list, b_list, atol: float, rtol: float
     ) -> tuple[int, list, list]:
         """Compare the values in the two int or float lists of the same size.
 
+        Parameters
+        ----------
+            rlist: list of integers or doubles
+                list of variable values from the new solution
+            blist: list of integers or doubles
+                list of variable values from the baseline
+            atol: double
+                absolute tolerance
+            rtol: double
+                relative tolerance
+
         Returns
         -------
             status: int
                 comparison outcome
-            bad_ID: list[int]
-                list of variable index that the difference fails to satisfy the tolerances
+            bad_id: list[int]
+                list of variable index that the difference > the tolerances
             diff: list[int or float]
                 the difference between the values from the two lists
 
         """
         l_size = len(r_list)
-        bad_ID = []
+        bad_id = []
         diff = []
         # go down the lists
         for i in range(l_size):
@@ -219,14 +312,14 @@ class PyCKtools:
                 # check relative tolerance
                 r_diff = a_diff - b_value * rtol
                 if r_diff > 0.0:
-                    bad_ID.append(i)
+                    bad_id.append(i)
                     if np.isclose(b_value, 0.0, atol=1.0e-9):
                         diff.append(abs(a_diff))
                     else:
                         diff.append(abs(a_diff / b_value))
         # check differences
-        iErr = len(bad_ID)
-        return iErr, bad_ID, diff
+        ierr = len(bad_id)
+        return ierr, bad_id, diff
 
     def init_test_status():
         """Initialize the test status values before running the tests."""

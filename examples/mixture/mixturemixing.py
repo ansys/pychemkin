@@ -82,7 +82,7 @@ MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 # Preprocess the mechanism files to prepare the chemistry set.
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 
 
 #####################

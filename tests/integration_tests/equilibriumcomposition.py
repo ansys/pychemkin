@@ -49,7 +49,7 @@ MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 # transport data not needed
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 # create the fuel mixture
 fuel = ck.Mixture(MyGasMech)
 # set mole fraction

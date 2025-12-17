@@ -42,10 +42,10 @@ tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
 My1stMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="GRI 3.0")
 
 # preprocess the mechanism files
-iError = My1stMech.preprocess()
+ierror = My1stMech.preprocess()
 print()
-if iError != 0:
-    print(f"Preprocessing error encountered. Code = {iError:d}.")
+if ierror != 0:
+    print(f"Preprocessing error encountered. Code = {ierror:d}.")
     print(f"see the summary file {My1stMech.summaryfile} for details")
     exit()
 else:
@@ -82,10 +82,10 @@ My2ndMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
 # only when the mechanism file contains all the transport data
 My2ndMech.preprocess_transportdata()
 # preprocess the 2nd mechanism files
-iError = My2ndMech.preprocess()
+ierror = My2ndMech.preprocess()
 print()
-if iError != 0:
-    print(f"Preprocessing error encountered. Code = {iError:d}.")
+if ierror != 0:
+    print(f"Preprocessing error encountered. Code = {ierror:d}.")
     print(f"see the summary file {My2ndMech.summaryfile} for details")
     exit()
 else:

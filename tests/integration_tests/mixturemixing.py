@@ -40,10 +40,12 @@ MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 # transport data not needed
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 # create the fuel mixture
-# note: mixture pressures are not specified because pressure is not required for the calculations here
-# the mixing process is assumed to take place at fixed pressure; i.e., the mixtures are at the same pressure
+# note: mixture pressures are not specified because pressure is not required
+# for the calculations here
+# the mixing process is assumed to take place at fixed pressure;
+# i.e., the mixtures are at the same pressure
 fuel = ck.Mixture(MyGasMech)
 # set mole fraction
 fuel.X = [("CH4", 1.0)]

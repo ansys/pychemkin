@@ -47,9 +47,13 @@ For each type of PSR, you either specify the reactor temperature (as a fixed
 value or by a piecewise-linear profile) or solve the energy conservation equation. In total,
 you get four variations of the PSR model.
 
-The JSR (jet-stirred reactor is mostly employed in chemical kinetics studies. By controlling the reactor temperature, pressure, and/or residence time, you can gain knowledge about the major intermediates of a complex chemical process and postulate possible reaction pathways.
+The JSR (jet-stirred reactor is mostly employed in chemical kinetics studies.
+By controlling the reactor temperature, pressure, and/or residence time,
+you can gain knowledge about the major intermediates of a complex chemical process
+and postulate possible reaction pathways.
 
-This example shows how to use the PSR model to validate the reaction mechanism against the measured data from hydrogen oxidation experiments.
+This example shows how to use the PSR model to validate the reaction mechanism
+against the measured data from hydrogen oxidation experiments.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_jet_stirred_reactor.png'
@@ -112,7 +116,7 @@ MyGasMech.chemfile = find_file(
 # =====================================
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 
 ###########################################################
 # Set up the H\ :sub:`2`\ -O\ :sub:`2`\ -N\ :sub:`2` stream

@@ -964,10 +964,10 @@ class Engine(BatchReactors):
         # Crank rotation angle corresponding to 90% of total heat release
         HR90 = c_double(self.IVCCA)
         # get heat release rate information from the solution
-        iErr = chemkin_wrapper.chemkin.KINAll0D_GetEngineHeatRelease(
+        ierr = chemkin_wrapper.chemkin.KINAll0D_GetEngineHeatRelease(
             QLossRateCA, AHRR, AHRRP, HR10, HR50, HR90
         )
-        if iErr != 0:
+        if ierr != 0:
             # reset the angles to 0 when error is encountered
             HR10 = c_double(0.0)
             HR50 = c_double(0.0)
@@ -1014,9 +1014,9 @@ class Engine(BatchReactors):
         # number of time points in the solution
         npoints = c_int(0)
         # get solution size of the batch reactor
-        iErr = chemkin_wrapper.chemkin.KINAll0D_GetSolnResponseSize(nzone, npoints)
+        ierr = chemkin_wrapper.chemkin.KINAll0D_GetSolnResponseSize(nzone, npoints)
         nzones = nzone.value
-        if iErr == 0 and nzones == expected:
+        if ierr == 0 and nzones == expected:
             # return the solution sizes
             self._numbsolutionpoints = (
                 npoints.value
@@ -1028,7 +1028,7 @@ class Engine(BatchReactors):
                 Color.PURPLE,
                 "failed to get the solution size,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -1139,15 +1139,15 @@ class Engine(BatchReactors):
         icreac = c_int(zoneID)
         icnpts = c_int(npoints)
         icnspec = c_int(self.numbspecies)
-        iErr = chemkin_wrapper.chemkin.KINAll0D_GetGasSolnResponse(
+        ierr = chemkin_wrapper.chemkin.KINAll0D_GetGasSolnResponse(
             icreac, icnpts, icnspec, time, temp, pres, vol, frac
         )
-        if iErr != 0:
+        if ierr != 0:
             msg = [
                 Color.RED,
                 "failed to fetch the raw solution data from memory,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -1165,13 +1165,13 @@ class Engine(BatchReactors):
         # species mass fractions
         self.parsespeciessolutiondata(frac)
         # create soolution mixture
-        iErr = self.create_solution_mixtures(frac)
-        if iErr != 0:
+        ierr = self.create_solution_mixtures(frac)
+        if ierr != 0:
             msg = [
                 Color.PURPLE,
                 "forming solution mixtures",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)

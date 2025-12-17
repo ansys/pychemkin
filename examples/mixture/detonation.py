@@ -84,7 +84,7 @@ MyMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
 # method is not used, transport property methods are not available in this project.
 
 # preprocess the mechanism files
-iError = MyMech.preprocess()
+ierror = MyMech.preprocess()
 
 ######################################################################
 # Set up gas mixtures based on the species in the C2 NOx chemistry set
@@ -114,11 +114,11 @@ products = ["CO2", "H2O", "N2"]
 # species mole fractions of added/inert mixture. Can also create an additives mixture here.
 add_frac = np.zeros(MyMech.KK, dtype=np.double)  # no additives: all zeros
 
-iError = premixed.X_by_Equivalence_Ratio(
+ierror = premixed.X_by_Equivalence_Ratio(
     MyMech, fuel.X, air.X, add_frac, products, equivalenceratio=1.0
 )
 # check fuel-oxidizer mixture creation status
-if iError != 0:
+if ierror != 0:
     print("Error: Failed to create the premixed mixture.")
     exit()
 

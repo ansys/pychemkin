@@ -130,7 +130,7 @@ def __setlinux():
     global _min_version
     global _target_lib
     global _valid_versions
-    iErr = 0
+    ierr = 0
     # set ansys installation directory (Linux)
     for v in _valid_versions:
         _ansys_ver = v
@@ -162,21 +162,21 @@ def __setlinux():
                             found_home = True
                             break
                     else:
-                        iErr = 2
+                        ierr = 2
                         break
                 if not found_home:
-                    iErr = 1
+                    ierr = 1
             else:
                 # no local Ansys installation
-                iErr = 1
+                ierr = 1
         else:
-            iErr = 1
+            ierr = 1
     # check Ansys version
     if _ansys_ver < _min_version:
-        iErr = 2
+        ierr = 2
 
     # check Ansys installation error
-    if iErr == 1:
+    if ierr == 1:
         msg = [
             Color.RED,
             "failed to find local Ansys chemkin installation.\n",
@@ -194,7 +194,7 @@ def __setlinux():
         this_msg = Color.SPACE.join(msg)
         logger.critical(this_msg)
         return 1
-    elif iErr == 2:
+    elif ierr == 2:
         msg = [
             Color.RED,
             "PyChemkin does not support Chemkin versions older than 2025R1.",

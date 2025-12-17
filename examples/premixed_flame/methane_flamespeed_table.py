@@ -102,10 +102,10 @@ MyGasMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="G
 # ============================
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
-if iError != 0:
+ierror = MyGasMech.preprocess()
+if ierror != 0:
     print("Error: failed to preprocess the mechanism!")
-    print(f"       error code = {iError}")
+    print(f"       error code = {ierror}")
     exit()
 
 ########################################################################
@@ -153,11 +153,11 @@ premixed.mass_flowrate = 0.4
 # equivalence ratio for the first case
 phi = 0.6
 # create mixture by using the equivalence ratio
-iError = premixed.X_by_Equivalence_Ratio(
+ierror = premixed.X_by_Equivalence_Ratio(
     MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=phi
 )
 # check fuel-oxidizer mixture creation status
-if iError != 0:
+if ierror != 0:
     print(
         "Error: failed to create the methane-air mixture "
         + "for equivalence ratio = "
@@ -263,11 +263,11 @@ for i in range(points):
     # update parameter
     phi += delta_phi
     # create mixture by using the equivalence ratio
-    iError = premixed.X_by_Equivalence_Ratio(
+    ierror = premixed.X_by_Equivalence_Ratio(
         MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=phi
     )
     # check fuel-oxidizer mixture creation status
-    if iError != 0:
+    if ierror != 0:
         print(
             "Error: failed to create the methane-air mixture ",
             "for equivalence ratio = ",

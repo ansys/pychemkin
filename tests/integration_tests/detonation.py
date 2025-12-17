@@ -48,7 +48,7 @@ MyMech = ck.Chemistry(label="C2 NOx")
 # therefore no need to specify the therm and the tran data files
 MyMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
 # preprocess the 2nd mechanism files
-iError = MyMech.preprocess()
+ierror = MyMech.preprocess()
 # create the fuel mixture
 fuel = ck.Mixture(MyMech)
 # set mole fraction
@@ -68,10 +68,10 @@ premixed = ck.Mixture(MyMech)
 products = ["CO2", "H2O", "N2"]
 # species mole fractions of added/inert mixture. can also create an additives mixture here
 add_frac = np.zeros(MyMech.KK, dtype=np.double)  # no additives: all zeros
-iError = premixed.X_by_Equivalence_Ratio(
+ierror = premixed.X_by_Equivalence_Ratio(
     MyMech, fuel.X, air.X, add_frac, products, equivalenceratio=1.0
 )
-if iError != 0:
+if ierror != 0:
     raise RuntimeError
 # list the composition of the premixed mixture
 premixed.list_composition(mode="mole")

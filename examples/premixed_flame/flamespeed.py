@@ -107,10 +107,10 @@ MyGasMech.preprocess_transportdata()
 # ==========================================
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
-if iError != 0:
+ierror = MyGasMech.preprocess()
+if ierror != 0:
     print("Error: Failed to preprocess the mechanism!")
-    print(f"       Error code = {iError}")
+    print(f"       Error code = {ierror}")
     exit()
 
 #######################################################################################
@@ -149,11 +149,11 @@ products = ["H2O", "N2"]
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
 # mean equivalence ratio
 equiv = 1.0
-iError = premixed.X_by_Equivalence_Ratio(
+ierror = premixed.X_by_Equivalence_Ratio(
     MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=equiv
 )
 # check fuel-oxidizer mixture creation status
-if iError != 0:
+if ierror != 0:
     print("Error: Failed to create the hydrogen-air mixture!")
     exit()
 

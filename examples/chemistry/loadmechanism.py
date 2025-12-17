@@ -87,14 +87,14 @@ MyGasMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="G
 # ============================
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 
 # display the preprocess status
 print()
-if iError != 0:
+if ierror != 0:
     # When a non-zero value is returned from the process, check the text output files,
     # "chem.out," "tran.out," and "summary.out," for potential error messages about the mechanism data.
-    print(f"Preprocessing error encountered. Code = {iError:d}.")
+    print(f"Preprocessing error encountered. Code = {ierror:d}.")
     print(f"See the summary file {MyGasMech.summaryfile} for details.")
     exit()
 else:
@@ -170,14 +170,14 @@ My2ndMech.preprocess_transportdata()
 # ===================================
 
 # preprocess the second mechanism file
-iError = My2ndMech.preprocess()
+ierror = My2ndMech.preprocess()
 
 # display the preprocess status
 print()
-if iError != 0:
+if ierror != 0:
     # When a non-zero value is returned from the process, check the text output files,
     # "chem.out," "tran.out," and "summary.out," for potential error messages about the mechanism data.
-    print(f"Preprocessing error encountered. Code = {iError:d}.")
+    print(f"Preprocessing error encountered. Code = {ierror:d}.")
     print(f"See the summary file {My2ndMech.summaryfile} for details.")
     exit()
 else:

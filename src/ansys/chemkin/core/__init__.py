@@ -103,7 +103,7 @@ chemkin_dir = Path(_chemkin_root)
 
 # set default units to cgs
 unit_code = c_int(1)
-iError = ck_wrapper.chemkin.KINSetUnitSystem(unit_code)
+ierror = ck_wrapper.chemkin.KINSetUnitSystem(unit_code)
 
 # chemkin module home directory
 frm = inspect.currentframe()

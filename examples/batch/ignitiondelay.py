@@ -103,7 +103,7 @@ gasoline.chemfile = os.path.join(mechanism_dir, "gasoline_14comp_WBencrypt.inp")
 # ==========================================
 
 # preprocess the mechanism files
-iError = gasoline.preprocess()
+ierror = gasoline.preprocess()
 
 ################################################
 # Set up the stoichiometric gasoline-air mixture
@@ -140,11 +140,11 @@ add_frac = np.zeros(gasoline.KK, dtype=np.double)  # no additives: all zeros
 # create the premixed mixture to be defined
 premixed = ck.Mixture(gasoline)
 # define the composition by the equivalence ratio
-iError = premixed.X_by_Equivalence_Ratio(
+ierror = premixed.X_by_Equivalence_Ratio(
     gasoline, fuelmixture.X, air.X, add_frac, products, equivalenceratio=1.0
 )
 # check fuel-oxidizer mixture creation status
-if iError != 0:
+if ierror != 0:
     print("Error: Failed to create the fuel-oxidizer mixture.")
     exit()
 

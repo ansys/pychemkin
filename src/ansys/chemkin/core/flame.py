@@ -113,10 +113,10 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
 
         """
         keyword = "TPRO"
-        iErr = self.setprofile(key=keyword, x=x, y=temp)
-        if iErr == 0:
+        ierr = self.setprofile(key=keyword, x=x, y=temp)
+        if ierr == 0:
             self.temp_profile_set = True
-        return iErr
+        return ierr
 
     def use_temp_profiel_initial_mesh(self, on: bool = False):
         """Use the grid points in the user defined initial/estimated temperature profile
@@ -158,7 +158,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
             error code: integer
 
         """
-        iErr = 0
+        ierr = 0
         # set up initial mesh related keywords
         if self.grid_T_profile:
             # use temperature profile grid as the initial grid
@@ -169,8 +169,8 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
                 msg = [Color.PURPLE, "temperature profile is NOT set.", Color.END]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                iErr = 1
-                return iErr
+                ierr = 1
+                return ierr
         elif self.numb_grid_profile > 0:
             # use user provided mesh
             if self.grid_profile[0] != self.starting_x:
@@ -189,8 +189,8 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                iErr = 2
-                return iErr
+                ierr = 2
+                return ierr
             if self.grid_profile[self.numb_grid_profile - 1] != self.ending_x:
                 # check startig point
                 msg = [
@@ -207,8 +207,8 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                iErr = 3
-                return iErr
+                ierr = 3
+                return ierr
             count = 0
             for x in self.grid_profile:
                 this_key = "GRID    " + str(x)
@@ -218,8 +218,8 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
                 msg = [Color.PURPLE, "grid profile has problem.", Color.END]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                iErr = abs(count - self.numb_grid_profile) * 10
-                return iErr
+                ierr = abs(count - self.numb_grid_profile) * 10
+                return ierr
         else:
             # uniform mesh
             self.setkeyword(key="NPTS", value=self.numb_grid_points)
@@ -239,7 +239,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         self.setkeyword(key="CURV", value=self.curvature)
         # maximum number of adaptive points can be added at one time
         self.setkeyword(key="NADP", value=self.max_numb_adapt_points)
-        return iErr
+        return ierr
 
     def set_SSsolver_keywords(self):
         """Add steady-state solver parameter keywoprds to the keyword list"""

@@ -663,15 +663,15 @@ def adiabatic_mixing_streams(streamA: Stream, streamB: Stream) -> Stream:
     # compute temperature of the final mixture from the mixture enthalpy
     # set the guessed temperature
     t_guessed = 0.0e0
-    iErr = calculate_mixture_temperature_from_enthalpy(
+    ierror = calculate_mixture_temperature_from_enthalpy(
         mixture=final_stream, mixtureH=mix_h, guesstemperature=t_guessed
     )
-    if iErr != 0:
+    if ierror != 0:
         msg = [
             Color.PURPLE,
             "failed to compute the final stream temperature,",
             "error code =",
-            str(iErr),
+            str(ierror),
             Color.END,
         ]
         this_msg = Color.SPACE.join(msg)

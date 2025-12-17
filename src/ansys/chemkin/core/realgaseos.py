@@ -46,8 +46,8 @@ def check_realgas_status(chem_index: int) -> bool:
 
     chemset_index = c_int(chem_index)
     mode = c_int(0)
-    iErr = ck_wrapper.chemkin.KINRealGas_CheckRealGasStatus(chemset_index, mode)
-    if iErr == 0:
+    ierr = ck_wrapper.chemkin.KINRealGas_CheckRealGasStatus(chemset_index, mode)
+    if ierr == 0:
         status = mode.value == 1
     return status
 
@@ -64,12 +64,12 @@ def set_current_pressure(chem_index: int, pressure: float) -> int:
 
     Returns
     -------
-        iErr: integer
+        ierr: integer
             error code
 
     """
     # convert variables
     chemset_index = c_int(chem_index)
     p = c_double(pressure)
-    iErr = ck_wrapper.chemkin.KINRealGas_SetCurrentPressure(chemset_index, p)
-    return iErr
+    ierr = ck_wrapper.chemkin.KINRealGas_SetCurrentPressure(chemset_index, p)
+    return ierr

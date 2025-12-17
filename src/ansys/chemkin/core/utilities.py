@@ -463,7 +463,7 @@ def calculate_stoichiometrics(
             logger.error(this_msg)
             exit()
     # create arrays of the linear algebraic system
-    A = np.zeros((numb_coreelem, numb_coreelem), dtype=np.double)
+    a = np.zeros((numb_coreelem, numb_coreelem), dtype=np.double)
     b = np.zeros(numb_coreelem, dtype=np.double)
     # construct the (numb_coreelem x 1) b array on the right-hand side
     #   b = [SUM_k(NCF(1,k)*fuel_molefrac(k)), ... SUM_k(NCF(numb_elem,k)*fuel_molefrac(k))]
@@ -474,15 +474,15 @@ def calculate_stoichiometrics(
             elem_count = chemistryset.SpeciesComposition(this_elem, k)
             b[m] += elem_count.astype(np.double) * fuel_molefrac[k]
             # first column of A[1:numb_coreelem, 1]
-            A[m][0] += elem_count.astype(np.double) * oxid_molefrac[k]
+            a[m][0] += elem_count.astype(np.double) * oxid_molefrac[k]
     # construct the sub-matrix on the right of A[1:numb_coreelem, 2:numb_prod]
     for m in range(numb_coreelem):
         this_elem = coreelem_index[m]
         for k in range(numb_prod):
             k_prod = prod_index[k]
-            A[m][k + 1] = chemistryset.SpeciesComposition(this_elem, k_prod)
+            a[m][k + 1] = chemistryset.SpeciesComposition(this_elem, k_prod)
     # solve the linear system: A x = b
-    x = np.linalg.solve(A, b)
+    x = np.linalg.solve(a, b)
     alpha = -x[0]
     nu = x[1:numb_coreelem]
     return alpha, nu

@@ -19,6 +19,14 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+""".. _ref_jet_stirred_reactor:
+
+=============================================
+Run PSR calculations for mechanism validation
+=============================================
+"""
+
 import os
 import time
 
@@ -57,7 +65,7 @@ MyGasMech.chemfile = os.path.join(
     mechanism_dir, "Hydrogen-Ammonia-NOx_chem_MFL2021.inp"
 )
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 # create a premixed fuel-oxidizer mixture
 # create the fuel-oxidizer inlet to the JSR
 feed = Stream(MyGasMech)

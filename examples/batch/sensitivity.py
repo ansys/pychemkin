@@ -110,16 +110,16 @@ MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 ###################################
 # Pre-process the ``Chemistry Set``
 # =================================
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 # check preprocess status
-if iError == 0:
+if ierror == 0:
     print("mechanism information:")
     print(f"number of gas species = {MyGasMech.KK:d}")
     print(f"number of gas reactions = {MyGasMech.IIGas:d}")
 else:
     # When a non-zero value is returned from the process, check the text output files
     # chem.out, tran.out, or summary.out for potential error messages about the mechanism data.
-    print(f"Preprocessing error encountered. Code = {iError:d}.")
+    print(f"Preprocessing error encountered. Code = {ierror:d}.")
     print(f"see the summary file {MyGasMech.summaryfile} for details")
     exit()
 
@@ -149,11 +149,11 @@ mixture.temperature = oxid.temperature
 products = ["CO2", "H2O", "N2"]
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)
 # create the air-fuel mixture by using the equivalence ratio method
-iError = mixture.X_by_Equivalence_Ratio(
+ierror = mixture.X_by_Equivalence_Ratio(
     MyGasMech, fuel.X, oxid.X, add_frac, products, equivalenceratio=1.1
 )
 # check fuel-oxidizer mixture creation status
-if iError != 0:
+if ierror != 0:
     print("Error: Failed to create the fuel-oxidizer mixture.")
     exit()
 

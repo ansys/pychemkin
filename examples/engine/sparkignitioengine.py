@@ -96,7 +96,7 @@ MyGasMech.chemfile = os.path.join(mechanism_dir, "gasoline_14comp_WBencrypt.inp"
 # =====================================
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 print("Mechanism information:")
 print(f"Number of gas species = {MyGasMech.KK:d}.")
 print(f"Number of gas reactions = {MyGasMech.IIGas:d}.")
@@ -138,11 +138,11 @@ fresh = ck.Mixture(MyGasMech)
 
 # mean equivalence ratio
 equiv = 1.0
-iError = fresh.X_by_Equivalence_Ratio(
+ierror = fresh.X_by_Equivalence_Ratio(
     MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=equiv
 )
 # check fuel-oxidizer mixture creation status
-if iError != 0:
+if ierror != 0:
     print("Error: Failed to create the fuel-oxidizer mixture.")
     exit()
 
@@ -181,7 +181,7 @@ EGRratio = 0.3
 # compute the EGR stream composition in mole fractions
 add_frac = fresh.get_EGR_mole_fraction(EGRratio, threshold=1.0e-8)
 # recreate the initial mixture with EGR
-iError = fresh.X_by_Equivalence_Ratio(
+ierror = fresh.X_by_Equivalence_Ratio(
     MyGasMech,
     fuelmixture.X,
     air.X,

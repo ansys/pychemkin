@@ -253,8 +253,8 @@ class PlugFlowReactor(BatchReactors):
 
         """
         keyword = "DPRO"
-        iErr = self.setprofile(key=keyword, x=x, y=diam)
-        if iErr == 0:
+        ierr = self.setprofile(key=keyword, x=x, y=diam)
+        if ierr == 0:
             self._inputcheck.append("AREAF")
             # set flow area at the inlet
             self.reactordiameter = c_double(diam[0])
@@ -262,7 +262,7 @@ class PlugFlowReactor(BatchReactors):
             area = np.pi * diam * diam / 4.0
             self.reactormixture._flowarea = area
             self.reactorflowarea = area
-        return iErr
+        return ierr
 
     @property
     def flowarea(self) -> float:
@@ -320,8 +320,8 @@ class PlugFlowReactor(BatchReactors):
 
         """
         keyword = "AFLO"
-        iErr = self.setprofile(key=keyword, x=x, y=area)
-        if iErr == 0:
+        ierr = self.setprofile(key=keyword, x=x, y=area)
+        if ierr == 0:
             self._inputcheck.append("AREAF")
             self.setkeyword(key="AREAF", value=area[0])
             # set flow area at the inlet
@@ -330,7 +330,7 @@ class PlugFlowReactor(BatchReactors):
             self.reactormixture._haveflowarea = True
             self.reactormixture._flowarea = area[0]
             self.reactorflowarea = area[0]
-        return iErr
+        return ierr
 
     def set_inlet_viscosity(self, visc: float):
         """Set the gas mixture viscocity at the PFR inlet
@@ -442,18 +442,18 @@ class PlugFlowReactor(BatchReactors):
             error code: integer
 
         """
-        iErr = 0
-        iErrc = 0
+        ierr = 0
+        ierrc = 0
         err_key = 0
         err_inputs = 0
         # set_verbose(True)
         # verify required inputs
-        iErr = self.validate_inputs()
-        if iErr != 0:
+        ierr = self.validate_inputs()
+        if ierr != 0:
             msg = [Color.PURPLE, "missing required input keywords.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            return iErr
+            return ierr
         # re-size work arrays if profile is used
         if self._numbprofiles > 0:
             # find total profile data points
@@ -464,23 +464,23 @@ class PlugFlowReactor(BatchReactors):
                 # re-size work arrays
                 self._profilesize = numbprofilepoints
                 ipoints = c_int(numbprofilepoints)
-                iErrc = chemkin_wrapper.chemkin.KINAll0D_SetProfilePoints(ipoints)
+                ierrc = chemkin_wrapper.chemkin.KINAll0D_SetProfilePoints(ipoints)
                 # setup reactor model working arrays
-                if iErrc == 0:
-                    iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
+                if ierrc == 0:
+                    ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
                         self._myLOUT, self._chemset_index
                     )
-                iErr += iErrc
-        if iErr != 0:
+                ierr += ierrc
+        if ierr != 0:
             msg = [
                 Color.PURPLE,
                 "profile data generation error, error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            return iErr
+            return ierr
         # prepare inlet conditions
         # get inlet mass flow rate
         self._massflowrate = c_double(self.mass_flowrate)
@@ -492,7 +492,7 @@ class PlugFlowReactor(BatchReactors):
         bulk_init = np.zeros_like(site_init, dtype=np.double)
         # set reactor inlet conditions and geometry parameters
         if self._reactortype.value == self.ReactorTypes.get("PFR", 3):
-            iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupPFRInputs(
+            ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupPFRInputs(
                 self._chemset_index,
                 self.startposition,
                 self.reactorlength,
@@ -505,18 +505,18 @@ class PlugFlowReactor(BatchReactors):
                 self._massflowrate,
                 y_init,
             )
-            iErr += iErrc
-            if iErrc != 0:
+            ierr += ierrc
+            if ierrc != 0:
                 msg = [
                     Color.PURPLE,
                     "failed to set up basic reactor keywords,",
                     "error code =",
-                    str(iErrc),
+                    str(ierrc),
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                return iErrc
+                return ierrc
             # turn OFF the momentum equation when pressure profile is set
             if self._numbprofiles > 0:
                 if "PPRO" in self._profiles_list or "VELPRO" in self._profiles_list:
@@ -529,42 +529,42 @@ class PlugFlowReactor(BatchReactors):
             # ignition delay (use additional keywords)
             # solve integrated heat release rate due to chemical reactions
             if self.EnergyTypes.get("ENERGY") == self._energytype.value:
-                iErrc = chemkin_wrapper.chemkin.KINAll0D_IntegrateHeatRelease()
-                iErr += iErrc
-                if iErrc != 0:
+                ierrc = chemkin_wrapper.chemkin.KINAll0D_IntegrateHeatRelease()
+                ierr += ierrc
+                if ierrc != 0:
                     msg = [
                         Color.PURPLE,
                         "failed to set up heat release keyword,",
                         "error code =",
-                        str(iErrc),
+                        str(ierrc),
                         Color.END,
                     ]
                     this_msg = Color.SPACE.join(msg)
                     logger.error(this_msg)
-                    return iErrc
+                    return ierrc
 
-        if iErr == 0 and self._numbprofiles > 0:
+        if ierr == 0 and self._numbprofiles > 0:
             for p in self._profiles_list:
                 key = bytes(p.profilekey, "utf-8")
                 npoints = c_int(p.size)
                 x = p.pos
                 y = p.value
-                iErrProf = chemkin_wrapper.chemkin.KINAll0D_SetProfileParameter(
+                ierrProf = chemkin_wrapper.chemkin.KINAll0D_SetProfileParameter(
                     key, npoints, x, y
                 )
-                iErr += iErrProf
-            if iErrProf != 0:
+                ierr += ierrProf
+            if ierrProf != 0:
                 msg = [
                     Color.PURPLE,
                     "failed to set up profile keywords,",
                     "error code =",
-                    str(iErrProf),
+                    str(ierrProf),
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                return iErrProf
-        if iErr == 0:
+                return ierrProf
+        if ierr == 0:
             # set additional keywords
             # create input lines from additional user-specified keywords
             err_inputs, nlines = self.createkeywordinputlines()
@@ -605,9 +605,9 @@ class PlugFlowReactor(BatchReactors):
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
         #
-        iErr = iErr + err_inputs + err_key
+        ierr = ierr + err_inputs + err_key
 
-        return iErr
+        return ierr
 
     def __run_model(self) -> int:
         """Run the PFR model after the keywords are processed
@@ -618,8 +618,8 @@ class PlugFlowReactor(BatchReactors):
 
         """
         # run the simulation without keyword inputs
-        iErr = chemkin_wrapper.chemkin.KINAll0D_Calculate(self._chemset_index)
-        return iErr
+        ierr = chemkin_wrapper.chemkin.KINAll0D_Calculate(self._chemset_index)
+        return ierr
 
     def run(self) -> int:
         """Generic Chemkin run PFR model method
@@ -758,7 +758,7 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
         # external heat transfer area per reactor length [cm2/cm]
         self._heat_transfer_area = 0.0e0
         # set up basic PFR parameters
-        iErr = chemkin_wrapper.chemkin.KINAll0D_Setup(
+        ierr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,
             self._reactortype,
             self._problemtype,
@@ -768,13 +768,13 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
             self._ninlets,
             self._nzones,
         )
-        if iErr == 0:
+        if ierr == 0:
             # setup reactor model working arrays
-            iErr = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
+            ierr = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
                 self._myLOUT, self._chemset_index
             )
-            iErr *= 10
-        if iErr != 0:
+            ierr *= 10
+        if ierr != 0:
             msg = [
                 Color.RED,
                 "failed to initialize the plug-flow reactor model",
@@ -782,7 +782,7 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
                 "\n",
                 Color.SPACEx6,
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -929,8 +929,8 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
 
         """
         keyword = "AEXT"
-        iErr = self.setprofile(key=keyword, x=x, y=area)
-        return iErr
+        ierr = self.setprofile(key=keyword, x=x, y=area)
+        return ierr
 
     def set_heat_loss_profile(
         self, x: npt.NDArray[np.double], Qloss: npt.NDArray[np.double]
@@ -950,8 +950,8 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
 
         """
         keyword = "QPRO"
-        iErr = self.setprofile(key=keyword, x=x, y=Qloss)
-        return iErr
+        ierr = self.setprofile(key=keyword, x=x, y=Qloss)
+        return ierr
 
     def set_velocity_profile(
         self, x: npt.NDArray[np.double], vel: npt.NDArray[np.double]
@@ -971,8 +971,8 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
 
         """
         keyword = "VELPRO"
-        iErr = self.setprofile(key=keyword, x=x, y=vel)
-        return iErr
+        ierr = self.setprofile(key=keyword, x=x, y=vel)
+        return ierr
 
 
 class PlugFlowReactor_FixedTemperature(PlugFlowReactor):
@@ -1007,7 +1007,7 @@ class PlugFlowReactor_FixedTemperature(PlugFlowReactor):
         # set reactor type
         self._energytype = c_int(self.EnergyTypes.get("GivenT", 2))
         # set up basic batch reactor parameters
-        iErr = chemkin_wrapper.chemkin.KINAll0D_Setup(
+        ierr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,
             self._reactortype,
             self._problemtype,
@@ -1017,13 +1017,13 @@ class PlugFlowReactor_FixedTemperature(PlugFlowReactor):
             self._ninlets,
             self._nzones,
         )
-        if iErr == 0:
+        if ierr == 0:
             # setup reactor model working arrays
-            iErr = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
+            ierr = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
                 self._myLOUT, self._chemset_index
             )
-            iErr *= 10
-        if iErr != 0:
+            ierr *= 10
+        if ierr != 0:
             msg = [
                 Color.RED,
                 "failed to initialize the plug-flow reactor model",
@@ -1031,7 +1031,7 @@ class PlugFlowReactor_FixedTemperature(PlugFlowReactor):
                 "\n",
                 Color.SPACEx6,
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -1056,5 +1056,5 @@ class PlugFlowReactor_FixedTemperature(PlugFlowReactor):
 
         """
         keyword = "TPRO"
-        iErr = self.setprofile(key=keyword, x=x, y=temp)
-        return iErr
+        ierr = self.setprofile(key=keyword, x=x, y=temp)
+        return ierr

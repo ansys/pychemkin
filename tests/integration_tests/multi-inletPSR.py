@@ -57,7 +57,7 @@ MyGasMech.chemfile = os.path.join(
     mechanism_dir, "Hydrogen-Ammonia-NOx_chem_MFL2021.inp"
 )
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 # create the fuel inlet
 fuel = Stream(MyGasMech, label="Fuel")
 # set fuel composition

@@ -102,7 +102,7 @@ MyGasMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
 # ====================================
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 
 ###################################
 # Instantiate and set up the stream

@@ -252,11 +252,11 @@ class Mixture:
 
         """
         if self._Xset == 1:
-            iErr, x = Mixture.normalize(self._molefrac)
+            ierr, x = Mixture.normalize(self._molefrac)
             return x
         elif self._Yset == 1:
-            iErr, x = self.__YtoX()
-            if iErr != 0:
+            ierr, x = self.__YtoX()
+            if ierr != 0:
                 msg = [Color.PURPLE, "fraction conversion failed.", Color.END]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
@@ -346,11 +346,11 @@ class Mixture:
 
         """
         if self._Yset == 1:
-            iErr, y = Mixture.normalize(self._massfrac)
+            ierr, y = Mixture.normalize(self._massfrac)
             return y
         elif self._Xset == 1:
-            iErr, y = self.__XtoY()
-            if iErr != 0:
+            ierr, y = self.__XtoY()
+            if ierr != 0:
                 msg = [Color.PURPLE, "fraction conversion failed.", Color.END]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
@@ -442,8 +442,8 @@ class Mixture:
         if self._Xset == 1:
             # mole fractions are given
             # remove negative values and normalize fractions
-            iErr, c = Mixture.normalize(frac=self._molefrac)
-            if iErr == 0:
+            ierr, c = Mixture.normalize(frac=self._molefrac)
+            if ierr == 0:
                 # compute mean molar mass
                 mwt = self.WTM
                 # compute density
@@ -456,8 +456,8 @@ class Mixture:
         elif self._Yset == 1:
             # mass fractions are given
             # remove negative values and normalize fractions
-            iErr, c = Mixture.normalize(frac=self._massfrac)
-            if iErr == 0:
+            ierr, c = Mixture.normalize(frac=self._massfrac)
+            if ierr == 0:
                 # compute density
                 den = self.RHO
                 for k in range(self._KK):
@@ -551,8 +551,8 @@ class Mixture:
         if self._Xset == 1:
             # mole fractions are given
             # remove negative values and normalize fractions
-            iErr, x = Mixture.normalize(frac=self._molefrac)
-            if iErr == 0:
+            ierr, x = Mixture.normalize(frac=self._molefrac)
+            if ierr == 0:
                 # compute mean molar mass
                 for k in range(self._KK):
                     mwt += x[k] * self._WT[k]
@@ -562,8 +562,8 @@ class Mixture:
         elif self._Yset == 1:
             # mass fractions are given
             # remove negative values and normalize fractions
-            iErr, y = Mixture.normalize(frac=self._massfrac)
-            if iErr == 0:
+            ierr, y = Mixture.normalize(frac=self._massfrac)
+            if ierr == 0:
                 # compute mean molar mass
                 for k in range(self._KK):
                     mwt += y[k] / self._WT[k]
@@ -601,14 +601,14 @@ class Mixture:
         mwt = self.WTM
         if mwt > 0.0e0:
             # remove negative values and normalize fractions
-            iErr, y = Mixture.normalize(frac=self._molefrac)
-            if iErr == 0:
+            ierr, y = Mixture.normalize(frac=self._molefrac)
+            if ierr == 0:
                 # convert mole fractions to mass fractions
                 for k in range(self._KK):
                     y[k] = y[k] * self._WT[k] / mwt
                 return 0, y
             else:
-                return iErr, self._molefrac
+                return ierr, self._molefrac
         else:
             # zero mean molar mass
             msg = [Color.PURPLE, "mean molar mass = 0.", Color.END]
@@ -631,14 +631,14 @@ class Mixture:
         mwt = self.WTM
         if mwt > 0.0e0:
             # remove negative values and normalize fractions
-            iErr, x = Mixture.normalize(frac=self._massfrac)
-            if iErr == 0:
+            ierr, x = Mixture.normalize(frac=self._massfrac)
+            if ierr == 0:
                 # convert mass fractions to mole fractions
                 for k in range(self._KK):
                     x[k] = x[k] * mwt / self._WT[k]
                 return 0, x
             else:
-                return iErr, self._massfrac
+                return ierr, self._massfrac
         else:
             # zero mean molar mass
             msg = [Color.PURPLE, "mean molar mass = 0.", Color.END]
@@ -688,8 +688,8 @@ class Mixture:
         if mode.lower() == "mole":
             # mole fractions are given
             # remove negative values and normalize fractions
-            iErr, x = Mixture.normalize(frac=frac)
-            if iErr == 0:
+            ierr, x = Mixture.normalize(frac=frac)
+            if ierr == 0:
                 # compute mean molar mass
                 for k in range(kgas):
                     mwt += x[k] * wt[k]
@@ -699,9 +699,9 @@ class Mixture:
         elif mode.lower() == "mass":
             # mass fractions are given
             # remove negative values and normalize fractions
-            iErr, y = Mixture.normalize(frac=frac)
+            ierr, y = Mixture.normalize(frac=frac)
             # compute mean molar mass
-            if iErr == 0:
+            if ierr == 0:
                 for k in range(kgas):
                     mwt += y[k] / wt[k]
 
@@ -755,8 +755,8 @@ class Mixture:
         mwt = Mixture.mean_molar_mass(frac=molefrac, wt=wt, mode="mole")
         if mwt > 0.0e0:
             # remove negative values and normalize fractions
-            iErr, massfrac = Mixture.normalize(frac=molefrac)
-            if iErr == 0:
+            ierr, massfrac = Mixture.normalize(frac=molefrac)
+            if ierr == 0:
                 # convert mole fractions to mass fractions
                 for k in range(kgas):
                     massfrac[k] = massfrac[k] * wt[k] / mwt
@@ -806,8 +806,8 @@ class Mixture:
         mwt = Mixture.mean_molar_mass(frac=massfrac, wt=wt, mode="mass")
         if mwt > 0.0e0:
             # remove negative values and normalize fractions
-            iErr, molefrac = Mixture.normalize(frac=massfrac)
-            if iErr == 0:
+            ierr, molefrac = Mixture.normalize(frac=massfrac)
+            if ierr == 0:
                 # convert mass fractions to mole fractions
                 for k in range(kgas):
                     molefrac[k] = molefrac[k] * mwt / wt[k]
@@ -864,8 +864,8 @@ class Mixture:
         den = Mixture.density(chemID, p, t, frac=massfrac, wt=wt, mode="mass")
         if den > 0.0e0:
             # remove negative values and normalize fractions
-            iErr, c = Mixture.normalize(frac=massfrac)
-            if iErr == 0:
+            ierr, c = Mixture.normalize(frac=massfrac)
+            if ierr == 0:
                 # convert mass fractions to mole fractions
                 for k in range(kgas):
                     c[k] = c[k] * den / wt[k]
@@ -923,8 +923,8 @@ class Mixture:
         den = Mixture.density(chemID, p, t, frac=molefrac, wt=wt, mode="mole")
         if mwt * den > 0.0e0:
             # remove negative values and normalize fractions
-            iErr, c = Mixture.normalize(frac=molefrac)
-            if iErr == 0:
+            ierr, c = Mixture.normalize(frac=molefrac)
+            if ierr == 0:
                 # convert mass fractions to mole fractions
                 fac = den / mwt
                 for k in range(kgas):
@@ -1060,7 +1060,7 @@ class Mixture:
             y = Mixture.mole_fraction_to_mass_fraction(molefrac=frac, wt=wt)
         elif mode.lower() == "mass":
             # normalize mass fractions
-            iErr, y = Mixture.normalize(frac=frac)
+            ierr, y = Mixture.normalize(frac=frac)
         else:
             # fraction type not given or incorrect
             msg = [
@@ -1078,8 +1078,8 @@ class Mixture:
         tt = c_double(t)  # temperature scalar
         yy = np.ctypeslib.as_array(y)  # mass fraction array
         # compute mass density from mass fraction
-        iErr = ck_wrapper.chemkin.KINGetMassDensity(chemset_index, tt, pp, yy, den_C)
-        if iErr == 0:
+        ierr = ck_wrapper.chemkin.KINGetMassDensity(chemset_index, tt, pp, yy, den_C)
+        if ierr == 0:
             return den_C.value
         else:
             # failed to compute mixture density
@@ -1213,7 +1213,7 @@ class Mixture:
             y = Mixture.mole_fraction_to_mass_fraction(molefrac=frac, wt=wt)
         elif mode.lower() == "mass":
             # normalize mass fractions
-            iErr, y = Mixture.normalize(frac=frac)
+            ierr, y = Mixture.normalize(frac=frac)
         else:
             # fraction type not given or incorrect
             msg = [
@@ -1233,12 +1233,12 @@ class Mixture:
             # real-gas cubic EOS is active, set current pressure that is required by the chemkin real-gas module
             set_current_pressure(chemID, p)
         # compute mass density from mass fraction
-        iErr = ck_wrapper.chemkin.KINGetGasMixtureSpecificHeat(
+        ierr = ck_wrapper.chemkin.KINGetGasMixtureSpecificHeat(
             chemset_index, tt, yy, CpB_C
         )
         # compute mean molar mass
         mwt = Mixture.mean_molar_mass(frac=y, wt=wt, mode="mass")
-        if iErr == 0:
+        if ierr == 0:
             return CpB_C.value * mwt
         else:
             # failed to compute mixture specific heat
@@ -1318,7 +1318,7 @@ class Mixture:
             y = Mixture.mole_fraction_to_mass_fraction(molefrac=frac, wt=wt)
         elif mode.lower() == "mass":
             # normalize mass fractions
-            iErr, y = Mixture.normalize(frac=frac)
+            ierr, y = Mixture.normalize(frac=frac)
         else:
             # fraction type not given or incorrect
             msg = [
@@ -1338,10 +1338,10 @@ class Mixture:
             # real-gas cubic EOS is active, set current pressure that is required by the chemkin real-gas module
             set_current_pressure(chemID, p)
         # compute enthalpy from mass fraction
-        iErr = ck_wrapper.chemkin.KINGetGasMixtureEnthalpy(chemset_index, tt, yy, H_C)
+        ierr = ck_wrapper.chemkin.KINGetGasMixtureEnthalpy(chemset_index, tt, yy, H_C)
         # compute mean molar mass
         mwt = Mixture.mean_molar_mass(frac=y, wt=wt, mode="mass")
-        if iErr == 0:
+        if ierr == 0:
             return H_C.value * mwt
         else:
             # failed to compute mixture enthalpy
@@ -1421,7 +1421,7 @@ class Mixture:
             y = Mixture.mole_fraction_to_mass_fraction(molefrac=frac, wt=wt)
         elif mode.lower() == "mass":
             # normalize mass fractions
-            iErr, y = Mixture.normalize(frac=frac)
+            ierr, y = Mixture.normalize(frac=frac)
         else:
             # fraction type not given or incorrect
             msg = [
@@ -1439,8 +1439,8 @@ class Mixture:
         tt = c_double(t)  # temperature scalar
         yy = np.ctypeslib.as_array(y)  # mass fraction array
         # compute mass density from mass fraction
-        iErr = ck_wrapper.chemkin.KINGetGasROP(chemset_index, tt, pp, yy, ROP)
-        if iErr == 0:
+        ierr = ck_wrapper.chemkin.KINGetGasROP(chemset_index, tt, pp, yy, ROP)
+        if ierr == 0:
             return ROP
         else:
             # failed to compute species molar rates of production
@@ -1530,7 +1530,7 @@ class Mixture:
             y = Mixture.mole_fraction_to_mass_fraction(molefrac=frac, wt=wt)
         elif mode.lower() == "mass":
             # normalize mass fractions
-            iErr, y = Mixture.normalize(frac=frac)
+            ierr, y = Mixture.normalize(frac=frac)
         else:
             # fraction type not given or incorrect
             msg = [
@@ -1548,10 +1548,10 @@ class Mixture:
         tt = c_double(t)  # temperature scalar
         yy = np.ctypeslib.as_array(y)  # mass fraction array
         # compute mass density from mass fraction
-        iErr = ck_wrapper.chemkin.KINGetGasReactionRates(
+        ierr = ck_wrapper.chemkin.KINGetGasReactionRates(
             chemset_index, tt, pp, yy, Kforward, Kreverse
         )
-        if iErr == 0:
+        if ierr == 0:
             return Kforward, Kreverse
         else:
             # failed to compute reaction rates
@@ -1559,7 +1559,7 @@ class Mixture:
                 Color.PURPLE,
                 "failed to compute reaction rates,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -1818,8 +1818,8 @@ class Mixture:
         """
         TT = c_double(self.temperature)
         Cp = np.zeros(self._KK, dtype=np.double)
-        iErr = ck_wrapper.chemkin.KINGetGasSpecificHeat(self._chemset_index, TT, Cp)
-        if iErr == 0:
+        ierr = ck_wrapper.chemkin.KINGetGasSpecificHeat(self._chemset_index, TT, Cp)
+        if ierr == 0:
             # convert [ergs/g-K] to [ergs/mol-K]
             Cp *= self._WT
         else:
@@ -1845,8 +1845,8 @@ class Mixture:
         """
         TT = c_double(self.temperature)
         H = np.zeros(self._KK, dtype=np.double)
-        iErr = ck_wrapper.chemkin.KINGetGasSpeciesEnthalpy(self._chemset_index, TT, H)
-        if iErr == 0:
+        ierr = ck_wrapper.chemkin.KINGetGasSpeciesEnthalpy(self._chemset_index, TT, H)
+        if ierr == 0:
             # convert [ergs/gm] to [ergs/mol]
             H *= self._WT
         else:
@@ -1873,8 +1873,8 @@ class Mixture:
             exit()
         TT = c_double(self.temperature)
         visc = np.zeros(self._KK, dtype=np.double)
-        iErr = ck_wrapper.chemkin.KINGetViscosity(self._chemset_index, TT, visc)
-        if iErr != 0:
+        ierr = ck_wrapper.chemkin.KINGetViscosity(self._chemset_index, TT, visc)
+        if ierr != 0:
             # failed to compute viscosities
             msg = [Color.PURPLE, "failed to compute species viscosities.", Color.END]
             this_msg = Color.SPACE.join(msg)
@@ -1898,8 +1898,8 @@ class Mixture:
             exit()
         TT = c_double(self.temperature)
         cond = np.zeros(self._KK, dtype=np.double)
-        iErr = ck_wrapper.chemkin.KINGetConductivity(self._chemset_index, TT, cond)
-        if iErr != 0:
+        ierr = ck_wrapper.chemkin.KINGetConductivity(self._chemset_index, TT, cond)
+        if ierr != 0:
             # failed to compute conductivities
             msg = [Color.PURPLE, "failed to compute species conductivities.", Color.END]
             this_msg = Color.SPACE.join(msg)
@@ -1925,10 +1925,10 @@ class Mixture:
         TT = c_double(self.temperature)
         dim = (self._KK, self._KK)
         diffusioncoeffs = np.zeros(dim, dtype=np.double, order="F")
-        iErr = ck_wrapper.chemkin.KINGetDiffusionCoeffs(
+        ierr = ck_wrapper.chemkin.KINGetDiffusionCoeffs(
             self._chemset_index, PP, TT, diffusioncoeffs
         )
-        if iErr != 0:
+        if ierr != 0:
             # failed to compute diffusion coefficients
             msg = [
                 Color.PURPLE,
@@ -1964,10 +1964,10 @@ class Mixture:
             exit()
         # get mixture viscosity
         TT = c_double(self.temperature)
-        iErr = ck_wrapper.chemkin.KINGetMixtureViscosity(
+        ierr = ck_wrapper.chemkin.KINGetMixtureViscosity(
             self._chemset_index, TT, self.Y, visc
         )
-        if iErr != 0:
+        if ierr != 0:
             # error message
             msg = [Color.PURPLE, "failed to compute mixture viscosity.", Color.END]
             this_msg = Color.SPACE.join(msg)
@@ -2000,10 +2000,10 @@ class Mixture:
             exit()
         # get mixture viscosity
         TT = c_double(self.temperature)
-        iErr = ck_wrapper.chemkin.KINGetMixtureConductivity(
+        ierr = ck_wrapper.chemkin.KINGetMixtureConductivity(
             self._chemset_index, TT, self.Y, cond
         )
-        if iErr != 0:
+        if ierr != 0:
             # error message
             msg = [Color.PURPLE, "failed to compute mixture conductivity.", Color.END]
             this_msg = Color.SPACE.join(msg)
@@ -2047,10 +2047,10 @@ class Mixture:
         # get mixture viscosity
         PP = c_double(self.pressure)
         TT = c_double(self.temperature)
-        iErr = ck_wrapper.chemkin.KINGetMixtureDiffusionCoeffs(
+        ierr = ck_wrapper.chemkin.KINGetMixtureDiffusionCoeffs(
             self._chemset_index, PP, TT, self.Y, diffusioncoeffs
         )
-        if iErr != 0:
+        if ierr != 0:
             # error message
             msg = [
                 Color.PURPLE,
@@ -2099,10 +2099,10 @@ class Mixture:
         # get mixture viscosity
         PP = c_double(self.pressure)
         TT = c_double(self.temperature)
-        iErr = ck_wrapper.chemkin.KINGetOrdinaryDiffusionCoeffs(
+        ierr = ck_wrapper.chemkin.KINGetOrdinaryDiffusionCoeffs(
             self._chemset_index, PP, TT, self.Y, binarydiffusioncoeffs
         )
-        if iErr != 0:
+        if ierr != 0:
             # error message
             msg = [
                 Color.PURPLE,
@@ -2152,10 +2152,10 @@ class Mixture:
         # get mixture viscosity
         PP = c_double(self.pressure)
         TT = c_double(self.temperature)
-        iErr = ck_wrapper.chemkin.KINGetThermalDiffusionCoeffs(
+        ierr = ck_wrapper.chemkin.KINGetThermalDiffusionCoeffs(
             self._chemset_index, PP, TT, self.Y, thermaldiffusioncoeffs, cond
         )
-        if iErr != 0:
+        if ierr != 0:
             # error message
             msg = [
                 Color.PURPLE,
@@ -2182,8 +2182,8 @@ class Mixture:
         # get species enthalpy
         TT = c_double(self.temperature)
         H = np.zeros(self._KK, dtype=np.double)
-        iErr = ck_wrapper.chemkin.KINGetGasSpeciesEnthalpy(self._chemset_index, TT, H)
-        if iErr == 0:
+        ierr = ck_wrapper.chemkin.KINGetGasSpeciesEnthalpy(self._chemset_index, TT, H)
+        if ierr == 0:
             # convert H from ergs/gm to ergs/mol
             H *= self._WT
         else:
@@ -2434,7 +2434,7 @@ class Mixture:
         # find additives mole array size
         kadd = len(add_molefrac)
         # check species number consistency
-        iErr = 0
+        ierr = 0
         if kspecies != kfuel:
             msg = [
                 Color.PURPLE,
@@ -2444,7 +2444,7 @@ class Mixture:
             ]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            iErr += 1
+            ierr += 1
         if kspecies != koxid:
             msg = [
                 Color.PURPLE,
@@ -2454,7 +2454,7 @@ class Mixture:
             ]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            iErr += 1
+            ierr += 1
         if kspecies != kadd:
             msg = [
                 Color.PURPLE,
@@ -2464,8 +2464,8 @@ class Mixture:
             ]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            iErr += 1
-        if iErr > 0:
+            ierr += 1
+        if ierr > 0:
             return 2
         # check equivalence ratio value
         if equivalenceratio <= 0.0e0:
@@ -2594,7 +2594,7 @@ class Mixture:
             massfrac=add_massfrac, wt=chemistryset.WT
         )
         # find the final mixture mole fractions and set the flags
-        iErr = self.X_by_Equivalence_Ratio(
+        ierr = self.X_by_Equivalence_Ratio(
             chemistryset,
             fuel_molefrac,
             oxid_molefrac,
@@ -2603,7 +2603,7 @@ class Mixture:
             equivalenceratio,
             threshold,
         )
-        return iErr
+        return ierr
 
     def get_EGR_mole_fraction(
         self, EGRratio: float, threshold: float = 1.0e-8
@@ -2642,24 +2642,24 @@ class Mixture:
             Error status: integer
 
         """
-        iErr = 0
+        ierr = 0
         # check mixture temperature
         if self._Tset == 0:
             msg = [Color.PURPLE, "mixture temperature is not provided.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            iErr = 1
+            ierr = 1
         if self._Pset == 0:
             msg = [Color.PURPLE, "mixture pressure is not provided.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            iErr = 2
+            ierr = 2
         if self._Xset == 0 and self._Yset == 0:
             msg = [Color.PURPLE, "mixture composition is not provided.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            iErr = 3
-        return iErr
+            ierr = 3
+        return ierr
 
     def use_realgas_cubicEOS(self):
         """Turn ON the real-gas cubic EOS to compute mixture properties if the mechanism contains necessary data"""
@@ -2671,13 +2671,13 @@ class Mixture:
             return
         # check real-gas EOS status
         iFlag = c_int(0)
-        iErr = ck_wrapper.chemkin.KINRealGas_UseCubicEOS(self._chemset_index, iFlag)
-        if iErr != 0:
+        ierr = ck_wrapper.chemkin.KINRealGas_UseCubicEOS(self._chemset_index, iFlag)
+        if ierr != 0:
             msg = [
                 Color.PURPLE,
                 "failed to activate the real-gas EOS model",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -2712,13 +2712,13 @@ class Mixture:
             return
         # check real-gas EOS status
         iFlag = c_int(0)
-        iErr = ck_wrapper.chemkin.KINRealGas_UseIdealGasLaw(self._chemset_index, iFlag)
-        if iErr != 0:
+        ierr = ck_wrapper.chemkin.KINRealGas_UseIdealGasLaw(self._chemset_index, iFlag)
+        if ierr != 0:
             msg = [
                 Color.PURPLE,
                 "failed to activate the ideal gas law,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -2750,15 +2750,15 @@ class Mixture:
         # set default mixing rule to Van der Waals
         mixingrule = c_int(rule + 1)
         iFlag = c_int(0)
-        iErr = ck_wrapper.chemkin.KINRealGas_SetMixingRule(
+        ierr = ck_wrapper.chemkin.KINRealGas_SetMixingRule(
             self._chemset_index, mixingrule, iFlag
         )
-        if iErr != 0:
+        if ierr != 0:
             msg = [
                 Color.PURPLE,
                 "failed to activate the real-gas mixing rule,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -2864,7 +2864,7 @@ def isothermal_mixing(
             exit()
         # check chemistry sets
         count = 0
-        iErrs = 0
+        ierrs = 0
         for r in recipe:
             if r[0].chemID != chem_index_check:
                 msg = [
@@ -2876,9 +2876,9 @@ def isothermal_mixing(
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                iErrs += 1
+                ierrs += 1
             count += 1
-        if iErrs != 0:
+        if ierrs != 0:
             exit()
     else:
         # incorrect object type
@@ -3044,7 +3044,7 @@ def adiabatic_mixing(recipe: list[tuple[Mixture, float]], mode: str) -> Mixture:
             exit()
         # check chemistry sets
         count = 0
-        iErrs = 0
+        ierrs = 0
         for r in recipe:
             if r[0].chemID != chem_index_check:
                 msg = [
@@ -3056,9 +3056,9 @@ def adiabatic_mixing(recipe: list[tuple[Mixture, float]], mode: str) -> Mixture:
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                iErrs += 1
+                ierrs += 1
             count += 1
-        if iErrs != 0:
+        if ierrs != 0:
             exit()
     else:
         # incorrect object type
@@ -3153,15 +3153,15 @@ def adiabatic_mixing(recipe: list[tuple[Mixture, float]], mode: str) -> Mixture:
     # compute temperature of the final mixture from the mixture enthalpy
     # set the guessed temperature
     t_guessed = 0.0e0
-    iErr = calculate_mixture_temperature_from_enthalpy(
+    ierr = calculate_mixture_temperature_from_enthalpy(
         mixture=finalmixture, mixtureH=mix_h, guesstemperature=t_guessed
     )
-    if iErr != 0:
+    if ierr != 0:
         msg = [
             Color.PURPLE,
             "failed to compute the final mixture temperature,",
             "error code =",
-            str(iErr),
+            str(ierr),
             Color.END,
         ]
         this_msg = Color.SPACE.join(msg)
@@ -3207,7 +3207,7 @@ def calculate_mixture_temperature_from_enthalpy(
     # iteration count limit
     maxcount = 200
     count = 0
-    iErr = 0
+    ierr = 0
     dt = 1.0e3
     # set guessed temperature value if given
     if guesstemperature > 0.0e0:
@@ -3227,7 +3227,7 @@ def calculate_mixture_temperature_from_enthalpy(
             msg = [Color.PURPLE, "search diverged.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            iErr = 1
+            ierr = 1
             break
 
         if abs(dt) <= tolerance:
@@ -3252,13 +3252,13 @@ def calculate_mixture_temperature_from_enthalpy(
         ]
         this_msg = Color.SPACE.join(msg)
         logger.error(this_msg)
-        iErr = 2
+        ierr = 2
     # update temperature
-    if iErr != 1:
+    if ierr != 1:
         mixture.temperature = localmixture.temperature
     # print(f'** iteration count = {count:d}')
     del localmixture
-    return iErr
+    return ierr
 
 
 def interpolate_mixtures(
@@ -3294,8 +3294,8 @@ def interpolate_mixtures(
         this_msg = Color.SPACE.join(msg)
         logger.error(this_msg)
         exit()
-    iErr = mixtureleft.validate()
-    if iErr != 0:
+    ierr = mixtureleft.validate()
+    if ierr != 0:
         msg = [
             Color.PURPLE,
             "the first mixture is not fully defined.",
@@ -3314,8 +3314,8 @@ def interpolate_mixtures(
         this_msg = Color.SPACE.join(msg)
         logger.error(this_msg)
         exit()
-    iErr = mixtureright.validate()
-    if iErr != 0:
+    ierr = mixtureright.validate()
+    if ierr != 0:
         msg = [
             Color.PURPLE,
             "the second mixture is not fully defined.",
@@ -3425,8 +3425,8 @@ def compare_mixtures(
         this_msg = Color.SPACE.join(msg)
         logger.error(this_msg)
         exit()
-    iErr = mixtureA.validate()
-    if iErr != 0:
+    ierr = mixtureA.validate()
+    if ierr != 0:
         msg = [
             Color.PURPLE,
             "the first mixture is not fully defined.",
@@ -3445,8 +3445,8 @@ def compare_mixtures(
         this_msg = Color.SPACE.join(msg)
         logger.error(this_msg)
         exit()
-    iErr = mixtureB.validate()
-    if iErr != 0:
+    ierr = mixtureB.validate()
+    if ierr != 0:
         msg = [
             Color.PURPLE,
             "the second mixture is not fully defined.",
@@ -3676,7 +3676,7 @@ def calculate_equilibrium(
     #
     if mode_in.lower() == "mole":
         # normalize mass fractions
-        iErr, x = Mixture.normalize(frac=frac)
+        ierr, x = Mixture.normalize(frac=frac)
     elif mode_in.lower() == "mass":
         # convert mass fraction to mole fraction and normalize
         x = Mixture.mass_fraction_to_mole_fraction(massfrac=frac, wt=wt)
@@ -3722,13 +3722,13 @@ def calculate_equilibrium(
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
 
-        iErr = ck_wrapper.chemkin.KINInitialize(_chemset_index, c_int(0))
-        if iErr != 0:
+        ierr = ck_wrapper.chemkin.KINInitialize(_chemset_index, c_int(0))
+        if ierr != 0:
             msg = [
                 Color.RED,
                 "Chemkin-CFD-API initialization failed;",
                 "code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -3737,9 +3737,9 @@ def calculate_equilibrium(
         else:
             chemistryset_initialized(_chemset_index.value)
     else:
-        iErr = 0
+        ierr = 0
 
-    iErr = ck_wrapper.chemkin.KINCalculateEqGasWithOption(
+    ierr = ck_wrapper.chemkin.KINCalculateEqGasWithOption(
         _chemset_index,
         eq_option,
         iRealGas,
@@ -3753,7 +3753,7 @@ def calculate_equilibrium(
         xx_eq,
     )
 
-    if iErr == 0:
+    if ierr == 0:
         # process solution
         if eq_option.value == 10 and verbose():
             # CHAPMAN-JOUGUET DETONATION
@@ -3777,7 +3777,7 @@ def calculate_equilibrium(
         else:
             # by default, return mass fraction
             # normalize mass fractions
-            iErr, x_eq = Mixture.normalize(frac=xx_eq)
+            ierr, x_eq = Mixture.normalize(frac=xx_eq)
             statevars = [
                 pp_eq.value,
                 tt_eq.value,

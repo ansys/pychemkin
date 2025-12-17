@@ -55,8 +55,8 @@ MyGasMech = ck.Chemistry(label="GRI 3.0")
 MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 # pre-process
-iError = MyGasMech.preprocess()
-if iError == 0:
+ierror = MyGasMech.preprocess()
+if ierror == 0:
     print("mechanism information:")
     print(f"number of gas species = {MyGasMech.KK:d}")
     print(f"number of gas reactions = {MyGasMech.IIGas:d}")
@@ -80,10 +80,10 @@ mixture.temperature = oxid.temperature
 products = ["CO2", "H2O", "N2"]
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)
 # create the air-fuel mixture by using the equivalence ratio method
-iError = mixture.X_by_Equivalence_Ratio(
+ierror = mixture.X_by_Equivalence_Ratio(
     MyGasMech, fuel.X, oxid.X, add_frac, products, equivalenceratio=1.1
 )
-if iError != 0:
+if ierror != 0:
     raise RuntimeError
 if ck.verbose():
     mixture.list_composition(mode="mole")

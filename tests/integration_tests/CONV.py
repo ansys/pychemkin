@@ -55,7 +55,7 @@ MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 # create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
 # create the fuel mixture
 fuelmixture = ck.Mixture(MyGasMech)
@@ -76,10 +76,10 @@ premixed = ck.Mixture(MyGasMech)
 products = ["CO2", "H2O", "N2"]
 # species mole fractions of added/inert mixture. can also create an additives mixture here
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
-iError = premixed.X_by_Equivalence_Ratio(
+ierror = premixed.X_by_Equivalence_Ratio(
     MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=0.7
 )
-if iError != 0:
+if ierror != 0:
     raise RuntimeError
 # list the composition of the premixed mixture
 premixed.list_composition(mode="mole")

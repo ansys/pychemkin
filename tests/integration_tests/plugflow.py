@@ -52,7 +52,7 @@ MyGasMech = ck.Chemistry(label="GRI 3.0")
 MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 # create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
 # create the inlet (mixture + flow rate)
 feedstock = Stream(MyGasMech)

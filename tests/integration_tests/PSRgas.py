@@ -57,7 +57,7 @@ MyGasMech.chemfile = os.path.join(
     mechanism_dir, "Hydrogen-Ammonia-NOx_chem_MFL2021.inp"
 )
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 # create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
 # create the fuel mixture
 fuel = ck.Mixture(MyGasMech)
@@ -80,10 +80,10 @@ products = ["h2o", "n2"]
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
 # mean equivalence ratio
 equiv = 1.0
-iError = feed.X_by_Equivalence_Ratio(
+ierror = feed.X_by_Equivalence_Ratio(
     MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=equiv
 )
-if iError != 0:
+if ierror != 0:
     raise RuntimeError
 # setting reactor pressure [dynes/cm2]
 feed.pressure = fuel.pressure
@@ -134,10 +134,10 @@ for i in range(numbruns):
     tempSSsolution[i] = solnmixture.temperature
     # update inlet gas equivalence ratio (composition)
     equiv += deltaequiv
-    iError = feed.X_by_Equivalence_Ratio(
+    ierror = feed.X_by_Equivalence_Ratio(
         MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=equiv
     )
-    if iError != 0:
+    if ierror != 0:
         print(f"error encountered with inlet equivalence ratio = {equiv}")
         raise RuntimeError
 

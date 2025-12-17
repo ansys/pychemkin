@@ -181,8 +181,8 @@ def activate_chemistryset(chem_index: int) -> int:
         error flag: integer
 
     """
-    iErr = ck_wrapper.chemkin.KINSwitchChemistrySet(c_int(chem_index))
-    if iErr == 0:
+    ierr = ck_wrapper.chemkin.KINSwitchChemistrySet(c_int(chem_index))
+    if ierr == 0:
         # mark this chemistry set as active
         global _active_chemistry_set
         _active_chemistry_set = chem_index
@@ -195,7 +195,7 @@ def activate_chemistryset(chem_index: int) -> int:
         ]
         this_msg = Color.SPACE.join(msg)
         logger.error(this_msg)
-    return iErr
+    return ierr
 
 
 def force_activate_chemistryset(chem_index: int):
@@ -209,8 +209,8 @@ def force_activate_chemistryset(chem_index: int):
     """
     if not check_active_chemistryset(chem_index):
         # the Chemistry Set is not currently active
-        iErr = activate_chemistryset(chem_index)
-        if iErr != 0:
+        ierr = activate_chemistryset(chem_index)
+        if ierr != 0:
             exit()
 
 
@@ -681,7 +681,7 @@ class Chemistry:
             return self._error_code
 
         if self._error_code == 0:
-            iErr = ck_wrapper.chemkin.KINGetChemistrySizes(
+            ierr = ck_wrapper.chemkin.KINGetChemistrySizes(
                 self._chemset_index,
                 self._num_elements,
                 self._num_gas_species,
@@ -693,14 +693,14 @@ class Chemistry:
                 self._num_max_surf_reactions,
             )
 
-            if iErr != 0:
+            if ierr != 0:
                 # failed to find mechanism sizes
                 msg = [
                     Color.RED,
                     "failed to find mechanism parameters\n",
                     Color.SPACEx6,
                     "error code =",
-                    str(iErr),
+                    str(ierr),
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
@@ -748,10 +748,10 @@ class Chemistry:
         EOSModel = ctypes.create_string_buffer(MAX_SPECIES_LENGTH)
         try:
             # check if the mechanism contains the real-gas EOS data
-            iErr = ck_wrapper.chemkin.KINRealGas_GetEOSMode(
+            ierr = ck_wrapper.chemkin.KINRealGas_GetEOSMode(
                 self._chemset_index, self._EOS, EOSModel
             )
-            if iErr == 0:
+            if ierr == 0:
                 if self._EOS.value > 0 and self._EOS.value <= 5:
                     msg = [
                         Color.YELLOW,
@@ -827,8 +827,8 @@ class Chemistry:
             for i in range(0, self._num_gas_species.value):
                 buff[i] = ctypes.create_string_buffer(MAX_SPECIES_LENGTH)
             pp = ctypes.cast(buff, POINTER(LP_c_char))
-            iErr = ck_wrapper.chemkin.KINGetGasSpeciesNames(self._chemset_index, pp)
-            if iErr == 0:
+            ierr = ck_wrapper.chemkin.KINGetGasSpeciesNames(self._chemset_index, pp)
+            if ierr == 0:
                 self._gas_species.clear()
                 for index in range(0, len(buff)):
                     strVal = ctypes.cast(buff[index], c_char_p).value.decode()
@@ -865,8 +865,8 @@ class Chemistry:
             for j in range(0, self._num_elements.value):
                 buff_ele[j] = ctypes.create_string_buffer(MAX_SPECIES_LENGTH)
             pp_ele = ctypes.cast(buff_ele, POINTER(LP_c_char))
-            iErr = ck_wrapper.chemkin.KINGetElementNames(self._chemset_index, pp_ele)
-            if iErr == 0:
+            ierr = ck_wrapper.chemkin.KINGetElementNames(self._chemset_index, pp_ele)
+            if ierr == 0:
                 self._elements.clear()
                 for index in range(0, len(buff_ele)):
                     eleVal = ctypes.cast(buff_ele[index], c_char_p).value.decode()
@@ -1002,8 +1002,8 @@ class Chemistry:
             exit()
         del self._AWT  # clear the "original" definition in __init__
         self._AWT = np.zeros(self._num_elements.value, dtype=np.double)
-        iErr = ck_wrapper.chemkin.KINGetAtomicWeights(self._chemset_index, self._AWT)
-        if iErr == 0:
+        ierr = ck_wrapper.chemkin.KINGetAtomicWeights(self._chemset_index, self._AWT)
+        if ierr == 0:
             self._AWTdone = 1
         else:
             # failed to find atomic masses
@@ -1039,10 +1039,10 @@ class Chemistry:
             exit()
         del self._WT  # clear the "original" definition in __init__
         self._WT = np.zeros(self._num_gas_species.value, dtype=np.double)
-        iErr = ck_wrapper.chemkin.KINGetGasMolecularWeights(
+        ierr = ck_wrapper.chemkin.KINGetGasMolecularWeights(
             self._chemset_index, self._WT
         )
-        if iErr == 0:
+        if ierr == 0:
             self._WTdone = 1
         else:
             # failed to find molecular masses
@@ -1108,8 +1108,8 @@ class Chemistry:
         #
         TT = c_double(temp)
         Cp = np.zeros(self._num_gas_species.value, dtype=np.double)
-        iErr = ck_wrapper.chemkin.KINGetGasSpecificHeat(self._chemset_index, TT, Cp)
-        if iErr == 0:
+        ierr = ck_wrapper.chemkin.KINGetGasSpecificHeat(self._chemset_index, TT, Cp)
+        if ierr == 0:
             # convert [ergs/g-K] to [ergs/mol-K]
             # for k in range(len(Cp)):
             #    Cp[k] = Cp[k] * self._WT[k]
@@ -1214,8 +1214,8 @@ class Chemistry:
                 set_current_pressure(self.chemID, pres)
         TT = c_double(temp)
         H = np.zeros(self._num_gas_species.value, dtype=np.double)
-        iErr = ck_wrapper.chemkin.KINGetGasSpeciesEnthalpy(self._chemset_index, TT, H)
-        if iErr == 0:
+        ierr = ck_wrapper.chemkin.KINGetGasSpeciesEnthalpy(self._chemset_index, TT, H)
+        if ierr == 0:
             # convert [ergs/gm] to [ergs/mol]
             # for k in range(len(H)):
             #    H[k] = H[k], * self._WT[k]
@@ -1281,10 +1281,10 @@ class Chemistry:
                 set_current_pressure(self.chemID, pres)
         TT = c_double(temp)
         U = np.zeros(self._num_gas_species.value, dtype=np.double)
-        iErr = ck_wrapper.chemkin.KINGetGasSpeciesInternalEnergy(
+        ierr = ck_wrapper.chemkin.KINGetGasSpeciesInternalEnergy(
             self._chemset_index, TT, U
         )
-        if iErr == 0:
+        if ierr == 0:
             # convert [ergs/gm] to [ergs/mol]
             # for k in range(len(U)):
             #    U[k] = U[k], * self._WT[k]
@@ -1337,8 +1337,8 @@ class Chemistry:
             exit()
         TT = c_double(temp)
         visc = np.zeros(self._num_gas_species.value, dtype=np.double)
-        iErr = ck_wrapper.chemkin.KINGetViscosity(self._chemset_index, TT, visc)
-        if iErr != 0:
+        ierr = ck_wrapper.chemkin.KINGetViscosity(self._chemset_index, TT, visc)
+        if ierr != 0:
             # failed to compute viscosity
             msg = [Color.PURPLE, "failed to compute specific viscosities.", Color.END]
             this_msg = Color.SPACE.join(msg)
@@ -1382,8 +1382,8 @@ class Chemistry:
             exit()
         TT = c_double(temp)
         cond = np.zeros(self._num_gas_species.value, dtype=np.double)
-        iErr = ck_wrapper.chemkin.KINGetConductivity(self._chemset_index, TT, cond)
-        if iErr != 0:
+        ierr = ck_wrapper.chemkin.KINGetConductivity(self._chemset_index, TT, cond)
+        if ierr != 0:
             # failed to compute conductivities
             msg = [
                 Color.PURPLE,
@@ -1442,10 +1442,10 @@ class Chemistry:
         TT = c_double(temp)
         dim = (self._num_gas_species.value, self._num_gas_species.value)
         diffusioncoeffs = np.zeros(dim, dtype=np.double, order="F")
-        iErr = ck_wrapper.chemkin.KINGetDiffusionCoeffs(
+        ierr = ck_wrapper.chemkin.KINGetDiffusionCoeffs(
             self._chemset_index, PP, TT, diffusioncoeffs
         )
-        if iErr != 0:
+        if ierr != 0:
             # failed to compute diffusion coefficients
             msg = [
                 Color.PURPLE,
@@ -1479,10 +1479,10 @@ class Chemistry:
             dim = (self._num_elements.value, self._num_gas_species.value)
             self.elementalcomp = np.zeros(dim, dtype=np.int32, order="F")
             # load the NCF matrix
-            iErr = ck_wrapper.chemkin.KINGetGasSpeciesComposition(
+            ierr = ck_wrapper.chemkin.KINGetGasSpeciesComposition(
                 self._chemset_index, self.elementalcomp
             )
-            if iErr != 0:
+            if ierr != 0:
                 msg = [
                     Color.PURPLE,
                     "failed to compute elemental compositions.",
@@ -1531,13 +1531,13 @@ class Chemistry:
             return
         # check real-gas EOS status
         iFlag = c_int(0)
-        iErr = ck_wrapper.chemkin.KINRealGas_UseCubicEOS(self._chemset_index, iFlag)
-        if iErr != 0:
+        ierr = ck_wrapper.chemkin.KINRealGas_UseCubicEOS(self._chemset_index, iFlag)
+        if ierr != 0:
             msg = [
                 Color.PURPLE,
                 "failed to turn ON the real-gas EOS model,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -1568,13 +1568,13 @@ class Chemistry:
             return
         # check real-gas EOS status
         iFlag = c_int(0)
-        iErr = ck_wrapper.chemkin.KINRealGas_UseIdealGasLaw(self._chemset_index, iFlag)
-        if iErr != 0:
+        ierr = ck_wrapper.chemkin.KINRealGas_UseIdealGasLaw(self._chemset_index, iFlag)
+        if ierr != 0:
             msg = [
                 Color.PURPLE,
                 "failed to turn ON ideal gas law,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -1609,10 +1609,10 @@ class Chemistry:
         # activation energy/temperature of all reactions [K]
         AEnergy = np.zeros_like(AFactor, dtype=np.double)
         # get the reaction parameters
-        iErr = ck_wrapper.chemkin.KINGetReactionRateParameters(
+        ierr = ck_wrapper.chemkin.KINGetReactionRateParameters(
             self._chemset_index, AFactor, TBeta, AEnergy
         )
-        if iErr != 0:
+        if ierr != 0:
             AFactor[:] = 0.0e0
             TBeta[:] = 0.0e0
             AEnergy[:] = 0.0e0
@@ -1647,15 +1647,15 @@ class Chemistry:
             exit()
         # convert the reaction parameters
         ireac = c_int(-reaction_index)  # negative index to "put" A-factor value
-        iErr = ck_wrapper.chemkin.KINSetAFactorForAReaction(
+        ierr = ck_wrapper.chemkin.KINSetAFactorForAReaction(
             self._chemset_index, ireac, c_double(AFactor)
         )
-        if iErr != 0:
+        if ierr != 0:
             msg = [
                 Color.PURPLE,
                 "failed to set Arrhenius A-Factor,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -1692,15 +1692,15 @@ class Chemistry:
         # convert the reaction parameters
         ireac = c_int(reaction_index)
         # get the A-factor value
-        iErr = ck_wrapper.chemkin.KINSetAFactorForAReaction(
+        ierr = ck_wrapper.chemkin.KINSetAFactorForAReaction(
             self._chemset_index, ireac, AFactor
         )
-        if iErr != 0:
+        if ierr != 0:
             msg = [
                 Color.PURPLE,
                 "failed to find Arrhenius A-Factor,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -1744,15 +1744,15 @@ class Chemistry:
         iStringSize = c_int(0)
         # get reaction string (might have to be increased to 2048 for 26R1)
         rstring = bytes(" " * 1024, "utf-8")
-        iErr = ck_wrapper.chemkin.KINGetGasReactionString(
+        ierr = ck_wrapper.chemkin.KINGetGasReactionString(
             self._chemset_index, ireac, iStringSize, rstring
         )
-        if iErr != 0:
+        if ierr != 0:
             msg = [
                 Color.PURPLE,
                 "failed to find reaction string,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -1768,8 +1768,8 @@ class Chemistry:
         """Store the work spaces of the current Chemistry Set
         if new Chemistry Set will be created later in the same project
         """
-        iErr = ck_wrapper.chemkin.KINUpdateChemistrySet(self._chemset_index)
-        if iErr == 0:
+        ierr = ck_wrapper.chemkin.KINUpdateChemistrySet(self._chemset_index)
+        if ierr == 0:
             # mark this chemistry set as active
             global _active_chemistry_set
             _active_chemistry_set = self._chemset_index.value
@@ -1790,8 +1790,8 @@ class Chemistry:
         """Switch to (re-activate) the work spaces of the current Chemistry Set
         when there are multiple Chemistry Sets in the same project
         """
-        iErr = activate_chemistryset(self._chemset_index.value)
-        if iErr == 0:
+        ierr = activate_chemistryset(self._chemset_index.value)
+        if ierr == 0:
             # mark this chemistry set as active
             msg = [
                 Color.YELLOW,

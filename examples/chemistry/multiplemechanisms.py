@@ -77,11 +77,11 @@ My1stMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="G
 # ==================================
 
 # preprocess the mechanism files
-iError = My1stMech.preprocess()
+ierror = My1stMech.preprocess()
 print()
-if iError != 0:
+if ierror != 0:
     # encountered error during preprocessing
-    print(f"Preprocessing error encountered. Code = {iError:d}.")
+    print(f"Preprocessing error encountered. Code = {ierror:d}.")
     print(f"See the summary file {My1stMech.summaryfile} for details.")
     exit()
 else:
@@ -165,11 +165,11 @@ My2ndMech.preprocess_transportdata()
 # chemistry set of the project. The first chemistry set, ``My1stMech``, is pushed to the background.
 
 # preprocess the second mechanism files
-iError = My2ndMech.preprocess()
+ierror = My2ndMech.preprocess()
 print()
-if iError != 0:
+if ierror != 0:
     # encountered error during preprocessing
-    print(f"Preprocessing error encountered. Code = {iError:d}.")
+    print(f"Preprocessing error encountered. Code = {ierror:d}.")
     print(f"See the summary file {My2ndMech.summaryfile} for details.")
     exit()
 else:

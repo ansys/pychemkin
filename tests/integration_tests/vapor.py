@@ -52,8 +52,8 @@ MyMech = ck.Chemistry(label="C2 NOx")
 # therefore no need to specify the therm and the tran data files
 MyMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
 # preprocess the 2nd mechanism files
-iError = MyMech.preprocess()
-if iError == 0:
+ierror = MyMech.preprocess()
+if ierror == 0:
     print(Color.GREEN + ">>> preprocess OK", end=Color.END)
 else:
     print(Color.RED + ">>> preprocess failed!", end=Color.END)

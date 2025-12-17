@@ -154,8 +154,8 @@ class PremixedFlame(Flame):
                 self.setkeyword(this_key, True)
                 numblines += 1
             # check error
-            iErr = numblines - npoints
-            return iErr
+            ierr = numblines - npoints
+            return ierr
         else:
             # no temperature profile found
             msg = [Color.PURPLE, "no temperature profile found.", Color.END]
@@ -201,8 +201,8 @@ class PremixedFlame(Flame):
             self.setkeyword(this_key, True)
             numblines += 1
         # check error
-        iErr = numblines - npoints
-        return iErr
+        ierr = numblines - npoints
+        return ierr
 
     def __run_model(self) -> int:
         """Run the reactor model after the keywords are processed
@@ -215,7 +215,7 @@ class PremixedFlame(Flame):
         # estimated reactor mass fraction
         y_init = self.reactormixture.Y
         # run the premixed flame simulation
-        iErr = chemkin_wrapper.chemkin.KINPremix_CalculateFlame(
+        ierr = chemkin_wrapper.chemkin.KINPremix_CalculateFlame(
             self._myLOUT,
             self._chemset_index,
             self._pressure,
@@ -225,7 +225,7 @@ class PremixedFlame(Flame):
             c_double(self.ending_x),
         )
 
-        return iErr
+        return ierr
 
     def __process_keywords(self):
         """Process input keywords for the reactor model
@@ -235,8 +235,8 @@ class PremixedFlame(Flame):
             Error code: integer
 
         """
-        iErr = 0
-        iErrc = 0
+        ierr = 0
+        ierrc = 0
         err_key = 0
         # set_verbose(True)
         # set inlet mass flux (estimated)
@@ -253,7 +253,7 @@ class PremixedFlame(Flame):
             # check temperature profile
             if not self.temp_profile_set:
                 # no temperature profile data
-                iErr = 1
+                ierr = 1
                 msg = [
                     Color.PURPLE,
                     "no temperature profile data given for",
@@ -263,26 +263,26 @@ class PremixedFlame(Flame):
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                return iErr
+                return ierr
         else:
             # burner stabilized flame and solve the energy equation
             if "TUNB" not in self._keyword_index:
                 self.setkeyword("TUNB", self.temperature)
         # prepare mesh keywords
         self.set_mesh_keywords()
-        if iErr == 0:
+        if ierr == 0:
             # set additional keywords
             self.set_SSsolver_keywords()
             # set profile keywords
             err_key = 0
             if self._numbprofiles > 0:
-                iErrc = self.set_profilekeywords()
-                err_key += iErrc
+                ierrc = self.set_profilekeywords()
+                err_key += ierrc
             # prepare mesh keywords
-            iErrc = self.set_mesh_keywords()
-            err_key += iErrc
+            ierrc = self.set_mesh_keywords()
+            err_key += ierrc
         # set keywords
-        if iErr + err_key == 0:
+        if ierr + err_key == 0:
             # pass all the keywords to the flame model
             for k in self._keyword_list:
                 this_key = bytes(k.keyphrase, "utf-8")  # Chemkin keyword phrase
@@ -298,10 +298,10 @@ class PremixedFlame(Flame):
                         # string type value: just assign the keyword value to 0.0
                         this_value = c_double(0.0)
                     # set the keyword
-                    iErrc = chemkin_wrapper.chemkin.KINPremix_SetParameter(
+                    ierrc = chemkin_wrapper.chemkin.KINPremix_SetParameter(
                         this_key, this_value
                     )
-                    if iErrc == 2:
+                    if ierrc == 2:
                         # keyword is not available
                         msg = [
                             Color.PURPLE,
@@ -312,23 +312,23 @@ class PremixedFlame(Flame):
                         ]
                         this_msg = Color.SPACE.join(msg)
                         logger.error(this_msg)
-                        iErr += iErrc
-                    elif iErrc != 0:
+                        ierr += ierrc
+                    elif ierrc != 0:
                         msg = [
                             Color.PURPLE,
                             "failed to process keyword,",
                             k.keyphrase,
                             "error code =",
-                            str(iErrc),
+                            str(ierrc),
                             Color.END,
                         ]
                         this_msg = Color.SPACE.join(msg)
                         logger.error(this_msg)
-                        iErr += iErrc
+                        ierr += ierrc
         #
         self.showkeywordinputlines()
         #
-        return iErr + err_key
+        return ierr + err_key
 
     def run(self) -> int:
         """Chemkin run premixed flame model method
@@ -456,8 +456,8 @@ class PremixedFlame(Flame):
         # insert the continuation keyword
         key_continue = bytes("CNTN", "utf-8")
         this_value = c_double(0.0)
-        iErr = chemkin_wrapper.chemkin.KINPremix_SetParameter(key_continue, this_value)
-        status += iErr
+        ierr = chemkin_wrapper.chemkin.KINPremix_SetParameter(key_continue, this_value)
+        status += ierr
         if status == 0:
             msg = [
                 Color.YELLOW,
@@ -467,8 +467,8 @@ class PremixedFlame(Flame):
             this_msg = Color.SPACE.join(msg)
             logger.info(this_msg)
             # run the model
-            iErr = self.run()
-            status += iErr
+            ierr = self.run()
+            status += ierr
         #
         return status
 
@@ -502,8 +502,8 @@ class PremixedFlame(Flame):
         # number of time points in the solution
         npoints = c_int(0)
         # get solution size of the premixed flame
-        iErr = chemkin_wrapper.chemkin.KINPremix_GetSolutionGridPoints(npoints)
-        if iErr == 0 and npoints.value > 2:
+        ierr = chemkin_wrapper.chemkin.KINPremix_GetSolutionGridPoints(npoints)
+        if ierr == 0 and npoints.value > 2:
             # return the solution sizes
             self._numbsolutionpoints = (
                 npoints.value
@@ -515,7 +515,7 @@ class PremixedFlame(Flame):
                 Color.PURPLE,
                 "failed to get the solution size,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -583,15 +583,15 @@ class PremixedFlame(Flame):
         # get raw solution data
         npoint = c_int(npoints)
         nspecies = c_int(self.reactormixture.KK)
-        iErr = chemkin_wrapper.chemkin.KINPremix_GetSolution(
+        ierr = chemkin_wrapper.chemkin.KINPremix_GetSolution(
             npoint, nspecies, pos, temp, frac
         )
-        if iErr != 0:
+        if ierr != 0:
             msg = [
                 Color.RED,
                 "failed to fetch the raw solution data from memory,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -599,15 +599,15 @@ class PremixedFlame(Flame):
             exit()
         # get the flame mass flux [g/sec-cm2]
         massflux = c_double(0.0)
-        iErr = chemkin_wrapper.chemkin.KINPremix_GetFlameMassFlux(massflux)
-        if iErr == 0:
+        ierr = chemkin_wrapper.chemkin.KINPremix_GetFlameMassFlux(massflux)
+        if ierr == 0:
             self._final_mass_flow_rate = max(0.0, massflux.value)
         else:
             msg = [
                 Color.RED,
                 "failed to get the flame mass flux,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -621,13 +621,13 @@ class PremixedFlame(Flame):
         # species mass fractions
         self.parsespeciessolutiondata(frac)
         # create solution mixture
-        iErr = self.create_solution_streams(frac)
-        if iErr != 0:
+        ierr = self.create_solution_streams(frac)
+        if ierr != 0:
             msg = [
                 Color.PURPLE,
                 "forming solution streams",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -700,7 +700,7 @@ class PremixedFlame(Flame):
 
         Returns
         -------
-            iError: integer
+            ierror: integer
                  error code
 
         """

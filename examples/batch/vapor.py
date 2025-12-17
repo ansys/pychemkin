@@ -84,8 +84,8 @@ MyMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
 # ===================================
 
 # preprocess the mechanism file
-iError = MyMech.preprocess()
-if iError == 0:
+ierror = MyMech.preprocess()
+if ierror == 0:
     print(Color.GREEN + ">>> Preprocessing succeeded.", end=Color.END)
 else:
     print(Color.RED + ">>> Preprocessing failed.", end=Color.END)

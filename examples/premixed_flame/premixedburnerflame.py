@@ -103,10 +103,10 @@ MyGasMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="G
 # ============================
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
-if iError != 0:
+ierror = MyGasMech.preprocess()
+if ierror != 0:
     print("Error: Failed to preprocess the mechanism.")
-    print(f"       Error code = {iError}.")
+    print(f"       Error code = {ierror}.")
     exit()
 
 #######################################################################################

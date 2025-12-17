@@ -102,7 +102,7 @@ MyGasMech.preprocess_transportdata()
 # available``.
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 
 ######################################################################
 # Set up gas mixtures based on the species in the C2 NOx chemistry set

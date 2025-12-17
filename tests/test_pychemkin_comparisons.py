@@ -28,11 +28,11 @@ class TestCompareResults:
         else:
             new_working = PyCKtools.TARGET_FOLDER
         new_result_dir = os.path.join(new_working, get_result_dir)
-        iErr = PyCKtools.check_folder(new_result_dir)
-        assert iErr == 0, f"result folder {new_result_dir} not found."
+        ierr = PyCKtools.check_folder(new_result_dir)
+        assert ierr == 0, f"result folder {new_result_dir} not found."
         baseline_dir = os.path.join(get_working_dir, get_baseline_dir)
-        iErr = PyCKtools.check_folder(baseline_dir)
-        assert iErr == 0, f"baseline folder {baseline_dir} not found."
+        ierr = PyCKtools.check_folder(baseline_dir)
+        assert ierr == 0, f"baseline folder {baseline_dir} not found."
         # load the result file
         result_tag = ".result"
         baseline_tag = ".baseline"
@@ -94,16 +94,16 @@ class TestCompareResults:
                             var, state_tol, species_tol, rate_tol
                         )
                         # perform the comparison
-                        iErr, bad, diff = PyCKtools.compare_list(
+                        ierr, bad, diff = PyCKtools.compare_list(
                             r_list, b_list, atol, rtol
                         )
                         #
-                        status += iErr
-                        if iErr > 0:
+                        status += ierr
+                        if ierr > 0:
                             # there are differences out of tolerances
                             logf.write("-" * self.line_length + "\n")
                             logf.write(f"{test_name}::{var}\n")
-                            for i in range(iErr):
+                            for i in range(ierr):
                                 ID = bad[i]
                                 msg = [
                                     "index = ",
@@ -121,7 +121,7 @@ class TestCompareResults:
                                 ]
                                 logf.write(" ".join(msg))
                             logf.write("-" * self.line_length + "\n")
-                    if iErr == 0:
+                    if ierr == 0:
                         # no significant difference found
                         logf.write("-" * self.line_length + "\n")
                         logf.write("OK.\n")

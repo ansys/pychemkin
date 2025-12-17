@@ -52,7 +52,7 @@ MyGasMech = ck.Chemistry(label="Gasoline")
 # including the full file path is recommended
 MyGasMech.chemfile = os.path.join(mechanism_dir, "gasoline_14comp_WBencrypt.inp")
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 print("mechanism information:")
 print(f"number of gas species = {MyGasMech.KK:d}")
 print(f"number of gas reactions = {MyGasMech.IIGas:d}")
@@ -78,10 +78,10 @@ products = ["co2", "h2o", "n2"]
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
 # mean equivalence ratio
 equiv = 1.0
-iError = fresh.X_by_Equivalence_Ratio(
+ierror = fresh.X_by_Equivalence_Ratio(
     MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=equiv
 )
-if iError != 0:
+if ierror != 0:
     raise RuntimeError
 # list the composition of the unburned fuel-air mixture
 fresh.list_composition(mode="mole")
@@ -93,7 +93,7 @@ EGRratio = 0.3
 # compute the EGR stream composition in mole fractions
 add_frac = fresh.get_EGR_mole_fraction(EGRratio, threshold=1.0e-8)
 # recreate the initial mixture with EGR
-iError = fresh.X_by_Equivalence_Ratio(
+ierror = fresh.X_by_Equivalence_Ratio(
     MyGasMech,
     fuelmixture.X,
     air.X,

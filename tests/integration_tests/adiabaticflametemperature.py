@@ -51,7 +51,7 @@ MyGasMech = ck.Chemistry(label="GRI 3.0")
 MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
 MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 
 oxid = ck.Mixture(MyGasMech)
 # set mass fraction
@@ -79,13 +79,13 @@ T = np.zeros(points, dtype=np.double)
 equiv = np.zeros_like(T, dtype=np.double)
 
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)
-iError = 0
+ierror = 0
 for i in range(points):
     equiv_current = equiv_ini
-    iError = mixture.X_by_Equivalence_Ratio(
+    ierror = mixture.X_by_Equivalence_Ratio(
         MyGasMech, fuel.X, oxid.X, add_frac, products, equivalenceratio=equiv_current
     )
-    if iError != 0:
+    if ierror != 0:
         raise RuntimeError
     result = ck.equilibrium(mixture, opt=5)
     T[i] = result.temperature

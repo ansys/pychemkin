@@ -205,9 +205,9 @@ class perfectlystirredreactor(openreactor):
             error code: integer
 
         """
-        iErr = 0
+        ierr = 0
         # loop over all external inlets into the reactor
-        iInlet = 0
+        i_inlet = 0
         flowrate_sum = 0.0
         #
         for key, inlet in self.externalinlets.items():
@@ -223,26 +223,26 @@ class perfectlystirredreactor(openreactor):
                 msg = [Color.PURPLE, "inlet", key, "has zero flow rate", Color.END]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                iErrc = 100 + iInlet + 1
+                ierrc = 100 + i_inlet + 1
             else:
-                iInlet += 1
+                i_inlet += 1
                 # set inlet inputs
-                iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupPSRInletInputs(
+                ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupPSRInletInputs(
                     self._chemset_index,
                     self.ireac,
-                    c_int(iInlet),
+                    c_int(i_inlet),
                     c_double(flowrate),
                     c_double(T_inlet),
                     Y_inlet,
                 )
-            iErr += iErrc
+            ierr += ierrc
         # check number of external inlet
-        if iInlet == 0:
+        if i_inlet == 0:
             msg = [Color.PURPLE, "PSR has no external inlet.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            iErr += 10
-        elif iInlet != self.numbexternalinlets:
+            ierr += 10
+        elif i_inlet != self.numbexternalinlets:
             msg = [
                 Color.PURPLE,
                 "inconsistent number of external inlets.\n",
@@ -252,15 +252,15 @@ class perfectlystirredreactor(openreactor):
                 "\n",
                 Color.SPACEx6,
                 "actual number of inlets:",
-                str(iInlet),
+                str(i_inlet),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            iErr += 11
+            ierr += 11
 
         # check total mass flow rate
-        if iErr == 0:
+        if ierr == 0:
             # check total mass flow rate
             if not np.isclose(flowrate_sum, self.totalmassflowrate, atol=1.0e-6):
                 msg = [
@@ -277,8 +277,8 @@ class perfectlystirredreactor(openreactor):
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                iErr += 12
-        return iErr
+                ierr += 12
+        return ierr
 
     def set_reactor_index(self, reactorindex: int):
         """Assign the reactor index/number of the current reactor in the reactor network
@@ -429,11 +429,11 @@ class perfectlystirredreactor(openreactor):
             error code: integer
 
         """
-        iErr = 0
+        ierr = 0
         # required inputs:
         if self._numb_requiredinput <= 0:
             # no required input
-            return iErr
+            return ierr
         else:
             if len(self._inputcheck) < self._numb_requiredinput:
                 msg = [Color.PURPLE, "some required inputs are missing.", Color.END]
@@ -442,11 +442,11 @@ class perfectlystirredreactor(openreactor):
             # verify required inputs one by one
             for k in self._requiredlist:
                 if k not in self._inputcheck:
-                    iErr += 1
+                    ierr += 1
                     msg = [Color.PURPLE, "missing required input", k, Color.END]
                     this_msg = Color.SPACE.join(msg)
                     logger.error(this_msg)
-            return iErr
+            return ierr
 
     def set_SSsolver_keywords(self):
         """Add steady-state solver parameter keywoprds to the keyword list"""
@@ -464,8 +464,8 @@ class perfectlystirredreactor(openreactor):
             Error code: integer
 
         """
-        iErr = self.__process_keywords()
-        return iErr
+        ierr = self.__process_keywords()
+        return ierr
 
     def __process_keywords(self) -> int:
         """Process input keywords for the reactor model
@@ -475,23 +475,23 @@ class perfectlystirredreactor(openreactor):
             Error code: integer
 
         """
-        iErr = 0
-        iErrc = 0
+        ierr = 0
+        ierrc = 0
         err_key = 0
         err_inputs = 0
         # set_verbose(True)
         # verify required inputs
-        iErr = self.validate_inputs()
-        if iErr != 0:
+        ierr = self.validate_inputs()
+        if ierr != 0:
             msg = [Color.PURPLE, "missing required input keywords.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            return iErr
+            return ierr
         # check external inlet
         if self.numbexternalinlets <= 0 or self.totalmassflowrate <= 0.0:
             # no external inlet for an open reactor
             if self.standalone:
-                iErr = 100
+                ierr = 100
                 msg = [
                     Color.PURPLE,
                     "missing external inlet for an open reactor.",
@@ -499,13 +499,13 @@ class perfectlystirredreactor(openreactor):
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                return iErr
+                return ierr
         else:
             # set up inlets
             err_inputs = self.set_inlet_keywords()
             if err_inputs != 0:
                 print(f"error code = {err_inputs}")
-            iErr += err_inputs
+            ierr += err_inputs
         # prepare estimated reactor conditions
         # estimated reactor mass fraction
         y_init = self.reactormixture.Y
@@ -515,7 +515,7 @@ class perfectlystirredreactor(openreactor):
         bulk_init = np.zeros_like(site_init, dtype=np.double)
         # set estimated reactor conditions and geometry parameters
         if self._reactortype.value == 2:
-            iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupPSRReactorInputs(
+            ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupPSRReactorInputs(
                 self._chemset_index,
                 self.ireac,
                 self._endtime,
@@ -529,25 +529,25 @@ class perfectlystirredreactor(openreactor):
                 site_init,
                 bulk_init,
             )
-            iErr += iErrc
-            if iErrc != 0:
+            ierr += ierrc
+            if ierrc != 0:
                 msg = [
                     Color.PURPLE,
                     "failed to set up basic reactor keywords,",
                     "error code =",
-                    str(iErrc),
+                    str(ierrc),
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                return iErrc
+                return ierrc
             # heat transfer (use additional keywords)
             # solver parameters (use additional keywords)
             # output controls (use additional keywords)
             # ROP (use additional keywords)
             # sensitivity (use additional keywords)
 
-        if iErr == 0 and self._numbprofiles > 0 and self.standalone:
+        if ierr == 0 and self._numbprofiles > 0 and self.standalone:
             for p in self._profiles_list:
                 key = bytes(p.profilekey, "utf-8")
                 npoints = c_int(p.size)
@@ -556,7 +556,7 @@ class perfectlystirredreactor(openreactor):
                 err_profile = chemkin_wrapper.chemkin.KINAll0D_SetProfileParameter(
                     key, npoints, x, y
                 )
-                iErr += err_profile
+                ierr += err_profile
             if err_profile != 0:
                 msg = [
                     Color.PURPLE,
@@ -568,7 +568,7 @@ class perfectlystirredreactor(openreactor):
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
                 return err_profile
-        if iErr == 0:
+        if ierr == 0:
             # set additional keywords
             self.set_SSsolver_keywords()
             # create input lines from additional user-specified keywords
@@ -619,9 +619,9 @@ class perfectlystirredreactor(openreactor):
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
         #
-        iErr = iErr + err_inputs + err_key
+        ierr = ierr + err_inputs + err_key
 
-        return iErr
+        return ierr
 
     def __run_model(self) -> int:
         """Run the reactor model after the keywords are processed
@@ -632,8 +632,8 @@ class perfectlystirredreactor(openreactor):
 
         """
         # run the simulation without keyword inputs
-        iErr = chemkin_wrapper.chemkin.KINAll0D_Calculate(self._chemset_index)
-        return iErr
+        ierr = chemkin_wrapper.chemkin.KINAll0D_Calculate(self._chemset_index)
+        return ierr
 
     def run(self) -> int:
         """Generic Chemkin run reactor model method
@@ -651,7 +651,7 @@ class perfectlystirredreactor(openreactor):
         # activate the Chemistry set associated with the Reactor instance
         force_activate_chemistryset(self._chemset_index.value)
         #
-        iErr = chemkin_wrapper.chemkin.KINAll0D_Setup(
+        ierr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,
             self._reactortype,
             self._problemtype,
@@ -661,13 +661,13 @@ class perfectlystirredreactor(openreactor):
             self._ninlets,
             self._nzones,
         )
-        if iErr == 0:
+        if ierr == 0:
             # setup reactor model working arrays
-            iErr = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
+            ierr = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
                 self._myLOUT, self._chemset_index
             )
-            iErr *= 10
-        if iErr != 0:
+            ierr *= 10
+        if ierr != 0:
             msg = [
                 Color.PURPLE,
                 "failed to initialize the perfectly-stirred reactor model",
@@ -675,7 +675,7 @@ class perfectlystirredreactor(openreactor):
                 "\n",
                 Color.SPACEx6,
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -810,13 +810,13 @@ class perfectlystirredreactor(openreactor):
         # get raw solution data
         temp = c_double(0.0)
         pres = c_double(0.0)
-        iErr = chemkin_wrapper.chemkin.KINAll0D_GetSolution(temp, pres, frac)
-        if iErr != 0:
+        ierr = chemkin_wrapper.chemkin.KINAll0D_GetSolution(temp, pres, frac)
+        if ierr != 0:
             msg = [
                 Color.RED,
                 "failed to fetch the raw solution data from memory,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -837,8 +837,8 @@ class perfectlystirredreactor(openreactor):
             smixture.X = frac
         # get reactor outlet mass flow rate [g/sec]
         exitmassflowrate = c_double(0.0)
-        iErr = chemkin_wrapper.chemkin.KINAll0D_GetExitMassFlowRate(exitmassflowrate)
-        if iErr == 0:
+        ierr = chemkin_wrapper.chemkin.KINAll0D_GetExitMassFlowRate(exitmassflowrate)
+        if ierr == 0:
             smixture.mass_flowrate = max(0.0, exitmassflowrate.value)
         else:
             smixture.mass_flowrate = 0.0
@@ -846,7 +846,7 @@ class perfectlystirredreactor(openreactor):
                 Color.RED,
                 "failed to get the total outlet mass flow rate,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)

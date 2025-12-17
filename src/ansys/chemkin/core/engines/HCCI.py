@@ -124,7 +124,7 @@ class HCCIengine(Engine):
         # profile points
         self._profilesize = int(0)
         # set up basic HCCI engine model parameters
-        iErr = chemkin_wrapper.chemkin.KINAll0D_Setup(
+        ierr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,
             self._reactortype,
             self._problemtype,
@@ -134,13 +134,13 @@ class HCCIengine(Engine):
             self._ninlets,
             self._nzones,
         )
-        if iErr == 0:
+        if ierr == 0:
             # setup HCCI engine model working arrays
-            iErr = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
+            ierr = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
                 self._myLOUT, self._chemset_index
             )
-            iErr *= 10
-        if iErr != 0:
+            ierr *= 10
+        if ierr != 0:
             msg = [
                 Color.RED,
                 "failed to initialize the HCCI engine model",
@@ -148,7 +148,7 @@ class HCCIengine(Engine):
                 "\n",
                 Color.SPACEx6,
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -848,16 +848,16 @@ class HCCIengine(Engine):
             Error code: integer
 
         """
-        iErr = 0
+        ierr = 0
         err_profile = 0
         set_verbose(True)
         # verify required inputs
-        iErr = self.validate_inputs()
-        if iErr != 0:
+        ierr = self.validate_inputs()
+        if ierr != 0:
             msg = [Color.PURPLE, "missing required input keywords", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            return iErr
+            return ierr
         # re-size work arrays if profile is used
         if self._numbprofiles > 0:
             # find total profile data points
@@ -867,14 +867,14 @@ class HCCIengine(Engine):
             if numbprofilepoints > 0:
                 # re-size work arrays
                 ipoints = c_int(numbprofilepoints)
-                iErrc = chemkin_wrapper.chemkin.KINAll0D_SetProfilePoints(ipoints)
+                ierrc = chemkin_wrapper.chemkin.KINAll0D_SetProfilePoints(ipoints)
                 # setup reactor model working arrays
-                if iErrc == 0:
-                    iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
+                if ierrc == 0:
+                    ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
                         self._myLOUT, self._chemset_index
                     )
-                iErr += iErrc
-        if iErr != 0:
+                ierr += ierrc
+        if ierr != 0:
             msg = [
                 Color.PURPLE,
                 "failed to set up profile keywords,",
@@ -884,7 +884,7 @@ class HCCIengine(Engine):
             ]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            return iErr
+            return ierr
         # prepare initial conditions
         # initial mass fraction
         y_init = self.reactormixture.Y
@@ -892,7 +892,7 @@ class HCCIengine(Engine):
         lolr = c_double(self.connectrodlength / self.crankradius)
         # set reactor initial conditions and geometry parameters
         if self._reactortype.value == self.ReactorTypes.get("HCCI"):
-            iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupHCCIInputs(
+            ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupHCCIInputs(
                 self._chemset_index,
                 c_double(self.IVCCA),
                 c_double(self.EVOCA),
@@ -906,10 +906,10 @@ class HCCIengine(Engine):
                 self._heat_loss_rate,
                 y_init,
             )
-            iErr += iErrc
-            if iErrc != 0:
+            ierr += ierrc
+            if ierrc != 0:
                 logger.error("failed to set up basic reactor keywords")
-                return iErrc
+                return ierrc
 
         # set reactor type
         self.set_reactortype_keywords()
@@ -963,10 +963,10 @@ class HCCIengine(Engine):
                 # non-uniform zonal properties with zonal equivalence ratios provided
                 self.set_zonal_equivalence_ratio_keywords()
         #
-        if iErr == 0 and self._numbprofiles > 0:
+        if ierr == 0 and self._numbprofiles > 0:
             # get keyword lines of all profiles
             err_profile, nproflines, prof_lines = self.createprofileinputlines()
-            iErr += err_profile
+            ierr += err_profile
             if err_profile == 0:
                 # set the profile keywords
                 for pkey in prof_lines:
@@ -988,8 +988,8 @@ class HCCIengine(Engine):
         # add the END keyword
         self.setkeyword(key="END", value=True)
         # create input lines from additional user-specified keywords
-        iErr, nlines = self.createkeywordinputlines()
-        if iErr == 0:
+        ierr, nlines = self.createkeywordinputlines()
+        if ierr == 0:
             if verbose():
                 msg = [
                     Color.YELLOW,
@@ -1008,7 +1008,7 @@ class HCCIengine(Engine):
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
 
-        return iErr
+        return ierr
 
     def __run_model_withFullInputs(self) -> int:
         """Run the HCCI engine model after the keywords are processed under the Full-Keyword mode
@@ -1030,21 +1030,21 @@ class HCCIengine(Engine):
         line_length = np.zeros(shape=self._numblines, dtype=np.int32)
         line_length[:] = self._linelength[:]
         # run the simulation with keyword inputs
-        iErr = chemkin_wrapper.chemkin.KINAll0D_CalculateInput(
+        ierr = chemkin_wrapper.chemkin.KINAll0D_CalculateInput(
             self._myLOUT, self._chemset_index, long_line, nlines, line_length
         )
-        if iErr != 0:
+        if ierr != 0:
             msg = [
                 Color.PURPLE,
                 "failed to set up reactor keywords in Full mode,",
                 "error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
 
-        return iErr
+        return ierr
 
     def __process_keywords(self) -> int:
         """Process input keywords for the HCCI engine model
@@ -1054,18 +1054,18 @@ class HCCIengine(Engine):
             Error code: integer
 
         """
-        iErr = 0
-        iErrc = 0
+        ierr = 0
+        ierrc = 0
         err_key = 0
         err_inputs = 0
         # set_verbose(True)
         # verify required inputs
-        iErr = self.validate_inputs()
-        if iErr != 0:
+        ierr = self.validate_inputs()
+        if ierr != 0:
             msg = [Color.PURPLE, "missing required input keywords", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            return iErr
+            return ierr
         # re-size work arrays if profile is used
         if self._numbprofiles > 0:
             # find total profile data points
@@ -1076,23 +1076,23 @@ class HCCIengine(Engine):
                 # re-size work arrays
                 self._profilesize = numbprofilepoints
                 ipoints = c_int(numbprofilepoints)
-                iErrc = chemkin_wrapper.chemkin.KINAll0D_SetProfilePoints(ipoints)
+                ierrc = chemkin_wrapper.chemkin.KINAll0D_SetProfilePoints(ipoints)
                 # setup reactor model working arrays
-                if iErrc == 0:
-                    iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
+                if ierrc == 0:
+                    ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
                         self._myLOUT, self._chemset_index
                     )
-                iErr += iErrc
-        if iErr != 0:
+                ierr += ierrc
+        if ierr != 0:
             msg = [
                 Color.PURPLE,
                 "profile data generation error, error code =",
-                str(iErr),
+                str(ierr),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            return iErr
+            return ierr
         # prepare initial conditions
         # initial mass fraction
         y_init = self.reactormixture.Y
@@ -1100,7 +1100,7 @@ class HCCIengine(Engine):
         lolr = c_double(self.connectrodlength / self.crankradius)
         # set reactor initial conditions and geometry parameters
         if self._reactortype.value == self.ReactorTypes.get("HCCI"):
-            iErrc = chemkin_wrapper.chemkin.KINAll0D_SetupHCCIInputs(
+            ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupHCCIInputs(
                 self._chemset_index,
                 c_double(self.IVCCA),
                 c_double(self.EVOCA),
@@ -1114,18 +1114,18 @@ class HCCIengine(Engine):
                 self._heat_loss_rate,
                 y_init,
             )
-            iErr += iErrc
-            if iErrc != 0:
+            ierr += ierrc
+            if ierrc != 0:
                 msg = [
                     Color.PURPLE,
                     "failed to set up basic reactor keywords,",
                     "error code =",
-                    str(iErrc),
+                    str(ierrc),
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                return iErrc
+                return ierrc
             # heat transfer (use additional keywords)
             # solver parameters (use additional keywords)
             # output controls (use additional keywords)
@@ -1133,25 +1133,25 @@ class HCCIengine(Engine):
             # sensitivity (use additional keywords)
             # ignition delay (use additional keywords)
             # solve integrated heat release rate due to chemical reactions
-            iErrc = chemkin_wrapper.chemkin.KINAll0D_IntegrateHeatRelease()
-            iErr += iErrc
-            if iErrc != 0:
+            ierrc = chemkin_wrapper.chemkin.KINAll0D_IntegrateHeatRelease()
+            ierr += ierrc
+            if ierrc != 0:
                 msg = [
                     Color.PURPLE,
                     "failed to set up heat release keyword,",
                     "error code =",
-                    str(iErrc),
+                    str(ierrc),
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                return iErrc
+                return ierrc
 
         # check if the wall heat transfer model is set up
-        if iErr == 0 and self._wallheattransfer:
+        if ierr == 0 and self._wallheattransfer:
             self.set_heat_transfer_keywords()
         #
-        if iErr == 0 and self._numbprofiles > 0:
+        if ierr == 0 and self._numbprofiles > 0:
             for p in self._profiles_list:
                 key = bytes(p.profilekey, "utf-8")
                 npoints = c_int(p.size)
@@ -1160,7 +1160,7 @@ class HCCIengine(Engine):
                 err_profile = chemkin_wrapper.chemkin.KINAll0D_SetProfileParameter(
                     key, npoints, x, y
                 )
-                iErr += err_profile
+                ierr += err_profile
             if err_profile != 0:
                 msg = [
                     Color.PURPLE,
@@ -1172,7 +1172,7 @@ class HCCIengine(Engine):
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
                 return err_profile
-        if iErr == 0:
+        if ierr == 0:
             # set additional keywords
             # create input lines from additional user-specified keywords
             err_inputs, nlines = self.createkeywordinputlines()
@@ -1213,9 +1213,9 @@ class HCCIengine(Engine):
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
         #
-        iErr = iErr + err_inputs + err_key
+        ierr = ierr + err_inputs + err_key
 
-        return iErr
+        return ierr
 
     def __run_model(self) -> int:
         """Run the HCCI engine model after the keywords are processed
@@ -1226,8 +1226,8 @@ class HCCIengine(Engine):
 
         """
         # run the simulation without keyword inputs
-        iErr = chemkin_wrapper.chemkin.KINAll0D_Calculate(self._chemset_index)
-        return iErr
+        ierr = chemkin_wrapper.chemkin.KINAll0D_Calculate(self._chemset_index)
+        return ierr
 
     def run(self) -> int:
         """Generic Chemkin run HCCI engine model method

@@ -101,7 +101,7 @@ MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
 # ============================
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 
 ################################################################
 # Set up gas mixtures based on the species in this chemistry set

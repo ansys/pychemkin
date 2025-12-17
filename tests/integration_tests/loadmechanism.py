@@ -33,8 +33,9 @@ pre-processed. The mechanism data consist of *a reaction mechanism input file*,
 This example demonstartes the steps to instantiate and pre-process a ``Chemistry Set``
 object which is always the first task in running any PyChemkin simulations.
 
-PyChemkin allows several ``Chemistry Set`` objects to coexist in the same Python project;
-however, only one ``Chemistry Set`` object is active at a time.
+PyChemkin allows several ``Chemistry Set`` objects to coexist in
+the same Python project; however, only one ``Chemistry Set`` object
+is active at a time.
 """
 
 #################################################
@@ -85,14 +86,15 @@ MyGasMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="G
 # =================================
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 
 # display the pre-process status
 print()
-if iError != 0:
+if ierror != 0:
     # When a non-zero value is returned from the process, check the text output files
-    # chem.out, tran.out, or summary.out for potential error messages about the mechanism data.
-    print(f"Preprocessing error encountered. Code = {iError:d}.")
+    # chem.out, tran.out, or summary.out for potential error messages about
+    # the mechanism data.
+    print(f"Preprocessing error encountered. Code = {ierror:d}.")
     print(f"see the summary file {MyGasMech.summaryfile} for details")
     exit()
 else:
@@ -133,18 +135,21 @@ print("=" * 50)
 ##################################################################
 # Create the second ``Chemistry Set`` instance in the same project
 # ================================================================
-# The second mechanism to be loaded into the project is the C2-NOx mechanism for
-# the combustion of C1-C2 hydrocarbons. This mechanism differs from the GRI mechanism
-# in the sense that it is self-contained, that is, the thermodynamic and the transport data
-# of all species are included in the mechanism input file C2_NOx_SRK.inp which sits in
-# the same reaction data directory as the GRI mechanism input files.
+# The second mechanism to be loaded into the project is the C2-NOx mechanism
+# for the combustion of C1-C2 hydrocarbons. This mechanism differs from
+# the GRI mechanism in the sense that it is self-contained, that is,
+# the thermodynamic and the transport data of all species are included
+# in the mechanism input file C2_NOx_SRK.inp which sits in the same
+# reaction data directory as the GRI mechanism input files.
 #
-# The same steps to instantiate the first ``Chemistry Set`` object can be applied to
-# process any set of reaction mechanism files. Here, slightly different procedures are
-# employed to instantiate the second ``Chemistry Set`` object. The object is first created,
-# and the reaction mechanism files are specified one by one afterwards. The reaction mechanism
-# file in this case contains all the necessary thermodynamic and transport data, therefore
-# no need to specify the therm and the tran data files. Note that, an additional step is
+# The same steps to instantiate the first ``Chemistry Set`` object can be
+# applied to process any set of reaction mechanism files. Here,
+# slightly different procedures are employed to instantiate the second
+# ``Chemistry Set`` object. The object is first created, and
+# the reaction mechanism files are specified one by one afterwards.
+# The reaction mechanism file in this case contains all the necessary
+# thermodynamic and transport data, therefore no need to specify
+# the therm and the tran data files. Note that, an additional step is
 # required to instruct the pre-processor to include the transport data.
 
 
@@ -169,14 +174,15 @@ My2ndMech.preprocess_transportdata()
 # ========================================
 
 # preprocess the 2nd mechanism files
-iError = My2ndMech.preprocess()
+ierror = My2ndMech.preprocess()
 
 # display the pre-process status
 print()
-if iError != 0:
+if ierror != 0:
     # When a non-zero value is returned from the process, check the text output files
-    # chem.out, tran.out, or summary.out for potential error messages about the mechanism data.
-    print(f"Preprocessing error encountered. Code = {iError:d}.")
+    # chem.out, tran.out, or summary.out for potential error messages about
+    # the mechanism data.
+    print(f"Preprocessing error encountered. Code = {ierror:d}.")
     print(f"see the summary file {My2ndMech.summaryfile} for details")
     exit()
 else:

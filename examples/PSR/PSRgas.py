@@ -116,7 +116,7 @@ MyGasMech.chemfile = find_file(
 # =====================================
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 
 #####################################
 # Set up the H\ :sub:`2`\ -air stream
@@ -156,11 +156,11 @@ products = ["h2o", "n2"]
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
 # mean equivalence ratio
 equiv = 1.0
-iError = feed.X_by_Equivalence_Ratio(
+ierror = feed.X_by_Equivalence_Ratio(
     MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=equiv
 )
 # check fuel-oxidizer mixture creation status
-if iError != 0:
+if ierror != 0:
     print("Error: Failed to create the fuel-oxidizer mixture.")
     exit()
 
@@ -270,11 +270,11 @@ for i in range(numbruns):
     tempSSsolution[i] = solnmixture.temperature
     # update inlet gas equivalence ratio (composition)
     equiv += deltaequiv
-    iError = feed.X_by_Equivalence_Ratio(
+    ierror = feed.X_by_Equivalence_Ratio(
         MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=equiv
     )
     # check fuel-oxidizer mixture creation status
-    if iError != 0:
+    if ierror != 0:
         print(f"Error encountered with inlet equivalence ratio = {equiv}.")
         exit()
 

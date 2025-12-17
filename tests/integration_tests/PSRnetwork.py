@@ -122,7 +122,7 @@ MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 # ==========================================
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 
 ####################################################################
 # Set up gas mixtures based on the species in this ``Chemistry Set``
@@ -170,11 +170,11 @@ add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
 premixed = Stream(MyGasMech)
 # mean equivalence ratio
 equiv = 0.6
-iError = premixed.X_by_Equivalence_Ratio(
+ierror = premixed.X_by_Equivalence_Ratio(
     MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=equiv
 )
 # check fuel-oxidizer mixture creation status
-if iError != 0:
+if ierror != 0:
     print("Error: Failed to create the fuel-oxidizer mixture.")
     exit()
 

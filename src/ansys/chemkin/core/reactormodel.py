@@ -127,7 +127,7 @@ class Keyword:
 
         """
         self._set = False
-        iErr = 0
+        ierr = 0
         # check value data type
         if data_type not in Keyword._keyworddatatypes:
             # the declared data type is not supported
@@ -149,7 +149,7 @@ class Keyword:
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-            iErr = 1
+            ierr = 1
         # block the protected keywords
         if Keyword.noFullKeyword:
             if phrase.upper() in Keyword._protectedkeywords:
@@ -165,8 +165,8 @@ class Keyword:
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                iErr = 2
-        if iErr > 0:
+                ierr = 2
+        if ierr > 0:
             return
         self._key = phrase.upper()  # Chemkin keyword phrase
         self._value = value  # value assigned to the keyword
@@ -668,8 +668,8 @@ class ReactorModel:
         # check mixture
         if isinstance(reactor_condition, (Mixture, Stream)):
             # if a Mixture/Stream object is passed in , verify the Mixture/Stream
-            iErr = reactor_condition.validate()
-            if iErr != 0:
+            ierr = reactor_condition.validate()
+            if ierr != 0:
                 msg = [Color.PURPLE, "the mixture is not fully defined.", Color.END]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
@@ -776,15 +776,15 @@ class ReactorModel:
             ]
             this_msg = Color.SPACE.join(msg)
             logger.info(this_msg)
-            iErr = chemkin_wrapper.chemkin.KINInitialize(self._chemset_index, c_int(0))
-            if iErr == 0:
+            ierr = chemkin_wrapper.chemkin.KINInitialize(self._chemset_index, c_int(0))
+            if ierr == 0:
                 chemistryset_initialized(self._chemset_index.value)
             else:
                 msg = [
                     Color.RED,
                     "Chemkin-CFD-API initialization failed;",
                     "code =",
-                    str(iErr),
+                    str(ierr),
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
@@ -970,8 +970,8 @@ class ReactorModel:
             for line in self._keyword_lines:
                 print(line)
             print("=" * 40)
-        iErr = self._numbkeywords - self._numblines
-        return iErr, self._numblines
+        ierr = self._numbkeywords - self._numblines
+        return ierr, self._numblines
 
     def showkeywordinputlines_with_tag(self, tag: str = ""):
         """List all currently-defined keywords, their parameters, and an
@@ -1030,8 +1030,8 @@ class ReactorModel:
             for line in self._keyword_lines:
                 print(line)
             print("=" * 40)
-        iErr = self._numbkeywords - self._numblines
-        return iErr, self._numblines
+        ierr = self._numbkeywords - self._numblines
+        return ierr, self._numblines
 
     def __findprofileslot(self, key: str) -> tuple[int, bool]:
         """Find the proper index in the global profile list either to add a new profile or to modify the existing profile parameter
@@ -1079,7 +1079,7 @@ class ReactorModel:
 
         """
         #
-        iErr = 0
+        ierr = 0
         # find the keyword
         i, newprofile = self.__findprofileslot(key.upper())
         # add the profile to the profiles index list
@@ -1102,7 +1102,7 @@ class ReactorModel:
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                iErr = status
+                ierr = status
         else:
             # an existing keyword, just update its value
             xsize = len(x)
@@ -1124,8 +1124,8 @@ class ReactorModel:
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                iErr = 1
-        return iErr
+                ierr = 1
+        return ierr
 
     def createprofileinputlines(self) -> tuple[int, int, list[str]]:
         """Create profile keyword input lines for Chemkin applications
@@ -1161,8 +1161,8 @@ class ReactorModel:
                 print("=" * 40)
         # lines: list of strings of a profile ['VPRO x1 v1', 'VPRO x2 v2', ...]
         # keyword_lines: list of lines:  [['VPRO x1 v1', 'VPRO x2 v2', ...], ['PPRO x1 p1', 'PPRO x2 p2', ..] , ... ]
-        iErr: int = numbprofiles - self._numbprofiles
-        return iErr, numblines, keyword_lines
+        ierr: int = numbprofiles - self._numbprofiles
+        return ierr, numblines, keyword_lines
 
     def createspeciesinputlines(
         self,
@@ -1636,15 +1636,15 @@ class ReactorModel:
         # reset the real gas flag
         if not mode:
             # switch to the ideal gas law
-            iErr = chemkin_wrapper.chemkin.KINRealGas_UseIdealGasLaw(
+            ierr = chemkin_wrapper.chemkin.KINRealGas_UseIdealGasLaw(
                 self._chemset_index, c_int(0)
             )
-            if iErr != 0:
+            if ierr != 0:
                 msg = [
                     Color.PURPLE,
                     "failed to turn OFF the real-gas EOS model,",
                     "error code =",
-                    str(iErr),
+                    str(ierr),
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
@@ -1752,8 +1752,8 @@ class ReactorModel:
 
         """
         # a shell method to be overridden by child classes
-        iErr = 0
-        return iErr
+        ierr = 0
+        return ierr
 
     def __run_model(self) -> int:
         """Simulation execution procedures specific to a particular Chemkin reactor model
@@ -1765,8 +1765,8 @@ class ReactorModel:
 
         """
         # a shell method to be overridden by child classes
-        iErr = 0
-        return iErr
+        ierr = 0
+        return ierr
 
     def run(self) -> int:
         """Generic Chemkin run reactor model method

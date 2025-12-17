@@ -27,10 +27,10 @@ class TestClassBasic:
             PyCKtools.init_test_status()
             TestClassBasic.fresh = False
         # run the basic test cases
-        iErr = PyCKtools.run_test(
+        ierr = PyCKtools.run_test(
             get_working_dir, get_source_dir, get_result_dir, test_file
         )
-        assert 0 == iErr, "run failed."
+        assert 0 == ierr, "run failed."
 
 
 @pytest.mark.group("utilities", "all")
@@ -62,10 +62,10 @@ class TestClassUtilities:
         self, get_working_dir, get_source_dir, get_result_dir, test_file
     ):
         """Run the selected pychemin utility test cases."""
-        iErr = PyCKtools.run_test(
+        ierr = PyCKtools.run_test(
             get_working_dir, get_source_dir, get_result_dir, test_file
         )
-        assert 0 == iErr, "run failed."
+        assert 0 == ierr, "run failed."
 
 
 @pytest.mark.group("equilibrium", "all")
@@ -93,10 +93,10 @@ class TestClassEquilibrium:
         self, get_working_dir, get_source_dir, get_result_dir, test_file
     ):
         """Run the selected pychemin equilibrium utility test cases."""
-        iErr = PyCKtools.run_test(
+        ierr = PyCKtools.run_test(
             get_working_dir, get_source_dir, get_result_dir, test_file
         )
-        assert 0 == iErr, "run failed."
+        assert 0 == ierr, "run failed."
 
 
 @pytest.mark.group("batch", "all")
@@ -120,10 +120,10 @@ class TestClassBatch:
     @pytest.mark.parametrize("test_file", batch_list)
     def test_batch(self, get_working_dir, get_source_dir, get_result_dir, test_file):
         """Run the selected pychemin batch reactor test cases."""
-        iErr = PyCKtools.run_test(
+        ierr = PyCKtools.run_test(
             get_working_dir, get_source_dir, get_result_dir, test_file
         )
-        assert 0 == iErr, "run failed."
+        assert 0 == ierr, "run failed."
 
 
 @pytest.mark.group("engine", "all")
@@ -145,10 +145,10 @@ class TestClassEngine:
     @pytest.mark.parametrize("test_file", engine_list)
     def test_engine(self, get_working_dir, get_source_dir, get_result_dir, test_file):
         """Run the selected pychemin engine model test cases."""
-        iErr = PyCKtools.run_test(
+        ierr = PyCKtools.run_test(
             get_working_dir, get_source_dir, get_result_dir, test_file
         )
-        assert 0 == iErr, "run failed."
+        assert 0 == ierr, "run failed."
 
 
 @pytest.mark.group("PFR", "all")
@@ -164,12 +164,14 @@ class TestClassPFR:
     PFR_list = ["plugflow"]
 
     @pytest.mark.parametrize("test_file", PFR_list)
-    def test_engine(self, get_working_dir, get_source_dir, get_result_dir, test_file):
+    def test_plug_flow_reactor(
+        self, get_working_dir, get_source_dir, get_result_dir, test_file
+    ):
         """Run the selected pychemin PFR model test case."""
-        iErr = PyCKtools.run_test(
+        ierr = PyCKtools.run_test(
             get_working_dir, get_source_dir, get_result_dir, test_file
         )
-        assert 0 == iErr, "run failed."
+        assert 0 == ierr, "run failed."
 
 
 @pytest.mark.group("PSR", "all")
@@ -185,12 +187,14 @@ class TestClassPSR:
     PSR_list = ["PSRgas", "jetstirredreactor", "multi-inletPSR", "PSRChain_declustered"]
 
     @pytest.mark.parametrize("test_file", PSR_list)
-    def test_engine(self, get_working_dir, get_source_dir, get_result_dir, test_file):
+    def test_perfectly_stirred_reactor(
+        self, get_working_dir, get_source_dir, get_result_dir, test_file
+    ):
         """Run the selected pychemin PSR model test cases."""
-        iErr = PyCKtools.run_test(
+        ierr = PyCKtools.run_test(
             get_working_dir, get_source_dir, get_result_dir, test_file
         )
-        assert 0 == iErr, "run failed."
+        assert 0 == ierr, "run failed."
 
 
 @pytest.mark.group("ERN", "all")
@@ -206,9 +210,11 @@ class TestClassERN:
     PSR_list = ["PSRChain_network", "PSRnetwork"]
 
     @pytest.mark.parametrize("test_file", PSR_list)
-    def test_engine(self, get_working_dir, get_source_dir, get_result_dir, test_file):
+    def test_reactor_network(
+        self, get_working_dir, get_source_dir, get_result_dir, test_file
+    ):
         """Run the selected pychemin ERN model test cases."""
-        iErr = PyCKtools.run_test(
+        ierr = PyCKtools.run_test(
             get_working_dir, get_source_dir, get_result_dir, test_file
         )
-        assert 0 == iErr, "run failed."
+        assert 0 == ierr, "run failed."
