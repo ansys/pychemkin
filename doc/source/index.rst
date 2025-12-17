@@ -58,9 +58,9 @@ PyChemkin provides Pythonic access to the Ansys Chemkin API for CFD (computation
        :hidden:
        :maxdepth: 3
 
-       getting_started
-       user_guide
-       API reference <autoapi/index.rst>
-       Examples <auto_examples/index.rst>
+       getting-started
+       user-guide
+       api/index
+       examples
        contributing
-
+       changelog
