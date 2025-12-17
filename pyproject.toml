@@ -21,9 +21,9 @@ classifiers = [
     "Natural Language :: English",
 ]
 dependencies = [
+    "matplotlib>=3.10.8",
     "numpy>=1.14.0,<3.0.0",
     "pyyaml>=6.0",
-    "matplotlib>=3.10.8",
 ]
 
 
@@ -41,32 +41,43 @@ tests = [
 ]
 
 doc = [
+    "Pillow==11.3.0",
+    "PyGitHub==2.8.1",
     "ansys-sphinx-theme==1.0.11",
-    "sphinx-autoapi==3.6.1",
-    "matplotlib==3.9.4",
     "jupytext==1.18.1",
-    "notebook==7.5.0",
+    "matplotlib==3.9.4",
     "nbsphinx==0.9.8",
+    "notebook==7.5.0",
     "numpydoc==1.9.0",
     "pandas==2.3.3",
     "pandoc==2.4.0",
-    "Pillow==11.3.0",
-    "PyGitHub==2.8.1",
     "pyvista==0.46.4",
     "requests==2.32.5",
+    "sphinx-autoapi==3.6.1",
     "sphinx-copybutton==0.5.2",
     "sphinx-design==0.6.1",
     "sphinx-gallery==0.19.0",
     "sphinx-jinja==2.0.2",
     "sphinx-notfound-page==1.1.0",
 ]
+tests = [
+    "dill==0.4.0",
+    "docker==7.1.0",
+    "pygltflib==1.16.5",
+    "pytest-cov==7.0.0",
+    "pytest-mock==3.15.1",
+    "pytest==8.4.2",
+    "requests==2.32.5",
+    "urllib3==2.6.0",
+    "usd-core==25.11",
+]
 
 [project.urls]
-Source = "https://github.com/ansys/pychemkin"
-Issues = "https://github.com/ansys/pychemkin/issues"
 Discussions = "https://github.com/ansys/pychemkin/discussions"
 Documentation = "https://chemkin.docs.pyansys.com/"
+Issues = "https://github.com/ansys/pychemkin/issues"
 Releases = "https://github.com/ansys/pychemkin/releases/"
+Source = "https://github.com/ansys/pychemkin"
 
 [tool.flit.module]
 name = "ansys.chemkin.core"
@@ -101,8 +112,8 @@ directory = "doc/source/changelog"
 filename = "doc/source/changelog.rst"
 start_string = ".. towncrier release notes start\n"
 template = "doc/source/changelog/template"
-title_format = "`{version} <https://github.com/ansys/pystk/releases/tag/v{version}>`_ - {project_date}"
-issue_format = "`#{issue} <https://github.com/ansys/pystk/pull/{issue}>`_"
+title_format = "`{version} <https://github.com/ansys/pychemkin/releases/tag/v{version}>`_ - {project_date}"
+issue_format = "`#{issue} <https://github.com/ansys/pychemkin/pull/{issue}>`_"
 
 [[tool.towncrier.type]]
 directory = "added"
