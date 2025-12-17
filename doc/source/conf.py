@@ -138,3 +138,9 @@ jinja_contexts = {
         "add_windows_warnings": True,
     },
 }
+
+# -- Lincheck configuration --------------------------------------------------
+linkcheck_ignore = [
+    r"https://ansys.com/*",
+    r"https://ansyshelp.ansys.com/*",
+]
