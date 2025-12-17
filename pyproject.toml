@@ -27,19 +27,7 @@ dependencies = [
 ]
 
 
-[project.optional-dependencies]
-tests = [
-    "pytest==8.4.2",
-    "pytest-cov==7.0.0",
-    "dill==0.4.0",
-    "pytest-mock==3.15.1",
-    "urllib3==2.6.2",
-    "requests==2.32.5",
-    "docker==7.1.0",
-    "usd-core==25.11",
-    "pygltflib==1.16.5",
-]
-
+[dependency-groups]
 doc = [
     "Pillow==11.3.0",
     "PyGitHub==2.8.1",
