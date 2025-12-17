@@ -53,14 +53,14 @@ air.temperature = 300.0
 # mixture composition in mole fractions
 air.X = [("O2", 0.21), ("N2", 0.79)]
 #
-print(f"pressure    = {air.pressure/ansys.chemkin.P_ATM} [atm]")
+print(f"pressure    = {air.pressure / ansys.chemkin.P_ATM} [atm]")
 print(f"temperature = {air.temperature} [K]")
 # print the 'air' composition in mass fractions
 air.list_composition(mode="mass")
 # get 'air' mixture density [g/cm3]
 print(f"the mixture density   = {air.RHO} [g/cm3]")
 # get 'air' mixture viscosity [g/cm-sec] or [poise]
-print(f"the mixture viscosity = {air.mixture_viscosity()*100.0} [cP]")
+print(f"the mixture viscosity = {air.mixture_viscosity() * 100.0} [cP]")
 
 # return results for comparisons
 current_dir = os.getcwd()

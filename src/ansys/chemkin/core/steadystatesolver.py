@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Chemkin steady-state solver controlling parameters.
-"""
+"""Chemkin steady-state solver controlling parameters."""
 
 from typing import Union
 
@@ -33,8 +32,7 @@ from ansys.chemkin.core.reactormodel import Keyword
 
 
 class SteadyStateSolver:
-    """Common steady-state solver controlling parameters
-    """
+    """Common steady-state solver controlling parameters"""
 
     def __init__(self):
         # steady-state solver control parameter class

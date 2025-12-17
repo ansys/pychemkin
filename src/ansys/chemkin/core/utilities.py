@@ -20,8 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""pychemkin utilities
-"""
+"""pychemkin utilities"""
+
 import os
 import re
 import secrets

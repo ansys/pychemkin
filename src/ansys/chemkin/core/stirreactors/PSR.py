@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Perfectly stirred reactor (PSR) model
-"""
+"""Perfectly stirred reactor (PSR) model"""
 
 import copy
 from ctypes import c_double, c_int
@@ -46,8 +45,7 @@ from ansys.chemkin.core.stirreactors.openreactor import openreactor
 
 
 class perfectlystirredreactor(openreactor):
-    """Generic perfectly-stirred reactor model
-    """
+    """Generic perfectly-stirred reactor model"""
 
     def __init__(self, guessedmixture: Stream, label: Union[str, None] = None):
         """Initialize a steady-state constant pressure perfectly-stirred reactor (PSR) object
@@ -451,8 +449,7 @@ class perfectlystirredreactor(openreactor):
             return iErr
 
     def set_SSsolver_keywords(self):
-        """Add steady-state solver parameter keywoprds to the keyword list
-        """
+        """Add steady-state solver parameter keywoprds to the keyword list"""
         # steady-state solver parameter given
         if len(self.SSsolverkeywords) > 0:
             #

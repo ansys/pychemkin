@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Plug Flow Reactor (PFR) model.
-"""
+"""Plug Flow Reactor (PFR) model."""
 
 import copy
 from ctypes import c_double, c_int
@@ -44,8 +43,7 @@ from ansys.chemkin.core.reactormodel import Keyword
 
 
 class PlugFlowReactor(BatchReactors):
-    """Generic Plug Flow Reactor (PFR) model with energy equation
-    """
+    """Generic Plug Flow Reactor (PFR) model with energy equation"""
 
     def __init__(self, inlet: Stream, label: str = "PFR"):
         """Initialize a generic PFR object
@@ -727,8 +725,7 @@ class PlugFlowReactor(BatchReactors):
 
 
 class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
-    """Plug Flow Reactor (PFR) model with energy equation
-    """
+    """Plug Flow Reactor (PFR) model with energy equation"""
 
     def __init__(self, inlet, label: str = "PFR"):
         """Initialize a PFR object that solves the Energy Equation
@@ -979,8 +976,7 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
 
 
 class PlugFlowReactor_FixedTemperature(PlugFlowReactor):
-    """Plug Flow Reactor (PFR) model with given temperature
-    """
+    """Plug Flow Reactor (PFR) model with given temperature"""
 
     def __init__(self, inlet, label: str = "PFR"):
         """Initialize a PFR object with given temperature profile along the length pf the reactor

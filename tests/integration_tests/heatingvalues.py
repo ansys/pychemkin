@@ -219,7 +219,9 @@ for f in fuels:
     fuelcount += 1
 
 # display results
-print(f"Fuel Heating Values at {thistemperature} [K] and {thispressure*1.0e-6} [bar]\n")
+print(
+    f"Fuel Heating Values at {thistemperature} [K] and {thispressure * 1.0e-6} [bar]\n"
+)
 for i in range(len(fuels)):
     print(f"fuel composition:  {fuels[i]}")
     print(f" LHV [kJ/g-fuel]:  {LHV[i] / ck.ERGS_PER_JOULE / 1.0e3}")

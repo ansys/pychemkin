@@ -1,5 +1,5 @@
-"""Additional tools for running PyChemkin tests.
-"""
+"""Additional tools for running PyChemkin tests."""
+
 import ast
 import glob
 import os
@@ -14,16 +14,14 @@ class PyCKtools:
     TARGET_FOLDER = ""
 
     def check_folder(thisfolder):
-        """Verify the given folder exists.
-        """
+        """Verify the given folder exists."""
         if not os.path.exists(thisfolder):
             print(f"Error: folder {thisfolder} does not exist.")
             return 1
         return 0
 
     def create_folder(newfolder):
-        """Create or clean up a folder.
-        """
+        """Create or clean up a folder."""
         if os.path.exists(newfolder):
             # delete any existing files in this target folder
             print(f"Warning: All files in folder {newfolder:s} will be deleted")
@@ -165,13 +163,11 @@ class PyCKtools:
         return PyCK_result
 
     def check_list_size(list1: list, list2: list, expected_diff: int = 0) -> bool:
-        """Verify that the two lists are of the same size.
-        """
+        """Verify that the two lists are of the same size."""
         return abs(len(list1) - len(list2)) == expected_diff
 
     def get_file_names(folder_path):
-        """Get a list of all file names in the specified folder.
-        """
+        """Get a list of all file names in the specified folder."""
         file_names = []
         for entry in os.scandir(folder_path):
             if entry.is_file():
@@ -184,8 +180,7 @@ class PyCKtools:
         species_tol: list[float],
         rate_tol: list[float],
     ):
-        """Find the tolerance values according to the variable type.
-        """
+        """Find the tolerance values according to the variable type."""
         if "species" in tolerance_name:
             atol = species_tol[0]
             rtol = species_tol[1]
@@ -234,7 +229,6 @@ class PyCKtools:
         return iErr, bad_ID, diff
 
     def init_test_status():
-        """Initialize the test status values before running the tests.
-        """
+        """Initialize the test status values before running the tests."""
         PyCKtools.TARGET_FOLDER = ""
         PyCKtools.FIRST_PASS = 0

@@ -58,7 +58,9 @@ from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.core.logger import logger
 
 # Chemkin 1-D premixed freely propagating flame model (steady-state)
-from ansys.chemkin.core.premixedflames.premixedflame import FreelyPropagating as FlameSpeed
+from ansys.chemkin.core.premixedflames.premixedflame import (
+    FreelyPropagating as FlameSpeed,
+)
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 

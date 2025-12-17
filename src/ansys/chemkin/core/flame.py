@@ -36,8 +36,7 @@ from ansys.chemkin.core.steadystatesolver import SteadyStateSolver
 
 
 class Flame(ReactorModel, SteadyStateSolver, Grid):
-    """Generic steady state, one dimensional flame model
-    """
+    """Generic steady state, one dimensional flame model"""
 
     def __init__(self, fuelstream: Stream, label: str):
         """Create a 1-D flame object
@@ -243,8 +242,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         return iErr
 
     def set_SSsolver_keywords(self):
-        """Add steady-state solver parameter keywoprds to the keyword list
-        """
+        """Add steady-state solver parameter keywoprds to the keyword list"""
         # steady-state solver parameter given
         if len(self.SSsolverkeywords) > 0:
             #
@@ -254,8 +252,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
     # mass transport options
 
     def use_mixture_averaged_transport(self):
-        """Use the mixture-averaged transport properties.
-        """
+        """Use the mixture-averaged transport properties."""
         self.setkeyword(key="MIX", value=True)
         if self.transport_mode == 2:
             # turn OFF the multi-component transport properties

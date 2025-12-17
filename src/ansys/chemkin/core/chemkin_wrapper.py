@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Chemkin-CFD-API python interfaces.
-"""
+"""Chemkin-CFD-API python interfaces."""
 
 import ctypes
 from ctypes import cdll
@@ -63,8 +62,7 @@ logger.debug(this_msg)
 
 
 def __setwindows():
-    """Set up PyChemkin environment on Windows platforms
-    """
+    """Set up PyChemkin environment on Windows platforms"""
     global _ansys_ver
     global _ansys_dir
     global _ckbin
@@ -124,8 +122,7 @@ def __setwindows():
 
 
 def __setlinux():
-    """Set up PyChemkin environment on Linux platforms
-    """
+    """Set up PyChemkin environment on Linux platforms"""
     global _ansys_ver
     global _ansys_dir
     global _ckbin

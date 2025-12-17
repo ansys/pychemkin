@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Chemkin reactor inlet/stream utilities.
-"""
+"""Chemkin reactor inlet/stream utilities."""
 
 import copy
 from typing import Union

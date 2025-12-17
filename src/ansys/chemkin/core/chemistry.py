@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Chemkin Chemistry utilities.
-"""
+"""Chemkin Chemistry utilities."""
 
 import ctypes
 from ctypes import POINTER, c_char_p, c_double, c_int
@@ -43,9 +42,7 @@ MAX_SPECIES_LENGTH = _symbol_length + 1  # Chemkin element/species symbol length
 LP_c_char = ctypes.POINTER(ctypes.c_char)  # pointer to C type character array
 COMPLETE = 0
 
-_chemset_identifiers: List = (
-    []
-)  # string used to identify different chemistry sets in the same project
+_chemset_identifiers: List = []  # string used to identify different chemistry sets in the same project
 _active_chemistry_set = -10
 chemkin_verbose = True  # verbose mode to turn ON/OFF the print statements that do not have the leading '**' characters
 _CKInitialized: Dict = {}  # Chemkin-CFD-API initialization flag for every Chemistry Set
@@ -124,8 +121,7 @@ def verify_version(min_version: int) -> bool:
 
 
 def done():
-    """Release Chemkin license and reset the Chemistry sets.
-    """
+    """Release Chemkin license and reset the Chemistry sets."""
     # terminate
     ck_wrapper.chemkin.KINFinish()
     # release
@@ -265,8 +261,7 @@ def check_active_chemistryset(chem_index: int) -> bool:
 
 
 class Chemistry:
-    """define and preprocess Chemkin chemistry set
-    """
+    """define and preprocess Chemkin chemistry set"""
 
     realgas_CuEOS = [
         "ideal gas",
@@ -447,8 +442,7 @@ class Chemistry:
         return self._summary_out
 
     def preprocess_transportdata(self):
-        """Instruct the preprocessor to include the transport data
-        """
+        """Instruct the preprocessor to include the transport data"""
         if self._index_tran.value == 0:
             # send a warning message
             msg = [
@@ -750,8 +744,7 @@ class Chemistry:
         return self._error_code
 
     def verify_realgas_model(self):
-        """Verify the availability of real-gas data in the mechanism
-        """
+        """Verify the availability of real-gas data in the mechanism"""
         EOSModel = ctypes.create_string_buffer(MAX_SPECIES_LENGTH)
         try:
             # check if the mechanism contains the real-gas EOS data
@@ -1529,8 +1522,7 @@ class Chemistry:
         return self._EOS.value
 
     def use_realgas_cubicEOS(self):
-        """Turn ON the real-gas cubic EOS to compute mixture properties if the mechanism contains necessary data
-        """
+        """Turn ON the real-gas cubic EOS to compute mixture properties if the mechanism contains necessary data"""
         if self._EOS.value < 1:
             # no real gas EOS data in the mechanism
             msg = [Color.YELLOW, "mechanism is for ideal gas law only.", Color.END]
@@ -1566,8 +1558,7 @@ class Chemistry:
             self.userealgas = False
 
     def use_idealgas_law(self):
-        """Turn on the ideal gas law to compute mixture properties
-        """
+        """Turn on the ideal gas law to compute mixture properties"""
         if self._EOS.value < 1:
             # no real gas EOS data in the mechanism
             msg = [Color.YELLOW, "mechanism is for ideal gas law only.", Color.END]

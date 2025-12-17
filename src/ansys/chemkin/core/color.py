@@ -22,8 +22,7 @@
 
 
 class Color:
-    """Define colors used by PyChemkin for printing text messages
-    """
+    """Define colors used by PyChemkin for printing text messages"""
 
     # color codes
     RED = "\033[91m"

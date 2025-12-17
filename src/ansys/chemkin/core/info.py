@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Chemkin help menu for keywords and key phrases.
-"""
+"""Chemkin help menu for keywords and key phrases."""
 
 import importlib.resources
 import os
@@ -38,10 +37,11 @@ _help_loaded = False
 
 
 def setup_hints():
-    """Set up Chemkin keyword hints.
-    """
+    """Set up Chemkin keyword hints."""
     # Chemkin keyword help data file in YAML format
-    _chemkin_resources_dir = importlib.resources.files("ansys.chemkin.core").joinpath("data")
+    _chemkin_resources_dir = importlib.resources.files("ansys.chemkin.core").joinpath(
+        "data"
+    )
     help_file = os.path.join(_chemkin_resources_dir, "ChemkinKeywordTips.yaml")
     global _help_loaded
     if not _help_loaded:
@@ -53,8 +53,7 @@ def setup_hints():
 
 
 def clear_hints():
-    """Clear the Chemkin keyword data.
-    """
+    """Clear the Chemkin keyword data."""
     global _help_loaded
     global CKdict
     if _help_loaded:
@@ -224,8 +223,7 @@ def help(topic: Union[str, None] = None):
 
 
 def show_realgas_usage():
-    """Show Chemkin real-gas model usage and options.
-    """
+    """Show Chemkin real-gas model usage and options."""
     print(
         Color.YELLOW
         + "** the real-gas cubic equation of state is available only when the mechanism contains the 'EOS_' data"
@@ -259,8 +257,7 @@ def show_realgas_usage():
 
 
 def show_equilibrium_options():
-    """Show the equilibrium calculation usage and options.
-    """
+    """Show the equilibrium calculation usage and options."""
     print(Color.YELLOW + "** equilibrium calculation usage: ")
     print("      EQ_mixture = ansys.chemkin.core.equilibrium(INIT_mixture, opt)")
     print("      INIT_mixture is the initial mixture (object)")
@@ -284,8 +281,7 @@ def show_equilibrium_options():
 
 
 def show_ignition_definitions():
-    """Show the ignition definitions available in Chemkin.
-    """
+    """Show the ignition definitions available in Chemkin."""
     # show ignition definition usage
     print(Color.YELLOW + "** ignition definition is assigned as a string, e.g., 'OH' ")
     print("   valid options are: ")
@@ -296,8 +292,7 @@ def show_ignition_definitions():
 
 
 def manuals():
-    """Access the Chemkin manuals page on the Ansys Help portal.
-    """
+    """Access the Chemkin manuals page on the Ansys Help portal."""
     # Chemkin manual page
     chemkin_manual_url = (
         "https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/prod_page.html?"

@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Single or multi- zone homogeneous charge compression ignition (HCCI) engine model.
-"""
+"""Single or multi- zone homogeneous charge compression ignition (HCCI) engine model."""
 
 import copy
 from ctypes import c_double, c_int
@@ -46,8 +45,7 @@ from ansys.chemkin.core.reactormodel import Keyword
 
 
 class HCCIengine(Engine):
-    """Single or multi- zone homogeneous charge compression ignition (HCCI) engine model
-    """
+    """Single or multi- zone homogeneous charge compression ignition (HCCI) engine model"""
 
     def __init__(
         self,
@@ -593,8 +591,7 @@ class HCCIengine(Engine):
             exit()
 
     def set_zonal_volume_keyword(self):
-        """Set zonal volume keyword for the multi-zone HCCI engine simulation
-        """
+        """Set zonal volume keyword for the multi-zone HCCI engine simulation"""
         if self._nzones.value == 1:
             # single zone is not allowed here
             msg = [
@@ -621,8 +618,7 @@ class HCCIengine(Engine):
             self.setkeyword(key=keyline, value=True)
 
     def set_zonal_mass_keyword(self):
-        """Set zonal mass keyword for the multi-zone HCCI engine simulation
-        """
+        """Set zonal mass keyword for the multi-zone HCCI engine simulation"""
         for izone in range(self._nzones.value):
             # set the zonal number string
             addon = str(izone + 1)

@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Steady state, 1-D burner stabilized premixed flame models.
-"""
+"""Steady state, 1-D burner stabilized premixed flame models."""
 
 import copy
 from ctypes import c_double, c_int
@@ -524,8 +523,7 @@ class PremixedFlame(Flame):
             exit()
 
     def process_solution(self):
-        """Post-process solution to extract the raw solution variable data
-        """
+        """Post-process solution to extract the raw solution variable data"""
         # check existing raw data
         if self.getrawsolutionstatus():
             msg = [

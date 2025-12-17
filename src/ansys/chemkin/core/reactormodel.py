@@ -48,8 +48,7 @@ from .mixture import Mixture
 # Base class for keyword data
 #
 class Keyword:
-    """A Chemkin keyword.
-    """
+    """A Chemkin keyword."""
 
     # supported Chemkin keyword data types
     _keyworddatatypes = ["bool", "int", "float", "str"]
@@ -114,9 +113,7 @@ class Keyword:
     # those _protectedkeywords via the setkeyword method are required.
     noFullKeyword = True  # default: API-call mode
 
-    def __init__(
-        self, phrase: str, value: Union[float, bool, str], data_type: str
-    ):
+    def __init__(self, phrase: str, value: Union[float, bool, str], data_type: str):
         """Initialize the Chemkin keyword
 
         Parameters
@@ -196,8 +193,7 @@ class Keyword:
             Keyword.noFullKeyword = True
 
     def show(self):
-        """Display the Chemkin keyword and its parameter value
-        """
+        """Display the Chemkin keyword and its parameter value"""
         if self._set:
             if isinstance(self._value, (int, float)):
                 msg = [
@@ -374,8 +370,7 @@ class Keyword:
 # This keyword type is used to distinguish keywords that act as on/off switches by their presence
 #
 class BooleanKeyword(Keyword):
-    """Chemkin boolean keyword
-    """
+    """Chemkin boolean keyword"""
 
     def __init__(self, phrase: str):
         """Set up a Chemkin keyword with a boolean parameter or with no parameter
@@ -394,8 +389,7 @@ class BooleanKeyword(Keyword):
 # This keyword type is used to hold integer keyword types (not sure if there actually are any of these)
 #
 class IntegerKeyword(Keyword):
-    """A Chemkin integer keyword
-    """
+    """A Chemkin integer keyword"""
 
     def __init__(self, phrase: str, value: int = 0):
         """Set up a Chemkin keyword with an integer parameter
@@ -415,8 +409,7 @@ class IntegerKeyword(Keyword):
 # This keyword type is used to hold real keyword types
 #
 class RealKeyword(Keyword):
-    """A Chemkin real keyword
-    """
+    """A Chemkin real keyword"""
 
     def __init__(self, phrase: str, value: float = 0.0e0):
         """Set up a Chemkin keyword with a real number (floating number) parameter
@@ -436,8 +429,7 @@ class RealKeyword(Keyword):
 # This keyword type is used to hold string keyword types
 #
 class StringKeyword(Keyword):
-    """A Chemkin string keyword
-    """
+    """A Chemkin string keyword"""
 
     def __init__(self, phrase: str, value: str = ""):
         """Set up a Chemkin keyword with a string parameter
@@ -459,8 +451,7 @@ class StringKeyword(Keyword):
 
 
 class Profile:
-    """Generic Chemkin profile keyword class
-    """
+    """Generic Chemkin profile keyword class"""
 
     def __init__(self, key: str, x: npt.NDArray[np.double], y: npt.NDArray[np.double]):
         """Create a profile object
@@ -584,8 +575,7 @@ class Profile:
         return self._profilekeyword
 
     def show(self):
-        """Show the profile data
-        """
+        """Show the profile data"""
         print(f"profile size: {self._size:d}")
         print(f" position           {self._profilekeyword:s}  ")
         for i in range(self._size):
@@ -662,8 +652,7 @@ class Profile:
 # defining methods to set chemistry, process keywords, and run
 #
 class ReactorModel:
-    """A generic Chemkin reactor model framework
-    """
+    """A generic Chemkin reactor model framework"""
 
     def __init__(self, reactor_condition: Stream, label: str):
         """Initialize the basic parameters of Chemkin reactor model
@@ -942,8 +931,7 @@ class ReactorModel:
             self._numbkeywords -= 1
 
     def showkeywordinputlines(self):
-        """List all currently-defined keywords and their parameters line by line
-        """
+        """List all currently-defined keywords and their parameters line by line"""
         # header
         print("** INPUT KEYWORDS: \n")
         print("=" * 40)

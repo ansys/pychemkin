@@ -116,7 +116,7 @@ elelist = MyGasMech.element_symbols
 AWT = MyGasMech.atomic_weight
 # print element information
 for k in range(len(elelist)):
-    print(f"element # {k+1:3d}: {elelist[k]:16} mass = {AWT[k]:f}")
+    print(f"element # {k + 1:3d}: {elelist[k]:16} mass = {AWT[k]:f}")
 
 print("=" * 50)
 
@@ -126,7 +126,7 @@ specieslist = MyGasMech.species_symbols
 WT = MyGasMech.species_molar_weight
 # print gas species information
 for k in range(len(specieslist)):
-    print(f"species # {k+1:3d}: {specieslist[k]:16} mass = {WT[k]:f}")
+    print(f"species # {k + 1:3d}: {specieslist[k]:16} mass = {WT[k]:f}")
 print("=" * 50)
 
 
@@ -200,7 +200,7 @@ elelist = My2ndMech.element_symbols
 AWT = My2ndMech.AWT
 # print element information
 for k in range(len(elelist)):
-    print(f"element # {k+1:3d}: {elelist[k]:16} mass = {AWT[k]:f}")
+    print(f"element # {k + 1:3d}: {elelist[k]:16} mass = {AWT[k]:f}")
 
 print("=" * 50)
 
@@ -210,7 +210,7 @@ specieslist = My2ndMech.species_symbols
 WT = My2ndMech.WT
 # print gas species information
 for k in range(len(specieslist)):
-    print(f"species # {k+1:3d}: {specieslist[k]:16} mass = {WT[k]:f}")
+    print(f"species # {k + 1:3d}: {specieslist[k]:16} mass = {WT[k]:f}")
 
 print("=" * 50)
 # return results for comparisons

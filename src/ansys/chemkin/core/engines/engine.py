@@ -38,8 +38,7 @@ from ansys.chemkin.core.reactormodel import Keyword
 
 
 class Engine(BatchReactors):
-    """Generic engine cylinder model
-    """
+    """Generic engine cylinder model"""
 
     def __init__(self, reactor_condition: Stream, label: str):
         """Initialize a generic Engine object
@@ -600,8 +599,7 @@ class Engine(BatchReactors):
         return self.enginestroke * self.borearea
 
     def list_engine_parameters(self):
-        """List engine parameters for verification
-        """
+        """List engine parameters for verification"""
         print("      === engine parameters ===")
         print(f"bore diameter         = {self.borediam} [cm]")
         print(f"stroke                = {self.enginestroke} [cm]")
@@ -893,8 +891,7 @@ class Engine(BatchReactors):
             self.HuberIMEP = IMEP  # [atm]
 
     def set_heat_transfer_keywords(self):
-        """Set the engine wall heat transfer related keywords
-        """
+        """Set the engine wall heat transfer related keywords"""
         # check if the wall heat transfer model is set up
         if not self._wallheattransfer:
             return
@@ -920,8 +917,7 @@ class Engine(BatchReactors):
         self.setkeyword(key="HIMP", value=self.HuberIMEP)
 
     def set_engine_keywords(self):
-        """Set engine parameter keywords under the Full-Keywords mode
-        """
+        """Set engine parameter keywords under the Full-Keywords mode"""
         self.setkeyword(key="BORE", value=self.borediam)
         self.setkeyword(key="STRK", value=self.enginestroke)
         self.setkeyword(key="CRLEN", value=self.connectrodlength)

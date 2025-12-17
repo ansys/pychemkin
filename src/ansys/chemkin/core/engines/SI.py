@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Spark Ignition (SI) engine model.
-"""
+"""Spark Ignition (SI) engine model."""
 
 import copy
 from ctypes import c_double, c_int
@@ -45,8 +44,7 @@ from ansys.chemkin.core.reactormodel import Keyword
 
 
 class SIengine(Engine):
-    """Spark Ignition (SI) engine model
-    """
+    """Spark Ignition (SI) engine model"""
 
     def __init__(self, reactor_condition: Stream, label: Union[str, None] = None):
         """Initialize a spark-ignition Engine object

@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Hybrid reactor network comprised of a mix of open reactors such as PSR and PFR.
-"""
+"""Hybrid reactor network comprised of a mix of open reactors such as PSR and PFR."""
 
 import copy
 from typing import Union
@@ -205,9 +204,9 @@ class ReactorNetwork:
             # add to the reactor dictionary
             self.reactor_objects[self.numb_reactors] = reactor
             # any external inlets
-            self.external_connections[
-                self.numb_reactors
-            ] = reactor.number_external_inlets
+            self.external_connections[self.numb_reactors] = (
+                reactor.number_external_inlets
+            )
             #
             if verbose():
                 msg = [
@@ -239,8 +238,7 @@ class ReactorNetwork:
             self.add_reactor(rxtor)
 
     def show_reactors(self):
-        """Show the reactor labels in the network.
-        """
+        """Show the reactor labels in the network."""
         if self.numb_reactors <= 0:
             msg = [
                 Color.YELLOW,
@@ -278,8 +276,7 @@ class ReactorNetwork:
         return self.numb_external_outlet
 
     def show_internal_outflow_connections(self):
-        """Show the ouflow connections to other reactors in the network.
-        """
+        """Show the ouflow connections to other reactors in the network."""
         if len(self.outflow_targets) > 0:
             for reactor_id, outflows in self.outflow_targets.items():
                 print(
@@ -313,8 +310,7 @@ class ReactorNetwork:
                 print("-" * 10)
 
     def show_internal_inflow_connections(self):
-        """Show the incoming flow connections from other reactors in the network.
-        """
+        """Show the incoming flow connections from other reactors in the network."""
         if len(self.inflow_sources) > 0:
             for reactor_id, inflows in self.inflow_sources.items():
                 print(
@@ -508,8 +504,7 @@ class ReactorNetwork:
             logger.error(this_msg)
 
     def clear_connections(self):
-        """Clear the internal connection configurations.
-        """
+        """Clear the internal connection configurations."""
         # clear internal outlet split
         self.outflow_targets.clear()
         # clear internal inlet source
@@ -666,8 +661,7 @@ class ReactorNetwork:
             print("=" * 20)
 
     def set_inflow_connections(self):
-        """Set up the sources of the internal network inlet stream to the reactor.
-        """
+        """Set up the sources of the internal network inlet stream to the reactor."""
         # initialize the collection
         self.inflow_sources.clear()
         # loop over all target reactors
@@ -931,8 +925,7 @@ class ReactorNetwork:
         return self.reactor_solutions[id]
 
     def set_external_streams(self):
-        """Set up external outlet streams.
-        """
+        """Set up external outlet streams."""
         # initialization
         self.external_outlet_streams.clear()
         # validate solution

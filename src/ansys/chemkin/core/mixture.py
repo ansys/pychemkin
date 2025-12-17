@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Chemkin Mixture utilities.
-"""
+"""Chemkin Mixture utilities."""
 
 import copy
 import ctypes
@@ -50,8 +49,7 @@ from ansys.chemkin.core.utilities import (
 
 
 class Mixture:
-    """define a mixture based on the gas species in the given chemistry set
-    """
+    """define a mixture based on the gas species in the given chemistry set"""
 
     def __init__(self, chem: Chemistry):
         """Initialize a Mixture object based on the given Chemistry set
@@ -2267,7 +2265,7 @@ class Mixture:
             print("                             [mol/cm3-sec]")
             for i in range(len(new_order)):
                 print(
-                    f" {i+1:-2d} {self._specieslist[new_order[i]]:>16}              {sorted_ROP[i]: e}"
+                    f" {i + 1:-2d} {self._specieslist[new_order[i]]:>16}              {sorted_ROP[i]: e}"
                 )
         return new_order, sorted_ROP
 
@@ -2320,7 +2318,7 @@ class Mixture:
             print("                             [gm/cm3-sec]")
             for i in range(len(new_order)):
                 print(
-                    f" {i+1:-2d} {self._specieslist[new_order[i]]:>16}              {sorted_ROP[i]: e}"
+                    f" {i + 1:-2d} {self._specieslist[new_order[i]]:>16}              {sorted_ROP[i]: e}"
                 )
         return new_order, sorted_ROP
 
@@ -2378,7 +2376,7 @@ class Mixture:
             print("                             [mol/cm3-sec]")
             for i in range(len(new_order)):
                 print(
-                    f" {i+1:-2d}          {new_order[i]+1:-4d}              {sorted_RR[i]: e}"
+                    f" {i + 1:-2d}          {new_order[i] + 1:-4d}              {sorted_RR[i]: e}"
                 )
         return new_order, sorted_RR
 
@@ -2664,8 +2662,7 @@ class Mixture:
         return iErr
 
     def use_realgas_cubicEOS(self):
-        """Turn ON the real-gas cubic EOS to compute mixture properties if the mechanism contains necessary data
-        """
+        """Turn ON the real-gas cubic EOS to compute mixture properties if the mechanism contains necessary data"""
         if self._EOS.value < 1:
             # no real gas EOS data in the mechanism
             msg = [Color.YELLOW, "mechanism is for ideal gas law only.", Color.END]
@@ -2705,8 +2702,7 @@ class Mixture:
             self.userealgas = False
 
     def use_idealgas_law(self):
-        """Turn on the ideal gas law to compute mixture properties
-        """
+        """Turn on the ideal gas law to compute mixture properties"""
         if self._EOS.value < 1:
             # no real gas EOS data in the mechanism
             msg = [Color.YELLOW, "mechanism is for ideal gas law only.", Color.END]

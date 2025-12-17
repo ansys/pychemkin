@@ -32,12 +32,10 @@ from ansys.chemkin.core.logger import logger
 
 
 class Grid:
-    """Grid quality control parameters for Chemkin 1-D steady-state reactor models.
-    """
+    """Grid quality control parameters for Chemkin 1-D steady-state reactor models."""
 
     def __init__(self):
-        """Grid quality control parameters for Chemkin 1-D steady-state reactor models.
-        """
+        """Grid quality control parameters for Chemkin 1-D steady-state reactor models."""
         self.max_numb_grid_points = 250
         self.max_numb_adapt_points = 10
         self.gradient = 0.1

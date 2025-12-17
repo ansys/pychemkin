@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Chemkin open reactor utilities.
-"""
+"""Chemkin open reactor utilities."""
 
 from ctypes import c_int
 from typing import Union
@@ -35,8 +34,7 @@ from ansys.chemkin.core.steadystatesolver import SteadyStateSolver
 
 
 class openreactor(ReactorModel, SteadyStateSolver):
-    """Generic open reactor model
-    """
+    """Generic open reactor model"""
 
     def __init__(self, guessedmixture: Stream, label: Union[str, None] = None):
         """Create a steady-state flow reactor object

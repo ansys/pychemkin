@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Chemkin closed homogeneous reactor model.
-"""
+"""Chemkin closed homogeneous reactor model."""
 
 import copy
 from ctypes import c_double, c_int
@@ -49,8 +48,7 @@ from ansys.chemkin.core.utilities import find_interpolate_parameters
 
 
 class BatchReactors(reactor):
-    """Generic Chemkin 0-D transient closed homogeneous reactor model
-    """
+    """Generic Chemkin 0-D transient closed homogeneous reactor model"""
 
     # set possible types in batch reactors
     ReactorTypes: dict[str, int] = {
@@ -534,8 +532,7 @@ class BatchReactors(reactor):
             show_ignition_definitions()
 
     def stop_after_ignition(self):
-        """Set the option to stop the simulation after ignition is detected
-        """
+        """Set the option to stop the simulation after ignition is detected"""
         # stop the simulation after ignition is detected
         self.setkeyword(key="IGN_STOP", value=True)
 
@@ -730,8 +727,7 @@ class BatchReactors(reactor):
         return iErr
 
     def set_reactortype_keywords(self):
-        """Set reactor type keywords under the Full-Keywords mode
-        """
+        """Set reactor type keywords under the Full-Keywords mode"""
         # keyword headers
         # set solver types
         if self._solvertype.value == self.SolverTypes.get("Transient", 1):
@@ -1326,8 +1322,7 @@ class BatchReactors(reactor):
             exit()
 
     def process_solution(self):
-        """Post-process solution to extract the raw solution variable data
-        """
+        """Post-process solution to extract the raw solution variable data"""
         # check existing raw data
         if self.getrawsolutionstatus():
             msg = [
