@@ -93,7 +93,7 @@ IRET:
     DefaultValue: '25'
     Units: 'none'
 NJAC:
-    Description: 'max Newton steps taken before getting a new Jacobian during sovling steady state problem'
+    Description: 'max Newton steps taken before getting a new Jacobian during solving steady state problem'
     DefaultValue: '20'
     Units: 'none'
 TJAC:
