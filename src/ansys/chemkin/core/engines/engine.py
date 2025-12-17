@@ -20,9 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-    Chemkin Engine Utilities.
-"""
+"""Chemkin Engine Utilities."""
 
 import copy
 from ctypes import c_double, c_int
@@ -938,11 +936,10 @@ class Engine(BatchReactors):
         self.setkeyword(key="DEGE", value=self.EVOCA)
 
     def set_enginecondition_keywords(self):
-        """
         self.setkeyword(key="PRES", value=self._pressure.value / P_ATM)
         self.setkeyword(key="TEMP", value=self._temperature.value)
         # initial mole fraction
-        nspecieslines, species_lines = self.createspeciesinputlines(
+        _, species_lines = self.createspeciesinputlines(
             self._solvertype.value, threshold=1.0e-12, molefrac=self.reactormixture.X
         )
         for line in species_lines:

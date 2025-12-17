@@ -778,12 +778,11 @@ class BatchReactors(reactor):
             self.setkeyword(key="ENRG", value=True)
 
     def set_reactorcondition_keywords(self):
-        """
         self.setkeyword(key="PRES", value=self._pressure.value / P_ATM)
         self.setkeyword(key="TEMP", value=self._temperature.value)
         self.setkeyword(key="TIME", value=self._endtime.value)
         # initial mole fraction
-        nspecieslines, species_lines = self.createspeciesinputlines(
+        _, species_lines = self.createspeciesinputlines(
             self._solvertype.value, threshold=1.0e-12, molefrac=self.reactormixture.X
         )
         for line in species_lines:
