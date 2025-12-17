@@ -48,7 +48,7 @@ This code example computes the density of a mixture named ``air``:
       import os
 
       # import PyChemkin
-      import ansys.chemkin as chemkin
+      import ansys.chemkin.core as chemkin
 
       # create a chemistry set for the GRI 3.0 mechanism in the data directory
       mech_dir = os.path.join(chemkin.ansys_dir, "reaction", "data")
@@ -95,9 +95,9 @@ Pythonic methods
 
 To get help within PyChemkin, use these pythonic methods:
 
-- ``ansys.chemkin.help()``: Get general information about a topic, such as ``ignition``.
-- ``ansys.chemkin.keywordhints()``: Get the description and syntax of a reactor keyword.
-- ``ansys.chemkin.phrasehints()``: Get a list of reactor keywords related to a phrase.
+- ``ansys.chemkin.core.help()``: Get general information about a topic, such as ``ignition``.
+- ``ansys.chemkin.core.keywordhints()``: Get the description and syntax of a reactor keyword.
+- ``ansys.chemkin.core.phrasehints()``: Get a list of reactor keywords related to a phrase.
 
 Product training and documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -43,7 +43,7 @@ Install PyChemkin
 
    ::
 
-      >>> import ansys.chemkin
+      >>> import ansys.chemkin.core
 
    If PyChemkin is installed correctly, Python displays a statement like this:
 

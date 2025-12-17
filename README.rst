@@ -57,7 +57,7 @@ Verifying the installation
 
 .. code:: python
 
-    import ansys.chemkin
+    import ansys.chemkin.core
 
 
 
@@ -91,7 +91,7 @@ PyChemkin (Ansys Chemkin) and use some basic capabilities:
     import os
 
     # import PyChemkin
-    import ansys.chemkin as chemkin
+    import ansys.chemkin.core as chemkin
 
     # create a Chemistry Set for GRI 3.0 mechanism in the data directory
     mech_dir = os.path.join(chemkin.ansys_dir, "reaction", "data")
