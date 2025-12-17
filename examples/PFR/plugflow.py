@@ -20,7 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-""".. _ref_plug_flow_reactor:
+"""
+.. _ref_plug_flow_reactor:
 
 ===========================================
 Simulate NO reduction in combustion exhaust
@@ -61,9 +62,6 @@ CH\ :sub:`4` is oxidized by the NO to form N\ :sub:`2`\ , CO, and H\ :sub:`2`. T
 import os
 import time
 
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
-
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
 
@@ -71,6 +69,8 @@ from ansys.chemkin import Color
 from ansys.chemkin.flowreactors.PFR import PlugFlowReactor_FixedTemperature
 from ansys.chemkin.inlet import Stream
 from ansys.chemkin.logger import logger
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()

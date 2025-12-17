@@ -20,7 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-""".. _ref_jet_stirred_reactor:
+"""
+.. _ref_jet_stirred_reactor:
 
 =============================================
 Run PSR calculations for mechanism validation
@@ -61,9 +62,6 @@ This example shows how to use the PSR model to validate the reaction mechanism a
 import os
 import time
 
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
-
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
 from ansys.chemkin.inlet import Stream  # external gaseous inlet
@@ -72,6 +70,8 @@ from ansys.chemkin.logger import logger
 # chemkin perfectly stirred reactor (PSR) model (steady-state)
 from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_FixedTemperature as PSR
 from ansys.chemkin.utilities import find_file
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()

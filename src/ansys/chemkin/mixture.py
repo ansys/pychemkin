@@ -20,15 +20,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Chemkin Mixture utilities.
+"""
+    Chemkin Mixture utilities.
 """
 
 import copy
 import ctypes
 from ctypes import c_double, c_int
-
-import numpy as np
-import numpy.typing as npt
 
 from ansys.chemkin import chemkin_wrapper as ck_wrapper
 from ansys.chemkin.chemistry import (
@@ -44,19 +42,22 @@ from ansys.chemkin.color import Color
 from ansys.chemkin.constants import P_ATM
 from ansys.chemkin.logger import logger
 from ansys.chemkin.utilities import calculate_stoichiometrics, where_element_in_array_1D
+import numpy as np
+import numpy.typing as npt
 
 
 class Mixture:
-    """define a mixture based on the gas species in the given chemistry set
+    """
+    define a mixture based on the gas species in the given chemistry set
     """
 
     def __init__(self, chem: Chemistry):
-        """Initialize a Mixture object based on the given Chemistry set
+        """
+        Initialize a Mixture object based on the given Chemistry set
 
         Parameters
         ----------
             chem: Chemistry object
-
         """
         self._temp = 0.0e0  # mixture temperature [K]
         self._press = 0.0e0  # mixture pressure [dynes/cm2]
@@ -110,37 +111,37 @@ class Mixture:
 
     @property
     def chemID(self) -> int:
-        """Get chemistry set index
+        """
+        Get chemistry set index
 
         Returns
         -------
             chemID: integer
                 chemistry set index associated with this Mixture
-
         """
         return self._chemset_index.value
 
     @property
     def KK(self) -> int:
-        """Get the number of gas species
+        """
+        Get the number of gas species
 
         Returns
         -------
             num_spec: integer
                 number of gas species in the mixture
-
         """
         return self._KK
 
     @property
     def pressure(self) -> float:
-        """Get gas mixture pressure [dynes/cm2]
+        """
+        Get gas mixture pressure [dynes/cm2]
 
         Returns
         -------
             pressure: double
                 mixture pressure [dynes/cm2]
-
         """
         if self._Pset == 1:
             return self._press
@@ -152,13 +153,13 @@ class Mixture:
 
     @pressure.setter
     def pressure(self, p: float):
-        """Set gas mixture pressure
+        """
+        Set gas mixture pressure
 
         Parameters
         ----------
             p: double
                 pressure [dynes/cm2]
-
         """
         if p <= 0.0:
             msg = [Color.PURPLE, "invalid pressure value.", Color.END]
@@ -171,13 +172,13 @@ class Mixture:
 
     @property
     def temperature(self) -> float:
-        """Get gas mixture temperature
+        """
+        Get gas mixture temperature
 
         Returns
         -------
             temperature: double
                 temperature [K]
-
         """
         if self._Tset == 1:
             return self._temp
@@ -189,13 +190,13 @@ class Mixture:
 
     @temperature.setter
     def temperature(self, t: float):
-        """Set gas mixture temperature
+        """
+        Set gas mixture temperature
 
         Parameters
         ----------
             t: double
                 mixture temperature [K]
-
         """
         if t <= 10.0:
             msg = [Color.PURPLE, "invalid temperature value.", Color.END]
@@ -207,13 +208,13 @@ class Mixture:
 
     @property
     def volume(self) -> float:
-        """Get mixture volume
+        """
+        Get mixture volume
 
         Returns
         -------
             volume: double
                 mixture volume [cm3]
-
         """
         if self._vol > 0.0e0:
             return self._vol
@@ -225,13 +226,13 @@ class Mixture:
 
     @volume.setter
     def volume(self, vol: float):
-        """Set mixture volume
+        """
+        Set mixture volume
 
         Parameters
         ----------
             vol: double
                 mixture volume [cm3]
-
         """
         if vol <= 0.0e0:
             msg = [Color.PURPLE, "invalid volume value.", Color.END]
@@ -242,13 +243,13 @@ class Mixture:
 
     @property
     def X(self) -> npt.NDArray[np.double]:
-        """Get mixture mole fraction
+        """
+        Get mixture mole fraction
 
         Returns
         -------
             X: 1-D double array, dimensdion = number_species
                 mixture composition in mole fractions
-
         """
         if self._Xset == 1:
             iErr, x = Mixture.normalize(self._molefrac)
@@ -269,13 +270,13 @@ class Mixture:
 
     @X.setter
     def X(self, recipe: list[tuple[str, float]]):
-        """Set mixture molar composition
+        """
+        Set mixture molar composition
 
         Parameters
         ----------
         recipe: list of tuples, [(species_symbol, fraction), ... ]
             non-zero mixture composition corresponding to the given mole fraction array
-
         """
         if self._Xset == 1:
             # reset the mole fraction array
@@ -336,13 +337,13 @@ class Mixture:
 
     @property
     def Y(self) -> npt.NDArray[np.double]:
-        """Get mixture mass fraction
+        """
+        Get mixture mass fraction
 
         Returns
         -------
             Y: 1-D double array, dimensdion = number_species
                 mixture composition in mass fractions
-
         """
         if self._Yset == 1:
             iErr, y = Mixture.normalize(self._massfrac)
@@ -363,13 +364,13 @@ class Mixture:
 
     @Y.setter
     def Y(self, recipe: list[tuple[str, float]]):
-        """Set mixture mass composition
+        """
+        Set mixture mass composition
 
         Parameters
         ----------
         recipe: list of tuples, [(species_symbol, fraction), ... ]
             non-zero mixture composition corresponding to the given mass fraction array
-
         """
         if self._Yset == 1:
             # reset the mass fraction array
@@ -430,13 +431,13 @@ class Mixture:
 
     @property
     def concentration(self) -> npt.NDArray[np.double]:
-        """Get mixture molar concentrations
+        """
+        Get mixture molar concentrations
 
         Returns
         -------
             c: 1-D double array, dimensdion = number_species
                 mixture compisition in molar concentrations [mole/cm3]
-
         """
         if self._Xset == 1:
             # mole fractions are given
@@ -471,19 +472,20 @@ class Mixture:
 
     @property
     def EOS(self) -> int:
-        """Get the available real-gas EOS model that is provided in the mechanism
+        """
+        Get the available real-gas EOS model that is provided in the mechanism
 
         Returns
         -------
             EOS: integer
                 index of the realgas EOS model defined in the gas-phase mechanism input file
-
         """
         return self._EOS.value
 
     @staticmethod
     def normalize(frac: npt.ArrayLike) -> tuple[int, npt.NDArray[np.double]]:
-        """Normalize the mixture composition
+        """
+        Normalize the mixture composition
 
         Parameters
         ----------
@@ -496,7 +498,6 @@ class Mixture:
                 error code
             localfrac: 1-D double array
                 normalized fraction array
-
         """
         # initialization
         sumx = 0.0e0
@@ -523,13 +524,13 @@ class Mixture:
 
     @property
     def WT(self) -> npt.NDArray[np.double]:
-        """Get species molecular masses
+        """
+        Get species molecular masses
 
         Returns
         -------
             WT: 1-D double array, dimension = number_species
                 species molecular masses [gm/mole]
-
         """
         return self._WT
 
@@ -538,13 +539,13 @@ class Mixture:
 
     @property
     def WTM(self) -> float:
-        """Get mean molar mass of the gas mixture
+        """
+        Get mean molar mass of the gas mixture
 
         Returns
         -------
             WTM: double
                 mean molecular mass of the mixture [gm/mol]
-
         """
         mwt = 0.0e0
         if self._Xset == 1:
@@ -586,7 +587,8 @@ class Mixture:
     mean_molar_weight = WTM
 
     def __XtoY(self) -> tuple[int, npt.NDArray[np.double]]:
-        """Convert mole fraction to mass fraction
+        """
+        Convert mole fraction to mass fraction
 
         Returns
         -------
@@ -594,7 +596,6 @@ class Mixture:
                 error code
             y: 1-D double array, dimension = number_species
                 mass fractions
-
         """
         # compute mean molar mass
         mwt = self.WTM
@@ -616,7 +617,8 @@ class Mixture:
             exit()
 
     def __YtoX(self) -> tuple[int, npt.NDArray[np.double]]:
-        """Convert mass fraction to mole fraction
+        """
+        Convert mass fraction to mole fraction
 
         Returns
         -------
@@ -624,7 +626,6 @@ class Mixture:
                 error code
             x: 1-D double array, dimensdion = number_species
                 mole fractions
-
         """
         # compute mean molar mass
         mwt = self.WTM
@@ -649,7 +650,8 @@ class Mixture:
     def mean_molar_mass(
         frac: npt.NDArray[np.double], wt: npt.NDArray[np.double], mode: str
     ) -> float:
-        """Get mean molar mass of the gas mixture
+        """
+        Get mean molar mass of the gas mixture
 
         Parameters
         ----------
@@ -664,7 +666,6 @@ class Mixture:
         -------
             mwt: double
                 mean molar mass [gm/mol]
-
         """
         # initialization
         mwt = 0.0e0
@@ -720,7 +721,8 @@ class Mixture:
     def mole_fraction_to_mass_fraction(
         molefrac: npt.NDArray[np.double], wt: npt.NDArray[np.double]
     ) -> npt.NDArray[np.double]:
-        """Convert mole fraction to mass fraction
+        """
+        Convert mole fraction to mass fraction
 
         Parameters
         ----------
@@ -733,7 +735,6 @@ class Mixture:
         -------
             massfrac: 1-D double array, dimension = number_species
                 mass fractions
-
         """
         # check size
         kgas = len(molefrac)
@@ -772,7 +773,8 @@ class Mixture:
     def mass_fraction_to_mole_fraction(
         massfrac: npt.NDArray[np.double], wt: npt.NDArray[np.double]
     ) -> npt.NDArray[np.double]:
-        """Convert mass fraction to mole fraction
+        """
+        Convert mass fraction to mole fraction
 
         Parameters
         ----------
@@ -785,7 +787,6 @@ class Mixture:
         -------
             molefrac: 1-D double array, dimension = number_species
                 mole fractions
-
         """
         # check size
         kgas = len(massfrac)
@@ -824,7 +825,8 @@ class Mixture:
         massfrac: npt.NDArray[np.double],
         wt: npt.NDArray[np.double],
     ) -> npt.NDArray[np.double]:
-        """Convert mass fractions to molar concentrations
+        """
+        Convert mass fractions to molar concentrations
 
         Parameters
         ----------
@@ -843,7 +845,6 @@ class Mixture:
         -------
             c: 1-D double array, dimension = number_species
                 molar concentrations [mole/cm3]
-
         """
         # check size
         kgas = len(massfrac)
@@ -881,7 +882,8 @@ class Mixture:
         molefrac: npt.NDArray[np.double],
         wt: npt.NDArray[np.double],
     ) -> npt.NDArray[np.double]:
-        """Convert mole fractions to molar concentrations
+        """
+        Convert mole fractions to molar concentrations
 
         Parameters
         ----------
@@ -900,7 +902,6 @@ class Mixture:
         -------
             c: 1-D double array, dimension = number_species
                 molar concentrations [mole/cm3]
-
         """
         # check size
         kgas = len(molefrac)
@@ -934,7 +935,8 @@ class Mixture:
             return molefrac
 
     def list_composition(self, mode: str, option: str = " ", bound: float = 0.0e0):
-        """List the mixture composition
+        """
+        list the mixture composition
 
         Parameters
         ----------
@@ -944,7 +946,6 @@ class Mixture:
                 flag indicates to list 'all' species or just the species with non-zero fraction
             bound: double
                 minimum fraction value for the species to be printed
-
         """
         #
         if option.lower() == "all":
@@ -997,7 +998,8 @@ class Mixture:
         wt: npt.NDArray[np.double],
         mode: str,
     ) -> float:
-        """Get mass density from the given mixture condition: pressure, temperature, and species composition
+        """
+        Get mass density from the given mixture condition: pressure, temperature, and species composition
 
         Parameters
         ----------
@@ -1018,7 +1020,6 @@ class Mixture:
         -------
             den: double
                 mass density in [gm/cm3]
-
         """
         # check inputs
         if chemID < 0:
@@ -1089,13 +1090,13 @@ class Mixture:
 
     @property
     def RHO(self) -> float:
-        """Get mixture mass density
+        """
+        Get mixture mass density
 
         Returns
         -------
             RHO: double
                 mixture density [gm/cm3]
-
         """
         # initialization
         den = 0.0e0
@@ -1154,7 +1155,8 @@ class Mixture:
         wt: npt.NDArray[np.double],
         mode: str,
     ) -> float:
-        """Get mixture specific heat capacity from the given mixture condition: pressure, temperature, and species composition
+        """
+        Get mixture specific heat capacity from the given mixture condition: pressure, temperature, and species composition
 
         Parameters
         ----------
@@ -1175,7 +1177,6 @@ class Mixture:
         -------
             CpB: double
                 mixture specific heat capacity [erg/mol-K]
-
         """
         # check inputs
         if chemID < 0:
@@ -1259,7 +1260,8 @@ class Mixture:
         wt: npt.NDArray[np.double],
         mode: str,
     ) -> float:
-        """Get mixture enthalpy from the given mixture condition: pressure, temperature, and species composition
+        """
+        Get mixture enthalpy from the given mixture condition: pressure, temperature, and species composition
 
         Parameters
         ----------
@@ -1280,7 +1282,6 @@ class Mixture:
         -------
             H: double
                 mixture enthalpy [erg/mol]
-
         """
         # check inputs
         if chemID < 0:
@@ -1358,7 +1359,8 @@ class Mixture:
         wt: npt.NDArray[np.double],
         mode: str,
     ) -> npt.NDArray[np.double]:
-        """Get species molar rate of production from the given mixture condition: pressure, temperature, and species composition
+        """
+        Get species molar rate of production from the given mixture condition: pressure, temperature, and species composition
 
         Parameters
         ----------
@@ -1379,7 +1381,6 @@ class Mixture:
         -------
             ROP: 1-D double array, dimension = number_species
                 species molar rate of production in [mol/cm3-sec]
-
         """
         # check inputs
         if chemID < 0:
@@ -1462,7 +1463,8 @@ class Mixture:
         wt: npt.NDArray[np.double],
         mode: str,
     ) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
-        """Get molar rates of the gas reactions from the given mixture condition: pressure, temperature, and species composition
+        """
+        Get molar rates of the gas reactions from the given mixture condition: pressure, temperature, and species composition
 
         Parameters
         ----------
@@ -1487,7 +1489,6 @@ class Mixture:
                 forward molar rates of the reactions in [mol/cm3-sec]
             Kreverse: 1-D double array, dimension = numbreaction
                 reverse molar rates of the reactions in [mol/cm3-sec]
-
         """
         # check inputs
         if chemID < 0:
@@ -1566,13 +1567,13 @@ class Mixture:
             exit()
 
     def Find_Equilibrium(self):
-        """Create the equilibrium state mixture corresponding to mixture itself
+        """
+        Create the equilibrium state mixture corresponding to mixture itself
 
         Returns
         -------
             EQState: Mixture object
                 gas mixture at the equilibrium state
-
         """
         # initialization a Mixture object by duplication
         EQState = copy.deepcopy(self)
@@ -1596,13 +1597,13 @@ class Mixture:
         return EQState
 
     def HML(self) -> float:
-        """Get enthalpy of the mixture
+        """
+        Get enthalpy of the mixture
 
         Returns
         -------
             hml: double
                 mixture enthalpy [erg/mol]
-
         """
         # initialization
         hml = 0.0e0
@@ -1643,13 +1644,13 @@ class Mixture:
             exit()
 
     def CPBL(self) -> float:
-        """Get specific heat capacity of the mixture
+        """
+        Get specific heat capacity of the mixture
 
         Returns
         -------
             cpbl: double
                 mixture specific heat capacity [erg/mol-K]
-
         """
         # initialization
         cpbl = 0.0e0
@@ -1690,13 +1691,13 @@ class Mixture:
             exit()
 
     def ROP(self) -> npt.NDArray[np.double]:
-        """Get species molar rate of production from the given mixture condition: pressure, temperature, and species compositions
+        """
+        Get species molar rate of production from the given mixture condition: pressure, temperature, and species compositions
 
         Returns
         -------
             ROP: 1-D double array, dimension = number_species
                 species molar rate of production in [mol/cm3-sec]
-
         """
         # check temperature
         if self._Tset == 0:
@@ -1745,7 +1746,8 @@ class Mixture:
             exit()
 
     def RxnRates(self) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
-        """Get molar rates of the gas reactions from the given mixture condition: pressure, temperature, and species composition
+        """
+        Get molar rates of the gas reactions from the given mixture condition: pressure, temperature, and species composition
 
         Returns
         -------
@@ -1753,7 +1755,6 @@ class Mixture:
                 forward molar rates of the reactions in [mol/cm3-sec]
             Kreverse: 1-D double array, dimension = numbreaction
                 reverse molar rates of the reactions in [mol/cm3-sec]
-
         """
         # check temperature
         if self._Tset == 0:
@@ -1807,13 +1808,13 @@ class Mixture:
             exit()
 
     def species_Cp(self) -> npt.NDArray[np.double]:
-        """Get species specific heat capacity at constant pressure
+        """
+        Get species specific heat capacity at constant pressure
 
         Returns
         -------
             Cp: 1-D double array, dimension = number_species
                 species specific heat capacities at constant pressure [ergs/mol-K]
-
         """
         TT = c_double(self.temperature)
         Cp = np.zeros(self._KK, dtype=np.double)
@@ -1834,13 +1835,13 @@ class Mixture:
         return Cp
 
     def species_H(self) -> npt.NDArray[np.double]:
-        """Get species enthalpy
+        """
+        Get species enthalpy
 
         Returns
         -------
             H: 1-D double array, dimension = number_species
                 species enthalpy [ergs/mol]
-
         """
         TT = c_double(self.temperature)
         H = np.zeros(self._KK, dtype=np.double)
@@ -1857,13 +1858,13 @@ class Mixture:
         return H
 
     def species_Visc(self) -> npt.NDArray[np.double]:
-        """Get species viscosity
+        """
+        Get species viscosity
 
         Returns
         -------
             visc: : 1-D double array, dimension = number_species
                 species viscosity [gm/cm-sec]
-
         """
         if self.transport_data != 1:
             msg = [Color.PURPLE, "no transport data processed.", Color.END]
@@ -1882,13 +1883,13 @@ class Mixture:
         return visc
 
     def species_Cond(self) -> npt.NDArray[np.double]:
-        """Get species conductivity
+        """
+        Get species conductivity
 
         Returns
         -------
             cond: 1-D double array, dimension = number_species
                 species conductivity [ergs/cm-K-sec]
-
         """
         if self.transport_data != 1:
             msg = [Color.PURPLE, "no transport data processed.", Color.END]
@@ -1907,13 +1908,13 @@ class Mixture:
         return cond
 
     def species_Diffusion_Coeffs(self) -> npt.NDArray[np.double]:
-        """Get species diffusion coefficients
+        """
+        Get species diffusion coefficients
 
         Returns
         -------
             diffusioncoeffs: 2-D double array, dimension = [number_species, number_species]
                 species diffusion coefficients [cm2/sec]
-
         """
         if self.transport_data != 1:
             msg = [Color.PURPLE, "no transport data processed.", Color.END]
@@ -1940,13 +1941,13 @@ class Mixture:
         return diffusioncoeffs
 
     def mixture_viscosity(self) -> float:
-        """Get viscosity of the gas mixture
+        """
+        Get viscosity of the gas mixture
 
         Returns
         -------
             visc: double
                 mixture viscosity [gm/cm-sec]
-
         """
         if self.transport_data != 1:
             msg = [Color.PURPLE, "no transport data processed.", Color.END]
@@ -1976,13 +1977,13 @@ class Mixture:
         return visc.value
 
     def mixture_conductivity(self) -> float:
-        """Get conductivity of the gas mixture
+        """
+        Get conductivity of the gas mixture
 
         Returns
         -------
             cond: double
                 mixture conductivity [erg/cm-K-sec]
-
         """
         if self.transport_data != 1:
             msg = [Color.PURPLE, "no transport data processed.", Color.END]
@@ -2012,13 +2013,13 @@ class Mixture:
         return cond.value
 
     def mixture_diffusion_coeffs(self) -> npt.NDArray[np.double]:
-        """Get mixture-averaged species diffusion coefficients of the gas mixture
+        """
+        Get mixture-averaged species diffusion coefficients of the gas mixture
 
         Returns
         -------
             diffusioncoeffs: 1-D double array, dimension = number_species
                 mixture-averaged diffusion coefficients [cm2/sec]
-
         """
         if self.transport_data != 1:
             msg = [Color.PURPLE, "no transport data processed.", Color.END]
@@ -2063,13 +2064,13 @@ class Mixture:
         return diffusioncoeffs
 
     def mixture_binary_diffusion_coeffs(self) -> npt.NDArray[np.double]:
-        """Get multi-component species binary diffusion coefficients of the gas mixture
+        """
+        Get multi-component species binary diffusion coefficients of the gas mixture
 
         Returns
         -------
             binarydiffusioncoeffs: 2-D double array, dimension = [number_species, number_species]
                 binary diffusion coefficients [cm2/sec]
-
         """
         if self.transport_data != 1:
             msg = [Color.PURPLE, "no transport data processed.", Color.END]
@@ -2116,13 +2117,13 @@ class Mixture:
         return binarydiffusioncoeffs
 
     def mixture_thermal_diffusion_coeffs(self) -> npt.NDArray[np.double]:
-        """Get thermal diffusivity of the gas mixture
+        """
+        Get thermal diffusivity of the gas mixture
 
         Returns
         -------
             thermaldiffusioncoeffs: 1-D double array, dimension = number_species
                 thermal diffusivity [gm/cm-sec]
-
         """
         if self.transport_data != 1:
             msg = [Color.PURPLE, "no transport data processed.", Color.END]
@@ -2169,13 +2170,13 @@ class Mixture:
         return thermaldiffusioncoeffs
 
     def volHRR(self) -> float:
-        """Get volumetric heat release rate
+        """
+        Get volumetric heat release rate
 
         Returns
         -------
             vol_HRR: double
                 volumetric heat release rate [ergs/cm3-sec]
-
         """
         volHRR = 0.0e0
         # get species enthalpy
@@ -2201,13 +2202,13 @@ class Mixture:
         return volHRR
 
     def massROP(self) -> npt.NDArray[np.double]:
-        """Get species mass rates of production
+        """
+        Get species mass rates of production
 
         Returns
         -------
             massROP: 1-D double array, dimension = number_species
                 mass rates of production [gm/cm3-sec]
-
         """
         # get species molar rate of production mol/cm3-sec
         ROP = self.ROP()
@@ -2218,7 +2219,8 @@ class Mixture:
     def list_ROP(
         self, threshold: float = 0.0
     ) -> tuple[npt.NDArray[np.int32], npt.NDArray[np.double]]:
-        """List information about species molar production rate in descending order
+        """
+        list information about species molar production rate in descending order
 
         Parameters
         ----------
@@ -2231,7 +2233,6 @@ class Mixture:
                 sorted species index
             sorted_ROP: 1-D double array, dimension = number_species
                 sorted ROP values [gm/cm3-sec]
-
         """
         # get species molar rate of production mol/cm3-sec
         ROP = self.ROP()
@@ -2271,7 +2272,8 @@ class Mixture:
     def list_massROP(
         self, threshold: float = 0.0
     ) -> tuple[npt.NDArray[np.int32], npt.NDArray[np.double]]:
-        """List information about species mass rate of production in descending order
+        """
+        list information about species mass rate of production in descending order
 
         Parameters
         ----------
@@ -2284,7 +2286,6 @@ class Mixture:
                 sorted species index
             sorted_massROP: 1-D double array, dimension = number_species
                 sorted mass ROP values [gm/cm3-sec]
-
         """
         # get species mass rate of production gm/cm3-sec
         massROP = self.massROP()
@@ -2324,7 +2325,8 @@ class Mixture:
     def list_reaction_rates(
         self, threshold: float = 0.0
     ) -> tuple[npt.NDArray[np.int32], npt.NDArray[np.double]]:
-        """List information about reaction rate in descending order
+        """
+        list information about reaction rate in descending order
 
         Parameters
         ----------
@@ -2337,7 +2339,6 @@ class Mixture:
                 sorted reaction index
             sorted_RxnRates: 1-D double array, dimension = numb_reactions
                 sorted reaction rate values [mol/cm3-sec]
-
         """
         # molar rates of reactions
         RF, RR = self.RxnRates()
@@ -2389,7 +2390,8 @@ class Mixture:
         equivalenceratio: float,
         threshold: float = 1.0e-10,
     ) -> int:
-        """Specify the mixture molar composition by providing the equivalence ratio, the mole fractions of the fuel mixture,
+        """
+        Specify the mixture molar composition by providing the equivalence ratio, the mole fractions of the fuel mixture,
         the oxidizer mixture, and the additives mixture, and the list of the complete combustion product species.
 
         Parameters
@@ -2412,7 +2414,6 @@ class Mixture:
         Returns
         -------
             Error status: integer
-
         """
         # check chemistry set
         if not isinstance(chemistryset, Chemistry):
@@ -2547,7 +2548,8 @@ class Mixture:
         equivalenceratio: float,
         threshold: float = 1.0e-10,
     ) -> int:
-        """Specify the mixture molar composition by providing the equivalence ratio, the mole fractions of the fuel mixture,
+        """
+        Specify the mixture molar composition by providing the equivalence ratio, the mole fractions of the fuel mixture,
         the oxidizer mixture, and the additives mixture, and the list of the complete combustion product species.
 
         Parameters
@@ -2570,7 +2572,6 @@ class Mixture:
         Returns
         -------
             Error status: integer
-
         """
         # check chemistry set
         if not isinstance(chemistryset, Chemistry):
@@ -2607,7 +2608,8 @@ class Mixture:
     def get_EGR_mole_fraction(
         self, EGRratio: float, threshold: float = 1.0e-8
     ) -> npt.NDArray[np.double]:
-        """Compute the EGR composition in mole fraction corresponding to this mixture
+        """
+        Compute the EGR composition in mole fraction corresponding to this mixture
 
         Parameters
         ----------
@@ -2620,7 +2622,6 @@ class Mixture:
         -------
             EGR_molefrac: 1-D double array, dimension = number_species
                 EGR stream compostion in mole fractions
-
         """
         # create burned mixture
         burned = self.Find_Equilibrium()
@@ -2634,12 +2635,12 @@ class Mixture:
         return EGR_molefrac
 
     def validate(self) -> int:
-        """Check whether the mixture is fully defined before being used by other methods
+        """
+        Check whether the mixture is fully defined before being used by other methods
 
         Returns
         -------
             Error status: integer
-
         """
         iErr = 0
         # check mixture temperature
@@ -2661,7 +2662,8 @@ class Mixture:
         return iErr
 
     def use_realgas_cubicEOS(self):
-        """Turn ON the real-gas cubic EOS to compute mixture properties if the mechanism contains necessary data
+        """
+        Turn ON the real-gas cubic EOS to compute mixture properties if the mechanism contains necessary data
         """
         if self._EOS.value < 1:
             # no real gas EOS data in the mechanism
@@ -2702,7 +2704,8 @@ class Mixture:
             self.userealgas = False
 
     def use_idealgas_law(self):
-        """Turn on the ideal gas law to compute mixture properties
+        """
+        Turn on the ideal gas law to compute mixture properties
         """
         if self._EOS.value < 1:
             # no real gas EOS data in the mechanism
@@ -2732,7 +2735,8 @@ class Mixture:
             self.userealgas = False
 
     def set_realgas_mixing_rule(self, rule: int = 0):
-        """Set the mixing rule to be used for calculating the real-gas mixture properties
+        """
+        Set the mixing rule to be used for calculating the real-gas mixture properties
 
         Parameters
         ----------
@@ -2740,7 +2744,6 @@ class Mixture:
                 mixing rule:
                     0 for the Van der Waals mixing rule;
                     1 for the critical properties mixing rule (integer scalar)
-
         """
         if self._EOS.value < 1:
             # no real gas EOS data in the mechanism
@@ -2799,7 +2802,8 @@ class Mixture:
 def isothermal_mixing(
     recipe: list[tuple[Mixture, float]], mode: str, finaltemperature: float
 ) -> Mixture:
-    """Find the resulting gas mixture properties from mixing a number of gas mixtures at the given mixture temperature
+    """
+    Find the resulting gas mixture properties from mixing a number of gas mixtures at the given mixture temperature
 
     Parameters
     ----------
@@ -2814,7 +2818,6 @@ def isothermal_mixing(
     -------
         finalmixture: Mixture object
             the resulting gas mixture after mixing
-
     """
     # check number of mixtures
     numb_mixture = len(recipe)
@@ -2985,7 +2988,8 @@ def isothermal_mixing(
 
 
 def adiabatic_mixing(recipe: list[tuple[Mixture, float]], mode: str) -> Mixture:
-    """Find the resulting gas mixture properties from mixing a number of gas mixtures with constant total enthalpy
+    """
+    Find the resulting gas mixture properties from mixing a number of gas mixtures with constant total enthalpy
 
     Parameters
     ----------
@@ -2998,7 +3002,6 @@ def adiabatic_mixing(recipe: list[tuple[Mixture, float]], mode: str) -> Mixture:
     -------
         finalmixture: Mixture object
             the resulting gas mixture after mixing
-
     """
     # check number of mixtures
     numb_mixture = len(recipe)
@@ -3178,7 +3181,8 @@ def calculate_mixture_temperature_from_enthalpy(
     mixtureH: float,
     guesstemperature: float = 0.0,
 ) -> int:
-    """Compute the mixture temperature from the given mixture enthalpy,
+    """
+    Compute the mixture temperature from the given mixture enthalpy,
     the solved mixture temperature is stored as the temperature attribute of the given gas mixture (i.e., as mixture.temperature)
 
     Parameters
@@ -3193,7 +3197,6 @@ def calculate_mixture_temperature_from_enthalpy(
     Returns
     -------
         error code: integer
-
     """
     # check argument
     if not isinstance(mixture, Mixture):
@@ -3265,7 +3268,8 @@ def calculate_mixture_temperature_from_enthalpy(
 def interpolate_mixtures(
     mixtureleft: Mixture, mixtureright: Mixture, ratio: float
 ) -> Mixture:
-    """Create a new mixture object by interpolating the two mixture objects with a specific weight ratio
+    """
+    Create a new mixture object by interpolating the two mixture objects with a specific weight ratio
 
     ::
         mixture_new = (1 - ratio) * mixtureleft + ratio * mixtureright
@@ -3283,7 +3287,6 @@ def interpolate_mixtures(
     -------
         mixturenew: Mixture object
             the resulting gas mixture
-
     """
     # check mixtures
     if not isinstance(mixtureleft, Mixture):
@@ -3387,7 +3390,8 @@ def compare_mixtures(
     rtol: float = 1.0e-3,
     mode: str = "mass",
 ) -> tuple[bool, float, float]:
-    """Compare properties of mixture B against those of mixture A. The mixture properties
+    """
+    Compare properties of mixture B against those of mixture A. The mixture properties
     include pressure [atm], temperature [K], and species mass/mole fractions. When the
     differences in the property values satisfy both the absolute and the relative
     tolerances, this method will return "True", that is, mixture B is essentially
@@ -3414,7 +3418,6 @@ def compare_mixtures(
             the max absolute difference value
         rtol_max: double
             the max relative difference value
-
     """
     # check mixtures
     if not isinstance(mixtureA, Mixture):
@@ -3579,7 +3582,8 @@ def calculate_equilibrium(
     EQOption: int = 1,
     useRealGas: int = 0,
 ) -> tuple[list[float], npt.NDArray[np.double]]:
-    """Get the equilibrium mixture composition corresponding to the given initial mixture composition at the given pressure and temperature
+    """
+    Get the equilibrium mixture composition corresponding to the given initial mixture composition at the given pressure and temperature
 
     Parameters
     ----------
@@ -3625,7 +3629,6 @@ def calculate_equilibrium(
             both speed of sound and detonation wave speed are set to 0.0
         equilibrium composition: 1-D double array
             given in fractions indicated by the parameter mode_out
-
     """
     # find the equilibrium composition at the mixture pressure and temperature
     # check inputs
@@ -3795,7 +3798,8 @@ def calculate_equilibrium(
 
 
 def equilibrium(mixture: Mixture, opt: int = 1) -> Mixture:
-    """Find the equilibrium state mixture corresponding to the given mixture
+    """
+    Find the equilibrium state mixture corresponding to the given mixture
 
     Parameters
     ----------
@@ -3822,7 +3826,6 @@ def equilibrium(mixture: Mixture, opt: int = 1) -> Mixture:
     -------
         finalmixture: Mixture object
             gas mixture at the equilibrium state
-
     """
     # check argument
     if not isinstance(mixture, Mixture):
@@ -3892,7 +3895,8 @@ def equilibrium(mixture: Mixture, opt: int = 1) -> Mixture:
 
 
 def detonation(mixture: Mixture) -> tuple[list[float], Mixture]:
-    """Find the Chapman-Jouguet state mixture and detonation wave speed corresponding to the given mixture
+    """
+    Find the Chapman-Jouguet state mixture and detonation wave speed corresponding to the given mixture
 
     Parameters
     ----------
@@ -3906,7 +3910,6 @@ def detonation(mixture: Mixture) -> tuple[list[float], Mixture]:
             detonation wave speed [cm/sec].
         finalmixture: Mixture object
             gas mixture at the equilibrium state
-
     """
     # check argument
     if not isinstance(mixture, Mixture):

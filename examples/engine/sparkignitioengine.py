@@ -20,7 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-""".. _ref_sparkignition_engine:
+"""
+.. _ref_sparkignition_engine:
 
 ================================
 Simulate a spark ignition engine
@@ -50,15 +51,14 @@ exhaust gas recirculation and the wall heat transfer can be included in the engi
 import os
 import time
 
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
-
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin import Color
 
 # chemkin spark ignition (SI) engine model (transient)
 from ansys.chemkin.engines.SI import SIengine
 from ansys.chemkin.logger import logger
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()

@@ -20,7 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-""".. _ref_equilibrium_composition:
+"""
+.. _ref_equilibrium_composition:
 
 =================================================================================
 Estimate the steady-state NO emission level of a complete burned fuel-air mixture
@@ -48,11 +49,10 @@ gets high enough.
 
 import os
 
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
-
 import ansys.chemkin as ck  # Chemkin
 from ansys.chemkin.logger import logger
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
 
 # check working directory
 current_dir = os.getcwd()

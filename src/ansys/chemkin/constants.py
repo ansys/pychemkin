@@ -42,7 +42,8 @@ R_GAS_CAL = (
 
 
 class Air:
-    """define the "air" composition in PyChemkin with a fixed mixture "recipe".
+    """
+    define the "air" composition in PyChemkin with a fixed mixture "recipe".
     A "recipe" is a list of tuples of ("species symbol", fraction) to define a
     gas mixture in PyChemkin.
     This class uses the upper case symbols for oxygen and nitrogen.
@@ -58,7 +59,8 @@ class Air:
 
 
 class air:
-    """define the "air" composition in PyChemkin with a fixed mixture "recipe".
+    """
+    define the "air" composition in PyChemkin with a fixed mixture "recipe".
     A "recipe" is a list of tuples of ("species symbol", fraction) to define a
     gas mixture in PyChemkin.
     This class uses the lower case symbols for oxygen and nitrogen.
@@ -74,7 +76,8 @@ class air:
 
 
 def water_heat_vaporization(temperature: float) -> float:
-    """Get the heat if vporization of water at the given temperature [K]
+    """
+    Get the heat if vporization of water at the given temperature [K]
 
     Parameters
     ----------
@@ -85,7 +88,6 @@ def water_heat_vaporization(temperature: float) -> float:
     -------
         enthalpy: double
             enthalpy of vaporization of water at the given temperature [erg/g-water]
-
     """
     # critical temperature of water [K]
     Tc = 647.096

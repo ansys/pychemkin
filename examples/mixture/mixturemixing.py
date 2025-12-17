@@ -20,7 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-""".. _ref_mixing_mixtures:
+"""
+.. _ref_mixing_mixtures:
 
 ====================
 Combine gas mixtures

@@ -24,19 +24,20 @@
 
 import copy
 
+from ansys.chemkin.color import Color
+from ansys.chemkin.logger import logger
 import numpy as np
 import numpy.typing as npt
 
-from ansys.chemkin.color import Color
-from ansys.chemkin.logger import logger
-
 
 class Grid:
-    """Grid quality control parameters for Chemkin 1-D steady-state reactor models.
+    """
+    Grid quality control parameters for Chemkin 1-D steady-state reactor models.
     """
 
     def __init__(self):
-        """Grid quality control parameters for Chemkin 1-D steady-state reactor models.
+        """
+        Grid quality control parameters for Chemkin 1-D steady-state reactor models.
         """
         self.max_numb_grid_points = 250
         self.max_numb_adapt_points = 10
@@ -51,13 +52,13 @@ class Grid:
         self.numb_grid_profile = 0
 
     def set_numb_grid_points(self, numb_points: int):
-        """Set the number of uniform grid points at the start of simulation.
+        """
+        Set the number of uniform grid points at the start of simulation.
 
         Parameters
         ----------
             numb_points: integer, default = 6
                 number of initial grid points
-
         """
         if numb_points > 0:
             self.numb_grid_points = numb_points
@@ -67,13 +68,13 @@ class Grid:
             logger.error(this_msg)
 
     def set_max_grid_points(self, numb_points: int):
-        """Set the maximum number of grid points allowed during the solution refinement.
+        """
+        Set the maximum number of grid points allowed during the solution refinement.
 
         Parameters
         ----------
             numb_points: integer, default = 250
                 maximum number of grid points
-
         """
         if numb_points > 0:
             self.max_numb_grid_points = numb_points
@@ -84,49 +85,49 @@ class Grid:
 
     @property
     def start_position(self) -> float:
-        """Get the coordinate value of the first grid point, that is, the inlet/entrance.
+        """
+        Get the coordinate value of the first grid point, that is, the inlet/entrance.
 
         Returns
         -------
             position: double
                 coordinate of the first grid point [cm]
-
         """
         return self.starting_x
 
     @start_position.setter
     def start_position(self, position: float):
-        """Reset the coordinate value of the first grid point, that is, the inlet/entrance.
+        """
+        Reset the coordinate value of the first grid point, that is, the inlet/entrance.
 
         Parameters
         ----------
             position: double, default = 0.0
                 coordinate of the first grid point [cm]
-
         """
         self.starting_x = position
 
     @property
     def end_position(self) -> float:
-        """Get the coordinate value of the last grid point, that is, the outlet/exit/gap.
+        """
+        Get the coordinate value of the last grid point, that is, the outlet/exit/gap.
 
         Returns
         -------
             position: double
                 coordinate of the last grid point [cm]
-
         """
         return self.ending_x
 
     @end_position.setter
     def end_position(self, position: float):
-        """Set the coordinate value of the last grid point, that is, the outlet/exit/gap.
+        """
+        Set the coordinate value of the last grid point, that is, the outlet/exit/gap.
 
         Parameters
         ----------
             position: double
                 coordinate of the last grid point [cm]
-
         """
         if position > self.starting_x:
             self.ending_x = position
@@ -136,13 +137,13 @@ class Grid:
             logger.error(this_msg)
 
     def set_reaction_zone_center(self, position: float):
-        """Set the coordinate value of the reaction/mixing zone center.
+        """
+        Set the coordinate value of the reaction/mixing zone center.
 
         Parameters
         ----------
             position: double
                 coordinate of center of the reaction/mixing zone [cm]
-
         """
         if position < self.starting_x:
             msg = [Color.PURPLE, "zone center must >= starting position.", Color.END]
@@ -156,13 +157,13 @@ class Grid:
             self.reaction_zone_center_x = position
 
     def set_reaction_zone_width(self, size: float):
-        """Set the width of the reaction/mixing.
+        """
+        Set the width of the reaction/mixing.
 
         Parameters
         ----------
             size: double
                 width of the reaction/mixing zone [cm]
-
         """
         if size > 0.0:
             self.reaction_zone_width = size
@@ -172,13 +173,13 @@ class Grid:
             logger.error(this_msg)
 
     def set_max_adaptive_points(self, numb_points: int):
-        """Set the maximum number of adaptive grid points allowed per solution refinement.
+        """
+        Set the maximum number of adaptive grid points allowed per solution refinement.
 
         Parameters
         ----------
             numb_points: integer, default = 10
                 maximum number of adapted grid points can be added
-
         """
         if numb_points > 0:
             self.max_numb_adapt_points = numb_points
@@ -198,7 +199,8 @@ class Grid:
             logger.error(this_msg)
 
     def set_solution_quality(self, gradient: float = 0.1, curvature: float = 0.5):
-        """Set the maximum gradient and curvature ratios in the final solution profile.
+        """
+        Set the maximum gradient and curvature ratios in the final solution profile.
         The solver will attempt to add more grid points to improve the resolution
         of the solution profiles till both gradient and curvature ratios are below
         the specified values or till the number of grid points exceeds the maximum
@@ -210,7 +212,6 @@ class Grid:
                 the maximum gradient ratio of in the final solution profiles.
             curvature: double, default = 0.5
                 the maximum curvature ratio of in the final solution profiles.
-
         """
         # check gradient ratio value
         if gradient <= 0.0:
@@ -236,7 +237,8 @@ class Grid:
             self.curvature = curvature
 
     def set_grid_profile(self, mesh: npt.NDArray[np.double]) -> int:
-        """Specify the grid point coordinates of the initial grid points.
+        """
+        Specify the grid point coordinates of the initial grid points.
 
         Parameters
         ----------
@@ -246,7 +248,6 @@ class Grid:
         Returns
         -------
             error code
-
         """
         ierror = 0
         ngrids = len(mesh)
