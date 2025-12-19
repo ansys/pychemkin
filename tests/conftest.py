@@ -56,10 +56,12 @@ def pytest_configure(config):
 
 
 def pytest_runtest_setup(item):
-    """Skip PyChemkin test groups that is not specified by the '--group' option.
+    """Skip PyChemkin test groups that is not specified by the '--group' option."""
+    """
     By default, pytest will run all test groups (i.e., --group="all").
     """
-    # run group if option "--group" is given and the group name appears in the option argument
+    # run group if option "--group" is given and the group name appears
+    # in the option argument
     groupnames = []
     for mark in item.iter_markers(name="group"):
         groupnames = mark.args
@@ -69,8 +71,8 @@ def pytest_runtest_setup(item):
 
 
 def pytest_collection_modifyitems(items):
-    """Modifies test items in place to ensure the result comparison test module runs last."""
-    CLASS_ORDER = [
+    """Set the order of test groups and ensure the result comparison runs last."""
+    class_order = [
         "TestClassBasic",
         "TestClassUtilities",
         "TestClassEquilibrium",
@@ -84,7 +86,7 @@ def pytest_collection_modifyitems(items):
     class_mapping = {item: item.cls.__name__ for item in items}
     sorted_items = items.copy()
     # Iteratively move tests of each class to the end of the test queue
-    for class_ in CLASS_ORDER:
+    for class_ in class_order:
         sorted_items = [it for it in sorted_items if class_mapping[it] != class_] + [
             it for it in sorted_items if class_mapping[it] == class_
         ]
@@ -93,24 +95,29 @@ def pytest_collection_modifyitems(items):
 
 @pytest.fixture
 def get_compare(request):
+    """Get comparison options."""
     return request.config.getoption("--compare")
 
 
 @pytest.fixture
 def get_source_dir(request):
+    """Get alternative source code folder."""
     return request.config.getoption("--source")
 
 
 @pytest.fixture
 def get_baseline_dir(request):
+    """Get alternative baseline folder."""
     return request.config.getoption("--baseline")
 
 
 @pytest.fixture
 def get_result_dir(request):
+    """Get alternative results folder."""
     return request.config.getoption("--results")
 
 
 @pytest.fixture
 def get_working_dir(request):
+    """Get alternative test working folder."""
     return request.config.rootdir

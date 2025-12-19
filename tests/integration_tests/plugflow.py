@@ -19,7 +19,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
+
+"""Test for the PFR model."""
+
+from pathlib import Path
 import time
 
 import matplotlib.pyplot as plt  # plotting
@@ -34,7 +37,7 @@ from ansys.chemkin.core.inlet import Stream
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = Path.cwd()
 logger.debug("working directory: " + current_dir)
 # set interactive mode for plotting the results
 # interactive = True: display plot
@@ -43,14 +46,14 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir / "reaction" / "data")
 mechanism_dir = data_dir
 # create a chemistry set based on the GRI mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
+MyGasMech.chemfile = Path(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
 # preprocess the mechanism files
 ierror = MyGasMech.preprocess()
 # create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
@@ -179,7 +182,7 @@ else:
     plt.savefig("plug_flow_reactor.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "plugflow.result")
+resultfile = Path(current_dir / "plugflow.result")
 results = {}
 results["state-distance"] = xprofile.tolist()
 results["state-temperature"] = tempprofile.tolist()
@@ -187,7 +190,7 @@ results["state-velocity"] = velocityprofile.tolist()
 results["species-CO_mole_fraction"] = COprofile.tolist()
 results["species-NO2_mole_fraction"] = NO2profile.tolist()
 #
-r = open(resultfile, "w")
+r = Path.open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

@@ -19,17 +19,20 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
+
+"""Test for defining and preprocessing gas phase reaction mechanism."""
+
+from pathlib import Path
 
 import ansys.chemkin.core  # import PyChemkin
 from ansys.chemkin.core.logger import logger
 
 # create a Chemistry Set for GRI 3.0 mechanism in the data directory
-mechanism_dir = os.path.join(ansys.chemkin.core.ansys_dir, "reaction", "data")
+mechanism_dir = Path(ansys.chemkin.core.ansys_dir, "reaction", "data")
 # set up mechanism file names
-mech_file = os.path.join(mechanism_dir, "grimech30_chem.inp")
-therm_file = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-tran_file = os.path.join(mechanism_dir, "grimech30_transport.dat")
+mech_file = Path(mechanism_dir / "grimech30_chem.inp")
+therm_file = Path(mechanism_dir / "grimech30_thermo.dat")
+tran_file = Path(mechanism_dir / "grimech30_transport.dat")
 # instantiate Chenistry Set 'GasMech'
 GasMech = ansys.chemkin.core.Chemistry(
     chem=mech_file, therm=therm_file, tran=tran_file, label="GRI 3.0"
@@ -63,8 +66,8 @@ print(f"the mixture density   = {air.RHO} [g/cm3]")
 print(f"the mixture viscosity = {air.mixture_viscosity() * 100.0} [cP]")
 
 # return results for comparisons
-current_dir = os.getcwd()
-resultfile = os.path.join(current_dir, "simple.result")
+current_dir = Path.cwd()
+resultfile = Path(current_dir / "simple.result")
 results = {}
 results["state-temperature"] = [air.temperature]
 results["state-pressure"] = [air.pressure]
@@ -72,7 +75,7 @@ results["state-density"] = [air.RHO]
 results["state-viscosity"] = [air.mixture_viscosity() * 100.0]
 results["species-mole_fraction"] = air.X.tolist()
 #
-r = open(resultfile, "w")
+r = Path.open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

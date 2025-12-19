@@ -20,66 +20,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-""".. _ref_equivalent_reactor_network:
-
-==============================================================================
-Simulate a combustor using an equivalent reactor network with stream recycling
-==============================================================================
-
-This tutorial describes the process of setting up and solving an equivalent reactor network (ERN) in PyChemkin.
-
-An equivalent reactor network is employed as a reduced-order model to simulate the steady-state
-combustion process inside a gas turbine combustor chamber. This reduced-order reactor network model retains the
-complexity of the combustion chemistry by sacrificing details of the combustor geometries, the spatial resolution and
-the mass and energy transfer processes. An ERN usually comprises of PSRs (perfectly-stirred reactors) and
-PFRs (plug-flow reactors). The network configuration and connectivity,
-the reactor parameters, and the mass flow rates can be determined from "hot" steady-state CFD simulation results and/or
-from observations and measured data of the actual/similar devices. Once a reactor network is calibrated against the
-experimental data of a gas combustor, it becomes a handy tool to quickly estimate the emissions from the combustor
-when it is subjected to certain variations in the fuel compositions.
-
-The proposed ERN model of a fictional gas turbine combustor is shown below
-
- .. figure:: combustor_ERN.png
-   :scale: 80 %
-   :alt: the combustor reactor network
-
-The *"primary fuel"* is mixed with the incoming air to form a *fuel-lean* mixture before entering the chamber through the
-primary inlet. Additional air, the *"primary air"*, is introduced to combustion chamber separately through openings
-surrounding the primary inlet. The *"secondary air"* will be entrained into the combustion chamber through well placed holes
-on the liners at a location slightly downstream from the primary inlet.
-
-The first PSR (reactor #1) represents the *"mixing zone"* around the main injector where the cool *"premixed fuel-air"* stream and
-the *"primary air"* stream are preheated by mixing with the hot combustion products from the *"recirculation zone"*. Downstream
-from PSR #1, PSR #2, the *"flame zone"*, is where the combustion of the heated fuel-air mixture takes place. The *"secondary air"*
-is injected here to cool down the combustion exhaust before it exits the combustion chamber. A portion of the exhaust gas coming
-out of PSR #2 does not leave the combustion chamber directly and is diverted to PSR #3, the *"recirculation zone"*. The majority
-of the outlet flow from PSR #3 is recirculated back to the *"flame zone"* to sustain the fuel-lean premixed flame there. The rest
-of the hot gas from PSR #3 will travel further back to PSR #1, the *"mixing zone"*, to preheat the fuel-lean mixture just entering
-the combustion chamber. And finally, the cooled flue gas leaving the chamber in a stream-like manner. Typically, a PFR will be
-applied to simulation the out-flow.
-
-The reactors in the network will be solved individually one by one. When there is a *"tear stream"* in the network,
-the ERN should be solved iteratively. A *"tear stream"* is usually a "recycle" stream that can serve as a "pivot point"
-for solving the recycle network iteratively. The convergence of the ERN is then determined by the absence of the
-per-iteration variation of the computed *"tear stream"* properties such as species composition. In the current project,
-the recycling streams from PSR #3 to PSR #1 and PSR #2 are *"tear streams"*.
-"""
-
-# sphinx_gallery_thumbnail_path = '_static/combustor_ERN.png'
+"""Test of a hybrid reactor network model with stream recycling."""
 
 ###############################################
 # Import PyChemkin package and start the logger
 # =============================================
 
-import os
+from pathlib import Path
 import time
 
 import numpy as np  # number crunching
 
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
-from ansys.chemkin.core.hybridreactornetwork import ReactorNetwork as ERN
+from ansys.chemkin.core.hybridreactornetwork import ReactorNetwork as Ern
 from ansys.chemkin.core.inlet import (
     Mixture,
     Stream,  # external gaseous inlet
@@ -87,10 +41,10 @@ from ansys.chemkin.core.inlet import (
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_EnergyConservation as psr
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = Path.cwd()
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -108,14 +62,14 @@ interactive = True
 # installation in the ``/reaction/data`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir / "reaction" / "data")
 mechanism_dir = data_dir
 # create a chemistry set based on the GRI mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
+MyGasMech.chemfile = Path(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
 
 ############################################
 # Pre-process the gasoline ``Chemistry Set``
@@ -156,14 +110,16 @@ air.X = ck.Air.X()  # mole fractions
 #   PyChemkin has *"air"* redefined as a convenient way to set up the air
 #   stream/mixture in the simulations. Use ``ansys.chemkin.core.Air.X()`` or
 #   ``ansys.chemkin.core.Air.Y()`` when the mechanism uses "O2" and "N2" for
-#   oxygen and nitrogen. Use ``ansys.chemkin.core.air.X()`` or ``ansys.chemkin.core.air.Y()``
-#   when oxygen and nitrogen are represented by "o2" and "n2".
+#   oxygen and nitrogen. Use ``ansys.chemkin.core.air.X()`` or
+#   ``ansys.chemkin.core.air.Y()`` when oxygen and nitrogen are represented
+#   by "o2" and "n2".
 #
 
 # primary fuel-air mixture
 # products from the complete combustion of the fuel mixture and air
 products = ["CO2", "H2O", "N2"]
-# species mole fractions of added/inert mixture. can also create an additives mixture here
+# species mole fractions of added/inert mixture.
+# can also create an additives mixture here
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
 
 # create the unburned fuel-air mixture
@@ -230,7 +186,7 @@ CO_index = MyGasMech.get_specindex("CO")
 #
 
 # PSR #1: mixing zone
-mix = PSR(premixed, label="mixing zone")
+mix = psr(premixed, label="mixing zone")
 # use different guess temperature
 mix.set_estimate_conditions(option="TP", guess_temp=800.0)
 # set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
@@ -241,7 +197,7 @@ mix.set_inlet(primary_air)
 
 
 # PSR #2: flame zone
-flame = PSR(premixed, label="flame zone")
+flame = psr(premixed, label="flame zone")
 # use use the equilibrium state of the inlet gas mixture as the guessed solution
 flame.set_estimate_conditions(option="TP", guess_temp=1600.0)
 # set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
@@ -250,7 +206,7 @@ flame.residence_time = 1.5 * 1.0e-3
 flame.set_inlet(secondary_air)
 
 # PSR #3: recirculation zone
-recirculation = PSR(premixed, label="recirculation zone")
+recirculation = psr(premixed, label="recirculation zone")
 # use use the equilibrium state of the inlet gas mixture as the guessed solution
 recirculation.set_estimate_conditions(option="TP", guess_temp=1600.0)
 # set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
@@ -280,7 +236,7 @@ recirculation.residence_time = 1.5 * 1.0e-3
 #
 
 # instantiate the chain PSR network as a hy
-PSRnetwork = ERN(MyGasMech)
+PSRnetwork = Ern(MyGasMech)
 
 # add the reactors from upstream to downstream
 PSRnetwork.add_reactor(mix)
@@ -293,28 +249,30 @@ PSRnetwork.show_reactors()
 ##################################
 # Define the PSR connectivity
 # ==============================
-# Because the current reactor network contains recycling streams, for example, from PSR #3 to
-# PSR #1 and PSR #2, the network connectivity must be specified explicitly. This is done by
-# using a *"split"* dictionary to define the outflow connections among the PSRs in the network.
-# The *key* of the *"split"* dictionary is the label of the *"originate PSR"*. The *value* is a
-# list of tuples consisting of the label of the *"target PSR"* and its *"mass flow rate fraction"*.
+# Because the current reactor network contains recycling streams, for example,
+# from PSR #3 to PSR #1 and PSR #2, the network connectivity must be specified
+# explicitly. This is done by using a *"split"* dictionary to define
+# the outflow connections among the PSRs in the network.
+# The *key* of the *"split"* dictionary is the label of the *"originate PSR"*.
+# The *value* is a list of tuples consisting of the label of the *"target PSR"*
+# and its *"mass flow rate fraction"*.
 #
 # ::
 #
 #   { "originate PSR" : [("target PSR1", fraction), ("target PSR2", fraction)],
 #     "another originate PSR" : [("target PSR1", fraction), ... ], ... }
 #
-# For example, the outflow from reactor "PSR1" is split into two streams. 90% of the
-# mass flow rate goes to "PSR2" and the rest is diverted to "PSR5". The split dictionary entry for
-# the outflow split of "PSR1" becomes
+# For example, the outflow from reactor "PSR1" is split into two streams.
+# 90% of the mass flow rate goes to "PSR2" and the rest is diverted to "PSR5".
+# The split dictionary entry for the outflow split of "PSR1" becomes
 #
 # ::
 #
 #   "PSR1" : [("PSR2", 0.9), ("PSR5", 0.1)]
 #
 # .. note::
-#   The outlet flow from a reactor that is leaving the reactor network must be labeled as "EXIT>>"
-#   when you define the outflow splitting.
+#   The outlet flow from a reactor that is leaving the reactor network must be
+#   labeled as "EXIT>>" when you define the outflow splitting.
 #
 
 # PSR #1 outlet flow splitting
@@ -325,7 +283,8 @@ PSRnetwork.add_outflow_connections(mix.label, split_table)
 split_table = [(recirculation.label, 0.2), ("EXIT>>", 0.8)]
 PSRnetwork.add_outflow_connections(flame.label, split_table)
 # PSR #3 outlet flow splitting
-# PSR #3 is the last reactor of the network, however it does not have external outlet
+# PSR #3 is the last reactor of the network,
+# however it does not have external outlet
 split_table = [(mix.label, 0.15), (flame.label, 0.85)]
 PSRnetwork.add_outflow_connections(recirculation.label, split_table)
 
@@ -353,18 +312,20 @@ PSRnetwork.set_tear_tolerance(1.0e-5)
 ###########################
 # Solve the reactor network
 # =========================
-# Use the ``run`` method to solve the entire reactor network. The hybrid ``ReactorNetwork``
-# will solve the reactors one by one in the order they are added to the network.
+# Use the ``run`` method to solve the entire reactor network.
+# The hybrid ``ReactorNetwork`` will solve the reactors one by one
+# in the order they are added to the network.
 #
 # .. note::
-#   Use the ``set_tear_iteration_limit(count)`` method to change the limit on the number of
-#   tear loop tear loop iterations can be taken before declaring the failure.
-#   The default limit is 200.
+#   Use the ``set_tear_iteration_limit(count)`` method to change the limit
+#   on the number of tear loop tear loop iterations can be taken before
+#   declaring the failure. The default limit is 200.
 #
 # .. note::
-#   The ``set_relaxation_factor(factor)`` method can be employed to make solution updating at the
-#   end of each iteration to be more aggressive (factor > 1.0) or more conservative (factor < 1.0).
-#   By default, the relaxation factor is set to 1.
+#   The ``set_relaxation_factor(factor)`` method can be employed to make
+#   solution updating at the end of each iteration to be more aggressive
+#   (factor > 1.0) or more conservative (factor < 1.0). By default,
+#   the relaxation factor is set to 1.
 #
 
 # set the start wall time
@@ -448,7 +409,7 @@ for index, stream in PSRnetwork.reactor_solutions.items():
     print("-" * 10)
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "PSRnetwork.result")
+resultfile = Path(current_dir / "PSRnetwork.result")
 results = {}
 results["state-temperature"] = temp
 results["state-mass_flow_rate"] = mflr
@@ -456,7 +417,7 @@ results["species-mole_fraction_CH4"] = X_CH4
 results["species-mole_fraction_CO"] = X_CO
 results["species-mole_fraction_NO"] = X_NO
 #
-r = open(resultfile, "w")
+r = Path.open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

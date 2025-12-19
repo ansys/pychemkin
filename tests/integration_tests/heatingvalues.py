@@ -19,7 +19,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
+
+"""Fuel species heating value test for the equilibrium calculation."""
+
+from pathlib import Path
 
 import numpy as np  # number crunching
 
@@ -28,10 +31,10 @@ from ansys.chemkin.core import Color
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = Path.cwd()
 logger.debug("working directory: " + current_dir)
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir / "reaction" / "data")
 logger.debug("data directory: " + data_dir)
 # set pressure & temperature condition
 thispressure = ck.P_ATM
@@ -40,20 +43,21 @@ thistemperature = 298.15
 
 #
 def getwaterheatofvaporization(temp):
-    """Compute water heat of vaporization [erg/g-water] at the given temperature
+    """Compute water heat of vaporization [erg/g-water] at the given temperature."""
+    """
     Use the enthalpy difference between water vapor and liquid water at the temperature
     Enthalpy data depend on temperature only
     There are empirical formulas for heat of vaporization, for example, DIPPR EQ
-    :param temp: temperature [K] (double scalar)
+    :param temp: temperature [K] (double scalar).
     """
     # compute water heat of vaporization
     # create a chemistry set object
-    WaterMech = ck.Chemistry(label="Water Only")
+    watermech = ck.Chemistry(label="Water Only")
     #
     # create a new mechanism input file
     #
-    waterfile = os.path.join(current_dir, "water_chem.inp")
-    w = open(waterfile, "w")
+    waterfile = Path(current_dir / "water_chem.inp")
+    w = Path.open(waterfile, "w")
     # the water mechanism contains two species:
     # water vapor (H2O) and liquid water (H2O(L))
     # declare elements
@@ -68,22 +72,19 @@ def getwaterheatofvaporization(temp):
     w.close()
     # set mechanism input files
     # including the full file path is recommended
-    WaterMech.chemfile = waterfile
-    WaterMech.thermfile = os.path.join(
-        data_dir,
-        "therm.dat",
-    )
+    watermech.chemfile = waterfile
+    watermech.thermfile = Path(data_dir / "therm.dat")
     # pre-process
-    ierror = WaterMech.preprocess()
+    ierror = watermech.preprocess()
     if ierror != 0:
         return 0.0
     # get species enthalpies [erg/mol] at 298.15 [K]
-    waterenthalpies = WaterMech.SpeciesH(thistemperature)
+    waterenthalpies = watermech.SpeciesH(thistemperature)
     # compute heat of vaporization of water [erg/g-water]
     # H_water_vapor - H_liquid_water
-    heatvaporization = (waterenthalpies[0] - waterenthalpies[1]) / WaterMech.WT[0]
+    heatvaporization = (waterenthalpies[0] - waterenthalpies[1]) / watermech.WT[0]
     # remove the temporary water mechanism file
-    os.remove(waterfile)
+    Path(waterfile).unlink()
     return heatvaporization
 
 
@@ -95,9 +96,10 @@ MyGasMech = ck.Chemistry(label="EQ")
 #
 # create a new mechanism input file
 #
-mymechfile = os.path.join(current_dir, "fuels_chem.inp")
-m = open(mymechfile, "w")
-# the mechanism contains only the necessary species (fuel, oxygen, and major combustion products)
+mymechfile = Path(current_dir / "fuels_chem.inp")
+m = Path.open(mymechfile, "w")
+# the mechanism contains only the necessary species
+# (fuel, oxygen, and major combustion products)
 # declare elements
 m.write("ELEMENT c h o END\n")
 # declare species
@@ -127,11 +129,11 @@ m.close()
 # set mechanism input files
 # including the full file path is recommended
 MyGasMech.chemfile = mymechfile
-MyGasMech.thermfile = os.path.join(
-    data_dir,
-    "ModelFuelLibrary",
-    "Full",
-    "Gasoline-Diesel-Biodiesel_PAH_NOx_therm_MFL2023.dat",
+MyGasMech.thermfile = Path(
+    data_dir
+    / "ModelFuelLibrary"
+    / "Full"
+    / "Gasoline-Diesel-Biodiesel_PAH_NOx_therm_MFL2023.dat"
 )
 # pre-process
 ierror = MyGasMech.preprocess()
@@ -149,7 +151,7 @@ unburned = ck.Mixture(MyGasMech)
 unburned.pressure = thispressure
 unburned.temperature = thistemperature
 # find the index for water vapor
-watervaporID = MyGasMech.get_specindex("h2o")
+watervapor_index = MyGasMech.get_specindex("h2o")
 # water heat of vaporization [erg/g-water] at 298.15 [K]
 # either call this method before creating the current Chemistry Set
 # or use the activate method to switch back to the current Chemistry Set after the call
@@ -160,7 +162,8 @@ MyGasMech.activate()
 fuel = ck.Mixture(MyGasMech)
 fuel.pressure = thispressure
 fuel.temperature = thistemperature
-# list of fuel compositions (mole/volume fractions) of which the heating values will be computed
+# list of fuel compositions (mole/volume fractions)
+# of which the heating values will be computed
 # [Methane, n-Butane, PRF RON 80, biodiesel]
 fuels = [
     [("ch4", 1.0)],
@@ -174,7 +177,7 @@ oxid.X = [("o2", 1.0)]
 oxid.pressure = thispressure
 oxid.temperature = thistemperature
 # get o2 index
-oxyID = MyGasMech.get_specindex("o2")
+oxy_index = MyGasMech.get_specindex("o2")
 # specify the complete combustion product species
 products = ["co2", "h2o"]
 # no added species
@@ -195,8 +198,9 @@ for f in fuels:
     # get the mixture enthalpy of the initial mixture [erg/g]
     Hunburned = unburned.HML() / unburned.WTM
     # compute the complete combustion state (fixed temperature and pressure)
-    # this step mimics the complete burning of the initial fuel-oxygen mixture at constant pressure
-    # and the subsequent cooling of the combustion products back to the original temperature
+    # this step mimics the complete burning of the initial fuel-oxygen mixture
+    # at constant pressure and the subsequent cooling of the combustion products
+    # back to the original temperature
     burned = unburned.Find_Equilibrium()
     # get the mixture enthalpy of the final mixture [erg/g]
     Hburned = burned.HML() / burned.WTM
@@ -204,10 +208,10 @@ for f in fuels:
     fmass = 0.0e0
     bmassfrac = unburned.Y
     for i in range(MyGasMech.KK):
-        if i != oxyID:
+        if i != oxy_index:
             fmass += bmassfrac[i]
     # water vapor mass fraction in the urned mixture
-    wmass = burned.Y[watervaporID]
+    wmass = burned.Y[watervapor_index]
     #
     if np.isclose(fmass, 0.0, atol=1.0e-10):
         # no fuel species exists in the unburned mixture
@@ -228,14 +232,14 @@ for i in range(len(fuels)):
     print(f" HHV [kJ/g-fuel]:  {HHV[i] / ck.ERGS_PER_JOULE / 1.0e3}\n")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "heatingvalues.result")
+resultfile = Path(current_dir / "heatingvalues.result")
 results = {}
 LHV = LHV / ck.ERGS_PER_JOULE / 1.0e3
 results["state-LHV"] = LHV.tolist()
 HHV = HHV / ck.ERGS_PER_JOULE / 1.0e3
 results["state-HHV"] = HHV.tolist()
 #
-r = open(resultfile, "w")
+r = Path.open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

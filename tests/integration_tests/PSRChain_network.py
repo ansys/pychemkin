@@ -20,47 +20,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-""".. _ref_chain_reactor_network:
-
-==============================================================
-Use a chain reactor network to model a fictional gas combustor
-==============================================================
-
-This tutorial describes the process of setting up and solving a series of linked perfectly-stirred reactors
-(PSR) in PyChemkin. This is the simplest reactor network as it does not contain any recycling stream or
-outflow splitting.
-
-The PSR chain model of a fictional can combustor is displayed below
-
- .. figure:: chain_reactor_network.png
-   :scale: 80 %
-   :alt: the chain reactor network
-
-The *"primary inlet stream"* to the first reactor, the *"combustor"*, is the fuel-lean methane-air mixture
-that is formed by mixing the fuel (methane) and the heated air. The exhaust from the *"combustor"* will enter the
-second reactor, the "dilution zone"*, where the hot combustion products will be cooled by the introduction of
-additional cool air. The cooled and diluted gas mixture in the *"dilution zone"* will then travel to the third
-reactor, the *"reburning zone"*. A mixture of fuel (methane) and carbon dioxide is injected to the gas in the
-*"reburning zone"* attempting to convert any remaining carbon monoxide or nitric oxide in the exhaust gas to
-carbon dioxide or nitrogen, respectively.
-
-In this tutorial, the chain reactor network will be configured and solved by using the ``ReactorNetwork`` module.
-The module automatically handles the tasks of running the individual reactors and setting up the inlet to the downstream
-reactor.
-"""
-
-# sphinx_gallery_thumbnail_path = '_static/chain_reactor_network.png'
+"""Test of hybrid PSR chain reactor network model."""
 
 ###############################################
 # Import PyChemkin package and start the logger
 # =============================================
 
-import os
+from pathlib import Path
 import time
 
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
-from ansys.chemkin.core.hybridreactornetwork import ReactorNetwork as ERN
+from ansys.chemkin.core.hybridreactornetwork import ReactorNetwork as Ern
 from ansys.chemkin.core.inlet import (
     Stream,  # external gaseous inlet
     adiabatic_mixing_streams,
@@ -71,7 +42,7 @@ from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = Path.cwd()
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -84,14 +55,14 @@ ck.set_verbose(True)
 # installation in the ``/reaction/data`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir / "reaction" / "data")
 mechanism_dir = data_dir
 # create a chemistry set based on the GRI mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
+MyGasMech.chemfile = Path(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
 
 ############################################
 # Pre-process the gasoline ``Chemistry Set``
@@ -117,8 +88,9 @@ ierror = MyGasMech.preprocess()
 #   PyChemkin has *"air"* redefined as a convenient way to set up the air
 #   stream/mixture in the simulations. Use ``ansys.chemkin.core.Air.X()`` or
 #   ``ansys.chemkin.core.Air.Y()`` when the mechanism uses "O2" and "N2" for
-#   oxygen and nitrogen. Use ``ansys.chemkin.core.air.X()`` or ``ansys.chemkin.core.air.Y()``
-#   when oxygen and nitrogen are represented by "o2" and "n2".
+#   oxygen and nitrogen. Use ``ansys.chemkin.core.air.X()`` or
+#   ``ansys.chemkin.core.air.Y()`` when oxygen and nitrogen are represented by
+#   "o2" and "n2".
 #
 
 # fuel is pure methane
@@ -237,7 +209,7 @@ reburn.set_inlet(reburn_fuel)
 #
 
 # instantiate the chain PSR network as a hy
-PSRChain = ERN(MyGasMech)
+PSRChain = Ern(MyGasMech)
 
 # add the reactors from upstream to downstream
 PSRChain.add_reactor(combustor)
@@ -250,8 +222,9 @@ PSRChain.show_reactors()
 ###########################
 # Solve the reactor network
 # =========================
-# Use the ``run`` method to solve the entire reactor network. The hybrid ``ReactorNetwork``
-# will solve the reactors one by one in the order they are added to the network.
+# Use the ``run`` method to solve the entire reactor network.
+# The hybrid ``ReactorNetwork`` will solve the reactors one by one
+# in the order they are added to the network.
 #
 
 # set the start wall time
@@ -306,7 +279,7 @@ print(f"CO = {network_outflow.X[CO_index]}")
 print(f"NO = {network_outflow.X[NO_index]}")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "PSRChain_network.result")
+resultfile = Path(current_dir / "PSRChain_network.result")
 results = {}
 results["state-temperature"] = [network_outflow.temperature]
 results["state-mass_flow_rate"] = [network_outflow.mass_flowrate]
@@ -314,7 +287,7 @@ results["species-mole_fraction_CH4"] = [network_outflow.X[CH4_index]]
 results["species-mole_fraction_CO"] = [network_outflow.X[CO_index]]
 results["species-mole_fraction_NO"] = [network_outflow.X[NO_index]]
 #
-r = open(resultfile, "w")
+r = Path.open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

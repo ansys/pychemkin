@@ -20,35 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-""".. _ref_connected_reactors:
-
-=====================================================================
-Use a chain of individual reactors to model a fictional gas combustor
-=====================================================================
-
-This tutorial describes the process of setting up and solving a series of linked perfectly-stirred reactors
-(PSR) in PyChemkin. This is the simplest reactor network as it does not contain any recycling stream or
-outflow splitting.
-
-The PSR chain model of a fictional can combustor is displayed below
-
- .. figure:: chain_reactor_network.png
-   :scale: 80 %
-   :alt: the chain reactor network
-
-The *"primary inlet stream"* to the first reactor, the *"combustor"*, is the fuel-lean methane-air mixture
-that is formed by mixing the fuel (methane) and the heated air. The exhaust from the *"combustor"* will enter the
-second reactor, the "dilution zone"*, where the hot combustion products will be cooled by the introduction of
-additional cool air. The cooled and diluted gas mixture in the *"dilution zone"* will then travel to the third
-reactor, the *"reburning zone"*. A mixture of fuel (methane) and carbon dioxide is injected to the gas in the
-*"reburning zone"* attempting to convert any remaining carbon monoxide or nitric oxide in the exhaust gas to
-carbon dioxide or nitrogen, respectively.
-
-In this tutorial, the reactors will be solved one by one from upstream to downstream. Once the solution of the
-upstream reactor is obtained, it will be used to set up the external inlet of the immediate downstream reactor.
-This process will continue till all reactors in the chain network are solved. Since there is no recycling stream
-in this configuration, the entire reactor network can be solved in one sweep.
-"""
+"""Test for the linked PSR chain network model."""
 
 # sphinx_gallery_thumbnail_path = '_static/chain_reactor_network.png'
 
@@ -56,7 +28,7 @@ in this configuration, the entire reactor network can be solved in one sweep.
 # Import PyChemkin package and start the logger
 # =============================================
 
-import os
+from pathlib import Path
 import time
 
 import ansys.chemkin.core as ck  # Chemkin
@@ -71,7 +43,7 @@ from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = Path.cwd()
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -89,14 +61,14 @@ interactive = True
 # installation in the ``/reaction/data`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir / "reaction" / "data")
 mechanism_dir = data_dir
 # create a chemistry set based on the GRI mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
+MyGasMech.chemfile = Path(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
 
 ############################################
 # Pre-process the gasoline ``Chemistry Set``
@@ -269,7 +241,7 @@ print()
 print(f"total simulation duration: {runtime} [sec]")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "PSRChain_declustered.result")
+resultfile = Path(current_dir / "PSRChain_declustered.result")
 results = {}
 results["state-temperature"] = [outflow.temperature]
 results["state-mass_flow_rate"] = [outflow.mass_flowrate]
@@ -277,7 +249,7 @@ results["species-mole_fraction_CH4"] = [outflow.X[CH4_index]]
 results["species-mole_fraction_CO"] = [outflow.X[CO_index]]
 results["species-mole_fraction_NO"] = [outflow.X[NO_index]]
 #
-r = open(resultfile, "w")
+r = Path.open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

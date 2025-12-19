@@ -19,7 +19,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
+
+"""Test of the multizone HCCI engine model."""
+
+from pathlib import Path
 
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
@@ -32,7 +35,7 @@ from ansys.chemkin.core.engines.HCCI import HCCIengine
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = Path.cwd()
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -43,15 +46,15 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir / "reaction" / "data")
 mechanism_dir = data_dir
 # create a chemistry set based on the GRI mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+MyGasMech.chemfile = Path(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
+MyGasMech.tranfile = Path(mechanism_dir / "grimech30_transport.dat")
 # preprocess the mechanism files
 ierror = MyGasMech.preprocess()
 # create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
@@ -72,7 +75,8 @@ air.temperature = 400.0
 fresh = ck.Mixture(MyGasMech)
 # products from the complete combustion of the fuel mixture and air
 products = ["CO2", "H2O", "N2"]
-# species mole fractions of added/inert mixture. can also create an additives mixture here
+# species mole fractions of added/inert mixture.
+# can also create an additives mixture here
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
 # mean equivalence ratio
 equiv = 0.8
@@ -83,7 +87,8 @@ if ierror != 0:
     raise RuntimeError
 # list the composition of the unburned fuel-air mixture
 fresh.list_composition(mode="mole")
-# set mixture temperature and pressure (equivalent to setting the initial temperature and pressure of the reactor)
+# set mixture temperature and pressure
+# (equivalent to setting the initial temperature and pressure of the reactor)
 fresh.temperature = 447.0
 fresh.pressure = 1.065 * ck.P_ATM
 # set exhaust gas recirculation (EGR) ratio with volume fraction
@@ -155,14 +160,14 @@ MyMZEngine.set_zonal_temperature(zonetemp=ztemperature)
 zvolumefrac = [0.3, 0.25, 0.2, 0.2, 0.05]
 MyMZEngine.set_zonal_volume_fraction(zonevol=zvolumefrac)
 # wall heat transfer area fractions
-zHTarea = [0.0, 0.15, 0.2, 0.25, 0.4]
-MyMZEngine.set_zonal_heat_transfer_area_fraction(zonearea=zHTarea)
+zone_ht_area = [0.0, 0.15, 0.2, 0.25, 0.4]
+MyMZEngine.set_zonal_heat_transfer_area_fraction(zonearea=zone_ht_area)
 # zonal equivalence ratios
 zphi = [equiv, equiv, equiv, equiv, equiv]
 MyMZEngine.set_zonal_equivalence_ratio(zonephi=zphi)
 # zonal EGR ratios
-zEGRR = [0.3, 0.3, 0.3, 0.35, 0.35]
-MyMZEngine.set_zonal_EGR_ratio(zoneegr=zEGRR)
+zone_egrr = [0.3, 0.3, 0.3, 0.35, 0.35]
+MyMZEngine.set_zonal_EGR_ratio(zoneegr=zone_egrr)
 # set fuel "molar" composition
 MyMZEngine.define_fuel_composition([("CH4", 0.9), ("C3H8", 0.05), ("C2H6", 0.05)])
 # set oxidizer "molar' composition
@@ -214,8 +219,8 @@ if runstatus != 0:
 print(Color.GREEN + ">>> Run completed. <<<", end=Color.END)
 #
 # get ignition delay "time"
-delayCA = MyMZEngine.get_ignition_delay()
-print(f"ignition delay CA = {delayCA} [degree]")
+delay_ca = MyMZEngine.get_ignition_delay()
+print(f"ignition delay CA = {delay_ca} [degree]")
 #
 # get heat release information
 HR10, HR50, HR90 = MyMZEngine.get_engine_heat_release_CAs()
@@ -300,7 +305,7 @@ else:
     plt.savefig("multizone_HCCI_engine.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "multizone.result")
+resultfile = Path(current_dir / "multizone.result")
 results = {}
 results["state-crank_angle"] = CAprofile.tolist()
 results["state-density"] = denprofile.tolist()
@@ -308,7 +313,7 @@ results["state-pressure"] = presprofile.tolist()
 results["state-volume"] = volprofile.tolist()
 results["state-viscosity"] = viscprofile.tolist()
 #
-r = open(resultfile, "w")
+r = Path.open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

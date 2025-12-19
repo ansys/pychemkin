@@ -19,7 +19,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
+
+"""Test for the brute force sensitivity analysis."""
+
+from pathlib import Path
 import time
 
 import matplotlib.pyplot as plt  # plotting
@@ -35,7 +38,7 @@ from ansys.chemkin.core.batchreactors.batchreactor import (
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = Path.cwd()
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(False)
@@ -46,14 +49,14 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir / "reaction" / "data")
 mechanism_dir = data_dir
 # create a chemistry set based on the diesel 14 components mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
+MyGasMech.chemfile = Path(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
 # pre-process
 ierror = MyGasMech.preprocess()
 if ierror == 0:
@@ -219,14 +222,14 @@ else:
     plt.savefig("sensitivity_analysis.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "sensitivity.result")
+resultfile = Path(current_dir / "sensitivity.result")
 results = {}
 results["state-index_positive"] = posindex.tolist()
 results["rate-sensitivity_positive"] = poscoeffs.tolist()
 results["state-index_negative"] = negindex.tolist()
 results["rate-sensitivity_negative"] = negcoeffs.tolist()
 #
-r = open(resultfile, "w")
+r = Path.open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

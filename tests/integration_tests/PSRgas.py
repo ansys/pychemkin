@@ -19,7 +19,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
+
+"""Test of steady state PSR model with the residence time option."""
+
+from pathlib import Path
 import time
 
 import matplotlib.pyplot as plt  # plotting
@@ -34,7 +37,7 @@ from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = Path.cwd()
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -45,17 +48,13 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(
-    ck.ansys_dir, "reaction", "data", "ModelFuelLibrary", "Skeletal"
-)
+data_dir = Path(ck.ansys_dir / "reaction" / "data" / "ModelFuelLibrary" / "Skeletal")
 mechanism_dir = data_dir
 # create a chemistry set based on the gasoline 14 components mechanism
 MyGasMech = ck.Chemistry(label="hydrogen")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(
-    mechanism_dir, "Hydrogen-Ammonia-NOx_chem_MFL2021.inp"
-)
+MyGasMech.chemfile = Path(mechanism_dir / "Hydrogen-Ammonia-NOx_chem_MFL2021.inp")
 # preprocess the mechanism files
 ierror = MyGasMech.preprocess()
 # create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
@@ -76,7 +75,8 @@ air.temperature = fuel.temperature
 feed = Stream(MyGasMech, label="feed_1")
 # products from the complete combustion of the fuel mixture and air
 products = ["h2o", "n2"]
-# species mole fractions of added/inert mixture. can also create an additives mixture here
+# species mole fractions of added/inert mixture.
+# can also create an additives mixture here
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
 # mean equivalence ratio
 equiv = 1.0
@@ -110,7 +110,7 @@ deltaequiv = 0.05
 numbruns = 9
 # solution arrays
 inletequiv = np.zeros(numbruns, dtype=np.double)
-tempSSsolution = np.zeros_like(inletequiv, dtype=np.double)
+temp_solution = np.zeros_like(inletequiv, dtype=np.double)
 # set the start wall time
 start_time = time.time()
 # loop over all inlet temperature values
@@ -131,7 +131,7 @@ for i in range(numbruns):
     # solnmixture.list_composition(mode="mole")
     # store solution values
     inletequiv[i] = equiv
-    tempSSsolution[i] = solnmixture.temperature
+    temp_solution[i] = solnmixture.temperature
     # update inlet gas equivalence ratio (composition)
     equiv += deltaequiv
     ierror = feed.X_by_Equivalence_Ratio(
@@ -146,7 +146,7 @@ runtime = time.time() - start_time
 print(f"total simulation duration: {runtime} [sec] over {numbruns} runs")
 #
 # plot results
-plt.plot(inletequiv, tempSSsolution, "b-")
+plt.plot(inletequiv, temp_solution, "b-")
 plt.xlabel("Inlet Gas Equivalence Ratio")
 plt.ylabel("Reactor Temperature [K]")
 plt.title("PSR Solution")
@@ -157,12 +157,12 @@ else:
     plt.savefig("PSR_gas.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "PSRgas.result")
+resultfile = Path(current_dir / "PSRgas.result")
 results = {}
 results["state-equivalence_ratio_inlet"] = inletequiv.tolist()
-results["state-temperature"] = tempSSsolution.tolist()
+results["state-temperature"] = temp_solution.tolist()
 #
-r = open(resultfile, "w")
+r = Path.open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

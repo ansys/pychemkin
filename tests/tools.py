@@ -16,9 +16,9 @@ class PyCKtools:
     TARGET_FOLDER = ""
 
     @staticmethod
-    def check_folder(thisfolder) -> int:
-        """Verify the given folder exists.
-
+    def check_folder(thisfolder: str) -> int:
+        """Verify the given folder exists."""
+        """
         Parameters
         ----------
             thisfolder: string
@@ -36,9 +36,9 @@ class PyCKtools:
         return 0
 
     @staticmethod
-    def create_folder(newfolder) -> int:
-        """Create or clean up a folder.
-
+    def create_folder(newfolder: str) -> int:
+        """Create or clean up a folder."""
+        """
         Parameters
         ----------
             newfolder: string
@@ -54,8 +54,8 @@ class PyCKtools:
             # delete any existing files in this target folder
             print(f"Warning: All files in folder {newfolder:s} will be deleted")
             # first delete any existing files
-            for oldfile in os.listdir(newfolder):
-                f = os.path.join(newfolder, oldfile)
+            for oldfile in Path.iterdir(newfolder):
+                f = Path(newfolder / oldfile)
                 try:
                     if Path(f).is_symlink():
                         Path(f).unlink()
@@ -77,23 +77,25 @@ class PyCKtools:
         return 0
 
     @staticmethod
-    def run_test(root_dir, source_dir, result_dir, test_file: str) -> int:
-        """Run the given PyChemkin test.
-
+    def run_test(
+        root_dir: str, source_dir: str, result_dir: str, test_file: str
+    ) -> int:
+        """Run the given PyChemkin test."""
+        """
         Parameters
         ----------
-            root_dir: str
+            root_dir: string
                 rootdir of pytest
-            source_dir: str
+            source_dir: string
                 the directory containing the PyChemkin source files
-            result_dir: str
+            result_dir: string
                 the directory containing the test result files
-            test_file: str
+            test_file: string
                 name of the PyChemkin test
 
         Returns
         -------
-            ReturnCode: int
+            ReturnCode: integer
                 return code from the subprocess run
 
         """
@@ -101,18 +103,18 @@ class PyCKtools:
         # find the working directory
         current_dir = Path.cwd()
         # set sources folder
-        source_folder = os.path.join(root_dir, source_dir)
+        source_folder = Path(root_dir / source_dir)
         # check if the source folder exists
         status = PyCKtools.check_folder(source_folder)
         assert 0 == status, "bad source folder name."
         # verify the output folder
-        output_folder = os.path.join(current_dir, "outputs")
+        output_folder = Path(current_dir / "outputs")
         # check if the output folder exists
         if PyCKtools.FIRST_PASS == 0:
             status = PyCKtools.create_folder(output_folder)
             assert 0 == status, "fail to get fresh output folder"
         # verify the temporary working folder
-        new_working = os.path.join(current_dir, result_dir)
+        new_working = Path(current_dir / result_dir)
         if PyCKtools.TARGET_FOLDER == "":
             PyCKtools.TARGET_FOLDER = current_dir
         # check if the temporary working folder exists
@@ -123,11 +125,11 @@ class PyCKtools:
             PyCKtools.FIRST_PASS += 1
         # set the test source file
         frun = test_file + ".py"
-        frun = os.path.join(source_folder, frun)
+        frun = Path(source_folder / frun)
         # set the test output file
         f = test_file + ".out"
-        output_folder = os.path.join(current_dir, "outputs")
-        f = os.path.join(output_folder, f)
+        output_folder = Path(current_dir / "outputs")
+        f = Path(output_folder / f)
         fout = Path.open(f, "w")
         # run test
         # change working directory
@@ -165,11 +167,11 @@ class PyCKtools:
         # close the solution output file
         fout.close()
         # clean up unimportant output files
-        for out_files in Path.glob(os.path.join(new_working, "*.out")):
+        for out_files in Path.glob(Path(new_working / "*.out")):
             Path.unlink(out_files)
-        for asc_files in Path.glob(os.path.join(new_working, "*.asc")):
+        for asc_files in Path.glob(Path(new_working / "*.asc")):
             Path.unlink(asc_files)
-        for inp_files in Path.glob(os.path.join(new_working, "*.inp")):
+        for inp_files in Path.glob(Path(new_working / "*.inp")):
             Path.unlink(inp_files)
         # return the return code from the subprocess run
         # change working directory
@@ -178,8 +180,13 @@ class PyCKtools:
         return results.returncode
 
     @staticmethod
-    def load_results(pyck_result_file) -> dict:
-        """Read PyChemkin result data from the text file.
+    def load_results(pyck_result_file: str) -> dict:
+        """Read PyChemkin result data from the text file."""
+        """
+        Parameters
+        ----------
+            pyck_result_file: string
+                name of the result file from simulation
 
         Returns
         -------
@@ -194,8 +201,8 @@ class PyCKtools:
 
     @staticmethod
     def check_list_size(list1: list, list2: list, expected_diff: int = 0) -> bool:
-        """Verify that the two lists are of the same size.
-
+        """Verify that the two lists are of the same size."""
+        """
         Parameters
         ----------
             list1: List
@@ -215,8 +222,8 @@ class PyCKtools:
 
     @staticmethod
     def get_file_names(folder_path) -> list[str]:
-        """Get a list of all file names in the specified folder.
-
+        """Get a list of all file names in the specified folder."""
+        """
         Parameters
         ----------
             folder_path: string
@@ -241,8 +248,8 @@ class PyCKtools:
         species_tol: list[float],
         rate_tol: list[float],
     ) -> tuple[float, float]:
-        """Find the tolerance values according to the variable type.
-
+        """Find the tolerance values according to the variable type."""
+        """
         Parameters
         ----------
             tolerancename: string
@@ -275,10 +282,13 @@ class PyCKtools:
 
     @staticmethod
     def compare_list(
-        r_list, b_list, atol: float, rtol: float
+        r_list: list[int | float],
+        b_list: list[int | float],
+        atol: float,
+        rtol: float,
     ) -> tuple[int, list, list]:
-        """Compare the values in the two int or float lists of the same size.
-
+        """Compare the values in the two int or float lists of the same size."""
+        """
         Parameters
         ----------
             rlist: list of integers or doubles

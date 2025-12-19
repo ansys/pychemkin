@@ -1,4 +1,4 @@
-"""Test script to run the group(s) of PyChemkin tests under the test groups sources folder."""
+"""Script to run the group(s) of PyChemkin tests under the test sources folder."""
 
 import pytest
 
@@ -6,22 +6,38 @@ from .tools import PyCKtools
 
 
 class TestClassBasic:
-    """Tests to verify Chemkin utilities for
-
-    1. preprocess
-    """
+    """Tests to verify Chemkin preprocessor."""
 
     # define tolerances for this group of tests
     # {'type_of_variable': [absolute_tolerance, relative_tolerance], ... }
-    # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s], ignition delay [msec], heat [cal]
+    # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s],
+    # ignition delay [msec], heat [cal]
     # species: mole/mass fraction
     # rate: reaction rate, rate of production, heat release rate
     basic_list = ["simple", "loadmechanism"]
     fresh = True
 
     @pytest.mark.parametrize("test_file", basic_list)
-    def test_basic(self, get_working_dir, get_source_dir, get_result_dir, test_file):
+    def test_basic(
+        self,
+        get_working_dir: str,
+        get_source_dir: str,
+        get_result_dir: str,
+        test_file: str,
+    ):
         """Run the selected pychemin basic utility test cases."""
+        """
+        Parameters
+        ----------
+            get_working_dir: string
+                working folder for testing
+            get_source_dir: string
+                folder where source codes for testing are stored
+            get_result_dir: string
+                folder where test results will be kept
+            test_file: string
+                name of the source file to be tested
+        """
         # initialization
         if TestClassBasic.fresh:
             PyCKtools.init_test_status()
@@ -36,16 +52,17 @@ class TestClassBasic:
 @pytest.mark.group("utilities", "all")
 @pytest.mark.utilities
 class TestClassUtilities:
-    """Tests to verify Chemkin utilities for
+    """Tests to verify Chemkin utilities.
 
     1. species/mixture property calculations,
     2. reaction rate calculations,
-    3. mixture operations,
+    3. mixture operations.
     """
 
     # define tolerances for this group of tests
     # {'type_of_variable': [absolute_tolerance, relative_tolerance], ... }
-    # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s], ignition delay [msec], heat [cal]
+    # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s],
+    # ignition delay [msec], heat [cal]
     # species: mole/mass fraction
     # rate: reaction rate, rate of production, heat release rate
     utility_list = [
@@ -53,7 +70,8 @@ class TestClassUtilities:
         "mixturemixing",
         "speciesproperties",
         "reactionrates",
-        # skip the test below because the subprocess produces a non-zero return code but the test is completed successfully
+        # skip the test below because the subprocess produces a non-zero return code
+        # but the test is completed successfully
         #    "multiplemechanisms",
     ]
 
@@ -71,14 +89,12 @@ class TestClassUtilities:
 @pytest.mark.group("equilibrium", "all")
 @pytest.mark.equilibrium
 class TestClassEquilibrium:
-    """Tests to verify Chemkin utilities for
-
-    1. equilibrium/detonation calculations.
-    """
+    """Tests to verify Chemkin utilities for equilibrium/detonation calculations."""
 
     # define tolerances for this group of tests
     # {'type_of_variable': [absolute_tolerance, relative_tolerance], ... }
-    # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s], ignition delay [msec], heat [cal]
+    # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s],
+    # ignition delay [msec], heat [cal]
     # species: mole/mass fraction
     # rate: reaction rate, rate of production, heat release rate
     equilibrium_list = [
@@ -106,7 +122,8 @@ class TestClassBatch:
 
     # define tolerances for this group of tests
     # {'type_of_variable': [absolute_tolerance, relative_tolerance], ... }
-    # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s], ignition delay [msec], heat [cal]
+    # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s],
+    # ignition delay [msec], heat [cal]
     # species: mole/mass fraction
     # rate: reaction rate, rate of production, heat release rate
     batch_list = [
@@ -133,7 +150,8 @@ class TestClassEngine:
 
     # define tolerances for this group of tests
     # {'type_of_variable': [absolute_tolerance, relative_tolerance], ... }
-    # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s], ignition delay [msec], heat [cal]
+    # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s],
+    # ignition delay [msec], heat [cal]
     # species: mole/mass fraction
     # rate: reaction rate, rate of production, heat release rate
     engine_list = [
@@ -158,7 +176,8 @@ class TestClassPFR:
 
     # define tolerances for this group of tests
     # {'type_of_variable': [absolute_tolerance, relative_tolerance], ... }
-    # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s], ignition delay [msec], heat [cal]
+    # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s],
+    # ignition delay [msec], heat [cal]
     # species: mole/mass fraction
     # rate: reaction rate, rate of production, heat release rate
     PFR_list = ["plugflow"]
@@ -181,7 +200,8 @@ class TestClassPSR:
 
     # define tolerances for this group of tests
     # {'type_of_variable': [absolute_tolerance, relative_tolerance], ... }
-    # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s], ignition delay [msec], heat [cal]
+    # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s],
+    # ignition delay [msec], heat [cal]
     # species: mole/mass fraction
     # rate: reaction rate, rate of production, heat release rate
     PSR_list = ["PSRgas", "jetstirredreactor", "multi-inletPSR", "PSRChain_declustered"]
@@ -204,7 +224,8 @@ class TestClassERN:
 
     # define tolerances for this group of tests
     # {'type_of_variable': [absolute_tolerance, relative_tolerance], ... }
-    # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s], ignition delay [msec], heat [cal]
+    # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s],
+    # ignition delay [msec], heat [cal]
     # species: mole/mass fraction
     # rate: reaction rate, rate of production, heat release rate
     PSR_list = ["PSRChain_network", "PSRnetwork"]

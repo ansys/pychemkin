@@ -19,7 +19,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
+
+"""Test for the profile feature of the closed homogeneous reactor model."""
+
+from pathlib import Path
 
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
@@ -34,7 +37,7 @@ from ansys.chemkin.core.batchreactors.batchreactor import (
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = Path.cwd()
 logger.debug("working directory: " + current_dir)
 # set interactive mode for plotting the results
 # interactive = True: display plot
@@ -43,14 +46,14 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir / "reaction" / "data")
 mechanism_dir = data_dir
 # create a chemistry set based on C2_NOx using an alternative method
 MyMech = ck.Chemistry(label="C2 NOx")
 # set mechanism input files individually
 # this mechanism file contains all the necessary thermodynamic and transport data
 # therefore no need to specify the therm and the tran data files
-MyMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
+MyMech.chemfile = Path(mechanism_dir / "C2_NOx_SRK.inp")
 # preprocess the 2nd mechanism files
 ierror = MyMech.preprocess()
 if ierror == 0:
@@ -151,21 +154,21 @@ tank.process_solution()
 solutionpoints = tank.getnumbersolutionpoints()
 print(f"number of solution points = {solutionpoints}")
 # get the time profile
-timeprofile_IG = tank.get_solution_variable_profile("time")
+timeprofile_idealgas = tank.get_solution_variable_profile("time")
 # get the volume profile
-volprofile_IG = tank.get_solution_variable_profile("volume")
+volprofile_idealgas = tank.get_solution_variable_profile("volume")
 # create array for mixture density
-denprofile_IG = np.zeros_like(timeprofile, dtype=np.double)
+denprofile_idealgas = np.zeros_like(timeprofile, dtype=np.double)
 # create array for mixture enthalpy
-Hprofile_IG = np.zeros_like(timeprofile, dtype=np.double)
+Hprofile_idealgas = np.zeros_like(timeprofile, dtype=np.double)
 # loop over all solution time points
 for i in range(solutionpoints):
     # get the mixture at the time point
     solutionmixture = tank.get_solution_mixture_at_index(solution_index=i)
     # get mixture density profile
-    denprofile_IG[i] = solutionmixture.RHO
+    denprofile_idealgas[i] = solutionmixture.RHO
     # get mixture enthalpy profile
-    Hprofile_IG[i] = solutionmixture.HML() / ck.ERGS_PER_JOULE * 1.0e-3
+    Hprofile_idealgas[i] = solutionmixture.HML() / ck.ERGS_PER_JOULE * 1.0e-3
 
 ck.done()
 # plot the profiles
@@ -178,18 +181,18 @@ plt.plot(timeprofile, tempprofile, "r-")
 plt.ylabel("Temperature [K]")
 plt.subplot(222)
 plt.plot(timeprofile, volprofile, "b-", label="real gas")
-plt.plot(timeprofile_IG, volprofile_IG, "b--", label="ideal gas")
+plt.plot(timeprofile_idealgas, volprofile_idealgas, "b--", label="ideal gas")
 plt.legend(loc="upper right")
 plt.ylabel("Volume [cm3]")
 plt.subplot(223)
 plt.plot(timeprofile, Hprofile, "g-", label="real gas")
-plt.plot(timeprofile_IG, Hprofile_IG, "g--", label="ideal gas")
+plt.plot(timeprofile_idealgas, Hprofile_idealgas, "g--", label="ideal gas")
 plt.legend(loc="upper right")
 plt.xlabel("time [sec]")
 plt.ylabel("Mixture Enthalpy [kJ/mole]")
 plt.subplot(224)
 plt.plot(timeprofile, denprofile, "m-", label="real gas")
-plt.plot(timeprofile_IG, denprofile_IG, "m--", label="ideal gas")
+plt.plot(timeprofile_idealgas, denprofile_idealgas, "m--", label="ideal gas")
 plt.legend(loc="upper left")
 plt.xlabel("time [sec]")
 plt.ylabel("Mixture Density [g/cm3]")
@@ -200,18 +203,18 @@ else:
     plt.savefig("vapor_condensation.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "vapor.result")
+resultfile = Path(current_dir / "vapor.result")
 results = {}
 results["state-time"] = timeprofile.tolist()
 results["state-temperature"] = tempprofile.tolist()
 results["state-volume_RealGas"] = volprofile.tolist()
-results["state-volume_IdealGas"] = volprofile_IG.tolist()
+results["state-volume_IdealGas"] = volprofile_idealgas.tolist()
 results["state-enthalpy_RealGas"] = Hprofile.tolist()
-results["state-enthalpy_IdealGas"] = Hprofile_IG.tolist()
+results["state-enthalpy_IdealGas"] = Hprofile_idealgas.tolist()
 results["state-density_RealGas"] = denprofile.tolist()
-results["state-density_IdealGas"] = denprofile_IG.tolist()
+results["state-density_IdealGas"] = denprofile_idealgas.tolist()
 #
-r = open(resultfile, "w")
+r = Path.open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

@@ -19,27 +19,35 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
+
+"""Test for the loading and operating multiple reaction mechanisms."""
+
+from pathlib import Path
 
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = Path.cwd()
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir / "reaction" / "data")
 mechanism_dir = data_dir
 # set mechanism input files
 # including the full file path is recommended
-chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+chemfile = Path(mechanism_dir / "grimech30_chem.inp")
+thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
+tranfile = Path(mechanism_dir / "grimech30_transport.dat")
 # create a chemistry set based on GRI 3.0
-My1stMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="GRI 3.0")
+My1stMech = ck.Chemistry(
+    chem=chemfile,
+    therm=thermfile,
+    tran=tranfile,
+    label="GRI 3.0",
+)
 
 # preprocess the mechanism files
 ierror = My1stMech.preprocess()
@@ -65,8 +73,8 @@ mymixture1.pressure = ck.P_ATM
 mymixture1.X = [("CH4", 0.1), ("O2", 0.21), ("N2", 0.79)]
 # compute the constrained H-P equilibrium state
 ck.help("equilibrium")
-equil_mix1_HP = ck.equilibrium(mymixture1, opt=5)
-print(f"equilibrium temperature of mymixture1 : {equil_mix1_HP.temperature} [K]")
+equil_mix1_hp = ck.equilibrium(mymixture1, opt=5)
+print(f"equilibrium temperature of mymixture1 : {equil_mix1_hp.temperature} [K]")
 #
 # load the second mechanism
 #
@@ -77,7 +85,7 @@ My2ndMech = ck.Chemistry(label="C2 NOx")
 # set mechanism input files individually
 # this mechanism file contains all the necessary thermodynamic and transport data
 # therefore no need to specify the therm and the tran data files
-My2ndMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
+My2ndMech.chemfile = Path(mechanism_dir / "C2_NOx_SRK.inp")
 # instruct the preprocessor to include the transport properties
 # only when the mechanism file contains all the transport data
 My2ndMech.preprocess_transportdata()
@@ -116,14 +124,14 @@ print(f"detonation mymixture1 temperature: {CJ_mix1.temperature} [K]")
 print(f"detonation wave speed = {speeds_mix1[1] / 100.0} [m/sec]")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "multiplemechanisms.result")
+resultfile = Path(current_dir / "multiplemechanisms.result")
 results = {}
 # results["state-temperature_IdealGas"] = [CJ_mix1.temperature]
 # results["state-detonation_speed_IdealGas"] = [speeds_mix1[1] / 100.0]
 results["state-temperature_RealGas"] = [CJ_mix2.temperature]
 results["state-detonation_speed_RealGas"] = [speeds_mix2[1] / 100.0]
 #
-r = open(resultfile, "w")
+r = Path.open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

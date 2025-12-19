@@ -19,7 +19,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
+
+"""Test for the spark ignition engine model."""
+
+from pathlib import Path
 import time
 
 import matplotlib.pyplot as plt  # plotting
@@ -33,7 +36,7 @@ from ansys.chemkin.core.engines.SI import SIengine
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = Path.cwd()
 logger.debug("working directory:" + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -44,13 +47,13 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir / "reaction" / "data")
 mechanism_dir = data_dir
 # create a chemistry set based on the gasoline 14 components mechanism
 MyGasMech = ck.Chemistry(label="Gasoline")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "gasoline_14comp_WBencrypt.inp")
+MyGasMech.chemfile = Path(mechanism_dir / "gasoline_14comp_WBencrypt.inp")
 # preprocess the mechanism files
 ierror = MyGasMech.preprocess()
 print("mechanism information:")
@@ -74,7 +77,8 @@ air.temperature = 353.0
 fresh = ck.Mixture(MyGasMech)
 # products from the complete combustion of the fuel mixture and air
 products = ["co2", "h2o", "n2"]
-# species mole fractions of added/inert mixture. can also create an additives mixture here
+# species mole fractions of added/inert mixture.
+# can also create an additives mixture here
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
 # mean equivalence ratio
 equiv = 1.0
@@ -85,7 +89,8 @@ if ierror != 0:
     raise RuntimeError
 # list the composition of the unburned fuel-air mixture
 fresh.list_composition(mode="mole")
-# set mixture temperature and pressure (equivalent to setting the initial temperature and pressure of the reactor)
+# set mixture temperature and pressure
+# (equivalent to setting the initial temperature and pressure of the reactor)
 fresh.temperature = fuelmixture.temperature
 fresh.pressure = fuelmixture.pressure
 # set exhaust gas recirculation (EGR) ratio with volume fraction
@@ -286,7 +291,7 @@ else:
     plt.savefig("spark_ignition_engine.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "sparkignitionengine.result")
+resultfile = Path(current_dir / "sparkignitionengine.result")
 results = {}
 results["state-crank_angle"] = CAprofile.tolist()
 results["state-temperature"] = tempprofile.tolist()
@@ -294,7 +299,7 @@ results["state-pressure"] = presprofile.tolist()
 results["state-volume"] = volprofile.tolist()
 results["species-CO_mole_fraction"] = COprofile.tolist()
 #
-r = open(resultfile, "w")
+r = Path.open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

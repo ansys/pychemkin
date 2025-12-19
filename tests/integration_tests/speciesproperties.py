@@ -19,7 +19,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
+
+"""Test for calculating gas species properties."""
+
+from pathlib import Path
 
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
@@ -28,7 +31,7 @@ import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = Path.cwd()
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -39,15 +42,15 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir / "reaction" / "data")
 mechanism_dir = data_dir
 # create a chemistry set based on GRI 3.0
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+MyGasMech.chemfile = Path(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
+MyGasMech.tranfile = Path(mechanism_dir / "grimech30_transport.dat")
 # preprocess the mechanism files
 ierror = MyGasMech.preprocess()
 # extract element symbols as a list
@@ -59,12 +62,12 @@ plotspeclist = ["CH4", "O2", "N2"]
 # find elemental compositions of selected species
 print(" ")
 for s in plotspeclist:
-    speciesID = MyGasMech.get_specindex(s)
-    print("species " + specieslist[speciesID])
+    species_id = MyGasMech.get_specindex(s)
+    print("species " + specieslist[species_id])
     print("elemental composition")
-    for elemID in range(MyGasMech.MM):
-        num_elem = MyGasMech.SpeciesComposition(elemID, speciesID)
-        print(f"    {elelist[elemID]:>4}: {num_elem:2d}")
+    for elem_id in range(MyGasMech.MM):
+        num_elem = MyGasMech.SpeciesComposition(elem_id, species_id)
+        print(f"    {elelist[elem_id]:>4}: {num_elem:2d}")
     print("=" * 10)
 print()
 #
@@ -72,32 +75,32 @@ print()
 #
 plt.figure(figsize=(12, 6))
 # temperature increment
-dTemp = 20.0
+dtemp = 20.0
 # number of property data points
 points = 100
 # curve attributes
 curvelist = ["g", "b--", "r:"]
 # create arrays
 # species specific heat capacity at constant volume data
-Cv = np.zeros(points, dtype=np.double)
+cv = np.zeros(points, dtype=np.double)
 # temperature data
-T = np.zeros(points, dtype=np.double)
+t = np.zeros(points, dtype=np.double)
 # start of the plotting loop #1
 k = 0
 # loop over the selected gas species
 for s in plotspeclist:
     # starting temperature at 300K
-    Temp = 300.0
+    temp = 300.0
     # loop over temperature data points
     for i in range(points):
-        HeatCapacity = MyGasMech.SpeciesCv(Temp)
-        ID = MyGasMech.get_specindex(s)
-        T[i] = Temp
+        heatcapacity = MyGasMech.SpeciesCv(temp)
+        id = MyGasMech.get_specindex(s)
+        t[i] = temp
         # convert ergs to joules
-        Cv[i] = HeatCapacity[ID] / ck.ERGS_PER_JOULE
-        Temp += dTemp
+        cv[i] = heatcapacity[id] / ck.ERGS_PER_JOULE
+        temp += dtemp
     plt.subplot(121)
-    plt.plot(T, Cv, curvelist[k])
+    plt.plot(t, cv, curvelist[k])
     k += 1
 # plot Cv versus temperature
 plt.xlabel("Temperature [K]")
@@ -111,17 +114,17 @@ k = 0
 # loop over the selected gas species
 for s in plotspeclist:
     # starting temperature at 300K
-    Temp = 300.0
+    temp = 300.0
     # loop over temperature data points
     for i in range(points):
-        conductivity = MyGasMech.SpeciesCond(Temp)
-        ID = MyGasMech.get_specindex(s)
-        T[i] = Temp
+        conductivity = MyGasMech.SpeciesCond(temp)
+        id = MyGasMech.get_specindex(s)
+        t[i] = temp
         # convert ergs to joules
-        kappa[i] = conductivity[ID] / ck.ERGS_PER_JOULE
-        Temp += dTemp
+        kappa[i] = conductivity[id] / ck.ERGS_PER_JOULE
+        temp += dtemp
     plt.subplot(122)
-    plt.plot(T, kappa, curvelist[k])
+    plt.plot(t, kappa, curvelist[k])
     k += 1
 # plot conductivity versus temperature
 plt.xlabel("Temperature [K]")
@@ -130,11 +133,12 @@ plt.legend(plotspeclist, loc="upper left")
 # calculate species binary diffusion coefficients
 # at 2 atm and 500K
 diffcoef = MyGasMech.SpeciesDiffusionCoeffs(2.0 * ck.P_ATM, 500.0)
-ID1 = MyGasMech.get_specindex(plotspeclist[0])
-ID2 = MyGasMech.get_specindex(plotspeclist[1])
-c = diffcoef[ID1][ID2]
+id1 = MyGasMech.get_specindex(plotspeclist[0])
+id2 = MyGasMech.get_specindex(plotspeclist[1])
+c = diffcoef[id1][id2]
 print(
-    f"diffusion coefficient for {plotspeclist[0]} against {plotspeclist[1]} is {c:e} [cm2/sec]"
+    f"diffusion coefficient for {plotspeclist[0]}"
+    f" against {plotspeclist[1]} is {c:e} [cm2/sec]"
 )
 # plot results
 if interactive:
@@ -143,14 +147,14 @@ else:
     plt.savefig("species_properties.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "speciesproperties.result")
+resultfile = Path(current_dir / "speciesproperties.result")
 results = {}
-results["state-temperature"] = T.tolist()
-results["state-Cv"] = Cv.tolist()
+results["state-temperature"] = t.tolist()
+results["state-Cv"] = cv.tolist()
 results["state-conductivity"] = kappa.tolist()
 results["state-binary_diffusivity"] = [float(c)]
 #
-r = open(resultfile, "w")
+r = Path.open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

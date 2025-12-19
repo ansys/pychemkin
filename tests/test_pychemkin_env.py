@@ -1,4 +1,6 @@
-import os
+"""Tests for Pychemkin run environment."""
+
+from pathlib import Path
 
 import ansys.chemkin.core as ck
 
@@ -6,17 +8,17 @@ import ansys.chemkin.core as ck
 class TestClassInstallation:
     """verify Ansys Chemkin and PyChemkin installations."""
 
-    def check_CK_install(self):
+    def check_ck_install(self):
         """Check Ansys Chemkin installation location."""
-        return os.path.isdir(ck.chemkin_dir)
+        return Path(ck.chemkin_dir).is_dir()
 
-    def check_PyCK_install(self):
+    def check_pyck_install(self):
         """Check PyChemkin module installation."""
-        return os.path.isdir(ck.pychemkin_dir)
+        return Path(ck.pychemkin_dir).is_dir()
 
     def test_installations(self):
         """Check proper installations."""
-        assert self.check_CK_install() and self.check_PyCK_install()
+        assert self.check_ck_install() and self.check_pyck_install()
 
     def test_minimum_version(self):
         """Check minimum version required to run PyChemkin."""

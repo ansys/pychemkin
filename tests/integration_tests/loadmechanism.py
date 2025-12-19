@@ -20,29 +20,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-""".. _ref_load_mechanism:
-
-=================================
-Pre-Process a Gas-Phase Mechanism
-=================================
-
-Before running a Chemkin simulation, the reaction mechanism data must be loaded and
-pre-processed. The mechanism data consist of *a reaction mechanism input file*,
-*a thermodynamic data file*, and *an optional transport data file*.
-
-This example demonstartes the steps to instantiate and pre-process a ``Chemistry Set``
-object which is always the first task in running any PyChemkin simulations.
-
-PyChemkin allows several ``Chemistry Set`` objects to coexist in
-the same Python project; however, only one ``Chemistry Set`` object
-is active at a time.
-"""
+"""Test for defining and preprocessing a chemistry set."""
 
 #################################################
 # Import PyChemkin package and start the logger
 # ===============================================
 
-import os
+from pathlib import Path
 
 # import PyChemkin packages
 import ansys.chemkin.core as ck
@@ -50,7 +34,7 @@ from ansys.chemkin.core import Color
 from ansys.chemkin.core.logger import logger
 
 # check the working directory
-current_dir = os.getcwd()
+current_dir = Path.cwd()
 logger.debug("working directory: " + current_dir)
 
 # set PyChemkin verbose mode
@@ -65,21 +49,25 @@ ck.set_verbose(True)
 # installation under the subdirectory *"\reaction\data"*.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir / "reaction" / "data")
 mechanism_dir = data_dir
 
 # set mechanism input files
 # including the full file path is recommended
 # the gas-phase reaction mechanism file (GRI 3.0)
-chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
+chemfile = Path(mechanism_dir / "grimech30_chem.inp")
 # the thermodynamic data file
-thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
+thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
 # the transport data file
-tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+tranfile = Path(mechanism_dir / "grimech30_transport.dat")
 
 # create a chemistry set instance based on the GRI 3.0 methane combustion mechanism
-MyGasMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="GRI 3.0")
-
+MyGasMech = ck.Chemistry(
+    chem=chemfile,
+    therm=thermfile,
+    tran=tranfile,
+    label="GRI 3.0",
+)
 
 ###################################
 # Pre-Process the ``Chemistry Set``
@@ -162,7 +150,7 @@ My2ndMech = ck.Chemistry(label="C2 NOx")
 # set mechanism input files individually
 # this mechanism file contains all the necessary thermodynamic and transport data
 # therefore no need to specify the therm and the tran data files
-My2ndMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
+My2ndMech.chemfile = Path(mechanism_dir / "C2_NOx_SRK.inp")
 
 # instruct the preprocessor to include the transport properties
 # only when the mechanism file contains all the transport data
@@ -220,12 +208,12 @@ for k in range(len(specieslist)):
 
 print("=" * 50)
 # return results for comparisons
-resultfile = os.path.join(current_dir, "loadmechanism.result")
+resultfile = Path(current_dir / "loadmechanism.result")
 results = {}
 results["state-AWT"] = AWT.tolist()
 results["state-WT"] = WT.tolist()
 #
-r = open(resultfile, "w")
+r = Path.open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

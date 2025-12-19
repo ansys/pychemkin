@@ -20,9 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Heating values test."""
+"""Single-zone HCCI engine test."""
 
-import os
+from pathlib import Path
 
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
@@ -35,7 +35,7 @@ from ansys.chemkin.core.engines.HCCI import HCCIengine
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = Path.cwd()
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -46,15 +46,15 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir / "reaction" / "data")
 mechanism_dir = data_dir
 # create a chemistry set based on the GRI mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+MyGasMech.chemfile = Path(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
+MyGasMech.tranfile = Path(mechanism_dir / "grimech30_transport.dat")
 # preprocess the mechanism files
 ierror = MyGasMech.preprocess()
 if ierror != 0:
@@ -80,7 +80,8 @@ air.temperature = 400.0
 fresh = ck.Mixture(MyGasMech)
 # products from the complete combustion of the fuel mixture and air
 products = ["CO2", "H2O", "N2"]
-# species mole fractions of added/inert mixture. can also create an additives mixture here
+# species mole fractions of added/inert mixture.
+# can also create an additives mixture here
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
 # mean equivalence ratio
 equiv = 0.8
@@ -93,7 +94,8 @@ if ierror != 0:
     raise RuntimeError
 # list the composition of the unburned fuel-air mixture
 fresh.list_composition(mode="mole")
-# set mixture temperature and pressure (equivalent to setting the initial temperature and pressure of the reactor)
+# set mixture temperature and pressure
+# (equivalent to setting the initial temperature and pressure of the reactor)
 fresh.temperature = 447.0
 fresh.pressure = 1.065 * ck.P_ATM
 # set exhaust gas recirculation (EGR) ratio with volume fraction
@@ -148,12 +150,12 @@ print(f"number of zone(s) = {MyEngine.get_number_of_zones()}")
 # "hohenburg": [<a> <b> <c> <d> <e> <Twall>]
 heattransferparameters = [0.035, 0.71, 0.0]
 # set cylinder wall temperature [K]
-Twall = 400.0
-MyEngine.set_wall_heat_transfer("dimensionless", heattransferparameters, Twall)
+temp_wall = 400.0
+MyEngine.set_wall_heat_transfer("dimensionless", heattransferparameters, temp_wall)
 # incylinder gas velocity correlation parameter (Woschni)
 # [<C11> <C12> <C2> <swirl ratio>]
-GVparameters = [2.28, 0.308, 3.24, 0.0]
-MyEngine.set_gas_velocity_correlation(GVparameters)
+gv_parameters = [2.28, 0.308, 3.24, 0.0]
+MyEngine.set_gas_velocity_correlation(gv_parameters)
 # set piston head top surface area [cm2]
 MyEngine.set_piston_head_area(area=124.75)
 # set cylinder clearance surface area [cm2]
@@ -170,9 +172,9 @@ MyEngine.adaptive_solution_saving(mode=False, steps=20)
 # set tolerances in tuple: (absolute tolerance, relative tolerance)
 MyEngine.tolerances = (1.0e-12, 1.0e-10)
 # get solver parameters
-ATOL, RTOL = MyEngine.tolerances
-print(f"default absolute tolerance = {ATOL}")
-print(f"default relative tolerance = {RTOL}")
+atol, rtol = MyEngine.tolerances
+print(f"default absolute tolerance = {atol}")
+print(f"default relative tolerance = {rtol}")
 # turn on the force non-negative solutions option in the solver
 MyEngine.force_nonnegative = True
 # specify the ignition definitions
@@ -201,8 +203,8 @@ if runstatus != 0:
 print(Color.GREEN + ">>> Run completed. <<<", end=Color.END)
 logger.info("run completed")
 # get ignition delay "time"
-delayCA = MyEngine.get_ignition_delay()
-print(f"ignition delay CA = {delayCA} [degree]")
+delay_ca = MyEngine.get_ignition_delay()
+print(f"ignition delay CA = {delay_ca} [degree]")
 # get heat release information
 HR10, HR50, HR90 = MyEngine.get_engine_heat_release_CAs()
 print("Engine Heat Release Information")
@@ -217,19 +219,20 @@ print(f"number of solution points = {solutionpoints}")
 # get the time profile
 timeprofile = MyEngine.get_solution_variable_profile("time")
 # convert time to crank angle
-CAprofile = np.zeros_like(timeprofile, dtype=np.double)
+ca_profile = np.zeros_like(timeprofile, dtype=np.double)
 count = 0
 for t in timeprofile:
-    CAprofile[count] = MyEngine.get_CA(timeprofile[count])
+    ca_profile[count] = MyEngine.get_CA(timeprofile[count])
     count += 1
 # get the cylinder pressure profile
 presprofile = MyEngine.get_solution_variable_profile("pressure")
 presprofile *= 1.0e-6
 # get the volume profile
 volprofile = MyEngine.get_solution_variable_profile("volume")
-# create arrays for mixture density, NO mole fraction, and mixture specific heat capacity
+# create arrays for mixture density, NO mole fraction,
+# and mixture specific heat capacity
 denprofile = np.zeros_like(timeprofile, dtype=np.double)
-Cpprofile = np.zeros_like(timeprofile, dtype=np.double)
+cpprofile = np.zeros_like(timeprofile, dtype=np.double)
 # loop over all solution time points
 for i in range(solutionpoints):
     # get the mixture at the time point
@@ -237,21 +240,21 @@ for i in range(solutionpoints):
     # get gas density [g/cm3]
     denprofile[i] = solutionmixture.RHO
     # get mixture specific heat capacity profile [erg/mole-K]
-    Cpprofile[i] = solutionmixture.CPBL() / ck.ERGS_PER_JOULE * 1.0e-3
+    cpprofile[i] = solutionmixture.CPBL() / ck.ERGS_PER_JOULE * 1.0e-3
 # plot the profiles
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))
 plt.subplot(221)
-plt.plot(CAprofile, presprofile, "r-")
+plt.plot(ca_profile, presprofile, "r-")
 plt.ylabel("Pressure [bar]")
 plt.subplot(222)
-plt.plot(CAprofile, volprofile, "b-")
+plt.plot(ca_profile, volprofile, "b-")
 plt.ylabel("Volume [cm3]")
 plt.subplot(223)
-plt.plot(CAprofile, denprofile, "g-")
+plt.plot(ca_profile, denprofile, "g-")
 plt.xlabel("Crank Angle [degree]")
 plt.ylabel("Mixture Density [g/cm3]")
 plt.subplot(224)
-plt.plot(CAprofile, Cpprofile, "m-")
+plt.plot(ca_profile, cpprofile, "m-")
 plt.xlabel("Crank Angle [degree]")
 plt.ylabel("Mixture Cp [kJ/mole]")
 # plot results
@@ -261,15 +264,15 @@ else:
     plt.savefig("HCCI_engine.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "hcciengine.result")
+resultfile = Path(current_dir / "hcciengine.result")
 results = {}
-results["state-crank_angle"] = CAprofile.tolist()
+results["state-crank_angle"] = ca_profile.tolist()
 results["state-density"] = denprofile.tolist()
 results["state-pressure"] = presprofile.tolist()
 results["state-volume"] = volprofile.tolist()
-results["state-Cp"] = Cpprofile.tolist()
+results["state-Cp"] = cpprofile.tolist()
 #
-r = open(resultfile, "w")
+r = Path.open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

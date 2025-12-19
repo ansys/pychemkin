@@ -20,7 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import os
+"""Adiabatic flame temperature test for equilibrium calculation."""
+
+from pathlib import Path
 
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
@@ -29,7 +31,7 @@ import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = Path.cwd()
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -42,14 +44,14 @@ interactive = False
 # This is a pychemkin equivalent of equil_test07
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir / "reaction" / "data")
 mechanism_dir = data_dir
 # create a chemistry set based on the diesel 14 components mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
+MyGasMech.chemfile = Path(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
 
 ierror = MyGasMech.preprocess()
 
@@ -102,12 +104,12 @@ else:
     plt.savefig("adiabatic_flame_temperature.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "adiabaticflametemperature.result")
+resultfile = Path(current_dir / "adiabaticflametemperature.result")
 results = {}
 results["state-equivalence_ratio"] = equiv.tolist()
 results["state-temperature"] = T.tolist()
 #
-r = open(resultfile, "w")
+r = Path.open(resultfile, "w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')
