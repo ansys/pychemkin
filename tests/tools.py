@@ -46,8 +46,8 @@ class PyCKtools:
 
         Returns
         -------
-        error: integer
-            error code
+            error: integer
+                error code
 
         """
         if Path(newfolder).exists():
@@ -221,7 +221,7 @@ class PyCKtools:
         return abs(len(list1) - len(list2)) == expected_diff
 
     @staticmethod
-    def get_file_names(folder_path) -> list[str]:
+    def get_file_names(folder_path: str) -> list[str]:
         """Get a list of all file names in the specified folder."""
         """
         Parameters
@@ -252,9 +252,9 @@ class PyCKtools:
         """
         Parameters
         ----------
-            tolerancename: string
+            tolerance_name: string
                 type of variables to be compared
-            stat_tol: list of double
+            state_tol: list of double
                 tolerance value for state variables
             species_tol: list of double
                 tolerance for species fractions
@@ -291,9 +291,9 @@ class PyCKtools:
         """
         Parameters
         ----------
-            rlist: list of integers or doubles
+            r_list: list of integers or doubles
                 list of variable values from the new solution
-            blist: list of integers or doubles
+            b_list: list of integers or doubles
                 list of variable values from the baseline
             atol: double
                 absolute tolerance
