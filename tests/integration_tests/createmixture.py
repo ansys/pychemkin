@@ -32,7 +32,7 @@ import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = Path.cwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -43,13 +43,13 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = Path(ck.ansys_dir / "reaction" / "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on the C2 NOx mechanism
 MyGasMech = ck.Chemistry(label="C2 NOx")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = Path(mechanism_dir / "C2_NOx_SRK.inp")
+MyGasMech.chemfile = str(mechanism_dir / "C2_NOx_SRK.inp")
 # this mechanism file contains all the necessary thermodynamic and transport data
 # therefore no need to specify the therm and the tran data files
 # instruct the preprocessor to include the transport properties

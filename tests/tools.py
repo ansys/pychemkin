@@ -70,7 +70,7 @@ class PyCKtools:
             # folder not exist, create new folder
             print(f"... Creating a new sub-folder {newfolder:s} to store run results")
             try:
-                Path.mkdir(newfolder)
+                new.mkdir()
             except OSError:
                 print(f"Error: Fail to create new folder {newfolder:s}")
                 return 1
@@ -124,18 +124,25 @@ class PyCKtools:
             #
             PyCKtools.FIRST_PASS += 1
         # set the test source file
-        frun = test_file + ".py"
-        frun = Path(source_folder) / frun
+        fr = test_file + ".py"
+        frun = Path(source_folder) / fr
         # set the test output file
-        f = test_file + ".out"
+        fo = test_file + ".out"
         output_folder = Path(current_dir) / "outputs"
-        f = output_folder / f
-        fout = Path.open(f, "w")
+        f = output_folder / fo
+        fout = f.open(mode="w")
         # run test
         # change working directory
+        print(f"{root_dir}  {source_dir}   {result_dir}  {test_file}")
+        print(f"new folder {new_working}  {type(new_working)}")
+        print(f"out folder {output_folder}   {type(output_folder)}")  # path
+        print(f"source folder {source_folder}   {type(source_folder)}")
+        print(f"current {current_dir}   {type(current_dir)}")
+        print(f"frun  {frun.resolve()} ffff {type(frun)}  ooooooooo {f.resolve()}  {type(f)}") # frun path  f path
+
         os.chdir(new_working)
         try:
-            results = subprocess.run(["python", frun], stdout=fout, check=True)
+            results = subprocess.run(["python", str(frun)], stdout=fout, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Command returned non-zero exit status: {e.returncode}")
             print(f"test = {test_file}")
@@ -167,11 +174,12 @@ class PyCKtools:
         # close the solution output file
         fout.close()
         # clean up unimportant output files
-        for out_files in Path.glob(str(new_working / "*.out")):
+        new = Path(new_working)
+        for out_files in new.glob("*.out"):
             Path.unlink(out_files)
-        for asc_files in Path.glob(str(new_working / "*.asc")):
+        for asc_files in new.glob("*.asc"):
             Path.unlink(asc_files)
-        for inp_files in Path.glob(str(new_working / "*.inp")):
+        for inp_files in new.glob("*.inp"):
             Path.unlink(inp_files)
         # return the return code from the subprocess run
         # change working directory

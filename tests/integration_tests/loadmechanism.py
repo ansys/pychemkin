@@ -34,7 +34,7 @@ from ansys.chemkin.core import Color
 from ansys.chemkin.core.logger import logger
 
 # check the working directory
-current_dir = Path.cwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 
 # set PyChemkin verbose mode
@@ -49,17 +49,17 @@ ck.set_verbose(True)
 # installation under the subdirectory *"\reaction\data"*.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = Path(ck.ansys_dir / "reaction" / "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 
 # set mechanism input files
 # including the full file path is recommended
 # the gas-phase reaction mechanism file (GRI 3.0)
-chemfile = Path(mechanism_dir / "grimech30_chem.inp")
+chemfile = str(mechanism_dir / "grimech30_chem.inp")
 # the thermodynamic data file
-thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
+thermfile = str(mechanism_dir / "grimech30_thermo.dat")
 # the transport data file
-tranfile = Path(mechanism_dir / "grimech30_transport.dat")
+tranfile = str(mechanism_dir / "grimech30_transport.dat")
 
 # create a chemistry set instance based on the GRI 3.0 methane combustion mechanism
 MyGasMech = ck.Chemistry(
@@ -103,20 +103,20 @@ print("=" * 50)
 # extract element symbols as a list
 elelist = MyGasMech.element_symbols
 # get atomic masses as numpy 1D double array
-AWT = MyGasMech.atomic_weight
+awt = MyGasMech.atomic_weight
 # print element information
 for k in range(len(elelist)):
-    print(f"element # {k + 1:3d}: {elelist[k]:16} mass = {AWT[k]:f}")
+    print(f"element # {k + 1:3d}: {elelist[k]:16} mass = {awt[k]:f}")
 
 print("=" * 50)
 
 # extract gas species symbols as a list
 specieslist = MyGasMech.species_symbols
 # get species molecular masses as numpy 1D double array
-WT = MyGasMech.species_molar_weight
+wt = MyGasMech.species_molar_weight
 # print gas species information
 for k in range(len(specieslist)):
-    print(f"species # {k + 1:3d}: {specieslist[k]:16} mass = {WT[k]:f}")
+    print(f"species # {k + 1:3d}: {specieslist[k]:16} mass = {wt[k]:f}")
 print("=" * 50)
 
 
@@ -150,7 +150,7 @@ My2ndMech = ck.Chemistry(label="C2 NOx")
 # set mechanism input files individually
 # this mechanism file contains all the necessary thermodynamic and transport data
 # therefore no need to specify the therm and the tran data files
-My2ndMech.chemfile = Path(mechanism_dir / "C2_NOx_SRK.inp")
+My2ndMech.chemfile = str(mechanism_dir / "C2_NOx_SRK.inp")
 
 # instruct the preprocessor to include the transport properties
 # only when the mechanism file contains all the transport data
@@ -191,29 +191,29 @@ print("=" * 50)
 # extract element symbols as a list
 elelist = My2ndMech.element_symbols
 # get atomic masses as numpy 1D double array
-AWT = My2ndMech.AWT
+awt = My2ndMech.AWT
 # print element information
 for k in range(len(elelist)):
-    print(f"element # {k + 1:3d}: {elelist[k]:16} mass = {AWT[k]:f}")
+    print(f"element # {k + 1:3d}: {elelist[k]:16} mass = {awt[k]:f}")
 
 print("=" * 50)
 
 # extract gas species symbols as a list
 specieslist = My2ndMech.species_symbols
 # get species molecular masses as numpy 1D double array
-WT = My2ndMech.WT
+wt = My2ndMech.WT
 # print gas species information
 for k in range(len(specieslist)):
-    print(f"species # {k + 1:3d}: {specieslist[k]:16} mass = {WT[k]:f}")
+    print(f"species # {k + 1:3d}: {specieslist[k]:16} mass = {wt[k]:f}")
 
 print("=" * 50)
 # return results for comparisons
-resultfile = Path(current_dir / "loadmechanism.result")
+resultfile = Path(current_dir) / "loadmechanism.result"
 results = {}
-results["state-AWT"] = AWT.tolist()
-results["state-WT"] = WT.tolist()
+results["state-AWT"] = awt.tolist()
+results["state-WT"] = wt.tolist()
 #
-r = Path.open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

@@ -27,10 +27,10 @@ class TestCompareResults:
             new_working = get_working_dir
         else:
             new_working = PyCKtools.TARGET_FOLDER
-        new_result_dir = Path(new_working / get_result_dir)
+        new_result_dir = str(Path(new_working) / get_result_dir)
         ierr = PyCKtools.check_folder(new_result_dir)
         assert ierr == 0, f"result folder {new_result_dir} not found."
-        baseline_dir = Path(get_working_dir / get_baseline_dir)
+        baseline_dir = str(Path(get_working_dir) / get_baseline_dir)
         ierr = PyCKtools.check_folder(baseline_dir)
         assert ierr == 0, f"baseline folder {baseline_dir} not found."
         # load the result file
@@ -39,13 +39,16 @@ class TestCompareResults:
         r_file_names = PyCKtools.get_file_names(new_result_dir)
         b_file_names = PyCKtools.get_file_names(baseline_dir)
         # create the comparison log file
-        logf = Path.open(Path(new_working / "compareresults.log"), "w+")
+        l = Path(new_working) / "compareresults.log"
+        logf = l.open(mode="w+")
         count_all_files = 0
         count_missing = 0
         count_skipped = 0
         count_bad = 0
         for rf in r_file_names:
-            test_name, extension = Path.suffix(rf)
+            rf_obj = Path(rf)
+            test_name =rf_obj.name
+            extension = rf_obj.suffix
             logf.write(f"\nchecking file {rf}...\n")
             count_all_files += 1
             if extension != result_tag:
@@ -55,14 +58,14 @@ class TestCompareResults:
                 count_skipped += 1
             else:
                 # prepare for result comparisons
-                this_result_file = Path(new_result_dir / rf)
+                this_result_file = str(Path(new_result_dir) / rf)
                 this_result = PyCKtools.load_results(this_result_file)
                 msg = str(test_name) + ": bad result file format."
                 assert isinstance(this_result, dict), msg
                 # load the baseline file
                 base_name = test_name + baseline_tag
                 if base_name in b_file_names:
-                    this_baseline_file = Path(baseline_dir / base_name)
+                    this_baseline_file = str(Path(baseline_dir) / base_name)
                     # find corresponding baseline
                     this_baseline = PyCKtools.load_results(this_baseline_file)
                     msg = str(test_name) + ": trouble reading the baseline of test."
