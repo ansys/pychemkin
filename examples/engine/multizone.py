@@ -20,30 +20,39 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-""".. _ref_multizone_engine:
+r""".. _ref_multizone_engine:
 
 =================================
 Simulate a multi-zone HCCI engine
 =================================
 
-Ansys Chemkin offers some idealized internal combustion (IC) engine models commonly used
-for fuel combustion and engine performance research. The Chemkin IC engine model is a specialized
-transient 0-D *closed* gas-phase reactor that mainly performs combustion simulation between the
-intake valve closing (IVC) and the exhaust valve opening (EVO), that is, when the engine cylinder resembles a closed chamber. The cylinder volume is derived from the piston motion as a function of the engine crank angle (CA) and engine parameters such as engine speed (RPM) and stroke. The energy equation is always solved and there are several wall heat transfer models specifically designed for engine simulations.
+Ansys Chemkin offers some idealized internal combustion (IC) engine models commonly
+used for fuel combustion and engine performance research.
+The Chemkin IC engine model is a specialized transient 0-D *closed* gas-phase reactor
+that mainly performs combustion simulation between the intake valve closing (IVC)
+and the exhaust valve opening (EVO), that is, when the engine cylinder resembles
+a closed chamber. The cylinder volume is derived from the piston motion as
+a function of the engine crank angle (CA) and engine parameters such as
+engine speed (RPM) and stroke. The energy equation is always solved and
+there are several wall heat transfer models specifically designed
+for engine simulations.
 
 .. note ::
     For additional information on the Chemkin IC engine models, use the
     ``ansys.chemkin.core.manuals()`` method to view the online **Theory** manual.
 
-The multi-zone homogeneous charged compression ignition (HCCI) model is mainly intended to address
-the temperature variation inside the cylinder caused by the wall heat transfer and the imperfect
-mixing of the in-cylinder gas mixture. In addition, the multi-zone HCCI engine model allows the
-introduction of non-uniform temperature and/or the equivalence ratio distribution of the gas mixture
+The multi-zone homogeneous charged compression ignition (HCCI) model is mainly
+intended to address the temperature variation inside the cylinder caused
+by the wall heat transfer and the imperfect mixing of the in-cylinder gas mixture.
+In addition, the multi-zone HCCI engine model allows the introduction of
+non-uniform temperature and/or the equivalence ratio distribution of the gas mixture
 at the IVC.
 
-This example shows how to set up and run the Chemkin multi-zone HCCI engine model. Many engine model-specific features, such as basic engine parameters, exhaust gas recirculation,
-and wall heat transfer, are applied to the engine simulation. This example also shows how to create
-initial distributions of zone size, temperature, and composition.
+This example shows how to set up and run the Chemkin multi-zone HCCI engine model.
+Many engine model-specific features, such as basic engine parameters,
+exhaust gas recirculation, and wall heat transfer, are applied to
+the engine simulation. This example also shows how to create initial distributions
+of zone size, temperature, and composition.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_multizone_HCCI_engine.png'
@@ -52,7 +61,7 @@ initial distributions of zone size, temperature, and composition.
 # Import PyChemkin packages and start the logger
 # ==============================================
 
-import os
+from pathlib import Path
 
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
@@ -65,7 +74,7 @@ from ansys.chemkin.core.engines.HCCI import HCCIengine
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -83,15 +92,15 @@ interactive = True
 # installation in the ``/reaction/data`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on the GRI mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+MyGasMech.chemfile = str(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
+MyGasMech.tranfile = str(mechanism_dir / "grimech30_transport.dat")
 
 ##############################
 # Preprocess the chemistry set
@@ -109,9 +118,9 @@ ierror = MyGasMech.preprocess()
 # You then define the *complete combustion product species* and provide the
 # *additives* composition if there is any. Finally, you set
 # the ``equivalenceratio`` value to create the fuel-air mixture. In this case,
-# the fuel mixture consists of methane, ethane, and propane as the simulated natural gas.
-# Because HCCI engines generally run on lean fuel-air mixtures, the equivalence ratio is
-# set to 0.8.
+# the fuel mixture consists of methane, ethane, and propane as
+# the simulated natural gas. Because HCCI engines generally run on
+# lean fuel-air mixtures, the equivalence ratio is set to 0.8.
 
 # create the fuel mixture
 fuelmixture = ck.Mixture(MyGasMech)
@@ -130,7 +139,8 @@ air.temperature = 400.0
 fresh = ck.Mixture(MyGasMech)
 # products from the complete combustion of the fuel mixture and air
 products = ["CO2", "H2O", "N2"]
-# species mole fractions of added/inert mixture. can also create an additives mixture here
+# species mole fractions of added/inert mixture.
+# can also create an additives mixture here
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
 # mean equivalence ratio
 equiv = 0.8
@@ -148,9 +158,9 @@ fresh.list_composition(mode="mole")
 ##########################################################
 # Specify pressure and temperature of the fuel-air mixture
 # ========================================================
-# Since you are going to use the ``fresh`` fuel-air mixture to instantiate the engine object later,
-# setting the mixture pressure and temperature is equivalent to setting
-# the initial temperature and pressure of the engine cylinder.
+# Since you are going to use the ``fresh`` fuel-air mixture to instantiate
+# the engine object later, setting the mixture pressure and temperature is
+# equivalent to setting the initial temperature and pressure of the engine cylinder.
 fresh.temperature = 447.0
 fresh.pressure = 1.065 * ck.P_ATM
 
@@ -159,16 +169,17 @@ fresh.pressure = 1.065 * ck.P_ATM
 # =====================================
 # Many engines have the configuration for exhaust gas recirculation (EGR). Chemkin
 # engine models allow you to add the EGR mixture to the fresh fuel-air mixture entered
-# the cylinder. If the engine you are modeling has EGR, you should have the EGR ratio, which
-# is generally the volume ratio between the EGR mixture and the fresh fuel-air ratio.
-# However, because you know nothing about the composition of the exhaust gas, you cannot simply
-# combine these two mixtures. In this case, you use the ``get_EGR_mole_fraction()`` method to estimate
-# the major components of the exhaust gas from the combustion of the fresh fuel-air mixture. The
-# ``threshold=1.0e-8`` parameter tells the method to ignore any species with a mole fraction below
-# the threshold value. Once you have the EGR mixture composition, use the ``X_by_Equivalence_Ratio()``
-# method a second time to re-create the ``fresh`` fuel-air mixture  with the original
-# ``fuelmixture`` and ``air`` mixtures along with the EGR composition you just got as the
-# *"additives"*.
+# the cylinder. If the engine you are modeling has EGR, you should have the EGR ratio,
+# which is generally the volume ratio between the EGR mixture and
+# the fresh fuel-air ratio. However, because you know nothing about the composition
+# of the exhaust gas, you cannot simply combine these two mixtures. In this case,
+# you use the ``get_EGR_mole_fraction()`` method to estimate the major components of
+# the exhaust gas from the combustion of the fresh fuel-air mixture. The
+# ``threshold=1.0e-8`` parameter tells the method to ignore any species with
+# a mole fraction below the threshold value. Once you have the EGR mixture composition,
+# use the ``X_by_Equivalence_Ratio()`` method a second time to re-create
+# the ``fresh`` fuel-air mixture  with the original ``fuelmixture`` and
+# ``air`` mixtures along with the EGR composition you just got as the *"additives"*.
 EGRratio = 0.3
 # compute the EGR stream composition in mole fractions
 add_frac = fresh.get_EGR_mole_fraction(EGRratio, threshold=1.0e-8)
@@ -189,9 +200,10 @@ fresh.list_composition(mode="mole", bound=1.0e-8)
 ################################
 # Set up the HCCI engine reactor
 # ==============================
-# Use the ``HCCIengine()`` method to create a multi-zone HCCI engine named ``MyMZEngine``
-# and make the new ``fresh`` mixture as the initial incylinder gas mixture at IVC.
-# Set the ``nzones`` parameter to the number of zones in your multi-zone HCCI engine model.
+# Use the ``HCCIengine()`` method to create a multi-zone HCCI engine
+# named ``MyMZEngine`` and make the new ``fresh`` mixture as
+# the initial incylinder gas mixture at IVC. Set the ``nzones``
+# parameter to the number of zones in your multi-zone HCCI engine model.
 
 # create a five-zone HCCI engine
 numbzones = 5
@@ -204,8 +216,9 @@ MyMZEngine.list_composition(mode="mole", bound=1.0e-8)
 # ===========================
 # Set the required engine parameters as shown in the following code. These
 # engine parameters are used to describe the cylinder volume during the
-# simulation. The ``starting_CA`` argument should be the crank angle corresponding
-# to the cylinder IVC. The ``ending_CA`` is typically the EVC crank angle.
+# simulation. The ``starting_CA`` argument should be the crank angle
+# corresponding to the cylinder IVC. The ``ending_CA`` is typically
+# the EVC crank angle.
 
 # cylinder bore diameter [cm]
 MyMZEngine.bore = 12.065
@@ -302,26 +315,29 @@ MyMZEngine.define_additive_fractions(addfrac=zadd)
 ####################
 # Set output options
 # ==================
-# You can turn on the adaptive solution saving to resolve the steep variations in the solution
-# profile. Here additional solution data points are saved for every 20*solver internal steps.
-# You must include the ``set_ignition_delay()`` method for the engine model to
-# report the ignition delay crank angle after the simulation is done. If ``method="T_inflection"`` is
-# set, the reactor model treats the inflection points in the predicted gas temperature profile
-# as the indication of an auto-ignition. You can choose a different auto-ignition definition.
+# You can turn on the adaptive solution saving to resolve the steep variations
+# in the solution profile. Here additional solution data points are saved for every
+# 20*solver internal steps. You must include the ``set_ignition_delay()`` method for
+# the engine model to report the ignition delay crank angle after the simulation
+# is done. If ``method="T_inflection"`` is set, the reactor model treats
+# the inflection points in the predicted gas temperature profile as the indication
+# of an auto-ignition. You can choose a different auto-ignition definition.
 #
 # .. note::
 #
-#   - Type ``ansys.chemkin.core.show_ignition_definitions()`` to get the list of all available ignition
-#     delay time definitions in Chemkin.
+#   - Type ``ansys.chemkin.core.show_ignition_definitions()`` to get the list of
+#     all available ignition delay time definitions in Chemkin.
 #
-#   - The ``set_ignition_delay()`` method is required for the engine model to report the ignition
-#     delay time for each zone as well as the cylinder averaged ignition delay time derived from
-#     the cylinder averaged temperature profile.
+#   - The ``set_ignition_delay()`` method is required for the engine model to
+#     report the ignition delay time for each zone as well as the cylinder averaged
+#     ignition delay time derived from the cylinder averaged temperature profile.
 #
-#   - By default, time/crank angle intervals for both print and save solution are 1/100 of the
-#     simulation duration, which in this case is :math:`dCA=(EVO-IVC)/100=2.58`\ . You can make
-#     the model report more frequently by using the ``CAstep_for_saving_solution()`` or the
-#     ``CAstep_for_printing_solution()`` method to set different interval values in the crank angle.
+#   - By default, time/crank angle intervals for both print and save solution are
+#     1/100 of the simulation duration, which in this case is
+#     :math:`dCA=(EVO-IVC)/100=2.58`\ . You can make the model report more frequently
+#     by using the ``CAstep_for_saving_solution()`` or the
+#     ``CAstep_for_printing_solution()`` method to set different interval values
+#     in the crank angle.
 #
 
 # set the number of crank angles between saving solution
@@ -412,17 +428,21 @@ print(f"90% heat release CA = {HR90} [degree].\n")
 # - The mixtures permit the use of all property and rate utilities to extract
 #   information such as viscosity, density, and mole fractions.
 #
-# You can use the ``get_solution_variable_profile()`` method to get the raw solution profiles. You
-# can get solution mixtures using either the ``get_solution_mixture_at_index()`` method for the
-# solution mixture at a given time point or the ``get_solution_mixture()`` method for the
-# solution mixture at a given time. (In this case, the mixture is constructed by interpolation.)
+# You can use the ``get_solution_variable_profile()`` method to get
+# the raw solution profiles. You can get solution mixtures using either
+# the ``get_solution_mixture_at_index()`` method for the solution mixture at
+# a given time point or the ``get_solution_mixture()`` method for the solution mixture
+# at a given time. (In this case, the mixture is constructed by interpolation.)
 #
 # .. note ::
 #
-#   - For engine models, use the ``process_engine_solution()`` method to postprocess the solutions.
-#   - Use the ``getnumbersolutionpoints()`` method to get the size of the solution profiles before
-#     creating the arrays.
-#   - Use the ``get_CA()`` method to convert the time values reported in the solution to crank angles.
+#   - For engine models, use the ``process_engine_solution()`` method to postprocess
+#     the solutions.
+#   - Use the ``getnumbersolutionpoints()`` method to get the size of
+#     the solution profiles before creating the arrays.
+#   - Use the ``get_CA()`` method to convert the time values reported in the solution
+#     to crank angles.
+#
 
 ####################################################
 # Postprocess the solution profiles in selected zone
@@ -432,14 +452,15 @@ print(f"90% heat release CA = {HR90} [degree].\n")
 # if there are n zones in the multi-zone engine model, there are (n+1) solution
 # records: n zonal results and the cylinder averaged results.
 #
-# To process the result of the zone number :math:`j`\ , :math:`(1 \leq j \leq n)`\ , set the parameter
-# value of ``zoneID`` to :math:`j` when you call the engine postprocessor with the
-# ``process_engine_solution()`` method. Otherwise, the cylinder averaged results are
-# postprocessed by default, that is, when the ``zoneID`` parameter is omitted.
+# To process the result of the zone number :math:`j`\ , :math:`(1 \leq j \leq n)`\ ,
+# set the parameter value of ``zoneID`` to :math:`j` when you call the engine
+# postprocessor with the ``process_engine_solution()`` method. Otherwise,
+# the cylinder averaged results are postprocessed by default, that is, when
+# the ``zoneID`` parameter is omitted.
 #
 # .. note ::
-#   Because The ``process_engine_solution()`` method can process only one set of results at
-#   a time (one zonal result or the cylinder averaged result), you must
+#   Because The ``process_engine_solution()`` method can process only one set
+#   of results at a time (one zonal result or the cylinder averaged result), you must
 #   postprocess the zones one by one to obtain all solution data of the multi-zone
 #   simulation.
 #

@@ -50,21 +50,21 @@ class PyCKtools:
                 error code
 
         """
-        if Path(newfolder).exists():
+        new = Path(newfolder)
+        if new.exists():
             # delete any existing files in this target folder
             print(f"Warning: All files in folder {newfolder:s} will be deleted")
             # first delete any existing files
-            for oldfile in Path.iterdir(newfolder):
-                f = Path(newfolder / oldfile)
+            for oldfile in new.iterdir():
                 try:
-                    if Path(f).is_symlink():
-                        Path(f).unlink()
-                    elif Path(f).is_file():
-                        Path(f).unlink()
-                    elif Path(f).is_dir():
-                        shutil.rmtree(f)
+                    if oldfile.is_symlink():
+                        oldfile.unlink()
+                    elif oldfile.is_file():
+                        oldfile.unlink()
+                    elif oldfile.is_dir():
+                        shutil.rmtree(str(oldfile))
                 except Exception as e:
-                    print(f"error: Fail to delete {oldfile:s}. Reason: {e:s}")
+                    print(f"error: Fail to delete {oldfile.name:s}. Reason: {e:s}")
                     return 1
         else:
             # folder not exist, create new folder
@@ -101,20 +101,20 @@ class PyCKtools:
         """
         #
         # find the working directory
-        current_dir = Path.cwd()
+        current_dir = str(Path.cwd())
         # set sources folder
-        source_folder = Path(root_dir / source_dir)
+        source_folder = str(Path(root_dir) / source_dir)
         # check if the source folder exists
         status = PyCKtools.check_folder(source_folder)
         assert 0 == status, "bad source folder name."
         # verify the output folder
-        output_folder = Path(current_dir / "outputs")
+        output_folder = str(Path(current_dir) / "outputs")
         # check if the output folder exists
         if PyCKtools.FIRST_PASS == 0:
             status = PyCKtools.create_folder(output_folder)
             assert 0 == status, "fail to get fresh output folder"
         # verify the temporary working folder
-        new_working = Path(current_dir / result_dir)
+        new_working = str(Path(current_dir) / result_dir)
         if PyCKtools.TARGET_FOLDER == "":
             PyCKtools.TARGET_FOLDER = current_dir
         # check if the temporary working folder exists
@@ -125,11 +125,11 @@ class PyCKtools:
             PyCKtools.FIRST_PASS += 1
         # set the test source file
         frun = test_file + ".py"
-        frun = Path(source_folder / frun)
+        frun = Path(source_folder) / frun
         # set the test output file
         f = test_file + ".out"
-        output_folder = Path(current_dir / "outputs")
-        f = Path(output_folder / f)
+        output_folder = Path(current_dir) / "outputs"
+        f = output_folder / f
         fout = Path.open(f, "w")
         # run test
         # change working directory
@@ -167,11 +167,11 @@ class PyCKtools:
         # close the solution output file
         fout.close()
         # clean up unimportant output files
-        for out_files in Path.glob(Path(new_working / "*.out")):
+        for out_files in Path.glob(str(new_working / "*.out")):
             Path.unlink(out_files)
-        for asc_files in Path.glob(Path(new_working / "*.asc")):
+        for asc_files in Path.glob(str(new_working / "*.asc")):
             Path.unlink(asc_files)
-        for inp_files in Path.glob(Path(new_working / "*.inp")):
+        for inp_files in Path.glob(str(new_working / "*.inp")):
             Path.unlink(inp_files)
         # return the return code from the subprocess run
         # change working directory
@@ -236,7 +236,7 @@ class PyCKtools:
 
         """
         file_names = []
-        for entry in os.scandir(folder_path):
+        for entry in Path(folder_path).iterdir():
             if entry.is_file():
                 file_names.append(entry.name)
         return file_names

@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_flame_speed_table:
+r""".. _ref_flame_speed_table:
 
 =============================================================================
 Construct atmospheric  methane-air flame speed versus equivalence ratio table
@@ -29,18 +28,21 @@ Construct atmospheric  methane-air flame speed versus equivalence ratio table
 
 One of the prevailing use case of the *freely propagating premixed flame* model is
 to build a *flame speed* table to be imported by another combustion simulation tools.
-PyChemkin provides the flexibility to customize the data structure of the flame speed table
-depending on the simulation goals and the tool. Furthermore, over the years, the chemkin
-flame speed calculator has derived a set of default solver settings that would greatly improve
-the convergence performance, especially for those widely adopted hydrocarbon fuel
-combustion mechanisms. The required input parameters the flame speed calculator are reduced
-to the composition of the fuel-oxidizer mixture, the initial/inlet pressure and temperature,
+PyChemkin provides the flexibility to customize the data structure of
+the flame speed table depending on the simulation goals and the tool. Furthermore,
+over the years, the chemkin flame speed calculator has derived a set of default
+solver settings that would greatly improve the convergence performance, especially
+for those widely adopted hydrocarbon fuel combustion mechanisms. The required
+input parameters the flame speed calculator are reduced to the composition of
+the fuel-oxidizer mixture, the initial/inlet pressure and temperature,
 and the calculation domain.
 
-This tutorial shows the "minimal" effort to create a flame speed table of CH\ :sub:`4`\ -air mixtures
-at the atmospheric pressure. The predicted flame speed values are compared against the experimental data
-as a function of the mixture equivalence ratio. Since the transport processes are critical for flame
-calculations, the transport data must be included in the mechanism data and preprocessed.
+This tutorial shows the "minimal" effort to create a flame speed table of
+CH\ :sub:`4`\ -air mixtures at the atmospheric pressure. The predicted flame speed
+values are compared against the experimental data as a function of
+the mixture equivalence ratio. Since the transport processes are critical for
+flame calculations, the transport data must be included in the mechanism data
+and preprocessed.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_flame_speed_table.png'
@@ -49,7 +51,7 @@ calculations, the transport data must be included in the mechanism data and prep
 # Import PyChemkin packages and start the logger
 # ==============================================
 
-import os
+from pathlib import Path
 import time
 
 import ansys.chemkin.core as ck  # Chemkin
@@ -65,7 +67,7 @@ import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -83,17 +85,18 @@ interactive = True
 # installation under the subdirectory *"/reaction/data"*.
 #
 # .. note::
-#   The transport data *must* be included and preprocessed because the transport processes,
-#   *convection and diffusion*, are important to sustain the flame structure.
+#   The transport data *must* be included and preprocessed because
+#   the transport processes, *convection and diffusion*, are important to
+#   sustain the flame structure.
 #
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # including the full file path is recommended
-chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+chemfile = str(mechanism_dir / "grimech30_chem.inp")
+thermfile = str(mechanism_dir / "grimech30_thermo.dat")
+tranfile = str(mechanism_dir / "grimech30_transport.dat")
 # create a chemistry set based on GRI 3.0
 MyGasMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="GRI 3.0")
 
@@ -140,7 +143,8 @@ air.temperature = fuel.temperature
 premixed = Stream(MyGasMech, label="premixed")
 # products from the complete combustion of the fuel mixture and air
 products = ["CO2", "H2O", "N2"]
-# species mole fractions of added/inert mixture. can also create an additives mixture here
+# species mole fractions of added/inert mixture.
+# can also create an additives mixture here
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
 
 # setting pressure and temperature is not required in this case
@@ -188,9 +192,10 @@ flamespeedcalculator = FlameSpeed(premixed, label="premixed_methane")
 ###############################################
 # Set up initial mesh and grid adaption options
 # =============================================
-# The ``end_poistion`` is a required input as it defines the length of the calculation domain.
-# Typically, the length of the calculation domain is between 1 to 10 [cm]. For low pressure
-# conditions, the flame thickness becomes wider and a larger calculation domain is required.
+# The ``end_poistion`` is a required input as it defines the length of
+# the calculation domain. Typically, the length of the calculation domain is
+# between 1 to 10 [cm]. For low pressure conditions, the flame thickness becomes
+# wider and a larger calculation domain is required.
 #
 
 # set the maximum total number of grid points allowed in the calculation (optional)
@@ -201,27 +206,32 @@ flamespeedcalculator.end_position = 1.0
 #####################################
 # Run the flame speed parameter study
 # ===================================
-# Use the ``run()`` method to run the freely propagating premixed flame (flame speed) model.
-# After the premixed flame calculation concludes successfully, use the ``process_solution()`` method to
-# postprocess the solutions. The predicted laminar flame speed can be obtained by using the
-# ``get_flame_speed()`` method. You can create other property profiles by looping through the
-# solution streams with proper ``Mixture`` methods. The parameter in this project is the equivalence ratio
-# of the methane-air mixture. You can start the parameter run from the most fuel-lean or from the most fuel-rich
-# case. Normally, the most "extreme" cases are difficult to converge. When running into these situations, start
-# the parameter runs from the stoichiometric condition and go down the lean and/or the rich branch. Here
-# the runs start from the most fuel-lean case (\ :math:`\phi = 0.6`\) and progress all the way to the most
-# fuel-rich case (\ :math:`\phi = 1.6`\) in steps of 0.05.
+# Use the ``run()`` method to run the freely propagating premixed flame
+# (flame speed) model. After the premixed flame calculation concludes successfully,
+# use the ``process_solution()`` method to postprocess the solutions.
+# The predicted laminar flame speed can be obtained by using the ``get_flame_speed()``
+# method. You can create other property profiles by looping through
+# the solution streams with proper ``Mixture`` methods. The parameter in this project
+# is the equivalence ratio of the methane-air mixture. You can start
+# the parameter run from the most fuel-lean or from the most fuel-rich case. Normally,
+# the most "extreme" cases are difficult to converge. When running
+# into these situations, start the parameter runs from the stoichiometric condition
+# and go down the lean and/or the rich branch. Here the runs start from
+# the most fuel-lean case (\ :math:`\phi = 0.6`\) and progress all the way to
+# the most fuel-rich case (\ :math:`\phi = 1.6`\) in steps of 0.05.
 #
 # .. note::
-#   - When the inlet stream condition is close to the flammability limit, the flame speed
-#     calculation might fail. Remember that the reaction mechanism (reaction rates, thermodynamic
-#     properties, and transport properties) and the reactor model are *models* that contain assumptions
-#     and uncertainties.
-#   - After complete the first run, you can use the ``continuation()`` method to start the new runs from the
-#     solution of the previous run. However, by doing this, the later runs will contain a lot of grid points
-#     accumulated from all previous runs.
-#   - Use the ``set_molefractions`` method to update the inlet gas composition before each run. Similarly,
-#     use the ``pressure`` and the ``temperature`` methods to change the inlet condition.
+#   - When the inlet stream condition is close to the flammability limit,
+#     the flame speed calculation might fail. Remember that the reaction mechanism
+#     (reaction rates, thermodynamic properties, and transport properties) and
+#     the reactor model are *models* that contain assumptions and uncertainties.
+#   - After complete the first run, you can use the ``continuation()`` method to
+#     start the new runs from the solution of the previous run. However,
+#     by doing this, the later runs will contain a lot of grid points accumulated
+#     from all previous runs.
+#   - Use the ``set_molefractions`` method to update the inlet gas composition
+#     before each run. Similarly, use the ``pressure`` and the ``temperature``
+#     methods to change the inlet condition.
 #
 
 # total number of parameter cases

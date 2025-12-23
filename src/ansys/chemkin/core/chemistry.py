@@ -42,10 +42,14 @@ MAX_SPECIES_LENGTH = _symbol_length + 1  # Chemkin element/species symbol length
 LP_c_char = ctypes.POINTER(ctypes.c_char)  # pointer to C type character array
 COMPLETE = 0
 
-_chemset_identifiers: List = []  # string used to identify different chemistry sets in the same project
+# string used to identify different chemistry sets in the same project
+_chemset_identifiers: List = []
 _active_chemistry_set = -10
-chemkin_verbose = True  # verbose mode to turn ON/OFF the print statements that do not have the leading '**' characters
-_CKInitialized: Dict = {}  # Chemkin-CFD-API initialization flag for every Chemistry Set
+# verbose mode to turn ON/OFF the print statements that
+# do not have the leading '**' character
+chemkin_verbose = True
+# Chemkin-CFD-API initialization flagfor every Chemistry Set
+_CKInitialized: Dict = {}
 # == end of global parameters
 
 
@@ -53,7 +57,9 @@ _CKInitialized: Dict = {}  # Chemkin-CFD-API initialization flag for every Chemi
 # Chemkin module level methods
 #
 def verbose() -> bool:
-    """Return the global verbose mode indicating the status (ON/OFF) of printing statements that do not have the leading '**' characters.
+    """Get current Pychemkin verbose mode."""
+    """Return the global verbose mode indicating the status (ON/OFF)
+    of printing statements that do not have the leading '**' characters.
 
     Returns
     -------
@@ -66,7 +72,9 @@ def verbose() -> bool:
 
 
 def set_verbose(OnOff: bool):
-    """Set the global verbose mode to turn ON(True) or OFF(False) of printing statements that do not have the leading '**' characters.
+    """Set Pychemkin verbose mode."""
+    """Set the global verbose mode to turn ON(True) or OFF(False) of
+    printing statements that do not have the leading '**' characters.
 
     Parameters
     ----------
@@ -159,7 +167,8 @@ def check_chemistryset(chem_index: int) -> bool:
     Returns
     -------
         status: boolean
-            the initialization status of the Chemistry set associated with the given Chemistry set index
+            the initialization status of the Chemistry set associated with
+            the given Chemistry set index
 
     """
     global _CKInitialized
@@ -168,8 +177,9 @@ def check_chemistryset(chem_index: int) -> bool:
 
 
 def activate_chemistryset(chem_index: int) -> int:
+    """Switch to (re-activate) the Chemistry Set."""
     """Switch to (re-activate) the work spaces of the current Chemistry Set
-    when there are multiple Chemistry Sets in the same project
+    when there are multiple Chemistry Sets in the same project.
 
     Parameters
     ----------
@@ -215,7 +225,7 @@ def force_activate_chemistryset(chem_index: int):
 
 
 def chemistryset_new(chem_index: int):
-    """Create a new Chemistry Set initialization flag and set the value to False
+    """Create a new Chemistry Set initialization flag and set the value to False.
 
     Parameters
     ----------
@@ -229,7 +239,7 @@ def chemistryset_new(chem_index: int):
 
 
 def chemistryset_initialized(chem_index: int):
-    """Set the Chemistry Set Initialization flag to True
+    """Set the Chemistry Set Initialization flag to True.
 
     Parameters
     ----------
@@ -261,7 +271,7 @@ def check_active_chemistryset(chem_index: int) -> bool:
 
 
 class Chemistry:
-    """define and preprocess Chemkin chemistry set"""
+    """define and preprocess Chemkin chemistry set."""
 
     realgas_CuEOS = [
         "ideal gas",
@@ -281,8 +291,9 @@ class Chemistry:
         tran: str = "",
         label: str = "",
     ):
-        """Create a Chemistry object based on given Chemkin mechanism input files, thermodynamic data file,
-        and transport data file.
+        """Create a Chemistry object."""
+        """Create a Chemistry object based on given Chemkin mechanism input files,
+        thermodynamic data file, and transport data file.
 
         Parameters
         ----------
@@ -369,7 +380,7 @@ class Chemistry:
 
     @property
     def thermfile(self) -> str:
-        """Get thermodynamic data filename of this chemistry set
+        """Get thermodynamic data filename of this chemistry set.
 
         Returns
         -------
@@ -381,7 +392,7 @@ class Chemistry:
 
     @thermfile.setter
     def thermfile(self, filename: str):
-        """Assign the thermodynamic data filename
+        """Assign the thermodynamic data filename.
 
         Parameters
         ----------
@@ -393,7 +404,7 @@ class Chemistry:
 
     @property
     def tranfile(self) -> str:
-        """Get transport data filename of this chemistry set
+        """Get transport data filename of this chemistry set.
 
         Returns
         -------
@@ -405,7 +416,7 @@ class Chemistry:
 
     @tranfile.setter
     def tranfile(self, filename: str):
-        """Assign the transport data filename
+        """Assign the transport data filename.
 
         Parameters
         ----------
@@ -431,7 +442,7 @@ class Chemistry:
 
     @property
     def summaryfile(self) -> str:
-        """Get the name of the summary file from the preprocessor
+        """Get the name of the summary file from the preprocessor.
 
         Returns
         -------
@@ -442,7 +453,7 @@ class Chemistry:
         return self._summary_out
 
     def preprocess_transportdata(self):
-        """Instruct the preprocessor to include the transport data"""
+        """Instruct the preprocessor to include the transport data."""
         if self._index_tran.value == 0:
             # send a warning message
             msg = [
@@ -478,7 +489,7 @@ class Chemistry:
 
     @property
     def surffile(self) -> str:
-        """Get surface mechanism filename of this chemistry set
+        """Get surface mechanism filename of this chemistry set.
 
         Returns
         -------
@@ -490,7 +501,7 @@ class Chemistry:
 
     @surffile.setter
     def surffile(self, filename: str):
-        """Assign the surface mechanism filename
+        """Assign the surface mechanism filename.
 
         Parameters
         ----------
@@ -521,7 +532,7 @@ class Chemistry:
         therm: str = "",
         tran: str = "",
     ):
-        """Assign all input files of the chemistry set
+        """Assign all input files of the chemistry set.
 
         Parameters
         ----------
@@ -584,7 +595,7 @@ class Chemistry:
             self._index_tran = c_int(0)
 
     def preprocess(self) -> int:
-        """Run Chemkin preprocessor
+        """Run Chemkin preprocessor.
 
         Returns
         -------
@@ -744,7 +755,7 @@ class Chemistry:
         return self._error_code
 
     def verify_realgas_model(self):
-        """Verify the availability of real-gas data in the mechanism"""
+        """Verify the availability of real-gas data in the mechanism."""
         EOSModel = ctypes.create_string_buffer(MAX_SPECIES_LENGTH)
         try:
             # check if the mechanism contains the real-gas EOS data
@@ -781,7 +792,7 @@ class Chemistry:
             logger.info(this_msg)
 
     def verify_transport_data(self) -> bool:
-        """Verify the availability of transport property data in the mechanism
+        """Verify the availability of transport property data in the mechanism.
 
         Returns
         -------
@@ -796,7 +807,7 @@ class Chemistry:
         return True
 
     def verify_surface_mechanism(self) -> bool:
-        """Verify the availability of surface chemistry data in the mechanism
+        """Verify the availability of surface chemistry data in the mechanism.
 
         Returns
         -------
@@ -812,7 +823,7 @@ class Chemistry:
 
     @property
     def species_symbols(self):
-        """Get list of gas species symbols
+        """Get list of gas species symbols.
 
         Returns
         -------
@@ -852,7 +863,7 @@ class Chemistry:
 
     @property
     def element_symbols(self):
-        """Get the list of element symbols
+        """Get the list of element symbols.
 
         Returns
         -------
@@ -889,7 +900,7 @@ class Chemistry:
         return self.ESymbol
 
     def get_specindex(self, specname: str) -> int:
-        """Get index of the gas species
+        """Get index of the gas species.
 
         Returns
         -------
@@ -907,7 +918,7 @@ class Chemistry:
 
     @property
     def chemID(self) -> int:
-        """Get chemistry set index
+        """Get chemistry set index.
 
         Returns
         -------
@@ -922,7 +933,7 @@ class Chemistry:
 
     @property
     def surfchem(self) -> int:
-        """Get surface chemistry status
+        """Get surface chemistry status.
 
         Returns
         -------
@@ -936,7 +947,7 @@ class Chemistry:
 
     @property
     def KK(self) -> int:
-        """Get number of gas species
+        """Get number of gas species.
 
         Returns
         -------
@@ -951,7 +962,7 @@ class Chemistry:
 
     @property
     def MM(self) -> int:
-        """Get number of elements in the chemistry set
+        """Get number of elements in the chemistry set.
 
         Returns
         -------
@@ -966,7 +977,7 @@ class Chemistry:
 
     @property
     def IIGas(self) -> int:
-        """Get number of gas-phase reactions
+        """Get number of gas-phase reactions.
 
         Returns
         -------
@@ -981,7 +992,7 @@ class Chemistry:
 
     @property
     def AWT(self) -> npt.NDArray[np.double]:
-        """Compute atomic masses
+        """Compute atomic masses.
 
         Returns
         -------
@@ -1018,7 +1029,7 @@ class Chemistry:
 
     @property
     def WT(self) -> npt.NDArray[np.double]:
-        """Compute gas species molecular masses
+        """Compute gas species molecular masses.
 
         Returns
         -------
@@ -1058,7 +1069,7 @@ class Chemistry:
     def SpeciesCp(
         self, temp: float = 0.0, pres: Union[float, None] = None
     ) -> npt.NDArray[np.double]:
-        """Get species specific heat capacity at constant pressure
+        """Get species specific heat capacity at constant pressure.
 
         Parameters
         ----------
@@ -1126,7 +1137,7 @@ class Chemistry:
     def SpeciesCv(
         self, temp: float = 0.0, pres: Union[float, None] = None
     ) -> npt.NDArray[np.double]:
-        """Get species specific heat capacity at constant volume (ideal gas only)
+        """Get species specific heat capacity at constant volume (ideal gas only).
 
         Parameters
         ----------
@@ -1165,7 +1176,7 @@ class Chemistry:
     def SpeciesH(
         self, temp: float = 0.0, pres: Union[float, None] = None
     ) -> npt.NDArray[np.double]:
-        """Get species enthalpy
+        """Get species enthalpy.
 
         Parameters
         ----------
@@ -1232,7 +1243,7 @@ class Chemistry:
     def SpeciesU(
         self, temp: float = 0.0, pres: Union[float, None] = None
     ) -> npt.NDArray[np.double]:
-        """Get species internal energy
+        """Get species internal energy.
 
         Parameters
         ----------
@@ -1303,7 +1314,7 @@ class Chemistry:
         return U
 
     def SpeciesVisc(self, temp: float = 0.0) -> npt.NDArray[np.double]:
-        """Get species viscosity
+        """Get species viscosity.
 
         Parameters
         ----------
@@ -1348,7 +1359,7 @@ class Chemistry:
         return visc
 
     def SpeciesCond(self, temp: float = 0.0) -> npt.NDArray[np.double]:
-        """Get species conductivity
+        """Get species conductivity.
 
         Parameters
         ----------
@@ -1399,7 +1410,7 @@ class Chemistry:
     def SpeciesDiffusionCoeffs(
         self, press: float = 0.0, temp: float = 0.0
     ) -> npt.NDArray[np.double]:
-        """Get species diffusion coefficients
+        """Get species diffusion coefficients.
 
         Parameters
         ----------
@@ -1410,7 +1421,8 @@ class Chemistry:
 
         Returns
         -------
-            diffusioncoeffs: 2-D double array, dimension = [number_species, number_species]
+            diffusioncoeffs: 2-D double array, dimension
+            = [number_species, number_species]
                 species diffusion coefficients [cm2/sec]
 
         """
@@ -1459,7 +1471,7 @@ class Chemistry:
         return diffusioncoeffs
 
     def SpeciesComposition(self, elemindex: int = -1, specindex: int = -1) -> int:
-        """Get elemental composition of a species
+        """Get elemental composition of a species.
 
         Parameters
         ----------
@@ -1511,7 +1523,7 @@ class Chemistry:
 
     @property
     def EOS(self) -> int:
-        """Get the available real-gas EOS model
+        """Get the available real-gas EOS model.
 
         Returns
         -------
@@ -1522,7 +1534,9 @@ class Chemistry:
         return self._EOS.value
 
     def use_realgas_cubicEOS(self):
-        """Turn ON the real-gas cubic EOS to compute mixture properties if the mechanism contains necessary data"""
+        """Turn ON the real-gas cubic EOS."""
+        """Turn ON the real-gas cubic EOS to compute mixture properties
+        if the mechanism contains necessary data."""
         if self._EOS.value < 1:
             # no real gas EOS data in the mechanism
             msg = [Color.YELLOW, "mechanism is for ideal gas law only.", Color.END]
@@ -1558,7 +1572,7 @@ class Chemistry:
             self.userealgas = False
 
     def use_idealgas_law(self):
-        """Turn on the ideal gas law to compute mixture properties"""
+        """Turn on the ideal gas law to compute mixture properties."""
         if self._EOS.value < 1:
             # no real gas EOS data in the mechanism
             msg = [Color.YELLOW, "mechanism is for ideal gas law only.", Color.END]
@@ -1589,7 +1603,7 @@ class Chemistry:
     def get_reaction_parameters(
         self,
     ) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double], npt.NDArray[np.double]]:
-        """Get the Arrhenius reaction rate parameters of all gas-phase reactions
+        """Get the Arrhenius reaction rate parameters of all gas-phase reactions.
 
         Returns
         -------
@@ -1619,7 +1633,7 @@ class Chemistry:
         return AFactor, TBeta, AEnergy
 
     def set_reaction_AFactor(self, reaction_index: int, AFactor: float):
-        """(Re)set the Arrhenius A-Factor of the given reaction
+        """(Re)set the Arrhenius A-Factor of the given reaction.
 
         Parameters
         ----------
@@ -1663,7 +1677,7 @@ class Chemistry:
             exit()
 
     def get_reaction_AFactor(self, reaction_index: int) -> float:
-        """Get the Arrhenius A-Factor of the given reaction
+        """Get the Arrhenius A-Factor of the given reaction.
 
         Parameters
         ----------
@@ -1766,7 +1780,7 @@ class Chemistry:
 
     def save(self):
         """Store the work spaces of the current Chemistry Set
-        if new Chemistry Set will be created later in the same project
+        if new Chemistry Set will be created later in the same project.
         """
         ierr = ck_wrapper.chemkin.KINUpdateChemistrySet(self._chemset_index)
         if ierr == 0:
@@ -1788,7 +1802,7 @@ class Chemistry:
 
     def activate(self):
         """Switch to (re-activate) the work spaces of the current Chemistry Set
-        when there are multiple Chemistry Sets in the same project
+        when there are multiple Chemistry Sets in the same project.
         """
         ierr = activate_chemistryset(self._chemset_index.value)
         if ierr == 0:

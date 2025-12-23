@@ -44,7 +44,7 @@ from ansys.chemkin.core.constants import P_ATM
 from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.utilities import (
     calculate_stoichiometrics,
-    where_element_in_array_1D,
+    where_element_in_array_1d,
 )
 
 
@@ -2253,7 +2253,7 @@ class Mixture:
         # find species index
         new_order = np.zeros_like(sorted_ROP, dtype=np.int32)
         for i in range(len(sorted_ROP)):
-            count, speciesID = where_element_in_array_1D(temp_ROP, sorted_ROP[i])
+            count, speciesID = where_element_in_array_1d(temp_ROP, sorted_ROP[i])
             # get the species index corresponding to the first occurrence
             # in case there are multiple species having the same rate
             new_order[i] = temp_order[speciesID[0]]
@@ -2306,7 +2306,7 @@ class Mixture:
         # find species index
         new_order = np.zeros_like(sorted_ROP, dtype=np.int32)
         for i in range(len(sorted_ROP)):
-            count, speciesID = where_element_in_array_1D(temp_ROP, sorted_ROP[i])
+            count, speciesID = where_element_in_array_1d(temp_ROP, sorted_ROP[i])
             # get the species index corresponding to the first occurrence
             # in case there are multiple species having the same rate
             new_order[i] = temp_order[speciesID[0]]
@@ -2362,7 +2362,7 @@ class Mixture:
         new_RR = copy.deepcopy(sorted_RR)
         for i in range(len(sorted_RR)):
             # find the instances of this reaction rate
-            count, rxnID = where_element_in_array_1D(temp_netRR, new_RR[i])
+            count, rxnID = where_element_in_array_1d(temp_netRR, new_RR[i])
             # get the reaction number corresponding to the first occurrence
             # in case there are multiple reactions having the same rate
             new_order[i] = temp_order[rxnID[0]]

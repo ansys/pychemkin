@@ -23,7 +23,7 @@
 """Chemkin help menu for keywords and key phrases."""
 
 import importlib.resources
-import os
+from pathlib import Path
 from typing import Union
 import webbrowser
 
@@ -42,12 +42,12 @@ def setup_hints():
     _chemkin_resources_dir = importlib.resources.files("ansys.chemkin.core").joinpath(
         "data"
     )
-    help_file = os.path.join(_chemkin_resources_dir, "ChemkinKeywordTips.yaml")
+    help_file = Path(_chemkin_resources_dir) / "ChemkinKeywordTips.yaml"
     global _help_loaded
     if not _help_loaded:
         global CKdict
         # load Chemkin keyword dictionary from the YAML file
-        with open(help_file, "r") as hints:
+        with Path.open(help_file, "r") as hints:
             CKdict = yaml.safe_load(hints)
             _help_loaded = True
 

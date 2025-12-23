@@ -26,6 +26,7 @@ import ctypes
 from ctypes import cdll
 import datetime
 import os
+from pathlib import Path
 import platform
 
 import numpy as np
@@ -33,36 +34,8 @@ import numpy as np
 from ansys.chemkin.core.color import Color
 from ansys.chemkin.core.logger import logger
 
-# set ansys version number
-_min_version = 251
-_valid_versions: list[int] = []
-_sub_releases = [2, 1]
-_ansys_ver = _min_version
-_ansys_dir = ""
-_ckbin = ""
-status = 0
-_target_lib = ""
-_lib_paths: list[str] = []
-# generate possible Ansys versions based on the current year
-this_date = datetime.datetime.now()
-_this_year = this_date.year
-# the newest version cannot have release year later than next year
-# get the last two digits of the year: ## of 20## (change to 21## when the 22nd century comes)
-# assemble the release year part
-_max_release_year = ((_this_year % 100) + 1) * 10
-_test_release = _max_release_year
-while _test_release >= _min_version - (_min_version % 10):
-    for r in _sub_releases:
-        _valid_versions.append(_test_release + r)
-    _test_release -= 10
-# create log
-msg = ["minimum Ansys version to run PyChemkin =", str(_min_version)]
-this_msg = Color.SPACE.join(msg)
-logger.debug(this_msg)
-
-
-def __setwindows():
-    """Set up PyChemkin environment on Windows platforms"""
+def __setwindows() -> int:
+    """Set up PyChemkin environment on Windows platforms."""
     global _ansys_ver
     global _ansys_dir
     global _ckbin
@@ -77,13 +50,13 @@ def __setwindows():
             _ansys_installation = "ANSYS" + str(_ansys_ver) + "_DIR"
             _ansys_home = os.environ.get(_ansys_installation, "NA")
             if _ansys_home != "NA":
-                _ansys_dir = os.path.dirname(_ansys_home)
+                _ansys_dir = str(Path(_ansys_home).parent)
                 break
         else:
             break
 
     if _ansys_ver >= _min_version:
-        if not os.path.isdir(_ansys_dir):
+        if not Path(_ansys_dir).is_dir():
             # no local Ansys installation
             msg = [
                 Color.RED,
@@ -98,12 +71,25 @@ def __setwindows():
             plat = "winx64"
             _ckbin = "chemkin.win64"
             # required third-party shared objects
-            _lib_paths = [
-                os.path.join(_ansys_dir, "reaction", _ckbin, "bin"),
-                os.path.join(_ansys_dir, "tp", "IntelCompiler", "2023.1.0", plat),
-                os.path.join(_ansys_dir, "tp", "IntelMKL", "2023.1.0", plat),
-                os.path.join(_ansys_dir, "tp", "zlib", "1.2.13", plat),
-            ]
+            ansys_dir_obj = Path(_ansys_dir)
+            lib_addition = ansys_dir_obj / "reaction" / _ckbin / "bin"
+            _lib_paths = [lib_addition.resolve()]
+            if _ansys_ver <= 252:
+                # <= 25R2
+                lib_addition = ansys_dir_obj / "tp" / "IntelCompiler" / "2023.1.0" / plat
+                _lib_paths.append(lib_addition.resolve())
+                lib_addition = ansys_dir_obj / "tp" / "IntelMKL" / "2023.1.0" / plat
+                _lib_paths.append(lib_addition.resolve())
+                lib_addition = ansys_dir_obj / "tp" / "zlib" / "1.2.13" / plat
+                _lib_paths.append(lib_addition.resolve())
+            else:
+                # >= 26R1
+                lib_addition = ansys_dir_obj / "tp" / "IntelCompiler" / "2023.1.0" / plat
+                _lib_paths.append(lib_addition.resolve())
+                lib_addition = ansys_dir_obj / "tp" / "IntelMKL" / "2023.1.0" / plat
+                _lib_paths.append(lib_addition.resolve())
+                lib_addition = ansys_dir_obj / "tp" / "zlib" / plat
+                _lib_paths.append(lib_addition.resolve())
     else:
         msg = [
             Color.RED,
@@ -117,12 +103,11 @@ def __setwindows():
     for _lib_path in _lib_paths:
         os.add_dll_directory(_lib_path)
     # set Chemkin-CFD-API shared object
-    _target_lib = os.path.join(_ansys_dir, "reaction", _ckbin, "bin", "KINeticsdll.dll")
+    _target_lib = str(ansys_dir_obj / "reaction" / _ckbin / "bin" / "KINeticsdll.dll")
     return 0
 
-
-def __setlinux():
-    """Set up PyChemkin environment on Linux platforms"""
+def __setlinux() -> int:
+    """Set up PyChemkin environment on Linux platforms."""
     global _ansys_ver
     global _ansys_dir
     global _ckbin
@@ -138,7 +123,7 @@ def __setlinux():
             _ansys_installation = "ANSYS" + str(_ansys_ver) + "_DIR"
             _ansys_home = os.environ.get(_ansys_installation, "NA")
             if _ansys_home != "NA":
-                _ansys_dir = os.path.dirname(_ansys_home)
+                _ansys_dir = str(Path(_ansys_home).parent)
                 break
         else:
             break
@@ -148,17 +133,18 @@ def __setlinux():
         # check local Ansys installation
         _user_home = os.environ.get("HOME", "NA")
         if _user_home != "NA":
-            _ansys_home = os.path.join(_user_home, "ansys_inc")
+            _ansys_home = Path(_user_home / "ansys_inc")
+            print(type(_ansys_home))
             found_home = False
-            if os.path.isdir(_ansys_home):
+            if Path(_ansys_home).is_dir():
                 # find all local Ansys installations
-                local_versions = [f.name for f in os.scandir(_ansys_home) if f.is_dir()]
+                local_versions = [f.name for f in _ansys_home.iterdir() if f.is_dir()]
                 for v in _valid_versions:
                     _ansys_ver = v
                     if v >= _min_version:
                         this_version = "v" + str(v)
                         if this_version in local_versions:
-                            _ansys_dir = os.path.join(_ansys_home, this_version)
+                            _ansys_dir = str(Path(_ansys_home) / this_version)
                             found_home = True
                             break
                     else:
@@ -203,24 +189,28 @@ def __setlinux():
         this_msg = Color.SPACE.join(msg)
         logger.critical(this_msg)
         return 2
-
     # required third-party shared objects
     plat = "linx64"
     _ckbin = "chemkin.linuxx8664"
-    _lib_paths = [
-        os.path.join(_ansys_dir, "reaction", _ckbin, "bin"),
-        os.path.join(
-            _ansys_dir,
-            "tp",
-            "IntelCompiler",
-            "2023.1.0",
-            plat,
-            "lib",
-            "intel64",
-        ),
-        os.path.join(_ansys_dir, "tp", "IntelMKL", "2023.1.0", plat, "lib", "intel64"),
-        os.path.join(_ansys_dir, "tp", "zlib", "1.2.13", plat, "lib"),
-    ]
+    ansys_dir_obj = Path(_ansys_dir)
+    lib_addition = ansys_dir_obj / "reaction" / _ckbin / "bin"
+    _lib_paths = [lib_addition.resolve()]
+    if _ansys_ver <= 252:
+        # <= 25R2
+        lib_addition = ansys_dir_obj / "tp" / "IntelCompiler" / "2023.1.0" / plat / "lib" / "intel64"
+        _lib_paths.append(lib_addition.resolve())
+        lib_addition = ansys_dir_obj / "tp" / "IntelMKL" / "2023.1.0" / plat / "lib" / "intel64"
+        _lib_paths.append(lib_addition.resolve())
+        lib_addition = ansys_dir_obj / "tp" / "zlib" / "1.2.13" / plat / "lib"
+        _lib_paths.append(lib_addition.resolve())
+    else:
+        # >= 26R1
+        lib_addition = ansys_dir_obj / "tp" / "IntelCompiler" / "2023.1.0" / plat / "lib" / "intel64"
+        _lib_paths.append(lib_addition.resolve())
+        lib_addition = ansys_dir_obj / "tp" / "IntelMKL" / "2023.1.0" / plat / "lib" / "intel64"
+        _lib_paths.append(lib_addition.resolve())
+        lib_addition = ansys_dir_obj / "tp" / "zlib" / plat / "lib"
+        _lib_paths.append(lib_addition.resolve())
     # set load dll paths
     combined_path = ":".join(_lib_paths)
     if "LD_LIBRARY_PATH" not in os.environ.keys():
@@ -236,10 +226,37 @@ def __setlinux():
     else:
         os.environ["PATH"] = os.environ["PATH"] + ":" + combined_path
     # set Chemkin-CFD-API shared object
-    _target_lib = os.path.join(_ansys_dir, "reaction", _ckbin, "bin", "libKINetics.so")
+    _target_lib = str(ansys_dir_obj / "reaction" / _ckbin / "bin" / "libKINetics.so")
     return 0
 
 
+# set ansys version number
+_min_version = 251
+_valid_versions: list[int] = []
+_sub_releases = [2, 1]
+_ansys_ver = _min_version
+_ansys_dir = ""
+_ckbin = ""
+status = 0
+_target_lib = ""
+_lib_paths: list[str] = []
+# generate possible Ansys versions based on the current year
+this_date = datetime.datetime.now()
+_this_year = this_date.year
+# the newest version cannot have release year later than next year
+# get the last two digits of the year: ## of 20##
+# (change to 21## when the 22nd century comes)
+# assemble the release year part
+_max_release_year = ((_this_year % 100) + 1) * 10
+_test_release = _max_release_year
+while _test_release >= _min_version - (_min_version % 10):
+    for r in _sub_releases:
+        _valid_versions.append(_test_release + r)
+    _test_release -= 10
+# create log
+msg = ["minimum Ansys version to run PyChemkin =", str(_min_version)]
+this_msg = Color.SPACE.join(msg)
+logger.debug(this_msg)
 # check platform
 if platform.system() == "Windows":
     # set ansys installation directory (Windows)
@@ -259,14 +276,15 @@ else:
     this_msg = Color.SPACE.join(msg)
     logger.critical(this_msg)
     exit()
+
 # check set up status
 if status != 0:
     exit()
 # load Chemkin-CFD-API shared object
 try:
-    chemkin = cdll.LoadLibrary(str(_target_lib))
+    chemkin = cdll.LoadLibrary(_target_lib)
 except OSError:
-    inst_dir = os.path.join(str(_ansys_dir), "reaction", str(_ckbin), "bin")
+    inst_dir = Path(_ansys_dir) / "reaction" / _ckbin / "bin"
     msg = [
         Color.RED,
         "error initializing ansys-chemkin.\n",
@@ -284,6 +302,7 @@ except OSError:
     this_msg = Color.SPACE.join(msg)
     logger.critical(this_msg)
     exit()
+
 # Chemkin-CFD-API
 # document: Chemkin-CFD-API Reference Guide (Ansys Help portal)
 #

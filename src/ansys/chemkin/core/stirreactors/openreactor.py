@@ -34,7 +34,7 @@ from ansys.chemkin.core.steadystatesolver import SteadyStateSolver
 
 
 class openreactor(ReactorModel, SteadyStateSolver):
-    """Generic open reactor model"""
+    """Generic open reactor model."""
 
     def __init__(self, guessedmixture: Stream, label: Union[str, None] = None):
         """Create a steady-state flow reactor object

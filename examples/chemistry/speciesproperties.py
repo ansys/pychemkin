@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-""".. _ref_species_properties:
+r""".. _ref_species_properties:
 
 ===============================
 Evaluate gas species properties
@@ -37,7 +37,7 @@ This example shows how use some of these methods to evaluate species thermodynam
 # Import PyChemkin packages and start the logger
 # ==============================================
 
-import os
+from pathlib import Path
 
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
@@ -46,7 +46,7 @@ import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -65,16 +65,16 @@ interactive = True
 # installation in the ``/reaction/data`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 
 # create a chemistry set based on GRI 3.0
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # inclusding the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+MyGasMech.chemfile = str(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
+MyGasMech.tranfile = str(mechanism_dir / "grimech30_transport.dat")
 
 
 ##############################
@@ -88,12 +88,14 @@ ierror = MyGasMech.preprocess()
 #########################################
 # Display the basic mechanism information
 # =======================================
-# Display the element and species information from the GRI 3.0 mechanism. You can get the entire list
-# of the elements and the gas species in the mechanism by using the ``element_symbols`` and
+# Display the element and species information from the GRI 3.0 mechanism.
+# You can get the entire list of the elements and the gas species in
+# the mechanism by using the ``element_symbols`` and
 # ``species_symbols`` lists, respectively.
 #
-# Use the ``get_specindex()`` method to get the species index of a species in the mechanism. Use
-# the ``SpeciesComposition()`` method to check the elemental composition of a gas species.
+# Use the ``get_specindex()`` method to get the species index of a species
+# in the mechanism. Use the ``SpeciesComposition()`` method to check
+# the elemental composition of a gas species.
 #
 # .. note::
 #   Both the species name/symbol and element name/symbol are case-sensitive.
@@ -120,15 +122,17 @@ print()
 ##################################
 # Plot selected species properties
 # ================================
-# Calculate and plot the properties of CH\ :sub:`4`\ , O\ :sub:`2`\ , and N\ :sub:`2` against the
-# temperature. Use these property methods:
+# Calculate and plot the properties of CH\ :sub:`4`\ , O\ :sub:`2`\ , and N\ :sub:`2`
+# against the temperature. Use these property methods:
 #
 # - ``SpeciesCv``: Species specific heat capacity at constant volume [erg/mol-K]
 # - ``SpeciesCond``: Species thermal conductivity [erg/cm-K-sec]
-# - ``SpeciesDiffusionCoeffs``: Binary diffusion coefficients between species pairs [cm\ :sup:`2`\ /sec]
+# - ``SpeciesDiffusionCoeffs``: Binary diffusion coefficients between species pairs
+#   [cm\ :sup:`2`\ /sec]
 #
 
-# plot Cv and thermal conductivity values at different temperatures for selected gas species
+# plot Cv and thermal conductivity values at different temperatures for
+# selected gas species
 #
 plt.figure(figsize=(12, 6))
 # temperature increment
@@ -204,9 +208,11 @@ plt.legend(plotspeclist, loc="upper left")
 ##########################################################################
 # Evaluate the binary diffusion coefficients between different gas species
 # ========================================================================
-# Use the ``SpeciesDiffusionCoeffs()`` method to calculate the binary diffusion coefficients
-# between pairs of gas species. Here, the binary diffusion coefficients are evaluated at 2 [atm]
-# and 500 [K]. The binary diffusion coefficient between CH\ :sub:`4` and O\ :sub:`2` is shown.
+# Use the ``SpeciesDiffusionCoeffs()`` method to calculate
+# the binary diffusion coefficients between pairs of gas species. Here,
+# the binary diffusion coefficients are evaluated at 2 [atm] and 500 [K].
+# The binary diffusion coefficient between CH\ :sub:`4` and O\ :sub:`2`
+# is shown.
 
 diffcoef = MyGasMech.SpeciesDiffusionCoeffs(2.0 * ck.P_ATM, 500.0)
 ID1 = MyGasMech.get_specindex(plotspeclist[0])

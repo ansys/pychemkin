@@ -272,7 +272,7 @@ class PremixedFlame(Flame):
         self.set_mesh_keywords()
         if ierr == 0:
             # set additional keywords
-            self.set_SSsolver_keywords()
+            self.set_ss_solver_keywords()
             # set profile keywords
             err_key = 0
             if self._numbprofiles > 0:
@@ -888,7 +888,7 @@ class BurnedStabilized_EnergyEquation(PremixedFlame):
         # solve the energy equation
         self.setkeyword("ENRG", True)
 
-    def skip_fix_T_solution(self, mode: bool = True):
+    def skip_fix_t_solution(self, mode: bool = True):
         """Skip the step of finding the intermediate solution with fixed temperature
 
         Parameters
@@ -931,7 +931,7 @@ class FreelyPropagating(PremixedFlame):
         # laminar flame speed [cm/sec]
         self.flamespeed = -1.0
 
-    def skip_fix_T_solution(self, mode: bool = True):
+    def skip_fix_t_solution(self, mode: bool = True):
         """Skip the step of finding the intermediate solution with fixed temperature
 
         Parameters

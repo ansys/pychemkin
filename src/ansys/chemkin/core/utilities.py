@@ -572,8 +572,8 @@ def find_file(filepath: str, partialfilename: str, fileext: str) -> str:
     """
     thefile = ""
     for file in Path(filepath).iterdir():
-        if fileext == file.suffix:
-            if re.search(partialfilename, str(file.name)):
-                thefile = str(file.name)
+        if ("." + fileext) == file.suffix:
+            if re.search(partialfilename, file.name):
+                thefile = str(file.resolve())
                 break
     return thefile

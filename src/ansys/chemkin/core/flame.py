@@ -241,12 +241,12 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         self.setkeyword(key="NADP", value=self.max_numb_adapt_points)
         return ierr
 
-    def set_SSsolver_keywords(self):
+    def set_ss_solver_keywords(self):
         """Add steady-state solver parameter keywoprds to the keyword list"""
         # steady-state solver parameter given
-        if len(self.SSsolverkeywords) > 0:
+        if len(self.ss_solverkeywords) > 0:
             #
-            for k, v in self.SSsolverkeywords.items():
+            for k, v in self.ss_solverkeywords.items():
                 self.setkeyword(k, v)
 
     # mass transport options

@@ -20,9 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Chemkin module for Python
-core
-"""
+"""Chemkin module for Python core."""
 
 from ctypes import c_int
 import inspect
@@ -35,49 +33,52 @@ import platform
 # so the users can have easy access to these resources
 from ansys.chemkin.core import chemkin_wrapper as ck_wrapper
 from ansys.chemkin.core.chemistry import (
-    Chemistry,
-    chemkin_version,
-    done,
-    set_verbose,
-    verbose,
+    Chemistry as Chemistry,
+    chemkin_version as chemkin_version,
+    done as done,
+    set_verbose as set_verbose,
+    verbose as verbose,
 )
 from ansys.chemkin.core.color import Color
 from ansys.chemkin.core.constants import (
-    AVOGADRO,
-    BOLTZMANN,
-    ERGS_PER_CALORIE,
-    ERGS_PER_JOULE,
-    JOULES_PER_CALORIE,
-    P_ATM,
-    P_TORRS,
-    R_GAS,
-    R_GAS_CAL,
-    Air,
-    air,
-    water_heat_vaporization,
+    AVOGADRO as AVOGADRO,
+    BOLTZMANN as BOLTZMANN,
+    ERGS_PER_CALORIE as ERGS_PER_CALORIE,
+    ERGS_PER_JOULE as ERGS_PER_JOULE,
+    JOULES_PER_CALORIE as JOULES_PER_CALORIE,
+    P_ATM as P_ATM,
+    P_TORRS as P_TORRS,
+    R_GAS as R_GAS,
+    R_GAS_CAL as R_GAS_CAL,
+    Air as Air,
+    air as air,
+    water_heat_vaporization as water_heat_vaporization,
 )
 from ansys.chemkin.core.info import (
     help,
-    keyword_hints,
-    manuals,
-    phrase_hints,
+    keyword_hints as keyword_hints,
+    manuals as manuals,
+    phrase_hints as phrase_hints,
     setup_hints,
-    show_equilibrium_options,
-    show_ignition_definitions,
-    show_realgas_usage,
+    show_equilibrium_options as show_equilibrium_options,
+    show_ignition_definitions as show_ignition_definitions,
+    show_realgas_usage as show_realgas_usage,
 )
 from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.mixture import (
-    Mixture,
-    adiabatic_mixing,
-    calculate_equilibrium,
-    calculate_mixture_temperature_from_enthalpy,
-    detonation,
-    equilibrium,
-    interpolate_mixtures,
-    isothermal_mixing,
+    Mixture as Mixture,
+    adiabatic_mixing as adiabatic_mixing,
+    calculate_equilibrium as calculate_equilibrium,
+    calculate_mixture_temperature_from_enthalpy as calculate_mixture_temperature_from_enthalpy,
+    detonation as detonation,
+    equilibrium as equilibrium,
+    interpolate_mixtures as interpolate_mixtures,
+    isothermal_mixing as isothermal_mixing,
 )
-from ansys.chemkin.core.realgaseos import check_realgas_status, set_current_pressure
+from ansys.chemkin.core.realgaseos import (
+    check_realgas_status as check_realgas_status,
+    set_current_pressure as set_current_pressure,
+)
 
 # show ansys (chemkin) version number
 msg = [
@@ -89,7 +90,7 @@ msg = [
 this_msg = Color.SPACE.join(msg)
 logger.info(this_msg)
 # get ansys installation location
-ansys_dir = str(ck_wrapper._ansys_dir)
+ansys_dir = ck_wrapper._ansys_dir
 ansys_version = ck_wrapper._ansys_ver
 
 if platform.system() == "Windows":
@@ -98,8 +99,9 @@ else:
     _chemkin_platform = "linuxx8664"
 
 # get chemkin installation location
-_chemkin_root = os.path.join(ansys_dir, "reaction", "chemkin." + _chemkin_platform)
-chemkin_dir = Path(_chemkin_root)
+ck_name = "chemkin." + _chemkin_platform
+_chemkin_root = Path(ansys_dir) / "reaction" / ck_name
+chemkin_dir = _chemkin_root.resolve()
 
 # set default units to cgs
 unit_code = c_int(1)
@@ -108,7 +110,7 @@ ierror = ck_wrapper.chemkin.KINSetUnitSystem(unit_code)
 # chemkin module home directory
 frm = inspect.currentframe()
 if frm is not None:
-    _chemkin_module_path = os.path.dirname(inspect.getfile(frm))
-    pychemkin_dir = Path(_chemkin_module_path)
+    _chemkin_module_path = Path(inspect.getfile(frm))
+    pychemkin_dir = _chemkin_module_path.parent
 # set up Chemkin keyword help data
 setup_hints()

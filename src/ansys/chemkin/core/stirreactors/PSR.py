@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Perfectly stirred reactor (PSR) model"""
+"""Perfectly stirred reactor (PSR) model."""
 
 import copy
 from ctypes import c_double, c_int
@@ -48,7 +48,9 @@ class perfectlystirredreactor(openreactor):
     """Generic perfectly-stirred reactor model"""
 
     def __init__(self, guessedmixture: Stream, label: Union[str, None] = None):
-        """Initialize a steady-state constant pressure perfectly-stirred reactor (PSR) object
+        """Instantiate a steady-state PSR object."""
+        """Initialize a steady-state constant pressure
+        perfectly-stirred reactor (PSR) object.
 
         Parameters
         ----------
@@ -448,12 +450,12 @@ class perfectlystirredreactor(openreactor):
                     logger.error(this_msg)
             return ierr
 
-    def set_SSsolver_keywords(self):
+    def set_ss_solver_keywords(self):
         """Add steady-state solver parameter keywoprds to the keyword list"""
         # steady-state solver parameter given
-        if len(self.SSsolverkeywords) > 0:
+        if len(self.ss_solverkeywords) > 0:
             #
-            for k, v in self.SSsolverkeywords.items():
+            for k, v in self.ss_solverkeywords.items():
                 self.setkeyword(k, v)
 
     def cluster_process_keywords(self) -> int:
@@ -570,7 +572,7 @@ class perfectlystirredreactor(openreactor):
                 return err_profile
         if ierr == 0:
             # set additional keywords
-            self.set_SSsolver_keywords()
+            self.set_ss_solver_keywords()
             # create input lines from additional user-specified keywords
             if self.standalone:
                 # single PSR

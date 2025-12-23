@@ -20,32 +20,34 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-""".. _ref_rcm:
+r""".. _ref_rcm:
 
 ====================================
 Simulate a rapid compression machine
 ====================================
 
 Ansys Chemkin offers some idealized reactor models commonly used for studying chemical
-processes and for developing reaction mechanisms. The *batch reactor* is a transient 0-D
-numerical portrayal of the *closed homogeneous/perfectly mixed* gas-phase reactor. There are
-two basic types of batch reactor models:
+processes and for developing reaction mechanisms. The *batch reactor* is
+a transient 0-D numerical portrayal of the *closed homogeneous/perfectly mixed*
+gas-phase reactor. There are two basic types of batch reactor models:
 
 - **constrained-pressure**
 - **constrained-volume**
 
-You can choose either to specify the reactor temperature (as a fixed value or by a
-piecewise-linear profile) or to solve the energy conservation equation for each reactor type.
-In total, you get four variations out of the base batch reactor model.
+You can choose either to specify the reactor temperature (as a fixed value or
+by a piecewise-linear profile) or to solve the energy conservation equation
+for each reactor type. In total, you get four variations out of
+the base batch reactor model.
 
-**Rapid Compression Machine (RCM)** is often employed to study fuel auto-ignition at high
-temperature and high-pressure conditions that are compatible to the engine-operating environments.
-The fuel-air mixture inside the RCM chamber is at relatively low pressure and temperature initially.
-The gas mixture is then suddenly compressed causing both the pressure and the temperature of the
-mixture to rise rapidly. The reactor/chamber pressure is monitored to identify the onset of
-auto-ignition after the compression stopped. This example models the RCM as a
-``GivenVolumeBatchReactor_EnergyConservation``, and the compression process is simulated by a
-predetermined time-volume profile.
+**Rapid Compression Machine (RCM)** is often employed to study fuel auto-ignition
+at high temperature and high-pressure conditions that are compatible to
+the engine-operating environments. The fuel-air mixture inside the RCM chamber is
+at relatively low pressure and temperature initially. The gas mixture is then
+suddenly compressed causing both the pressure and the temperature of the mixture
+to rise rapidly. The reactor/chamber pressure is monitored to identify the onset
+of auto-ignition after the compression stopped. This example models the RCM as a
+``GivenVolumeBatchReactor_EnergyConservation``, and the compression process
+is simulated by a predetermined time-volume profile.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_RCM_solution.png'
@@ -54,7 +56,7 @@ predetermined time-volume profile.
 # Import PyChemkin package and start the logger
 # =============================================
 
-import os
+from pathlib import Path
 
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
@@ -69,7 +71,7 @@ from ansys.chemkin.core.batchreactors.batchreactor import (
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -87,15 +89,15 @@ interactive = True
 # installation in the ``/reaction/data`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on the GRI 3.0 mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+MyGasMech.chemfile = str(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
+MyGasMech.tranfile = str(mechanism_dir / "grimech30_transport.dat")
 
 ##############################
 # Preprocess the chemistry set
@@ -194,10 +196,10 @@ npoints = 3
 # position array of the profile data
 x = np.zeros(npoints, dtype=np.double)
 # value array of the profile data
-volprofile = np.zeros_like(x, dtype=np.double)
+vol_profile = np.zeros_like(x, dtype=np.double)
 # set reactor volume data points
 x = [0.0, 0.01, 2.0]  # [sec]
-volprofile = [10.0, 4.0, 4.0]  # [cm3]
+vol_profile = [10.0, 4.0, 4.0]  # [cm3]
 
 ####################
 # Set output options
@@ -220,7 +222,7 @@ volprofile = [10.0, 4.0, 4.0]  # [cm3]
 #
 
 # set the volume profile
-MyCONV.set_volume_profile(x, volprofile)
+MyCONV.set_volume_profile(x, vol_profile)
 # output controls
 # set timestep between saving solution
 MyCONV.timestep_for_saving_solution = 0.01
@@ -238,9 +240,9 @@ MyCONV.set_ignition_delay(method="T_inflection")
 # set tolerances in tuple: (absolute tolerance, relative tolerance)
 MyCONV.tolerances = (1.0e-10, 1.0e-8)
 # get solver parameters
-ATOL, RTOL = MyCONV.tolerances
-print(f"Dfault absolute tolerance = {ATOL}.")
-print(f"Default relative tolerance = {RTOL}.")
+atol, rtol = MyCONV.tolerances
+print(f"Dfault absolute tolerance = {atol}.")
+print(f"Default relative tolerance = {rtol}.")
 # turn on the force non-negative solutions option in the solver
 MyCONV.force_nonnegative = True
 # show solver option
@@ -328,12 +330,12 @@ volprofile = MyCONV.get_solution_variable_profile("volume")
 # reactor mass
 massprofile = np.zeros_like(timeprofile, dtype=np.double)
 # create arrays for CH4 mole fraction, CH4 ROP, and mixture viscosity
-CH4profile = np.zeros_like(timeprofile, dtype=np.double)
-CH4ROPprofile = np.zeros_like(timeprofile, dtype=np.double)
+ch4_profile = np.zeros_like(timeprofile, dtype=np.double)
+ch4_rop_profile = np.zeros_like(timeprofile, dtype=np.double)
 viscprofile = np.zeros_like(timeprofile, dtype=np.double)
-CurrentROP = np.zeros(MyGasMech.KK, dtype=np.double)
+current_rop = np.zeros(MyGasMech.KK, dtype=np.double)
 # find CH4 species index
-CH4_index = MyGasMech.get_specindex("CH4")
+ch4_index = MyGasMech.get_specindex("CH4")
 
 # loop over all solution time points
 for i in range(solutionpoints):
@@ -344,10 +346,10 @@ for i in range(solutionpoints):
     # reactor mass [g]
     massprofile[i] = den * volprofile[i]
     # get CH4 mole fraction profile
-    CH4profile[i] = solutionmixture.X[CH4_index]
+    ch4_profile[i] = solutionmixture.X[ch4_index]
     # get CH4 ROP profile
-    currentROP = solutionmixture.ROP()
-    CH4ROPprofile[i] = currentROP[CH4_index]
+    current_rop = solutionmixture.ROP()
+    ch4_rop_profile[i] = current_rop[ch4_index]
     # get mixture vicosity profile
     viscprofile[i] = solutionmixture.mixture_viscosity()
 
@@ -376,10 +378,10 @@ plt.subplot(221)
 plt.plot(timeprofile, tempprofile, "r-")
 plt.ylabel("Temperature [K]")
 plt.subplot(222)
-plt.plot(timeprofile, CH4profile, "b-")
+plt.plot(timeprofile, ch4_profile, "b-")
 plt.ylabel("CH4 Mole Fraction")
 plt.subplot(223)
-plt.plot(timeprofile, CH4ROPprofile, "g-")
+plt.plot(timeprofile, ch4_rop_profile, "g-")
 plt.xlabel("time [sec]")
 plt.ylabel("CH4 Production Rate [mol/cm3-sec]")
 plt.subplot(224)

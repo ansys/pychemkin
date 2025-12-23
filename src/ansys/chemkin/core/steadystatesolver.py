@@ -32,68 +32,71 @@ from ansys.chemkin.core.reactormodel import Keyword
 
 
 class SteadyStateSolver:
-    """Common steady-state solver controlling parameters"""
+    """Common steady-state solver controlling parameters."""
 
     def __init__(self):
         # steady-state solver control parameter class
         # mostly just keyword processing
         # >>> steady-state search algorithm:
         # absolute tolerance for the steady-state solution
-        self.SSabsolute_tolerance = 1.0e-9
+        self.ss_absolute_tolerance = 1.0e-9
         # relative tolerance for the steady-state solution
-        self.SSrelative_tolerance = 1.0e-4
+        self.ss_relative_tolerance = 1.0e-4
         # max number of iterations per steady state search
-        self.SSmaxiteration = 100
+        self.ss_maxiteration = 100
         # number of steady-state searches before evaluating new Jacobian matrix
-        self.SSJacobianage = 20
+        self.ss_jacobianage = 20
         # max number of calls to pseudo transient algorithm
         self.maxpseudotransient = 100
-        # number of pseudo transient "steps" before calling the steady-state search algorithm
+        # number of pseudo transient "steps"
+        # before calling the steady-state search algorithm
         self.numbinitialpseudosteps = 0
         # upper bound of the temperature value during iteration
         self.maxTbound = 5000.0  # [K]
         # floor value (lower bound) of the gas species mass fraction during iteration
         self.speciesfloor = -1.0e-14
-        # reset negative gas species fraction to the given value in intermediate solution
+        # reset negative gas species fraction to the given value
+        # in intermediate solution
         self.species_positive = 0.0e0
         # use legacy steady-state solver algorithm
         self.use_legacy_technique = False
         # use damping in search: 0 = OFF; 1 = ON
-        self.SSdamping = 1
+        self.ss_damping = 1
         # absolute perturbation for Jacobian evaluation
         self.absolute_perturbation = 0.0e0
         # relative perturbation for Jacobian evaluation
         self.relative_perturbation = 0.0e0
         # >>> pseudo transient (time stepping) algorithm:
         # absolute tolerance for the time stepping solution
-        self.TRabsolute_tolerance = 1.0e-9
+        self.tr_absolute_tolerance = 1.0e-9
         # relative tolerance for the time stepping solution
-        self.TRrelative_tolerance = 1.0e-4
-        # max number of iterations per pseudo time step before cutting the time step size
-        self.TRmaxiteration = 25
+        self.tr_relative_tolerance = 1.0e-4
+        # max number of iterations per pseudo time step
+        # before cutting the time step size
+        self.tr_maxiteration = 25
         # max number of pseudo time steps before increasing the time step size
         self.timestepsizeage = 25
         # minimum time step size allowed
-        self.TRminstepsize = 1.0e-10  # [sec]
+        self.tr_minstepsize = 1.0e-10  # [sec]
         # maximum time step size allowed
-        self.TRmaxstepsize = 1.0e-2  # [sec]
+        self.tr_maxstepsize = 1.0e-2  # [sec]
         # time step size increasing factor
-        self.TRupfactor = 2.0
+        self.tr_upfactor = 2.0
         # time step size decreasing factor
-        self.TRdownfactor = 2.2
+        self.tr_downfactor = 2.2
         # number of pseudo time steps before evaluating new Jacobian matrix
-        self.TRJacobianage = 20
+        self.tr_jacobianage = 20
         # initial stride and number of steps per pseudo time stepping call
         # for fixed-temperature solution
-        self.TRstride_fixT = 1.0e-6  # [sec]
-        self.TRnumbsteps_fixT = 100
+        self.tr_stride_fixT = 1.0e-6  # [sec]
+        self.tr_numbsteps_fixT = 100
         # for energy equation solution
-        self.TRstride_ENRG = 1.0e-6  # [sec]
-        self.TRnumbsteps_ENRG = 100
+        self.tr_stride_ENRG = 1.0e-6  # [sec]
+        self.tr_numbsteps_ENRG = 100
         # solver message output level: 0 ~ 2
         self.print_level = 1
         # steady-state solver keywords
-        self.SSsolverkeywords: dict[str, Union[int, float, str, bool]] = {}
+        self.ss_solverkeywords: dict[str, Union[int, float, str, bool]] = {}
 
     @property
     def steady_state_tolerances(self) -> tuple[float, float]:
@@ -108,7 +111,7 @@ class SteadyStateSolver:
                     relative tolerance
 
         """
-        return (self.SSabsolute_tolerance, self.SSrelative_tolerance)
+        return (self.ss_absolute_tolerance, self.ss_relative_tolerance)
 
     @steady_state_tolerances.setter
     def steady_state_tolerances(self, tolerances: tuple[float, float]):
@@ -126,14 +129,14 @@ class SteadyStateSolver:
         """
         ierr = 0
         if tolerances[0] > 0.0:
-            self.SSsolverkeywords["ATOL"] = tolerances[0]
-            self.SSabsolute_tolerance = tolerances[0]
+            self.ss_solverkeywords["ATOL"] = tolerances[0]
+            self.ss_absolute_tolerance = tolerances[0]
         else:
             ierr = 1
 
         if tolerances[1] > 0.0:
-            self.SSsolverkeywords["RTOL"] = tolerances[1]
-            self.SSrelative_tolerance = tolerances[1]
+            self.ss_solverkeywords["RTOL"] = tolerances[1]
+            self.ss_relative_tolerance = tolerances[1]
         else:
             ierr = 1
 
@@ -155,7 +158,7 @@ class SteadyStateSolver:
                     relative tolerance for time stepping algorithm
 
         """
-        return (self.TRabsolute_tolerance, self.TRrelative_tolerance)
+        return (self.tr_absolute_tolerance, self.tr_relative_tolerance)
 
     @time_stepping_tolerances.setter
     def time_stepping_tolerances(self, tolerances: tuple[float, float]):
@@ -173,14 +176,14 @@ class SteadyStateSolver:
         """
         ierr = 0
         if tolerances[0] > 0.0:
-            self.SSsolverkeywords["ATIM"] = tolerances[0]
-            self.TRabsolute_tolerance = tolerances[0]
+            self.ss_solverkeywords["ATIM"] = tolerances[0]
+            self.tr_absolute_tolerance = tolerances[0]
         else:
             ierr = 1
 
         if tolerances[1] > 0.0:
-            self.SSsolverkeywords["RTIM"] = tolerances[1]
-            self.TRrelative_tolerance = tolerances[1]
+            self.ss_solverkeywords["RTIM"] = tolerances[1]
+            self.tr_relative_tolerance = tolerances[1]
         else:
             ierr = 1
 
@@ -190,6 +193,7 @@ class SteadyStateSolver:
             logger.error(this_msg)
 
     def set_max_pseudo_transient_call(self, maxtime: int):
+        """Set max number of the pseudo transient operation."""
         """Set the maximum number of call to the pseudo transient algorithm
         in an attempt to find the steady-state solution
 
@@ -200,7 +204,7 @@ class SteadyStateSolver:
 
         """
         if maxtime >= 1:
-            self.SSsolverkeywords["MAXTIME"] = maxtime
+            self.ss_solverkeywords["MAXTIME"] = maxtime
             self.maxpseudotransient = maxtime
         else:
             msg = [Color.PURPLE, "parameter must >= 1.", Color.END]
@@ -208,7 +212,9 @@ class SteadyStateSolver:
             logger.error(this_msg)
 
     def set_max_timestep_iteration(self, maxiteration: int):
-        """Set the maximum number of iterations per time step when performing the pseudo transient algorithm
+        """Set max number of iterations per time step."""
+        """Set the maximum number of iterations per time step when performing
+        the pseudo transient algorithm.
 
         Parameters
         ----------
@@ -217,8 +223,8 @@ class SteadyStateSolver:
 
         """
         if maxiteration >= 1:
-            self.SSsolverkeywords["TRMAXITER"] = maxiteration
-            self.TRmaxiteration = maxiteration
+            self.ss_solverkeywords["TRMAXITER"] = maxiteration
+            self.tr_maxiteration = maxiteration
         else:
             msg = [Color.PURPLE, "parameter must >= 1.", Color.END]
             this_msg = Color.SPACE.join(msg)
@@ -235,16 +241,18 @@ class SteadyStateSolver:
 
         """
         if maxiteration >= 1:
-            self.SSsolverkeywords["SSMAXITER"] = maxiteration
-            self.SSmaxiteration = maxiteration
+            self.ss_solverkeywords["SSMAXITER"] = maxiteration
+            self.ss_maxiteration = maxiteration
         else:
             msg = [Color.PURPLE, "parameter must >= 1.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
 
     def set_initial_timesteps(self, initsteps: int):
-        """Set the number of pseudo time steps to be performed to establish a "better"
-        set of guessed solution before start the actual steady-state solution search.
+        """Set the number of pseudo time steps to be performed."""
+        """Set the number of pseudo time steps to be performed
+        to establish a "better" set of guessed solution before
+        starting the actual steady-state solution search.
 
         Parameters
         ----------
@@ -253,7 +261,7 @@ class SteadyStateSolver:
 
         """
         if initsteps >= 1:
-            self.SSsolverkeywords["ISTP"] = initsteps
+            self.ss_solverkeywords["ISTP"] = initsteps
             self.numbinitialpseudosteps = initsteps
         else:
             msg = [Color.PURPLE, "parameter must >= 1.", Color.END]
@@ -261,7 +269,9 @@ class SteadyStateSolver:
             logger.error(this_msg)
 
     def set_species_floor(self, floor_value: float):
-        """Set the minimum species fraction value allowed during steady-state solution search.
+        """Set the minimum species fraction value allowed."""
+        """Set the minimum species fraction value allowed
+        during steady-state solution search.
 
         Parameters
         ----------
@@ -270,7 +280,7 @@ class SteadyStateSolver:
 
         """
         if np.abs(floor_value) < 1.0:
-            self.SSsolverkeywords["SFLR"] = floor_value
+            self.ss_solverkeywords["SFLR"] = floor_value
             self.speciesfloor = floor_value
         else:
             msg = [Color.PURPLE, "species floor value must < 1.", Color.END]
@@ -278,7 +288,9 @@ class SteadyStateSolver:
             logger.error(this_msg)
 
     def set_temperature_ceiling(self, ceilingvalue: float):
-        """Set the maximum temperature value allowed during steady-state solution search.
+        """Set the maximum temperature value allowed."""
+        """Set the maximum temperature value allowed
+        during steady-state solution search.
 
         Parameters
         ----------
@@ -287,7 +299,7 @@ class SteadyStateSolver:
 
         """
         if ceilingvalue > 300.0:
-            self.SSsolverkeywords["TBND"] = ceilingvalue
+            self.ss_solverkeywords["TBND"] = ceilingvalue
             self.maxTbound = ceilingvalue
         else:
             msg = [Color.PURPLE, "temperature value must > 300.", Color.END]
@@ -295,6 +307,7 @@ class SteadyStateSolver:
             logger.error(this_msg)
 
     def set_species_reset_value(self, resetvalue: float):
+        """Set the positive reset value for any negative species fraction."""
         """Set the positive value to reset any negative species fraction in
         intermediate solutions during iterations.
 
@@ -305,7 +318,7 @@ class SteadyStateSolver:
 
         """
         if resetvalue >= 0.0:
-            self.SSsolverkeywords["SPOS"] = resetvalue
+            self.ss_solverkeywords["SPOS"] = resetvalue
             self.species_positive = resetvalue
         else:
             msg = [Color.PURPLE, "species fraction value must >= 0.", Color.END]
@@ -313,7 +326,9 @@ class SteadyStateSolver:
             logger.error(this_msg)
 
     def set_max_pseudo_timestep_size(self, dtmax: float):
-        """Set the maximum time step sizes allowed by the pseudo time stepping solution.
+        """Set max time step sizes allowed by the pseudo time stepping."""
+        """Set the maximum time step sizes allowed by
+        the pseudo time stepping solution.
 
         Parameters
         ----------
@@ -322,15 +337,17 @@ class SteadyStateSolver:
 
         """
         if dtmax > 0.0:
-            self.SSsolverkeywords["DTMX"] = dtmax
-            self.TRmaxstepsize = dtmax
+            self.ss_solverkeywords["DTMX"] = dtmax
+            self.tr_maxstepsize = dtmax
         else:
             msg = [Color.PURPLE, "time step size must > 0.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
 
     def set_min_pseudo_timestep_size(self, dtmin: float):
-        """Set the minimum time step size allowed by the pseudo time stepping solution.
+        """Set min time step size of the pseudo time stepping operation."""
+        """Set the minimum time step size allowed by
+        the pseudo time stepping solution.
 
         Parameters
         ----------
@@ -339,15 +356,17 @@ class SteadyStateSolver:
 
         """
         if dtmin > 0.0:
-            self.SSsolverkeywords["DTMN"] = dtmin
-            self.TRminstepsize = dtmin
+            self.ss_solverkeywords["DTMN"] = dtmin
+            self.tr_minstepsize = dtmin
         else:
             msg = [Color.PURPLE, "time step size must > 0.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
 
     def set_pseudo_timestep_age(self, age: int):
-        """Set the minimum number of time steps taken before allowing time step size increase.
+        """Set min number of time steps before time step size increase."""
+        """Set the minimum number of time steps taken before
+        allowing time step size increase.
 
         Parameters
         ----------
@@ -356,15 +375,17 @@ class SteadyStateSolver:
 
         """
         if age > 0:
-            self.SSsolverkeywords["IRET"] = age
+            self.ss_solverkeywords["IRET"] = age
             self.timestepsizeage = age
         else:
             msg = [Color.PURPLE, "number of time step must > 0.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
 
-    def set_Jacobian_age(self, age: int):
-        """Set the number of steady-state searches before re-evaluate the Jacobian matrix.
+    def set_jacobian_age(self, age: int):
+        """Set the number of searches before Jacobian matrix evaluation."""
+        """Set the number of steady-state searches before re-evaluating
+        the Jacobian matrix.
 
         Parameters
         ----------
@@ -373,15 +394,17 @@ class SteadyStateSolver:
 
         """
         if age > 0:
-            self.SSsolverkeywords["NJAC"] = age
-            self.SSJacobianage = age
+            self.ss_solverkeywords["NJAC"] = age
+            self.ss_jacobianage = age
         else:
             msg = [Color.PURPLE, "number of time step must > 0.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
 
-    def set_pseudo_Jacobian_age(self, age: int):
-        """Set the number of time steps taken before re-evaluate the Jacobian matrix.
+    def set_pseudo_jacobian_age(self, age: int):
+        """Set the number of time steps before Jacobian matrix evaluation."""
+        """Set the number of time steps taken before re-evaluating
+        the Jacobian matrix.
 
         Parameters
         ----------
@@ -390,15 +413,17 @@ class SteadyStateSolver:
 
         """
         if age > 0:
-            self.SSsolverkeywords["TJAC"] = age
-            self.TRJacobianage = age
+            self.ss_solverkeywords["TJAC"] = age
+            self.tr_jacobianage = age
         else:
             msg = [Color.PURPLE, "number of time step must > 0.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
 
     def set_damping_option(self, ON: bool):
-        """Turn ON (True) or OFF (False) the damping option of the steady-state solver.
+        """Turn ON or OFF the damping option of the steady-state solver."""
+        """Turn ON (True) or OFF (False) the damping option of
+        the steady-state solver.
 
         Parameters
         ----------
@@ -408,16 +433,17 @@ class SteadyStateSolver:
         """
         if isinstance(ON, bool):
             if ON:
-                self.SSdamping = 1
+                self.ss_damping = 1
             else:
-                self.SSdamping = 0
-            self.SSsolverkeywords["TWOPNT_DAMPING_OPTIN"] = self.SSdamping
+                self.ss_damping = 0
+            self.ss_solverkeywords["TWOPNT_DAMPING_OPTIN"] = self.ss_damping
         else:
             msg = [Color.PURPLE, "parameter must be either True or False.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
 
     def set_legacy_option(self, ON: bool):
+        """Turn ON or OFF the legacy steady-state solver."""
         """Turn ON (True) or OFF (False) the legacy steady-state solver.
 
         Parameters
@@ -429,13 +455,14 @@ class SteadyStateSolver:
         if isinstance(ON, bool):
             self.use_legacy_technique = ON
             if ON:
-                self.SSsolverkeywords["USE_LEGACY_TECHNIQUE"] = "4X"
+                self.ss_solverkeywords["USE_LEGACY_TECHNIQUE"] = "4X"
         else:
             msg = [Color.PURPLE, "parameter must be either True or False.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
 
     def set_print_level(self, level: int):
+        """Set the text output level of the steady-state solver."""
         """Set the level of information to be provided by the steady-state solver
         to the text output.
 
@@ -446,7 +473,7 @@ class SteadyStateSolver:
 
         """
         if level in [0, 1, 2]:
-            self.SSsolverkeywords["PRNT"] = level
+            self.ss_solverkeywords["PRNT"] = level
             self.print_level = level
         else:
             msg = [Color.PURPLE, "print level must be either 0, 1, or 2.", Color.END]
@@ -456,12 +483,15 @@ class SteadyStateSolver:
     def set_pseudo_timestepping_parameters(
         self, numb_steps: int = 100, step_size: float = 1.0e-6, stage: int = 1
     ):
-        """Set the parameters for the pseudo time stepping process of the steady state solver.
+        """Set pseudo time stepping  parameters."""
+        """Set the parameters for the pseudo time stepping process
+        of the steady state solver.
 
         Parameters
         ----------
             numb_step: integer, default = 100
-                the number of pseudo time steps to be taken during each time stepping process
+                the number of pseudo time steps to be taken during
+                each time stepping process
             step_size: double, default = 1.0e-6 [sec]
                 the initial time step size for each time stepping process
             stage: integer, {1, 2}
@@ -473,7 +503,7 @@ class SteadyStateSolver:
         if stage in [1, 2]:
             this_key = "TIM" + str(stage)
             this_phrase = this_key + Keyword.fourspaces + str(numb_steps)
-            self.SSsolverkeywords[this_phrase] = step_size
+            self.ss_solverkeywords[this_phrase] = step_size
         else:
             msg = [Color.PURPLE, "the stage must be either 1 or 2.", Color.END]
             this_msg = Color.SPACE.join(msg)

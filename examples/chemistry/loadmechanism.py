@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-""".. _ref_load_mechanism:
+r""".. _ref_load_mechanism:
 
 ================================
 Preprocess a gas-phase mechanism
@@ -43,7 +43,7 @@ However, only one chemistry set can be active at a time.
 # Import PyChemkin packages and start the logger
 # ==============================================
 
-import os
+from pathlib import Path
 
 # import PyChemkin packages
 import ansys.chemkin.core as ck
@@ -51,7 +51,7 @@ from ansys.chemkin.core import Color
 from ansys.chemkin.core.logger import logger
 
 # check the working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 
 # set PyChemkin verbose mode
@@ -66,17 +66,17 @@ ck.set_verbose(True)
 # installation in the ``/reaction/data`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 
 # set mechanism input files
 # including the full file path is recommended
 # the gas-phase reaction mechanism file (GRI 3.0)
-chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
+chemfile = str(mechanism_dir / "grimech30_chem.inp")
 # the thermodynamic data file
-thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
+thermfile = str(mechanism_dir / "grimech30_thermo.dat")
 # the transport data file
-tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+tranfile = str(mechanism_dir / "grimech30_transport.dat")
 
 # create a chemistry set based on the GRI 3.0 methane combustion mechanism
 MyGasMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="GRI 3.0")
@@ -93,7 +93,8 @@ ierror = MyGasMech.preprocess()
 print()
 if ierror != 0:
     # When a non-zero value is returned from the process, check the text output files,
-    # "chem.out," "tran.out," and "summary.out," for potential error messages about the mechanism data.
+    # "chem.out," "tran.out," and "summary.out," for potential error messages about
+    # the mechanism data.
     print(f"Preprocessing error encountered. Code = {ierror:d}.")
     print(f"See the summary file {MyGasMech.summaryfile} for details.")
     exit()
@@ -110,7 +111,7 @@ else:
 # =======================================
 
 print(f"\nElement and species information of mechanism {MyGasMech.label}")
-print("=" * 50.0)
+print("=" * 50)
 
 # extract element symbols as a list
 elelist = MyGasMech.element_symbols
@@ -137,17 +138,19 @@ print("=" * 50)
 # =============================
 # The second mechanism to load into the project is the C2-NOx mechanism for
 # the combustion of C1-C2 hydrocarbons. This mechanism differs from the GRI mechanism
-# in the sense that it is self-contained, that is, the thermodynamic and transport data
-# of all species is included in the ``C2_NOx_SRK.inp`` mechanism input file, which sits in
-# the same reaction data directory as the GRI mechanism input files.
+# in the sense that it is self-contained, that is, the thermodynamic and
+# transport data of all species is included in the ``C2_NOx_SRK.inp`` mechanism
+# input file, which sits in the same reaction data directory as
+# the GRI mechanism input files.
 #
 # Use the same steps that were used to instantiate the first chemistry set to
-# process any set of reaction mechanism files. Here, use a slightly different procedure
-# to instantiate the second chemistry set. After you have created it, specify
-# the reaction mechanism files one by one. The reaction mechanism
-# file in this case contains all the necessary thermodynamic and transport data. Thus, there
-# is no need to specify thermodynamic and transport data files. However, an additional step is
-# required to instruct the preprocessor to include the transport data.
+# process any set of reaction mechanism files. Here, use a slightly
+# different procedure to instantiate the second chemistry set. After you have
+# created it, specify the reaction mechanism files one by one.
+# The reaction mechanism file in this case contains all the necessary thermodynamic
+# and transport data. Thus, there is no need to specify thermodynamic and
+# transport data files. However, an additional step is required to instruct
+# the preprocessor to include the transport data.
 
 # set the second mechanism directory (the default Chemkin mechanism data directory)
 mechanism_dir = data_dir
@@ -158,7 +161,7 @@ My2ndMech = ck.Chemistry(label="C2 NOx")
 # set mechanism input files individually
 # this mechanism file contains all the necessary thermodynamic and transport data
 # thus, there is no need to specify thermodynamic and transport data files
-My2ndMech.chemfile = os.path.join(mechanism_dir, "C2_NOx_SRK.inp")
+My2ndMech.chemfile = str(mechanism_dir / "C2_NOx_SRK.inp")
 
 # instruct the preprocessor to include the transport properties
 # only when the mechanism file contains all the transport data
@@ -176,7 +179,8 @@ ierror = My2ndMech.preprocess()
 print()
 if ierror != 0:
     # When a non-zero value is returned from the process, check the text output files,
-    # "chem.out," "tran.out," and "summary.out," for potential error messages about the mechanism data.
+    # "chem.out," "tran.out," and "summary.out," for potential error messages about
+    # the mechanism data.
     print(f"Preprocessing error encountered. Code = {ierror:d}.")
     print(f"See the summary file {My2ndMech.summaryfile} for details.")
     exit()
@@ -193,7 +197,7 @@ else:
 # =======================================
 
 print(f"\nElement and species information of mechanism {My2ndMech.label}")
-print("=" * 50.0)
+print("=" * 50)
 
 # extract element symbols as a list
 elelist = My2ndMech.element_symbols
