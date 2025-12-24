@@ -1405,22 +1405,22 @@ class ReactorModel:
         return self.reactormixture.concentration
 
     def set_molefractions(self, molefrac: npt.NDArray[np.double]):
-        """
-        (Re)set the reactor initial/guessed species mole fractions.
+        """(Re)set the reactor initial/guessed species mole fractions.
 
         Parameters
         ----------
             molefrac: 1-D double array, dimension = number of gas species
+
         """
         self.reactormixture.X = molefrac
 
     def set_massfractions(self, massfrac: npt.NDArray[np.double]):
-        """
-        (Re)set the reactor initial/guessed species mass fractions.
+        """(Re)set the reactor initial/guessed species mass fractions.
 
         Parameters
         ----------
             molefrac: 1-D double array, dimension = number of gas species
+
         """
         self.reactormixture.Y = massfrac
 

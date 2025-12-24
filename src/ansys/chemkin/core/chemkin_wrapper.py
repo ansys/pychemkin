@@ -34,6 +34,7 @@ import numpy as np
 from ansys.chemkin.core.color import Color
 from ansys.chemkin.core.logger import logger
 
+
 def __setwindows() -> int:
     """Set up PyChemkin environment on Windows platforms."""
     global _ansys_ver
@@ -50,13 +51,14 @@ def __setwindows() -> int:
             _ansys_installation = "ANSYS" + str(_ansys_ver) + "_DIR"
             _ansys_home = os.environ.get(_ansys_installation, "NA")
             if _ansys_home != "NA":
-                _ansys_dir = str(Path(_ansys_home).parent)
+                ansyshome = Path(_ansys_home).parent
+                _ansys_dir = str(ansyshome)
                 break
         else:
             break
 
     if _ansys_ver >= _min_version:
-        if not Path(_ansys_dir).is_dir():
+        if not ansyshome.is_dir():
             # no local Ansys installation
             msg = [
                 Color.RED,
@@ -71,25 +73,24 @@ def __setwindows() -> int:
             plat = "winx64"
             _ckbin = "chemkin.win64"
             # required third-party shared objects
-            ansys_dir_obj = Path(_ansys_dir)
-            lib_addition = ansys_dir_obj / "reaction" / _ckbin / "bin"
-            _lib_paths = [lib_addition.resolve()]
+            lib_addition = ansyshome / "reaction" / _ckbin / "bin"
+            _lib_paths = [str(lib_addition)]
             if _ansys_ver <= 252:
                 # <= 25R2
-                lib_addition = ansys_dir_obj / "tp" / "IntelCompiler" / "2023.1.0" / plat
-                _lib_paths.append(lib_addition.resolve())
-                lib_addition = ansys_dir_obj / "tp" / "IntelMKL" / "2023.1.0" / plat
-                _lib_paths.append(lib_addition.resolve())
-                lib_addition = ansys_dir_obj / "tp" / "zlib" / "1.2.13" / plat
-                _lib_paths.append(lib_addition.resolve())
+                lib_addition = ansyshome / "tp" / "IntelCompiler" / "2023.1.0" / plat
+                _lib_paths.append(str(lib_addition))
+                lib_addition = ansyshome / "tp" / "IntelMKL" / "2023.1.0" / plat
+                _lib_paths.append(str(lib_addition))
+                lib_addition = ansyshome / "tp" / "zlib" / "1.2.13" / plat
+                _lib_paths.append(str(lib_addition))
             else:
                 # >= 26R1
-                lib_addition = ansys_dir_obj / "tp" / "IntelCompiler" / "2023.1.0" / plat
-                _lib_paths.append(lib_addition.resolve())
-                lib_addition = ansys_dir_obj / "tp" / "IntelMKL" / "2023.1.0" / plat
-                _lib_paths.append(lib_addition.resolve())
-                lib_addition = ansys_dir_obj / "tp" / "zlib" / plat
-                _lib_paths.append(lib_addition.resolve())
+                lib_addition = ansyshome / "tp" / "IntelCompiler" / "2023.1.0" / plat
+                _lib_paths.append(str(lib_addition))
+                lib_addition = ansyshome / "tp" / "IntelMKL" / "2023.1.0" / plat
+                _lib_paths.append(str(lib_addition))
+                lib_addition = ansyshome / "tp" / "zlib" / plat
+                _lib_paths.append(str(lib_addition))
     else:
         msg = [
             Color.RED,
@@ -103,8 +104,9 @@ def __setwindows() -> int:
     for _lib_path in _lib_paths:
         os.add_dll_directory(_lib_path)
     # set Chemkin-CFD-API shared object
-    _target_lib = str(ansys_dir_obj / "reaction" / _ckbin / "bin" / "KINeticsdll.dll")
+    _target_lib = str(ansyshome / "reaction" / _ckbin / "bin" / "KINeticsdll.dll")
     return 0
+
 
 def __setlinux() -> int:
     """Set up PyChemkin environment on Linux platforms."""
@@ -133,18 +135,18 @@ def __setlinux() -> int:
         # check local Ansys installation
         _user_home = os.environ.get("HOME", "NA")
         if _user_home != "NA":
-            _ansys_home = Path(_user_home / "ansys_inc")
-            print(type(_ansys_home))
+            ansyshome = Path(_user_home) / "ansys_inc"
+            _ansys_home = str(ansyshome)
             found_home = False
-            if Path(_ansys_home).is_dir():
+            if ansyshome.is_dir():
                 # find all local Ansys installations
-                local_versions = [f.name for f in _ansys_home.iterdir() if f.is_dir()]
+                local_versions = [f.name for f in ansyshome.iterdir() if f.is_dir()]
                 for v in _valid_versions:
                     _ansys_ver = v
                     if v >= _min_version:
                         this_version = "v" + str(v)
                         if this_version in local_versions:
-                            _ansys_dir = str(Path(_ansys_home) / this_version)
+                            _ansys_dir = _ansys_home + this_version
                             found_home = True
                             break
                     else:
@@ -192,25 +194,32 @@ def __setlinux() -> int:
     # required third-party shared objects
     plat = "linx64"
     _ckbin = "chemkin.linuxx8664"
-    ansys_dir_obj = Path(_ansys_dir)
-    lib_addition = ansys_dir_obj / "reaction" / _ckbin / "bin"
-    _lib_paths = [lib_addition.resolve()]
+    lib_addition = ansyshome / "reaction" / _ckbin / "bin"
+    _lib_paths = [str(lib_addition)]
     if _ansys_ver <= 252:
         # <= 25R2
-        lib_addition = ansys_dir_obj / "tp" / "IntelCompiler" / "2023.1.0" / plat / "lib" / "intel64"
-        _lib_paths.append(lib_addition.resolve())
-        lib_addition = ansys_dir_obj / "tp" / "IntelMKL" / "2023.1.0" / plat / "lib" / "intel64"
-        _lib_paths.append(lib_addition.resolve())
-        lib_addition = ansys_dir_obj / "tp" / "zlib" / "1.2.13" / plat / "lib"
-        _lib_paths.append(lib_addition.resolve())
+        lib_addition = (
+            ansyshome / "tp" / "IntelCompiler" / "2023.1.0" / plat / "lib" / "intel64"
+        )
+        _lib_paths.append(str(lib_addition))
+        lib_addition = (
+            ansyshome / "tp" / "IntelMKL" / "2023.1.0" / plat / "lib" / "intel64"
+        )
+        _lib_paths.append(str(lib_addition))
+        lib_addition = ansyshome / "tp" / "zlib" / "1.2.13" / plat / "lib"
+        _lib_paths.append(str(lib_addition))
     else:
         # >= 26R1
-        lib_addition = ansys_dir_obj / "tp" / "IntelCompiler" / "2023.1.0" / plat / "lib" / "intel64"
-        _lib_paths.append(lib_addition.resolve())
-        lib_addition = ansys_dir_obj / "tp" / "IntelMKL" / "2023.1.0" / plat / "lib" / "intel64"
-        _lib_paths.append(lib_addition.resolve())
-        lib_addition = ansys_dir_obj / "tp" / "zlib" / plat / "lib"
-        _lib_paths.append(lib_addition.resolve())
+        lib_addition = (
+            ansyshome / "tp" / "IntelCompiler" / "2023.1.0" / plat / "lib" / "intel64"
+        )
+        _lib_paths.append(str(lib_addition))
+        lib_addition = (
+            ansyshome / "tp" / "IntelMKL" / "2023.1.0" / plat / "lib" / "intel64"
+        )
+        _lib_paths.append(str(lib_addition))
+        lib_addition = ansyshome / "tp" / "zlib" / plat / "lib"
+        _lib_paths.append(str(lib_addition))
     # set load dll paths
     combined_path = ":".join(_lib_paths)
     if "LD_LIBRARY_PATH" not in os.environ.keys():
@@ -226,7 +235,7 @@ def __setlinux() -> int:
     else:
         os.environ["PATH"] = os.environ["PATH"] + ":" + combined_path
     # set Chemkin-CFD-API shared object
-    _target_lib = str(ansys_dir_obj / "reaction" / _ckbin / "bin" / "libKINetics.so")
+    _target_lib = str(ansyshome / "reaction" / _ckbin / "bin" / "libKINetics.so")
     return 0
 
 

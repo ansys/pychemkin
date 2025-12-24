@@ -124,12 +124,12 @@ class PyCKtools:
             #
             PyCKtools.FIRST_PASS += 1
         # set the test source file
-        fr = test_file + ".py"
-        frun = Path(source_folder) / fr
+        runfile = test_file + ".py"
+        frun = Path(source_folder) / runfile
         # set the test output file
-        fo = test_file + ".out"
+        outfile = test_file + ".out"
         output_folder = Path(current_dir) / "outputs"
-        f = output_folder / fo
+        f = output_folder / outfile
         fout = f.open(mode="w")
         # run test
         # change working directory

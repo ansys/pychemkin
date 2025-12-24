@@ -39,8 +39,8 @@ class TestCompareResults:
         r_file_names = PyCKtools.get_file_names(new_result_dir)
         b_file_names = PyCKtools.get_file_names(baseline_dir)
         # create the comparison log file
-        l = Path(new_working) / "compareresults.log"
-        logf = l.open(mode="w+")
+        log = Path(new_working) / "compareresults.log"
+        logf = log.open(mode="w+")
         count_all_files = 0
         count_missing = 0
         count_skipped = 0
