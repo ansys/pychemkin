@@ -37,7 +37,7 @@ from ansys.chemkin.core.batchreactors.batchreactor import (
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = Path.cwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -48,15 +48,15 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = Path(ck.ansys_dir / "reaction" / "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on the diesel 14 components mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = Path(mechanism_dir / "grimech30_chem.inp")
-MyGasMech.thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
-MyGasMech.tranfile = Path(mechanism_dir / "grimech30_transport.dat")
+MyGasMech.chemfile = str(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
+MyGasMech.tranfile = str(mechanism_dir / "grimech30_transport.dat")
 # preprocess the mechanism files
 ierror = MyGasMech.preprocess()
 # create the fuel mixture
@@ -197,7 +197,7 @@ else:
     plt.savefig("close_homogeneous.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = Path(current_dir / "closed_homogeneous__transient.result")
+resultfile = Path(current_dir) / "closed_homogeneous__transient.result"
 results = {}
 results["state-time"] = timeprofile.tolist()
 results["state-temperature"] = tempprofile.tolist()
@@ -205,7 +205,7 @@ results["species-H2O_mole_fraction"] = h2o_profile.tolist()
 results["rate-H2O_production_rate"] = h2o_rop_rofile.tolist()
 results["state-density"] = denprofile.tolist()
 #
-r = Path.open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

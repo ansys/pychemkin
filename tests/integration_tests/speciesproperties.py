@@ -31,7 +31,7 @@ import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = Path.cwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -42,15 +42,15 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = Path(ck.ansys_dir / "reaction" / "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on GRI 3.0
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = Path(mechanism_dir / "grimech30_chem.inp")
-MyGasMech.thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
-MyGasMech.tranfile = Path(mechanism_dir / "grimech30_transport.dat")
+MyGasMech.chemfile = str(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
+MyGasMech.tranfile = str(mechanism_dir / "grimech30_transport.dat")
 # preprocess the mechanism files
 ierror = MyGasMech.preprocess()
 # extract element symbols as a list
@@ -147,14 +147,14 @@ else:
     plt.savefig("species_properties.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = Path(current_dir / "speciesproperties.result")
+resultfile = Path(current_dir) / "speciesproperties.result"
 results = {}
 results["state-temperature"] = t.tolist()
 results["state-Cv"] = cv.tolist()
 results["state-conductivity"] = kappa.tolist()
 results["state-binary_diffusivity"] = [float(c)]
 #
-r = Path.open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

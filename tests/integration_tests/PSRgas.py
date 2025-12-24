@@ -37,7 +37,7 @@ from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
 
 # check working directory
-current_dir = Path.cwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -48,13 +48,13 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = Path(ck.ansys_dir / "reaction" / "data" / "ModelFuelLibrary" / "Skeletal")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data" / "ModelFuelLibrary" / "Skeletal"
 mechanism_dir = data_dir
 # create a chemistry set based on the gasoline 14 components mechanism
 MyGasMech = ck.Chemistry(label="hydrogen")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = Path(mechanism_dir / "Hydrogen-Ammonia-NOx_chem_MFL2021.inp")
+MyGasMech.chemfile = str(mechanism_dir / "Hydrogen-Ammonia-NOx_chem_MFL2021.inp")
 # preprocess the mechanism files
 ierror = MyGasMech.preprocess()
 # create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
@@ -157,12 +157,12 @@ else:
     plt.savefig("PSR_gas.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = Path(current_dir / "PSRgas.result")
+resultfile = Path(current_dir) / "PSRgas.result"
 results = {}
 results["state-equivalence_ratio_inlet"] = inletequiv.tolist()
 results["state-temperature"] = temp_solution.tolist()
 #
-r = Path.open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

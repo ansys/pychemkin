@@ -37,7 +37,7 @@ from ansys.chemkin.core.batchreactors.batchreactor import (
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = Path.cwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set interactive mode for plotting the results
 # interactive = True: display plot
@@ -46,14 +46,14 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = Path(ck.ansys_dir / "reaction" / "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on C2_NOx using an alternative method
 MyMech = ck.Chemistry(label="C2 NOx")
 # set mechanism input files individually
 # this mechanism file contains all the necessary thermodynamic and transport data
 # therefore no need to specify the therm and the tran data files
-MyMech.chemfile = Path(mechanism_dir / "C2_NOx_SRK.inp")
+MyMech.chemfile = str(mechanism_dir / "C2_NOx_SRK.inp")
 # preprocess the 2nd mechanism files
 ierror = MyMech.preprocess()
 if ierror == 0:
@@ -203,7 +203,7 @@ else:
     plt.savefig("vapor_condensation.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = Path(current_dir / "vapor.result")
+resultfile = Path(current_dir) / "vapor.result"
 results = {}
 results["state-time"] = timeprofile.tolist()
 results["state-temperature"] = tempprofile.tolist()
@@ -214,7 +214,7 @@ results["state-enthalpy_IdealGas"] = Hprofile_idealgas.tolist()
 results["state-density_RealGas"] = denprofile.tolist()
 results["state-density_IdealGas"] = denprofile_idealgas.tolist()
 #
-r = Path.open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

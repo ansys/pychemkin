@@ -29,18 +29,18 @@ from ansys.chemkin.core import Color
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = Path.cwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = Path(ck.ansys_dir / "reaction" / "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # set mechanism input files
 # including the full file path is recommended
-chemfile = Path(mechanism_dir / "grimech30_chem.inp")
-thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
-tranfile = Path(mechanism_dir / "grimech30_transport.dat")
+chemfile = str(mechanism_dir / "grimech30_chem.inp")
+thermfile = str(mechanism_dir / "grimech30_thermo.dat")
+tranfile = str(mechanism_dir / "grimech30_transport.dat")
 # create a chemistry set based on GRI 3.0
 My1stMech = ck.Chemistry(
     chem=chemfile,
@@ -85,7 +85,7 @@ My2ndMech = ck.Chemistry(label="C2 NOx")
 # set mechanism input files individually
 # this mechanism file contains all the necessary thermodynamic and transport data
 # therefore no need to specify the therm and the tran data files
-My2ndMech.chemfile = Path(mechanism_dir / "C2_NOx_SRK.inp")
+My2ndMech.chemfile = str(mechanism_dir / "C2_NOx_SRK.inp")
 # instruct the preprocessor to include the transport properties
 # only when the mechanism file contains all the transport data
 My2ndMech.preprocess_transportdata()
@@ -112,26 +112,26 @@ mymixture2.pressure = 2.0 * ck.P_ATM
 # set mixture molar composition
 mymixture2.X = [("H2", 0.02), ("O2", 0.2), ("N2", 0.8)]
 # compute detonation wave speed with mymixture2
-speeds_mix2, CJ_mix2 = ck.detonation(mymixture2)
-print(f"detonation mymixture2 temperature: {CJ_mix2.temperature} [K]")
+speeds_mix2, cj_mix2 = ck.detonation(mymixture2)
+print(f"detonation mymixture2 temperature: {cj_mix2.temperature} [K]")
 print(f"detonation wave speed = {speeds_mix2[1] / 100.0} [m/sec]")
 #
 # re-activate My1stMech
 My1stMech.activate()
 # compute detonation wave speed with mymixture1
-speeds_mix1, CJ_mix1 = ck.detonation(mymixture1)
-print(f"detonation mymixture1 temperature: {CJ_mix1.temperature} [K]")
+speeds_mix1, cj_mix1 = ck.detonation(mymixture1)
+print(f"detonation mymixture1 temperature: {cj_mix1.temperature} [K]")
 print(f"detonation wave speed = {speeds_mix1[1] / 100.0} [m/sec]")
 
 # return results for comparisons
-resultfile = Path(current_dir / "multiplemechanisms.result")
+resultfile = Path(current_dir) / "multiplemechanisms.result"
 results = {}
 # results["state-temperature_IdealGas"] = [CJ_mix1.temperature]
 # results["state-detonation_speed_IdealGas"] = [speeds_mix1[1] / 100.0]
-results["state-temperature_RealGas"] = [CJ_mix2.temperature]
+results["state-temperature_RealGas"] = [cj_mix2.temperature]
 results["state-detonation_speed_RealGas"] = [speeds_mix2[1] / 100.0]
 #
-r = Path.open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

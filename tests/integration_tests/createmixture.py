@@ -169,14 +169,14 @@ else:
     plt.savefig("create_mixture.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = Path(current_dir / "createmixture.result")
+resultfile = Path(current_dir) / "createmixture.result"
 results = {}
 results["state-temperature"] = t.tolist()
 results["state-density"] = rho.tolist()
 results["state-viscosity"] = visc.tolist()
 results["state-diffusivity_CH4"] = diff_ch4.tolist()
 #
-r = Path.open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

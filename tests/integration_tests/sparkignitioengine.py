@@ -36,7 +36,7 @@ from ansys.chemkin.core.engines.SI import SIengine
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = Path.cwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory:" + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -47,13 +47,13 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = Path(ck.ansys_dir / "reaction" / "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on the gasoline 14 components mechanism
 MyGasMech = ck.Chemistry(label="Gasoline")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = Path(mechanism_dir / "gasoline_14comp_WBencrypt.inp")
+MyGasMech.chemfile = str(mechanism_dir / "gasoline_14comp_WBencrypt.inp")
 # preprocess the mechanism files
 ierror = MyGasMech.preprocess()
 print("mechanism information:")
@@ -94,9 +94,9 @@ fresh.list_composition(mode="mole")
 fresh.temperature = fuelmixture.temperature
 fresh.pressure = fuelmixture.pressure
 # set exhaust gas recirculation (EGR) ratio with volume fraction
-EGRratio = 0.3
+egr_ratio = 0.3
 # compute the EGR stream composition in mole fractions
-add_frac = fresh.get_EGR_mole_fraction(EGRratio, threshold=1.0e-8)
+add_frac = fresh.get_EGR_mole_fraction(egr_ratio, threshold=1.0e-8)
 # recreate the initial mixture with EGR
 ierror = fresh.X_by_Equivalence_Ratio(
     MyGasMech,
@@ -170,8 +170,8 @@ Twall = 434.0
 MyEngine.set_wall_heat_transfer("dimensionless", heattransferparameters, Twall)
 # incylinder gas velocity correlation parameter (Woschni)
 # [<C11> <C12> <C2> <swirl ratio>]
-GVparameters = [2.28, 0.318, 0.324, 0.0]
-MyEngine.set_gas_velocity_correlation(GVparameters)
+gv_parameters = [2.28, 0.318, 0.324, 0.0]
+MyEngine.set_gas_velocity_correlation(gv_parameters)
 # set piston head top surface area [cm2]
 MyEngine.set_piston_head_area(area=56.75)
 # set cylinder clearance surface area [cm2]
@@ -188,9 +188,9 @@ MyEngine.adaptive_solution_saving(mode=False, steps=20)
 # set tolerances in tuple: (absolute tolerance, relative tolerance)
 MyEngine.tolerances = (1.0e-15, 1.0e-6)
 # get solver parameters
-ATOL, RTOL = MyEngine.tolerances
-print(f"default absolute tolerance = {ATOL}")
-print(f"default relative tolerance = {RTOL}")
+atol, rtol = MyEngine.tolerances
+print(f"default absolute tolerance = {atol}")
+print(f"default relative tolerance = {rtol}")
 # turn on the force non-negative solutions option in the solver
 MyEngine.force_nonnegative = True
 # show solver option
@@ -233,10 +233,10 @@ print(f"number of solution points = {solutionpoints}")
 # get the time profile
 timeprofile = MyEngine.get_solution_variable_profile("time")
 # convert time to crank angle
-CAprofile = np.zeros_like(timeprofile, dtype=np.double)
+ca_profile = np.zeros_like(timeprofile, dtype=np.double)
 count = 0
 for t in timeprofile:
-    CAprofile[count] = MyEngine.get_CA(timeprofile[count])
+    ca_profile[count] = MyEngine.get_CA(timeprofile[count])
     count += 1
 # get the cylinder pressure profile
 presprofile = MyEngine.get_solution_variable_profile("pressure")
@@ -247,14 +247,14 @@ tempprofile = MyEngine.get_solution_variable_profile("temperature")
 volprofile = MyEngine.get_solution_variable_profile("volume")
 # create arrays for zonal CO mole fraction
 # find CO species index
-COindex = MyGasMech.get_specindex("co")
-COprofile = np.zeros_like(timeprofile, dtype=np.double)
+co_index = MyGasMech.get_specindex("co")
+co_profile = np.zeros_like(timeprofile, dtype=np.double)
 # loop over all solution time points
 for i in range(solutionpoints):
     # get the zonal mixture at the time point
     solutionmixture = MyEngine.get_solution_mixture_at_index(solution_index=i)
     # get zonal CO mole fraction
-    COprofile[i] = solutionmixture.X[COindex]
+    co_profile[i] = solutionmixture.X[co_index]
 #
 # post-process cylinder-averged solution
 MyEngine.process_average_engine_solution()
@@ -267,21 +267,21 @@ cylindertempprofile = MyEngine.get_solution_variable_profile("temperature")
 plt.subplots(2, 2, sharex="col", figsize=(13, 6.5))
 plt.suptitle(plottitle, fontsize=16)
 plt.subplot(221)
-plt.plot(CAprofile, presprofile, "r-")
+plt.plot(ca_profile, presprofile, "r-")
 plt.ylabel("Pressure [bar]")
 plt.subplot(222)
-plt.plot(CAprofile, volprofile, "b-")
-plt.plot(CAprofile, cylindervolprofile, "b--")
+plt.plot(ca_profile, volprofile, "b-")
+plt.plot(ca_profile, cylindervolprofile, "b--")
 plt.ylabel("Volume [cm3]")
 plt.legend(["Zone", "Cylinder"], loc="lower right")
 plt.subplot(223)
-plt.plot(CAprofile, tempprofile, "g-")
-plt.plot(CAprofile, cylindertempprofile, "g--")
+plt.plot(ca_profile, tempprofile, "g-")
+plt.plot(ca_profile, cylindertempprofile, "g--")
 plt.xlabel("Crank Angle [degree]")
 plt.ylabel("Mixture Temperature [K]")
 plt.legend(["Zone", "Averaged"], loc="upper left")
 plt.subplot(224)
-plt.plot(CAprofile, COprofile, "m-")
+plt.plot(ca_profile, co_profile, "m-")
 plt.xlabel("Crank Angle [degree]")
 plt.ylabel("CO Mole Fraction")
 # plot results
@@ -291,15 +291,15 @@ else:
     plt.savefig("spark_ignition_engine.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = Path(current_dir / "sparkignitionengine.result")
+resultfile = Path(current_dir) / "sparkignitionengine.result"
 results = {}
-results["state-crank_angle"] = CAprofile.tolist()
+results["state-crank_angle"] = ca_profile.tolist()
 results["state-temperature"] = tempprofile.tolist()
 results["state-pressure"] = presprofile.tolist()
 results["state-volume"] = volprofile.tolist()
-results["species-CO_mole_fraction"] = COprofile.tolist()
+results["species-CO_mole_fraction"] = co_profile.tolist()
 #
-r = Path.open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

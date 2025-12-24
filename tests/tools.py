@@ -133,13 +133,6 @@ class PyCKtools:
         fout = f.open(mode="w")
         # run test
         # change working directory
-        print(f"{root_dir}  {source_dir}   {result_dir}  {test_file}")
-        print(f"new folder {new_working}  {type(new_working)}")
-        print(f"out folder {output_folder}   {type(output_folder)}")  # path
-        print(f"source folder {source_folder}   {type(source_folder)}")
-        print(f"current {current_dir}   {type(current_dir)}")
-        print(f"frun  {frun.resolve()} ffff {type(frun)}  ooooooooo {f.resolve()}  {type(f)}") # frun path  f path
-
         os.chdir(new_working)
         try:
             results = subprocess.run(["python", str(frun)], stdout=fout, check=True)

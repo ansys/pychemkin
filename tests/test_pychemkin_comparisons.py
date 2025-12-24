@@ -47,7 +47,7 @@ class TestCompareResults:
         count_bad = 0
         for rf in r_file_names:
             rf_obj = Path(rf)
-            test_name =rf_obj.name
+            test_name = rf_obj.stem
             extension = rf_obj.suffix
             logf.write(f"\nchecking file {rf}...\n")
             count_all_files += 1

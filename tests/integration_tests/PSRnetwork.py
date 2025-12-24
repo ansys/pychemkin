@@ -44,7 +44,7 @@ from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_EnergyConservation as psr
 
 # check working directory
-current_dir = Path.cwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -62,14 +62,14 @@ interactive = True
 # installation in the ``/reaction/data`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = Path(ck.ansys_dir / "reaction" / "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on the GRI mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = Path(mechanism_dir / "grimech30_chem.inp")
-MyGasMech.thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
+MyGasMech.chemfile = str(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
 
 ############################################
 # Pre-process the gasoline ``Chemistry Set``
@@ -157,10 +157,10 @@ secondary_air.temperature = 670.0  # [K]
 secondary_air.mass_flowrate = 100.0  # [g/sec]
 
 # find the species index
-CH4_index = MyGasMech.get_specindex("CH4")
-O2_index = MyGasMech.get_specindex("O2")
-NO_index = MyGasMech.get_specindex("NO")
-CO_index = MyGasMech.get_specindex("CO")
+ch4_index = MyGasMech.get_specindex("CH4")
+o2_index = MyGasMech.get_specindex("O2")
+no_index = MyGasMech.get_specindex("NO")
+co_index = MyGasMech.get_specindex("CO")
 
 ##################################################
 # Define reactors in the reactor network
@@ -375,10 +375,10 @@ for m in range(PSRnetwork.number_external_outlets):
     print("=" * 10)
     print(f"temperature = {network_outflow.temperature} [K]")
     print(f"mass flow rate = {network_outflow.mass_flowrate} [g/sec]")
-    print(f"CH4 = {network_outflow.X[CH4_index]}")
-    print(f"O2 = {network_outflow.X[O2_index]}")
-    print(f"CO = {network_outflow.X[CO_index]}")
-    print(f"NO = {network_outflow.X[NO_index]}")
+    print(f"CH4 = {network_outflow.X[ch4_index]}")
+    print(f"O2 = {network_outflow.X[o2_index]}")
+    print(f"CO = {network_outflow.X[co_index]}")
+    print(f"NO = {network_outflow.X[no_index]}")
     print("-" * 10)
 
 # display the raector solutions
@@ -388,36 +388,36 @@ print("reactor/zone")
 print("=" * 10)
 temp = []
 mflr = []
-X_CH4 = []
-X_CO = []
-X_NO = []
+x_ch4 = []
+x_co = []
+x_no = []
 for index, stream in PSRnetwork.reactor_solutions.items():
     name = PSRnetwork.get_reactor_label(index)
     print(f"reactor: {name}")
     print(f"temperature = {stream.temperature} [K]")
     print(f"mass flow rate = {stream.mass_flowrate} [g/sec]")
-    print(f"CH4 = {stream.X[CH4_index]}")
-    print(f"O2 = {stream.X[O2_index]}")
-    print(f"CO = {stream.X[CO_index]}")
-    print(f"NO = {stream.X[NO_index]}")
+    print(f"CH4 = {stream.X[ch4_index]}")
+    print(f"O2 = {stream.X[o2_index]}")
+    print(f"CO = {stream.X[co_index]}")
+    print(f"NO = {stream.X[no_index]}")
     # save results to lists for comparisons
     temp.append(stream.temperature)
     mflr.append(stream.mass_flowrate)
-    X_CH4.append(stream.X[CH4_index])
-    X_CO.append(stream.X[CO_index])
-    X_NO.append(stream.X[NO_index])
+    x_ch4.append(stream.X[ch4_index])
+    x_co.append(stream.X[co_index])
+    x_no.append(stream.X[no_index])
     print("-" * 10)
 
 # return results for comparisons
-resultfile = Path(current_dir / "PSRnetwork.result")
+resultfile = Path(current_dir) / "PSRnetwork.result"
 results = {}
 results["state-temperature"] = temp
 results["state-mass_flow_rate"] = mflr
-results["species-mole_fraction_CH4"] = X_CH4
-results["species-mole_fraction_CO"] = X_CO
-results["species-mole_fraction_NO"] = X_NO
+results["species-mole_fraction_CH4"] = x_ch4
+results["species-mole_fraction_CO"] = x_co
+results["species-mole_fraction_NO"] = x_no
 #
-r = Path.open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

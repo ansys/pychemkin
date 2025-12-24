@@ -31,7 +31,7 @@ import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = Path.cwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -44,14 +44,14 @@ interactive = False
 # This is a pychemkin equivalent of equil_test07
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = Path(ck.ansys_dir / "reaction" / "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on the diesel 14 components mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = Path(mechanism_dir / "grimech30_chem.inp")
-MyGasMech.thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
+MyGasMech.chemfile = str(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
 
 ierror = MyGasMech.preprocess()
 
@@ -77,8 +77,8 @@ points = 12
 deq = 0.1
 equiv_ini = 0.5
 
-T = np.zeros(points, dtype=np.double)
-equiv = np.zeros_like(T, dtype=np.double)
+t = np.zeros(points, dtype=np.double)
+equiv = np.zeros_like(t, dtype=np.double)
 
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)
 ierror = 0
@@ -90,11 +90,11 @@ for i in range(points):
     if ierror != 0:
         raise RuntimeError
     result = ck.equilibrium(mixture, opt=5)
-    T[i] = result.temperature
+    t[i] = result.temperature
     equiv[i] = equiv_current
     equiv_ini = equiv_ini + deq
 
-plt.plot(equiv, T, "bs--")
+plt.plot(equiv, t, "bs--")
 plt.xlabel("Equivalence ratio")
 plt.ylabel("Temperature [K]")
 # plot results
@@ -104,12 +104,12 @@ else:
     plt.savefig("adiabatic_flame_temperature.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = Path(current_dir / "adiabaticflametemperature.result")
+resultfile = Path(current_dir) / "adiabaticflametemperature.result"
 results = {}
 results["state-equivalence_ratio"] = equiv.tolist()
-results["state-temperature"] = T.tolist()
+results["state-temperature"] = t.tolist()
 #
-r = Path.open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

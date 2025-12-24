@@ -43,7 +43,7 @@ from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
 
 # check working directory
-current_dir = Path.cwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -61,14 +61,14 @@ interactive = True
 # installation in the ``/reaction/data`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = Path(ck.ansys_dir / "reaction" / "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on the GRI mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = Path(mechanism_dir / "grimech30_chem.inp")
-MyGasMech.thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
+MyGasMech.chemfile = str(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
 
 ############################################
 # Pre-process the gasoline ``Chemistry Set``
@@ -119,10 +119,10 @@ reburn_fuel.X = [("CH4", 0.6), ("CO2", 0.4)]
 reburn_fuel.mass_flowrate = 0.12  # [g/sec]
 
 # find the species index
-CH4_index = MyGasMech.get_specindex("CH4")
-O2_index = MyGasMech.get_specindex("O2")
-NO_index = MyGasMech.get_specindex("NO")
-CO_index = MyGasMech.get_specindex("CO")
+ch4_index = MyGasMech.get_specindex("CH4")
+o2_index = MyGasMech.get_specindex("O2")
+no_index = MyGasMech.get_specindex("NO")
+co_index = MyGasMech.get_specindex("CO")
 
 #####################################
 # Create individual PSR for each zone
@@ -175,10 +175,10 @@ print("combustor exit")
 print("=" * 40)
 print(f"temperature = {solnstream1.temperature} [K]")
 print(f"mass flow rate = {solnstream1.mass_flowrate} [g/sec]")
-print(f"CH4 = {solnstream1.X[CH4_index]}")
-print(f"O2 = {solnstream1.X[O2_index]}")
-print(f"CO = {solnstream1.X[CO_index]}")
-print(f"NO = {solnstream1.X[NO_index]}")
+print(f"CH4 = {solnstream1.X[ch4_index]}")
+print(f"O2 = {solnstream1.X[o2_index]}")
+print(f"CO = {solnstream1.X[co_index]}")
+print(f"NO = {solnstream1.X[no_index]}")
 
 # PSR #2: cooling
 cooling = PSR(solnstream1, label="cooling zone")
@@ -203,10 +203,10 @@ print("dilution zone exit")
 print("=" * 40)
 print(f"temperature = {solnstream2.temperature} [K]")
 print(f"mass flow rate = {solnstream2.mass_flowrate} [g/sec]")
-print(f"CH4 = {solnstream2.X[CH4_index]}")
-print(f"O2 = {solnstream2.X[O2_index]}")
-print(f"CO = {solnstream2.X[CO_index]}")
-print(f"NO = {solnstream2.X[NO_index]}")
+print(f"CH4 = {solnstream2.X[ch4_index]}")
+print(f"O2 = {solnstream2.X[o2_index]}")
+print(f"CO = {solnstream2.X[co_index]}")
+print(f"NO = {solnstream2.X[no_index]}")
 
 # PSR #3: reburn
 reburn = PSR(solnstream2, label="reburn zone")
@@ -230,10 +230,10 @@ print("outflow")
 print("=" * 40)
 print(f"temperature = {outflow.temperature} [K]")
 print(f"mass flow rate = {outflow.mass_flowrate} [g/sec]")
-print(f"CH4 = {outflow.X[CH4_index]}")
-print(f"O2 = {outflow.X[O2_index]}")
-print(f"CO = {outflow.X[CO_index]}")
-print(f"NO = {outflow.X[NO_index]}")
+print(f"CH4 = {outflow.X[ch4_index]}")
+print(f"O2 = {outflow.X[o2_index]}")
+print(f"CO = {outflow.X[co_index]}")
+print(f"NO = {outflow.X[no_index]}")
 
 # compute the total runtime
 runtime = time.time() - start_time
@@ -241,15 +241,15 @@ print()
 print(f"total simulation duration: {runtime} [sec]")
 
 # return results for comparisons
-resultfile = Path(current_dir / "PSRChain_declustered.result")
+resultfile = Path(current_dir) / "PSRChain_declustered.result"
 results = {}
 results["state-temperature"] = [outflow.temperature]
 results["state-mass_flow_rate"] = [outflow.mass_flowrate]
-results["species-mole_fraction_CH4"] = [outflow.X[CH4_index]]
-results["species-mole_fraction_CO"] = [outflow.X[CO_index]]
-results["species-mole_fraction_NO"] = [outflow.X[NO_index]]
+results["species-mole_fraction_CH4"] = [outflow.X[ch4_index]]
+results["species-mole_fraction_CO"] = [outflow.X[co_index]]
+results["species-mole_fraction_NO"] = [outflow.X[no_index]]
 #
-r = Path.open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

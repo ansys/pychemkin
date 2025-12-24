@@ -31,7 +31,7 @@ import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = Path.cwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -42,14 +42,14 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = Path(ck.ansys_dir / "reaction" / "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on C2_NOx using an alternative method
 MyMech = ck.Chemistry(label="C2 NOx")
 # set mechanism input files individually
 # this mechanism file contains all the necessary thermodynamic and transport data
 # therefore no need to specify the therm and the tran data files
-MyMech.chemfile = Path(mechanism_dir / "C2_NOx_SRK.inp")
+MyMech.chemfile = str(mechanism_dir / "C2_NOx_SRK.inp")
 # preprocess the 2nd mechanism files
 ierror = MyMech.preprocess()
 # create the fuel mixture
@@ -83,24 +83,24 @@ premixed.list_composition(mode="mole")
 points = 5
 dpres = 10.0 * ck.P_ATM
 pres = fuel.pressure
-P = np.zeros(points, dtype=np.double)
-Det = np.zeros_like(P, dtype=np.double)
+p = np.zeros(points, dtype=np.double)
+det = np.zeros_like(p, dtype=np.double)
 premixed.pressure = pres
 premixed.temperature = fuel.temperature
 # start of pressure loop
 for i in range(points):
     # compute the C-J state corresponding to the initial mixture
-    speed, CJstate = ck.detonation(premixed)
+    speed, cj_state = ck.detonation(premixed)
     # update plot data
     # convert pressure to atm
-    P[i] = pres / ck.P_ATM
+    p[i] = pres / ck.P_ATM
     # convert speed to m/sec
-    Det[i] = speed[1] / 1.0e2
+    det[i] = speed[1] / 1.0e2
     # update pressure value
     pres += dpres
     premixed.pressure = pres
 # create plot for ideal gas results
-plt.plot(P, Det, "bo--", label="ideal gas", markersize=5, fillstyle="none")
+plt.plot(p, det, "bo--", label="ideal gas", markersize=5, fillstyle="none")
 #
 # turn on real-gas cubic equation of state
 premixed.use_realgas_cubicEOS()
@@ -109,28 +109,28 @@ premixed.use_realgas_cubicEOS()
 # restart the calculation with real-gas EOS
 premixed.pressure = fuel.pressure
 pres = fuel.pressure
-P[:] = 0.0e0
-Det[:] = 0.0e0
+p[:] = 0.0e0
+det[:] = 0.0e0
 # set verbose mode to false to turn OFF extra printouts
 ck.set_verbose(False)
 # start of pressure loop
 for i in range(points):
     # compute the C-J state corresponding to the initial mixture
-    speed, CJstate = ck.detonation(premixed)
+    speed, cj_state = ck.detonation(premixed)
     # update plot data
-    P[i] = pres / ck.P_ATM
-    Det[i] = speed[1] / 1.0e2
+    p[i] = pres / ck.P_ATM
+    det[i] = speed[1] / 1.0e2
     # update pressure value
     pres += dpres
     premixed.pressure = pres
 # stop Chemkin
 ck.done()
 # create plot for real gas results
-plt.plot(P, Det, "r^-", label="real gas", markersize=5, fillstyle="none")
+plt.plot(p, det, "r^-", label="real gas", markersize=5, fillstyle="none")
 # plot data
-P_data = [44.1, 50.6, 67.2, 80.8]
-Det_data = [1950.0, 1970.0, 2000.0, 2020.0]
-plt.plot(P_data, Det_data, "gD:", label="data", markersize=4)
+p_data = [44.1, 50.6, 67.2, 80.8]
+det_data = [1950.0, 1970.0, 2000.0, 2020.0]
+plt.plot(p_data, det_data, "gD:", label="data", markersize=4)
 #
 plt.legend(loc="upper left")
 plt.xlabel("Pressure [atm]")
@@ -143,12 +143,12 @@ else:
     plt.savefig("detonation.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = Path(current_dir / "detonation.result")
+resultfile = Path(current_dir) / "detonation.result"
 results = {}
-results["state-pressure"] = P.tolist()
-results["state-detonation_speed_RealGas"] = Det.tolist()
+results["state-pressure"] = p.tolist()
+results["state-detonation_speed_RealGas"] = det.tolist()
 #
-r = Path.open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

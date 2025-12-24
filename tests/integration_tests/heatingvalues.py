@@ -31,11 +31,11 @@ from ansys.chemkin.core import Color
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = Path.cwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = Path(ck.ansys_dir / "reaction" / "data")
-logger.debug("data directory: " + data_dir)
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
+logger.debug("data directory: " + str(data_dir))
 # set pressure & temperature condition
 thispressure = ck.P_ATM
 thistemperature = 298.15
@@ -56,8 +56,8 @@ def getwaterheatofvaporization(temp):
     #
     # create a new mechanism input file
     #
-    waterfile = Path(current_dir / "water_chem.inp")
-    w = Path.open(waterfile, "w")
+    waterfile = Path(current_dir) / "water_chem.inp"
+    w = waterfile.open(mode="w")
     # the water mechanism contains two species:
     # water vapor (H2O) and liquid water (H2O(L))
     # declare elements
@@ -72,8 +72,8 @@ def getwaterheatofvaporization(temp):
     w.close()
     # set mechanism input files
     # including the full file path is recommended
-    watermech.chemfile = waterfile
-    watermech.thermfile = Path(data_dir / "therm.dat")
+    watermech.chemfile = str(waterfile)
+    watermech.thermfile = str(data_dir / "therm.dat")
     # pre-process
     ierror = watermech.preprocess()
     if ierror != 0:
@@ -96,8 +96,8 @@ MyGasMech = ck.Chemistry(label="EQ")
 #
 # create a new mechanism input file
 #
-mymechfile = Path(current_dir / "fuels_chem.inp")
-m = Path.open(mymechfile, "w")
+mymechfile = Path(current_dir) / "fuels_chem.inp"
+m = mymechfile.open(mode="w")
 # the mechanism contains only the necessary species
 # (fuel, oxygen, and major combustion products)
 # declare elements
@@ -128,8 +128,8 @@ m.close()
 #
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = mymechfile
-MyGasMech.thermfile = Path(
+MyGasMech.chemfile = str(mymechfile)
+MyGasMech.thermfile = str(
     data_dir
     / "ModelFuelLibrary"
     / "Full"
@@ -185,8 +185,8 @@ add_frac = np.zeros(MyGasMech.KK, dtype=np.double)
 #
 # compute fuel heating values
 #
-LHV = np.zeros(len(fuels), dtype=np.double)
-HHV = np.zeros_like(LHV, dtype=np.double)
+lhv = np.zeros(len(fuels), dtype=np.double)
+hhv = np.zeros_like(lhv, dtype=np.double)
 fuelcount = 0
 for f in fuels:
     # re-set the fuel composition (mole/volume fractions)
@@ -196,14 +196,14 @@ for f in fuels:
         MyGasMech, fuel.X, oxid.X, add_frac, products, equivalenceratio=1.0
     )
     # get the mixture enthalpy of the initial mixture [erg/g]
-    Hunburned = unburned.HML() / unburned.WTM
+    h_unburned = unburned.HML() / unburned.WTM
     # compute the complete combustion state (fixed temperature and pressure)
     # this step mimics the complete burning of the initial fuel-oxygen mixture
     # at constant pressure and the subsequent cooling of the combustion products
     # back to the original temperature
     burned = unburned.Find_Equilibrium()
     # get the mixture enthalpy of the final mixture [erg/g]
-    Hburned = burned.HML() / burned.WTM
+    h_burned = burned.HML() / burned.WTM
     # get total fuel mass fraction
     fmass = 0.0e0
     bmassfrac = unburned.Y
@@ -218,8 +218,8 @@ for f in fuels:
         print(f">>> error no fuel species in the unburned mixture {f}")
         exit()
     # compute the heating values [erg/g-fuel]
-    LHV[fuelcount] = -(Hburned - Hunburned) / fmass
-    HHV[fuelcount] = -(Hburned - (Hunburned + heatvaporization * wmass)) / fmass
+    lhv[fuelcount] = -(h_burned - h_unburned) / fmass
+    hhv[fuelcount] = -(h_burned - (h_unburned + heatvaporization * wmass)) / fmass
     fuelcount += 1
 
 # display results
@@ -228,18 +228,18 @@ print(
 )
 for i in range(len(fuels)):
     print(f"fuel composition:  {fuels[i]}")
-    print(f" LHV [kJ/g-fuel]:  {LHV[i] / ck.ERGS_PER_JOULE / 1.0e3}")
-    print(f" HHV [kJ/g-fuel]:  {HHV[i] / ck.ERGS_PER_JOULE / 1.0e3}\n")
+    print(f" LHV [kJ/g-fuel]:  {lhv[i] / ck.ERGS_PER_JOULE / 1.0e3}")
+    print(f" HHV [kJ/g-fuel]:  {hhv[i] / ck.ERGS_PER_JOULE / 1.0e3}\n")
 
 # return results for comparisons
-resultfile = Path(current_dir / "heatingvalues.result")
+resultfile = Path(current_dir) / "heatingvalues.result"
 results = {}
-LHV = LHV / ck.ERGS_PER_JOULE / 1.0e3
-results["state-LHV"] = LHV.tolist()
-HHV = HHV / ck.ERGS_PER_JOULE / 1.0e3
-results["state-HHV"] = HHV.tolist()
+lhv = lhv / ck.ERGS_PER_JOULE / 1.0e3
+results["state-LHV"] = lhv.tolist()
+hhv = hhv / ck.ERGS_PER_JOULE / 1.0e3
+results["state-HHV"] = hhv.tolist()
 #
-r = Path.open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

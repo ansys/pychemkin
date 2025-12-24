@@ -38,7 +38,7 @@ from ansys.chemkin.core.batchreactors.batchreactor import (
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = Path.cwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(False)
@@ -49,13 +49,13 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = Path(ck.ansys_dir / "reaction" / "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on GRI 3.0
 gasoline = ck.Chemistry(label="gasoline 14comp")
 # set mechanism input files
 # including the full file path is recommended
-gasoline.chemfile = Path(mechanism_dir / "gasoline_14comp_WBencrypt.inp")
+gasoline.chemfile = str(mechanism_dir / "gasoline_14comp_WBencrypt.inp")
 # preprocess the mechanism files
 ierror = gasoline.preprocess()
 # create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
@@ -183,12 +183,12 @@ else:
     plt.savefig("ignition_delay.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = Path(current_dir / "ignitiondelay.result")
+resultfile = Path(current_dir) / "ignitiondelay.result"
 results = {}
 results["state-temperature_inverse"] = temp_inv.tolist()
 results["state-ignition_delay"] = delaytime.tolist()
 #
-r = Path.open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

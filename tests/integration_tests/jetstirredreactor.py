@@ -37,7 +37,7 @@ from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_FixedTemperature as PSR
 
 # check working directory
-current_dir = Path.cwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -48,13 +48,13 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = Path(ck.ansys_dir / "reaction" / "data" / "ModelFuelLibrary" / "Skeletal")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data" / "ModelFuelLibrary" / "Skeletal"
 mechanism_dir = data_dir
 # create a chemistry set based on the hydrogen-ammonia mechanism
 MyGasMech = ck.Chemistry(label="hydrogen")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = Path(mechanism_dir / "Hydrogen-Ammonia-NOx_chem_MFL2021.inp")
+MyGasMech.chemfile = str(mechanism_dir / "Hydrogen-Ammonia-NOx_chem_MFL2021.inp")
 # preprocess the mechanism files
 ierror = MyGasMech.preprocess()
 # create a premixed fuel-oxidizer mixture
@@ -82,7 +82,7 @@ JSR.set_initial_timesteps(1000)
 deltatemp = 25.0
 numbruns = 19
 # find H2O species index
-H2Oindex = MyGasMech.get_specindex("h2o")
+h2o_index = MyGasMech.get_specindex("h2o")
 # solution arrays
 inlet_temp = np.zeros(numbruns, dtype=np.double)
 h2o_solution = np.zeros_like(inlet_temp, dtype=np.double)
@@ -106,7 +106,7 @@ for i in range(numbruns):
     # solnmixture.list_composition(mode="mole")
     # store solution values
     inlet_temp[i] = solnmixture.temperature
-    h2o_solution[i] = solnmixture.X[H2Oindex]
+    h2o_solution[i] = solnmixture.X[h2o_index]
     # update reactor temperature
     temp += deltatemp
     JSR.temperature = temp
@@ -157,12 +157,12 @@ else:
     plt.savefig("jet_stirred_reactor.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = Path(current_dir / "jetstirredreactor.result")
+resultfile = Path(current_dir) / "jetstirredreactor.result"
 results = {}
 results["state-temperature_inlet"] = inlet_temp.tolist()
 results["species-H2O_mole_fraction"] = h2o_solution.tolist()
 #
-r = Path.open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

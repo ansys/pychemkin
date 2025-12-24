@@ -31,7 +31,7 @@ import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = Path.cwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -42,14 +42,14 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = Path(ck.ansys_dir / "reaction" / "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on GRI 3.0
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = Path(mechanism_dir / "grimech30_chem.inp")
-MyGasMech.thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
+MyGasMech.chemfile = str(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
 # transport data not needed
 # preprocess the mechanism files
 ierror = MyGasMech.preprocess()
@@ -103,12 +103,12 @@ else:
     plt.savefig("equilibrium_composition.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = Path(current_dir / "equilibriumcomposition.result")
+resultfile = Path(current_dir) / "equilibriumcomposition.result"
 results = {}
 results["state-temperature"] = t.tolist()
 results["species-NO_mole_fraction"] = no.tolist()
 #
-r = Path.open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

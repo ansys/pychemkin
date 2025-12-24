@@ -37,7 +37,7 @@ from ansys.chemkin.core.inlet import Stream
 from ansys.chemkin.core.logger import logger
 
 # check working directory
-current_dir = Path.cwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set interactive mode for plotting the results
 # interactive = True: display plot
@@ -46,14 +46,14 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = Path(ck.ansys_dir / "reaction" / "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on the GRI mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = Path(mechanism_dir / "grimech30_chem.inp")
-MyGasMech.thermfile = Path(mechanism_dir / "grimech30_thermo.dat")
+MyGasMech.chemfile = str(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
 # preprocess the mechanism files
 ierror = MyGasMech.preprocess()
 # create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
@@ -120,23 +120,23 @@ xprofile = tubereactor.get_solution_variable_profile("time")
 # get the temperature profile [K]
 tempprofile = tubereactor.get_solution_variable_profile("temperature")
 # get the NO mass fraction profile
-YNOprofile = tubereactor.get_solution_variable_profile("NO")
+no_y_profile = tubereactor.get_solution_variable_profile("NO")
 # outlet grid index
 xout_index = solutionpoints - 1
 print(f"At the reactor outlet: x = {xprofile[xout_index]} [cm]")
-print(f"the NO mass fraction = {YNOprofile[xout_index]}")
+print(f"the NO mass fraction = {no_y_profile[xout_index]}")
 #
 # more involving post-processing by using Mixtures
 #
 # create arrays for CO, NH3, and NO2 mole fractions
-COprofile = np.zeros_like(xprofile, dtype=np.double)
-NH3profile = np.zeros_like(xprofile, dtype=np.double)
-NO2profile = np.zeros_like(xprofile, dtype=np.double)
+co2_profile = np.zeros_like(xprofile, dtype=np.double)
+nh3_profile = np.zeros_like(xprofile, dtype=np.double)
+no2_profile = np.zeros_like(xprofile, dtype=np.double)
 velocityprofile = np.zeros_like(xprofile, dtype=np.double)
 # find species index
-CO_index = MyGasMech.get_specindex("CO2")
-NH3_index = MyGasMech.get_specindex("NH3")
-NO2_index = MyGasMech.get_specindex("NO2")
+co2_index = MyGasMech.get_specindex("CO2")
+nh3_index = MyGasMech.get_specindex("NH3")
+no2_index = MyGasMech.get_specindex("NO2")
 # reactor mass flow rate (constant) [g/sec]
 massflowrate = tubereactor.mass_flowrate
 # reactor cross-section area [cm2]
@@ -153,11 +153,11 @@ for i in range(solutionpoints):
     # gas velocity [g]
     velocityprofile[i] = ratio / den
     # get CO mole fraction profile
-    COprofile[i] = solutionmixture.X[CO_index]
+    co2_profile[i] = solutionmixture.X[co2_index]
     # get NH3 mole fraction profile
-    NH3profile[i] = solutionmixture.X[NH3_index]
+    nh3_profile[i] = solutionmixture.X[nh3_index]
     # get NO2 mole fraction profile
-    NO2profile[i] = solutionmixture.X[NO2_index]
+    no2_profile[i] = solutionmixture.X[no2_index]
 # plot the profiles
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))
 plt.suptitle("Constant Temperature Plug-Flow Reactor", fontsize=16)
@@ -165,10 +165,10 @@ plt.subplot(221)
 plt.plot(xprofile, tempprofile, "r-")
 plt.ylabel("Temperature [K]")
 plt.subplot(222)
-plt.plot(xprofile, COprofile, "b-")
-plt.ylabel("CO Mole Fraction")
+plt.plot(xprofile, co2_profile, "b-")
+plt.ylabel("CO2 Mole Fraction")
 plt.subplot(223)
-plt.plot(xprofile, NO2profile, "g-")
+plt.plot(xprofile, no2_profile, "g-")
 plt.xlabel("distance [cm]")
 plt.ylabel("NO2 Mole Fraction")
 plt.subplot(224)
@@ -182,15 +182,15 @@ else:
     plt.savefig("plug_flow_reactor.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = Path(current_dir / "plugflow.result")
+resultfile = Path(current_dir) / "plugflow.result"
 results = {}
 results["state-distance"] = xprofile.tolist()
 results["state-temperature"] = tempprofile.tolist()
 results["state-velocity"] = velocityprofile.tolist()
-results["species-CO_mole_fraction"] = COprofile.tolist()
-results["species-NO2_mole_fraction"] = NO2profile.tolist()
+results["species-CO_mole_fraction"] = co2_profile.tolist()
+results["species-NO2_mole_fraction"] = no2_profile.tolist()
 #
-r = Path.open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')
