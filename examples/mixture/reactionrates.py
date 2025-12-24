@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_reaction_rates:
+""".. _ref_reaction_rates:
 
 ===================
 Rank reaction rates
@@ -46,10 +45,11 @@ from the raw data, such as isolating dominant reactions at different mixture con
 
 import os
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
+
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core.logger import logger
 
 # check working directory
 current_dir = os.getcwd()
@@ -87,7 +87,7 @@ MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
 # ============================
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 
 
 ################################################################
@@ -154,10 +154,10 @@ add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
 # create the premixed mixture to define
 premixed = ck.Mixture(MyGasMech)
 # define the actual composition by the equivalence ratio
-iError = premixed.X_by_Equivalence_Ratio(
+ierror = premixed.X_by_Equivalence_Ratio(
     MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=1.0
 )
-if iError != 0:
+if ierror != 0:
     # check fuel-air mixture creation status
     print("Error: Failed to create the fuel-air mixture.")
     exit()

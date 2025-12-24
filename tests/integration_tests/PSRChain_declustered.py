@@ -20,36 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_connected_reactors:
-
-=====================================================================
-Use a chain of individual reactors to model a fictional gas combustor
-=====================================================================
-
-This tutorial describes the process of setting up and solving a series of linked perfectly-stirred reactors
-(PSR) in PyChemkin. This is the simplest reactor network as it does not contain any recycling stream or
-outflow splitting.
-
-The PSR chain model of a fictional can combustor is displayed below
-
- .. figure:: chain_reactor_network.png
-   :scale: 80 %
-   :alt: the chain reactor network
-
-The *"primary inlet stream"* to the first reactor, the *"combustor"*, is the fuel-lean methane-air mixture
-that is formed by mixing the fuel (methane) and the heated air. The exhaust from the *"combustor"* will enter the
-second reactor, the "dilution zone"*, where the hot combustion products will be cooled by the introduction of
-additional cool air. The cooled and diluted gas mixture in the *"dilution zone"* will then travel to the third
-reactor, the *"reburning zone"*. A mixture of fuel (methane) and carbon dioxide is injected to the gas in the
-*"reburning zone"* attempting to convert any remaining carbon monoxide or nitric oxide in the exhaust gas to
-carbon dioxide or nitrogen, respectively.
-
-In this tutorial, the reactors will be solved one by one from upstream to downstream. Once the solution of the
-upstream reactor is obtained, it will be used to set up the external inlet of the immediate downstream reactor.
-This process will continue till all reactors in the chain network are solved. Since there is no recycling stream
-in this configuration, the entire reactor network can be solved in one sweep.
-"""
+"""Test for the linked PSR chain network model."""
 
 # sphinx_gallery_thumbnail_path = '_static/chain_reactor_network.png'
 
@@ -57,20 +28,22 @@ in this configuration, the entire reactor network can be solved in one sweep.
 # Import PyChemkin package and start the logger
 # =============================================
 
-import os
+from pathlib import Path
 import time
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.inlet import adiabatic_mixing_streams
-from ansys.chemkin.logger import logger
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
+from ansys.chemkin.core.inlet import (
+    Stream,  # external gaseous inlet
+    adiabatic_mixing_streams,
+)
+from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -88,21 +61,21 @@ interactive = True
 # installation in the ``/reaction/data`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on the GRI mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
+MyGasMech.chemfile = str(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
 
 ############################################
 # Pre-process the gasoline ``Chemistry Set``
 # ==========================================
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 
 ####################################################################
 # Set up gas mixtures based on the species in this ``Chemistry Set``
@@ -146,10 +119,10 @@ reburn_fuel.X = [("CH4", 0.6), ("CO2", 0.4)]
 reburn_fuel.mass_flowrate = 0.12  # [g/sec]
 
 # find the species index
-CH4_index = MyGasMech.get_specindex("CH4")
-O2_index = MyGasMech.get_specindex("O2")
-NO_index = MyGasMech.get_specindex("NO")
-CO_index = MyGasMech.get_specindex("CO")
+ch4_index = MyGasMech.get_specindex("CH4")
+o2_index = MyGasMech.get_specindex("O2")
+no_index = MyGasMech.get_specindex("NO")
+co_index = MyGasMech.get_specindex("CO")
 
 #####################################
 # Create individual PSR for each zone
@@ -202,10 +175,10 @@ print("combustor exit")
 print("=" * 40)
 print(f"temperature = {solnstream1.temperature} [K]")
 print(f"mass flow rate = {solnstream1.mass_flowrate} [g/sec]")
-print(f"CH4 = {solnstream1.X[CH4_index]}")
-print(f"O2 = {solnstream1.X[O2_index]}")
-print(f"CO = {solnstream1.X[CO_index]}")
-print(f"NO = {solnstream1.X[NO_index]}")
+print(f"CH4 = {solnstream1.X[ch4_index]}")
+print(f"O2 = {solnstream1.X[o2_index]}")
+print(f"CO = {solnstream1.X[co_index]}")
+print(f"NO = {solnstream1.X[no_index]}")
 
 # PSR #2: cooling
 cooling = PSR(solnstream1, label="cooling zone")
@@ -230,10 +203,10 @@ print("dilution zone exit")
 print("=" * 40)
 print(f"temperature = {solnstream2.temperature} [K]")
 print(f"mass flow rate = {solnstream2.mass_flowrate} [g/sec]")
-print(f"CH4 = {solnstream2.X[CH4_index]}")
-print(f"O2 = {solnstream2.X[O2_index]}")
-print(f"CO = {solnstream2.X[CO_index]}")
-print(f"NO = {solnstream2.X[NO_index]}")
+print(f"CH4 = {solnstream2.X[ch4_index]}")
+print(f"O2 = {solnstream2.X[o2_index]}")
+print(f"CO = {solnstream2.X[co_index]}")
+print(f"NO = {solnstream2.X[no_index]}")
 
 # PSR #3: reburn
 reburn = PSR(solnstream2, label="reburn zone")
@@ -257,10 +230,10 @@ print("outflow")
 print("=" * 40)
 print(f"temperature = {outflow.temperature} [K]")
 print(f"mass flow rate = {outflow.mass_flowrate} [g/sec]")
-print(f"CH4 = {outflow.X[CH4_index]}")
-print(f"O2 = {outflow.X[O2_index]}")
-print(f"CO = {outflow.X[CO_index]}")
-print(f"NO = {outflow.X[NO_index]}")
+print(f"CH4 = {outflow.X[ch4_index]}")
+print(f"O2 = {outflow.X[o2_index]}")
+print(f"CO = {outflow.X[co_index]}")
+print(f"NO = {outflow.X[no_index]}")
 
 # compute the total runtime
 runtime = time.time() - start_time
@@ -268,15 +241,15 @@ print()
 print(f"total simulation duration: {runtime} [sec]")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "PSRChain_declustered.result")
+resultfile = Path(current_dir) / "PSRChain_declustered.result"
 results = {}
 results["state-temperature"] = [outflow.temperature]
 results["state-mass_flow_rate"] = [outflow.mass_flowrate]
-results["species-mole_fraction_CH4"] = [outflow.X[CH4_index]]
-results["species-mole_fraction_CO"] = [outflow.X[CO_index]]
-results["species-mole_fraction_NO"] = [outflow.X[NO_index]]
+results["species-mole_fraction_CH4"] = [outflow.X[ch4_index]]
+results["species-mole_fraction_CO"] = [outflow.X[co_index]]
+results["species-mole_fraction_NO"] = [outflow.X[no_index]]
 #
-r = open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

@@ -19,15 +19,19 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin.logger import logger
+"""Test for gas-phase reaction rate calculation."""
+
+from pathlib import Path
+
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core.logger import logger
+
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -38,17 +42,17 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on GRI 3.0
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+MyGasMech.chemfile = str(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
+MyGasMech.tranfile = str(mechanism_dir / "grimech30_transport.dat")
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 # create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
 # create the fuel mixture
 fuelmixture = ck.Mixture(MyGasMech)
@@ -67,12 +71,13 @@ air.temperature = 1500.0
 premixed = ck.Mixture(MyGasMech)
 # products from the complete combustion of the fuel mixture and air
 products = ["CO2", "H2O", "N2"]
-# species mole fractions of added/inert mixture. can also create an additives mixture here
+# species mole fractions of added/inert mixture.
+# can also create an additives mixture here
 add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
-iError = premixed.X_by_Equivalence_Ratio(
+ierror = premixed.X_by_Equivalence_Ratio(
     MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=1.0
 )
-if iError != 0:
+if ierror != 0:
     raise RuntimeError
 # list the composition of the premixed mixture
 premixed.list_composition(mode="mole")
@@ -133,12 +138,12 @@ else:
     plt.savefig("reaction_rates.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "reactionrates.result")
+resultfile = Path(current_dir) / "reactionrates.result"
 results = {}
 results["state-order_1800"] = rxn_order.tolist()
 results["rate-net_reaction_rate_1800"] = net_rxn_rates.tolist()
 #
-r = open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

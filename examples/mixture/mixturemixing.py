@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_mixing_mixtures:
+""".. _ref_mixing_mixtures:
 
 ====================
 Combine gas mixtures
@@ -49,8 +48,8 @@ This example shows how to use these two mixing methods and understand the differ
 
 import os
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin.logger import logger
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core.logger import logger
 
 # check working directory
 current_dir = os.getcwd()
@@ -83,7 +82,7 @@ MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
 # Preprocess the mechanism files to prepare the chemistry set.
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 
 
 #####################
