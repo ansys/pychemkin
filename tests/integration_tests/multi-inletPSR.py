@@ -32,9 +32,8 @@ import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
 from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.core.logger import logger
-
-# Chemkin PSR model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import PSRSetVolumeEnergyConservation as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSRSetVolumeEnergyConservation as Psr
+from ansys.chemkin.core.utilities import find_file
 
 # check working directory
 current_dir = str(Path.cwd())
@@ -54,7 +53,11 @@ mechanism_dir = data_dir
 MyGasMech = ck.Chemistry(label="hydrogen")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = str(mechanism_dir / "Hydrogen-Ammonia-NOx_chem_MFL2021.inp")
+MyGasMech.chemfile = find_file(
+    str(mechanism_dir),
+    "Hydrogen-Ammonia-NOx_chem_MFL",
+    "inp",
+)
 # preprocess the mechanism files
 ierror = MyGasMech.preprocess()
 # create the fuel inlet
@@ -76,7 +79,7 @@ air.temperature = fuel.temperature
 air.vol_flowrate = 50.0
 # create a PSR with fixed reactor volume and
 # with the fuel inlet composition as the estimated reactor condition
-combustor = PSR(fuel, label="tincan")
+combustor = Psr(fuel, label="tincan")
 # set the estimated reactor temperature [K]
 combustor.temperature = 2000.0
 # set the reactor volume (cm3): required for PSRSetVolumeEnergyConservation model

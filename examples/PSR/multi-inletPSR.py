@@ -79,7 +79,7 @@ from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import PSRSetVolumeEnergyConservation as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSRSetVolumeEnergyConservation as Psr
 from ansys.chemkin.core.utilities import find_file
 
 # check working directory
@@ -185,7 +185,7 @@ air.vol_flowrate = 50.0
 
 # create a PSR with fixed reactor volume and
 # with the fuel inlet composition as the estimated reactor condition
-combustor = PSR(fuel, label="tincan")
+combustor = Psr(fuel, label="tincan")
 
 ############################################
 # Set up additional reactor model parameters

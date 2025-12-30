@@ -59,8 +59,8 @@ class Color:
 
     @staticmethod
     def ckprint(mode: str, msg: list = []):
-        """Customized text messages.
-
+        """Customized text messages."""
+        """
         Parameters
         ----------
             mode: string, {"normal, "info", "warning, "error", "fatal", "ok"},

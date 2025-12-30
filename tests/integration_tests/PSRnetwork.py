@@ -41,7 +41,7 @@ from ansys.chemkin.core.inlet import (
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeEnergyConservation as psr
+from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeEnergyConservation as Psr
 
 # check working directory
 current_dir = str(Path.cwd())
@@ -186,7 +186,7 @@ co_index = MyGasMech.get_specindex("CO")
 #
 
 # PSR #1: mixing zone
-mix = psr(premixed, label="mixing zone")
+mix = Psr(premixed, label="mixing zone")
 # use different guess temperature
 mix.set_estimate_conditions(option="TP", guess_temp=800.0)
 # set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
@@ -197,7 +197,7 @@ mix.set_inlet(primary_air)
 
 
 # PSR #2: flame zone
-flame = psr(premixed, label="flame zone")
+flame = Psr(premixed, label="flame zone")
 # use use the equilibrium state of the inlet gas mixture as the guessed solution
 flame.set_estimate_conditions(option="TP", guess_temp=1600.0)
 # set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
@@ -206,7 +206,7 @@ flame.residence_time = 1.5 * 1.0e-3
 flame.set_inlet(secondary_air)
 
 # PSR #3: recirculation zone
-recirculation = psr(premixed, label="recirculation zone")
+recirculation = Psr(premixed, label="recirculation zone")
 # use use the equilibrium state of the inlet gas mixture as the guessed solution
 recirculation.set_estimate_conditions(option="TP", guess_temp=1600.0)
 # set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model

@@ -95,7 +95,7 @@ class HCCIengine(Engine):
         self._nzones = c_int(nzones)
         # must use full keyword mode for multi-zone simulations
         if self._nzones.value > 1:
-            Keyword.noFullKeyword = False
+            Keyword.no_fullkeyword = False
         # zonal setup mode for the multi-zone engine simulation
         # 0 = single-zone or multi-zone with uniform zonal properties
         # 1 = multi-zone with raw species mole fractions
@@ -1310,7 +1310,7 @@ class HCCIengine(Engine):
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
         #
-        if self._nzones.value == 1 and Keyword.noFullKeyword:
+        if self._nzones.value == 1 and Keyword.no_fullkeyword:
             # use API calls
             return_value = (
                 self.__process_keywords()
@@ -1335,7 +1335,7 @@ class HCCIengine(Engine):
         msg = [Color.YELLOW, "running HCCI engine simulation ...", Color.END]
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
-        if self._nzones.value == 1 and Keyword.noFullKeyword:
+        if self._nzones.value == 1 and Keyword.no_fullkeyword:
             # single-zone HCCI
             # use API calls
             return_value = self.__run_model()

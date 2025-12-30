@@ -35,6 +35,7 @@ class SteadyStateSolver:
     """Common steady-state solver controlling parameters."""
 
     def __init__(self):
+        """Create a steady state solver object."""
         # steady-state solver control parameter class
         # mostly just keyword processing
         # >>> steady-state search algorithm:
@@ -197,7 +198,7 @@ class SteadyStateSolver:
     def set_max_pseudo_transient_call(self, maxtime: int):
         """Set max number of the pseudo transient operation."""
         """Set the maximum number of call to the pseudo transient algorithm
-        in an attempt to find the steady-state solution
+        in an attempt to find the steady-state solution.
 
         Parameters
         ----------

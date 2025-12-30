@@ -46,7 +46,7 @@ at relatively low pressure and temperature initially. The gas mixture is then
 suddenly compressed causing both the pressure and the temperature of the mixture
 to rise rapidly. The reactor/chamber pressure is monitored to identify the onset
 of auto-ignition after the compression stopped. This example models the RCM as a
-``GivenVolumeBatchReactor_EnergyConservation``, and the compression process
+``GivenVolumeBatchReactorEnergyConservation``, and the compression process
 is simulated by a predetermined time-volume profile.
 """
 
@@ -66,7 +66,7 @@ from ansys.chemkin.core import Color
 
 # chemkin batch reactor models (transient)
 from ansys.chemkin.core.batchreactors.batchreactor import (
-    GivenVolumeBatchReactor_EnergyConservation,
+    GivenVolumeBatchReactorEnergyConservation,
 )
 from ansys.chemkin.core.logger import logger
 
@@ -157,14 +157,14 @@ premixed.pressure = 3.0 * ck.P_ATM
 # Set up the rapid-compression machine
 # ====================================
 # Create the rapid-compression machine as an instance of the
-# ``GivenVolumeBatchReactor_EnergyConservation`` object because the reactor volume is
+# ``GivenVolumeBatchReactorEnergyConservation`` object because the reactor volume is
 # assigned as a function of time. The batch reactors must be associated with a
 # mixture that implicitly links the chemistry set (gas-phase mechanism and properties)
 # to the batch reactor. Additionally, it also defines the initial reactor conditions
 # (pressure, temperature, volume, and gas composition).
 
 # create a constant volume batch reactor (with energy equation)
-MyCONV = GivenVolumeBatchReactor_EnergyConservation(premixed, label="RCM")
+MyCONV = GivenVolumeBatchReactorEnergyConservation(premixed, label="RCM")
 # show initial gas composition inside the reactor
 MyCONV.list_composition(mode="mole")
 

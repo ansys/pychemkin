@@ -34,7 +34,8 @@ from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeFixedTemperature as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeFixedTemperature as Psr
+from ansys.chemkin.core.utilities import find_file
 
 # check working directory
 current_dir = str(Path.cwd())
@@ -54,7 +55,11 @@ mechanism_dir = data_dir
 MyGasMech = ck.Chemistry(label="hydrogen")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = str(mechanism_dir / "Hydrogen-Ammonia-NOx_chem_MFL2021.inp")
+MyGasMech.chemfile = find_file(
+    str(mechanism_dir),
+    "Hydrogen-Ammonia-NOx_chem_MFL",
+    "inp",
+)
 # preprocess the mechanism files
 ierror = MyGasMech.preprocess()
 # create a premixed fuel-oxidizer mixture
@@ -71,7 +76,7 @@ feed.temperature = temp
 feed.mass_flowrate = 0.11
 # create the Jet-Stirred Reactor
 # use the inlet gas property as the estimated reactor condition
-JSR = PSR(feed, label="JSR")
+JSR = Psr(feed, label="JSR")
 # connect the inlet to the reactor
 JSR.set_inlet(feed)
 # set PSR residence time (sec): required for PSRSetResTimeFixedTemperature model

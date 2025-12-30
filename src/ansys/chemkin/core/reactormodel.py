@@ -111,7 +111,7 @@ class Keyword:
     # the rest of the keywords can be set by keyword input lines (i.e., using the setkeyword method).
     # Under the full-keyword mode, all keywords and their parameters are set by keyword input lines, and specifying
     # those _protectedkeywords via the setkeyword method are required.
-    noFullKeyword = True  # default: API-call mode
+    no_fullkeyword = True  # default: API-call mode
 
     def __init__(self, phrase: str, value: Union[float, bool, str], data_type: str):
         """Initialize the Chemkin keyword."""
@@ -151,7 +151,7 @@ class Keyword:
                 logger.error(this_msg)
             ierr = 1
         # block the protected keywords
-        if Keyword.noFullKeyword:
+        if Keyword.no_fullkeyword:
             if phrase.upper() in Keyword._protectedkeywords:
                 msg = [
                     Color.PURPLE,
@@ -177,11 +177,11 @@ class Keyword:
 
     @staticmethod
     def setfullkeywords(mode: bool):
+        """Require all keywords and their parameters must be specified."""
         """All keywords and their parameters must be specified by
         using the setkeyword method and will be passed to the reactor model
         for further processing.
-        """
-        """
+
         Parameters
         ----------
             mode: boolean
@@ -190,9 +190,9 @@ class Keyword:
         """
         if mode:
             # turn ON the full keyword mode (no checking on protected keywords)
-            Keyword.noFullKeyword = False
+            Keyword.no_fullkeyword = False
         else:
-            Keyword.noFullKeyword = True
+            Keyword.no_fullkeyword = True
 
     def show(self):
         """Display the Chemkin keyword and its parameter value."""
@@ -376,7 +376,7 @@ class BooleanKeyword(Keyword):
 
     def __init__(self, phrase: str):
         """Set up a Chemkin keyword with a boolean parameter or
-        with no parameter..
+        with no parameter.
         """
         """
         Parameters
@@ -416,7 +416,9 @@ class RealKeyword(Keyword):
     """A Chemkin real keyword."""
 
     def __init__(self, phrase: str, value: float = 0.0e0):
-        """Set up a Chemkin keyword with a real number (floating number) parameter."""
+        """Set up a Chemkin keyword with a real number
+        (floating number) parameter.
+        """
         """
         Parameters
         ----------
@@ -455,7 +457,7 @@ class StringKeyword(Keyword):
 
 
 class Profile:
-    """Generic Chemkin profile keyword class."""
+    """Chemkin profile keyword class."""
 
     def __init__(self, key: str, x: npt.NDArray[np.double], y: npt.NDArray[np.double]):
         """Create a profile object."""
@@ -631,7 +633,7 @@ class Profile:
         # special treatment for pressure profile
         factor = 1.0e0
         if self._profilekeyword == "PPRO":
-            if Keyword.noFullKeyword:
+            if Keyword.no_fullkeyword:
                 # use API calls: pressure profile units = dynes/cm2
                 pass
             else:
@@ -656,7 +658,7 @@ class Profile:
 # defining methods to set chemistry, process keywords, and run
 #
 class ReactorModel:
-    """A generic Chemkin reactor model framework."""
+    """Serve as a generic Chemkin reactor model framework."""
 
     def __init__(self, reactor_condition: Stream, label: str):
         """Initialize the basic parameters of Chemkin reactor model."""
@@ -1803,9 +1805,9 @@ class ReactorModel:
         return self.runstatus
 
     def __process_keywords(self) -> int:
-        """Generic Chemkin reactor keyword processing method."""
+        """Serve as a generic Chemkin reactor keyword processing method."""
         """
-        To be overridden by child classes
+        To be overridden by child classes.
 
         Returns
         -------
@@ -1821,7 +1823,7 @@ class ReactorModel:
         a particular Chemkin reactor model.
         """
         """
-        To be overridden by child classes
+        To be overridden by child classes.
 
         Returns
         -------
@@ -1833,9 +1835,9 @@ class ReactorModel:
         return ierr
 
     def run(self) -> int:
-        """Generic Chemkin run reactor model method."""
+        """Serve as a generic Chemkin run reactor model method."""
         """
-        To be overridden by child classes
+        To be overridden by child classes.
 
         Returns
         -------

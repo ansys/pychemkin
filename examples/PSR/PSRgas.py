@@ -77,7 +77,7 @@ from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeEnergyConservation as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeEnergyConservation as Psr
 from ansys.chemkin.core.utilities import find_file
 
 # check working directory
@@ -188,7 +188,7 @@ feed.mass_flowrate = 432.0
 # changes the estimated reactor temperature from 298 to 1700 [K].
 # The residence time of the nominal case is set by
 # the ``residence_time()`` method.
-sphere = PSR(feed, label="PSR_1")
+sphere = Psr(feed, label="PSR_1")
 
 ############################################
 # Set up additional reactor model parameters

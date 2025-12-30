@@ -41,7 +41,7 @@ the base batch reactor model.
 
 This example models the ignition of a stoichiometric hydrogen-air mixture
 (\ :math:`\phi = 1`\ ) in a balloon (constant-pressure) reactor. The reactor is created
-as an instance of the ``GivenPressureBatchReactor_EnergyConservation`` object.
+as an instance of the ``GivenPressureBatchReactorEnergyConservation`` object.
 The initial gas mixture in the batch reactor is set by the properties of
 the hydrogen-air mixture. You get the ignition delay time (if auto-ignition of
 the hydrogen-air mixture occurs during the simulation time) and plot the predicted
@@ -62,7 +62,7 @@ from ansys.chemkin.core import Color
 
 # chemkin batch reactor models (transient)
 from ansys.chemkin.core.batchreactors.batchreactor import (
-    GivenPressureBatchReactor_EnergyConservation,
+    GivenPressureBatchReactorEnergyConservation,
 )
 from ansys.chemkin.core.logger import logger
 import matplotlib.pyplot as plt  # plotting
@@ -133,14 +133,14 @@ fuelmixture.list_composition(mode="mole")
 # Set up a constant-pressure batch reactor (with energy equation)
 # ===============================================================
 # Create the constant-pressure batch reactor as an instance of the
-# ``GivenPressureBatchReactor_EnergyConservation`` object
+# ``GivenPressureBatchReactorEnergyConservation`` object
 # because the reactor pressure is kept constant
 # (or assigned as a function of time). The batch reactors must be
 # associated with a mixture, which implicitly links the chemistry set
 # (gas-phase mechanism and properties) to the batch reactor. Additionally,
 # it defines the initial conditions (pressure, temperature, volume,
 # and gas composition) of the batch reactor.
-MyCONP = GivenPressureBatchReactor_EnergyConservation(fuelmixture, label="tran")
+MyCONP = GivenPressureBatchReactorEnergyConservation(fuelmixture, label="tran")
 
 ##############################
 # List the mixture composition

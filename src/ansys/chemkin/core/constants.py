@@ -43,7 +43,9 @@ R_GAS_CAL = (
 
 
 class Air:
-    """define the "air" composition in PyChemkin with a fixed mixture "recipe".
+    """define the "air" composition in PyChemkin with a fixed mixture "recipe"."""
+
+    """
     A "recipe" is a list of tuples of ("species symbol", fraction) to define a
     gas mixture in PyChemkin.
     This class uses the upper case symbols for oxygen and nitrogen.
@@ -51,15 +53,19 @@ class Air:
 
     @staticmethod
     def x() -> list[tuple[str, float]]:
+        """Returns the 'air' composition in mole fractions."""
         return [("O2", 0.21), ("N2", 0.79)]
 
     @staticmethod
     def y() -> list[tuple[str, float]]:
+        """Returns the 'air' composition in mass fractions."""
         return [("O2", 0.23), ("N2", 0.77)]
 
 
 class air:
-    """define the "air" composition in PyChemkin with a fixed mixture "recipe".
+    """define the "air" composition in PyChemkin with a fixed mixture "recipe"."""
+
+    """
     A "recipe" is a list of tuples of ("species symbol", fraction) to define a
     gas mixture in PyChemkin.
     This class uses the lower case symbols for oxygen and nitrogen.
@@ -67,16 +73,18 @@ class air:
 
     @staticmethod
     def x() -> list[tuple[str, float]]:
+        """Returns the 'air' composition in mole fractions."""
         return [("o2", 0.21), ("n2", 0.79)]
 
     @staticmethod
     def y() -> list[tuple[str, float]]:
+        """Returns the 'air' composition in mass fractions."""
         return [("o2", 0.23), ("n2", 0.77)]
 
 
 def water_heat_vaporization(temperature: float) -> float:
-    """Get the heat if vporization of water at the given temperature [K].
-
+    """Get the heat if vporization of water at the given temperature [K]."""
+    """
     Parameters
     ----------
         temperature: double
@@ -89,30 +97,30 @@ def water_heat_vaporization(temperature: float) -> float:
 
     """
     # critical temperature of water [K]
-    Tc = 647.096
+    tc = 647.096
     # reduce temperature
-    Tr = temperature / Tc
+    tr = temperature / tc
     # check value
     if temperature < 1.5e2:
         print("temperature value is too low.")
         exit()
-    elif Tr >= 1.0:
+    elif tr >= 1.0:
         print(
-            f"temperature value is above the critical temperature of wwater {Tc} [K]."
+            f"temperature value is above the critical temperature of wwater {tc} [K]."
         )
         exit()
     #
     a = (5.1546e7, 0.28402, -0.15843, 0.2375)
-    Trm1 = 1.0 - Tr
+    tr_m1 = 1.0 - tr
     #
     index = 1
     fac = 1.0
     exponent = 0.0
     while index < 4:
         exponent += a[index] * fac
-        fac *= Tr
+        fac *= tr
         index += 1
-    h = Trm1**exponent
+    h = tr_m1**exponent
     # heat of vaporization [J/kmol]
     h *= a[0]
     # convert to [erg/g-water]

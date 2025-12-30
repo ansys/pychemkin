@@ -871,7 +871,7 @@ class PremixedFlame(Flame):
         return mixturetarget
 
 
-class BurnedStabilized_GivenTemperature(PremixedFlame):
+class BurnedStabilizedGivenTemperature(PremixedFlame):
     """Burner-stabilized premixed flame with given temperature profile."""
 
     def __init__(self, inlet: Stream, label: Union[str, None] = None):
@@ -902,7 +902,7 @@ class BurnedStabilized_GivenTemperature(PremixedFlame):
         self.setkeyword("TGIV", True)
 
 
-class BurnedStabilized_EnergyEquation(PremixedFlame):
+class BurnedStabilizedEnergyEquation(PremixedFlame):
     """Burner-stabilized premixed flame."""
 
     def __init__(self, inlet: Stream, label: Union[str, None] = None):

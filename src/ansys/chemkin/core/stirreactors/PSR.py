@@ -44,7 +44,7 @@ from ansys.chemkin.core.reactormodel import Keyword
 from ansys.chemkin.core.stirreactors.openreactor import OpenReactor
 
 
-class perfectlystirredreactor(OpenReactor):
+class PerfectlyStirredReactor(OpenReactor):
     """Generic perfectly-stirred reactor model."""
 
     def __init__(self, guessedmixture: Stream, label: Union[str, None] = None):
@@ -98,10 +98,10 @@ class perfectlystirredreactor(OpenReactor):
         # Perfectly-Stirred Reactor (PSR) model
         self._reactortype = c_int(2)
         # Steady-State PSR only
-        self._solvertype = c_int(self.SolverTypes.get("SteadyState", 2))
+        self._solvertype = c_int(self.solver_types.get("SteadyState", 2))
         # default options
-        self._problemtype = c_int(self.ProblemTypes.get("SETVOL", 1))
-        self._energytype = c_int(self.EnergyTypes.get("ENERGY", 1))
+        self._problemtype = c_int(self.problem_types.get("SETVOL", 1))
+        self._energytype = c_int(self.energy_types.get("ENERGY", 1))
         # set reactor number (single reactor)
         self.ireac = c_int(1)
 
@@ -283,10 +283,10 @@ class perfectlystirredreactor(OpenReactor):
         return ierr
 
     def set_reactor_index(self, reactorindex: int):
+        """Assign the reactor index/number."""
         """Assign the reactor index/number of the current reactor
         in the reactor network.
-        """
-        """
+
         This method should be called by the PSR cluster/network Class/Module
         For single PSR the reactor index is always 1 (default)
 
@@ -303,10 +303,10 @@ class perfectlystirredreactor(OpenReactor):
     def set_estimate_conditions(
         self, option: str, guess_temp: Union[float, None] = None
     ):
+        """Reset the initial/guessed reactor gas mixture."""
         """Reset the initial/guessed reactor gas mixture properties to
         improve the steady-state solution finding performance.
-        """
-        """
+
         Parameters
         ----------
             option: str, {"TP", "HP", "TT"}
@@ -428,8 +428,10 @@ class perfectlystirredreactor(OpenReactor):
             exit()
 
     def validate_inputs(self) -> int:
-        """Validate the keywords specified by the user before running the simulation."""
-        """
+        """Validate the keywords."""
+        """Validate the keywords specified by the user before
+        running the simulation.
+
         Returns
         -------
             error code: integer
@@ -736,7 +738,7 @@ class perfectlystirredreactor(OpenReactor):
         ]
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
-        if Keyword.noFullKeyword:
+        if Keyword.no_fullkeyword:
             # use API calls
             ret_val = (
                 self.__process_keywords()
@@ -768,7 +770,7 @@ class perfectlystirredreactor(OpenReactor):
         msg = [Color.YELLOW, "running reactor simulation ...", Color.END]
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
-        if Keyword.noFullKeyword:
+        if Keyword.no_fullkeyword:
             # use API calls
             ret_val = self.__run_model()
         # update run status
@@ -786,10 +788,10 @@ class perfectlystirredreactor(OpenReactor):
         return ret_val
 
     def process_solution(self) -> Stream:
+        """Post-process solution."""
         """Post-process solution to extract the raw solution variable data
         package the steady-state solution into a mixture object.
-        """
-        """
+
         Returns
         -------
             smixture: Stream object
@@ -865,7 +867,7 @@ class perfectlystirredreactor(OpenReactor):
         return smixture
 
 
-class PSRSetResTimeEnergyConservation(perfectlystirredreactor):
+class PSRSetResTimeEnergyConservation(PerfectlyStirredReactor):
     """PSR model with given reactor reasidence time (CONP)
     and solve energy equation (ENERGY).
     rho_PSR * Vol_PSR / residence_time = mass_flow_rate
@@ -889,8 +891,8 @@ class PSRSetResTimeEnergyConservation(perfectlystirredreactor):
         # initialization
         super().__init__(guessedmixture, label)
         # specify residence
-        self._problemtype = c_int(self.ProblemTypes.get("SETTAU", 2))
-        self._energytype = c_int(self.EnergyTypes.get("ENERGY", 1))
+        self._problemtype = c_int(self.problem_types.get("SETTAU", 2))
+        self._energytype = c_int(self.energy_types.get("ENERGY", 1))
         # heat transfer parameters
         self._heat_loss_rate = c_double(0.0e0)
         self._heat_transfer_coefficient = 0.0e0
@@ -1019,7 +1021,7 @@ class PSRSetResTimeEnergyConservation(perfectlystirredreactor):
             self.setkeyword(key="AREAQ", value=value)
 
 
-class PSRSetVolumeEnergyConservation(perfectlystirredreactor):
+class PSRSetVolumeEnergyConservation(PerfectlyStirredReactor):
     """PSR model with given reactor volume (CONV)
     and solve energy equation (ENERGY).
     """
@@ -1046,8 +1048,8 @@ class PSRSetVolumeEnergyConservation(perfectlystirredreactor):
         # initialization
         super().__init__(guessedmixture, label)
         # specify volume
-        self._problemtype = c_int(self.ProblemTypes.get("SETVOL", 1))
-        self._energytype = c_int(self.EnergyTypes.get("ENERGY", 1))
+        self._problemtype = c_int(self.problem_types.get("SETVOL", 1))
+        self._energytype = c_int(self.energy_types.get("ENERGY", 1))
         # heat transfer parameters
         self._heat_loss_rate = c_double(0.0e0)
         self._heat_transfer_coefficient = 0.0e0
@@ -1176,7 +1178,7 @@ class PSRSetVolumeEnergyConservation(perfectlystirredreactor):
             self.setkeyword(key="AREAQ", value=value)
 
 
-class PSRSetResTimeFixedTemperature(perfectlystirredreactor):
+class PSRSetResTimeFixedTemperature(PerfectlyStirredReactor):
     """PSR model with given reactor reasidence time (CONP)
     and reactor temperature (GivenT).
     """
@@ -1203,11 +1205,11 @@ class PSRSetResTimeFixedTemperature(perfectlystirredreactor):
         # initialization
         super().__init__(guessedmixture, label)
         # specify residence time
-        self._problemtype = c_int(self.ProblemTypes.get("SETTAU", 2))
-        self._energytype = c_int(self.EnergyTypes.get("GivenT", 2))
+        self._problemtype = c_int(self.problem_types.get("SETTAU", 2))
+        self._energytype = c_int(self.energy_types.get("GivenT", 2))
 
 
-class PSRSetVolumeFixedTemperature(perfectlystirredreactor):
+class PSRSetVolumeFixedTemperature(PerfectlyStirredReactor):
     """PSR model with given reactor volume (CONV)
     and reactor temperature (GivenT).
     """
@@ -1234,5 +1236,5 @@ class PSRSetVolumeFixedTemperature(perfectlystirredreactor):
         # initialization
         super().__init__(guessedmixture, label)
         # specify volume
-        self._problemtype = c_int(self.ProblemTypes.get("SETVOL", 1))
-        self._energytype = c_int(self.EnergyTypes.get("GivenT", 2))
+        self._problemtype = c_int(self.problem_types.get("SETVOL", 1))
+        self._energytype = c_int(self.energy_types.get("GivenT", 2))

@@ -24,7 +24,7 @@
 
 import ctypes
 from ctypes import POINTER, c_char_p, c_double, c_int
-import os
+from pathlib import Path
 from typing import Dict, List, Union
 
 import numpy as np
@@ -276,7 +276,7 @@ def check_active_chemistryset(chem_index: int) -> bool:
 class Chemistry:
     """define and preprocess Chemkin chemistry set."""
 
-    realgas_CuEOS = [
+    realgas_cueos = [
         "ideal gas",
         "Van der Waals",
         "Redlich-Kwong",
@@ -351,10 +351,10 @@ class Chemistry:
         # set the mechanism input files names if given
         self.set_file_names(chem, surf, therm, tran)
         # check surface mechanism
-        if os.path.isfile(self._surf_file):
+        if Path(self._surf_file).is_file():
             self._index_surf = ctypes.c_int(1)
         # check transport data file
-        if os.path.isfile(self._tran_file):
+        if Path(self._tran_file).is_file():
             self._index_tran = ctypes.c_int(1)
 
     @property
@@ -428,7 +428,7 @@ class Chemistry:
 
         """
         self._tran_file = filename
-        if os.path.isfile(self._tran_file):
+        if Path(self._tran_file).is_file():
             self._index_tran = ctypes.c_int(1)
         else:
             self._index_tran = c_int(0)
@@ -513,7 +513,7 @@ class Chemistry:
 
         """
         self._surf_file = filename
-        if os.path.isfile(self._surf_file):
+        if Path(self._surf_file).is_file():
             self._index_surf = ctypes.c_int(1)
         else:
             self._index_surf = c_int(0)
@@ -556,7 +556,7 @@ class Chemistry:
             self._gas_file = "chem.inp"
         if len(surf) > 1:
             self._surf_file = surf
-            if os.path.isfile(self._surf_file):
+            if Path(self._surf_file).is_file():
                 self._index_surf = ctypes.c_int(1)
             else:
                 self._index_surf = ctypes.c_int(0)
@@ -579,7 +579,7 @@ class Chemistry:
             self._therm_file = "therm.dat"
         if len(tran) > 1:
             self._tran_file = tran
-            if os.path.isfile(self._tran_file):
+            if Path(self._tran_file).is_file():
                 self._index_tran = ctypes.c_int(1)
             else:
                 self._index_tran = c_int(0)
@@ -606,7 +606,7 @@ class Chemistry:
 
         """
         # check minimum set of required files
-        if not os.path.isfile(self._gas_file):
+        if not Path(self._gas_file).is_file():
             msg = [
                 Color.RED,
                 "gas mechanism file",
@@ -617,7 +617,7 @@ class Chemistry:
             this_msg = Color.SPACE.join(msg)
             logger.critical(this_msg)
             exit()
-        if not os.path.isfile(self._therm_file):
+        if not Path(self._therm_file).is_file():
             msg = [
                 Color.MAGENTA,
                 "thermodynamic data file not found/specified.",
@@ -1564,7 +1564,7 @@ class Chemistry:
             msg = [
                 Color.YELLOW,
                 "real-gas cubic EOS model",
-                Chemistry.realgas_CuEOS[self._eos.value],
+                Chemistry.realgas_cueos[self._eos.value],
                 "is turned ON.",
                 Color.END,
             ]
@@ -1606,8 +1606,8 @@ class Chemistry:
     def get_reaction_parameters(
         self,
     ) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double], npt.NDArray[np.double]]:
-        """Get the Arrhenius reaction rate parameters of all gas-phase reactions.
-
+        """Get the Arrhenius reaction rate parameters of all gas-phase reactions."""
+        """
         Returns
         -------
             a_factor: 1-D double array
@@ -1619,7 +1619,8 @@ class Chemistry:
 
         """
         reactionsize = self.ii_gas
-        # pre-exponent A factor of all gas-phase reactions in the mechanism in cgs units [mole-cm3-sec-K]
+        # pre-exponent A factor of all gas-phase reactions in the mechanism
+        # in cgs units [mole-cm3-sec-K]
         a_factor = np.zeros(shape=reactionsize, dtype=np.double)
         # temperature exponent of all reactions [-]
         beta = np.zeros_like(a_factor, dtype=np.double)
@@ -1636,8 +1637,8 @@ class Chemistry:
         return a_factor, beta, act_energy
 
     def set_reaction_afactor(self, reaction_index: int, a_factor: float):
-        """(Re)set the Arrhenius A-Factor of the given reaction.
-
+        """(Re)set the Arrhenius A-Factor of the given reaction."""
+        """
         Parameters
         ----------
             reaction_index: integer
@@ -1680,8 +1681,8 @@ class Chemistry:
             exit()
 
     def get_reaction_afactor(self, reaction_index: int) -> float:
-        """Get the Arrhenius A-Factor of the given reaction.
-
+        """Get the Arrhenius A-Factor of the given reaction."""
+        """
         Parameters
         ----------
             reaction_index: integer
@@ -1726,8 +1727,10 @@ class Chemistry:
         return a_factor.value
 
     def get_gas_reaction_string(self, reaction_index: int) -> str:
-        """Get the reaction string of the gas-phase reaction specified by the reaction index.
-
+        """Get the reaction string of the gas-phase reaction specified
+        by the reaction index.
+        """
+        """
         Parameters
         ----------
             reaction_index: integer

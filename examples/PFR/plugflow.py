@@ -36,8 +36,8 @@ the reactor as the inlet materials march toward the reactor exit. Typically,
 the pressure of the PFR is fixed. However, Chemkin does permit the use of
 a pressure profile to enforce a certain pressure gradient in the PFR.
 
-Use the ``PlugFlowReactor_FixedTemperature()`` or
-``PlugFlowReactor_EnergyConservation()`` method to create a PFR.
+Use the ``PFRFixedTemperature()`` or
+``PFREnergyConservation()`` method to create a PFR.
 Unlike the closed batch reactor model, which is instantiated by a mixture,
 the open reactor model, such as the PFR model, is initiated by a stream, which is
 simply a mixture with the addition of the inlet mass/volumetric
@@ -72,7 +72,7 @@ import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
 
 # chemkin plug flow reactor model
-from ansys.chemkin.core.flowreactors.PFR import PlugFlowReactor_FixedTemperature
+from ansys.chemkin.core.flowreactors.PFR import PFRFixedTemperature
 from ansys.chemkin.core.inlet import Stream
 from ansys.chemkin.core.logger import logger
 
@@ -140,12 +140,12 @@ exhaust.velocity = 26.815
 #####################################
 # Create the plug flow reactor object
 # ===================================
-# Use the ``PlugFlowReactor_FixedTemperature()`` method to create
+# Use the ``PFRFixedTemperature()`` method to create
 # a plug flow reactor. The required input parameter of
 # the open reactor models in PyChemkin is the stream, while PyChemkin
 # batch reactor models take a mixture as the input parameter. In this case,
 # the exhaust stream is used to create a PFR named ``tubereactor``.
-tubereactor = PlugFlowReactor_FixedTemperature(exhaust)
+tubereactor = PFRFixedTemperature(exhaust)
 
 ############################################
 # Set up additional reactor model parameters

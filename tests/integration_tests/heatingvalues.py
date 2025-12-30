@@ -29,11 +29,13 @@ import numpy as np  # number crunching
 import ansys.chemkin.core as ck
 from ansys.chemkin.core import Color
 from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.utilities import find_file
 
 # check working directory
 current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set mechanism directory (the default Chemkin mechanism data directory)
+global data_dir
 data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 logger.debug("data directory: " + str(data_dir))
 # set pressure & temperature condition
@@ -138,12 +140,13 @@ m.close()
 # set mechanism input files
 # including the full file path is recommended
 MyGasMech.chemfile = str(mymechfile)
-MyGasMech.thermfile = str(
-    data_dir
-    / "ModelFuelLibrary"
-    / "Full"
-    / "Gasoline-Diesel-Biodiesel_PAH_NOx_therm_MFL2023.dat"
+therm_dir = str(data_dir / "ModelFuelLibrary" / "Full")
+MyGasMech.thermfile = find_file(
+    therm_dir,
+    "Gasoline-Diesel-Biodiesel_PAH_NOx_therm_MFL",
+    "dat",
 )
+
 # pre-process
 ierror = MyGasMech.preprocess()
 if ierror == 0:
@@ -152,6 +155,7 @@ else:
     print(Color.RED + ">>> preprocess failed!", end=Color.END)
     exit()
 #
+exit()
 # set pressure & temperature condition
 thispressure = ck.P_ATM
 thistemperature = 298.15

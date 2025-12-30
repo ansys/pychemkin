@@ -32,7 +32,7 @@ from ansys.chemkin.core import Color
 
 # chemkin batch reactor model (transient)
 from ansys.chemkin.core.batchreactors.batchreactor import (
-    GivenPressureBatchReactor_FixedTemperature,
+    GivenPressureBatchReactorFixedTemperature,
 )
 from ansys.chemkin.core.logger import logger
 
@@ -71,7 +71,7 @@ mist.pressure = 100.0 * ck.P_ATM
 # mist.set_realgas_mixing_rule(rule=0)
 # create a constant pressure batch reactor (with given temperature)
 #
-tank = GivenPressureBatchReactor_FixedTemperature(mist, label="tank")
+tank = GivenPressureBatchReactorFixedTemperature(mist, label="tank")
 # show initial gas composition inside the reactor
 tank.list_composition(mode="mole")
 # set other reactor properties

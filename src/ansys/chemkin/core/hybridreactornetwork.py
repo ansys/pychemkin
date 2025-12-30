@@ -20,14 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Hybrid reactor network comprised of a mix of open reactors such as PSR and PFR."""
+"""Hybrid reactor network comprised of a mix of open reactors such as PSR and PFR"""
 
 import copy
 from typing import Union
 
 from ansys.chemkin.core.chemistry import Chemistry, verbose
 from ansys.chemkin.core.color import Color as Color
-from ansys.chemkin.core.flowreactors.PFR import PlugFlowReactor as PFR
+from ansys.chemkin.core.flowreactors.PFR import PlugFlowReactor as Pfr
 from ansys.chemkin.core.inlet import (
     Stream,  # external gaseous inlet
     adiabatic_mixing_streams,
@@ -35,7 +35,7 @@ from ansys.chemkin.core.inlet import (
     compare_streams,
 )
 from ansys.chemkin.core.logger import logger
-from ansys.chemkin.core.stirreactors.PSR import perfectlystirredreactor as PSR
+from ansys.chemkin.core.stirreactors.PSR import PerfectlyStirredReactor as Psr
 
 
 class ReactorNetwork:
@@ -90,7 +90,7 @@ class ReactorNetwork:
         self.reactor_map: dict[str, int] = {}
         # dictionary of the reactors joined the network
         # {reactor index : Reactor object}
-        self.reactor_objects: dict[int, Union[PSR, PFR]] = {}
+        self.reactor_objects: dict[int, Union[Psr, Pfr]] = {}
         # solution Stream objects for inter-connecting streams between the reactors
         # array size = number of reactors in the network
         # {"source" reactor index : outflow Stream object}
@@ -165,7 +165,7 @@ class ReactorNetwork:
         logger.warning(this_msg)
         return ""
 
-    def add_reactor(self, reactor: Union[PSR, PFR]):
+    def add_reactor(self, reactor: Union[Psr, Pfr]):
         """Add a reactor to the network in order."""
         """
         Plan the order (sequence) of reactor addition carefully.
@@ -191,7 +191,7 @@ class ReactorNetwork:
         else:
             # check: the first reactor must have at least one external inlet
             # by definition PFR has ONE external inlet
-            if isinstance(reactor, PSR):
+            if isinstance(reactor, Psr):
                 # check if the reactor is a PSR
                 if self.numb_reactors == 0 and reactor.numbexternalinlets <= 0:
                     msg = [
@@ -230,7 +230,7 @@ class ReactorNetwork:
                 this_msg = Color.SPACE.join(msg)
                 logger.info(this_msg)
 
-    def add_reactor_list(self, reactor_list: list[Union[PSR, PFR]]):
+    def add_reactor_list(self, reactor_list: list[Union[Psr, Pfr]]):
         """Add a list of reactors to the network in order."""
         """
         Plan the order (sequence) of reactor addition carefully.
@@ -1054,7 +1054,7 @@ class ReactorNetwork:
             if id in self.inflow_sources.keys():
                 self.create_internal_inlet(id)
 
-            if isinstance(rxtor, PSR):
+            if isinstance(rxtor, Psr):
                 # if the reactor is a PSR, get a better guessed solution
                 this_inlet = self.internal_inflow.get(id, None)
                 if this_inlet is not None:
@@ -1173,7 +1173,7 @@ class ReactorNetwork:
                     if id in self.internal_inflow.keys():
                         # reset the inlet
                         rxtor.reset_inlet(self.internal_inflow[id])
-                if isinstance(rxtor, PSR):
+                if isinstance(rxtor, Psr):
                     # if the reactor is a PSR, get a better guessed solution
                     this_inlet = self.internal_inflow.get(id, None)
                     if this_inlet is not None:
@@ -1423,14 +1423,14 @@ class ReactorNetwork:
             logger.error(this_msg)
             exit()
 
-    def check_tearstream_convergence(self, streamA, streamB) -> tuple[bool, float]:
+    def check_tearstream_convergence(self, stream_a, stream_b) -> tuple[bool, float]:
         """Compare the last and the current reactor solution at the tear point."""
         """
         Parameters
         ----------
-            streamA: Stream object
+            stream_a: Stream object
                 reactor solution to be compared against
-            streamB: Stream object
+            stream_b: Stream object
                 reactor solution used for the comparison
 
         Returns
@@ -1445,7 +1445,7 @@ class ReactorNetwork:
         """
         # compare the streams
         converged, max_atol, max_rtol = compare_streams(
-            streamA, streamB, atol=1.0e-8, rtol=self.tolerance
+            stream_a, stream_b, atol=1.0e-8, rtol=self.tolerance
         )
         return converged, max_rtol
 

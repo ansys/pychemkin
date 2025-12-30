@@ -66,7 +66,7 @@ from ansys.chemkin.core import Color
 
 # chemkin batch reactor models (transient)
 from ansys.chemkin.core.batchreactors.batchreactor import (
-    GivenPressureBatchReactor_EnergyConservation,
+    GivenPressureBatchReactorEnergyConservation,
 )
 from ansys.chemkin.core.logger import logger
 
@@ -166,7 +166,7 @@ premixed.temperature = 700.0
 ################################################################
 # Create the reactor object for ignition delay time calculations
 # ==============================================================
-# Use the ``GivenPressureBatchReactor_EnergyConservation`` method to instantiate a
+# Use the ``GivenPressureBatchReactorEnergyConservation`` method to instantiate a
 # *constant pressure batch reactor that also includes the energy equation*.
 # This ``ReactorModel`` method requires a ``Mixture`` object as an input parameter.
 # This ``Mixture`` input serves two purposes: passing the ``Chemistry Set`` to
@@ -174,7 +174,7 @@ premixed.temperature = 700.0
 # (pressure, temperature, and gas composition) of the simulation. You should use
 # the ``premixed`` mixture you just created.
 
-MyCONP = GivenPressureBatchReactor_EnergyConservation(premixed, label="CONP")
+MyCONP = GivenPressureBatchReactorEnergyConservation(premixed, label="CONP")
 
 ############################################
 # Set up additional reactor model parameters

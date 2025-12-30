@@ -33,7 +33,7 @@ from ansys.chemkin.core import Color
 
 # chemkin batch reactor models (transient)
 from ansys.chemkin.core.batchreactors.batchreactor import (
-    GivenPressureBatchReactor_EnergyConservation,
+    GivenPressureBatchReactorEnergyConservation,
 )
 from ansys.chemkin.core.logger import logger
 
@@ -93,7 +93,7 @@ premixed.temperature = 700.0
 #
 # create a constant pressure batch reactor (with energy equation)
 #
-MyCONP = GivenPressureBatchReactor_EnergyConservation(premixed, label="CONP")
+MyCONP = GivenPressureBatchReactorEnergyConservation(premixed, label="CONP")
 # show initial gas composition inside the reactor
 MyCONP.list_composition(mode="mole")
 # set other reactor parameters

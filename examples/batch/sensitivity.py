@@ -76,7 +76,7 @@ from ansys.chemkin.core import Color
 
 # chemkin batch reactor models (transient)
 from ansys.chemkin.core.batchreactors.batchreactor import (
-    GivenPressureBatchReactor_EnergyConservation,
+    GivenPressureBatchReactorEnergyConservation,
 )
 from ansys.chemkin.core.logger import logger
 
@@ -197,10 +197,10 @@ if ck.verbose():
 ################################################################
 # Create the reactor object for ignition delay time calculations
 # ==============================================================
-# Use the ``GivenPressureBatchReactor_EnergyConservation`` method to instantiate a
+# Use the ``GivenPressureBatchReactorEnergyConservation`` method to instantiate a
 # *constant pressure batch reactor that also includes the energy equation*. You
 # should use the ``mixture`` you just created.
-MyCONP = GivenPressureBatchReactor_EnergyConservation(mixture, label="CONP")
+MyCONP = GivenPressureBatchReactorEnergyConservation(mixture, label="CONP")
 # show initial gas composition inside the reactor for verification
 MyCONP.list_composition(mode="mole")
 

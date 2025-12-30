@@ -80,7 +80,7 @@ class PlugFlowReactor(BatchReactors):
         # number of zones
         self._nzones = c_int(0)
         # use API mode for PFR simulations
-        Keyword.noFullKeyword = True
+        Keyword.no_fullkeyword = True
         # FORTRAN file unit of the text output file
         self._mylout = c_int(157)
         #
@@ -370,10 +370,10 @@ class PlugFlowReactor(BatchReactors):
             exit()
 
     def set_pseudo_surface_velocity(self, vel: float):
+        """Set the pseudo surface velocity at the active surface."""
         """Set the pseudo surface velocity at the reactive surface
         to improve convergence due to surface chemistry stiffness.
-        """
-        """
+
         Note: set this parameter only when having convergence issue
         with surface chemistry
 
@@ -429,7 +429,9 @@ class PlugFlowReactor(BatchReactors):
 
     @property
     def sccm(self) -> float:
-        """Get plug flow reactor inlet volumetric flow rate in SCCM [standard cm3/min].
+        """Get inlet volumetric flow rate in SCCM."""
+        """Get plug flow reactor inlet volumetric flow rate in
+        SCCM [standard cm3/min].
 
         Returns
         -------
@@ -615,8 +617,8 @@ class PlugFlowReactor(BatchReactors):
         return ierr
 
     def __run_model(self) -> int:
-        """Run the PFR model after the keywords are processed.
-
+        """Run the PFR model after the keywords are processed."""
+        """
         Returns
         -------
             error code: integer
@@ -683,7 +685,7 @@ class PlugFlowReactor(BatchReactors):
         ]
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
-        if Keyword.noFullKeyword:
+        if Keyword.no_fullkeyword:
             # use API calls
             ret_val = (
                 self.__process_keywords()
@@ -708,7 +710,7 @@ class PlugFlowReactor(BatchReactors):
         msg = [Color.YELLOW, "running reactor simulation ...", Color.END]
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
-        if Keyword.noFullKeyword:
+        if Keyword.no_fullkeyword:
             # use API calls
             ret_val = self.__run_model()
         else:
@@ -729,7 +731,7 @@ class PlugFlowReactor(BatchReactors):
         return ret_val
 
 
-class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
+class PFREnergyConservation(PlugFlowReactor):
     """Plug Flow Reactor (PFR) model with energy equation."""
 
     def __init__(self, inlet, label: str = "PFR"):
@@ -809,10 +811,10 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
 
     @heat_loss_rate.setter
     def heat_loss_rate(self, value: float):
+        """Set the heat loss rate."""
         """Set the heat loss rate per length from the reactor
         to the surroundings (required).
-        """
-        """
+
         Parameters
         ----------
             value: double, default = 0.0
@@ -820,7 +822,7 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
 
         """
         self._heat_loss_rate = c_double(value)
-        if not Keyword.noFullKeyword:
+        if not Keyword.no_fullkeyword:
             self.setkeyword(key="QLOS", value=value)
 
     @property
@@ -889,8 +891,10 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
 
     @property
     def heat_transfer_area(self) -> float:
-        """Get heat transfer area per length between the reactor and the surroundings."""
-        """
+        """Get heat transfer area."""
+        """Get heat transfer area per length between the reactor
+        and the surroundings.
+
         Returns
         -------
             heat_transfer_area: double
@@ -901,8 +905,10 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
 
     @heat_transfer_area.setter
     def heat_transfer_area(self, value: float = 0.0e0):
-        """Set heat transfer area per length between the reactor and the surroundings."""
-        """
+        """Set heat transfer area."""
+        """Set heat transfer area per length between the reactor
+        and the surroundings.
+
         Parameters
         ----------
             value: double, default = 0.0
@@ -983,7 +989,7 @@ class PlugFlowReactor_EnergyConservation(PlugFlowReactor):
         return ierr
 
 
-class PlugFlowReactor_FixedTemperature(PlugFlowReactor):
+class PFRFixedTemperature(PlugFlowReactor):
     """Plug Flow Reactor (PFR) model with given temperature."""
 
     def __init__(self, inlet, label: str = "PFR"):

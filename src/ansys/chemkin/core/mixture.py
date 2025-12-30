@@ -2721,7 +2721,7 @@ class Mixture:
             msg = [
                 Color.YELLOW,
                 "real-gas cubic EOS model",
-                Chemistry.realgas_CuEOS[self._eos.value],
+                Chemistry.realgas_cueos[self._eos.value],
                 "is turned ON.",
                 Color.END,
             ]

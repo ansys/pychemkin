@@ -61,7 +61,7 @@ from ansys.chemkin.core.logger import logger
 
 # Chemkin 1-D premixed burner-stabilized flame model (steady-state)
 from ansys.chemkin.core.premixedflames.premixedflame import (
-    BurnedStabilized_GivenTemperature as Burner,
+    BurnedStabilizedGivenTemperature as Burner,
 )
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching

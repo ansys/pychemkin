@@ -75,7 +75,7 @@ from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.core.logger import logger
 
 # chemkin perfectly stirred reactor (PSR) model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeFixedTemperature as PSR
+from ansys.chemkin.core.stirreactors.PSR import PerfectlyStirredReactor as Psr
 from ansys.chemkin.core.utilities import find_file
 
 # check working directory
@@ -149,7 +149,7 @@ feed.mass_flowrate = 0.11
 # because both the reactor temperature and residence time are fixed
 # during the experiments. The gas property of the inlet feed is applied
 # as the estimated reactor condition of the JSR.
-JSR = PSR(feed, label="JSR")
+JSR = Psr(feed, label="JSR")
 
 ###################################
 # Connect the inlets to the reactor

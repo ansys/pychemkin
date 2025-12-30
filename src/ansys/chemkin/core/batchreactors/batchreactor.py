@@ -167,7 +167,7 @@ class BatchReactors(Reactor):
             # set internal surface area keyword for PFR
             if (
                 self._reactortype.value == self.ReactorTypes.get("PFR", 3)
-                or Keyword.noFullKeyword
+                or Keyword.no_fullkeyword
             ):
                 self.setkeyword(key="AREA", value=value)
 
@@ -1222,7 +1222,7 @@ class BatchReactors(Reactor):
         ]
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
-        if Keyword.noFullKeyword:
+        if Keyword.no_fullkeyword:
             # use API calls
             ret_val = (
                 self.__process_keywords()
@@ -1247,7 +1247,7 @@ class BatchReactors(Reactor):
         msg = [Color.YELLOW, "running reactor simulation ...", Color.END]
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
-        if Keyword.noFullKeyword:
+        if Keyword.no_fullkeyword:
             # use API calls
             ret_val = self.__run_model()
         else:
@@ -1662,7 +1662,7 @@ class BatchReactors(Reactor):
         return mixturetarget
 
 
-class GivenPressureBatchReactor_FixedTemperature(BatchReactors):
+class GivenPressureBatchReactorFixedTemperature(BatchReactors):
     """Chemkin 0-D transient closed homogeneous reactor model
     with given reactor pressure (CONP) and reactor temperature (TGIV).
     """
@@ -1733,7 +1733,7 @@ class GivenPressureBatchReactor_FixedTemperature(BatchReactors):
             logger.critical(this_msg)
             exit()
         # if full-keyword mode is turned ON
-        if not Keyword.noFullKeyword:
+        if not Keyword.no_fullkeyword:
             # populate the reactor setup keywords
             self.set_reactortype_keywords()
 
@@ -1790,7 +1790,7 @@ class GivenPressureBatchReactor_FixedTemperature(BatchReactors):
         return ierr
 
 
-class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
+class GivenPressureBatchReactorEnergyConservation(BatchReactors):
     """Chemkin 0-D transient closed homogeneous reactor model
     with given reactor pressure (CONP) and
     solving the energy equation (ENRG).
@@ -1865,7 +1865,7 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
             logger.critical(this_msg)
             exit()
         # if full-keyword mode is turned ON
-        if not Keyword.noFullKeyword:
+        if not Keyword.no_fullkeyword:
             # populate the reactor setup keywords
             self.set_reactortype_keywords()
 
@@ -1923,7 +1923,7 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
 
         """
         self._heat_loss_rate = c_double(value)
-        if not Keyword.noFullKeyword:
+        if not Keyword.no_fullkeyword:
             self.setkeyword(key="QLOS", value=value)
 
     @property
@@ -2055,7 +2055,7 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
             return ierr
 
     def set_heat_loss_profile(
-        self, x: npt.NDArray[np.double], Qloss: npt.NDArray[np.double]
+        self, x: npt.NDArray[np.double], qloss: npt.NDArray[np.double]
     ) -> int:
         """Specify reactor heat loss rate profile."""
         """
@@ -2063,7 +2063,7 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
         ----------
             x: 1D double array
                 position value of the profile data [cm or sec]
-            Qloss: 1D double array
+            qloss: 1D double array
                 heat loss rate value of the profile data [cal/sec]
 
         Returns
@@ -2083,11 +2083,11 @@ class GivenPressureBatchReactor_EnergyConservation(BatchReactors):
             return 10
         else:
             keyword = "QPRO"
-            ierr = self.setprofile(key=keyword, x=x, y=Qloss)
+            ierr = self.setprofile(key=keyword, x=x, y=qloss)
             return ierr
 
 
-class GivenVolumeBatchReactor_FixedTemperature(BatchReactors):
+class GivenVolumeBatchReactorFixedTemperature(BatchReactors):
     """Chemkin 0-D transient closed homogeneous reactor model
     with given reactor volume (CONV) and reactor temperature (TGIV).
     """
@@ -2158,7 +2158,7 @@ class GivenVolumeBatchReactor_FixedTemperature(BatchReactors):
             logger.critical(this_msg)
             exit()
         # if full-keyword mode is turned ON
-        if not Keyword.noFullKeyword:
+        if not Keyword.no_fullkeyword:
             # populate the reactor setup keywords
             self.set_reactortype_keywords()
 
@@ -2215,7 +2215,7 @@ class GivenVolumeBatchReactor_FixedTemperature(BatchReactors):
         return ierr
 
 
-class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
+class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
     """Chemkin 0-D transient closed homogeneous reactor model
     with given reactor volume (CONV) and
     solving the energy equation (ENRG).
@@ -2290,7 +2290,7 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
             logger.critical(this_msg)
             exit()
         # if full-keyword mode is turned ON
-        if not Keyword.noFullKeyword:
+        if not Keyword.no_fullkeyword:
             # populate the reactor setup keywords
             self.set_reactortype_keywords()
 
@@ -2348,7 +2348,7 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
 
         """
         self._heat_loss_rate = c_double(value)
-        if not Keyword.noFullKeyword:
+        if not Keyword.no_fullkeyword:
             self.setkeyword(key="QLOS", value=value)
 
     @property
@@ -2480,7 +2480,7 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
             return ierr
 
     def set_heat_loss_profile(
-        self, x: npt.NDArray[np.double], Qloss: npt.NDArray[np.double]
+        self, x: npt.NDArray[np.double], qloss: npt.NDArray[np.double]
     ) -> int:
         """Specify reactor heat loss rate profile."""
         """
@@ -2488,7 +2488,7 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
         ----------
             x: 1D double array
                 position value of the profile data [cm or sec]
-            Qloss: 1D double array
+            qloss: 1D double array
                 heat loss rate value of the profile data [cal/sec]
 
         Returns
@@ -2508,5 +2508,5 @@ class GivenVolumeBatchReactor_EnergyConservation(BatchReactors):
             return 10
         else:
             keyword = "QPRO"
-            ierr = self.setprofile(key=keyword, x=x, y=Qloss)
+            ierr = self.setprofile(key=keyword, x=x, y=qloss)
             return ierr

@@ -80,7 +80,7 @@ class SIengine(Engine):
         # number of zones
         self._nzones = c_int(nzones)
         # use API mode for SI simulations
-        Keyword.noFullKeyword = True
+        Keyword.no_fullkeyword = True
         # FORTRAN file unit of the text output file
         self._mylout = c_int(156)
         # profile points
@@ -750,7 +750,7 @@ class SIengine(Engine):
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
         #
-        if Keyword.noFullKeyword:
+        if Keyword.no_fullkeyword:
             # use API calls
             ret_val = (
                 self.__process_keywords()
@@ -775,7 +775,7 @@ class SIengine(Engine):
         msg = [Color.YELLOW, "running SI engine simulation ...", Color.END]
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
-        if Keyword.noFullKeyword:
+        if Keyword.no_fullkeyword:
             # use API calls
             ret_val = self.__run_model()
         else:

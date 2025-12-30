@@ -32,7 +32,7 @@ from ansys.chemkin.core import Color
 
 # chemkin batch reactor models (transient)
 from ansys.chemkin.core.batchreactors.batchreactor import (
-    GivenVolumeBatchReactor_EnergyConservation,
+    GivenVolumeBatchReactorEnergyConservation,
 )
 from ansys.chemkin.core.logger import logger
 
@@ -94,7 +94,7 @@ premixed.pressure = 3.0 * ck.P_ATM
 # Rapid Compression Machine
 # create a constant volume batch reactor (with energy equation)
 #
-MyCONV = GivenVolumeBatchReactor_EnergyConservation(premixed, label="RCM")
+MyCONV = GivenVolumeBatchReactorEnergyConservation(premixed, label="RCM")
 # set the initial reactor temperature (see the warning message in the run output)
 # MyCONV.temperature = 800.0  # K
 # show initial gas composition inside the reactor

@@ -29,7 +29,7 @@ Explore cooling water vapor
 How does the volume of water vapor evolves when it is cooled from a temperature
 above the boiling point to a temperature that is just above the freezing point
 at constant pressure? How fast does the vapor volume drop? This example uses
-the ``GivenPressureBatchReactor_FixedTemperature`` model to explore
+the ``GivenPressureBatchReactorFixedTemperature`` model to explore
 the different behaviors between an *ideal gas* water vapor and
 its *real gas* counterpart.
 """
@@ -50,7 +50,7 @@ from ansys.chemkin.core import Color
 
 # chemkin batch reactor model (transient)
 from ansys.chemkin.core.batchreactors.batchreactor import (
-    GivenPressureBatchReactor_FixedTemperature,
+    GivenPressureBatchReactorFixedTemperature,
 )
 from ansys.chemkin.core.logger import logger
 
@@ -110,12 +110,12 @@ mist.pressure = 100.0 * ck.P_ATM
 ######################################################################
 # Create the reactor ``tank`` to perform the vapor cooling simulation
 # ====================================================================
-# Use the ``GivenPressureBatchReactor_FixedTemperature()`` method to create
+# Use the ``GivenPressureBatchReactorFixedTemperature()`` method to create
 # a constant-pressure batch reactor (with a given temperature).
 # Use the ``mist`` mixture that you just created to set the initial gas condition
 # inside the ``tank`` reactor.
 #
-tank = GivenPressureBatchReactor_FixedTemperature(mist, label="tank")
+tank = GivenPressureBatchReactorFixedTemperature(mist, label="tank")
 
 ############################################
 # Set up additional reactor model parameters

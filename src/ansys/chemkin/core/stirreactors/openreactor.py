@@ -66,7 +66,7 @@ class OpenReactor(ReactorModel, SteadyStateSolver):
         # initialize steady-state solver
         SteadyStateSolver.__init__(self)
         # use API mode for steady-state open reactor/flame simulations
-        Keyword.noFullKeyword = True
+        Keyword.no_fullkeyword = True
         # FORTRAN file unit of the text output file
         self._mylout = c_int(158)
         # inlet information
@@ -77,11 +77,11 @@ class OpenReactor(ReactorModel, SteadyStateSolver):
         # total mass flow rate into this reactor [g/sec]
         self.totalmassflowrate = 0.0
         #
-        self.SolverTypes = {"Transient": 1, "SteadyState": 2}
-        self.EnergyTypes = {"ENERGY": 1, "GivenT": 2}
+        self.solver_types = {"Transient": 1, "SteadyState": 2}
+        self.energy_types = {"ENERGY": 1, "GivenT": 2}
         # specify "reactor residence time" = "SETTAU" or
         # specify "reactor volume" = "SETVOLV"
-        self.ProblemTypes = {"SETVOL": 1, "SETTAU": 2}
+        self.problem_types = {"SETVOL": 1, "SETTAU": 2}
 
     def set_inlet(self, extinlet: Stream):
         """Add an external inlet to the reactor."""
@@ -160,10 +160,10 @@ class OpenReactor(ReactorModel, SteadyStateSolver):
         logger.info(this_msg)
 
     def reset_inlet(self, new_stream: Stream):
+        """Reset the properties of an existing external inlet."""
         """Reset the properties of an existing external inlet from the reactor
         by the inlet name.
-        """
-        """
+
         Parameters
         ----------
             new_stream: Stream object

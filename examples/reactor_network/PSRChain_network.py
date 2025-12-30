@@ -68,7 +68,7 @@ from ansys.chemkin.core.inlet import adiabatic_mixing_streams
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeEnergyConservation as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeEnergyConservation as Psr
 
 # check working directory
 current_dir = str(Path.cwd())
@@ -191,7 +191,7 @@ co_index = MyGasMech.get_specindex("CO")
 #
 
 # PSR #1: combustor
-combustor = PSR(premixed, label="combustor")
+combustor = Psr(premixed, label="combustor")
 # use the equilibrium state of the inlet gas mixture as the guessed solution
 combustor.set_estimate_conditions(option="HP")
 # set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
@@ -200,7 +200,7 @@ combustor.residence_time = 2.0 * 1.0e-3
 combustor.set_inlet(premixed)
 
 # PSR #2: dilution zone
-dilution = PSR(premixed, label="dilution zone")
+dilution = Psr(premixed, label="dilution zone")
 # set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
 dilution.residence_time = 1.5 * 1.0e-3
 # add external inlet
@@ -209,7 +209,7 @@ air.mass_flowrate = 62.0  # [g/sec]
 dilution.set_inlet(air)
 
 # PSR #3: reburning zone
-reburn = PSR(premixed, label="reburning zone")
+reburn = Psr(premixed, label="reburning zone")
 # set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
 reburn.residence_time = 3.5 * 1.0e-3
 # add external inlet

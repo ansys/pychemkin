@@ -32,7 +32,7 @@ import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
 
 # chemkin plug flow reactor model
-from ansys.chemkin.core.flowreactors.PFR import PlugFlowReactor_FixedTemperature
+from ansys.chemkin.core.flowreactors.PFR import PFRFixedTemperature
 from ansys.chemkin.core.inlet import Stream
 from ansys.chemkin.core.logger import logger
 
@@ -79,7 +79,7 @@ feedstock.x = [
 feedstock.velocity = 26.815
 #
 # create a plug flow reactor instance
-tubereactor = PlugFlowReactor_FixedTemperature(feedstock)
+tubereactor = PFRFixedTemperature(feedstock)
 # set PFR diameter [cm]
 tubereactor.diameter = 5.8431
 # set PFR length [cm]

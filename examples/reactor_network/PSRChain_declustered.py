@@ -69,7 +69,7 @@ from ansys.chemkin.core.inlet import adiabatic_mixing_streams
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeEnergyConservation as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeEnergyConservation as Psr
 
 # check working directory
 current_dir = str(Path.cwd())
@@ -181,7 +181,7 @@ co_index = MyGasMech.get_specindex("CO")
 #
 
 # PSR #1: combustor
-combustor = PSR(premixed, label="combustor")
+combustor = Psr(premixed, label="combustor")
 # use the equilibrium state of the inlet gas mixture as the guessed solution
 combustor.set_estimate_conditions(option="HP")
 # set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
@@ -209,7 +209,7 @@ print(f"CO = {solnstream1.x[co_index]}.")
 print(f"NO = {solnstream1.x[no_index]}.")
 
 # PSR #2: cooling
-cooling = PSR(solnstream1, label="cooling zone")
+cooling = Psr(solnstream1, label="cooling zone")
 # set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
 cooling.residence_time = 1.5 * 1.0e-3
 # add external inlet
@@ -237,7 +237,7 @@ print(f"CO = {solnstream2.x[co_index]}.")
 print(f"NO = {solnstream2.x[no_index]}.")
 
 # PSR #3: reburn
-reburn = PSR(solnstream2, label="reburn zone")
+reburn = Psr(solnstream2, label="reburn zone")
 # set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
 reburn.residence_time = 3.5 * 1.0e-3
 # add external inlet
