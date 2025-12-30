@@ -121,7 +121,7 @@ if ierror != 0:
 # Instantiate an ``Stream`` object ``premixed`` for the inlet gas mixture.
 # The ``Stream`` object is a ``Mixture`` object with the addition of the
 # *inlet flow rate*. You can specify the inlet gas properties the same way you
-# set up a ``Mixture``. Here the ``X_by_Equivalence_Ratio`` method is used.
+# set up a ``Mixture``. Here the ``x_by_equivalence_ratio`` method is used.
 # You create the ``fuel`` and the ``air`` mixtures first. Then define the
 # *complete combustion product species* and provide the *additives* composition
 # if applicable. And finally you can simply set ``equivalenceratio=1`` to create
@@ -131,14 +131,14 @@ if ierror != 0:
 # create the fuel mixture
 fuel = ck.Mixture(MyGasMech)
 # set fuel composition: hydrogen diluted by nitrogen
-fuel.X = [("H2", 0.7), ("N2", 0.3)]
+fuel.x = [("H2", 0.7), ("N2", 0.3)]
 # setting pressure and temperature is not required in this case
 fuel.pressure = 0.0125 * ck.P_ATM
 fuel.temperature = 300.0  # inlet temperature
 
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
-air.X = ck.Air.X()
+air.x = ck.Air.x()
 # setting pressure and temperature is not required in this case
 air.pressure = fuel.pressure
 air.temperature = fuel.temperature
@@ -149,11 +149,11 @@ premixed = Stream(MyGasMech, label="premixed")
 products = ["H2O", "N2"]
 # species mole fractions of added/inert mixture.
 # can also create an additives mixture here
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
+add_frac = np.zeros(MyGasMech.kk, dtype=np.double)  # no additives: all zeros
 # mean equivalence ratio
 equiv = 1.0
-ierror = premixed.X_by_Equivalence_Ratio(
-    MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=equiv
+ierror = premixed.x_by_equivalence_ratio(
+    MyGasMech, fuel.x, air.x, add_frac, products, equivalenceratio=equiv
 )
 # check fuel-oxidizer mixture creation status
 if ierror != 0:
@@ -204,7 +204,7 @@ flamespeedcalculator = FlameSpeed(premixed, label="premixed_hydrogen")
 #   There are three methods to set up the initial mesh for the premixed flame
 #   calculations:
 #
-#   1. ``use_TPRO_grids`` method (default) to use the grid points in
+#   1. ``use_tpro_grids`` method (default) to use the grid points in
 #      the estimate temperature profile.
 #
 #   2. ``set_numb_grid_points`` method to create a uniform mesh of
@@ -378,7 +378,7 @@ for i in range(solutionpoints):
     # get the stream at the grid point
     solutionstream = flamespeedcalculator.get_solution_stream_at_grid(grid_index=i)
     # get gas density [g/cm3]
-    denprofile[i] = solutionstream.RHO
+    denprofile[i] = solutionstream.rho
     # get mixture viscosity profile [g/cm-sec] or [Poise]
     viscprofile[i] = solutionstream.mixture_viscosity() * 1.0e2
 

@@ -113,7 +113,7 @@ ierror = gasoline.preprocess()
 # Set up the stoichiometric gasoline-air mixture
 # ==============================================
 # You need to set up the stoichiometric gasoline-air mixture for the subsequent
-# ignition delay time calculations. Here the ``X_by_Equivalence_Ratio``method is used.
+# ignition delay time calculations. Here the ``x_by_equivalence_ratio``method is used.
 # You create the ``fuel`` and the ``air`` mixtures first. Then define the
 # *complete combustion product species* and provide the *additives* composition
 # if applicable. And finally you can simply set ``equivalenceratio=1`` to create
@@ -124,14 +124,14 @@ ierror = gasoline.preprocess()
 # create the fuel mixture
 fuelmixture = ck.Mixture(gasoline)
 # set fuel = composition of PRF 60
-fuelmixture.X = [("ic8h18", 0.6), ("nc7h16", 0.4)]
+fuelmixture.x = [("ic8h18", 0.6), ("nc7h16", 0.4)]
 # setting pressure and temperature
 fuelmixture.pressure = 5.0 * ck.P_ATM
 fuelmixture.temperature = 1500.0
 
 # create the oxidizer mixture: air
 air = ck.Mixture(gasoline)
-air.X = [("o2", 0.21), ("n2", 0.79)]
+air.x = [("o2", 0.21), ("n2", 0.79)]
 # setting pressure and temperature
 air.pressure = 5.0 * ck.P_ATM
 air.temperature = 1500.0
@@ -140,13 +140,13 @@ air.temperature = 1500.0
 products = ["co2", "h2o", "n2"]
 # species mole fractions of added/inert mixture.
 # can also create an additives mixture here
-add_frac = np.zeros(gasoline.KK, dtype=np.double)  # no additives: all zeros
+add_frac = np.zeros(gasoline.kk, dtype=np.double)  # no additives: all zeros
 
 # create the premixed mixture to be defined
 premixed = ck.Mixture(gasoline)
 # define the composition by the equivalence ratio
-ierror = premixed.X_by_Equivalence_Ratio(
-    gasoline, fuelmixture.X, air.X, add_frac, products, equivalenceratio=1.0
+ierror = premixed.x_by_equivalence_ratio(
+    gasoline, fuelmixture.x, air.x, add_frac, products, equivalenceratio=1.0
 )
 # check fuel-oxidizer mixture creation status
 if ierror != 0:

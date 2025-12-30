@@ -79,7 +79,7 @@ from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import PSR_SetVolume_EnergyConservation as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSRSetVolumeEnergyConservation as PSR
 from ansys.chemkin.core.utilities import find_file
 
 # check working directory
@@ -153,7 +153,7 @@ ierror = MyGasMech.preprocess()
 # create the fuel inlet
 fuel = Stream(MyGasMech, label="Fuel")
 # set fuel composition
-fuel.X = [("h2", 0.21), ("n2", 0.79)]
+fuel.x = [("h2", 0.21), ("n2", 0.79)]
 # setting pressure and temperature is not required in this case
 fuel.pressure = ck.P_ATM
 fuel.temperature = 450.0  # inlet temperature
@@ -162,7 +162,7 @@ fuel.vol_flowrate = 25.0
 
 # create the oxidizer inlet: air
 air = Stream(MyGasMech, label="Oxid")
-air.X = [("o2", 0.21), ("n2", 0.79)]
+air.x = [("o2", 0.21), ("n2", 0.79)]
 # setting pressure and temperature is not required in this case
 air.pressure = fuel.pressure
 air.temperature = fuel.temperature
@@ -172,7 +172,7 @@ air.vol_flowrate = 50.0
 ####################################################################
 # Create the PSR to predict the gas composition of the outlet stream
 # ==================================================================
-# Use the ``PSR_SetVolume_EnergyConservation()`` method to instantiate a PSR
+# Use the ``PSRSetVolumeEnergyConservation()`` method to instantiate a PSR
 # named ``combustor``. You must include the energy equation because the goal is to
 # see how the residence time would affect the hydrogen combustion process.
 # The ``combustor`` PSR is initiated with the parameter set to the ``fuel`` inlet,
@@ -197,7 +197,7 @@ combustor = PSR(fuel, label="tincan")
 
 # reset the estimated reactor temperature [K]
 combustor.temperature = 2000.0
-# set the reactor volume (cm3): required for PSR_SetVolume_EnergyConservation model
+# set the reactor volume (cm3): required for PSRSetVolumeEnergyConservation model
 combustor.volume = 200.0
 
 ###################################
@@ -252,7 +252,7 @@ combustor.set_species_floor(-1.0e-10)
 # use a new one for each simulation result.
 
 # reactor volume increment
-deltaVol = -5
+delta_vol = -5
 numbruns = 9
 # solution arrays
 residencetime = np.zeros(numbruns, dtype=np.double)
@@ -284,7 +284,7 @@ for i in range(numbruns):
     residencetime[i] = combustor.volume / combustor.net_vol_flowrate
     temp_ss_solution[i] = solnmixture.temperature
     # update reactor volume
-    combustor.volume += deltaVol
+    combustor.volume += delta_vol
 
 # compute the total runtime
 runtime = time.time() - start_time

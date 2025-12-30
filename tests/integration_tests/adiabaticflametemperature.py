@@ -80,12 +80,12 @@ equiv_ini = 0.5
 t = np.zeros(points, dtype=np.double)
 equiv = np.zeros_like(t, dtype=np.double)
 
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)
+add_frac = np.zeros(MyGasMech.kk, dtype=np.double)
 ierror = 0
 for i in range(points):
     equiv_current = equiv_ini
-    ierror = mixture.X_by_Equivalence_Ratio(
-        MyGasMech, fuel.X, oxid.X, add_frac, products, equivalenceratio=equiv_current
+    ierror = mixture.x_by_equivalence_ratio(
+        MyGasMech, fuel.x, oxid.x, add_frac, products, equivalenceratio=equiv_current
     )
     if ierror != 0:
         raise RuntimeError

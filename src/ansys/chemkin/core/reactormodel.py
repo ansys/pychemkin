@@ -114,8 +114,8 @@ class Keyword:
     noFullKeyword = True  # default: API-call mode
 
     def __init__(self, phrase: str, value: Union[float, bool, str], data_type: str):
-        """Initialize the Chemkin keyword.
-
+        """Initialize the Chemkin keyword."""
+        """
         Parameters
         ----------
             phrase: string
@@ -177,9 +177,11 @@ class Keyword:
 
     @staticmethod
     def setfullkeywords(mode: bool):
-        """All keywords and their parameters must be specified by using the setkeyword method
-        and will be passed to the reactor model for further processing.
-
+        """All keywords and their parameters must be specified by
+        using the setkeyword method and will be passed to the reactor model
+        for further processing.
+        """
+        """
         Parameters
         ----------
             mode: boolean
@@ -250,8 +252,8 @@ class Keyword:
             logger.info(this_msg)
 
     def resetvalue(self, value: Union[float, bool, str]):
-        """Reset the parameter value of an existing keyword.
-
+        """Reset the parameter value of an existing keyword."""
+        """
         Parameters
         ----------
             value: indicated by the data_type, {int, float, string, bool}
@@ -288,8 +290,8 @@ class Keyword:
             logger.error(this_msg)
 
     def parametertype(self) -> type:
-        """Get parameter type of the keyword.
-
+        """Get parameter type of the keyword."""
+        """
         Returns
         -------
             parameter_data_type: string, {'int', 'float', 'string', 'bool'}
@@ -300,8 +302,8 @@ class Keyword:
 
     @property
     def value(self) -> Union[int, float, bool, str]:
-        """Get parameter value of the keyword.
-
+        """Get parameter value of the keyword."""
+        """
         Returns
         -------
             parameter value: {integer, floating, string, or boolean}
@@ -316,8 +318,8 @@ class Keyword:
 
     @property
     def keyphrase(self) -> str:
-        """Get the phrase of the keyword.
-
+        """Get the phrase of the keyword."""
+        """
         Returns
         -------
             keyword phrase: string
@@ -327,8 +329,8 @@ class Keyword:
 
     @property
     def keyprefix(self) -> bool:
-        """Get the status of the keyword.
-
+        """Get the status of the keyword."""
+        """
         Returns
         -------
             status: boolean
@@ -341,8 +343,8 @@ class Keyword:
             return False
 
     def getvalue_as_string(self) -> tuple[int, str]:
-        """Create the keyword input line for Chemkin applications.
-
+        """Create the keyword input line for Chemkin applications."""
+        """
         Returns
         -------
             linelength: integer
@@ -373,8 +375,10 @@ class BooleanKeyword(Keyword):
     """Chemkin boolean keyword."""
 
     def __init__(self, phrase: str):
-        """Set up a Chemkin keyword with a boolean parameter or with no parameter.
-
+        """Set up a Chemkin keyword with a boolean parameter or
+        with no parameter..
+        """
+        """
         Parameters
         ----------
             phrase: string
@@ -392,8 +396,8 @@ class IntegerKeyword(Keyword):
     """A Chemkin integer keyword."""
 
     def __init__(self, phrase: str, value: int = 0):
-        """Set up a Chemkin keyword with an integer parameter
-
+        """Set up a Chemkin keyword with an integer parameter."""
+        """
         Parameters
         ----------
             phrase: string
@@ -412,8 +416,8 @@ class RealKeyword(Keyword):
     """A Chemkin real keyword."""
 
     def __init__(self, phrase: str, value: float = 0.0e0):
-        """Set up a Chemkin keyword with a real number (floating number) parameter.
-
+        """Set up a Chemkin keyword with a real number (floating number) parameter."""
+        """
         Parameters
         ----------
             phrase: string
@@ -432,8 +436,8 @@ class StringKeyword(Keyword):
     """A Chemkin string keyword."""
 
     def __init__(self, phrase: str, value: str = ""):
-        """Set up a Chemkin keyword with a string parameter
-
+        """Set up a Chemkin keyword with a string parameter."""
+        """
         Parameters
         ----------
             phrase: string
@@ -454,8 +458,8 @@ class Profile:
     """Generic Chemkin profile keyword class."""
 
     def __init__(self, key: str, x: npt.NDArray[np.double], y: npt.NDArray[np.double]):
-        """Create a profile object.
-
+        """Create a profile object."""
+        """
         Parameters
         ----------
             key: string
@@ -516,8 +520,8 @@ class Profile:
 
     @property
     def size(self) -> int:
-        """Get number of data points in the profile.
-
+        """Get number of data points in the profile."""
+        """
         Returns
         -------
             size: integer
@@ -528,8 +532,8 @@ class Profile:
 
     @property
     def status(self) -> int:
-        """Get the validity of the profile object.
-
+        """Get the validity of the profile object."""
+        """
         Returns
         -------
             status: integer
@@ -540,8 +544,8 @@ class Profile:
 
     @property
     def pos(self) -> npt.NDArray[np.double]:
-        """Get position values of profiles data.
-
+        """Get position values of profiles data."""
+        """
         Returns
         -------
             pos: 1-D double array
@@ -552,8 +556,8 @@ class Profile:
 
     @property
     def value(self) -> npt.NDArray[np.double]:
-        """Get variable values of profile data.
-
+        """Get variable values of profile data."""
+        """
         Returns
         -------
             val: 1-D double array
@@ -564,8 +568,8 @@ class Profile:
 
     @property
     def profilekey(self) -> str:
-        """Get profile keyword.
-
+        """Get profile keyword."""
+        """
         Returns
         -------
             profilekeyword: string
@@ -575,7 +579,7 @@ class Profile:
         return self._profilekeyword
 
     def show(self):
-        """Show the profile data"""
+        """Show the profile data."""
         print(f"profile size: {self._size:d}")
         print(f" position           {self._profilekeyword:s}  ")
         for i in range(self._size):
@@ -584,8 +588,8 @@ class Profile:
     def resetprofile(
         self, size: int, x: npt.NDArray[np.double], y: npt.NDArray[np.double]
     ):
-        """Reset the profile data.
-
+        """Reset the profile data."""
+        """
         Parameters
         ----------
             size: integer
@@ -612,8 +616,8 @@ class Profile:
         self._val[:] = y[:]
 
     def getprofile_as_string_list(self) -> tuple[int, list[str]]:
-        """Create the keyword input lines as a list for Chemkin applications.
-
+        """Create the keyword input lines as a list for Chemkin applications."""
+        """
         Returns
         -------
             size: integer
@@ -655,8 +659,8 @@ class ReactorModel:
     """A generic Chemkin reactor model framework."""
 
     def __init__(self, reactor_condition: Stream, label: str):
-        """Initialize the basic parameters of Chemkin reactor model
-
+        """Initialize the basic parameters of Chemkin reactor model."""
+        """
         Parameters
         ----------
             reactor_condition: Chemistry or Mixture object
@@ -676,10 +680,11 @@ class ReactorModel:
                 logger.error(this_msg)
                 exit()
             # check if the chemstry set is active
-            if not check_active_chemistryset(reactor_condition.chemID):
+            if not check_active_chemistryset(reactor_condition.chemid):
                 msg = [
                     Color.PURPLE,
-                    "the Chemistry Set associated with the Mixture is not currently active.\n",
+                    "the Chemistry Set associated with the"
+                    "Mixture is not currently active.\n",
                     Color.SPACEx6,
                     "activate Chemistry Set using the 'active()' method.",
                     Color.END,
@@ -688,7 +693,7 @@ class ReactorModel:
                 logger.error(this_msg)
                 exit()
             # chemistry set index
-            self._chemset_index = ctypes.c_int(reactor_condition.chemID)
+            self._chemset_index = ctypes.c_int(reactor_condition.chemid)
             # mixture
             self.reactormixture = copy.deepcopy(reactor_condition)
             # mixture gas species symbols
@@ -697,11 +702,11 @@ class ReactorModel:
             self._temperature = ctypes.c_double(reactor_condition.temperature)
             # mixture pressure [dynes/cm2]
             self._pressure = ctypes.c_double(reactor_condition.pressure)
-            self.numbspecies = self.reactormixture._KK
+            self.numbspecies = self.reactormixture._kk
         # elif isinstance(reactor_condition, Chemistry):
         # if a Chemistry Set object is passed in (for flame models)
         # chemistry set index
-        # self._chemset_index = ctypes.c_int(reactor_condition.chemID)
+        # self._chemset_index = ctypes.c_int(reactor_condition.chemid)
         # gas species symbols
         # self._specieslist = reactor_condition.species_symbols  # gas species symbols
         # self.numbspecies = reactor_condition.KK
@@ -725,7 +730,7 @@ class ReactorModel:
         # write text output file
         self._TextOut = True
         # FORTRAN file unit of the text output file
-        self._myLOUT = c_int(154)
+        self._mylout = c_int(154)
         # write XML solution file
         self._XMLOut = True
         # number of keywords used
@@ -795,8 +800,8 @@ class ReactorModel:
                 exit()
 
     def usefullkeywords(self, mode: bool):
-        """Specify all necessary keywords explicitly.
-
+        """Specify all necessary keywords explicitly."""
+        """
         Parameters
         ----------
             mode: boolean, default = False
@@ -816,8 +821,10 @@ class ReactorModel:
             logger.info(this_msg)
 
     def __findkeywordslot(self, key: str) -> tuple[int, bool]:
-        """Find the proper index in the global keyword list to add a new keyword or to modify the keyword parameter
-
+        """Find the proper index in the global keyword list to add
+        a new keyword or to modify the keyword parameter.
+        """
+        """
         Parameters
         ----------
             key: string
@@ -842,8 +849,8 @@ class ReactorModel:
                 return self._numbkeywords, True
 
     def setkeyword(self, key: str, value: Union[bool, float, str]):
-        """Set a Chemkin keyword and its parameter.
-
+        """Set a Chemkin keyword and its parameter."""
+        """
         Parameters
         ----------
             key: string
@@ -897,8 +904,8 @@ class ReactorModel:
                 exit()
 
     def removekeyword(self, key: str):
-        """Remove an existing Chemkin keyword and its parameter.
-
+        """Remove an existing Chemkin keyword and its parameter."""
+        """
         Parameters
         ----------
             key: string
@@ -945,7 +952,8 @@ class ReactorModel:
         print("=" * 40)
 
     def createkeywordinputlines(self) -> tuple[int, int]:
-        """Create keyword input lines for Chemkin applications.
+        """Create keyword input lines for Chemkin applications."""
+        """
         one keyword per line: <keyword>     <parameter>
 
         Returns
@@ -979,7 +987,8 @@ class ReactorModel:
     def showkeywordinputlines_with_tag(self, tag: str = ""):
         """List all currently-defined keywords, their parameters, and an
         extra tag string line by line.
-
+        """
+        """
         Parameters
         ----------
             tag: string
@@ -996,7 +1005,8 @@ class ReactorModel:
         print("=" * 40)
 
     def createkeywordinputlines_with_tag(self, tag: str = "") -> tuple[int, int]:
-        """Create keyword input lines for Chemkin applications
+        """Create keyword input lines for Chemkin applications."""
+        """
         one keyword per line: <keyword>     <parameter>    <tag>
 
         Parameters
@@ -1038,8 +1048,10 @@ class ReactorModel:
         return ierr, self._numblines
 
     def __findprofileslot(self, key: str) -> tuple[int, bool]:
-        """Find the proper index in the global profile list either to add a new profile or to modify the existing profile parameter
-
+        """Find the proper index in the global profile list either to add
+        a new profile or to modify the existing profile parameter.
+        """
+        """
         Parameters
         ----------
             key: string
@@ -1066,8 +1078,8 @@ class ReactorModel:
     def setprofile(
         self, key: str, x: npt.NDArray[np.double], y: npt.NDArray[np.double]
     ) -> int:
-        """Set a Chemkin profile and its parameter.
-
+        """Set a Chemkin profile and its parameter."""
+        """
         Parameters
         ----------
             key: string
@@ -1132,8 +1144,8 @@ class ReactorModel:
         return ierr
 
     def createprofileinputlines(self) -> tuple[int, int, list[str]]:
-        """Create profile keyword input lines for Chemkin applications.
-
+        """Create profile keyword input lines for Chemkin applications."""
+        """
         one keyword per line: <profile keyword>     <position>  <value>
 
         Returns
@@ -1164,7 +1176,8 @@ class ReactorModel:
                     print(line)
                 print("=" * 40)
         # lines: list of strings of a profile ['VPRO x1 v1', 'VPRO x2 v2', ...]
-        # keyword_lines: list of lines:  [['VPRO x1 v1', 'VPRO x2 v2', ...], ['PPRO x1 p1', 'PPRO x2 p2', ..] , ... ]
+        # keyword_lines: list of lines:  [['VPRO x1 v1', 'VPRO x2 v2', ...],
+        # ['PPRO x1 p1', 'PPRO x2 p2', ..] , ... ]
         ierr: int = numbprofiles - self._numbprofiles
         return ierr, numblines, keyword_lines
 
@@ -1174,14 +1187,17 @@ class ReactorModel:
         threshold: float = 1.0e-12,
         molefrac: npt.NDArray[np.double] = None,
     ) -> tuple[int, list[str]]:
-        """Create keyword input lines for initial/estimated species mole fraction inside the batch reactor
-
+        """Create keyword input lines for initial/estimated
+        species mole fraction inside the batch reactor.
+        """
+        """
         Parameters
         ----------
             solvertype: integer
                 solver type of the reactor model
             threshold: double
-                minimum species mole fraction value to be included in the species keyword
+                minimum species mole fraction value to be
+                included in the species keyword
             molefrac: 1-D double array
                 species composition in mole fractions
 
@@ -1195,7 +1211,7 @@ class ReactorModel:
         """
         # initial(transient)/estimate(steady-state) composition keyword depends on the solver type
         key = Keyword.gasspecieskeywords[solvertype - 1]
-        KSYM = self._specieslist
+        ksym = self._specieslist
         lines = []
         numb_lines = 0
         for i in range(len(molefrac)):
@@ -1203,7 +1219,7 @@ class ReactorModel:
                 thisline = (
                     key
                     + Keyword.fourspaces
-                    + KSYM[i].rstrip()
+                    + ksym[i].rstrip()
                     + Keyword.fourspaces
                     + str(molefrac[i])
                 )
@@ -1218,18 +1234,22 @@ class ReactorModel:
         molefrac: npt.NDArray[np.double] = None,
         addon: str = "",
     ) -> tuple[int, list[str]]:
-        """Create keyword input lines for initial/estimated species mole fraction inside the batch reactor
-
+        """Create keyword input lines for initial/estimated
+        species mole fraction inside the batch reactor.
+        """
+        """
         Parameters
         ----------
             key: string
                 Chemkin reactor keyword for species value
             threshold: douoble
-                minimum species mole fraction value to be included in the species keyword
+                minimum species mole fraction value to be included in
+                the species keyword
             molefrac: 1-D double array
                 species composition in mole fractions
             addon: string
-                add-on string to the species input, usually the reactor/zone number
+                add-on string to the species input, usually the
+                reactor/zone number
 
         Returns
         -------
@@ -1240,15 +1260,15 @@ class ReactorModel:
         """
         # must use estimate composition keyword 'XEST'
         # (the 'REAC' keyword does not accept reactor/zone number)
-        KSYM = self._specieslist
+        ksym = self._specieslist
         ksize = len(molefrac)
-        if ksize != len(KSYM):
+        if ksize != len(ksym):
             msg = [
                 Color.PURPLE,
                 "species mole fraction array has size",
                 str(ksize),
                 "but",
-                str(len(KSYM)),
+                str(len(ksym)),
                 "is expected.",
                 Color.END,
             ]
@@ -1263,7 +1283,7 @@ class ReactorModel:
                 thisline = (
                     key.rstrip()
                     + Keyword.fourspaces
-                    + KSYM[i].rstrip()
+                    + ksym[i].rstrip()
                     + Keyword.fourspaces
                     + str(molefrac[i])
                     + Keyword.fourspaces
@@ -1273,12 +1293,12 @@ class ReactorModel:
                 numb_lines += 1
         return numb_lines, lines
 
-    def chemID(self) -> int:
-        """Get chemistry set index.
-
+    def chemid(self) -> int:
+        """Get chemistry set index."""
+        """
         Returns
         -------
-            chemID: integer
+            chemid: integer
                 chemistry set index
 
         """
@@ -1286,8 +1306,8 @@ class ReactorModel:
 
     @property
     def temperature(self) -> float:
-        """Get reactor initial temperature.
-
+        """Get reactor initial temperature."""
+        """
         Returns
         -------
             temperature: double
@@ -1298,8 +1318,8 @@ class ReactorModel:
 
     @temperature.setter
     def temperature(self, t: float):
-        """(Re)set reactor temperature.
-
+        """(Re)set reactor temperature."""
+        """
         Parameters
         ----------
             t: double
@@ -1316,8 +1336,8 @@ class ReactorModel:
 
     @property
     def pressure(self) -> float:
-        """Get reactor pressure.
-
+        """Get reactor pressure."""
+        """
         Returns
         -------
             pressure: double
@@ -1328,8 +1348,8 @@ class ReactorModel:
 
     @pressure.setter
     def pressure(self, p: float):
-        """(Re)set reactor pressure.
-
+        """(Re)set reactor pressure."""
+        """
         Parameters
         ----------
             p: double
@@ -1346,56 +1366,68 @@ class ReactorModel:
 
     @property
     def massfraction(self) -> float:
-        """Get the initial/guessed/estimate gas species mass fractions inside the reactor.
-
+        """Get the initial/guessed/estimate gas species mass fractions
+        inside the reactor.
+        """
+        """
         Returns
         -------
             reactormixture: 1-D double array
                 mixture mass fraction [-]
 
         """
-        return self.reactormixture.Y
+        return self.reactormixture.y
 
     @massfraction.setter
     def massfraction(self, recipe: list[tuple[str, float]]):
-        """(Re)set the initial/guessed/estimate gas species mass fractions inside the reactor.
-
+        """(Re)set the initial/guessed/estimate gas species mass fractions
+        inside the reactor.
+        """
+        """
         Parameters
         ----------
             recipe: list of tuples, [(species_symbol, fraction), ... ]
-                non-zero mixture composition corresponding to the given mole/mass fraction array
+                non-zero mixture composition corresponding to
+                the given mole/mass fraction array
 
         """
-        self.reactormixture.Y(recipe)
+        self.reactormixture.y(recipe)
 
     @property
     def molefraction(self) -> npt.NDArray[np.double]:
-        """Get the initial/guessed/estimate gas species mole fractions inside the reactor.
-
+        """Get the initial/guessed/estimate gas species mole fractions
+        inside the reactor.
+        """
+        """
         Returns
         -------
             X: 1-D double array
                 mixture mole fraction
 
         """
-        return self.reactormixture.X
+        return self.reactormixture.x
 
     @molefraction.setter
     def molefraction(self, recipe: list[tuple[str, float]]):
-        """(Re)set the initial/guessed/estimate gas species mole fractions inside the reactor.
-
+        """(Re)set the initial/guessed/estimate gas species mole fractions
+        inside the reactor.
+        """
+        """
         Parameters
         ----------
             recipe: list of tuples, [(species_symbol, fraction), ... ]
-                non-zero mixture composition corresponding to the given mole/mass fraction array
+                non-zero mixture composition corresponding to the given
+                mole/mass fraction array
 
         """
-        self.reactormixture.X(recipe)
+        self.reactormixture.x(recipe)
 
     @property
     def concentration(self) -> npt.NDArray[np.double]:
-        """Get the initial/guessed/estimate gas species molar concentrations inside the reactor.
-
+        """Get the initial/guessed/estimate gas species molar concentrations
+        inside the reactor.
+        """
+        """
         Returns
         -------
             concentration: 1-D double array
@@ -1405,28 +1437,28 @@ class ReactorModel:
         return self.reactormixture.concentration
 
     def set_molefractions(self, molefrac: npt.NDArray[np.double]):
-        """(Re)set the reactor initial/guessed species mole fractions.
-
+        """(Re)set the reactor initial/guessed species mole fractions."""
+        """
         Parameters
         ----------
             molefrac: 1-D double array, dimension = number of gas species
 
         """
-        self.reactormixture.X = molefrac
+        self.reactormixture.x = molefrac
 
     def set_massfractions(self, massfrac: npt.NDArray[np.double]):
-        """(Re)set the reactor initial/guessed species mass fractions.
-
+        """(Re)set the reactor initial/guessed species mass fractions."""
+        """
         Parameters
         ----------
             molefrac: 1-D double array, dimension = number of gas species
 
         """
-        self.reactormixture.Y = massfrac
+        self.reactormixture.y = massfrac
 
     def list_composition(self, mode: str, option: str = " ", bound: float = 0.0e0):
-        """List the gas mixture composition inside the reactor.
-
+        """List the gas mixture composition inside the reactor."""
+        """
         Parameters
         ----------
             mode: string, {'mass', 'mole'}, default = 'mole'
@@ -1441,8 +1473,8 @@ class ReactorModel:
 
     @property
     def gasratemultiplier(self) -> float:
-        """Get the value of the gas-phase reaction rate multiplier.
-
+        """Get the value of the gas-phase reaction rate multiplier."""
+        """
         Returns
         -------
             rate_factor: double
@@ -1453,8 +1485,8 @@ class ReactorModel:
 
     @gasratemultiplier.setter
     def gasratemultiplier(self, value: float = 1.0e0):
-        """Set the value of the gas-phase reaction rate multiplier (optional)
-
+        """Set the value of the gas-phase reaction rate multiplier (optional)."""
+        """
         Parameters
         ----------
             value: double, default = 1.0
@@ -1471,9 +1503,9 @@ class ReactorModel:
             self.setkeyword(key="GFAC", value=value)
 
     @property
-    def STD_Output(self) -> bool:
-        """Get text output status
-
+    def std_output(self) -> bool:
+        """Get text output status."""
+        """
         Returns
         -------
             status: boolean
@@ -1482,10 +1514,10 @@ class ReactorModel:
         """
         return self._TextOut
 
-    @STD_Output.setter
-    def STD_Output(self, mode: bool):
-        """Set text output status (optional)
-
+    @std_output.setter
+    def std_output(self, mode: bool):
+        """Set text output status (optional)."""
+        """
         Parameters
         ----------
             mode: boolean, default = True: always write to the text output file
@@ -1497,9 +1529,9 @@ class ReactorModel:
         self._TextOut = mode
 
     @property
-    def XML_Output(self) -> bool:
-        """Get XML solution output status
-
+    def xml_output(self) -> bool:
+        """Get XML solution output status."""
+        """
         Returns
         -------
             status: boolean
@@ -1508,10 +1540,10 @@ class ReactorModel:
         """
         return self._XMLOut
 
-    @XML_Output.setter
-    def XML_Output(self, mode: bool):
-        """Set XML solution output status (optional)
-
+    @xml_output.setter
+    def xml_output(self, mode: bool):
+        """Set XML solution output status (optional)."""
+        """
         Parameters
         ----------
             mode: boolean, default = True: always create the XML solution file
@@ -1530,8 +1562,8 @@ class ReactorModel:
         temperature_threshold: Union[float, None] = None,
         species_threshold: Union[float, None] = None,
     ):
-        """Switch ON/OFF A-factor sensitivity analysis
-
+        """Switch ON/OFF A-factor sensitivity analysis."""
+        """
         Parameters
         ----------
             mode: boolean
@@ -1541,9 +1573,11 @@ class ReactorModel:
             relative_tolerance: double
                 relative tolerance of the sensitivity parameters
             temperature_threshold: double
-                threshold normalized temperature sensitivity parameter value to print out to the text output file
+                threshold normalized temperature sensitivity parameter value
+                to print out to the text output file
             species_threshold: double
-                threshold normalized species sensitivity parameter value to print out to the text output file
+                threshold normalized species sensitivity parameter value
+                to print out to the text output file
 
         """
         if "ASEN" in self._keyword_index:
@@ -1585,9 +1619,9 @@ class ReactorModel:
                 # do nothing
                 pass
 
-    def setROPanalysis(self, mode=True, threshold=None):
-        """Switch ON/OFF the ROP (Rate Of Production) analysis
-
+    def set_rop_analysis(self, mode=True, threshold=None):
+        """Switch ON/OFF the ROP (Rate Of Production) analysis."""
+        """
         Parameters
         ----------
             mode: boolean, default = False
@@ -1623,8 +1657,8 @@ class ReactorModel:
 
     @property
     def realgas(self) -> bool:
-        """Get the real gas EOS status
-
+        """Get the real gas EOS status."""
+        """
         Returns
         -------
             status: boolean
@@ -1645,10 +1679,11 @@ class ReactorModel:
             # has not been turned ON
             return False
 
-    def userealgasEOS(self, mode: bool):
+    def userealgas_eos(self, mode: bool):
         """Set the option to turn ON/OFF the real gas model
-        for cubic EOS enabled gas-phase mechanism
-
+        for cubic EOS enabled gas-phase mechanism.
+        """
+        """
         Parameters
         ----------
             mode: boolean
@@ -1677,8 +1712,9 @@ class ReactorModel:
 
     def setrealgasmixingmodel(self, model: int):
         """Set the real gas mixing rule/model
-        for cubic EOS enabled gas-phase mechanism
-
+        for cubic EOS enabled gas-phase mechanism.
+        """
+        """
         Parameters
         ----------
             model: integer, {0, 1}
@@ -1721,8 +1757,8 @@ class ReactorModel:
             exit()
 
     def setrunstatus(self, code: int):
-        """Set the simulation run status
-
+        """Set the simulation run status."""
+        """
         Parameters
         ----------
             run_status: integer
@@ -1732,8 +1768,8 @@ class ReactorModel:
         self.runstatus = code
 
     def getrunstatus(self, mode: str = "silent") -> int:
-        """Get the reactor model simulation status
-
+        """Get the reactor model simulation status."""
+        """
         Parameters
         ----------
             mode: string {'verbose', 'silent'}, default = 'silent'
@@ -1767,8 +1803,9 @@ class ReactorModel:
         return self.runstatus
 
     def __process_keywords(self) -> int:
-        """Generic Chemkin reactor keyword processing method
-        to be overridden by child classes
+        """Generic Chemkin reactor keyword processing method."""
+        """
+        To be overridden by child classes
 
         Returns
         -------
@@ -1780,8 +1817,11 @@ class ReactorModel:
         return ierr
 
     def __run_model(self) -> int:
-        """Simulation execution procedures specific to a particular Chemkin reactor model
-        to be overridden by child classes
+        """Simulation execution procedures specific to
+        a particular Chemkin reactor model.
+        """
+        """
+        To be overridden by child classes
 
         Returns
         -------
@@ -1793,8 +1833,9 @@ class ReactorModel:
         return ierr
 
     def run(self) -> int:
-        """Generic Chemkin run reactor model method
-        to be overridden by child classes
+        """Generic Chemkin run reactor model method."""
+        """
+        To be overridden by child classes
 
         Returns
         -------
@@ -1805,20 +1846,20 @@ class ReactorModel:
         logger.debug("Running " + str(self.__class__.__name__) + " " + self.label)
         # keyword processing
         logger.debug("Processing keywords")
-        retVal = (
+        ret_val = (
             self.__process_keywords()
         )  # each reactor model subclass to perform its own keyword processing
         logger.debug("Processing keywords complete")
         # run reactor model
         logger.debug("Running model")
-        retVal = self.__run_model()
-        logger.debug("Running model complete, status = " + str(retVal))
+        ret_val = self.__run_model()
+        logger.debug("Running model complete, status = " + str(ret_val))
 
-        return retVal
+        return ret_val
 
     def setsolutionspeciesfracmode(self, mode: str = "mass"):
-        """Set the type of species fractions in the solution
-
+        """Set the type of species fractions in the solution."""
+        """
         Parameters
         ----------
             mode: string {'mass', 'mole'}
@@ -1840,8 +1881,8 @@ class ReactorModel:
             exit()
 
     def getrawsolutionstatus(self) -> bool:
-        """Get the status of the post-process
-
+        """Get the status of the post-process."""
+        """
         Returns
         -------
             status: boolean
@@ -1855,8 +1896,8 @@ class ReactorModel:
         return status
 
     def getmixturesolutionstatus(self) -> bool:
-        """Get the status of the post-process
-
+        """Get the status of the post-process."""
+        """
         Returns
         -------
             status: boolean
@@ -1870,8 +1911,8 @@ class ReactorModel:
         return status
 
     def get_solution_size(self) -> tuple[int, int]:
-        """Get the number of reactors and the number of solution points
-
+        """Get the number of reactors and the number of solution points."""
+        """
         Returns
         -------
             nreactor: integer
@@ -1894,8 +1935,10 @@ class ReactorModel:
         return self._numbsolutionpoints
 
     def parsespeciessolutiondata(self, frac: npt.NDArray[np.double]):
-        """Parse the species fraction solution data that are stored in a 2D array (number_species x numb_solution)
-
+        """Parse the species fraction solution data that are stored
+        in a 2D array (number_species x numb_solution).
+        """
+        """
         Parameters
         ----------
             frac: 2-D double array, dimension = [number_species, numb_solution]
@@ -1915,7 +1958,7 @@ class ReactorModel:
 
     def process_solution(self):
         """Post-process solution to extract the raw solution variable data
-        to be overridden by child classes
+        to be overridden by child classes.
         """
         # a shell method to be overridden by child classes
         pass

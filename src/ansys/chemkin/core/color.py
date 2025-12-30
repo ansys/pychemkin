@@ -22,7 +22,7 @@
 
 
 class Color:
-    """Define colors used by PyChemkin for printing text messages"""
+    """Define colors used by PyChemkin for printing text messages."""
 
     # color codes
     RED = "\033[91m"
@@ -63,7 +63,8 @@ class Color:
 
         Parameters
         ----------
-            mode: string, {"normal, "info", "warning, "error", "fatal", "ok"}, default = ""
+            mode: string, {"normal, "info", "warning, "error", "fatal", "ok"},
+            default = ""
                 message mode/type
             msg: list of strings
                 the message to be printed

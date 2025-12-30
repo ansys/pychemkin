@@ -121,7 +121,7 @@ air.pressure = 1.0 * ansys.chemkin.core.P_ATM
 # mixture temperature in [K]
 air.temperature = 300.0
 # mixture composition in mole fractions
-air.X = [("O2", 0.21), ("N2", 0.79)]
+air.x = [("O2", 0.21), ("N2", 0.79)]
 
 ##########################################################
 # Print the properties of the air mixture for verification
@@ -143,6 +143,6 @@ print(f"Temperature = {air.temperature} [K]")
 # print the 'air' composition in mass fractions
 air.list_composition(mode="mass")
 # get 'air' mixture density [g/cm3]
-print(f"Mixture density   = {air.RHO} [g/cm3]")
+print(f"Mixture density   = {air.rho} [g/cm3]")
 # get 'air' mixture viscosity [g/cm-sec] or [poise]
 print(f"Mixture viscosity = {air.mixture_viscosity() * 100.0} [cP]")

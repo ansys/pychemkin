@@ -59,9 +59,9 @@ if ierror != 0:
 else:
     print(Color.GREEN + "Preprocessing succeeded.", end=Color.END)
     print("mechanism information:")
-    print(f"number of elements = {My1stMech.MM:d}")
+    print(f"number of elements = {My1stMech.mm:d}")
     print(f"number of gas species = {My1stMech.KK:d}")
-    print(f"number of gas reactions = {My1stMech.IIGas:d}")
+    print(f"number of gas reactions = {My1stMech.ii_gas:d}")
 
 # create a mixture with My1stMech
 mymixture1 = ck.Mixture(My1stMech)
@@ -70,7 +70,7 @@ mymixture1.temperature = 1000.0
 # set mixture pressure [dynes/cm2]
 mymixture1.pressure = ck.P_ATM
 # set molar compositions
-mymixture1.X = [("CH4", 0.1), ("O2", 0.21), ("N2", 0.79)]
+mymixture1.x = [("CH4", 0.1), ("O2", 0.21), ("N2", 0.79)]
 # compute the constrained H-P equilibrium state
 ck.help("equilibrium")
 equil_mix1_hp = ck.equilibrium(mymixture1, opt=5)
@@ -99,9 +99,9 @@ if ierror != 0:
 else:
     print(Color.GREEN + "Preprocessing succeeded.", end=Color.END)
     print("mechanism information:")
-    print(f"number of elements = {My2ndMech.MM:d}")
+    print(f"number of elements = {My2ndMech.mm:d}")
     print(f"number of gas species = {My2ndMech.KK:d}")
-    print(f"number of gas reactions = {My2ndMech.IIGas:d}")
+    print(f"number of gas reactions = {My2ndMech.ii_gas:d}")
 
 # create the 2nd mixture with the My2ndMech
 mymixture2 = ck.Mixture(My2ndMech)
@@ -110,7 +110,7 @@ mymixture2.temperature = 500.0
 # set mixture pressure [dynes/cm2]
 mymixture2.pressure = 2.0 * ck.P_ATM
 # set mixture molar composition
-mymixture2.X = [("H2", 0.02), ("O2", 0.2), ("N2", 0.8)]
+mymixture2.x = [("H2", 0.02), ("O2", 0.2), ("N2", 0.8)]
 # compute detonation wave speed with mymixture2
 speeds_mix2, cj_mix2 = ck.detonation(mymixture2)
 print(f"detonation mymixture2 temperature: {cj_mix2.temperature} [K]")

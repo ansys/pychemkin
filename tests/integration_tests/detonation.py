@@ -71,9 +71,9 @@ premixed = ck.Mixture(MyMech)
 products = ["CO2", "H2O", "N2"]
 # species mole fractions of added/inert mixture.
 # can also create an additives mixture here
-add_frac = np.zeros(MyMech.KK, dtype=np.double)  # no additives: all zeros
-ierror = premixed.X_by_Equivalence_Ratio(
-    MyMech, fuel.X, air.X, add_frac, products, equivalenceratio=1.0
+add_frac = np.zeros(MyMech.kk, dtype=np.double)  # no additives: all zeros
+ierror = premixed.x_by_equivalence_ratio(
+    MyMech, fuel.x, air.x, add_frac, products, equivalenceratio=1.0
 )
 if ierror != 0:
     raise RuntimeError
@@ -103,7 +103,7 @@ for i in range(points):
 plt.plot(p, det, "bo--", label="ideal gas", markersize=5, fillstyle="none")
 #
 # turn on real-gas cubic equation of state
-premixed.use_realgas_cubicEOS()
+premixed.use_realgas_cubic_eos()
 # set mixture mixing rule to Van der Waals (default)
 # premixed.set_realgas_mixing_rule(rule=0)
 # restart the calculation with real-gas EOS

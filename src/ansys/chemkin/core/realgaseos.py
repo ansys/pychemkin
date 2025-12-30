@@ -28,8 +28,8 @@ from ansys.chemkin.core import chemkin_wrapper as ck_wrapper
 
 
 def check_realgas_status(chem_index: int) -> bool:
-    """Check whether the real-gas cubic EOS is active
-
+    """Check whether the real-gas cubic EOS is active."""
+    """
     Parameters
     ----------
         chem_index: integer
@@ -53,8 +53,8 @@ def check_realgas_status(chem_index: int) -> bool:
 
 
 def set_current_pressure(chem_index: int, pressure: float) -> int:
-    """Set gas mixture pressure for real-gas EOS calculations.
-
+    """Set gas mixture pressure for real-gas EOS calculations."""
+    """
     Parameters
     ----------
         chem_index: integer

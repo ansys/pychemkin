@@ -64,7 +64,7 @@ feedstock.temperature = 1444.48
 # set inlet/PFR pressure [atm]
 feedstock.pressure = 0.83 * ck.P_ATM
 # set inlet composition
-feedstock.X = [
+feedstock.x = [
     ("AR", 0.8433),
     ("CO", 0.0043),
     ("CO2", 0.0429),
@@ -149,15 +149,15 @@ for i in range(solutionpoints):
     # get the mixture at the time point
     solutionmixture = tubereactor.get_solution_mixture_at_index(solution_index=i)
     # get gas density [g/cm3]
-    den = solutionmixture.RHO
+    den = solutionmixture.rho
     # gas velocity [g]
     velocityprofile[i] = ratio / den
     # get CO mole fraction profile
-    co2_profile[i] = solutionmixture.X[co2_index]
+    co2_profile[i] = solutionmixture.x[co2_index]
     # get NH3 mole fraction profile
-    nh3_profile[i] = solutionmixture.X[nh3_index]
+    nh3_profile[i] = solutionmixture.x[nh3_index]
     # get NO2 mole fraction profile
-    no2_profile[i] = solutionmixture.X[no2_index]
+    no2_profile[i] = solutionmixture.x[no2_index]
 # plot the profiles
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))
 plt.suptitle("Constant Temperature Plug-Flow Reactor", fontsize=16)

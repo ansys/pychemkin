@@ -34,7 +34,7 @@ from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import PSR_SetVolume_EnergyConservation as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSRSetVolumeEnergyConservation as PSR
 
 # check working directory
 current_dir = str(Path.cwd())
@@ -60,7 +60,7 @@ ierror = MyGasMech.preprocess()
 # create the fuel inlet
 fuel = Stream(MyGasMech, label="Fuel")
 # set fuel composition
-fuel.X = [("h2", 0.21), ("n2", 0.79)]
+fuel.x = [("h2", 0.21), ("n2", 0.79)]
 # setting pressure and temperature is not required in this case
 fuel.pressure = ck.P_ATM
 fuel.temperature = 450.0  # inlet temperature
@@ -68,7 +68,7 @@ fuel.temperature = 450.0  # inlet temperature
 fuel.vol_flowrate = 25.0
 # create the oxidizer inlet: air
 air = Stream(MyGasMech, label="Oxid")
-air.X = [("o2", 0.21), ("n2", 0.79)]
+air.x = [("o2", 0.21), ("n2", 0.79)]
 # setting pressure and temperature is not required in this case
 air.pressure = fuel.pressure
 air.temperature = fuel.temperature
@@ -79,7 +79,7 @@ air.vol_flowrate = 50.0
 combustor = PSR(fuel, label="tincan")
 # set the estimated reactor temperature [K]
 combustor.temperature = 2000.0
-# set the reactor volume (cm3): required for PSR_SetVolume_EnergyConservation model
+# set the reactor volume (cm3): required for PSRSetVolumeEnergyConservation model
 combustor.volume = 200.0
 # add external inlets to the PSR
 combustor.set_inlet(fuel)

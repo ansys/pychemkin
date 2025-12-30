@@ -46,11 +46,18 @@ from ansys.chemkin.core.utilities import find_interpolate_parameters
 
 
 class PremixedFlame(Flame):
+    """One-dimensional premixed flame model."""
+
     def __init__(self, inlet: Stream, label: Union[str, None] = None):
+        """Preixed flame model object."""
         # check reactor Mixture object
         if not isinstance(inlet, Stream):
             # wrong argument type
-            msg = [Color.RED, "the first argument must be a Mixture object.", Color.END]
+            msg = [
+                Color.RED,
+                "the first argument must be a Mixture object.",
+                Color.END,
+            ]
             this_msg = Color.SPACE.join(msg)
             logger.critical(this_msg)
             exit()
@@ -59,7 +66,8 @@ class PremixedFlame(Flame):
             self.label = "premixedflame"
         else:
             self.label = label
-        # set flow area to unity for easy conversion from mass flow rate to mass flux in the flame models
+        # set flow area to unity for easy conversion from mass flow rate
+        # to mass flux in the flame models
         if not inlet._haveflowarea:
             inlet.flowarea = 1.0  # [cm2]
         # initialization
@@ -69,8 +77,8 @@ class PremixedFlame(Flame):
         self._final_mass_flow_rate = -1.0
 
     def set_inlet(self, extinlet: Stream):
-        """Add an external inlet to the reactor
-
+        """Add an external inlet to the reactor"""
+        """
         Parameters
         ----------
             extinlet: Stream object
@@ -88,7 +96,10 @@ class PremixedFlame(Flame):
         exit()
 
     def unburnt_temperature(self, temperature: float):
-        """Set the unburnt fuel-oxidizer gas temperature for the flame speed calculation.
+        """Set the unburnt fuel-oxidizer gas temperature for
+        the flame speed calculation.
+        """
+        """
         By default, the inlet Stream temperature will be used.
 
         Parameters
@@ -107,12 +118,14 @@ class PremixedFlame(Flame):
         self.setkeyword("TUNB", value=temperature)
 
     def lump_diffusion_imbalance(self, mode: bool = True):
+        """Lump error to the last species."""
         """Lamp the "mass flux imbalance" due to species transport to the last species.
-        The net diffusion flux at any interface should be zero. Use the lumping option to
-        assign all mass imbalance to the last gas species of the mechanism by forcing
-        its mass fraction to be 1 - (sum of all other species mass fractions). By default,
-        the correction velocity formulism is used to distribute the mass flux imbalance evenly
-        to all species.
+        The net diffusion flux at any interface should be zero. Use
+        the lumping option to assign all mass imbalance to the last gas species of
+        the mechanism by forcing its mass fraction to be
+        1 - (sum of all other species mass fractions). By default,
+        the correction velocity formulism is used to distribute the mass flux
+        imbalance evenly to all species.
 
         Parameters
         ----------
@@ -124,8 +137,8 @@ class PremixedFlame(Flame):
         self.setkeyword("TRCE", value=mode)
 
     def set_profilekeywords(self) -> int:
-        """Create profile keywords for Chemkin flame applications
-
+        """Create profile keywords for Chemkin flame applications."""
+        """
         one keyword per line: <profile keyword>     <position>  <value>
 
         Returns
@@ -141,12 +154,12 @@ class PremixedFlame(Flame):
         numblines = 0
         # create the keyword lines from the keyword objects in the profile list
         if tag in self._profiles_index:
-            profile_ID = self._profiles_index.index(tag)
-            T_profile = self._profiles_list[profile_ID]
-            npoints = T_profile.size
+            profile_id = self._profiles_index.index(tag)
+            t_profile = self._profiles_list[profile_id]
+            npoints = t_profile.size
             #
-            positions = T_profile.pos
-            y = T_profile.value
+            positions = t_profile.pos
+            y = t_profile.value
             # loop over all data points
             for x in positions:
                 this_key = ""
@@ -163,9 +176,9 @@ class PremixedFlame(Flame):
             logger.error(this_msg)
             return -1
 
-    def use_TPRO_grids(self, mode: bool = True):
+    def use_tpro_grids(self, mode: bool = True):
         """Use the position values of the temperature profile data as
-        the initial grid points to start the simulation
+        the initial grid points to start the simulation.
 
         Parameters
         ----------
@@ -177,8 +190,8 @@ class PremixedFlame(Flame):
         self.setkeyword("USE_TPRO_GRID", value=mode)
 
     def set_gridkeywords(self) -> int:
-        """Create 1-D grid profile keywords for Chemkin flame applications
-
+        """Create 1-D grid profile keywords for Chemkin flame applications."""
+        """
         one keyword per line: <profile keyword>     <position>
 
         Returns
@@ -205,18 +218,18 @@ class PremixedFlame(Flame):
         return ierr
 
     def __run_model(self) -> int:
-        """Run the reactor model after the keywords are processed
-
+        """Run the reactor model after the keywords are processed."""
+        """
         Returns
         -------
             Error code: integer
 
         """
         # estimated reactor mass fraction
-        y_init = self.reactormixture.Y
+        y_init = self.reactormixture.y
         # run the premixed flame simulation
         ierr = chemkin_wrapper.chemkin.KINPremix_CalculateFlame(
-            self._myLOUT,
+            self._mylout,
             self._chemset_index,
             self._pressure,
             self._temperature,
@@ -228,8 +241,8 @@ class PremixedFlame(Flame):
         return ierr
 
     def __process_keywords(self):
-        """Process input keywords for the reactor model
-
+        """Process input keywords for the reactor model."""
+        """
         Returns
         -------
             Error code: integer
@@ -331,8 +344,8 @@ class PremixedFlame(Flame):
         return ierr + err_key
 
     def run(self) -> int:
-        """Chemkin run premixed flame model method
-
+        """Chemkin run premixed flame model method."""
+        """
         Returns
         -------
             Error code: integer
@@ -362,15 +375,15 @@ class PremixedFlame(Flame):
             msg = [Color.YELLOW, "initializing Chemkin ...", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.info(this_msg)
-            retVal = chemkin_wrapper.chemkin.KINInitialize(
+            ret_val = chemkin_wrapper.chemkin.KINInitialize(
                 self._chemset_index, self._solvertype
             )
-            if retVal != 0:
+            if ret_val != 0:
                 msg = [
                     Color.RED,
                     "Chemkin-CFD-API initialization failed;",
                     "code =",
-                    str(retVal),
+                    str(ret_val),
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
@@ -390,20 +403,20 @@ class PremixedFlame(Flame):
         ]
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
-        retVal = (
+        ret_val = (
             self.__process_keywords()
         )  # each reactor model subclass to perform its own keyword processing
-        if retVal != 0:
+        if ret_val != 0:
             msg = [
                 Color.RED,
                 "generating the keyword inputs,",
                 "error code =",
-                str(retVal),
+                str(ret_val),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
             logger.critical(this_msg)
-            return retVal
+            return ret_val
         logger.debug("processing keywords complete")
 
         # run reactor model
@@ -411,11 +424,11 @@ class PremixedFlame(Flame):
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
         # use API calls
-        retVal = self.__run_model()
+        ret_val = self.__run_model()
         # update run status
-        self.setrunstatus(code=retVal)
-        msg = ["simulation completed,", "status =", str(retVal), Color.END]
-        if retVal == 0:
+        self.setrunstatus(code=ret_val)
+        msg = ["simulation completed,", "status =", str(ret_val), Color.END]
+        if ret_val == 0:
             msg.insert(0, Color.GREEN)
             this_msg = Color.SPACE.join(msg)
             logger.info(this_msg)
@@ -424,12 +437,13 @@ class PremixedFlame(Flame):
             this_msg = Color.SPACE.join(msg)
             logger.critical(this_msg)
 
-        return retVal
+        return ret_val
 
     def continuation(self) -> int:
         """Perform a continuation run after the original flame simulation is
         completed successfully.
-
+        """
+        """
         Returns
         -------
             Error code: integer
@@ -473,8 +487,8 @@ class PremixedFlame(Flame):
         return status
 
     def get_solution_size(self) -> int:
-        """Get the number of solution points
-
+        """Get the number of solution points."""
+        """
         Returns
         -------
             npoints: integer
@@ -523,7 +537,7 @@ class PremixedFlame(Flame):
             exit()
 
     def process_solution(self):
-        """Post-process solution to extract the raw solution variable data"""
+        """Post-process solution to extract the raw solution variable data."""
         # check existing raw data
         if self.getrawsolutionstatus():
             msg = [
@@ -582,7 +596,7 @@ class PremixedFlame(Flame):
         )
         # get raw solution data
         npoint = c_int(npoints)
-        nspecies = c_int(self.reactormixture.KK)
+        nspecies = c_int(self.reactormixture.kk)
         ierr = chemkin_wrapper.chemkin.KINPremix_GetSolution(
             npoint, nspecies, pos, temp, frac
         )
@@ -635,14 +649,14 @@ class PremixedFlame(Flame):
             exit()
         # compute laminar flame speed
         if self._flamemode == 0:
-            inlet_density = self._solution_mixturearray[0].RHO
+            inlet_density = self._solution_mixturearray[0].rho
             self.flamespeed = self._final_mass_flow_rate / inlet_density
         # clean up
         del pos, temp, frac
 
     def get_solution_variable_profile(self, varname: str) -> npt.NDArray[np.double]:
-        """Get the profile of the solution variable specified
-
+        """Get the profile of the solution variable specified."""
+        """
         Parameters
         ----------
             varname: string
@@ -691,11 +705,12 @@ class PremixedFlame(Flame):
         return var
 
     def create_solution_streams(self, specfrac: npt.NDArray[np.double]) -> int:
-        """Create a list of Streams that represent the gas mixture at a solution point
-
+        """Create a list of Streams that represent the gas mixture at a solution point."""
+        """
         Parameters
         ----------
-            specfrac: 2D double array, dimensions = [number_species, numb_solution_point]
+            specfrac: 2D double array, dimensions
+            = [number_species, numb_solution_point]
                 species fractions of all time points [species_fraction, time_point]
 
         Returns
@@ -714,7 +729,8 @@ class PremixedFlame(Flame):
             this_msg = Color.SPACE.join(msg)
             logger.info(this_msg)
             return 1
-        # create a temporary Stream object to hold the mixture properties at current solution point
+        # create a temporary Stream object to hold the mixture properties
+        # at current solution point
         sstream = copy.deepcopy(self.reactormixture)
         # create variable arrays to hold the solution profile
         species = []
@@ -740,10 +756,10 @@ class PremixedFlame(Flame):
             # set mixture composition
             if self._speciesmode == "mass":
                 # mass fractions
-                sstream.Y = frac
+                sstream.y = frac
             else:
                 # mole fractions
-                sstream.X = frac
+                sstream.x = frac
             # add to the solution stream list
             self._solution_mixturearray.append(copy.deepcopy(sstream))
         # clean up
@@ -752,8 +768,8 @@ class PremixedFlame(Flame):
         return 0
 
     def get_solution_stream(self, x: float) -> Stream:
-        """Get the Stream representing the solution state at the given location
-
+        """Get the Stream representing the solution state at the given location."""
+        """
         Parameters
         ----------
             x: double
@@ -762,7 +778,8 @@ class PremixedFlame(Flame):
         Returns
         -------
             mixturetarget: Stream object
-                a Stream representing the gas properties in the flame domain at the specific location
+                a Stream representing the gas properties in the flame domain
+                at the specific location
 
         """
         # check status
@@ -803,8 +820,10 @@ class PremixedFlame(Flame):
             return mixturetarget
 
     def get_solution_stream_at_grid(self, grid_index: int) -> Stream:
-        """Get the Stream representing the solution state at the given solution point index
-
+        """Get the Stream representing the solution state at
+        the given solution point index.
+        """
+        """
         Parameters
         ----------
             grid_index: integer
@@ -853,16 +872,28 @@ class PremixedFlame(Flame):
 
 
 class BurnedStabilized_GivenTemperature(PremixedFlame):
+    """Burner-stabilized premixed flame with given temperature profile."""
+
     def __init__(self, inlet: Stream, label: Union[str, None] = None):
+        """Burner-stabilized flame model with given temperature profile."""
+        """
+        Parameters
+        ----------
+            inlet: Stream object
+                inlet mixture to the burner nozzle
+            label: string
+                name of the flame model/object
+
+        """
         #
         if label is None:
             label = "Premixed Burner"
         # initialization
         super().__init__(inlet=inlet, label=label)
         # energy equation
-        self._energytype = self.EnergyTypes.get("TGiven", c_int(2))
+        self._energytype = self.energytypes.get("TGiven", c_int(2))
         # FORTRAN file unit of the text output file
-        self._myLOUT = c_int(161)
+        self._mylout = c_int(161)
         # flame model mode: burner stabilized
         self._flamemode = 1
         # set required keywords for this model
@@ -872,15 +903,27 @@ class BurnedStabilized_GivenTemperature(PremixedFlame):
 
 
 class BurnedStabilized_EnergyEquation(PremixedFlame):
+    """Burner-stabilized premixed flame."""
+
     def __init__(self, inlet: Stream, label: Union[str, None] = None):
+        """Burner-stabilized premixed flame."""
+        """
+        Parameters
+        ----------
+            inlet: Stream object
+                inlet mixture to the burner nozzle
+            label: string
+                name of the flame model/object
+
+        """
         # initialization
         if label is None:
             label = "Premixed Burner"
         super().__init__(inlet=inlet, label=label)
         # energy equation
-        self._energytype = self.EnergyTypes.get("ENERGY", c_int(1))
+        self._energytype = self.energytypes.get("ENERGY", c_int(1))
         # FORTRAN file unit of the text output file
-        self._myLOUT = c_int(162)
+        self._mylout = c_int(162)
         # flame model mode: burner stabilized
         self._flamemode = 2
         # set required keywords for this model
@@ -889,8 +932,8 @@ class BurnedStabilized_EnergyEquation(PremixedFlame):
         self.setkeyword("ENRG", True)
 
     def skip_fix_t_solution(self, mode: bool = True):
-        """Skip the step of finding the intermediate solution with fixed temperature
-
+        """Skip the step of finding the intermediate solution with fixed temperature."""
+        """
         Parameters
         ----------
             mode: boolean {True, False}
@@ -902,8 +945,9 @@ class BurnedStabilized_EnergyEquation(PremixedFlame):
 
     def automatic_temperature_profile_estimate(self, mode: bool = True):
         """Let the premixed flame model to construct an estimated temperature profile
-        based on the equilibrium state to start the calculation
-
+        based on the equilibrium state to start the calculation.
+        """
+        """
         Parameters
         ----------
             mode: boolean {True, False}
@@ -915,13 +959,25 @@ class BurnedStabilized_EnergyEquation(PremixedFlame):
 
 
 class FreelyPropagating(PremixedFlame):
+    """Freely propagating premixed flame model."""
+
     def __init__(self, inlet: Stream, label: Union[str, None] = None):
+        """Freely propagating premixed flame."""
+        """
+        Parameters
+        ----------
+            inlet: Stream object
+                inlet mixture to the burner nozzle
+            label: string
+                name of the flame model/object
+
+        """
         # initialization
         if label is None:
             label = "Premixed Propagating"
         super().__init__(inlet=inlet, label=label)
         # energy equation
-        self._energytype = self.EnergyTypes.get("ENERGY", c_int(1))
+        self._energytype = self.energytypes.get("ENERGY", c_int(1))
         # flame model mode: freely propagating
         self._flamemode = 0
         # set required keywords for this model
@@ -932,8 +988,8 @@ class FreelyPropagating(PremixedFlame):
         self.flamespeed = -1.0
 
     def skip_fix_t_solution(self, mode: bool = True):
-        """Skip the step of finding the intermediate solution with fixed temperature
-
+        """Skip the step of finding the intermediate solution with fixed temperature."""
+        """
         Parameters
         ----------
             mode: boolean {True, False}
@@ -945,8 +1001,9 @@ class FreelyPropagating(PremixedFlame):
 
     def automatic_temperature_profile_estimate(self, mode: bool = True):
         """Let the premixed flame model to construct an estimated temperature profile
-        based on the equilibrium state to start the calculation
-
+        based on the equilibrium state to start the calculation.
+        """
+        """
         Parameters
         ----------
             mode: boolean {True, False}
@@ -968,6 +1025,7 @@ class FreelyPropagating(PremixedFlame):
             self.removekeyword("TFIX")
 
     def pinned_temperature(self, temperature: float = 400.0):
+        """Pin the assigned temperature to the mesh."""
         """Pin the assigned temperature to the mesh to anchor the freely propagating flame.
         This temperature should be slightly higher than the inlet/unburnt gas temperature
         and less than the ignition temperature of the inlet gas mixture.
@@ -999,8 +1057,8 @@ class FreelyPropagating(PremixedFlame):
             self.setkeyword("TFIX", value=temperature)
 
     def get_flame_speed(self) -> float:
-        """Get the computed laminar flame speed
-
+        """Get the computed laminar flame speed."""
+        """
         Returns
         -------
             flame_speed: double

@@ -98,7 +98,7 @@ from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeEnergyConservation as PSR
 import numpy as np  # number crunching
 
 # check working directory
@@ -146,20 +146,20 @@ ierror = MyGasMech.preprocess()
 fuel = Mixture(MyGasMech)
 fuel.temperature = 650.0  # [K]
 fuel.pressure = 10.0 * ck.P_ATM  # [atm] => [dyne/cm2]
-fuel.X = [("CH4", 1.0)]
+fuel.x = [("CH4", 1.0)]
 
 # air is modeled as a mixture of oxygen and nitrogen
 air = Mixture(MyGasMech)
 air.temperature = 650.0  # [K]
 air.pressure = 10.0 * ck.P_ATM
-air.X = ck.Air.X()  # mole fractions
+air.x = ck.Air.x()  # mole fractions
 
 #################################################
 # Create external inlet streams from the mixtures
 # ===============================================
 # Create the ``fuel`` and the ``air`` streams/mixtures before setting up the
 # external inlet streams. The fuel in this case is pure methane. The
-# ``X_by_Equivalence_Ratio()`` method is used to form the main
+# ``x_by_equivalence_ratio()`` method is used to form the main
 # ``premixed`` inlet stream to the *mixing zone* reactor. The external inlets
 # to the first reactor, the *mixing zone*, and the second reactor, the
 # *flame zone*, are simply ``air`` mixtures with different mass flow rates
@@ -167,10 +167,10 @@ air.X = ck.Air.X()  # mole fractions
 #
 # .. note::
 #   PyChemkin has *air* redefined as a convenient way to set up the air
-#   stream/mixture in the simulations. Use the ``ansys.chemkin.core.Air.X()`` or
-#   ``ansys.chemkin.core.Air.Y()`` method when the mechanism uses ``O2`` and
-#   ``N2`` for oxygen and nitrogen. Use the ``ansys.chemkin.core.air.X()`` or
-#   ``ansys.chemkin.core.air.Y()`` method when oxygen and nitrogen are represented
+#   stream/mixture in the simulations. Use the ``ansys.chemkin.core.Air.x()`` or
+#   ``ansys.chemkin.core.Air.y()`` method when the mechanism uses ``O2`` and
+#   ``N2`` for oxygen and nitrogen. Use the ``ansys.chemkin.core.air.x()`` or
+#   ``ansys.chemkin.core.air.y()`` method when oxygen and nitrogen are represented
 #   by ``o2`` and ``n2``.
 #
 
@@ -179,14 +179,14 @@ air.X = ck.Air.X()  # mole fractions
 products = ["CO2", "H2O", "N2"]
 # species mole fractions of added/inert mixture.
 # (You can also create an additives mixture here.)
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
+add_frac = np.zeros(MyGasMech.kk, dtype=np.double)  # no additives: all zeros
 
 # create the unburned fuel-air mixture
 premixed = Stream(MyGasMech)
 # mean equivalence ratio
 equiv = 0.6
-ierror = premixed.X_by_Equivalence_Ratio(
-    MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=equiv
+ierror = premixed.x_by_equivalence_ratio(
+    MyGasMech, fuel.x, air.x, add_frac, products, equivalenceratio=equiv
 )
 # check fuel-oxidizer mixture creation status
 if ierror != 0:
@@ -203,14 +203,14 @@ premixed.mass_flowrate = 500.0  # [g/sec]
 
 # primary air stream to mix with the primary fuel-air stream
 primary_air = Stream(MyGasMech, label="Primary_Air")
-primary_air.X = air.X
+primary_air.x = air.x
 primary_air.pressure = air.pressure
 primary_air.temperature = air.temperature
 primary_air.mass_flowrate = 50.0  # [g/sec]
 
 # secondary bypass air stream
 secondary_air = Stream(MyGasMech, label="Secondary_Air")
-secondary_air.X = air.X
+secondary_air.x = air.x
 secondary_air.pressure = air.pressure
 secondary_air.temperature = 670.0  # [K]
 secondary_air.mass_flowrate = 100.0  # [g/sec]
@@ -246,7 +246,7 @@ co_index = MyGasMech.get_specindex("CO")
 mix = PSR(premixed, label="mixing zone")
 # use different guess temperature
 mix.set_estimate_conditions(option="TP", guess_temp=800.0)
-# set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
+# set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
 mix.residence_time = 0.5 * 1.0e-3
 # add external inlets
 mix.set_inlet(premixed)
@@ -257,7 +257,7 @@ mix.set_inlet(primary_air)
 flame = PSR(premixed, label="flame zone")
 # use the equilibrium state of the inlet gas mixture as the guessed solution
 flame.set_estimate_conditions(option="TP", guess_temp=1600.0)
-# set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
+# set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
 flame.residence_time = 1.5 * 1.0e-3
 # add external inlet
 flame.set_inlet(secondary_air)
@@ -266,7 +266,7 @@ flame.set_inlet(secondary_air)
 recirculation = PSR(premixed, label="recirculation zone")
 # use the equilibrium state of the inlet gas mixture as the guessed solution
 recirculation.set_estimate_conditions(option="TP", guess_temp=1600.0)
-# set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
+# set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
 recirculation.residence_time = 1.5 * 1.0e-3
 
 ############################
@@ -427,10 +427,10 @@ for m in range(PSRnetwork.number_external_outlets):
     print("=" * 10)
     print(f"Temperature = {network_outflow.temperature} [K].")
     print(f"Mass flow rate = {network_outflow.mass_flowrate} [g/sec].")
-    print(f"CH4 = {network_outflow.X[ch4_index]}.")
-    print(f"O2 = {network_outflow.X[o2_index]}.")
-    print(f"CO = {network_outflow.X[co_index]}.")
-    print(f"NO = {network_outflow.X[no_index]}.")
+    print(f"CH4 = {network_outflow.x[ch4_index]}.")
+    print(f"O2 = {network_outflow.x[o2_index]}.")
+    print(f"CO = {network_outflow.x[co_index]}.")
+    print(f"NO = {network_outflow.x[no_index]}.")
     print("-" * 10)
 
 # display the reactor solutions
@@ -443,8 +443,8 @@ for index, stream in PSRnetwork.reactor_solutions.items():
     print(f"Reactor: {name}.")
     print(f"Temperature = {stream.temperature} [K].")
     print(f"Mass flow rate = {stream.mass_flowrate} [g/sec].")
-    print(f"CH4 = {stream.X[ch4_index]}.")
-    print(f"O2 = {stream.X[o2_index]}.")
-    print(f"CO = {stream.X[co_index]}.")
-    print(f"NO = {stream.X[no_index]}.")
+    print(f"CH4 = {stream.x[ch4_index]}.")
+    print(f"O2 = {stream.x[o2_index]}.")
+    print(f"CO = {stream.x[co_index]}.")
+    print(f"NO = {stream.x[no_index]}.")
     print("-" * 10)

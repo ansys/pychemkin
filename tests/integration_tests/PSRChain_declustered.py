@@ -40,7 +40,7 @@ from ansys.chemkin.core.inlet import (
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeEnergyConservation as PSR
 
 # check working directory
 current_dir = str(Path.cwd())
@@ -87,14 +87,14 @@ ierror = MyGasMech.preprocess()
 fuel = Stream(MyGasMech)
 fuel.temperature = 300.0  # [K]
 fuel.pressure = 2.1 * ck.P_ATM  # [atm] => [dyne/cm2]
-fuel.X = [("CH4", 1.0)]
+fuel.x = [("CH4", 1.0)]
 fuel.mass_flowrate = 3.275  # [g/sec]
 
 # air is modeled as a mixture of oxygen and nitrogen
 air = Stream(MyGasMech)
 air.temperature = 550.0  # [K]
 air.pressure = 2.1 * ck.P_ATM
-air.X = ck.Air.X()  # use predefined "air" recipe in mole fractions
+air.x = ck.Air.x()  # use predefined "air" recipe in mole fractions
 air.mass_flowrate = 45.0  # [g/sec]
 
 #################################################
@@ -115,7 +115,7 @@ print(str(premixed.mass_flowrate))
 reburn_fuel = Stream(MyGasMech)
 reburn_fuel.temperature = 300.0  # [K]
 reburn_fuel.pressure = 2.1 * ck.P_ATM  # [atm] => [dyne/cm2]
-reburn_fuel.X = [("CH4", 0.6), ("CO2", 0.4)]
+reburn_fuel.x = [("CH4", 0.6), ("CO2", 0.4)]
 reburn_fuel.mass_flowrate = 0.12  # [g/sec]
 
 # find the species index
@@ -156,7 +156,7 @@ co_index = MyGasMech.get_specindex("CO")
 combustor = PSR(premixed, label="combustor")
 # use the equilibrium state of the inlet gas mixture as the guessed solution
 combustor.set_estimate_conditions(option="HP")
-# set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
+# set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
 combustor.residence_time = 2.0 * 1.0e-3
 # add external inlet
 combustor.set_inlet(premixed)
@@ -175,14 +175,14 @@ print("combustor exit")
 print("=" * 40)
 print(f"temperature = {solnstream1.temperature} [K]")
 print(f"mass flow rate = {solnstream1.mass_flowrate} [g/sec]")
-print(f"CH4 = {solnstream1.X[ch4_index]}")
-print(f"O2 = {solnstream1.X[o2_index]}")
-print(f"CO = {solnstream1.X[co_index]}")
-print(f"NO = {solnstream1.X[no_index]}")
+print(f"CH4 = {solnstream1.x[ch4_index]}")
+print(f"O2 = {solnstream1.x[o2_index]}")
+print(f"CO = {solnstream1.x[co_index]}")
+print(f"NO = {solnstream1.x[no_index]}")
 
 # PSR #2: cooling
 cooling = PSR(solnstream1, label="cooling zone")
-# set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
+# set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
 cooling.residence_time = 1.5 * 1.0e-3
 # add external inlet
 air.mass_flowrate = 62.0  # [g/sec]
@@ -203,14 +203,14 @@ print("dilution zone exit")
 print("=" * 40)
 print(f"temperature = {solnstream2.temperature} [K]")
 print(f"mass flow rate = {solnstream2.mass_flowrate} [g/sec]")
-print(f"CH4 = {solnstream2.X[ch4_index]}")
-print(f"O2 = {solnstream2.X[o2_index]}")
-print(f"CO = {solnstream2.X[co_index]}")
-print(f"NO = {solnstream2.X[no_index]}")
+print(f"CH4 = {solnstream2.x[ch4_index]}")
+print(f"O2 = {solnstream2.x[o2_index]}")
+print(f"CO = {solnstream2.x[co_index]}")
+print(f"NO = {solnstream2.x[no_index]}")
 
 # PSR #3: reburn
 reburn = PSR(solnstream2, label="reburn zone")
-# set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
+# set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
 reburn.residence_time = 3.5 * 1.0e-3
 # add external inlet
 reburn.set_inlet(reburn_fuel)
@@ -230,10 +230,10 @@ print("outflow")
 print("=" * 40)
 print(f"temperature = {outflow.temperature} [K]")
 print(f"mass flow rate = {outflow.mass_flowrate} [g/sec]")
-print(f"CH4 = {outflow.X[ch4_index]}")
-print(f"O2 = {outflow.X[o2_index]}")
-print(f"CO = {outflow.X[co_index]}")
-print(f"NO = {outflow.X[no_index]}")
+print(f"CH4 = {outflow.x[ch4_index]}")
+print(f"O2 = {outflow.x[o2_index]}")
+print(f"CO = {outflow.x[co_index]}")
+print(f"NO = {outflow.x[no_index]}")
 
 # compute the total runtime
 runtime = time.time() - start_time
@@ -245,9 +245,9 @@ resultfile = Path(current_dir) / "PSRChain_declustered.result"
 results = {}
 results["state-temperature"] = [outflow.temperature]
 results["state-mass_flow_rate"] = [outflow.mass_flowrate]
-results["species-mole_fraction_CH4"] = [outflow.X[ch4_index]]
-results["species-mole_fraction_CO"] = [outflow.X[co_index]]
-results["species-mole_fraction_NO"] = [outflow.X[no_index]]
+results["species-mole_fraction_CH4"] = [outflow.x[ch4_index]]
+results["species-mole_fraction_CO"] = [outflow.x[co_index]]
+results["species-mole_fraction_NO"] = [outflow.x[no_index]]
 #
 r = resultfile.open(mode="w")
 r.write("{\n")

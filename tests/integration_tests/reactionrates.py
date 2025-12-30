@@ -57,13 +57,13 @@ ierror = MyGasMech.preprocess()
 # create the fuel mixture
 fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition
-fuelmixture.X = [("CH4", 1.0)]
+fuelmixture.x = [("CH4", 1.0)]
 # setting pressure and temperature is not required in this case
 fuelmixture.pressure = 5.0 * ck.P_ATM
 fuelmixture.temperature = 1500.0
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
-air.X = [("O2", 0.21), ("N2", 0.79)]
+air.x = [("O2", 0.21), ("N2", 0.79)]
 # setting pressure and temperature is not required in this case
 air.pressure = 5.0 * ck.P_ATM
 air.temperature = 1500.0
@@ -73,9 +73,9 @@ premixed = ck.Mixture(MyGasMech)
 products = ["CO2", "H2O", "N2"]
 # species mole fractions of added/inert mixture.
 # can also create an additives mixture here
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
-ierror = premixed.X_by_Equivalence_Ratio(
-    MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=1.0
+add_frac = np.zeros(MyGasMech.kk, dtype=np.double)  # no additives: all zeros
+ierror = premixed.x_by_equivalence_ratio(
+    MyGasMech, fuelmixture.x, air.x, add_frac, products, equivalenceratio=1.0
 )
 if ierror != 0:
     raise RuntimeError
@@ -88,14 +88,14 @@ premixed.list_composition(mode="mole")
 premixed.pressure = 5.0 * ck.P_ATM
 premixed.temperature = 1600.0
 # get the net species molar rates of production [mole/cm3-sec]
-rop = premixed.ROP()
+rop = premixed.rop()
 # list the nonzero rates in descending order
 print()
-specrate_order, species_rates = premixed.list_ROP()
+specrate_order, species_rates = premixed.list_rop()
 # get the forward and the reverse rates of each reaction
-kf, kr = premixed.RxnRates()
+kf, kr = premixed.rxn_rates()
 print()
-print(f"reverse reaction rates: (raw values of all {MyGasMech.IIGas:d} reactions)")
+print(f"reverse reaction rates: (raw values of all {MyGasMech.ii_gas:d} reactions)")
 print(str(kr))
 print("=" * 40)
 # list the nonzero net reaction rates

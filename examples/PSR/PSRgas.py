@@ -77,7 +77,7 @@ from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeEnergyConservation as PSR
 from ansys.chemkin.core.utilities import find_file
 
 # check working directory
@@ -126,7 +126,7 @@ ierror = MyGasMech.preprocess()
 # Instantiate a stream feed for the inlet gas mixture.
 # The stream is a mixture with the addition of the
 # inlet flow rate. You specify inlet gas properties in the same way as you
-# set up a mixture. Here, the ``X_by_Equivalence_Ratio()`` method is used.
+# set up a mixture. Here, the ``x_by_equivalence_ratio()`` method is used.
 #
 # First create the fuel and air mixtures. Then, define the
 # complete combustion product species and provide the additives composition
@@ -139,14 +139,14 @@ ierror = MyGasMech.preprocess()
 # create the fuel mixture
 fuel = ck.Mixture(MyGasMech)
 # set fuel composition: hydrogen diluted by nitrogen
-fuel.X = [("h2", 0.8), ("n2", 0.2)]
+fuel.x = [("h2", 0.8), ("n2", 0.2)]
 # setting the pressure and temperature is not required in this case
 fuel.pressure = ck.P_ATM
 fuel.temperature = 298.0  # inlet temperature
 
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
-air.X = [("o2", 0.21), ("n2", 0.79)]
+air.x = [("o2", 0.21), ("n2", 0.79)]
 # setting the pressure and temperature is not required in this case
 air.pressure = fuel.pressure
 air.temperature = fuel.temperature
@@ -157,11 +157,11 @@ feed = Stream(MyGasMech, label="feed_1")
 products = ["h2o", "n2"]
 # species mole fractions of added/inert mixture.
 # You can also create an additives mixture here.
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
+add_frac = np.zeros(MyGasMech.kk, dtype=np.double)  # no additives: all zeros
 # mean equivalence ratio
 equiv = 1.0
-ierror = feed.X_by_Equivalence_Ratio(
-    MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=equiv
+ierror = feed.x_by_equivalence_ratio(
+    MyGasMech, fuel.x, air.x, add_frac, products, equivalenceratio=equiv
 )
 # check fuel-oxidizer mixture creation status
 if ierror != 0:
@@ -178,7 +178,7 @@ feed.mass_flowrate = 432.0
 ####################################################################
 # Create the PSR to predict the gas composition of the outlet stream
 # ===================================================================
-# Use the ``PSR_SetResTime_EnergyConservation()`` method to instantiate
+# Use the ``PSRSetResTimeEnergyConservation()`` method to instantiate
 # the PSR ``sphere`` object because the goal is to see how
 # the residence time affects the hydrogen combustion process.
 # The gas property of the inlet feed is applied as the estimated
@@ -200,7 +200,7 @@ sphere = PSR(feed, label="PSR_1")
 
 # reset the estimated reactor temperature [K]
 sphere.temperature = 1700.0
-# set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
+# set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
 sphere.residence_time = 3.0 * 1.0e-5
 
 ##################################
@@ -240,10 +240,10 @@ sphere.set_species_floor(-1.0e-10)
 # ===============================================
 # In the parameter study, the equivalence ratio :math:`\phi` of the inlet gas mixture
 # is increased from 1.0 to 1.4. This is done by applying the
-# ``X_by_Equivalence_Ratio()`` method on the feed inlet. Changing the equivalence ratio
+# ``x_by_equivalence_ratio()`` method on the feed inlet. Changing the equivalence ratio
 # of the inlet gas mixture inevitably has impact on the inlet stream density and
 # hence the inlet volumetric flow rate. By using the
-# ``PSR_SetResTime_EnergyConservation`` model, the PSR residence time remains
+# ``PSRSetResTimeEnergyConservation`` model, the PSR residence time remains
 # constant for all runs. The effects from any variations of the inlet are
 # reflected on the PSR volume.
 #
@@ -280,8 +280,8 @@ for i in range(numbruns):
     temp_ss_solution[i] = solnmixture.temperature
     # update inlet gas equivalence ratio (composition)
     equiv += deltaequiv
-    ierror = feed.X_by_Equivalence_Ratio(
-        MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=equiv
+    ierror = feed.x_by_equivalence_ratio(
+        MyGasMech, fuel.x, air.x, add_frac, products, equivalenceratio=equiv
     )
     # check fuel-oxidizer mixture creation status
     if ierror != 0:

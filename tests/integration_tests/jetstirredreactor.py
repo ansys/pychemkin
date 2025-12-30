@@ -34,7 +34,7 @@ from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_FixedTemperature as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeFixedTemperature as PSR
 
 # check working directory
 current_dir = str(Path.cwd())
@@ -61,7 +61,7 @@ ierror = MyGasMech.preprocess()
 # create the fuel-oxidizer inlet to the JSR
 feed = Stream(MyGasMech)
 # set H2-O2-N2 composition
-feed.X = [("h2", 1.1e-2), ("n2", 9.62e-1), ("o2", 2.75e-2)]
+feed.x = [("h2", 1.1e-2), ("n2", 9.62e-1), ("o2", 2.75e-2)]
 # setting reactor pressure [dynes/cm2]
 feed.pressure = ck.P_ATM
 # set inlet gas temperature [K]
@@ -74,7 +74,7 @@ feed.mass_flowrate = 0.11
 JSR = PSR(feed, label="JSR")
 # connect the inlet to the reactor
 JSR.set_inlet(feed)
-# set PSR residence time (sec): required for PSR_SetResTime_FixedTemperature model
+# set PSR residence time (sec): required for PSRSetResTimeFixedTemperature model
 JSR.residence_time = 120.0 * 1.0e-3
 # set the number of initial pseudo time steps in the steady-state solver
 JSR.set_initial_timesteps(1000)
@@ -106,7 +106,7 @@ for i in range(numbruns):
     # solnmixture.list_composition(mode="mole")
     # store solution values
     inlet_temp[i] = solnmixture.temperature
-    h2o_solution[i] = solnmixture.X[h2o_index]
+    h2o_solution[i] = solnmixture.x[h2o_index]
     # update reactor temperature
     temp += deltatemp
     JSR.temperature = temp

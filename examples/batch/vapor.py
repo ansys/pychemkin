@@ -26,10 +26,12 @@ r""".. _ref_cooling_vapor:
 Explore cooling water vapor
 ===========================
 
-How does the volume of water vapor evolves when it is cooled from a temperature above the boiling point
-to a temperature that is just above the freezing point at constant pressure? How fast does the vapor
-volume drop? This example uses the ``GivenPressureBatchReactor_FixedTemperature`` model to explore
-the different behaviors between an *ideal gas* water vapor and its *real gas* counterpart.
+How does the volume of water vapor evolves when it is cooled from a temperature
+above the boiling point to a temperature that is just above the freezing point
+at constant pressure? How fast does the vapor volume drop? This example uses
+the ``GivenPressureBatchReactor_FixedTemperature`` model to explore
+the different behaviors between an *ideal gas* water vapor and
+its *real gas* counterpart.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_vapor_condensation.png'
@@ -101,7 +103,7 @@ else:
 # the mixture should be entirely in gas form.
 mist = ck.Mixture(MyMech)
 # set mole fraction
-mist.X = [("H2O", 2.0), ("O2", 1.0), ("N2", 3.76)]
+mist.x = [("H2O", 2.0), ("O2", 1.0), ("N2", 3.76)]
 mist.temperature = 500.0  # [K]
 mist.pressure = 100.0 * ck.P_ATM
 
@@ -161,7 +163,7 @@ tank.set_temperature_profile(x, tpro_profile)
 #   thermodynamic properties of a real-gas mixture. You can use
 #   ``set_realgas_mixing_rule`` to switch to a different mixing rule.
 #
-tank.userealgasEOS(mode=True)
+tank.userealgas_eos(mode=True)
 
 ####################
 # Set output options
@@ -243,9 +245,9 @@ for i in range(solutionpoints):
     # get the mixture at the time point
     solutionmixture = tank.get_solution_mixture_at_index(solution_index=i)
     # get mixture density profile
-    den_profile[i] = solutionmixture.RHO
+    den_profile[i] = solutionmixture.rho
     # get mixture enthalpy profile
-    h_profile[i] = solutionmixture.HML() / ck.ERGS_PER_JOULE * 1.0e-3
+    h_profile[i] = solutionmixture.hml() / ck.ERGS_PER_JOULE * 1.0e-3
 
 #################################
 # Turn off the real gas EOS model
@@ -253,7 +255,7 @@ for i in range(solutionpoints):
 # Use the ``use_realgas_cubicEOS()`` method to turn off the real gas EOS model.
 # Alternatively, use the ``use_idealgas_law()`` method to turn on the ideal
 # gas law.
-tank.userealgasEOS(mode=False)
+tank.userealgas_eos(mode=False)
 
 #########################################################
 # Run the vapor cooling simulation with the ideal gas law
@@ -291,9 +293,9 @@ for i in range(solutionpoints):
     # get the mixture at the time point
     solutionmixture = tank.get_solution_mixture_at_index(solution_index=i)
     # get mixture density profile
-    den_profile_ig[i] = solutionmixture.RHO
+    den_profile_ig[i] = solutionmixture.rho
     # get mixture enthalpy profile
-    h_profile_ig[i] = solutionmixture.HML() / ck.ERGS_PER_JOULE * 1.0e-3
+    h_profile_ig[i] = solutionmixture.hml() / ck.ERGS_PER_JOULE * 1.0e-3
 
 ck.done()
 

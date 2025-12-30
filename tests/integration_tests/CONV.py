@@ -63,13 +63,13 @@ ierror = MyGasMech.preprocess()
 # create the fuel mixture
 fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition
-fuelmixture.X = [("CH4", 1.0)]
+fuelmixture.x = [("CH4", 1.0)]
 # setting pressure and temperature is not required in this case
 fuelmixture.pressure = 5.0 * ck.P_ATM
 fuelmixture.temperature = 1500.0
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
-air.X = [("O2", 0.21), ("N2", 0.79)]
+air.x = [("O2", 0.21), ("N2", 0.79)]
 # setting pressure and temperature is not required in this case
 air.pressure = 5.0 * ck.P_ATM
 air.temperature = 1500.0
@@ -79,9 +79,9 @@ premixed = ck.Mixture(MyGasMech)
 products = ["CO2", "H2O", "N2"]
 # species mole fractions of added/inert mixture.
 # can also create an additives mixture here
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
-ierror = premixed.X_by_Equivalence_Ratio(
-    MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=0.7
+add_frac = np.zeros(MyGasMech.kk, dtype=np.double)  # no additives: all zeros
+ierror = premixed.x_by_equivalence_ratio(
+    MyGasMech, fuelmixture.x, air.x, add_frac, products, equivalenceratio=0.7
 )
 if ierror != 0:
     raise RuntimeError
@@ -176,7 +176,7 @@ massprofile = np.zeros_like(timeprofile, dtype=np.double)
 ch4_profile = np.zeros_like(timeprofile, dtype=np.double)
 ch4_rop_profile = np.zeros_like(timeprofile, dtype=np.double)
 viscprofile = np.zeros_like(timeprofile, dtype=np.double)
-current_rop = np.zeros(MyGasMech.KK, dtype=np.double)
+current_rop = np.zeros(MyGasMech.kk, dtype=np.double)
 # find CH4 species index
 ch4_index = MyGasMech.get_specindex("CH4")
 # loop over all solution time points
@@ -184,13 +184,13 @@ for i in range(solutionpoints):
     # get the mixture at the time point
     solutionmixture = MyCONV.get_solution_mixture_at_index(solution_index=i)
     # get gas density [g/cm3]
-    den = solutionmixture.RHO
+    den = solutionmixture.rho
     # reactor mass [g]
     massprofile[i] = den * volprofile[i]
     # get CH4 mole fraction profile
-    ch4_profile[i] = solutionmixture.X[ch4_index]
+    ch4_profile[i] = solutionmixture.x[ch4_index]
     # get CH4 ROP profile
-    current_rop = solutionmixture.ROP()
+    current_rop = solutionmixture.rop()
     ch4_rop_profile[i] = current_rop[ch4_index]
     # get mixture vicosity profile
     viscprofile[i] = solutionmixture.mixture_viscosity()

@@ -113,7 +113,7 @@ ierror = MyGasMech.preprocess()
 # Set up the fuel-air mixture
 # ============================
 # You must set up the fuel-air mixture inside the engine cylinder
-# right after the intake valve is closed. Here the ``X_by_Equivalence_Ratio()``
+# right after the intake valve is closed. Here the ``x_by_equivalence_ratio()``
 # method is used. You create the ``fuelmixture`` and the ``air`` mixtures first.
 # You then define the *complete combustion product species* and provide the
 # *additives* composition if there is any. Finally, you set
@@ -125,13 +125,13 @@ ierror = MyGasMech.preprocess()
 # create the fuel mixture
 fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition
-fuelmixture.X = [("CH4", 0.9), ("C3H8", 0.05), ("C2H6", 0.05)]
+fuelmixture.x = [("CH4", 0.9), ("C3H8", 0.05), ("C2H6", 0.05)]
 # setting pressure and temperature is not required in this case
 fuelmixture.pressure = 1.5 * ck.P_ATM
 fuelmixture.temperature = 400.0
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
-air.X = [("O2", 0.21), ("N2", 0.79)]
+air.x = [("O2", 0.21), ("N2", 0.79)]
 # setting pressure and temperature is not required in this case
 air.pressure = 1.5 * ck.P_ATM
 air.temperature = 400.0
@@ -141,11 +141,11 @@ fresh = ck.Mixture(MyGasMech)
 products = ["CO2", "H2O", "N2"]
 # species mole fractions of added/inert mixture.
 # can also create an additives mixture here
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
+add_frac = np.zeros(MyGasMech.kk, dtype=np.double)  # no additives: all zeros
 # mean equivalence ratio
 equiv = 0.8
-ierror = fresh.X_by_Equivalence_Ratio(
-    MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=equiv
+ierror = fresh.x_by_equivalence_ratio(
+    MyGasMech, fuelmixture.x, air.x, add_frac, products, equivalenceratio=equiv
 )
 # check fuel-oxidizer mixture creation status
 if ierror != 0:
@@ -173,21 +173,21 @@ fresh.pressure = 1.065 * ck.P_ATM
 # which is generally the volume ratio between the EGR mixture and
 # the fresh fuel-air ratio. However, because you know nothing about the composition
 # of the exhaust gas, you cannot simply combine these two mixtures. In this case,
-# you use the ``get_EGR_mole_fraction()`` method to estimate the major components of
+# you use the ``get_egr_mole_fraction()`` method to estimate the major components of
 # the exhaust gas from the combustion of the fresh fuel-air mixture. The
 # ``threshold=1.0e-8`` parameter tells the method to ignore any species with
 # a mole fraction below the threshold value. Once you have the EGR mixture composition,
-# use the ``X_by_Equivalence_Ratio()`` method a second time to re-create
+# use the ``x_by_equivalence_ratio()`` method a second time to re-create
 # the ``fresh`` fuel-air mixture  with the original ``fuelmixture`` and
 # ``air`` mixtures along with the EGR composition you just got as the *"additives"*.
-EGRratio = 0.3
+egr_ratio = 0.3
 # compute the EGR stream composition in mole fractions
-add_frac = fresh.get_EGR_mole_fraction(EGRratio, threshold=1.0e-8)
+add_frac = fresh.get_egr_mole_fraction(egr_ratio, threshold=1.0e-8)
 # recreate the initial mixture with EGR
-ierror = fresh.X_by_Equivalence_Ratio(
+ierror = fresh.x_by_equivalence_ratio(
     MyGasMech,
-    fuelmixture.X,
-    air.X,
+    fuelmixture.x,
+    air.x,
     add_frac,
     products,
     equivalenceratio=equiv,
@@ -216,8 +216,8 @@ MyMZEngine.list_composition(mode="mole", bound=1.0e-8)
 # ===========================
 # Set the required engine parameters as shown in the following code. These
 # engine parameters are used to describe the cylinder volume during the
-# simulation. The ``starting_CA`` argument should be the crank angle
-# corresponding to the cylinder IVC. The ``ending_CA`` is typically
+# simulation. The ``starting_ca`` argument should be the crank angle
+# corresponding to the cylinder IVC. The ``ending_ca`` is typically
 # the EVC crank angle.
 
 # cylinder bore diameter [cm]
@@ -229,13 +229,13 @@ MyMZEngine.connecting_rod_length = 26.0093
 # compression ratio [-]
 MyMZEngine.compression_ratio = 16.5
 # engine speed [RPM]
-MyMZEngine.RPM = 1000
+MyMZEngine.rpm = 1000
 
 # set other parameters
 # simulation start CA [degree]
-MyMZEngine.starting_CA = -142.0
+MyMZEngine.starting_ca = -142.0
 # simulation end CA [degree]
-MyMZEngine.ending_CA = 116.0
+MyMZEngine.ending_ca = 116.0
 
 # list the engine parameters
 MyMZEngine.list_engine_parameters()
@@ -268,12 +268,12 @@ print(f"number of zone(s) = {MyMZEngine.get_number_of_zones()}")
 
 heattransferparameters = [0.035, 0.71, 0.0]
 # set cylinder wall temperature [K]
-Twall = 400.0
-MyMZEngine.set_wall_heat_transfer("dimensionless", heattransferparameters, Twall)
+t_wall = 400.0
+MyMZEngine.set_wall_heat_transfer("dimensionless", heattransferparameters, t_wall)
 # in-cylinder gas velocity correlation parameter (Woschni)
 # [<C11> <C12> <C2> <swirl ratio>]
-GVparameters = [2.28, 0.308, 3.24, 0.0]
-MyMZEngine.set_gas_velocity_correlation(GVparameters)
+gv_parameters = [2.28, 0.308, 3.24, 0.0]
+MyMZEngine.set_gas_velocity_correlation(gv_parameters)
 # set piston head top surface area [cm2]
 MyMZEngine.set_piston_head_area(area=124.75)
 # set cylinder clearance surface area [cm2]
@@ -294,14 +294,14 @@ MyMZEngine.set_zonal_temperature(zonetemp=ztemperature)
 zvolumefrac = [0.3, 0.25, 0.2, 0.2, 0.05]
 MyMZEngine.set_zonal_volume_fraction(zonevol=zvolumefrac)
 # wall heat transfer area fractions
-zHTarea = [0.0, 0.15, 0.2, 0.25, 0.4]
-MyMZEngine.set_zonal_heat_transfer_area_fraction(zonearea=zHTarea)
+zht_area = [0.0, 0.15, 0.2, 0.25, 0.4]
+MyMZEngine.set_zonal_heat_transfer_area_fraction(zonearea=zht_area)
 # zonal equivalence ratios
 zphi = [equiv, equiv, equiv, equiv, equiv]
 MyMZEngine.set_zonal_equivalence_ratio(zonephi=zphi)
 # zonal EGR ratios
-zEGRR = [0.3, 0.3, 0.3, 0.35, 0.35]
-MyMZEngine.set_zonal_EGR_ratio(zoneegr=zEGRR)
+zegrr = [0.3, 0.3, 0.3, 0.35, 0.35]
+MyMZEngine.set_zonal_egr_ratio(zoneegr=zegrr)
 # set fuel "molar" composition
 MyMZEngine.define_fuel_composition([("CH4", 0.9), ("C3H8", 0.05), ("C2H6", 0.05)])
 # set oxidizer "molar' composition
@@ -335,15 +335,15 @@ MyMZEngine.define_additive_fractions(addfrac=zadd)
 #   - By default, time/crank angle intervals for both print and save solution are
 #     1/100 of the simulation duration, which in this case is
 #     :math:`dCA=(EVO-IVC)/100=2.58`\ . You can make the model report more frequently
-#     by using the ``CAstep_for_saving_solution()`` or the
-#     ``CAstep_for_printing_solution()`` method to set different interval values
+#     by using the ``ca_step_for_saving_solution()`` or the
+#     ``ca_step_for_printing_solution()`` method to set different interval values
 #     in the crank angle.
 #
 
 # set the number of crank angles between saving solution
-MyMZEngine.CAstep_for_saving_solution = 0.5
+MyMZEngine.ca_step_for_saving_solution = 0.5
 # set the number of crank angles between printing solution
-MyMZEngine.CAstep_for_printing_solution = 10.0
+MyMZEngine.ca_step_for_printing_solution = 10.0
 # turn on adaptive solution saving
 MyMZEngine.adaptive_solution_saving(mode=True, steps=20)
 # specify the ignition definitions
@@ -358,15 +358,15 @@ MyMZEngine.set_ignition_delay(method="T_inflection")
 # set tolerances in tuple: (absolute tolerance, relative tolerance)
 MyMZEngine.tolerances = (1.0e-12, 1.0e-10)
 # get solver parameters
-ATOL, RTOL = MyMZEngine.tolerances
-print(f"Default absolute tolerance = {ATOL}.")
-print(f"Default relative tolerance = {RTOL}")
+atol, rtol = MyMZEngine.tolerances
+print(f"Default absolute tolerance = {atol}.")
+print(f"Default relative tolerance = {rtol}")
 # turn on the force non-negative solutions option in the solver
 MyMZEngine.force_nonnegative = True
 # show solver and output options
 # show the number of crank angles between printing solution
 print(
-    f"Crank angles between solution printing: {MyMZEngine.CAstep_for_printing_solution}"
+    f"Crank angles between solution printing: {MyMZEngine.ca_step_for_printing_solution}"
 )
 # show other transient solver setup
 print(f"Forced non-negative solution values: {MyMZEngine.force_nonnegative}")
@@ -399,22 +399,22 @@ print(Color.GREEN + ">>> Run completed. <<<", end=Color.END)
 # ignition delay crank angle (CA) after the run is completed.
 
 # get ignition delay "time"
-delayCA = MyMZEngine.get_ignition_delay()
-print(f"Ignition delay CA = {delayCA} [degree].")
+delay_ca = MyMZEngine.get_ignition_delay()
+print(f"Ignition delay CA = {delay_ca} [degree].")
 
 ###################################
 # Get the heat release crank angles
 # =================================
 # The engine models also report the crank angles when the accumulated heat
 # release reaches 10%, 50%, and 90% of the total heat release. Use the
-# ``get_engine_heat_release_CAs()`` method to extract these heat release
+# ``get_engine_heat_release_cas()`` method to extract these heat release
 # crank angles (CA).
 
-HR10, HR50, HR90 = MyMZEngine.get_engine_heat_release_CAs()
+hr10, hr50, hr90 = MyMZEngine.get_engine_heat_release_cas()
 print("Engine Heat Release Information:")
-print(f"10% heat release CA = {HR10} [degree].")
-print(f"50% heat release CA = {HR50} [degree].")
-print(f"90% heat release CA = {HR90} [degree].\n")
+print(f"10% heat release CA = {hr10} [degree].")
+print(f"50% heat release CA = {hr50} [degree].")
+print(f"90% heat release CA = {hr90} [degree].\n")
 
 ##########################
 # Postprocess the solution
@@ -440,7 +440,7 @@ print(f"90% heat release CA = {HR90} [degree].\n")
 #     the solutions.
 #   - Use the ``getnumbersolutionpoints()`` method to get the size of
 #     the solution profiles before creating the arrays.
-#   - Use the ``get_CA()`` method to convert the time values reported in the solution
+#   - Use the ``get_ca()`` method to convert the time values reported in the solution
 #     to crank angles.
 #
 
@@ -453,10 +453,10 @@ print(f"90% heat release CA = {HR90} [degree].\n")
 # records: n zonal results and the cylinder averaged results.
 #
 # To process the result of the zone number :math:`j`\ , :math:`(1 \leq j \leq n)`\ ,
-# set the parameter value of ``zoneID`` to :math:`j` when you call the engine
+# set the parameter value of ``zone_id`` to :math:`j` when you call the engine
 # postprocessor with the ``process_engine_solution()`` method. Otherwise,
 # the cylinder averaged results are postprocessed by default, that is, when
-# the ``zoneID`` parameter is omitted.
+# the ``zone_id`` parameter is omitted.
 #
 # .. note ::
 #   Because The ``process_engine_solution()`` method can process only one set
@@ -465,7 +465,7 @@ print(f"90% heat release CA = {HR90} [degree].\n")
 #   simulation.
 #
 thiszone = 1
-MyMZEngine.process_engine_solution(zoneID=thiszone)
+MyMZEngine.process_engine_solution(zone_id=thiszone)
 plottitle = "Zone " + str(thiszone) + " Solution"
 # get the number of solution time points
 solutionpoints = MyMZEngine.getnumbersolutionpoints()
@@ -473,10 +473,10 @@ print(f"Number of solution points = {solutionpoints}.")
 # get the time profile
 timeprofile = MyMZEngine.get_solution_variable_profile("time")
 # convert time to crank angle
-CAprofile = np.zeros_like(timeprofile, dtype=np.double)
+ca_profile = np.zeros_like(timeprofile, dtype=np.double)
 count = 0
 for t in timeprofile:
-    CAprofile[count] = MyMZEngine.get_CA(timeprofile[count])
+    ca_profile[count] = MyMZEngine.get_ca(timeprofile[count])
     count += 1
 # get the cylinder pressure profile
 presprofile = MyMZEngine.get_solution_variable_profile("pressure")
@@ -491,12 +491,12 @@ for i in range(solutionpoints):
     # get the zonal mixture at the time point
     solutionmixture = MyMZEngine.get_solution_mixture_at_index(solution_index=i)
     # get zonal gas density [g/cm3]
-    denprofile[i] = solutionmixture.RHO
+    denprofile[i] = solutionmixture.rho
     # get zonal mixture viscosity profile [g/cm-sec] or [Poise]
     viscprofile[i] = solutionmixture.mixture_viscosity() * 1.0e2
 
 # post-process cylinder-averged solution
-# do NOT set the zoneID parameter
+# do NOT set the zone_id parameter
 MyMZEngine.process_average_engine_solution()
 # get the cylinder volume profile
 cylindervolprofile = MyMZEngine.get_solution_variable_profile("volume")
@@ -507,7 +507,7 @@ for i in range(solutionpoints):
     # get the zonal mixture at the time point
     solutionmixture = MyMZEngine.get_solution_mixture_at_index(solution_index=i)
     # get zonal gas density [g/cm3]
-    cylinderdenprofile[i] = solutionmixture.RHO
+    cylinderdenprofile[i] = solutionmixture.rho
 
 ###################################
 # Plot the engine solution profiles
@@ -522,21 +522,21 @@ for i in range(solutionpoints):
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))
 plt.suptitle(plottitle, fontsize=16)
 plt.subplot(221)
-plt.plot(CAprofile, presprofile, "r-")
+plt.plot(ca_profile, presprofile, "r-")
 plt.ylabel("Pressure [bar]")
 plt.subplot(222)
-plt.plot(CAprofile, volprofile, "b-")
-plt.plot(CAprofile, cylindervolprofile, "b--")
+plt.plot(ca_profile, volprofile, "b-")
+plt.plot(ca_profile, cylindervolprofile, "b--")
 plt.ylabel("Volume [cm3]")
 plt.legend(["Zone", "Cylinder"], loc="upper right")
 plt.subplot(223)
-plt.plot(CAprofile, denprofile, "g-")
-plt.plot(CAprofile, cylinderdenprofile, "g--")
+plt.plot(ca_profile, denprofile, "g-")
+plt.plot(ca_profile, cylinderdenprofile, "g--")
 plt.xlabel("Crank Angle [degree]")
 plt.ylabel("Mixture Density [g/cm3]")
 plt.legend(["Zone", "Averaged"], loc="upper left")
 plt.subplot(224)
-plt.plot(CAprofile, viscprofile, "m-")
+plt.plot(ca_profile, viscprofile, "m-")
 plt.xlabel("Crank Angle [degree]")
 plt.ylabel("Mixture Viscosity [cP]")
 # plot results

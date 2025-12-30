@@ -39,15 +39,17 @@ from ansys.chemkin.core.mixture import (
 
 
 class Stream(Mixture):
-    """Generic inlet stream consists of the gas species defined in the given chemistry set
-    for Chemkin open reactor models
+    """Generic inlet stream consists of the gas species defined in
+    the given chemistry set for Chemkin open reactor models.
     """
 
     # The "Stream" class is an extension of the "Mixture" class
 
     def __init__(self, chem, label: Union[str, None] = None):
-        """Initialize an inlet object with a given chemistry set for open reactor models
-
+        """Initialize an inlet object with a given chemistry set
+        for open reactor models.
+        """
+        """
         Parameters
         ----------
             chem: Chemistry object
@@ -61,10 +63,14 @@ class Stream(Mixture):
         self._flowratemode = -1  # not given
         self._inletflowrate = [0.0] * 4
         # types of flow rate allowed
-        self._massflowrate = 0.0  # mass flow rate FLRT [g/sec]
-        self._volflowrate = 0.0  # volumetric flow rate VDOT [cm3/sec]
-        self._velocity = 0.0  # gas velocity VEL [cm/sec] for plug flow reactor model
-        self._SCCM = 0.0  # standard (198.15K, 1atm) cubic centimeters per minute SCCM [standard cm3/min]
+        # mass flow rate FLRT [g/sec]
+        self._massflowrate = 0.0
+        # volumetric flow rate VDOT [cm3/sec]
+        self._volflowrate = 0.0
+        # gas velocity VEL [cm/sec] for plug flow reactor model
+        self._velocity = 0.0
+        # standard (198.15K, 1atm) cubic centimeters per minute SCCM [standard cm3/min]
+        self._sccm = 0.0
         # inlet velocity gradient [1/sec] (for premixed, oppdif, amd spin)
         self._velgrad = 0.0
         # flow area (for velocity in plug flow reactor model)
@@ -77,8 +83,8 @@ class Stream(Mixture):
         self._label = label
 
     def convert_to_mass_flowrate(self) -> float:
-        """Convert different types of flow rate value to mass flow rate
-
+        """Convert different types of flow rate value to mass flow rate."""
+        """
         Returns
         -------
             mrate: double
@@ -89,12 +95,12 @@ class Stream(Mixture):
         if self._flowratemode == 1:
             # volumetric flow rate
             # get inlet gas mixture density
-            mrate = self.RHO * self._volflowrate
+            mrate = self.rho * self._volflowrate
             return mrate
         elif self._flowratemode == 2:
             # velocity
             if self._haveflowarea:
-                mrate = self.RHO * self._flowarea * self._velocity
+                mrate = self.rho * self._flowarea * self._velocity
                 return mrate
             else:
                 # no flow area
@@ -109,17 +115,17 @@ class Stream(Mixture):
 
         elif self._flowratemode == 3:
             # SCCM
-            chemID = self._chemset_index.value
+            chemid = self._chemset_index.value
             # set standard condition
             p = P_ATM  # [atm]
             t = 298.15  # [K]
             # set mass fractions
-            frac = copy.deepcopy(self.Y)
+            frac = copy.deepcopy(self.y)
             # molecular masses
-            wt = self._WT
+            wt = self._wt
             # get gas density at the standard condition
-            standard_den = Mixture.density(chemID, p, t, frac, wt, mode="mass")
-            mrate = standard_den * self._SCCM / 60.0
+            standard_den = Mixture.density(chemid, p, t, frac, wt, mode="mass")
+            mrate = standard_den * self._sccm / 60.0
             del frac
             return mrate
         else:
@@ -129,8 +135,8 @@ class Stream(Mixture):
             exit()
 
     def convert_to_vol_flowrate(self) -> float:
-        """Convert different types of flow rate value to volumetric flow rate.
-
+        """Convert different types of flow rate value to volumetric flow rate."""
+        """
         Returns
         -------
             vrate: double
@@ -141,7 +147,7 @@ class Stream(Mixture):
         if self._flowratemode == 0:
             # mass flow rate
             # get inlet gas mixture density
-            vrate = self._massflowrate / self.RHO
+            vrate = self._massflowrate / self.rho
             return vrate
         elif self._flowratemode == 2:
             # velocity
@@ -161,18 +167,18 @@ class Stream(Mixture):
 
         elif self._flowratemode == 3:
             # SCCM
-            chemID = self._chemset_index.value
+            chemid = self._chemset_index.value
             # set standard condition
             p = P_ATM  # [atm]
             t = 298.15  # [K]
             # set mass fractions
-            frac = copy.deepcopy(self.Y)
+            frac = copy.deepcopy(self.y)
             # molecular masses
-            wt = self._WT
+            wt = self._wt
             # get gas density at the standard condition
-            standard_den = Mixture.density(chemID, p, t, frac, wt, mode="mass")
-            mrate = standard_den * self._SCCM / 60.0
-            vrate = mrate / self.RHO
+            standard_den = Mixture.density(chemid, p, t, frac, wt, mode="mass")
+            mrate = standard_den * self._sccm / 60.0
+            vrate = mrate / self.rho
             del frac
             return vrate
         else:
@@ -181,9 +187,9 @@ class Stream(Mixture):
             logger.error(this_msg)
             exit()
 
-    def convert_to_SCCM(self) -> float:
-        """Convert different types of flow rate value to SCCM
-
+    def convert_to_sccm(self) -> float:
+        """Convert different types of flow rate value to SCCM."""
+        """
         Returns
         -------
             sccm: double
@@ -191,16 +197,16 @@ class Stream(Mixture):
 
         """
         #
-        chemID = self._chemset_index.value
+        chemid = self._chemset_index.value
         # set standard condition
         p = P_ATM  # [atm]
         t = 298.15  # [K]
         # set mass fractions
-        frac = copy.deepcopy(self.Y)
+        frac = copy.deepcopy(self.y)
         # molecular masses
-        wt = self._WT
+        wt = self._wt
         # get gas density at the standard condition
-        standard_den = Mixture.density(chemID, p, t, frac, wt, mode="mass")
+        standard_den = Mixture.density(chemid, p, t, frac, wt, mode="mass")
         del frac
         #
         if self._flowratemode == 0:
@@ -210,13 +216,13 @@ class Stream(Mixture):
         elif self._flowratemode == 1:
             # volumetric flow rate
             # get inlet gas mixture density
-            mrate = self.RHO * self._volflowrate
+            mrate = self.rho * self._volflowrate
             sccm = mrate / standard_den * 60.0
             return sccm
         elif self._flowratemode == 2:
             # velocity
             if self._haveflowarea:
-                mrate = self.RHO * self._flowarea * self._velocity
+                mrate = self.rho * self._flowarea * self._velocity
                 sccm = mrate / standard_den * 60.0
                 return sccm
             else:
@@ -237,8 +243,8 @@ class Stream(Mixture):
 
     @property
     def flowarea(self) -> float:
-        """Get inlet flow area
-
+        """Get inlet flow area."""
+        """
         Returns
         -------
             flowarea: double
@@ -255,8 +261,8 @@ class Stream(Mixture):
 
     @flowarea.setter
     def flowarea(self, farea: float):
-        """Set inlet cross-sectional flow area
-
+        """Set inlet cross-sectional flow area."""
+        """
         Parameters
         ----------
             farea: double
@@ -273,8 +279,8 @@ class Stream(Mixture):
 
     @property
     def mass_flowrate(self) -> float:
-        """Get inlet mass flow rate
-
+        """Get inlet mass flow rate."""
+        """
         Returns
         -------
             mflowrate: double
@@ -288,8 +294,8 @@ class Stream(Mixture):
 
     @mass_flowrate.setter
     def mass_flowrate(self, mflowrate: float):
-        """Set inlet mass flow rate
-
+        """Set inlet mass flow rate."""
+        """
         Parameters
         ----------
             mflowrate: double
@@ -304,7 +310,7 @@ class Stream(Mixture):
         # reset the flow rates
         self._volflowrate = 0.0
         self._velocity = 0.0
-        self._SCCM = 0.0
+        self._sccm = 0.0
         # set flow rate mode to mass flow rate
         self._flowratemode = 0
         self._inletflowrate[self._flowratemode] = mflowrate
@@ -312,8 +318,8 @@ class Stream(Mixture):
 
     @property
     def vol_flowrate(self) -> float:
-        """Get inlet volumetric flow rate
-
+        """Get inlet volumetric flow rate."""
+        """
         Returns
         -------
             vflowrate: double
@@ -327,8 +333,8 @@ class Stream(Mixture):
 
     @vol_flowrate.setter
     def vol_flowrate(self, vflowrate: float):
-        """Set inlet volumetric flow rate
-
+        """Set inlet volumetric flow rate."""
+        """
         Parameters
         ----------
             vflowrate: double
@@ -343,7 +349,7 @@ class Stream(Mixture):
         # reset the flow rates
         self._massflowrate = 0.0
         self._velocity = 0.0
-        self._SCCM = 0.0
+        self._sccm = 0.0
         # set flow rate mode to volumetric flow rate
         self._flowratemode = 1
         self._inletflowrate[self._flowratemode] = vflowrate
@@ -351,8 +357,8 @@ class Stream(Mixture):
 
     @property
     def sccm(self) -> float:
-        """Get inlet SCCM volumetric flow rate
-
+        """Get inlet SCCM volumetric flow rate."""
+        """
         Returns
         -------
             vflowrate: double
@@ -360,14 +366,14 @@ class Stream(Mixture):
 
         """
         if self._flowratemode == 3:
-            return self._SCCM
+            return self._sccm
         else:
-            return self.convert_to_SCCM()
+            return self.convert_to_sccm()
 
     @sccm.setter
     def sccm(self, vflowrate: float):
-        """Set inlet volumetric flow rate in SCCM
-
+        """Set inlet volumetric flow rate in SCCM."""
+        """
         Parameters
         ----------
             vflowrate: double
@@ -386,12 +392,12 @@ class Stream(Mixture):
         # set flow rate mode to volumetric flow rate
         self._flowratemode = 3
         self._inletflowrate[self._flowratemode] = vflowrate
-        self._SCCM = vflowrate
+        self._sccm = vflowrate
 
     @property
     def velocity(self) -> float:
-        """Get inlet gas velocity
-
+        """Get inlet gas velocity."""
+        """
         Returns
         -------
             vel: double
@@ -422,8 +428,8 @@ class Stream(Mixture):
 
     @velocity.setter
     def velocity(self, vel: float):
-        """Set inlet velocity
-
+        """Set inlet velocity."""
+        """
         Parameters
         ----------
             vel: velocity [cm/sec]
@@ -437,7 +443,7 @@ class Stream(Mixture):
         # reset the flow rates
         self._massflowrate = 0.0
         self._volflowrate = 0.0
-        self._SCCM = 0.0
+        self._sccm = 0.0
         # set flow rate mode to velocity
         self._flowratemode = 2
         self._inletflowrate[self._flowratemode] = vel
@@ -445,6 +451,7 @@ class Stream(Mixture):
 
     @property
     def velocity_gradient(self) -> float:
+        """Get inlet gas axial velocity gradient."""
         """Get inlet gas axial velocity gradient (for premixed, oppdif, and spin)
         or radial velocity spreading rate (v_r/r) at the inlet.
 
@@ -458,8 +465,8 @@ class Stream(Mixture):
 
     @velocity_gradient.setter
     def velocity_gradient(self, velgrad: float):
-        """Set inlet axial velocity gradient
-
+        """Set inlet axial velocity gradient."""
+        """
         Parameters
         ----------
             velgrad: double
@@ -481,8 +488,8 @@ class Stream(Mixture):
 
     @property
     def label(self) -> str:
-        """Get the label of the Stream.
-
+        """Get the label of the Stream."""
+        """
         Returns
         -------
             label: string
@@ -493,8 +500,8 @@ class Stream(Mixture):
 
     @label.setter
     def label(self, name: str):
-        """Set the label of the Stream.
-
+        """Set the label of the Stream."""
+        """
         Parameters
         ----------
             name: string
@@ -506,8 +513,8 @@ class Stream(Mixture):
 
 # stream utilities
 def clone_stream(source: Stream, target: Stream):
-    """Copy the properties of the source Stream to the target Stream.
-
+    """Copy the properties of the source Stream to the target Stream."""
+    """
     Parameters
     ----------
         source: Stream object
@@ -517,12 +524,12 @@ def clone_stream(source: Stream, target: Stream):
 
     """
     # check Chemistry set
-    if source.chemID == target.chemID:
+    if source.chemid == target.chemid:
         # clone the Stream properties
         target.temperature = source.temperature
         target.pressure = source.pressure
         target.mass_flowrate = source.mass_flowrate
-        target.X = source.X
+        target.x = source.x
     else:
         msg = [
             Color.PURPLE,
@@ -535,13 +542,14 @@ def clone_stream(source: Stream, target: Stream):
 
 
 def compare_streams(
-    streamA: Stream,
-    streamB: Stream,
+    stream_a: Stream,
+    stream_b: Stream,
     atol: float = 1.0e-10,
     rtol: float = 1.0e-3,
     mode: str = "mass",
 ) -> tuple[bool, float, float]:
-    """Compare properties of stream B against those of stream A. The stream properties
+    """Compare properties of stream B against those of stream A."""
+    """The stream properties
     include mixture properties such as pressure [atm], temperature [K], and
     species mass/mole fractions and the stream mass flow rate. When the
     differences in the property values satisfy both the absolute and the relative
@@ -550,9 +558,9 @@ def compare_streams(
 
     Parameters
     ----------
-        streamA: Stream object
+        stream_a: Stream object
             mixture A, the target stream
-        streamB: Stream object
+        stream_b: Stream object
             stream B, the sample stream
         atol: double, default = 1.0e-10
             the absolute tolerance for the max property differences
@@ -573,12 +581,12 @@ def compare_streams(
     """
     # check mixtures first
     issame, diff_max, var_max = compare_mixtures(
-        streamA, streamB, atol=atol, rtol=rtol, mode=mode
+        stream_a, stream_b, atol=atol, rtol=rtol, mode=mode
     )
     # compare stream mass flow rate
-    mflr_diff = abs(streamA.mass_flowrate - streamB.mass_flowrate)
+    mflr_diff = abs(stream_a.mass_flowrate - stream_b.mass_flowrate)
     # find relative difference
-    mflr_var = mflr_diff / streamA.mass_flowrate
+    mflr_var = mflr_diff / stream_a.mass_flowrate
     # check tolerances
     flowsame = mflr_diff <= atol
     flowsame = flowsame or mflr_var <= rtol
@@ -592,27 +600,27 @@ def compare_streams(
     return issame, diff_max, var_max
 
 
-def adiabatic_mixing_streams(streamA: Stream, streamB: Stream) -> Stream:
-    """Create a new Stream object by mixing two streams adiabatically. The
-    enthalpy of the final stream is the sum of the enthalpies of
+def adiabatic_mixing_streams(stream_a: Stream, stream_b: Stream) -> Stream:
+    """Create a new Stream object by mixing two streams adiabatically."""
+    """The enthalpy of the final stream is the sum of the enthalpies of
     the two streams, and so is the final mass flow rate.
 
     Parameters
     ----------
-        streamA: Stream object
+        stream_a: Stream object
             mixture A, the target stream
-        streamB: Stream object
+        stream_b: Stream object
             stream B, the sample stream
 
     Returns
     -------
         final_stream: Stream object
-            the final stream from combining steamA and streamB
+            the final stream from combining stream_a and stream_b
 
     """
-    if isinstance(streamA, Stream) and isinstance(streamB, Stream):
-        if streamA.chemID == streamB.chemID:
-            final_stream = copy.deepcopy(streamA)
+    if isinstance(stream_a, Stream) and isinstance(stream_b, Stream):
+        if stream_a.chemid == stream_b.chemid:
+            final_stream = copy.deepcopy(stream_a)
         else:
             msg = [
                 Color.PURPLE,
@@ -633,38 +641,38 @@ def adiabatic_mixing_streams(streamA: Stream, streamB: Stream) -> Stream:
         exit()
 
     # number of gas species
-    numb_species = streamA._KK
+    numb_species = stream_a._kk
     # initialization
     massfrac = np.zeros(numb_species, dtype=np.double)
     mix_h = 0.0e0
     speciesfrac_sum = 0.0e0
     # total mass flow rate
-    total_mass_flow_rate = streamA.mass_flowrate + streamB.mass_flowrate
+    total_mass_flow_rate = stream_a.mass_flowrate + stream_b.mass_flowrate
     final_stream.mass_flowrate = total_mass_flow_rate
     # compute the species mass fractions in the combined stream
     for k in range(numb_species):
-        massfrac[k] = streamA.Y[k] * streamA.mass_flowrate
-        massfrac[k] += streamB.Y[k] * streamB.mass_flowrate
+        massfrac[k] = stream_a.y[k] * stream_a.mass_flowrate
+        massfrac[k] += stream_b.y[k] * stream_b.mass_flowrate
         massfrac[k] /= total_mass_flow_rate
         speciesfrac_sum += massfrac[k]
 
     if speciesfrac_sum > 0.0e0:
         for k in range(numb_species):
             massfrac[k] /= speciesfrac_sum
-        final_stream.Y = massfrac
+        final_stream.y = massfrac
 
     # compute the final stream's enthalpy flux [ergs/g]
-    mix_h = streamA.HML() / streamA.WTM * streamA.mass_flowrate
-    mix_h += streamB.HML() / streamB.WTM * streamB.mass_flowrate
+    mix_h = stream_a.hml() / stream_a.wtm * stream_a.mass_flowrate
+    mix_h += stream_b.hml() / stream_b.wtm * stream_b.mass_flowrate
     mix_h /= total_mass_flow_rate
     # use mean molecular weight of the gas mixture of the combined stream
     # to convert the enthalpy from [erg/g] to [erg/mol]
-    mix_h *= final_stream.WTM
+    mix_h *= final_stream.wtm
     # compute temperature of the final mixture from the mixture enthalpy
     # set the guessed temperature
     t_guessed = 0.0e0
     ierror = calculate_mixture_temperature_from_enthalpy(
-        mixture=final_stream, mixtureH=mix_h, guesstemperature=t_guessed
+        mixture=final_stream, h_mixture=mix_h, guesstemperature=t_guessed
     )
     if ierror != 0:
         msg = [
@@ -684,8 +692,8 @@ def adiabatic_mixing_streams(streamA: Stream, streamB: Stream) -> Stream:
 def create_stream_from_mixture(
     chem: Chemistry, mixture: Mixture, flow_rate: float = 0.0, mode: str = "mass"
 ) -> Stream:
-    """Create a new Stream object from the given Mixture object.
-
+    """Create a new Stream object from the given Mixture object."""
+    """
     Parameters
     ----------
         chem: Chemistry object
@@ -693,7 +701,8 @@ def create_stream_from_mixture(
         mixture: Mixture object
             the Mixture whose properties will be used to set up the new Stream
         flow_rate: double, >= 0.0, default = 0.0
-            the flow rate/velocity of the new Stream, [g/sec], [cm3/sec], [cm/sec], [standard cm3/minute]
+            the flow rate/velocity of the new Stream, [g/sec], [cm3/sec],
+            [cm/sec], [standard cm3/minute]
         mode: string, {"mass", "vol", "vel", "sccm"}
             the type of flow rate data is given by the flow_rate parameter
 
@@ -709,7 +718,7 @@ def create_stream_from_mixture(
     if isinstance(mixture, Mixture):
         new_stream.pressure = mixture.pressure
         new_stream.temperature = mixture.temperature
-        new_stream.X = mixture.X
+        new_stream.x = mixture.x
     else:
         msg = [
             Color.PURPLE,

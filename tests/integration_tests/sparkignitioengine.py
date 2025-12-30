@@ -57,19 +57,19 @@ MyGasMech.chemfile = str(mechanism_dir / "gasoline_14comp_WBencrypt.inp")
 # preprocess the mechanism files
 ierror = MyGasMech.preprocess()
 print("mechanism information:")
-print(f"number of gas species = {MyGasMech.KK:d}")
-print(f"number of gas reactions = {MyGasMech.IIGas:d}")
+print(f"number of gas species = {MyGasMech.kk:d}")
+print(f"number of gas reactions = {MyGasMech.ii_gas:d}")
 # create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
 # create the fuel mixture
 fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition
-fuelmixture.X = [("ic8h18", 0.9), ("nc7h16", 0.1)]
+fuelmixture.x = [("ic8h18", 0.9), ("nc7h16", 0.1)]
 # setting pressure and temperature is not required in this case
 fuelmixture.pressure = ck.P_ATM
 fuelmixture.temperature = 353.0
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
-air.X = [("o2", 0.21), ("n2", 0.79)]
+air.x = [("o2", 0.21), ("n2", 0.79)]
 # setting pressure and temperature is not required in this case
 air.pressure = ck.P_ATM
 air.temperature = 353.0
@@ -79,11 +79,11 @@ fresh = ck.Mixture(MyGasMech)
 products = ["co2", "h2o", "n2"]
 # species mole fractions of added/inert mixture.
 # can also create an additives mixture here
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
+add_frac = np.zeros(MyGasMech.kk, dtype=np.double)  # no additives: all zeros
 # mean equivalence ratio
 equiv = 1.0
-ierror = fresh.X_by_Equivalence_Ratio(
-    MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=equiv
+ierror = fresh.x_by_equivalence_ratio(
+    MyGasMech, fuelmixture.x, air.x, add_frac, products, equivalenceratio=equiv
 )
 if ierror != 0:
     raise RuntimeError
@@ -96,12 +96,12 @@ fresh.pressure = fuelmixture.pressure
 # set exhaust gas recirculation (EGR) ratio with volume fraction
 egr_ratio = 0.3
 # compute the EGR stream composition in mole fractions
-add_frac = fresh.get_EGR_mole_fraction(egr_ratio, threshold=1.0e-8)
+add_frac = fresh.get_egr_mole_fraction(egr_ratio, threshold=1.0e-8)
 # recreate the initial mixture with EGR
-ierror = fresh.X_by_Equivalence_Ratio(
+ierror = fresh.x_by_equivalence_ratio(
     MyGasMech,
-    fuelmixture.X,
-    air.X,
+    fuelmixture.x,
+    air.x,
     add_frac,
     products,
     equivalenceratio=equiv,
@@ -125,12 +125,12 @@ MyEngine.connecting_rod_length = 17.853
 # compression ratio [-]
 MyEngine.compression_ratio = 12
 # engine speed [RPM]
-MyEngine.RPM = 600
+MyEngine.rpm = 600
 # set other parameters
 # simulation start CA [degree]
-MyEngine.starting_CA = -120.2
+MyEngine.starting_ca = -120.2
 # simulation end CA [degree]
-MyEngine.ending_CA = 139.8
+MyEngine.ending_ca = 139.8
 # list the engine parameters
 MyEngine.list_engine_parameters()
 print(f"engine displacement volume {MyEngine.get_displacement_volume()} [cm3]")
@@ -139,7 +139,7 @@ print(f"engine clearance volume {MyEngine.get_clearance_volume()} [cm3]")
 # >>> option 1
 # use Wiebe function
 # start of combustion crank angle
-MyEngine.set_burn_timing(SOC=-14.5, duration=45.6)
+MyEngine.set_burn_timing(soc=-14.5, duration=45.6)
 MyEngine.wiebe_parameters(n=4.0, b=7.0)
 # >>> option 2
 # use anchor points
@@ -178,9 +178,9 @@ MyEngine.set_piston_head_area(area=56.75)
 MyEngine.set_cylinder_head_area(area=56.75)
 # output controls
 # set the number of crank angles between saving solution
-MyEngine.CAstep_for_saving_solution = 0.5
+MyEngine.ca_step_for_saving_solution = 0.5
 # set the number of crank angles between printing solution
-MyEngine.CAstep_for_printing_solution = 10.0
+MyEngine.ca_step_for_printing_solution = 10.0
 # turn OFF adaptive solution saving
 MyEngine.adaptive_solution_saving(mode=False, steps=20)
 # turn OFF adaptive solution saving
@@ -196,7 +196,7 @@ MyEngine.force_nonnegative = True
 # show solver option
 # show the number of crank angles between printng solution
 print(
-    f"crank angles between solution printing: {MyEngine.CAstep_for_printing_solution}"
+    f"crank angles between solution printing: {MyEngine.ca_step_for_printing_solution}"
 )
 # show other transient solver setup
 print(f"forced non-negative solution values: {MyEngine.force_nonnegative}")
@@ -222,7 +222,7 @@ unburnedzone = 1
 burnedzone = 2
 zonestrings = ["Unburned Zone", "Burned Zone"]
 thiszone = burnedzone
-MyEngine.process_engine_solution(zoneID=thiszone)
+MyEngine.process_engine_solution(zone_id=thiszone)
 plottitle = zonestrings[thiszone - 1] + " Solution"
 # post-process cylinder-averged solution profiles
 # MyMZEngine.process_average_engine_solution()
@@ -236,7 +236,7 @@ timeprofile = MyEngine.get_solution_variable_profile("time")
 ca_profile = np.zeros_like(timeprofile, dtype=np.double)
 count = 0
 for t in timeprofile:
-    ca_profile[count] = MyEngine.get_CA(timeprofile[count])
+    ca_profile[count] = MyEngine.get_ca(timeprofile[count])
     count += 1
 # get the cylinder pressure profile
 presprofile = MyEngine.get_solution_variable_profile("pressure")
@@ -254,7 +254,7 @@ for i in range(solutionpoints):
     # get the zonal mixture at the time point
     solutionmixture = MyEngine.get_solution_mixture_at_index(solution_index=i)
     # get zonal CO mole fraction
-    co_profile[i] = solutionmixture.X[co_index]
+    co_profile[i] = solutionmixture.x[co_index]
 #
 # post-process cylinder-averged solution
 MyEngine.process_average_engine_solution()

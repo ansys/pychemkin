@@ -108,7 +108,7 @@ ierror = MyGasMech.preprocess()
 
 fuel = ck.Mixture(MyGasMech)
 # set mole fraction
-fuel.X = [("CH4", 0.8), ("H2", 0.2)]
+fuel.x = [("CH4", 0.8), ("H2", 0.2)]
 fuel.temperature = 300.0
 fuel.pressure = ck.P_ATM  # 1 atm
 
@@ -119,7 +119,7 @@ fuel.pressure = ck.P_ATM  # 1 atm
 
 air = ck.Mixture(MyGasMech)
 # set mass fraction
-air.Y = [("O2", 0.23), ("N2", 0.77)]
+air.y = [("O2", 0.23), ("N2", 0.77)]
 air.temperature = 300.0
 air.pressure = ck.P_ATM  # 1 atm
 
@@ -164,7 +164,7 @@ for k in range(points):
     # find the equilibrium state mixture at the given mixture temperature and pressure
     eqstate = ck.equilibrium(premixed, opt=1)
     #
-    no[k] = eqstate.X[no_index] * 1.0e6  # convert to ppm
+    no[k] = eqstate.x[no_index] * 1.0e6  # convert to ppm
     t[k] = temp
     temp += dtemp
 

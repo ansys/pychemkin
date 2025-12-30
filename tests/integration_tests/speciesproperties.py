@@ -65,8 +65,8 @@ for s in plotspeclist:
     species_id = MyGasMech.get_specindex(s)
     print("species " + specieslist[species_id])
     print("elemental composition")
-    for elem_id in range(MyGasMech.MM):
-        num_elem = MyGasMech.SpeciesComposition(elem_id, species_id)
+    for elem_id in range(MyGasMech.mm):
+        num_elem = MyGasMech.species_composition(elem_id, species_id)
         print(f"    {elelist[elem_id]:>4}: {num_elem:2d}")
     print("=" * 10)
 print()
@@ -93,7 +93,7 @@ for s in plotspeclist:
     temp = 300.0
     # loop over temperature data points
     for i in range(points):
-        heatcapacity = MyGasMech.SpeciesCv(temp)
+        heatcapacity = MyGasMech.species_cv(temp)
         id = MyGasMech.get_specindex(s)
         t[i] = temp
         # convert ergs to joules
@@ -117,7 +117,7 @@ for s in plotspeclist:
     temp = 300.0
     # loop over temperature data points
     for i in range(points):
-        conductivity = MyGasMech.SpeciesCond(temp)
+        conductivity = MyGasMech.species_cond(temp)
         id = MyGasMech.get_specindex(s)
         t[i] = temp
         # convert ergs to joules
@@ -132,7 +132,7 @@ plt.ylabel("Conductivity [J/cm-K-sec]")
 plt.legend(plotspeclist, loc="upper left")
 # calculate species binary diffusion coefficients
 # at 2 atm and 500K
-diffcoef = MyGasMech.SpeciesDiffusionCoeffs(2.0 * ck.P_ATM, 500.0)
+diffcoef = MyGasMech.species_diffusioncoeffs(2.0 * ck.P_ATM, 500.0)
 id1 = MyGasMech.get_specindex(plotspeclist[0])
 id2 = MyGasMech.get_specindex(plotspeclist[1])
 c = diffcoef[id1][id2]

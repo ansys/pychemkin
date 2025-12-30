@@ -75,7 +75,7 @@ from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.core.logger import logger
 
 # chemkin perfectly stirred reactor (PSR) model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_FixedTemperature as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeFixedTemperature as PSR
 from ansys.chemkin.core.utilities import find_file
 
 # check working directory
@@ -133,7 +133,7 @@ ierror = MyGasMech.preprocess()
 # create the fuel-oxidizer inlet to the JSR
 feed = Stream(MyGasMech)
 # set H2-O2-N2 composition
-feed.X = [("h2", 1.1e-2), ("n2", 9.62e-1), ("o2", 2.75e-2)]
+feed.x = [("h2", 1.1e-2), ("n2", 9.62e-1), ("o2", 2.75e-2)]
 # set reactor pressure [dynes/cm2]
 feed.pressure = ck.P_ATM
 # set inlet gas temperature [K]
@@ -145,7 +145,7 @@ feed.mass_flowrate = 0.11
 ####################################################################
 # Create the PSR to predict the gas composition of the outlet stream
 # ==================================================================
-# Use the ``PSR_SetResTime_FixedTemperature()`` method to instantiate the JSR
+# Use the ``PSRSetResTimeFixedTemperature()`` method to instantiate the JSR
 # because both the reactor temperature and residence time are fixed
 # during the experiments. The gas property of the inlet feed is applied
 # as the estimated reactor condition of the JSR.
@@ -168,7 +168,7 @@ JSR.set_inlet(feed)
 # before running the simulations. For the steady-state PSR, you must provide
 # either the residence time or the reactor volume.
 
-# set PSR residence time (sec): required for PSR_SetResTime_FixedTemperature model
+# set PSR residence time (sec): required for PSRSetResTimeFixedTemperature model
 JSR.residence_time = 120.0 * 1.0e-3
 
 #####################
@@ -221,7 +221,7 @@ for i in range(numbruns):
     # solnmixture.list_composition(mode="mole")
     # store solution values
     inlet_temp[i] = solnmixture.temperature
-    h2o_ss_solution[i] = solnmixture.X[h2o_index]
+    h2o_ss_solution[i] = solnmixture.x[h2o_index]
     # update reactor temperature
     temp += deltatemp
     JSR.temperature = temp

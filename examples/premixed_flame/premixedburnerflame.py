@@ -132,7 +132,7 @@ if ierror != 0:
 # create the fuel-air stream for the premixed flame speed calculation
 premixed = Stream(MyGasMech, label="premixed")
 # set inlet premixed stream molar composition
-premixed.X = [("C2H4", 0.163), ("O2", 0.237), ("AR", 0.6)]
+premixed.x = [("C2H4", 0.163), ("O2", 0.237), ("AR", 0.6)]
 # setting inlet pressure [dynes/cm2]
 premixed.pressure = 1.0 * ck.P_ATM
 # set inlet/unburnt gas temperature [K]
@@ -388,7 +388,7 @@ for i in range(solutionpoints):
     # get the stream at the grid point
     solutionstream = flatflame.get_solution_stream_at_grid(grid_index=i)
     # get mixture-specific heat capacity profile [erg/mole-K]
-    cp_profile[i] = solutionstream.CPBL() / ck.ERGS_PER_JOULE * 1.0e-3
+    cp_profile[i] = solutionstream.cpbl() / ck.ERGS_PER_JOULE * 1.0e-3
     # get thermal conductivity profile [ergs/cm-K-sec]
     condprofile[i] = solutionstream.mixture_conductivity() * 1.0e-5
 

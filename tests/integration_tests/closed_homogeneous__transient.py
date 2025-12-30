@@ -65,13 +65,13 @@ fuelmixture = ck.Mixture(MyGasMech)
 fuelmixture.X = [("H2", 2.0), ("N2", 3.76), ("O2", 1.0)]
 # setting pressure and temperature is not required in this case
 fuelmixture.pressure = ck.P_ATM
-fuelmixture.temperature = 1000
+fuelmixture.temperature = 1000.0
 # products from the complete combustion of the fuel mixture and air
 products = ["H2O", "N2"]
 # species mole fractions of added/inert mixture.
 # can also create an additives mixture here
-# add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
-# ierror = premixed.X_by_Equivalence_Ratio(
+# add_frac = np.zeros(MyGasMech.kk, dtype=np.double)  # no additives: all zeros
+# ierror = premixed.x_by_equivalence_ratio(
 #     MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=0.7
 # )
 # if ierror != 0:
@@ -159,7 +159,7 @@ tempprofile = MyCONV.get_solution_variable_profile("temperature")
 h2o_profile = np.zeros_like(timeprofile, dtype=np.double)
 h2o_rop_rofile = np.zeros_like(timeprofile, dtype=np.double)
 denprofile = np.zeros_like(timeprofile, dtype=np.double)
-current_rop = np.zeros(MyGasMech.KK, dtype=np.double)
+current_rop = np.zeros(MyGasMech.kk, dtype=np.double)
 # find CH4 species index
 h2o_index = MyGasMech.get_specindex("H2O")
 # loop over all solution time points
@@ -167,12 +167,12 @@ for i in range(solutionpoints):
     # get the mixture at the time point
     solutionmixture = MyCONV.get_solution_mixture_at_index(solution_index=i)
     # get gas density [g/cm3]
-    denprofile[i] = solutionmixture.RHO
+    denprofile[i] = solutionmixture.rho
     # reactor mass [g]
     # get CH4 mole fraction profile
     h2o_profile[i] = solutionmixture.X[h2o_index]
     # get CH4 ROP profile
-    current_rop = solutionmixture.ROP()
+    current_rop = solutionmixture.rop()
     h2o_rop_rofile[i] = current_rop[h2o_index]
 # plot the profiles
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))

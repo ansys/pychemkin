@@ -35,7 +35,7 @@ class Grid:
     """Grid quality control parameters for Chemkin 1-D steady-state reactor models."""
 
     def __init__(self):
-        """Grid quality control parameters for Chemkin 1-D steady-state reactor models."""
+        """Grid quality control parameters for Chemkin 1-D reactor models."""
         self.max_numb_grid_points = 250
         self.max_numb_adapt_points = 10
         self.gradient = 0.1
@@ -65,7 +65,7 @@ class Grid:
             logger.error(this_msg)
 
     def set_max_grid_points(self, numb_points: int):
-        """Set the maximum number of grid points allowed during the solution refinement.
+        """Set the max number of grid points allowed during the solution refinement.
 
         Parameters
         ----------
@@ -82,7 +82,8 @@ class Grid:
 
     @property
     def start_position(self) -> float:
-        """Get the coordinate value of the first grid point, that is, the inlet/entrance.
+        """Get the coordinate value of the first grid point.
+        Location/coordinate of the inlet/entrance.
 
         Returns
         -------
@@ -94,7 +95,8 @@ class Grid:
 
     @start_position.setter
     def start_position(self, position: float):
-        """Reset the coordinate value of the first grid point, that is, the inlet/entrance.
+        """Reset the coordinate value of the first grid point.
+        Location/coordinate of the inlet/entrance.
 
         Parameters
         ----------
@@ -106,7 +108,8 @@ class Grid:
 
     @property
     def end_position(self) -> float:
-        """Get the coordinate value of the last grid point, that is, the outlet/exit/gap.
+        """Get the coordinate value of the last grid point.
+        Location/coordinate of the outlet/exit/gap.
 
         Returns
         -------
@@ -118,7 +121,8 @@ class Grid:
 
     @end_position.setter
     def end_position(self, position: float):
-        """Set the coordinate value of the last grid point, that is, the outlet/exit/gap.
+        """Set the coordinate value of the last grid point.
+        Location/coordinate of the outlet/exit/gap.
 
         Parameters
         ----------
@@ -170,7 +174,7 @@ class Grid:
             logger.error(this_msg)
 
     def set_max_adaptive_points(self, numb_points: int):
-        """Set the maximum number of adaptive grid points allowed per solution refinement.
+        """Set the max number of adaptive grid points allowed per solution refinement.
 
         Parameters
         ----------

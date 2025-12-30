@@ -66,13 +66,13 @@ if ierror != 0:
 # create the fuel mixture
 fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition
-fuelmixture.X = [("CH4", 0.9), ("C3H8", 0.05), ("C2H6", 0.05)]
+fuelmixture.x = [("CH4", 0.9), ("C3H8", 0.05), ("C2H6", 0.05)]
 # setting pressure and temperature is not required in this case
 fuelmixture.pressure = 1.5 * ck.P_ATM
 fuelmixture.temperature = 400.0
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
-air.X = [("O2", 0.21), ("N2", 0.79)]
+air.x = [("O2", 0.21), ("N2", 0.79)]
 # setting pressure and temperature is not required in this case
 air.pressure = 1.5 * ck.P_ATM
 air.temperature = 400.0
@@ -82,11 +82,11 @@ fresh = ck.Mixture(MyGasMech)
 products = ["CO2", "H2O", "N2"]
 # species mole fractions of added/inert mixture.
 # can also create an additives mixture here
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
+add_frac = np.zeros(MyGasMech.kk, dtype=np.double)  # no additives: all zeros
 # mean equivalence ratio
 equiv = 0.8
-ierror = fresh.X_by_Equivalence_Ratio(
-    MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=equiv
+ierror = fresh.x_by_equivalence_ratio(
+    MyGasMech, fuelmixture.x, air.x, add_frac, products, equivalenceratio=equiv
 )
 if ierror != 0:
     msg = "mixture creation failed"
@@ -99,14 +99,14 @@ fresh.list_composition(mode="mole")
 fresh.temperature = 447.0
 fresh.pressure = 1.065 * ck.P_ATM
 # set exhaust gas recirculation (EGR) ratio with volume fraction
-EGRratio = 0.3
+egr_ratio = 0.3
 # compute the EGR stream composition in mole fractions
-add_frac = fresh.get_EGR_mole_fraction(EGRratio, threshold=1.0e-8)
+add_frac = fresh.get_egr_mole_fraction(egr_ratio, threshold=1.0e-8)
 # recreate the initial mixture with EGR
-ierror = fresh.X_by_Equivalence_Ratio(
+ierror = fresh.x_by_equivalence_ratio(
     MyGasMech,
-    fuelmixture.X,
-    air.X,
+    fuelmixture.x,
+    air.x,
     add_frac,
     products,
     equivalenceratio=equiv,
@@ -130,14 +130,14 @@ MyEngine.connecting_rod_length = 26.0093
 # compression ratio [-]
 MyEngine.compression_ratio = 16.5
 # engine speed [RPM]
-MyEngine.RPM = 1000
+MyEngine.rpm = 1000
 # set piston pin offset distance [cm]
 MyEngine.set_piston_pin_offset(offset=-0.5)
 # set other parameters
 # simulation start CA [degree]
-MyEngine.starting_CA = -142.0
+MyEngine.starting_ca = -142.0
 # simulation end CA [degree]
-MyEngine.ending_CA = 116.0
+MyEngine.ending_ca = 116.0
 # list the engine parameters
 MyEngine.list_engine_parameters()
 print(f"engine displacement volume {MyEngine.get_displacement_volume()} [cm3]")
@@ -162,9 +162,9 @@ MyEngine.set_piston_head_area(area=124.75)
 MyEngine.set_cylinder_head_area(area=123.5)
 # output controls
 # set the number of crank angles between saving solution
-MyEngine.CAstep_for_saving_solution = 0.5
+MyEngine.ca_step_for_saving_solution = 0.5
 # set the number of crank angles between printing solution
-MyEngine.CAstep_for_printing_solution = 10.0
+MyEngine.ca_step_for_printing_solution = 10.0
 # turn OFF adaptive solution saving
 MyEngine.adaptive_solution_saving(mode=False, steps=20)
 # turn OFF adaptive solution saving
@@ -185,7 +185,7 @@ MyEngine.set_ignition_delay(method="T_inflection")
 # show solver option
 # show the number of crank angles between printng solution
 print(
-    f"crank angles between solution printing: {MyEngine.CAstep_for_printing_solution}"
+    f"crank angles between solution printing: {MyEngine.ca_step_for_printing_solution}"
 )
 # show other transient solver setup
 print(f"forced non-negative solution values: {MyEngine.force_nonnegative}")
@@ -206,11 +206,11 @@ logger.info("run completed")
 delay_ca = MyEngine.get_ignition_delay()
 print(f"ignition delay CA = {delay_ca} [degree]")
 # get heat release information
-HR10, HR50, HR90 = MyEngine.get_engine_heat_release_CAs()
+hr10, hr50, hr90 = MyEngine.get_engine_heat_release_cas()
 print("Engine Heat Release Information")
-print(f"10% heat release CA = {HR10} [degree]")
-print(f"50% heat release CA = {HR50} [degree]")
-print(f"90% heat release CA = {HR90} [degree]\n")
+print(f"10% heat release CA = {hr10} [degree]")
+print(f"50% heat release CA = {hr50} [degree]")
+print(f"90% heat release CA = {hr90} [degree]\n")
 # post-process the solutions
 MyEngine.process_engine_solution()
 # get the number of solution time points
@@ -222,7 +222,7 @@ timeprofile = MyEngine.get_solution_variable_profile("time")
 ca_profile = np.zeros_like(timeprofile, dtype=np.double)
 count = 0
 for t in timeprofile:
-    ca_profile[count] = MyEngine.get_CA(timeprofile[count])
+    ca_profile[count] = MyEngine.get_ca(timeprofile[count])
     count += 1
 # get the cylinder pressure profile
 presprofile = MyEngine.get_solution_variable_profile("pressure")
@@ -238,9 +238,9 @@ for i in range(solutionpoints):
     # get the mixture at the time point
     solutionmixture = MyEngine.get_solution_mixture_at_index(solution_index=i)
     # get gas density [g/cm3]
-    denprofile[i] = solutionmixture.RHO
+    denprofile[i] = solutionmixture.rho
     # get mixture specific heat capacity profile [erg/mole-K]
-    cpprofile[i] = solutionmixture.CPBL() / ck.ERGS_PER_JOULE * 1.0e-3
+    cpprofile[i] = solutionmixture.cpbl() / ck.ERGS_PER_JOULE * 1.0e-3
 # plot the profiles
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))
 plt.subplot(221)

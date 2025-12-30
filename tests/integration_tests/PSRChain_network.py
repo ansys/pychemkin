@@ -39,7 +39,7 @@ from ansys.chemkin.core.inlet import (
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeEnergyConservation as PSR
 
 # check working directory
 current_dir = str(Path.cwd())
@@ -86,9 +86,9 @@ ierror = MyGasMech.preprocess()
 #
 # .. note::
 #   PyChemkin has *"air"* redefined as a convenient way to set up the air
-#   stream/mixture in the simulations. Use ``ansys.chemkin.core.Air.X()`` or
+#   stream/mixture in the simulations. Use ``ansys.chemkin.core.Air.x()`` or
 #   ``ansys.chemkin.core.Air.Y()`` when the mechanism uses "O2" and "N2" for
-#   oxygen and nitrogen. Use ``ansys.chemkin.core.air.X()`` or
+#   oxygen and nitrogen. Use ``ansys.chemkin.core.air.x()`` or
 #   ``ansys.chemkin.core.air.Y()`` when oxygen and nitrogen are represented by
 #   "o2" and "n2".
 #
@@ -97,7 +97,7 @@ ierror = MyGasMech.preprocess()
 fuel = Stream(MyGasMech)
 fuel.temperature = 300.0  # [K]
 fuel.pressure = 2.1 * ck.P_ATM  # [atm] => [dyne/cm2]
-fuel.X = [("CH4", 1.0)]
+fuel.x = [("CH4", 1.0)]
 fuel.mass_flowrate = 3.275  # [g/sec]
 
 # air is modeled as a mixture of oxygen and nitrogen
@@ -105,7 +105,7 @@ air = Stream(MyGasMech)
 air.temperature = 550.0  # [K]
 air.pressure = 2.1 * ck.P_ATM
 # use predefined "air" recipe in mole fractions (with upper cased symbols)
-air.X = ck.Air.X()
+air.x = ck.Air.x()
 air.mass_flowrate = 45.0  # [g/sec]
 
 #################################################
@@ -128,7 +128,7 @@ print(f"premixed stream mass flow rate = {premixed.mass_flowrate} [g/sec]")
 reburn_fuel = Stream(MyGasMech)
 reburn_fuel.temperature = 300.0  # [K]
 reburn_fuel.pressure = 2.1 * ck.P_ATM  # [atm] => [dyne/cm2]
-reburn_fuel.X = [("CH4", 0.6), ("CO2", 0.4)]
+reburn_fuel.x = [("CH4", 0.6), ("CO2", 0.4)]
 reburn_fuel.mass_flowrate = 0.12  # [g/sec]
 
 # find the species index
@@ -164,14 +164,14 @@ co_index = MyGasMech.get_specindex("CO")
 combustor = PSR(premixed, label="combustor")
 # use the equilibrium state of the inlet gas mixture as the guessed solution
 combustor.set_estimate_conditions(option="HP")
-# set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
+# set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
 combustor.residence_time = 2.0 * 1.0e-3
 # add external inlet
 combustor.set_inlet(premixed)
 
 # PSR #2: dilution zone
 dilution = PSR(premixed, label="dilution zone")
-# set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
+# set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
 dilution.residence_time = 1.5 * 1.0e-3
 # add external inlet
 # first, assign the "correct" mass flow rate to the "air" stream
@@ -180,7 +180,7 @@ dilution.set_inlet(air)
 
 # PSR #3: reburning zone
 reburn = PSR(premixed, label="reburning zone")
-# set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
+# set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
 reburn.residence_time = 3.5 * 1.0e-3
 # add external inlet
 reburn.set_inlet(reburn_fuel)
@@ -273,19 +273,19 @@ print("outflow")
 print("=" * 10)
 print(f"temperature = {network_outflow.temperature} [K]")
 print(f"mass flow rate = {network_outflow.mass_flowrate} [g/sec]")
-print(f"CH4 = {network_outflow.X[ch4_index]}")
-print(f"O2 = {network_outflow.X[o2_index]}")
-print(f"CO = {network_outflow.X[co_index]}")
-print(f"NO = {network_outflow.X[no_index]}")
+print(f"CH4 = {network_outflow.x[ch4_index]}")
+print(f"O2 = {network_outflow.x[o2_index]}")
+print(f"CO = {network_outflow.x[co_index]}")
+print(f"NO = {network_outflow.x[no_index]}")
 
 # return results for comparisons
 resultfile = Path(current_dir) / "PSRChain_network.result"
 results = {}
 results["state-temperature"] = [network_outflow.temperature]
 results["state-mass_flow_rate"] = [network_outflow.mass_flowrate]
-results["species-mole_fraction_CH4"] = [network_outflow.X[ch4_index]]
-results["species-mole_fraction_CO"] = [network_outflow.X[co_index]]
-results["species-mole_fraction_NO"] = [network_outflow.X[no_index]]
+results["species-mole_fraction_CH4"] = [network_outflow.x[ch4_index]]
+results["species-mole_fraction_CO"] = [network_outflow.x[co_index]]
+results["species-mole_fraction_NO"] = [network_outflow.x[no_index]]
 #
 r = resultfile.open(mode="w")
 r.write("{\n")

@@ -247,7 +247,7 @@ def create_mixture_recipe_from_fractions(
         logger.error(this_msg)
         exit()
     # check array size
-    numb_species = chemistry_set.KK
+    numb_species = chemistry_set.kk
     if len(frac) != numb_species:
         msg = [
             Color.PURPLE,
@@ -263,7 +263,7 @@ def create_mixture_recipe_from_fractions(
     # build the recipe from frac array
     for k in range(numb_species):
         if frac[k] > 0.0e0:
-            species_symbol = chemistry_set.KSymbol[k]
+            species_symbol = chemistry_set.ksymbol[k]
             recipe.append((species_symbol, frac[k]))
             count += 1
     return count, recipe
@@ -369,8 +369,8 @@ def calculate_stoichiometrics(
         logger.error(this_msg)
         exit()
     # get the number of elements and the number of gas species from the chemistry set
-    numb_elem = chemistryset.MM
-    numb_species = chemistryset.KK
+    numb_elem = chemistryset.mm
+    numb_species = chemistryset.kk
     # find fuel species array size
     kfuel = len(fuel_molefrac)
     # find oxidizer array size
@@ -410,7 +410,7 @@ def calculate_stoichiometrics(
             msg = [
                 Color.YELLOW,
                 "species",
-                chemistryset.KSymbol[i],
+                chemistryset.ksymbol[i],
                 "is in both the fuel and the oxidizer mixtures.",
                 Color.END,
             ]
@@ -422,13 +422,13 @@ def calculate_stoichiometrics(
     # elements in the fuel species
     for k in fuel_index:
         for m in range(numb_elem):
-            elem_count = chemistryset.SpeciesComposition(m, k)
+            elem_count = chemistryset.species_composition(m, k)
             if elem_count > 0:
                 elem_tally[m] += elem_count
     # elements in the oxidizer species
     for k in oxid_index:
         for m in range(numb_elem):
-            elem_count = chemistryset.SpeciesComposition(m, k)
+            elem_count = chemistryset.species_composition(m, k)
             if elem_count > 0:
                 elem_tally[m] += elem_count
     numb_coreelem, coreelem_index = _nonzero_element_in_array_1d(elem_tally)
@@ -449,7 +449,7 @@ def calculate_stoichiometrics(
         elem_prod = np.zeros(numb_elem, dtype=np.int32)
         for k in prod_index:
             for m in range(numb_elem):
-                elem_count = chemistryset.SpeciesComposition(m, k)
+                elem_count = chemistryset.species_composition(m, k)
                 if elem_count > 0:
                     elem_prod[m] += elem_count
         numb_prodelem, prodelem_index = _nonzero_element_in_array_1d(elem_prod)
@@ -496,7 +496,7 @@ def calculate_stoichiometrics(
         b[m] = 0.0e0
         this_elem = coreelem_index[m]
         for k in range(numb_species):
-            elem_count = chemistryset.SpeciesComposition(this_elem, k)
+            elem_count = chemistryset.species_composition(this_elem, k)
             b[m] += elem_count.astype(np.double) * fuel_molefrac[k]
             # first column of A[1:numb_coreelem, 1]
             a[m][0] += elem_count.astype(np.double) * oxid_molefrac[k]
@@ -505,7 +505,7 @@ def calculate_stoichiometrics(
         this_elem = coreelem_index[m]
         for k in range(numb_prod):
             k_prod = prod_index[k]
-            a[m][k + 1] = chemistryset.SpeciesComposition(this_elem, k_prod)
+            a[m][k + 1] = chemistryset.species_composition(this_elem, k_prod)
     # solve the linear system: A x = b
     x = np.linalg.solve(a, b)
     alpha = -x[0]

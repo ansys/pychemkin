@@ -176,9 +176,9 @@ if ierror != 0:
 else:
     Color.ckprint("OK", ["PreProcess success", "!!!"])
     print("mechanism information:")
-    print(f"number of elements = {My2ndMech.MM:d}")
-    print(f"number of gas species = {My2ndMech.KK:d}")
-    print(f"number of gas reactions = {My2ndMech.IIGas:d}")
+    print(f"number of elements = {My2ndMech.mm:d}")
+    print(f"number of gas species = {My2ndMech.kk:d}")
+    print(f"number of gas reactions = {My2ndMech.ii_gas:d}")
 
 
 #####################################
@@ -191,7 +191,7 @@ print("=" * 50)
 # extract element symbols as a list
 elelist = My2ndMech.element_symbols
 # get atomic masses as numpy 1D double array
-awt = My2ndMech.AWT
+awt = My2ndMech.awt
 # print element information
 for k in range(len(elelist)):
     print(f"element # {k + 1:3d}: {elelist[k]:16} mass = {awt[k]:f}")
@@ -201,7 +201,7 @@ print("=" * 50)
 # extract gas species symbols as a list
 specieslist = My2ndMech.species_symbols
 # get species molecular masses as numpy 1D double array
-wt = My2ndMech.WT
+wt = My2ndMech.wt
 # print gas species information
 for k in range(len(specieslist)):
     print(f"species # {k + 1:3d}: {specieslist[k]:16} mass = {wt[k]:f}")

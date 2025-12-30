@@ -117,7 +117,7 @@ if ierror != 0:
 # Instantiate a stream named ``premixed`` for the inlet gas mixture.
 # This stream  is a mixture with the addition of the
 # inlet flow rate. You can specify the inlet gas properties the same way you
-# set up a ``Mixture``. Here the ``X_by_Equivalence_Ratio`` method is used.
+# set up a ``Mixture``. Here the ``x_by_equivalence_ratio`` method is used.
 # You create the ``fuel`` and the ``air`` mixtures first. Then define the
 # *complete combustion product species* and provide the *additives* composition
 # if applicable. And finally, during the parameter iteration runs, you can simply set
@@ -127,14 +127,14 @@ if ierror != 0:
 # create the fuel mixture
 fuel = ck.Mixture(MyGasMech)
 # set fuel composition: methane
-fuel.X = [("CH4", 1.0)]
+fuel.x = [("CH4", 1.0)]
 # setting pressure and temperature condition for the flame speed calculations
 fuel.pressure = 1.0 * ck.P_ATM
 fuel.temperature = 300.0  # inlet temperature
 
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
-air.X = ck.Air.X()
+air.x = ck.Air.x()
 # setting pressure and temperature is not required in this case
 air.pressure = fuel.pressure
 air.temperature = fuel.temperature
@@ -145,7 +145,7 @@ premixed = Stream(MyGasMech, label="premixed")
 products = ["CO2", "H2O", "N2"]
 # species mole fractions of added/inert mixture.
 # can also create an additives mixture here
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
+add_frac = np.zeros(MyGasMech.kk, dtype=np.double)  # no additives: all zeros
 
 # setting pressure and temperature is not required in this case
 premixed.pressure = fuel.pressure
@@ -157,8 +157,8 @@ premixed.mass_flowrate = 0.4
 # equivalence ratio for the first case
 phi = 0.6
 # create mixture by using the equivalence ratio
-ierror = premixed.X_by_Equivalence_Ratio(
-    MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=phi
+ierror = premixed.x_by_equivalence_ratio(
+    MyGasMech, fuel.x, air.x, add_frac, products, equivalenceratio=phi
 )
 # check fuel-oxidizer mixture creation status
 if ierror != 0:
@@ -273,8 +273,8 @@ for i in range(points):
     # update parameter
     phi += delta_phi
     # create mixture by using the equivalence ratio
-    ierror = premixed.X_by_Equivalence_Ratio(
-        MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=phi
+    ierror = premixed.x_by_equivalence_ratio(
+        MyGasMech, fuel.x, air.x, add_frac, products, equivalenceratio=phi
     )
     # check fuel-oxidizer mixture creation status
     if ierror != 0:
@@ -285,7 +285,7 @@ for i in range(points):
         )
         exit()
     # update initial gas composition
-    flamespeedcalculator.set_molefractions(premixed.X)
+    flamespeedcalculator.set_molefractions(premixed.x)
 
 # compute the total runtime
 runtime = time.time() - start_time

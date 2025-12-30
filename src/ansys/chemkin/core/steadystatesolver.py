@@ -100,8 +100,8 @@ class SteadyStateSolver:
 
     @property
     def steady_state_tolerances(self) -> tuple[float, float]:
-        """Get tolerance for the steady-state search algorithm
-
+        """Get tolerance for the steady-state search algorithm."""
+        """
         Returns
         -------
             tuple, [absolute_tolerance, relative_tolerance]
@@ -116,8 +116,9 @@ class SteadyStateSolver:
     @steady_state_tolerances.setter
     def steady_state_tolerances(self, tolerances: tuple[float, float]):
         """Set the absolute and the relative tolerances
-        for the steady-state solution search algorithm
-
+        for the steady-state solution search algorithm.
+        """
+        """
         Parameters
         ----------
             tolerances: tuple, [absolute_tolerance, relative_tolerance]
@@ -147,8 +148,8 @@ class SteadyStateSolver:
 
     @property
     def time_stepping_tolerances(self) -> tuple[float, float]:
-        """Get tolerance for the pseudo time stepping solution algorithm
-
+        """Get tolerance for the pseudo time stepping solution algorithm."""
+        """
         Returns
         -------
             tuple, [absolute_tolerance, relative_tolerance]
@@ -163,8 +164,9 @@ class SteadyStateSolver:
     @time_stepping_tolerances.setter
     def time_stepping_tolerances(self, tolerances: tuple[float, float]):
         """Set the absolute and the relative tolerances
-        for the pseudo time stepping solution algorithm
-
+        for the pseudo time stepping solution algorithm.
+        """
+        """
         Parameters
         ----------
             tolerances: tuple, [absolute_tolerance, relative_tolerance]
@@ -233,7 +235,8 @@ class SteadyStateSolver:
     def set_max_search_iteration(self, maxiteration: int):
         """Set the maximum number of iterations per search when performing
         the steady-state search algorithm.
-
+        """
+        """
         Parameters
         ----------
             maxtime: integer
@@ -420,7 +423,7 @@ class SteadyStateSolver:
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
 
-    def set_damping_option(self, ON: bool):
+    def set_damping_option(self, status: bool):
         """Turn ON or OFF the damping option of the steady-state solver."""
         """Turn ON (True) or OFF (False) the damping option of
         the steady-state solver.
@@ -431,8 +434,8 @@ class SteadyStateSolver:
                 turn On the damping option
 
         """
-        if isinstance(ON, bool):
-            if ON:
+        if isinstance(status, bool):
+            if status:
                 self.ss_damping = 1
             else:
                 self.ss_damping = 0
@@ -442,19 +445,19 @@ class SteadyStateSolver:
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
 
-    def set_legacy_option(self, ON: bool):
+    def set_legacy_option(self, option: bool):
         """Turn ON or OFF the legacy steady-state solver."""
         """Turn ON (True) or OFF (False) the legacy steady-state solver.
 
         Parameters
         ----------
-            ON: boolean
+            option: boolean
                 turn On the legacy solver
 
         """
-        if isinstance(ON, bool):
-            self.use_legacy_technique = ON
-            if ON:
+        if isinstance(option, bool):
+            self.use_legacy_technique = option
+            if option:
                 self.ss_solverkeywords["USE_LEGACY_TECHNIQUE"] = "4X"
         else:
             msg = [Color.PURPLE, "parameter must be either True or False.", Color.END]

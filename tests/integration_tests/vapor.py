@@ -64,7 +64,7 @@ else:
 # create the air+vapor mixture
 mist = ck.Mixture(MyMech)
 # set mole fraction
-mist.X = [("H2O", 2.0), ("O2", 1.0), ("N2", 3.76)]
+mist.x = [("H2O", 2.0), ("O2", 1.0), ("N2", 3.76)]
 mist.temperature = 500.0  # [K]
 mist.pressure = 100.0 * ck.P_ATM
 # set mixture mixing rule to Van der Waals (default)
@@ -78,16 +78,16 @@ tank.list_composition(mode="mole")
 tank.volume = 10.0  # cm3
 tank.time = 0.5  # sec
 # turn on real-gas cubic equation of state
-tank.userealgasEOS(mode=True)
+tank.userealgas_eos(mode=True)
 # output controls
 # set timestep between saving solution
 tank.timestep_for_saving_solution = 0.01
 # set tolerances in tuple: (absolute tolerance, relative tolerance)
 tank.tolerances = (1.0e-10, 1.0e-8)
 # get solver parameters
-ATOL, RTOL = tank.tolerances
-print(f"default absolute tolerance = {ATOL}")
-print(f"default relative tolerance = {RTOL}")
+atol, rtol = tank.tolerances
+print(f"default absolute tolerance = {atol}")
+print(f"default relative tolerance = {rtol}")
 # turn on the force non-negative solutions option in the solver
 tank.force_nonnegative = True
 # set tank profile
@@ -96,12 +96,12 @@ npoints = 3
 # position array of the profile data
 x = np.zeros(npoints, dtype=np.double)
 # value array of the profile data
-TPROprofile = np.zeros_like(x, dtype=np.double)
+tpro_profile = np.zeros_like(x, dtype=np.double)
 # set tank temperature data points
 x = [0.0, 0.2, 2.0]  # [sec]
-TPROprofile = [500.0, 275.0, 275.0]  # [K]
+tpro_profile = [500.0, 275.0, 275.0]  # [K]
 # set the temperature profile
-tank.set_temperature_profile(x, TPROprofile)
+tank.set_temperature_profile(x, tpro_profile)
 # run the CONP reactor model with given temperature profile
 runstatus = tank.run()
 # check run status
@@ -132,13 +132,13 @@ for i in range(solutionpoints):
     # get the mixture at the time point
     solutionmixture = tank.get_solution_mixture_at_index(solution_index=i)
     # get mixture density profile
-    denprofile[i] = solutionmixture.RHO
+    denprofile[i] = solutionmixture.rho
     # get mixture enthalpy profile
-    Hprofile[i] = solutionmixture.HML() / ck.ERGS_PER_JOULE * 1.0e-3
+    Hprofile[i] = solutionmixture.hml() / ck.ERGS_PER_JOULE * 1.0e-3
 
 #
 # turn off real-gas cubic equation of state
-tank.userealgasEOS(mode=False)
+tank.userealgas_eos(mode=False)
 # run the CONP reactor model with given temperature profile
 runstatus = tank.run()
 # check run status
@@ -166,9 +166,9 @@ for i in range(solutionpoints):
     # get the mixture at the time point
     solutionmixture = tank.get_solution_mixture_at_index(solution_index=i)
     # get mixture density profile
-    denprofile_idealgas[i] = solutionmixture.RHO
+    denprofile_idealgas[i] = solutionmixture.rho
     # get mixture enthalpy profile
-    Hprofile_idealgas[i] = solutionmixture.HML() / ck.ERGS_PER_JOULE * 1.0e-3
+    Hprofile_idealgas[i] = solutionmixture.hml() / ck.ERGS_PER_JOULE * 1.0e-3
 
 ck.done()
 # plot the profiles

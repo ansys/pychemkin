@@ -58,7 +58,7 @@ MyGasMech.preprocess_transportdata()
 # preprocess the mechanism files
 ierror = MyGasMech.preprocess()
 # get species molecular masses as numpy 1D double array
-wt = MyGasMech.WT
+wt = MyGasMech.wt
 # create a mixture called premixed based on the MyGasMech chemistry set
 premixed = ck.Mixture(MyGasMech)
 # set mixture pressure [dynes/cm2]
@@ -72,7 +72,7 @@ mixture_recipe = [("CH4", 0.08), ("N2", 0.6), ("O2", 0.2), ("H2O", 0.12)]
 # set mixture mole fractions
 premixed.X = mixture_recipe
 # find the mixture mean molecular mass
-print(f"mean molecular mass = {premixed.WTM:f} gm/mole")
+print(f"mean molecular mass = {premixed.wtm:f} gm/mole")
 print("=" * 40)
 # convert automatically to mass fractions
 print("mixture mass fractions (raw data):")
@@ -126,9 +126,9 @@ for j in range(len(press)):
         # set mixture temperature [K]
         premixed.temperature = temp
         # get mixture density [gm/cm3]
-        rho[i] = premixed.RHO
+        rho[i] = premixed.rho
         # get mixture enthalpy [ergs/mol] and convert it to [kJ/mol]
-        enthalpy[i] = premixed.HML() * 1.0e-3 / ck.ERGS_PER_JOULE
+        enthalpy[i] = premixed.hml() * 1.0e-3 / ck.ERGS_PER_JOULE
         # get mixture viscosity [gm/cm-sec]
         visc[i] = premixed.mixture_viscosity()
         # get mixture-averaged diffusion coefficient of CH4 [cm2/sec]

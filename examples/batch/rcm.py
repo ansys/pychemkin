@@ -116,28 +116,29 @@ ierror = MyGasMech.preprocess()
 # create the fuel mixture
 fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition
-fuelmixture.X = [("CH4", 1.0)]
+fuelmixture.x = [("CH4", 1.0)]
 # setting pressure and temperature is not required in this case
 fuelmixture.pressure = 5.0 * ck.P_ATM
 fuelmixture.temperature = 1500.0
 
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
-air.X = [("O2", 0.21), ("N2", 0.79)]
+air.x = [("O2", 0.21), ("N2", 0.79)]
 # setting pressure and temperature is not required in this case
 air.pressure = 5.0 * ck.P_ATM
 air.temperature = 1500.0
 
 # products from the complete combustion of the fuel mixture and air
 products = ["CO2", "H2O", "N2"]
-# species mole fractions of added/inert mixture. can also create an additives mixture here
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
+# species mole fractions of added/inert mixture.
+# can also create an additives mixture here
+add_frac = np.zeros(MyGasMech.kk, dtype=np.double)  # no additives: all zeros
 
 # create the premixed mixture to be defined
 premixed = ck.Mixture(MyGasMech)
 
-ierror = premixed.X_by_Equivalence_Ratio(
-    MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=0.7
+ierror = premixed.x_by_equivalence_ratio(
+    MyGasMech, fuelmixture.x, air.x, add_frac, products, equivalenceratio=0.7
 )
 # check fuel-oxidizer mixture creation status
 if ierror != 0:
@@ -147,7 +148,8 @@ if ierror != 0:
 # list the composition of the premixed mixture for verification
 premixed.list_composition(mode="mole")
 
-# set mixture temperature and pressure (equivalent to setting the initial temperature and pressure of the reactor)
+# set mixture temperature and pressure
+# (equivalent to setting the initial temperature and pressure of the reactor)
 premixed.temperature = 800.0
 premixed.pressure = 3.0 * ck.P_ATM
 
@@ -158,8 +160,8 @@ premixed.pressure = 3.0 * ck.P_ATM
 # ``GivenVolumeBatchReactor_EnergyConservation`` object because the reactor volume is
 # assigned as a function of time. The batch reactors must be associated with a
 # mixture that implicitly links the chemistry set (gas-phase mechanism and properties)
-# to the batch reactor. Additionally, it also defines the initial reactor conditions (pressure,
-# temperature, volume, and gas composition).
+# to the batch reactor. Additionally, it also defines the initial reactor conditions
+# (pressure, temperature, volume, and gas composition).
 
 # create a constant volume batch reactor (with energy equation)
 MyCONV = GivenVolumeBatchReactor_EnergyConservation(premixed, label="RCM")
@@ -174,8 +176,9 @@ MyCONV.list_composition(mode="mole")
 # simulation end time are required inputs.
 #
 # .. note::
-#   You can reset the initial reactor temperature by using the ``MyCONV.temperature = 800.0``
-#   method. In the run output, you see a warning message about the change.
+#   You can reset the initial reactor temperature by using the
+#   ``MyCONV.temperature = 800.0`` method. In the run output, you see
+#   a warning message about the change.
 #
 
 # set other reactor properties
@@ -187,8 +190,9 @@ MyCONV.time = 0.1
 ########################
 # Set the volume profile
 # ======================
-# Create a time-volume profile by using two arrays. Use the ``set_volume_profile()`` method
-# to add the profile to the reactor model. The profile data overrides the initial volume
+# Create a time-volume profile by using two arrays. Use
+# the ``set_volume_profile()`` method to add the profile to
+# the reactor model. The profile data overrides the initial volume
 # value set earlier with the ``volume()`` method.
 
 # number of profile data points
@@ -204,21 +208,23 @@ vol_profile = [10.0, 4.0, 4.0]  # [cm3]
 ####################
 # Set output options
 # ==================
-# You can turn on the adaptive solution saving to resolve the steep variations in the solution
-# profile. Here additional solution data points are saved for every **100 [K]** change in gas
-# temperature. The ``set_ignition_delay()`` method must be included for the reactor model to
-# report the ignition delay times after the simulation is done. If ``method="T_inflection"`` is
-# set, the reactor model treats the inflection points in the predicted gas temperature profile
-# as the indication of an auto-ignition. You can choose a different auto-ignition definition.
+# You can turn on the adaptive solution saving to resolve the steep variations
+# in the solution profile. Here additional solution data points are saved for every
+# **100 [K]** change in gas temperature. The ``set_ignition_delay()`` method must be
+# included for the reactor model to report the ignition delay times after
+# the simulation is done. If ``method="T_inflection"`` is set, the reactor model
+# treats the inflection points in the predicted gas temperature profile as
+# the indication of an auto-ignition. You can choose a different
+# auto-ignition definition.
 #
 # .. note::
-#   Type ``ansys.chemkin.core.show_ignition_definitions()`` to get the list of all available ignition
-#   delay time definitions in Chemkin.
+#   Type ``ansys.chemkin.core.show_ignition_definitions()`` to get\
+#   the list of all available ignition delay time definitions in Chemkin.
 #
 # .. note::
-#   By default, time intervals for both print and save solution are **1/100** of the
-#   simulation end time. In this case :math:`dt=time/100=0.001`\ . You can change them
-#   to different values.
+#   By default, time intervals for both print and save solution are **1/100**
+#   of the simulation end time. In this case :math:`dt=time/100=0.001`\ .
+#   You can change them to different values.
 #
 
 # set the volume profile
@@ -234,8 +240,8 @@ MyCONV.set_ignition_delay(method="T_inflection")
 #####################
 # Set solver controls
 # ===================
-# You can overwrite the default solver controls by using solver-related methods, such as those
-# for tolerances.
+# You can overwrite the default solver controls by using solver-related methods,
+# such as those for tolerances.
 
 # set tolerances in tuple: (absolute tolerance, relative tolerance)
 MyCONV.tolerances = (1.0e-10, 1.0e-8)
@@ -278,12 +284,12 @@ print(Color.GREEN + ">>> Run completed. <<<", end=Color.END)
 ###############################################
 # Get the ignition delay time from the solution
 # =============================================
-# Use the ``get_ignition_delay()`` method to extract the ignition delay time after the
-# run is completed.
+# Use the ``get_ignition_delay()`` method to extract the ignition delay time after
+# the run is completed.
 #
 # .. note::
-#   You need to deduct the initial compression time = 0.01 [sec] to get the *actual* ignition
-#   delay time.
+#   You need to deduct the initial compression time = 0.01 [sec] to get
+#   the *actual* ignition delay time.
 #
 
 # get ignition delay time (need to deduct the initial compression time = 0.01 [sec])
@@ -296,20 +302,22 @@ print(f"Ignition delay time = {delaytime} [msec].")
 # The postprocessing step parses the solution and package the solution values at each
 # time point into a mixture. There are two ways to access the solution profiles:
 #
-# - The raw solution profiles (value as a function of distance) are available for distance,
-#   temperature, pressure, volume, and species mass fractions.
+# - The raw solution profiles (value as a function of distance) are available
+#   for distance, temperature, pressure, volume, and species mass fractions.
 #
 #  -The mixtures permit the use of all property and rate utilities to extract
 #   information such as viscosity, density, and mole fractions.
 #
-# You can use the ``get_solution_variable_profile()`` method to get the raw solution profiles. You
-# can get solution mixtures using either the ``get_solution_mixture_at_index()`` method for the
-# solution mixture at the given saved location or the ``get_solution_mixture()`` method for the
-# solution mixture at the given distance. (In this case, the mixture is constructed by interpolation.)
+# You can use the ``get_solution_variable_profile()`` method to get
+# the raw solution profiles. You can get solution mixtures using either the
+# ``get_solution_mixture_at_index()`` method for the solution mixture at
+# the given saved location or the ``get_solution_mixture()`` method for
+# the solution mixture at the given distance. (In this case, the mixture is
+# constructed by interpolation.)
 #
 # .. note::
-#   Use the ``getnumbersolutionpoints()`` method to get the size of the solution profiles before
-#   creating the arrays.
+#   Use the ``getnumbersolutionpoints()`` method to get the size of
+#   the solution profiles before creating the arrays.
 #
 
 # postprocess the solutions
@@ -333,7 +341,7 @@ massprofile = np.zeros_like(timeprofile, dtype=np.double)
 ch4_profile = np.zeros_like(timeprofile, dtype=np.double)
 ch4_rop_profile = np.zeros_like(timeprofile, dtype=np.double)
 viscprofile = np.zeros_like(timeprofile, dtype=np.double)
-current_rop = np.zeros(MyGasMech.KK, dtype=np.double)
+current_rop = np.zeros(MyGasMech.kk, dtype=np.double)
 # find CH4 species index
 ch4_index = MyGasMech.get_specindex("CH4")
 
@@ -342,13 +350,13 @@ for i in range(solutionpoints):
     # get the mixture at the time point
     solutionmixture = MyCONV.get_solution_mixture_at_index(solution_index=i)
     # get gas density [g/cm3]
-    den = solutionmixture.RHO
+    den = solutionmixture.rho
     # reactor mass [g]
     massprofile[i] = den * volprofile[i]
     # get CH4 mole fraction profile
-    ch4_profile[i] = solutionmixture.X[ch4_index]
+    ch4_profile[i] = solutionmixture.x[ch4_index]
     # get CH4 ROP profile
-    current_rop = solutionmixture.ROP()
+    current_rop = solutionmixture.rop()
     ch4_rop_profile[i] = current_rop[ch4_index]
     # get mixture vicosity profile
     viscprofile[i] = solutionmixture.mixture_viscosity()
@@ -356,10 +364,11 @@ for i in range(solutionpoints):
 ################################
 # Validate the simulation result
 # ==============================
-# Since the RCM is a closed reactor, the total gas mass inside RCM must be kept constant.
-# You can verify it by computing the maximum mass deviation in the solution profile.
-# If you find the mass variations are too large to be acceptable, you can set smaller tolerance
-# values and/or adjust some solver parameters such as the maximum solver time step size
+# Since the RCM is a closed reactor, the total gas mass inside RCM must be
+# kept constant. You can verify it by computing the maximum mass deviation
+# in the solution profile. If you find the mass variations are too large to
+# be acceptable, you can set smaller tolerance values and/or adjust
+# some solver parameters such as the maximum solver time step size
 # and re-run the simulation.
 del_mass = np.zeros_like(timeprofile, dtype=np.double)
 mass0 = massprofile[0]

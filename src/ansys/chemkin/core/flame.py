@@ -36,10 +36,10 @@ from ansys.chemkin.core.steadystatesolver import SteadyStateSolver
 
 
 class Flame(ReactorModel, SteadyStateSolver, Grid):
-    """Generic steady state, one dimensional flame model"""
+    """Generic steady state, one dimensional flame model."""
 
     def __init__(self, fuelstream: Stream, label: str):
-        """Create a 1-D flame object
+        """Create a 1-D flame object.
 
         Parameters
         ----------
@@ -75,13 +75,13 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         # use API mode for steady-state flame simulations
         Keyword.noFullKeyword = False
         # FORTRAN file unit of the text output file
-        self._myLOUT = c_int(160)
+        self._mylout = c_int(160)
         # temperature profile is set
         self.temp_profile_set = False
         # use the grid points in the temperature profile as the initial mesh
-        self.grid_T_profile = False
+        self.grid_t_profile = False
         # energy equation
-        self.EnergyTypes = {"ENERGY": 1, "GivenT": 2}
+        self.energytypes = {"ENERGY": 1, "GivenT": 2}
         self._energytype = c_int(1)
         # solver type: always steady state
         self._solvertype = c_int(1)
@@ -98,7 +98,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
     def set_temperature_profile(
         self, x: npt.NDArray[np.double], temp: npt.NDArray[np.double]
     ) -> int:
-        """Specify temperature profile
+        """Specify temperature profile.
 
         Parameters
         ----------
@@ -119,19 +119,21 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         return ierr
 
     def use_temp_profiel_initial_mesh(self, on: bool = False):
-        """Use the grid points in the user defined initial/estimated temperature profile
-        as the initial/starting grid points.
+        """Use the grid points in the user defined initial/estimated
+        temperature profile as the initial/starting grid points.
 
         Parameters
         ----------
             on: boolean, default = False
-                use the grid points of the temperature profile as the initial grid points
+                use the grid points of the temperature profile
+                as the initial grid points
 
         """
-        self.grid_T_profile = on
+        self.grid_t_profile = on
 
     def set_convection_differencing_type(self, mode: str):
-        """Set the finite differencing scheme for the convective terms in the transport equations.
+        """Set the finite differencing scheme for the convective terms
+        in the transport equations.
 
         Parameters
         ----------
@@ -151,7 +153,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
                 self.setkeyword(key="CDIF", value=False)
 
     def set_mesh_keywords(self) -> int:
-        """Set mesh related keywords
+        """Set mesh related keywords.
 
         Returns
         -------
@@ -160,7 +162,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         """
         ierr = 0
         # set up initial mesh related keywords
-        if self.grid_T_profile:
+        if self.grid_t_profile:
             # use temperature profile grid as the initial grid
             if self.temp_profile_set:
                 # verify TPRO is set
@@ -242,7 +244,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         return ierr
 
     def set_ss_solver_keywords(self):
-        """Add steady-state solver parameter keywoprds to the keyword list"""
+        """Add steady-state solver parameter keywoprds to the keyword list."""
         # steady-state solver parameter given
         if len(self.ss_solverkeywords) > 0:
             #
@@ -270,8 +272,9 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
             self.removekeyword(key="MIX")
         self.transport_mode = 2
 
-    def use_fixed_Lewis_number_transport(self, Lewis: float = 1.0):
-        """Use a fixed Lewis number to compute the species diffusion coefficient from mixture conductivity.
+    def use_fixed_lewis_number_transport(self, Lewis: float = 1.0):
+        """Use a fixed Lewis number to compute the species diffusion coefficient
+        from mixture conductivity.
 
         .. math::
 
@@ -299,8 +302,8 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
     def use_thermal_diffusion(self, mode: bool = True):
         """Include the thermal diffusion (Doret) effect.
         The inclusion of thermal diffucivity is recommended when there are significant
-        amount of "light" species in the system. Species with molecular weight less than 5 g/mol
-        is considered a light species, for example, hydrogen.
+        amount of "light" species in the system. Species with molecular weight
+        less than 5 g/mol is considered a light species, for example, hydrogen.
 
         Parameters
         ----------
@@ -312,18 +315,20 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
 
     def set_species_boundary_types(self, mode: str = "comp"):
         """Set the species boundary condition type (at inlet and outlet).
-        When the species value is fixed at the boundary, the "back" diffusion of the species
-        into the inlet stream is not considered. That is, when the species profile is positive
-        at the inlet, a fixed species value implies the species concentration in the inlet stream
-        is actually lower than its boundary concentration. When the "flux" option is employed,
-        species mass flux will be balanced at the inlet. That is, the species concentration at
-        the inlet will be slightly varied from its specified boundary value so that the "net"
+        When the species value is fixed at the boundary, the "back" diffusion
+        of the species into the inlet stream is not considered. That is, when
+        the species profile is positive at the inlet, a fixed species value implies
+        the species concentration in the inlet stream is actually lower than its
+        boundary concentration. When the "flux" option is employed, species mass flux
+        will be balanced at the inlet. That is, the species concentration at the inlet
+        will be slightly varied from its specified boundary value so that the "net"
         species mass flux at the inlet is zero.
 
         Parameters
         ----------
             mode: string, {"flux", "comp"}
-                keep the species mole/mass fraction at a fixed value or keep the species mass flux conserved
+                keep the species mole/mass fraction at a fixed value or
+                keep the species mass flux conserved
 
         """
         if mode.lower() == "comp":

@@ -114,14 +114,14 @@ MyGasMech.chemfile = str(mechanism_dir / "gasoline_14comp_WBencrypt.inp")
 # preprocess the mechanism files
 ierror = MyGasMech.preprocess()
 print("Mechanism information:")
-print(f"Number of gas species = {MyGasMech.KK:d}.")
-print(f"Number of gas reactions = {MyGasMech.IIGas:d}.")
+print(f"Number of gas species = {MyGasMech.kk:d}.")
+print(f"Number of gas reactions = {MyGasMech.ii_gas:d}.")
 
 ################################################
 # Set up the stoichiometric gasoline-air mixture
 # ==============================================
 # You must set up the stoichiometric gasoline-air mixture for the subsequent
-# SI engine calculations. Here the ``X_by_Equivalence_Ratio()``method is used.
+# SI engine calculations. Here the ``x_by_equivalence_ratio()``method is used.
 # You create the ``fuel`` and the ``air`` mixtures first. You then define the
 # *complete combustion product species* and provide the *additives* composition
 # if applicable. Finally, you simply set ``equivalenceratio=1`` to create
@@ -132,14 +132,14 @@ print(f"Number of gas reactions = {MyGasMech.IIGas:d}.")
 # create the fuel mixture
 fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition
-fuelmixture.X = [("ic8h18", 0.9), ("nc7h16", 0.1)]
+fuelmixture.x = [("ic8h18", 0.9), ("nc7h16", 0.1)]
 # setting pressure and temperature is not required in this case
 fuelmixture.pressure = ck.P_ATM
 fuelmixture.temperature = 353.0
 
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
-air.X = [("o2", 0.21), ("n2", 0.79)]
+air.x = [("o2", 0.21), ("n2", 0.79)]
 # setting pressure and temperature is not required in this case
 air.pressure = ck.P_ATM
 air.temperature = 353.0
@@ -148,15 +148,15 @@ air.temperature = 353.0
 products = ["co2", "h2o", "n2"]
 # species mole fractions of added/inert mixture.
 # You can also create an additives mixture here.
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
+add_frac = np.zeros(MyGasMech.kk, dtype=np.double)  # no additives: all zeros
 
 # create the unburned fuel-air mixture
 fresh = ck.Mixture(MyGasMech)
 
 # mean equivalence ratio
 equiv = 1.0
-ierror = fresh.X_by_Equivalence_Ratio(
-    MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=equiv
+ierror = fresh.x_by_equivalence_ratio(
+    MyGasMech, fuelmixture.x, air.x, add_frac, products, equivalenceratio=equiv
 )
 # check fuel-oxidizer mixture creation status
 if ierror != 0:
@@ -188,22 +188,22 @@ fresh.pressure = fuelmixture.pressure
 # which is generally the volume ratio between the EGR mixture and
 # the fresh fuel-air ratio. However, because you know nothing about the composition
 # of the exhaust gas, you cannot simply combine these two mixtures. In this case,
-# you use the ``get_EGR_mole_fraction()`` method to estimate the major components of
+# you use the ``get_egr_mole_fraction()`` method to estimate the major components of
 # the exhaust gas from the combustion of the fresh fuel-air mixture.
 # The ``threshold=1.0e-8`` parameter tells the method to ignore any species with
 # a mole fraction below the threshold value. Once you have
-# the EGR mixture composition, use the ``X_by_Equivalence_Ratio()`` method
+# the EGR mixture composition, use the ``x_by_equivalence_ratio()`` method
 # a second time to re-create the fuel-air mixture ``fresh`` with the original
 # ``fuelmixture`` and ``air`` mixtures, along with the EGR composition that
 # you just got as the *additives*.
-EGRratio = 0.3
+egr_ratio = 0.3
 # compute the EGR stream composition in mole fractions
-add_frac = fresh.get_EGR_mole_fraction(EGRratio, threshold=1.0e-8)
+add_frac = fresh.get_egr_mole_fraction(egr_ratio, threshold=1.0e-8)
 # recreate the initial mixture with EGR
-ierror = fresh.X_by_Equivalence_Ratio(
+ierror = fresh.x_by_equivalence_ratio(
     MyGasMech,
-    fuelmixture.X,
-    air.X,
+    fuelmixture.x,
+    air.x,
     add_frac,
     products,
     equivalenceratio=equiv,
@@ -230,8 +230,8 @@ MyEngine.list_composition(mode="mole", bound=1.0e-8)
 # ==============================
 # Set the required engine parameters as shown in the following code. These
 # engine parameters are used to describe the cylinder volume during the
-# simulation. The ``starting_CA`` argument should be the crank angle corresponding
-# to the cylinder IVC. The ``ending_CA`` argument is typically the EVC crank angle.
+# simulation. The ``starting_ca`` argument should be the crank angle corresponding
+# to the cylinder IVC. The ``ending_ca`` argument is typically the EVC crank angle.
 
 # cylinder bore diameter [cm]
 MyEngine.bore = 8.5
@@ -242,13 +242,13 @@ MyEngine.connecting_rod_length = 17.853
 # compression ratio [-]
 MyEngine.compression_ratio = 12
 # engine speed [RPM]
-MyEngine.RPM = 600
+MyEngine.rpm = 600
 
 # set other parameters
 # simulation start CA [degree]
-MyEngine.starting_CA = -120.2
+MyEngine.starting_ca = -120.2
 # simulation end CA [degree]
-MyEngine.ending_CA = 139.8
+MyEngine.ending_ca = 139.8
 # list the engine parameters
 MyEngine.list_engine_parameters()
 print(f"Engine displacement volume = {MyEngine.get_displacement_volume()} [cm3].")
@@ -286,7 +286,7 @@ print(f"Engine clearance volume = = {MyEngine.get_clearance_volume()} [cm3].")
 #
 
 # start of combustion CA
-MyEngine.set_burn_timing(SOC=-14.5, duration=45.6)
+MyEngine.set_burn_timing(soc=-14.5, duration=45.6)
 MyEngine.wiebe_parameters(n=4.0, b=7.0)
 # set minimum zonal mass [g]
 MyEngine.set_minimum_zone_mass(minmass=1.0e-5)
@@ -338,15 +338,15 @@ MyEngine.set_cylinder_head_area(area=56.75)
 #   By default, time/crank angle intervals for both print and save solution
 #   are 1/100 of the simulation duration, which in this case is
 #   :math:`dCA=(EVO-IVC)/100=2.58`\ . You can make the model report more frequently
-#   by using the ``CAstep_for_saving_solution()`` or
-#   ``CAstep_for_printing_solution()`` method to set different interval values
+#   by using the ``ca_step_for_saving_solution()`` or
+#   ``ca_step_for_printing_solution()`` method to set different interval values
 #   in the CA.
 #
 
 # set the number of crank angles between saving solution
-MyEngine.CAstep_for_saving_solution = 0.5
+MyEngine.ca_step_for_saving_solution = 0.5
 # set the number of crank angles between printing solution
-MyEngine.CAstep_for_printing_solution = 10.0
+MyEngine.ca_step_for_printing_solution = 10.0
 # turn ON adaptive solution saving
 MyEngine.adaptive_solution_saving(mode=True, steps=20)
 
@@ -359,15 +359,15 @@ MyEngine.adaptive_solution_saving(mode=True, steps=20)
 # set tolerances in tuple: (absolute tolerance, relative tolerance)
 MyEngine.tolerances = (1.0e-15, 1.0e-6)
 # get solver parameters
-ATOL, RTOL = MyEngine.tolerances
-print(f"Default absolute tolerance = {ATOL}.")
-print(f"Default relative tolerance = {RTOL}.")
+atol, rtol = MyEngine.tolerances
+print(f"Default absolute tolerance = {atol}.")
+print(f"Default relative tolerance = {rtol}.")
 # turn on the force non-negative solutions option in the solver
 MyEngine.force_nonnegative = True
 # show solver option
 # show the number of crank angles between printing solution
 print(
-    f"Crank angles between solution printing: {MyEngine.CAstep_for_printing_solution}"
+    f"Crank angles between solution printing: {MyEngine.ca_step_for_printing_solution}"
 )
 # show other transient solver setup
 print(f"Forced non-negative solution values: {MyEngine.force_nonnegative}")
@@ -424,7 +424,7 @@ print(f"Total simulation duration: {runtime} [sec]")
 #     the solutions.
 #   - Use the ``getnumbersolutionpoints()`` method to get the size of
 #     the solution profiles before creating the arrays.
-#   - Use the ``get_CA()`` method to convert the time values reported in the solution
+#   - Use the ``get_ca()`` method to convert the time values reported in the solution
 #     to crank angles.
 #
 #
@@ -436,9 +436,9 @@ print(f"Total simulation duration: {runtime} [sec]")
 # the *unburned zones* and *burned zone*, along with the cylinder averaged results.
 # That is, there are three solution records. The unburned zone is designated
 # as ``zone 1``, and the burned zone is designated as ``zone 2``. To process
-# the result of the burned zone, you use ``zoneID=2`` when you call
+# the result of the burned zone, you use ``zone_id=2`` when you call
 # the engine postprocessor with the ``process_engine_solution()`` method.
-# If you omit the ``zoneID`` parameter, the cylinder averaged results are
+# If you omit the ``zone_id`` parameter, the cylinder averaged results are
 # postprocessed by default.
 #
 # .. note ::
@@ -451,7 +451,7 @@ unburnedzone = 1
 burnedzone = 2
 zonestrings = ["Unburned Zone", "Burned Zone"]
 thiszone = burnedzone
-MyEngine.process_engine_solution(zoneID=thiszone)
+MyEngine.process_engine_solution(zone_id=thiszone)
 plottitle = zonestrings[thiszone - 1] + " Solution"
 # get the number of solution time points
 solutionpoints = MyEngine.getnumbersolutionpoints()
@@ -459,10 +459,10 @@ print(f"Number of solution points = {solutionpoints}.")
 # get the time profile
 timeprofile = MyEngine.get_solution_variable_profile("time")
 # convert time to crank angle
-CAprofile = np.zeros_like(timeprofile, dtype=np.double)
+ca_profile = np.zeros_like(timeprofile, dtype=np.double)
 count = 0
 for t in timeprofile:
-    CAprofile[count] = MyEngine.get_CA(timeprofile[count])
+    ca_profile[count] = MyEngine.get_ca(timeprofile[count])
     count += 1
 # get the cylinder pressure profile
 presprofile = MyEngine.get_solution_variable_profile("pressure")
@@ -473,14 +473,14 @@ tempprofile = MyEngine.get_solution_variable_profile("temperature")
 volprofile = MyEngine.get_solution_variable_profile("volume")
 # create arrays for zonal CO mole fraction
 # find CO species index
-COindex = MyGasMech.get_specindex("co")
-COprofile = np.zeros_like(timeprofile, dtype=np.double)
+co_index = MyGasMech.get_specindex("co")
+co_profile = np.zeros_like(timeprofile, dtype=np.double)
 # loop over all solution time points
 for i in range(solutionpoints):
     # get the zonal mixture at the time point
     solutionmixture = MyEngine.get_solution_mixture_at_index(solution_index=i)
     # get zonal CO mole fraction
-    COprofile[i] = solutionmixture.X[COindex]
+    co_profile[i] = solutionmixture.x[co_index]
 
 # postprocess cylinder-averged solution
 MyEngine.process_average_engine_solution()
@@ -502,21 +502,21 @@ cylindertempprofile = MyEngine.get_solution_variable_profile("temperature")
 plt.subplots(2, 2, sharex="col", figsize=(13, 6.5))
 plt.suptitle(plottitle, fontsize=16)
 plt.subplot(221)
-plt.plot(CAprofile, presprofile, "r-")
+plt.plot(ca_profile, presprofile, "r-")
 plt.ylabel("Pressure [bar]")
 plt.subplot(222)
-plt.plot(CAprofile, volprofile, "b-")
-plt.plot(CAprofile, cylindervolprofile, "b--")
+plt.plot(ca_profile, volprofile, "b-")
+plt.plot(ca_profile, cylindervolprofile, "b--")
 plt.ylabel("Volume [cm3]")
 plt.legend(["Zone", "Cylinder"], loc="lower right")
 plt.subplot(223)
-plt.plot(CAprofile, tempprofile, "g-")
-plt.plot(CAprofile, cylindertempprofile, "g--")
+plt.plot(ca_profile, tempprofile, "g-")
+plt.plot(ca_profile, cylindertempprofile, "g--")
 plt.xlabel("Crank Angle [degree]")
 plt.ylabel("Mixture Temperature [K]")
 plt.legend(["Zone", "Averaged"], loc="upper left")
 plt.subplot(224)
-plt.plot(CAprofile, COprofile, "m-")
+plt.plot(ca_profile, co_profile, "m-")
 plt.xlabel("Crank Angle [degree]")
 plt.ylabel("CO Mole Fraction")
 # plot results

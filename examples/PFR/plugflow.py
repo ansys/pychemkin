@@ -113,7 +113,7 @@ ierror = MyGasMech.preprocess()
 # =================================
 # Create a hot exhaust gas mixture by assigning the mole fractions of the
 # species. A stream is simply a mixture with the addition of
-# mass/volumetric flow rate or velocity. Here, the gas composition ``exhaust.X``
+# mass/volumetric flow rate or velocity. Here, the gas composition ``exhaust.x``
 # is given by a recipe consisting of the common species in the combustion exhaust,
 # such as CO\ :sub:`2` and H\ :sub:`2`O and the CH\ :sub:`4` injected.
 # The inlet velocity is given by ``exhaust.velocity = 26.815``.
@@ -125,7 +125,7 @@ exhaust.temperature = 1750.0
 # set inlet/PFR pressure [atm]
 exhaust.pressure = 0.83 * ck.P_ATM
 # set inlet molar composition directly
-exhaust.X = [
+exhaust.x = [
     ("CO", 0.0145),
     ("CO2", 0.0735),
     ("H2O", 0.1107),
@@ -267,7 +267,7 @@ no_y_profile = tubereactor.get_solution_variable_profile("NO")
 n2_y_profile = tubereactor.get_solution_variable_profile("N2")
 
 # inlet NO mass fraction
-no_y_inlet = exhaust.Y[MyGasMech.get_specindex("NO")]
+no_y_inlet = exhaust.y[MyGasMech.get_specindex("NO")]
 # outlet grid index
 xout_index = solutionpoints - 1
 print("At the reactor inlet: x = 0 [xm]")
@@ -295,7 +295,7 @@ for i in range(solutionpoints):
     # get the mixture at the time point
     solutionmixture = tubereactor.get_solution_mixture_at_index(solution_index=i)
     # get gas density [g/cm3]
-    den = solutionmixture.RHO
+    den = solutionmixture.rho
     # gas velocity [g]
     velocityprofile[i] = ratio / den
 

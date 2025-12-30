@@ -108,7 +108,7 @@ ierror = MyGasMech.preprocess()
 # Set up gas mixtures based on the species in this chemistry set
 # ==============================================================
 # Compose the species molar ratios of the fuel-air mixture in a
-# recipe list and use the ``fuelmixture.X()`` method to set the mixture
+# recipe list and use the ``fuelmixture.x()`` method to set the mixture
 # composition (mole fractions) directly.
 #
 # Since you are going to use the ``fuelmixture`` mixture to instantiate
@@ -119,7 +119,7 @@ ierror = MyGasMech.preprocess()
 # create the fuel mixture
 fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition (mole ratios)
-fuelmixture.X = [("H2", 2.0), ("N2", 3.76), ("O2", 1.0)]
+fuelmixture.x = [("H2", 2.0), ("N2", 3.76), ("O2", 1.0)]
 # setting the mixture pressure and temperature is equivalent to setting
 # the initial temperature and pressure of the reactor in this case
 fuelmixture.pressure = ck.P_ATM
@@ -280,7 +280,7 @@ tempprofile = MyCONP.get_solution_variable_profile("temperature")
 h2o_profile = np.zeros_like(timeprofile, dtype=np.double)
 h2o_rop_profile = np.zeros_like(timeprofile, dtype=np.double)
 denprofile = np.zeros_like(timeprofile, dtype=np.double)
-current_rop = np.zeros(MyGasMech.KK, dtype=np.double)
+current_rop = np.zeros(MyGasMech.kk, dtype=np.double)
 # find H2O species index
 h2o_index = MyGasMech.get_specindex("H2O")
 # loop over all solution time points
@@ -288,12 +288,12 @@ for i in range(solutionpoints):
     # get the mixture at the time point
     solutionmixture = MyCONP.get_solution_mixture_at_index(solution_index=i)
     # get gas density [g/cm3]
-    denprofile[i] = solutionmixture.RHO
+    denprofile[i] = solutionmixture.rho
     # reactor mass [g]
     # get H2O mole fraction profile
-    h2o_profile[i] = solutionmixture.X[h2o_index]
+    h2o_profile[i] = solutionmixture.x[h2o_index]
     # get H2O ROP profile
-    current_rop = solutionmixture.ROP()
+    current_rop = solutionmixture.rop()
     h2o_rop_profile[i] = current_rop[h2o_index]
 
 ############################

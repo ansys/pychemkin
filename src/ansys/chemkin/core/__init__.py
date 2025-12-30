@@ -24,7 +24,6 @@
 
 from ctypes import c_int
 import inspect
-import os
 from pathlib import Path
 import platform
 
@@ -55,7 +54,7 @@ from ansys.chemkin.core.constants import (
     water_heat_vaporization as water_heat_vaporization,
 )
 from ansys.chemkin.core.info import (
-    help,
+    help as help,
     keyword_hints as keyword_hints,
     manuals as manuals,
     phrase_hints as phrase_hints,

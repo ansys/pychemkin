@@ -39,15 +39,18 @@ from ansys.chemkin.core.stirreactors.PSR import perfectlystirredreactor as PSR
 
 
 class ReactorNetwork:
-    """The hybrid reactor network allows internal recycling stream and reactor outflow splitting.
+    """The hybrid reactor network allows internal recycling stream and
+    reactor outflow splitting.
     The reactors are solved individually in terms. For network with complex internal
     connections, "Tearing points" can be manually defined and "tear stream" method is
     applied to solve the entire network iteratively.
     """
 
     def __init__(self, chem: Chemistry):
-        """Create a hybrid reactor network object in which the reactors are solved individually.
-
+        """Create a hybrid reactor network object in which the reactors are
+        solved individually.
+        """
+        """
         Parameters
         ----------
             chem: Chemistry set object
@@ -93,7 +96,8 @@ class ReactorNetwork:
         # {"source" reactor index : outflow Stream object}
         self.reactor_solutions: dict[int, Stream] = {}
         # outlet flow connectivity to other reactors in the network
-        # {"source" reactor index : {[("target reactor index", outflow split fraction), ... ]}
+        # {"source" reactor index :
+        # {[("target reactor index", outflow split fraction), ... ]}
         self.outflow_targets: dict[int, list[tuple[int, float]]] = {}
         # flag to set internal outflow connection
         self.outflow_altered = True
@@ -101,9 +105,11 @@ class ReactorNetwork:
         # {reactor index : number of external inlets}
         self.external_connections: dict[int, int] = {}
         # incoming flow collected from other reactors in the network
-        # {"target" reactor index : [("source reactor index", outflow split fraction), ... ]}
+        # {"target" reactor index :
+        # [("source reactor index", outflow split fraction), ... ]}
         self.inflow_sources: dict[int, list[tuple[int, float]]] = {}
-        # stream object representing all internal flows to the reactor (inckluding the through flow)
+        # stream object representing all internal flows to the reactor
+        # (inckluding the through flow)
         # {reactor index : Stream object}
         self.internal_inflow: dict[int, Stream] = {}
         # flag indicating the inletnal inlet stream of the reactor is "connected"
@@ -126,9 +132,10 @@ class ReactorNetwork:
         self.network_run_status = -100
 
     def get_reactor_label(self, reactor_index: int) -> str:
-        """Get the name/label of the reactor corresponding to the reactor index in the
-        reactor network.
-
+        """Get the name/label of the reactor corresponding to the reactor index
+        in the reactor network.
+        """
+        """
         Parameters
         ----------
             reactor_index: integer
@@ -159,9 +166,11 @@ class ReactorNetwork:
         return ""
 
     def add_reactor(self, reactor: Union[PSR, PFR]):
-        """Add a reactor to the network in order.
-        Plan the order (sequence) of reactor addition carefully. The order of the reactors is
-        somewhat important as it might affect the convergence rate of the network, especially with
+        """Add a reactor to the network in order."""
+        """
+        Plan the order (sequence) of reactor addition carefully.
+        The order of the reactors is somewhat important as it might affect
+        the convergence rate of the network, especially with
         the presence of any "tearing stream".
 
         Parameters
@@ -222,9 +231,11 @@ class ReactorNetwork:
                 logger.info(this_msg)
 
     def add_reactor_list(self, reactor_list: list[Union[PSR, PFR]]):
-        """Add a list of reactors to the network in order.
-        Plan the order (sequence) of reactor addition carefully. The order of the reactors is
-        somewhat important as it might affect the convergence rate of the network, especially with
+        """Add a list of reactors to the network in order."""
+        """
+        Plan the order (sequence) of reactor addition carefully.
+        The order of the reactors is somewhat important as it might affect
+        the convergence rate of the network, especially with
         the presence of any "tearing stream".
 
         Parameters
@@ -253,8 +264,8 @@ class ReactorNetwork:
 
     @property
     def number_reactors(self) -> int:
-        """Get the number of reactors in the network
-
+        """Get the number of reactors in the network."""
+        """
         Returns
         -------
             numb_reactors: integer
@@ -265,8 +276,8 @@ class ReactorNetwork:
 
     @property
     def number_external_outlets(self) -> int:
-        """Get the number of external outlets from the network
-
+        """Get the number of external outlets from the network."""
+        """
         Returns
         -------
             numb_outlets: integer
@@ -292,20 +303,23 @@ class ReactorNetwork:
                             # it is a through flow to the downstream reactor
                             print("  *through flow*")
                         print(
-                            f"  reactor no. {v[0]} {self.get_reactor_label(v[0])}: {v[1]}"
+                            f"  reactor no. {v[0]} "
+                            f"{self.get_reactor_label(v[0])}: {v[1]}"
                         )
                 print("-" * 10)
         else:
             # no outlet flow connection defined: chain network
             for name, id in self.reactor_map.items():
-                # construct the out flow connection (which contains the through flows only)
+                # construct the out flow connection
+                # (which contains the through flows only)
                 downstream = id + 1
                 self.outflow_targets[id] = [(downstream, 1.0)]
                 print(f"reactor number {id}: {name}")
                 print("-- outflow connections --")
                 print("  *through flow*")
                 print(
-                    f"  reactor no. {downstream} {self.get_reactor_label(downstream)}: 1.0"
+                    f"  reactor no. {downstream} "
+                    f"{self.get_reactor_label(downstream)}: 1.0"
                 )
                 print("-" * 10)
 
@@ -327,7 +341,8 @@ class ReactorNetwork:
         else:
             # no inlet flow connection defined
             for name, id in self.reactor_map.items():
-                # construct the out flow connection (which contains the through flows only)
+                # construct the out flow connection
+                # (which contains the through flows only)
                 downstream = id + 1
                 self.outflow_targets[id] = [(downstream, 1.0)]
                 print(f"reactor number {id}: {name}")
@@ -338,10 +353,14 @@ class ReactorNetwork:
     def add_outflow_connections(
         self, source_label: str, outflow_split: list[tuple[str, float]]
     ):
-        """Add outflow connections to other reactors in the network. The connection is given
-        by a tuple consistinig of the target reactor name and the mass flow rate split fraction.
-        The connection to the immediate downstream reactor (through flow) is optional.
-
+        """Add outflow connections to other reactors in the network."""
+        """
+        The connection is given by a tuple consistinig of
+        the target reactor name and the mass flow rate split fraction.
+        The connection to the immediate downstream reactor (through flow)
+        is optional.
+        """
+        """
         Parameters
         ----------
             source_label: string
@@ -516,8 +535,8 @@ class ReactorNetwork:
         self.numb_external_outlet = 0
 
     def remove_reactor(self, name: str):
-        """Remove the named reactor from the network.
-
+        """Remove the named reactor from the network."""
+        """
         Parameters
         ----------
             name: string
@@ -622,11 +641,13 @@ class ReactorNetwork:
                 else:
                     # index of the immediate downstream reactor
                     downstream = n + 1
-                    # 100% outlet mass flow goes to the next reactor (through flow only)
+                    # 100% outlet mass flow goes to the next reactor
+                    # (through flow only)
                     self.outflow_targets[n] = [(downstream, 1.0)]
                     print(
                         " - added thru flow to "
-                        + f"reactor # {downstream} {self.get_reactor_label(downstream)}"
+                        f"reactor # {downstream} "
+                        f"{self.get_reactor_label(downstream)}"
                     )
                 print(f" reactor # {n} {name}")
                 print(f" updated outlet target list {self.outflow_targets.get(n, [])}")
@@ -674,14 +695,15 @@ class ReactorNetwork:
                     # check if this reactor is a target of other reactors
                     for v in targets:
                         if v[0] == n:
-                            # part of the outflow from this reactor goes to the target reactor
+                            # part of the outflow from this reactor goes
+                            # to the target reactor
                             this_list = list(self.inflow_sources.get(n, []))
                             this_list.append((id, v[1]))
                             self.inflow_sources[n] = this_list
 
     def set_external_outlet(self, reactor_index: int):
-        """Add a new network external outlet to the reactor.
-
+        """Add a new network external outlet to the reactor."""
+        """
         Parameters
         ----------
             reactor_index: integer
@@ -694,8 +716,10 @@ class ReactorNetwork:
         self.external_outlets[self.numb_external_outlet] = reactor_index
 
     def calculate_incoming_streams(self, reactor_index: int) -> Union[Stream, None]:
-        """Calculate the combined internal incoming streams from other reactors in the network.
-
+        """Calculate the combined internal incoming streams from other reactors
+        in the network.
+        """
+        """
         Parameters
         ----------
             reactor_index: integer
@@ -722,8 +746,10 @@ class ReactorNetwork:
                 if id in self.reactor_solutions.keys():
                     # check the internal inlet stream for this reactor
                     if initialized:
-                        # the total internal inlet to the current reactor is already created
-                        # merge the internal flow from the source PSR into the total internal inlet stream to the current PSR
+                        # the total internal inlet to the current reactor is
+                        # already created merge the internal flow from
+                        # the source PSR into the total internal inlet stream
+                        # to the current PSR
                         this_stream = copy.deepcopy(
                             self.reactor_solutions.get(id, None)
                         )
@@ -760,7 +786,8 @@ class ReactorNetwork:
                 else:
                     # skip the reactor does not have solution yet
                     print(
-                        f"building internal inlet for reactor {self.get_reactor_label(reactor_index)}"
+                        f"building internal inlet for reactor "
+                        f"{self.get_reactor_label(reactor_index)}"
                     )
                     print(f"reactor {self.get_reactor_label(id)} not having solution")
                     print(f"source: {v}")
@@ -773,7 +800,8 @@ class ReactorNetwork:
     def set_internal_inlet(self, reactor_index: int) -> int:
         """Create or update the merged inlet stream to the reactor from the rest of
         the reactors in the network.
-
+        """
+        """
         Parameters
         ----------
             reactor_index: integer
@@ -817,7 +845,8 @@ class ReactorNetwork:
     def create_internal_inlet(self, reactor_index: int):
         """Create a new inlet stream that combines all incoming streams from the other
         reactor network to the current reactor.
-
+        """
+        """
         Parameters
         ----------
             reactor_index: integer
@@ -835,8 +864,8 @@ class ReactorNetwork:
             self.internal_inflow_ready[reactor_index] = True
 
     def get_network_run_status(self) -> int:
-        """Get network run status
-
+        """Get network run status."""
+        """
         Returns
         -------
             status: integer
@@ -859,9 +888,10 @@ class ReactorNetwork:
     def run(self) -> int:
         """Solve the hybrid reactor network by solving the individual reactors in
         the sequence as they are added to the network. If there is any "tear stream"
-        in the network, the solution process will be repeated till the properties of the
-        "tear stream" are converged.
-
+        in the network, the solution process will be repeated till the properties
+        of the "tear stream" are converged.
+        """
+        """
         Returns
         -------
             run status: integer
@@ -881,8 +911,8 @@ class ReactorNetwork:
         return run_status
 
     def get_reactor_stream(self, reactor_name: str) -> Stream:
-        """Get the solution Stream object of the given reactor name/label.
-
+        """Get the solution Stream object of the given reactor name/label."""
+        """
         Parameters
         ----------
             reactor_name: string
@@ -960,7 +990,8 @@ class ReactorNetwork:
                 print("-" * 10)
                 print(f"network external outlet # {ioutlet} from reactor # {nrxtor}")
                 print(
-                    f"   mass flow rate = {self.reactor_solutions[nrxtor].mass_flowrate * frac} [g/sec]"
+                    f"   mass flow rate = "
+                    f"{self.reactor_solutions[nrxtor].mass_flowrate * frac} [g/sec]"
                 )
                 print(
                     f"   temperature = {self.reactor_solutions[nrxtor].temperature} [K]"
@@ -968,8 +999,8 @@ class ReactorNetwork:
                 print("-" * 10)
 
     def get_external_stream(self, stream_index: int) -> list[Stream]:
-        """Get the list of external outlet Stream objects.
-
+        """Get the list of external outlet Stream objects."""
+        """
         Parameters
         ----------
             stream_index: integer
@@ -1006,7 +1037,8 @@ class ReactorNetwork:
     def run_without_tearstream(self) -> int:
         """Run the individual reactors in the network one by one without using
         tear stream iteration.
-
+        """
+        """
         Returns
         -------
             run_status: integer
@@ -1026,7 +1058,7 @@ class ReactorNetwork:
                 # if the reactor is a PSR, get a better guessed solution
                 this_inlet = self.internal_inflow.get(id, None)
                 if this_inlet is not None:
-                    rxtor.reset_estimate_composition(this_inlet.X, mode="mole")
+                    rxtor.reset_estimate_composition(this_inlet.x, mode="mole")
             # run the individual reactor model
             reactor_run_status = rxtor.run()
             # check status
@@ -1045,7 +1077,8 @@ class ReactorNetwork:
                 logger.error(this_msg)
                 exit()
             else:
-                # process the solution and add the solution stream to the outflow stream list
+                # process the solution and add the solution stream to
+                # the outflow stream list
                 self.reactor_solutions[id] = rxtor.process_solution()
             status += reactor_run_status
 
@@ -1057,7 +1090,8 @@ class ReactorNetwork:
     def run_with_tearstream(self) -> int:
         """Run the individual reactors in the network one by one with
         tear stream iteration.
-
+        """
+        """
         Returns
         -------
             run_status: integer
@@ -1082,8 +1116,8 @@ class ReactorNetwork:
                 # check reactor inlet configuration
                 if rxtor.number_external_inlets == 0:
                     # the reactor has no external inlet
-                    # check if the reactor has any incoming connection from the other reactors
-                    # if possible, creat the internal flow inlet
+                    # check if the reactor has any incoming connection from
+                    # the other reactors if possible, creat the internal flow inlet
                     if id in self.inflow_sources.keys():
                         self.create_internal_inlet(id)
                     else:
@@ -1118,7 +1152,8 @@ class ReactorNetwork:
                     logger.error(this_msg)
                     exit()
                 else:
-                    # process the solution and add the solution stream to the outflow stream list
+                    # process the solution and add the solution stream to
+                    # the outflow stream list
                     self.reactor_solutions[id] = rxtor.process_solution()
 
                 # overall run status
@@ -1130,7 +1165,8 @@ class ReactorNetwork:
             for id, rxtor in self.reactor_objects.items():
                 # construct the through flow inlet for the next iteration
                 # Note: the first iteration does not include any recycling/tear stream
-                # check if the reactor has any incoming connection from the other reactors
+                # check if the reactor has any incoming connection from
+                # the other reactors
                 if id in self.inflow_sources.keys():
                     # the reactor has incoming connection from the other reactors
                     self.create_internal_inlet(id)
@@ -1141,7 +1177,7 @@ class ReactorNetwork:
                     # if the reactor is a PSR, get a better guessed solution
                     this_inlet = self.internal_inflow.get(id, None)
                     if this_inlet is not None:
-                        rxtor.reset_estimate_composition(this_inlet.X, mode="mole")
+                        rxtor.reset_estimate_composition(this_inlet.x, mode="mole")
                         rxtor.set_estimate_conditions(
                             option="TP", guess_temp=rxtor.temperature
                         )
@@ -1178,7 +1214,8 @@ class ReactorNetwork:
                     del updated_stream
                 else:
                     # there is no previous reactor solution
-                    # create storage for the last reactor solution and save the current reactor solution there
+                    # create storage for the last reactor solution and save
+                    # the current reactor solution there
                     last_reactor_solutions[id] = copy.deepcopy(
                         self.reactor_solutions[id]
                     )
@@ -1232,8 +1269,8 @@ class ReactorNetwork:
 
     # tear stream utilities
     def remove_tearpoint(self, reactor_name: str):
-        """Remove the tear point from the list.
-
+        """Remove the tear point from the list."""
+        """
         Parameters
         ----------
             reactor_name: string
@@ -1263,8 +1300,8 @@ class ReactorNetwork:
             exit()
 
     def add_tearingpoint(self, reactor_name: str):
-        """Add a new tear point to the list.
-
+        """Add a new tear point to the list."""
+        """
         Parameters
         ----------
             reactor_name: string
@@ -1314,8 +1351,8 @@ class ReactorNetwork:
             exit()
 
     def set_tear_tolerance(self, tol: float = 1.0e-6):
-        """Set the relative tolerance to test the tear stream convergencce.
-
+        """Set the relative tolerance to test the tear stream convergencce."""
+        """
         Parameters
         ----------
             tol: double, default = 1.0e-6
@@ -1331,8 +1368,8 @@ class ReactorNetwork:
             exit()
 
     def set_tear_iteration_limit(self, max_count: int):
-        """Set the maximum number of tear loop iterations.
-
+        """Set the maximum number of tear loop iterations."""
+        """
         Parameters
         ----------
             max_count: integer
@@ -1348,8 +1385,8 @@ class ReactorNetwork:
             exit()
 
     def check_iteration_count(self, count: int) -> bool:
-        """Check the iteration count for over the set limit.
-
+        """Check the iteration count for over the set limit."""
+        """
         Parameters
         ----------
             count: integer
@@ -1370,7 +1407,8 @@ class ReactorNetwork:
     def set_relaxation_factor(self, relax: float):
         """Set the relaxation factor when updating the tear stream
         properties from their values of the previous iteration step.
-
+        """
+        """
         Parameters
         ----------
             relax: double
@@ -1386,8 +1424,8 @@ class ReactorNetwork:
             exit()
 
     def check_tearstream_convergence(self, streamA, streamB) -> tuple[bool, float]:
-        """Compare the last and the current reactor solution at the tear point.
-
+        """Compare the last and the current reactor solution at the tear point."""
+        """
         Parameters
         ----------
             streamA: Stream object
@@ -1399,7 +1437,8 @@ class ReactorNetwork:
         -------
             converged: boolean
                 True=the two streams are close within the relative tolerance
-                False=the differences of the two streams are greater than the relative tolerance
+                False=the differences of the two streams are greater than
+                the relative tolerance
             residual: double
                 the maximum relative difference between the properties of the streams
 
@@ -1411,8 +1450,10 @@ class ReactorNetwork:
         return converged, max_rtol
 
     def update_tear_solution(self, new_stream: Stream, old_stream: Stream) -> Stream:
-        """Update the old/temporary tear point stream properties (with the used of a relaxation factor).
-
+        """Update the old/temporary tear point stream properties
+        (with the used of a relaxation factor).
+        """
+        """
         Parameters
         ----------
             new_stream: Stream object
@@ -1438,13 +1479,13 @@ class ReactorNetwork:
         diff = new_stream.mass_flowrate - old_stream.mass_flowrate
         updated_stream.mass_flowrate = old_stream.mass_flowrate + fac * diff
         #
-        old_fractions = copy.deepcopy(old_stream.Y)
-        new_fractions = copy.deepcopy(new_stream.Y)
+        old_fractions = copy.deepcopy(old_stream.y)
+        new_fractions = copy.deepcopy(new_stream.y)
         for k in range(len(old_fractions)):
             diff = new_fractions[k] - old_fractions[k]
             new_fractions[k] = old_fractions[k] + fac * diff
 
-        updated_stream.Y = new_fractions
+        updated_stream.y = new_fractions
         # clean up
         del old_fractions
         del new_fractions

@@ -26,9 +26,12 @@ r""".. _ref_species_properties:
 Evaluate gas species properties
 ===============================
 
-PyChemkin inherits many Ansys Chemkin utilities for evaluating species properties in a mechanism.
-Most tools for calculating the species properties are part of the PyChemkin ``Chemistry()`` methods.
-This example shows how use some of these methods to evaluate species thermodynamic and transport properties.
+PyChemkin inherits many Ansys Chemkin utilities for evaluating
+species properties in a mechanism. Most tools for calculating
+the species properties are part of the PyChemkin
+``Chemistry()`` methods. This example shows how use some of
+these methods to evaluate species thermodynamic and
+transport properties.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_species_properties.png'
@@ -109,12 +112,12 @@ plotspeclist = ["CH4", "O2", "N2"]
 # find elemental compositions of selected species
 print(" ")
 for s in plotspeclist:
-    speciesID = MyGasMech.get_specindex(s)
-    print("species " + specieslist[speciesID])
+    species_index = MyGasMech.get_specindex(s)
+    print("species " + specieslist[species_index])
     print("elemental composition")
-    for elemID in range(MyGasMech.MM):
-        num_elem = MyGasMech.SpeciesComposition(elemID, speciesID)
-        print(f"    {elelist[elemID]:>4}: {num_elem:2d}")
+    for elem_index in range(MyGasMech.mm):
+        num_elem = MyGasMech.species_composition(elem_index, species_index)
+        print(f"    {elelist[elem_index]:>4}: {num_elem:2d}")
     print("=" * 10)
 print()
 
@@ -125,7 +128,7 @@ print()
 # Calculate and plot the properties of CH\ :sub:`4`\ , O\ :sub:`2`\ , and N\ :sub:`2`
 # against the temperature. Use these property methods:
 #
-# - ``SpeciesCv``: Species specific heat capacity at constant volume [erg/mol-K]
+# - ``species_cv``: Species specific heat capacity at constant volume [erg/mol-K]
 # - ``SpeciesCond``: Species thermal conductivity [erg/cm-K-sec]
 # - ``SpeciesDiffusionCoeffs``: Binary diffusion coefficients between species pairs
 #   [cm\ :sup:`2`\ /sec]
@@ -136,7 +139,7 @@ print()
 #
 plt.figure(figsize=(12, 6))
 # temperature increment
-dTemp = 20.0
+dtemp = 20.0
 # number of property data points
 points = 100
 # curve attributes
@@ -149,25 +152,25 @@ curvelist = ["g", "b--", "r:"]
 
 # create arrays
 # specify specific heat capacity at constant volume data
-Cv = np.zeros(points, dtype=np.double)
+cv = np.zeros(points, dtype=np.double)
 # temperature data
-T = np.zeros(points, dtype=np.double)
+t = np.zeros(points, dtype=np.double)
 # start plotting loop #1
 k = 0
 # loop over selected gas species
 for s in plotspeclist:
     # starting temperature at 300 [K]
-    Temp = 300.0
+    temp = 300.0
     # loop over temperature data points
     for i in range(points):
-        HeatCapacity = MyGasMech.SpeciesCv(Temp)
-        ID = MyGasMech.get_specindex(s)
-        T[i] = Temp
+        heatcapacity = MyGasMech.species_cv(temp)
+        index = MyGasMech.get_specindex(s)
+        t[i] = temp
         # convert ergs to joules
-        Cv[i] = HeatCapacity[ID] / ck.ERGS_PER_JOULE
-        Temp += dTemp
+        cv[i] = heatcapacity[index] / ck.ERGS_PER_JOULE
+        temp += dtemp
     plt.subplot(121)
-    plt.plot(T, Cv, curvelist[k])
+    plt.plot(t, cv, curvelist[k])
     k += 1
 # plot Cv versus temperature
 plt.xlabel("Temperature [K]")
@@ -187,17 +190,17 @@ k = 0
 # loop over selected gas species
 for s in plotspeclist:
     # starting temperature at 300 [K]
-    Temp = 300.0
+    temp = 300.0
     # loop over temperature data points
     for i in range(points):
-        conductivity = MyGasMech.SpeciesCond(Temp)
-        ID = MyGasMech.get_specindex(s)
-        T[i] = Temp
+        conductivity = MyGasMech.species_cond(temp)
+        index = MyGasMech.get_specindex(s)
+        t[i] = temp
         # convert ergs to joules
-        kappa[i] = conductivity[ID] / ck.ERGS_PER_JOULE
-        Temp += dTemp
+        kappa[i] = conductivity[index] / ck.ERGS_PER_JOULE
+        temp += dtemp
     plt.subplot(122)
-    plt.plot(T, kappa, curvelist[k])
+    plt.plot(t, kappa, curvelist[k])
     k += 1
 # plot conductivity versus temperature
 plt.xlabel("Temperature [K]")
@@ -214,12 +217,13 @@ plt.legend(plotspeclist, loc="upper left")
 # The binary diffusion coefficient between CH\ :sub:`4` and O\ :sub:`2`
 # is shown.
 
-diffcoef = MyGasMech.SpeciesDiffusionCoeffs(2.0 * ck.P_ATM, 500.0)
-ID1 = MyGasMech.get_specindex(plotspeclist[0])
-ID2 = MyGasMech.get_specindex(plotspeclist[1])
-c = diffcoef[ID1][ID2]
+diffcoef = MyGasMech.species_diffusioncoeffs(2.0 * ck.P_ATM, 500.0)
+id1 = MyGasMech.get_specindex(plotspeclist[0])
+id2 = MyGasMech.get_specindex(plotspeclist[1])
+c = diffcoef[id1][id2]
 print(
-    f"Diffusion coefficient for {plotspeclist[0]} against {plotspeclist[1]} is {c:e} [cm²/sec]."
+    f"Diffusion coefficient for {plotspeclist[0]}"
+    "against {plotspeclist[1]} is {c:e} [cm²/sec]."
 )
 
 # plot results

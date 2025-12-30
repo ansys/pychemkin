@@ -93,19 +93,19 @@ ierror = MyMech.preprocess()
 # ====================================================================
 # Create gas mixtures named ``fuel`` (natural gas) and ``air`` based on
 # ``MyMech``. Then, use these two mixtures to form the combustible ``premixed``
-# mixture for the detonation calculations. Use the ``X_by_Equivalence_Ratio()`` method
+# mixture for the detonation calculations. Use the ``x_by_equivalence_ratio()`` method
 # to set the equivalence ratio of the fuel-air mixture to 1.
 
 # create the fuel mixture
 fuel = ck.Mixture(MyMech)
 # set mole fraction
-fuel.X = [("CH4", 0.8), ("C2H6", 0.2)]
+fuel.x = [("CH4", 0.8), ("C2H6", 0.2)]
 fuel.temperature = 290.0
 fuel.pressure = 40.0 * ck.P_ATM
 # create the air mixture
 air = ck.Mixture(MyMech)
 # set mass fraction
-air.X = [("O2", 0.21), ("N2", 0.79)]
+air.x = [("O2", 0.21), ("N2", 0.79)]
 air.temperature = fuel.temperature
 air.pressure = fuel.pressure
 # create the initial mixture
@@ -115,10 +115,10 @@ premixed = ck.Mixture(MyMech)
 products = ["CO2", "H2O", "N2"]
 # species mole fractions of added/inert mixture.
 # Can also create an additives mixture here.
-add_frac = np.zeros(MyMech.KK, dtype=np.double)  # no additives: all zeros
+add_frac = np.zeros(MyMech.kk, dtype=np.double)  # no additives: all zeros
 
-ierror = premixed.X_by_Equivalence_Ratio(
-    MyMech, fuel.X, air.X, add_frac, products, equivalenceratio=1.0
+ierror = premixed.x_by_equivalence_ratio(
+    MyMech, fuel.x, air.x, add_frac, products, equivalenceratio=1.0
 )
 # check fuel-oxidizer mixture creation status
 if ierror != 0:
@@ -199,7 +199,7 @@ plt.plot(p, det, "bo--", label="ideal gas", markersize=5, fillstyle="none")
 #   ``set_realgas_mixing_rule()`` method to switch to a different mixing rule.
 
 # turn on real-gas cubic equation of state
-premixed.use_realgas_cubicEOS()
+premixed.use_realgas_cubic_eos()
 # set mixture mixing rule to Van der Waals (default)
 # premixed.set_realgas_mixing_rule(rule=0)
 # restart the calculation with real-gas EOS

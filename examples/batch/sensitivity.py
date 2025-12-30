@@ -115,11 +115,12 @@ ierror = MyGasMech.preprocess()
 # check preprocess status
 if ierror == 0:
     print("mechanism information:")
-    print(f"number of gas species = {MyGasMech.KK:d}")
-    print(f"number of gas reactions = {MyGasMech.IIGas:d}")
+    print(f"number of gas species = {MyGasMech.kk:d}")
+    print(f"number of gas reactions = {MyGasMech.ii_gas:d}")
 else:
     # When a non-zero value is returned from the process, check the text output files
-    # chem.out, tran.out, or summary.out for potential error messages about the mechanism data.
+    # chem.out, tran.out, or summary.out for potential error messages about
+    # the mechanism data.
     print(f"Preprocessing error encountered. Code = {ierror:d}.")
     print(f"see the summary file {MyGasMech.summaryfile} for details")
     exit()
@@ -134,13 +135,13 @@ else:
 # The premixed air-fuel mixture has an equivalence ratio of 1.1.
 oxid = ck.Mixture(MyGasMech)
 # set mole fraction
-oxid.X = [("O2", 1.0), ("N2", 3.76)]
+oxid.x = [("O2", 1.0), ("N2", 3.76)]
 oxid.temperature = 900
 oxid.pressure = ck.P_ATM  # 1 atm
 
 fuel = ck.Mixture(MyGasMech)
 # set mole fraction
-fuel.X = [("C3H8", 0.1), ("CH4", 0.8), ("H2", 0.1)]
+fuel.x = [("C3H8", 0.1), ("CH4", 0.8), ("H2", 0.1)]
 fuel.temperature = oxid.temperature
 fuel.pressure = oxid.pressure
 
@@ -148,10 +149,10 @@ mixture = ck.Mixture(MyGasMech)
 mixture.pressure = oxid.pressure
 mixture.temperature = oxid.temperature
 products = ["CO2", "H2O", "N2"]
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)
+add_frac = np.zeros(MyGasMech.kk, dtype=np.double)
 # create the air-fuel mixture by using the equivalence ratio method
-ierror = mixture.X_by_Equivalence_Ratio(
-    MyGasMech, fuel.X, oxid.X, add_frac, products, equivalenceratio=1.1
+ierror = mixture.x_by_equivalence_ratio(
+    MyGasMech, fuel.x, oxid.x, add_frac, products, equivalenceratio=1.1
 )
 # check fuel-oxidizer mixture creation status
 if ierror != 0:
@@ -184,7 +185,7 @@ if ck.verbose():
 # rate parameters by "screening" their values.
 a_factor, beta, active_energy = MyGasMech.get_reaction_parameters()
 if ck.verbose():
-    for i in range(MyGasMech.IIGas):
+    for i in range(MyGasMech.ii_gas):
         print(f"reaction: {i + 1}")
         print(f"A  = {a_factor[i]}")
         print(f"B  = {beta[i]}")
@@ -206,22 +207,26 @@ MyCONP.list_composition(mode="mole")
 ############################################
 # Set up additional reactor model parameters
 # ==========================================
-# *Reactor parameters*, *solver controls*, and *output instructions* need to be provided
-# before running the simulations. For a batch reactor, the *initial volume* and the
-# *simulation end time* are required inputs. The ``set_ignition_delay`` method must be included
-# for the reactor model to report the *ignition delay times* after the simulation is done.
-# The *inflection points* definition is employed to detect the auto-ignition time because
-# ``method="T_inflection"`` is specified. You can choose a different auto-ignition definition.
-# Allow additional solution data point to be saved so that the predicted temperature profile
-# can have enough resolution to provide more precise ignition delay time value. Here the adoptive
-# solution saving is turned on by the ``adaptive_solution_saving`` method and the solution will
-# be recorded for every **20** solver internal steps. Remember to set a simulation end time
-# ``time`` that is long enough to catch the occurrence of auto-ignition.
+# *Reactor parameters*, *solver controls*, and *output instructions* need to be
+# provided before running the simulations. For a batch reactor,
+# the *initial volume* and the *simulation end time* are required inputs.
+# The ``set_ignition_delay`` method must be included for the reactor model to
+# report the *ignition delay times* after the simulation is done.
+# The *inflection points* definition is employed to detect
+# the auto-ignition time because ``method="T_inflection"`` is specified.
+# You can choose a different auto-ignition definition.
+# Allow additional solution data point to be saved so that
+# the predicted temperature profile can have enough resolution to provide
+# more precise ignition delay time value. Here the adoptive solution saving
+# is turned on by the ``adaptive_solution_saving`` method and the solution
+# will be recorded for every **20** solver internal steps. Remember to set
+# a simulation end time ``time`` that is long enough to catch
+# the occurrence of auto-ignition.
 #
 # .. note::
-#   By default, time intervals for both print and save solution are **1/100** of the
-#   *simulation end time*. In this case :math:`dt=time/100=0.001`\ . You can change them
-#   to different values.
+#   By default, time intervals for both print and save solution are **1/100**
+#   of the *simulation end time*. In this case :math:`dt=time/100=0.001`\ .
+#   You can change them to different values.
 #
 
 # reactor volume [cm3]
@@ -261,31 +266,32 @@ else:
 # Run the sensitivity analysis cases
 # ==================================
 # Now compute the "raw" A-factor sensitivity coefficients of ignition delay time.
-# Firstly, you create an array ``IGsen`` to store the sensitivity coefficients, the size
-# of ``IGsen`` must be no less than the number of reactions in the mechanism ``MyGasMech``.
-# Secondly, you introduce a small perturbation to the A-factor one reaction at a time
-# by using the ``set_reaction_AFactor`` method. The advantage of this method is that you
-# do not need to preprocess the ``Chemistry Set`` every time you make a change to the rate
-# parameter. Then you run the same batch reactor ``MyCONP`` to get the ignition delay time.
+# Firstly, you create an array ``IGsen`` to store the sensitivity coefficients,
+# the size of ``ig_sen`` must be no less than the number of reactions in
+# the mechanism ``MyGasMech``. Secondly, you introduce a small perturbation to
+# the A-factor one reaction at a time by using the ``set_reaction_afactor`` method.
+# The advantage of this method is that you do not need to preprocess
+# the ``Chemistry Set`` every time you make a change to the rate parameter.
+# Then you run the same batch reactor ``MyCONP`` to get the ignition delay time.
 #
-# Once the simulation is complete successfully, use the ``get_ignition_delay`` method to
-# extract the ignition delay time. Compute the difference between this ignition delay time
-# value (with altered A-factor) and the baseline value (from the original mechanism) and
-# save the result to array ``IGsen``. Remember to restore the A-factor to its original
-# value before moving on to the next reaction.
+# Once the simulation is complete successfully, use the ``get_ignition_delay`` method
+# to extract the ignition delay time. Compute the difference between this
+# ignition delay time value (with altered A-factor) and the baseline value
+# (from the original mechanism) and save the result to array ``ig_sen``. Remember to
+# restore the A-factor to its original value before moving on to the next reaction.
 
 # create sensitivity coefficient array
-ig_sen = np.zeros(MyGasMech.IIGas, dtype=np.double)
+ig_sen = np.zeros(MyGasMech.ii_gas, dtype=np.double)
 # set perturbation magnitude
 perturb = 0.001  # increase by 0.1%
 perturb_plus_1 = 1.0 + perturb
 # loop over all reactions
-for i in range(MyGasMech.IIGas):
+for i in range(MyGasMech.ii_gas):
     a_new = a_factor[i] * perturb_plus_1
     # actual reaction index
     ireac = i + 1
     # update the A factor
-    MyGasMech.set_reaction_AFactor(ireac, a_new)
+    MyGasMech.set_reaction_afactor(ireac, a_new)
     # run the reactor model
     runstatus = MyCONP.run()
     #
@@ -296,7 +302,7 @@ for i in range(MyGasMech.IIGas):
         # compute d(delaytime)
         ig_sen[i] = delaytime - delaytime_org
         # restore the A factor
-        MyGasMech.set_reaction_AFactor(ireac, a_factor[i])
+        MyGasMech.set_reaction_afactor(ireac, a_factor[i])
     else:
         # if get this, most likely the END time is too short
         print(f"trouble finding ignition delay time for raection {ireac}")
@@ -305,7 +311,7 @@ for i in range(MyGasMech.IIGas):
 
 # compute and report the total runtime (wall time)
 runtime = time.time() - start_time
-print(f"\ntotal simulation time: {runtime} [sec] over {MyGasMech.IIGas + 1} runs")
+print(f"\ntotal simulation time: {runtime} [sec] over {MyGasMech.ii_gas + 1} runs")
 
 #################################################
 # Compute the normalized sensitivity coefficients

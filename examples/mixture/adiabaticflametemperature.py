@@ -97,14 +97,14 @@ ierror = MyGasMech.preprocess()
 oxid = ck.Mixture(MyGasMech)
 # use a "recipe" to set the mole fractions of the mixture
 # the "oxid" mixture consists of 100% O2
-oxid.X = [("O2", 1.0)]
+oxid.x = [("O2", 1.0)]
 oxid.temperature = 295.15  # [K]
 oxid.pressure = ck.P_ATM  # 1 atm
 
 # create the "fuel" mixture
 fuel = ck.Mixture(MyGasMech)
 # set the "fuel" molar composition to 100% CH4
-fuel.X = [("CH4", 1.0)]
+fuel.x = [("CH4", 1.0)]
 fuel.temperature = oxid.temperature
 fuel.pressure = oxid.pressure
 
@@ -122,7 +122,7 @@ products = ["CO2", "H2O"]
 # the fuel-oxidizer mixture For example, a diluent such as argon or
 # helium might be added to the fuel-oxidizer mixture Use an all-zero array
 # if there is no additive
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)
+add_frac = np.zeros(MyGasMech.kk, dtype=np.double)
 
 ############################
 # Set up the parameter study
@@ -152,7 +152,7 @@ equiv = np.zeros_like(t, dtype=np.double)
 # equilibrium temperature. To see all available options for this method, use
 # the ``ck.help(topic="equilibrium")`` method.
 #
-# This example uses the ``X_by_Equivalence_Ratio()`` method to set
+# This example uses the ``x_by_equivalence_ratio()`` method to set
 # the fuel-oxidizer composition with the given equivalence ratios
 # because the composition of both the fuel and oxidizer mixtures is specified
 # in mole fractions.
@@ -162,8 +162,8 @@ for i in range(points):
     equiv_current = equiv_ini
 
     # create the fuel-oxidizer mixture with the given equivalence ratio
-    ierror = mixture.X_by_Equivalence_Ratio(
-        MyGasMech, fuel.X, oxid.X, add_frac, products, equivalenceratio=equiv_current
+    ierror = mixture.x_by_equivalence_ratio(
+        MyGasMech, fuel.x, oxid.x, add_frac, products, equivalenceratio=equiv_current
     )
     # check fuel-oxidizer mixture creation status
     if ierror != 0:

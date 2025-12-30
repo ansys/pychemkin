@@ -34,7 +34,7 @@ from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeEnergyConservation as PSR
 
 # check working directory
 current_dir = str(Path.cwd())
@@ -61,13 +61,13 @@ ierror = MyGasMech.preprocess()
 # create the fuel mixture
 fuel = ck.Mixture(MyGasMech)
 # set fuel composition
-fuel.X = [("h2", 0.8), ("n2", 0.2)]
+fuel.x = [("h2", 0.8), ("n2", 0.2)]
 # setting pressure and temperature is not required in this case
 fuel.pressure = ck.P_ATM
 fuel.temperature = 298.0  # inlet temperature
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
-air.X = [("o2", 0.21), ("n2", 0.79)]
+air.x = [("o2", 0.21), ("n2", 0.79)]
 # setting pressure and temperature is not required in this case
 air.pressure = fuel.pressure
 air.temperature = fuel.temperature
@@ -77,11 +77,11 @@ feed = Stream(MyGasMech, label="feed_1")
 products = ["h2o", "n2"]
 # species mole fractions of added/inert mixture.
 # can also create an additives mixture here
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
+add_frac = np.zeros(MyGasMech.kk, dtype=np.double)  # no additives: all zeros
 # mean equivalence ratio
 equiv = 1.0
-ierror = feed.X_by_Equivalence_Ratio(
-    MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=equiv
+ierror = feed.x_by_equivalence_ratio(
+    MyGasMech, fuel.x, air.x, add_frac, products, equivalenceratio=equiv
 )
 if ierror != 0:
     raise RuntimeError
@@ -98,7 +98,7 @@ sphere = PSR(feed, label="PSR_1")
 sphere.temperature = 1700.0
 # connect the inlet to the reactor
 sphere.set_inlet(feed)
-# set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
+# set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
 sphere.residence_time = 3.0 * 1.0e-5
 # reset the tolerances in the steady-state solver
 sphere.steady_state_tolerances = (1.0e-9, 1.0e-6)
@@ -134,8 +134,8 @@ for i in range(numbruns):
     temp_solution[i] = solnmixture.temperature
     # update inlet gas equivalence ratio (composition)
     equiv += deltaequiv
-    ierror = feed.X_by_Equivalence_Ratio(
-        MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=equiv
+    ierror = feed.x_by_equivalence_ratio(
+        MyGasMech, fuel.x, air.x, add_frac, products, equivalenceratio=equiv
     )
     if ierror != 0:
         print(f"error encountered with inlet equivalence ratio = {equiv}")

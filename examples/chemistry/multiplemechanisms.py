@@ -27,10 +27,10 @@ Work with multiple mechanisms
 =============================
 
 PyChemkin can facilitate multiple mechanisms in one project. However, only one
-chemistry set can be active at a time. This example shows how to use the ``activate()``
-method to switch between multiple chemistry sets (mechanisms) in the same Python project.
-You can use this method to compare results from two different mechanisms,
-such as the *base* and *reduced* mechanisms.
+chemistry set can be active at a time. This example shows how to use
+the ``activate()`` method to switch between multiple chemistry sets (mechanisms)
+in the same Python project. You can use this method to compare results from
+two different mechanisms, such as the *base* and *reduced* mechanisms.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_preprocess.png'
@@ -88,9 +88,9 @@ else:
     # Display the basic mechanism information
     print(Color.GREEN + "Preprocessing succeeded.", end=Color.END)
     print("Mechanism information:")
-    print(f"Number of elements = {My1stMech.MM:d}.")
-    print(f"Number of gas species = {My1stMech.KK:d}.")
-    print(f"Number of gas reactions = {My1stMech.IIGas:d}.")
+    print(f"Number of elements = {My1stMech.mm:d}.")
+    print(f"Number of gas species = {My1stMech.kk:d}.")
+    print(f"Number of gas reactions = {My1stMech.ii_gas:d}.")
 
 
 ######################
@@ -107,13 +107,13 @@ mymixture1.temperature = 1000.0
 # set mixture pressure [dynes/cm2]
 mymixture1.pressure = ck.P_ATM
 # use the "X" property to specify the molar compositions of the mixture
-mymixture1.X = [("CH4", 0.1), ("O2", 0.21), ("N2", 0.79)]
+mymixture1.x = [("CH4", 0.1), ("O2", 0.21), ("N2", 0.79)]
 
 
 ####################################
 # Perform an equilibrium calculation
 # ==================================
-# The equilibrium state is stored as a mixture named ``equil_mix1_HP``. You can get
+# The equilibrium state is stored as a mixture named ``equil_mix1_hp``. You can get
 # the equilibrium temperature from the ``temperature`` property of this mixture.
 # You can learn more about the PyChemkin ``equilibrium()`` method by either typing
 # ``ck.help("equilibrium")`` at the Python prompt or uncommenting the following line.
@@ -121,9 +121,9 @@ mymixture1.X = [("CH4", 0.1), ("O2", 0.21), ("N2", 0.79)]
 # ck.help("equilibrium")
 
 # find the constrained H-P equilibrium state of ``mymixture1``
-equil_mix1_HP = ck.equilibrium(mymixture1, opt=5)
+equil_mix1_hp = ck.equilibrium(mymixture1, opt=5)
 # print the equilibrium temperature
-print(f"Equilibrium temperature of mymixture1: {equil_mix1_HP.temperature} [K]")
+print(f"Equilibrium temperature of mymixture1: {equil_mix1_hp.temperature} [K]")
 
 
 #################################
@@ -178,9 +178,9 @@ else:
     # Display the basic mechanism information
     print(Color.GREEN + "Preprocessing succeeded.", end=Color.END)
     print("Mechanism information:")
-    print(f"Number of elements = {My2ndMech.MM:d}.")
-    print(f"Number of gas species = {My2ndMech.KK:d}.")
-    print(f"Number of gas reactions = {My2ndMech.IIGas:d}.")
+    print(f"Number of elements = {My2ndMech.mm:d}.")
+    print(f"Number of gas species = {My2ndMech.kk:d}.")
+    print(f"Number of gas reactions = {My2ndMech.ii_gas:d}.")
 
 
 ################################################################################
@@ -193,7 +193,7 @@ mymixture2.temperature = 500.0
 # set mixture pressure [dynes/cm2]
 mymixture2.pressure = 2.0 * ck.P_ATM
 # set mixture molar composition
-mymixture2.X = [("H2", 0.02), ("O2", 0.2), ("N2", 0.8)]
+mymixture2.x = [("H2", 0.02), ("O2", 0.2), ("N2", 0.8)]
 
 
 ###############################
@@ -204,9 +204,9 @@ mymixture2.X = [("H2", 0.02), ("O2", 0.2), ("N2", 0.8)]
 # speed of sound and the detonation wave speed are returned in
 # the ``speeds_mix2`` tuple.
 
-speeds_mix2, CJ_mix2 = ck.detonation(mymixture2)
+speeds_mix2, cj_mix2 = ck.detonation(mymixture2)
 #  print the detonation calculation results
-print(f"Detonation mymixture2 temperature: {CJ_mix2.temperature} [K]")
+print(f"Detonation mymixture2 temperature: {cj_mix2.temperature} [K]")
 print(f"Detonation wave speed = {speeds_mix2[1] / 100.0} [m/sec]")
 
 
@@ -231,7 +231,7 @@ My1stMech.activate()
 #   The ``mymixture1`` and ``mymixture2`` gas mixtures have different
 #   initial conditions.
 
-speeds_mix1, CJ_mix1 = ck.detonation(mymixture1)
+speeds_mix1, cj_mix1 = ck.detonation(mymixture1)
 # print the detonation calculation results
-print(f"Detonation 'mymixture1' temperature: {CJ_mix1.temperature} [K]")
+print(f"Detonation 'mymixture1' temperature: {cj_mix1.temperature} [K]")
 print(f"Detonation wave speed = {speeds_mix1[1] / 100.0} [m/sec]")

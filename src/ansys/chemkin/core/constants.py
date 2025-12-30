@@ -22,7 +22,8 @@
 
 """Constants used by Chemkin utilities and models."""
 
-# == Chemkin module global parameters -- DO NOT MODIFY without asking Chemkin development team members
+# == Chemkin module global parameters
+# -- DO NOT MODIFY without asking Chemkin development team members
 BOLTZMANN = 1.3806504e-16  # BOLTZMANN constant [ergs/K] (double scalar)
 AVOGADRO = 6.02214179e23  # AVOGADRO number [1/mole] (double scalar)
 P_ATM = 1.01325e06  # atmospheric pressure [dynes/cm2] (double scalar)
@@ -49,11 +50,11 @@ class Air:
     """
 
     @staticmethod
-    def X() -> list[tuple[str, float]]:
+    def x() -> list[tuple[str, float]]:
         return [("O2", 0.21), ("N2", 0.79)]
 
     @staticmethod
-    def Y() -> list[tuple[str, float]]:
+    def y() -> list[tuple[str, float]]:
         return [("O2", 0.23), ("N2", 0.77)]
 
 
@@ -65,16 +66,16 @@ class air:
     """
 
     @staticmethod
-    def X() -> list[tuple[str, float]]:
+    def x() -> list[tuple[str, float]]:
         return [("o2", 0.21), ("n2", 0.79)]
 
     @staticmethod
-    def Y() -> list[tuple[str, float]]:
+    def y() -> list[tuple[str, float]]:
         return [("o2", 0.23), ("n2", 0.77)]
 
 
 def water_heat_vaporization(temperature: float) -> float:
-    """Get the heat if vporization of water at the given temperature [K]
+    """Get the heat if vporization of water at the given temperature [K].
 
     Parameters
     ----------

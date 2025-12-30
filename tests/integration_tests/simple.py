@@ -54,14 +54,14 @@ air.pressure = 1.0 * ansys.chemkin.core.P_ATM
 # mixture temperature in [K]
 air.temperature = 300.0
 # mixture composition in mole fractions
-air.X = [("O2", 0.21), ("N2", 0.79)]
+air.x = [("O2", 0.21), ("N2", 0.79)]
 #
 print(f"pressure    = {air.pressure / ansys.chemkin.core.P_ATM} [atm]")
 print(f"temperature = {air.temperature} [K]")
 # print the 'air' composition in mass fractions
 air.list_composition(mode="mass")
 # get 'air' mixture density [g/cm3]
-print(f"the mixture density   = {air.RHO} [g/cm3]")
+print(f"the mixture density   = {air.rho} [g/cm3]")
 # get 'air' mixture viscosity [g/cm-sec] or [poise]
 print(f"the mixture viscosity = {air.mixture_viscosity() * 100.0} [cP]")
 
@@ -71,9 +71,9 @@ resultfile = current_dir / "simple.result"
 results = {}
 results["state-temperature"] = [air.temperature]
 results["state-pressure"] = [air.pressure]
-results["state-density"] = [air.RHO]
+results["state-density"] = [air.rho]
 results["state-viscosity"] = [air.mixture_viscosity() * 100.0]
-results["species-mole_fraction"] = air.X.tolist()
+results["species-mole_fraction"] = air.x.tolist()
 #
 r = resultfile.open(mode="w")
 r.write("{\n")

@@ -116,20 +116,20 @@ print("=" * 50)
 # extract element symbols as a list
 elelist = MyGasMech.element_symbols
 # get atomic masses as numpy 1D double array
-AWT = MyGasMech.atomic_weight
+awt = MyGasMech.atomic_weight
 # print element information
 for k in range(len(elelist)):
-    print(f"Element number {k + 1:3d}: {elelist[k]:16}. Mass = {AWT[k]:f}.")
+    print(f"Element number {k + 1:3d}: {elelist[k]:16}. Mass = {awt[k]:f}.")
 
 print("=" * 50)
 
 # extract gas species symbols as a list
 specieslist = MyGasMech.species_symbols
 # get species molecular masses as numpy 1D double array
-WT = MyGasMech.species_molar_weight
+wt = MyGasMech.species_molar_weight
 # print gas species information
 for k in range(len(specieslist)):
-    print(f"Species number {k + 1:3d}: {specieslist[k]:16}. Mass = {WT[k]:f}.")
+    print(f"Species number {k + 1:3d}: {specieslist[k]:16}. Mass = {wt[k]:f}.")
 print("=" * 50)
 
 
@@ -187,9 +187,9 @@ if ierror != 0:
 else:
     Color.ckprint("OK", ["Preprocessing succeeded.", "!!!"])
     print("Mechanism information:")
-    print(f"Number of elements = {My2ndMech.MM:d}.")
-    print(f"Number of gas species = {My2ndMech.KK:d}.")
-    print(f"Number of gas reactions = {My2ndMech.IIGas:d}.")
+    print(f"Number of elements = {My2ndMech.mm:d}.")
+    print(f"Number of gas species = {My2ndMech.kk:d}.")
+    print(f"Number of gas reactions = {My2ndMech.ii_gas:d}.")
 
 
 #########################################
@@ -202,19 +202,19 @@ print("=" * 50)
 # extract element symbols as a list
 elelist = My2ndMech.element_symbols
 # get atomic masses as numpy 1D double array
-AWT = My2ndMech.AWT
+awt = My2ndMech.awt
 # print element information
 for k in range(len(elelist)):
-    print(f"Element # {k + 1:3d}: {elelist[k]:16}. Mass = {AWT[k]:f}.")
+    print(f"Element # {k + 1:3d}: {elelist[k]:16}. Mass = {awt[k]:f}.")
 
 print("=" * 50)
 
 # extract gas species symbols as a list
 specieslist = My2ndMech.species_symbols
 # get species molecular masses as numpy 1D double array
-WT = My2ndMech.WT
+wt = My2ndMech.wt
 # print gas species information
 for k in range(len(specieslist)):
-    print(f"Species # {k + 1:3d}: {specieslist[k]:16}. Mass = {WT[k]:f}.")
+    print(f"Species # {k + 1:3d}: {specieslist[k]:16}. Mass = {wt[k]:f}.")
 
 print("=" * 50)
