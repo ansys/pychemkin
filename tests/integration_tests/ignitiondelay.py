@@ -19,22 +19,26 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
+
+"""Ignition delay time test for the closed homogeneous reactor."""
+
+from pathlib import Path
 import time
 
-import ansys.chemkin as ck  # chemkin
-from ansys.chemkin import Color
-
-# chemkin batch reactor models (transient)
-from ansys.chemkin.batchreactors.batchreactor import (
-    GivenPressureBatchReactor_EnergyConservation,
-)
-from ansys.chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
+import ansys.chemkin.core as ck  # chemkin
+from ansys.chemkin.core import Color
+
+# chemkin batch reactor models (transient)
+from ansys.chemkin.core.batchreactors.batchreactor import (
+    GivenPressureBatchReactorEnergyConservation,
+)
+from ansys.chemkin.core.logger import logger
+
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(False)
@@ -45,26 +49,26 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on GRI 3.0
 gasoline = ck.Chemistry(label="gasoline 14comp")
 # set mechanism input files
 # including the full file path is recommended
-gasoline.chemfile = os.path.join(mechanism_dir, "gasoline_14comp_WBencrypt.inp")
+gasoline.chemfile = str(mechanism_dir / "gasoline_14comp_WBencrypt.inp")
 # preprocess the mechanism files
-iError = gasoline.preprocess()
+ierror = gasoline.preprocess()
 # create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
 # create the fuel mixture
 fuelmixture = ck.Mixture(gasoline)
 # set fuel = composition PRF 60
-fuelmixture.X = [("ic8h18", 0.6), ("nc7h16", 0.4)]
+fuelmixture.x = [("ic8h18", 0.6), ("nc7h16", 0.4)]
 # setting pressure and temperature
 fuelmixture.pressure = 5.0 * ck.P_ATM
 fuelmixture.temperature = 1500.0
 # create the oxidizer mixture: air
 air = ck.Mixture(gasoline)
-air.X = [("o2", 0.21), ("n2", 0.79)]
+air.x = [("o2", 0.21), ("n2", 0.79)]
 # setting pressure and temperature
 air.pressure = 5.0 * ck.P_ATM
 air.temperature = 1500.0
@@ -72,22 +76,24 @@ air.temperature = 1500.0
 premixed = ck.Mixture(gasoline)
 # products from the complete combustion of the fuel mixture and air
 products = ["co2", "h2o", "n2"]
-# species mole fractions of added/inert mixture. can also create an additives mixture here
-add_frac = np.zeros(gasoline.KK, dtype=np.double)  # no additives: all zeros
-iError = premixed.X_by_Equivalence_Ratio(
-    gasoline, fuelmixture.X, air.X, add_frac, products, equivalenceratio=1.0
+# species mole fractions of added/inert mixture.
+# can also create an additives mixture here
+add_frac = np.zeros(gasoline.kk, dtype=np.double)  # no additives: all zeros
+ierror = premixed.x_by_equivalence_ratio(
+    gasoline, fuelmixture.x, air.x, add_frac, products, equivalenceratio=1.0
 )
-if iError != 0:
+if ierror != 0:
     raise RuntimeError
 # list the composition of the premixed mixture
 premixed.list_composition(mode="mole")
-# set mixture temperature and pressure (equivalent to setting the initial temperature and pressure of the reactor)
+# set mixture temperature and pressure
+# (equivalent to setting the initial temperature and pressure of the reactor)
 premixed.pressure = 40.0 * ck.P_ATM
 premixed.temperature = 700.0
 #
 # create a constant pressure batch reactor (with energy equation)
 #
-MyCONP = GivenPressureBatchReactor_EnergyConservation(premixed, label="CONP")
+MyCONP = GivenPressureBatchReactorEnergyConservation(premixed, label="CONP")
 # show initial gas composition inside the reactor
 MyCONP.list_composition(mode="mole")
 # set other reactor parameters
@@ -107,7 +113,8 @@ MyCONP.tolerances = (1.0e-10, 1.0e-8)
 # set ignition delay
 # ck.show_ignition_definitions()
 MyCONP.set_ignition_delay(method="T_inflection")
-# stop after ignition is detected (not recommended for ignition delay time calculations)
+# stop after ignition is detected
+# (not recommended for ignition delay time calculations)
 # MyCONP.stop_after_ignition()
 # show solver option
 print(f"timestep between solution printing: {MyCONP.timestep_for_printing_solution}")
@@ -127,7 +134,8 @@ start_time = time.time()
 for i in range(npoints):
     # update the initial reactor temperature
     MyCONP.temperature = init_temp  # K
-    # show the additional keywords given by user (verify inputs before running the simulation)
+    # show the additional keywords given by user
+    # (verify inputs before running the simulation)
     # MyCONP.showkeywordinputlines()
     # run the reactor model
     runstatus = MyCONP.run()
@@ -145,7 +153,8 @@ for i in range(npoints):
 # compute the total runtime
 runtime = time.time() - start_time
 print(f"total simulation duration: {runtime} [sec] for {npoints} cases")
-# create an ignition delay versus 1/T plot for the PRF fuel (should exhibit the NTC region)
+# create an ignition delay versus 1/T plot for the PRF fuel
+# (should exhibit the NTC region)
 plt.rcParams.update({"figure.autolayout": True})
 fig, ax1 = plt.subplots()
 ax1.semilogy(temp_inv, delaytime, "bs--")
@@ -155,7 +164,7 @@ ax1.set_ylabel("Ignition delay time [msec]")
 
 # Create a secondary x-axis for T (=1/(1/T))
 def one_over(x):
-    """Vectorized 1/x, treating x==0 manually"""
+    """Vectorized 1/x, treating x==0 manually."""
     x = np.array(x, float)
     near_zero = np.isclose(x, 0)
     x[near_zero] = np.inf
@@ -174,12 +183,12 @@ else:
     plt.savefig("ignition_delay.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "ignitiondelay.result")
+resultfile = Path(current_dir) / "ignitiondelay.result"
 results = {}
 results["state-temperature_inverse"] = temp_inv.tolist()
 results["state-ignition_delay"] = delaytime.tolist()
 #
-r = open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

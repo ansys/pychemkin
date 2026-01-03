@@ -20,33 +20,34 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_rcm:
+r""".. _ref_rcm:
 
 ====================================
 Simulate a rapid compression machine
 ====================================
 
 Ansys Chemkin offers some idealized reactor models commonly used for studying chemical
-processes and for developing reaction mechanisms. The *batch reactor* is a transient 0-D
-numerical portrayal of the *closed homogeneous/perfectly mixed* gas-phase reactor. There are
-two basic types of batch reactor models:
+processes and for developing reaction mechanisms. The *batch reactor* is
+a transient 0-D numerical portrayal of the *closed homogeneous/perfectly mixed*
+gas-phase reactor. There are two basic types of batch reactor models:
 
 - **constrained-pressure**
 - **constrained-volume**
 
-You can choose either to specify the reactor temperature (as a fixed value or by a
-piecewise-linear profile) or to solve the energy conservation equation for each reactor type.
-In total, you get four variations out of the base batch reactor model.
+You can choose either to specify the reactor temperature (as a fixed value or
+by a piecewise-linear profile) or to solve the energy conservation equation
+for each reactor type. In total, you get four variations out of
+the base batch reactor model.
 
-**Rapid Compression Machine (RCM)** is often employed to study fuel auto-ignition at high
-temperature and high-pressure conditions that are compatible to the engine-operating environments.
-The fuel-air mixture inside the RCM chamber is at relatively low pressure and temperature initially.
-The gas mixture is then suddenly compressed causing both the pressure and the temperature of the
-mixture to rise rapidly. The reactor/chamber pressure is monitored to identify the onset of
-auto-ignition after the compression stopped. This example models the RCM as a
-``GivenVolumeBatchReactor_EnergyConservation``, and the compression process is simulated by a
-predetermined time-volume profile.
+**Rapid Compression Machine (RCM)** is often employed to study fuel auto-ignition
+at high temperature and high-pressure conditions that are compatible to
+the engine-operating environments. The fuel-air mixture inside the RCM chamber is
+at relatively low pressure and temperature initially. The gas mixture is then
+suddenly compressed causing both the pressure and the temperature of the mixture
+to rise rapidly. The reactor/chamber pressure is monitored to identify the onset
+of auto-ignition after the compression stopped. This example models the RCM as a
+``GivenVolumeBatchReactorEnergyConservation``, and the compression process
+is simulated by a predetermined time-volume profile.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_RCM_solution.png'
@@ -55,21 +56,22 @@ predetermined time-volume profile.
 # Import PyChemkin package and start the logger
 # =============================================
 
-import os
+from pathlib import Path
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
-
-# chemkin batch reactor models (transient)
-from ansys.chemkin.batchreactors.batchreactor import (
-    GivenVolumeBatchReactor_EnergyConservation,
-)
-from ansys.chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
+
+# chemkin batch reactor models (transient)
+from ansys.chemkin.core.batchreactors.batchreactor import (
+    GivenVolumeBatchReactorEnergyConservation,
+)
+from ansys.chemkin.core.logger import logger
+
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -87,22 +89,22 @@ interactive = True
 # installation in the ``/reaction/data`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on the GRI 3.0 mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+MyGasMech.chemfile = str(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
+MyGasMech.tranfile = str(mechanism_dir / "grimech30_transport.dat")
 
 ##############################
 # Preprocess the chemistry set
 # ============================
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 
 ################################################################
 # Set up gas mixtures based on the species in this chemistry set
@@ -114,38 +116,40 @@ iError = MyGasMech.preprocess()
 # create the fuel mixture
 fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition
-fuelmixture.X = [("CH4", 1.0)]
+fuelmixture.x = [("CH4", 1.0)]
 # setting pressure and temperature is not required in this case
 fuelmixture.pressure = 5.0 * ck.P_ATM
 fuelmixture.temperature = 1500.0
 
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
-air.X = [("O2", 0.21), ("N2", 0.79)]
+air.x = [("O2", 0.21), ("N2", 0.79)]
 # setting pressure and temperature is not required in this case
 air.pressure = 5.0 * ck.P_ATM
 air.temperature = 1500.0
 
 # products from the complete combustion of the fuel mixture and air
 products = ["CO2", "H2O", "N2"]
-# species mole fractions of added/inert mixture. can also create an additives mixture here
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
+# species mole fractions of added/inert mixture.
+# can also create an additives mixture here
+add_frac = np.zeros(MyGasMech.kk, dtype=np.double)  # no additives: all zeros
 
 # create the premixed mixture to be defined
 premixed = ck.Mixture(MyGasMech)
 
-iError = premixed.X_by_Equivalence_Ratio(
-    MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=0.7
+ierror = premixed.x_by_equivalence_ratio(
+    MyGasMech, fuelmixture.x, air.x, add_frac, products, equivalenceratio=0.7
 )
 # check fuel-oxidizer mixture creation status
-if iError != 0:
+if ierror != 0:
     print("Error: Failed to create the fuel-oxidizer mixture.")
     exit()
 
 # list the composition of the premixed mixture for verification
 premixed.list_composition(mode="mole")
 
-# set mixture temperature and pressure (equivalent to setting the initial temperature and pressure of the reactor)
+# set mixture temperature and pressure
+# (equivalent to setting the initial temperature and pressure of the reactor)
 premixed.temperature = 800.0
 premixed.pressure = 3.0 * ck.P_ATM
 
@@ -153,14 +157,14 @@ premixed.pressure = 3.0 * ck.P_ATM
 # Set up the rapid-compression machine
 # ====================================
 # Create the rapid-compression machine as an instance of the
-# ``GivenVolumeBatchReactor_EnergyConservation`` object because the reactor volume is
+# ``GivenVolumeBatchReactorEnergyConservation`` object because the reactor volume is
 # assigned as a function of time. The batch reactors must be associated with a
 # mixture that implicitly links the chemistry set (gas-phase mechanism and properties)
-# to the batch reactor. Additionally, it also defines the initial reactor conditions (pressure,
-# temperature, volume, and gas composition).
+# to the batch reactor. Additionally, it also defines the initial reactor conditions
+# (pressure, temperature, volume, and gas composition).
 
 # create a constant volume batch reactor (with energy equation)
-MyCONV = GivenVolumeBatchReactor_EnergyConservation(premixed, label="RCM")
+MyCONV = GivenVolumeBatchReactorEnergyConservation(premixed, label="RCM")
 # show initial gas composition inside the reactor
 MyCONV.list_composition(mode="mole")
 
@@ -172,8 +176,9 @@ MyCONV.list_composition(mode="mole")
 # simulation end time are required inputs.
 #
 # .. note::
-#   You can reset the initial reactor temperature by using the ``MyCONV.temperature = 800.0``
-#   method. In the run output, you see a warning message about the change.
+#   You can reset the initial reactor temperature by using the
+#   ``MyCONV.temperature = 800.0`` method. In the run output, you see
+#   a warning message about the change.
 #
 
 # set other reactor properties
@@ -185,8 +190,9 @@ MyCONV.time = 0.1
 ########################
 # Set the volume profile
 # ======================
-# Create a time-volume profile by using two arrays. Use the ``set_volume_profile()`` method
-# to add the profile to the reactor model. The profile data overrides the initial volume
+# Create a time-volume profile by using two arrays. Use
+# the ``set_volume_profile()`` method to add the profile to
+# the reactor model. The profile data overrides the initial volume
 # value set earlier with the ``volume()`` method.
 
 # number of profile data points
@@ -194,33 +200,35 @@ npoints = 3
 # position array of the profile data
 x = np.zeros(npoints, dtype=np.double)
 # value array of the profile data
-volprofile = np.zeros_like(x, dtype=np.double)
+vol_profile = np.zeros_like(x, dtype=np.double)
 # set reactor volume data points
 x = [0.0, 0.01, 2.0]  # [sec]
-volprofile = [10.0, 4.0, 4.0]  # [cm3]
+vol_profile = [10.0, 4.0, 4.0]  # [cm3]
 
 ####################
 # Set output options
 # ==================
-# You can turn on the adaptive solution saving to resolve the steep variations in the solution
-# profile. Here additional solution data points are saved for every **100 [K]** change in gas
-# temperature. The ``set_ignition_delay()`` method must be included for the reactor model to
-# report the ignition delay times after the simulation is done. If ``method="T_inflection"`` is
-# set, the reactor model treats the inflection points in the predicted gas temperature profile
-# as the indication of an auto-ignition. You can choose a different auto-ignition definition.
+# You can turn on the adaptive solution saving to resolve the steep variations
+# in the solution profile. Here additional solution data points are saved for every
+# **100 [K]** change in gas temperature. The ``set_ignition_delay()`` method must be
+# included for the reactor model to report the ignition delay times after
+# the simulation is done. If ``method="T_inflection"`` is set, the reactor model
+# treats the inflection points in the predicted gas temperature profile as
+# the indication of an auto-ignition. You can choose a different
+# auto-ignition definition.
 #
 # .. note::
-#   Type ``ansys.chemkin.show_ignition_definitions()`` to get the list of all available ignition
-#   delay time definitions in Chemkin.
+#   Type ``ansys.chemkin.core.show_ignition_definitions()`` to get\
+#   the list of all available ignition delay time definitions in Chemkin.
 #
 # .. note::
-#   By default, time intervals for both print and save solution are **1/100** of the
-#   simulation end time. In this case :math:`dt=time/100=0.001`\ . You can change them
-#   to different values.
+#   By default, time intervals for both print and save solution are **1/100**
+#   of the simulation end time. In this case :math:`dt=time/100=0.001`\ .
+#   You can change them to different values.
 #
 
 # set the volume profile
-MyCONV.set_volume_profile(x, volprofile)
+MyCONV.set_volume_profile(x, vol_profile)
 # output controls
 # set timestep between saving solution
 MyCONV.timestep_for_saving_solution = 0.01
@@ -232,15 +240,15 @@ MyCONV.set_ignition_delay(method="T_inflection")
 #####################
 # Set solver controls
 # ===================
-# You can overwrite the default solver controls by using solver-related methods, such as those
-# for tolerances.
+# You can overwrite the default solver controls by using solver-related methods,
+# such as those for tolerances.
 
 # set tolerances in tuple: (absolute tolerance, relative tolerance)
 MyCONV.tolerances = (1.0e-10, 1.0e-8)
 # get solver parameters
-ATOL, RTOL = MyCONV.tolerances
-print(f"Dfault absolute tolerance = {ATOL}.")
-print(f"Default relative tolerance = {RTOL}.")
+atol, rtol = MyCONV.tolerances
+print(f"Dfault absolute tolerance = {atol}.")
+print(f"Default relative tolerance = {rtol}.")
 # turn on the force non-negative solutions option in the solver
 MyCONV.force_nonnegative = True
 # show solver option
@@ -276,12 +284,12 @@ print(Color.GREEN + ">>> Run completed. <<<", end=Color.END)
 ###############################################
 # Get the ignition delay time from the solution
 # =============================================
-# Use the ``get_ignition_delay()`` method to extract the ignition delay time after the
-# run is completed.
+# Use the ``get_ignition_delay()`` method to extract the ignition delay time after
+# the run is completed.
 #
 # .. note::
-#   You need to deduct the initial compression time = 0.01 [sec] to get the *actual* ignition
-#   delay time.
+#   You need to deduct the initial compression time = 0.01 [sec] to get
+#   the *actual* ignition delay time.
 #
 
 # get ignition delay time (need to deduct the initial compression time = 0.01 [sec])
@@ -294,20 +302,22 @@ print(f"Ignition delay time = {delaytime} [msec].")
 # The postprocessing step parses the solution and package the solution values at each
 # time point into a mixture. There are two ways to access the solution profiles:
 #
-# - The raw solution profiles (value as a function of distance) are available for distance,
-#   temperature, pressure, volume, and species mass fractions.
+# - The raw solution profiles (value as a function of distance) are available
+#   for distance, temperature, pressure, volume, and species mass fractions.
 #
 #  -The mixtures permit the use of all property and rate utilities to extract
 #   information such as viscosity, density, and mole fractions.
 #
-# You can use the ``get_solution_variable_profile()`` method to get the raw solution profiles. You
-# can get solution mixtures using either the ``get_solution_mixture_at_index()`` method for the
-# solution mixture at the given saved location or the ``get_solution_mixture()`` method for the
-# solution mixture at the given distance. (In this case, the mixture is constructed by interpolation.)
+# You can use the ``get_solution_variable_profile()`` method to get
+# the raw solution profiles. You can get solution mixtures using either the
+# ``get_solution_mixture_at_index()`` method for the solution mixture at
+# the given saved location or the ``get_solution_mixture()`` method for
+# the solution mixture at the given distance. (In this case, the mixture is
+# constructed by interpolation.)
 #
 # .. note::
-#   Use the ``getnumbersolutionpoints()`` method to get the size of the solution profiles before
-#   creating the arrays.
+#   Use the ``getnumbersolutionpoints()`` method to get the size of
+#   the solution profiles before creating the arrays.
 #
 
 # postprocess the solutions
@@ -328,36 +338,37 @@ volprofile = MyCONV.get_solution_variable_profile("volume")
 # reactor mass
 massprofile = np.zeros_like(timeprofile, dtype=np.double)
 # create arrays for CH4 mole fraction, CH4 ROP, and mixture viscosity
-CH4profile = np.zeros_like(timeprofile, dtype=np.double)
-CH4ROPprofile = np.zeros_like(timeprofile, dtype=np.double)
+ch4_profile = np.zeros_like(timeprofile, dtype=np.double)
+ch4_rop_profile = np.zeros_like(timeprofile, dtype=np.double)
 viscprofile = np.zeros_like(timeprofile, dtype=np.double)
-CurrentROP = np.zeros(MyGasMech.KK, dtype=np.double)
+current_rop = np.zeros(MyGasMech.kk, dtype=np.double)
 # find CH4 species index
-CH4_index = MyGasMech.get_specindex("CH4")
+ch4_index = MyGasMech.get_specindex("CH4")
 
 # loop over all solution time points
 for i in range(solutionpoints):
     # get the mixture at the time point
     solutionmixture = MyCONV.get_solution_mixture_at_index(solution_index=i)
     # get gas density [g/cm3]
-    den = solutionmixture.RHO
+    den = solutionmixture.rho
     # reactor mass [g]
     massprofile[i] = den * volprofile[i]
     # get CH4 mole fraction profile
-    CH4profile[i] = solutionmixture.X[CH4_index]
+    ch4_profile[i] = solutionmixture.x[ch4_index]
     # get CH4 ROP profile
-    currentROP = solutionmixture.ROP()
-    CH4ROPprofile[i] = currentROP[CH4_index]
+    current_rop = solutionmixture.rop()
+    ch4_rop_profile[i] = current_rop[ch4_index]
     # get mixture vicosity profile
     viscprofile[i] = solutionmixture.mixture_viscosity()
 
 ################################
 # Validate the simulation result
 # ==============================
-# Since the RCM is a closed reactor, the total gas mass inside RCM must be kept constant.
-# You can verify it by computing the maximum mass deviation in the solution profile.
-# If you find the mass variations are too large to be acceptable, you can set smaller tolerance
-# values and/or adjust some solver parameters such as the maximum solver time step size
+# Since the RCM is a closed reactor, the total gas mass inside RCM must be
+# kept constant. You can verify it by computing the maximum mass deviation
+# in the solution profile. If you find the mass variations are too large to
+# be acceptable, you can set smaller tolerance values and/or adjust
+# some solver parameters such as the maximum solver time step size
 # and re-run the simulation.
 del_mass = np.zeros_like(timeprofile, dtype=np.double)
 mass0 = massprofile[0]
@@ -376,10 +387,10 @@ plt.subplot(221)
 plt.plot(timeprofile, tempprofile, "r-")
 plt.ylabel("Temperature [K]")
 plt.subplot(222)
-plt.plot(timeprofile, CH4profile, "b-")
+plt.plot(timeprofile, ch4_profile, "b-")
 plt.ylabel("CH4 Mole Fraction")
 plt.subplot(223)
-plt.plot(timeprofile, CH4ROPprofile, "g-")
+plt.plot(timeprofile, ch4_rop_profile, "g-")
 plt.xlabel("time [sec]")
 plt.ylabel("CH4 Production Rate [mol/cm3-sec]")
 plt.subplot(224)
