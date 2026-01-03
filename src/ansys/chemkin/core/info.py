@@ -61,6 +61,7 @@ def clear_hints():
 
 
 def keyword_hints(mykey: str):
+    """Get hints about the Chemkin keyword."""
     """Get hints about the Chemkin keyword.
 
     Parameters
@@ -87,6 +88,7 @@ def keyword_hints(mykey: str):
 
 
 def phrase_hints(phrase: str):
+    """Get keyword hints by using key phrase in the description."""
     """Get keyword hints by using key phrase in the description.
 
     Parameters
@@ -122,6 +124,7 @@ def phrase_hints(phrase: str):
 
 
 def help(topic: Union[str, None] = None):
+    """Provide assistance on finding information about Chemkin keywords."""
     """Provide assistance on finding information about Chemkin keywords.
 
     Parameters
@@ -134,7 +137,8 @@ def help(topic: Union[str, None] = None):
     if topic is None:
         # general information about getting help
         msg = [
-            "For detailed information about all Chemkin keywords and reactor models,\n",
+            "For detailed information about all Chemkin keywords and",
+            "reactor models,\n",
             Color.SPACEx6,
             "use \"ansys.chemkin.core.help('manual')\".",
         ]
@@ -226,10 +230,12 @@ def show_realgas_usage():
     """Show Chemkin real-gas model usage and options."""
     print(
         Color.YELLOW
-        + "** the real-gas cubic equation of state is available only when the mechanism contains the 'EOS_' data"
+        + "** the real-gas cubic equation of state is available "
+        + "only when the mechanism contains the 'EOS_' data"
     )
     print(
-        "   after the gas-phase mechanism is pre-processed, the pre-processor will indicate "
+        "   after the gas-phase mechanism is pre-processed, "
+        + "the pre-processor will indicate "
         + "if the mechanism contains the necessary real-gas data"
     )
     print("   * for real-gas eligible mechanisms,")
@@ -248,7 +254,8 @@ def show_realgas_usage():
     print("                   0: the Van der Waals mixing method (default)")
     print("                   1: the pseudo-critical property method")
     print(
-        "       to deactivate the real-gas cubic EOS in mixture property calculation, use"
+        "       to deactivate the real-gas cubic EOS in mixture property "
+        "calculation, use"
     )
     print("              <mixture_object>.use_idealgas_law()")
     print("     > using the real-gas EOS with reactor models:")
@@ -295,8 +302,8 @@ def manuals():
     """Access the Chemkin manuals page on the Ansys Help portal."""
     # Chemkin manual page
     chemkin_manual_url = (
-        "https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/prod_page.html?"
-        + "pn=Chemkin&pid=ChemkinPro&lang=en"
+        "https://ansyshelp.ansys.com/account/secured?returnurl="
+        "/Views/Secured/prod_page.html?" + "pn=Chemkin&pid=ChemkinPro&lang=en"
     )
     # open the web page on a new tab of the default web browser
     webbrowser.open_new_tab(chemkin_manual_url)

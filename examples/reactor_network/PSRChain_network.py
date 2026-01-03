@@ -115,8 +115,8 @@ ierror = MyGasMech.preprocess()
 #
 # .. note::
 #   PyChemkin has ``air`` predefined as a convenient way to set up the air
-#   stream/mixture in simulations. Use the ``ansys.chemkin.core.Air.x()`` or
-#   ``ansys.chemkin.core.Air.y()`` method when the mechanism uses "O2" and "N2" for
+#   stream/mixture in simulations. Use the ``ansys.chemkin.core.air_cap.x()`` or
+#   ``ansys.chemkin.core.air_cap.y()`` method when the mechanism uses "O2" and "N2" for
 #   oxygen and nitrogen. Use the ``ansys.chemkin.core.air.x()`` or
 #   ``ansys.chemkin.core.air.y()`` method when the mechanism uses "o2" and "n2"
 #   for oxygen and nitrogen.
@@ -134,7 +134,7 @@ air = Stream(MyGasMech)
 air.temperature = 550.0  # [K]
 air.pressure = 2.1 * ck.P_ATM
 # use predefined "air" recipe in mole fractions (with upper cased symbols)
-air.x = ck.Air.x()
+air.x = ck.air_cap.x()
 air.mass_flowrate = 45.0  # [g/sec]
 
 #################################################

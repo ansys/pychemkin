@@ -77,8 +77,10 @@ class PremixedFlame(Flame):
         self._final_mass_flow_rate = -1.0
 
     def set_inlet(self, extinlet: Stream):
-        """Add an external inlet to the reactor"""
+        """Add an external inlet to the reactor."""
         """
+        Add an external inlet to the reactor.
+
         Parameters
         ----------
             extinlet: Stream object
@@ -96,10 +98,10 @@ class PremixedFlame(Flame):
         exit()
 
     def unburnt_temperature(self, temperature: float):
-        """Set the unburnt fuel-oxidizer gas temperature for
+        """Set the unburnt fuel-oxidizer gas temperature."""
+        """
+        Set the unburnt fuel-oxidizer gas temperature for
         the flame speed calculation.
-        """
-        """
         By default, the inlet Stream temperature will be used.
 
         Parameters
@@ -177,6 +179,7 @@ class PremixedFlame(Flame):
             return -1
 
     def use_tpro_grids(self, mode: bool = True):
+        """Use the position data of the temperature profile as initial grid."""
         """Use the position values of the temperature profile data as
         the initial grid points to start the simulation.
 
@@ -440,10 +443,10 @@ class PremixedFlame(Flame):
         return ret_val
 
     def continuation(self) -> int:
+        """Perform a continuation run."""
         """Perform a continuation run after the original flame simulation is
         completed successfully.
-        """
-        """
+
         Returns
         -------
             Error code: integer
@@ -573,7 +576,8 @@ class PremixedFlame(Flame):
         # create arrays to hold the raw solution data
         pos = np.zeros(self._numbsolutionpoints, dtype=np.double)
         temp = np.zeros_like(pos, dtype=np.double)
-        # create a species mass fraction array to hold the solution species fraction profiles
+        # create a species mass fraction array to hold
+        # the solution species fraction profiles
         frac = np.zeros(
             (
                 self.numbspecies,
@@ -657,6 +661,8 @@ class PremixedFlame(Flame):
     def get_solution_variable_profile(self, varname: str) -> npt.NDArray[np.double]:
         """Get the profile of the solution variable specified."""
         """
+        Get the profile of the solution variable specified.
+
         Parameters
         ----------
             varname: string
@@ -705,8 +711,11 @@ class PremixedFlame(Flame):
         return var
 
     def create_solution_streams(self, specfrac: npt.NDArray[np.double]) -> int:
-        """Create a list of Streams that represent the gas mixture at a solution point."""
+        """Create a list of Streams at every solution points."""
         """
+        Create a list of Streams that represent the gas mixture
+        at every solution points.
+
         Parameters
         ----------
             specfrac: 2D double array, dimensions
@@ -820,10 +829,10 @@ class PremixedFlame(Flame):
             return mixturetarget
 
     def get_solution_stream_at_grid(self, grid_index: int) -> Stream:
+        """Get the Stream representing the solution given point index."""
         """Get the Stream representing the solution state at
         the given solution point index.
-        """
-        """
+
         Parameters
         ----------
             grid_index: integer
@@ -877,6 +886,8 @@ class BurnedStabilizedGivenTemperature(PremixedFlame):
     def __init__(self, inlet: Stream, label: Union[str, None] = None):
         """Burner-stabilized flame model with given temperature profile."""
         """
+        Burner-stabilized flame model with given temperature profile.
+
         Parameters
         ----------
             inlet: Stream object
@@ -908,6 +919,8 @@ class BurnedStabilizedEnergyEquation(PremixedFlame):
     def __init__(self, inlet: Stream, label: Union[str, None] = None):
         """Burner-stabilized premixed flame."""
         """
+        Burner-stabilized premixed flame.
+
         Parameters
         ----------
             inlet: Stream object
@@ -932,8 +945,11 @@ class BurnedStabilizedEnergyEquation(PremixedFlame):
         self.setkeyword("ENRG", True)
 
     def skip_fix_t_solution(self, mode: bool = True):
-        """Skip the step of finding the intermediate solution with fixed temperature."""
+        """Skip finding the intermediate solution with fixed temperature."""
         """
+        Skip the step of finding the intermediate solution with
+        fixed temperature.
+
         Parameters
         ----------
             mode: boolean {True, False}
@@ -944,10 +960,10 @@ class BurnedStabilizedEnergyEquation(PremixedFlame):
         self.setkeyword("NOFT", value=mode)
 
     def automatic_temperature_profile_estimate(self, mode: bool = True):
+        """Construct an estimated temperature profile from the equilibrium state."""
         """Let the premixed flame model to construct an estimated temperature profile
         based on the equilibrium state to start the calculation.
-        """
-        """
+
         Parameters
         ----------
             mode: boolean {True, False}
@@ -964,6 +980,8 @@ class FreelyPropagating(PremixedFlame):
     def __init__(self, inlet: Stream, label: Union[str, None] = None):
         """Freely propagating premixed flame."""
         """
+        Freely propagating premixed flame.
+
         Parameters
         ----------
             inlet: Stream object
@@ -988,8 +1006,10 @@ class FreelyPropagating(PremixedFlame):
         self.flamespeed = -1.0
 
     def skip_fix_t_solution(self, mode: bool = True):
-        """Skip the step of finding the intermediate solution with fixed temperature."""
+        """Skip finding the intermediate solution with fixed temperature."""
         """
+        Skip the step of finding the intermediate solution with fixed temperature.
+
         Parameters
         ----------
             mode: boolean {True, False}
@@ -1000,10 +1020,11 @@ class FreelyPropagating(PremixedFlame):
         self.setkeyword("NOFT", value=mode)
 
     def automatic_temperature_profile_estimate(self, mode: bool = True):
-        """Let the premixed flame model to construct an estimated temperature profile
-        based on the equilibrium state to start the calculation.
-        """
-        """
+        """Construct an estimated temperature profile from the equilibrium state."""
+        """Let the premixed flame model to construct an estimated
+        temperature profile based on the equilibrium state to
+        start the calculation.
+
         Parameters
         ----------
             mode: boolean {True, False}
@@ -1026,9 +1047,11 @@ class FreelyPropagating(PremixedFlame):
 
     def pinned_temperature(self, temperature: float = 400.0):
         """Pin the assigned temperature to the mesh."""
-        """Pin the assigned temperature to the mesh to anchor the freely propagating flame.
-        This temperature should be slightly higher than the inlet/unburnt gas temperature
-        and less than the ignition temperature of the inlet gas mixture.
+        """Pin the assigned temperature to the mesh to
+        anchor the freely propagating flame. This temperature
+        should be slightly higher than the inlet/unburnt
+        gas temperature and less than the ignition temperature
+        of the inlet gas mixture.
 
         Parameters
         ----------

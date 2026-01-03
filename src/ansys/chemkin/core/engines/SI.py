@@ -49,6 +49,8 @@ class SIengine(Engine):
     def __init__(self, reactor_condition: Stream, label: Union[str, None] = None):
         """Initialize a spark-ignition Engine object."""
         """
+        Initialize a spark-ignition Engine object.
+
         Parameters
         ----------
             reactor_condition: Mixture object
@@ -139,6 +141,8 @@ class SIengine(Engine):
     def wiebe_parameters(self, n: float, b: float):
         """Set Wiebe function parameters."""
         """
+        Set Wiebe function parameters.
+
         .. math::
 
             Wiebe = 1 - exp^{-b[(CA-SOC)/duration]^(n+1)]}
@@ -176,8 +180,10 @@ class SIengine(Engine):
         self.wiebeb = b
 
     def set_burn_timing(self, soc: float, duration: float = 0.0):
-        """Set SI engine start of combustion (SOC) timing."""
+        """Set SI engine SOC timing."""
         """
+        Set SI engine start of combustion (SOC) timing.
+
         Parameters
         ----------
             soc: double
@@ -208,6 +214,8 @@ class SIengine(Engine):
     def set_burn_anchor_points(self, ca10: float, ca50: float, ca90: float):
         """Set the SI mass burned profile using the anchor points."""
         """
+        Set the SI mass burned profile using the anchor points.
+
         Parameters
         ----------
             ca10: double
@@ -266,6 +274,8 @@ class SIengine(Engine):
     ) -> int:
         """Specify SI engine mass burned fraction profile."""
         """
+        Specify SI engine mass burned fraction profile.
+
         Parameters
         ----------
             crankangles: 1-D double array
@@ -301,6 +311,8 @@ class SIengine(Engine):
     def set_combustion_efficiency(self, efficiency: float):
         """Set the overall combustion efficiency."""
         """
+        Set the overall combustion efficiency.
+
         Parameters
         ----------
             efficiency: double, default = 1.0
@@ -318,10 +330,10 @@ class SIengine(Engine):
         self.setkeyword(key="BEFF", value=efficiency)
 
     def set_burned_products_minimum_mole_fraction(self, bound: float):
+        """Set the minimum gas species mole fraction value."""
         """Set the minimum gas species mole fraction value from the flame sheet
         to be injected to the burned zone.
-        """
-        """
+
         Parameters
         ----------
             bound: double
@@ -338,10 +350,10 @@ class SIengine(Engine):
             exit()
 
     def set_wiebe_keywords(self) -> int:
+        """Set the Wiebe function parameters."""
         """Set the Wiebe function parameters keywords
         for the SI engine model.
-        """
-        """
+
         Returns
         -------
             error code: integer
@@ -370,10 +382,10 @@ class SIengine(Engine):
         return ierror
 
     def set_burn_anchor_points_keywords(self) -> int:
+        """Set the mass burned profile anchor points."""
         """Set the mass burned profile anchor points keywords
         for the SI engine model.
-        """
-        """
+
         Returns
         -------
             error code: integer
@@ -400,10 +412,10 @@ class SIengine(Engine):
         return ierror
 
     def set_burn_profile_keywords(self) -> int:
+        """Set the mass burned fraction profile."""
         """Set the mass burned fraction profile keywords
         for the SI engine model.
-        """
-        """
+
         Returns
         -------
             error code: integer
@@ -442,8 +454,9 @@ class SIengine(Engine):
         return ierror
 
     def __process_keywords(self) -> int:
-        """Process input keywords for the SI engine model."""
-        """
+        """Process input keywords."""
+        """Process input keywords for the SI engine model.
+
         Returns
         -------
             error code: integer
@@ -469,7 +482,11 @@ class SIengine(Engine):
                 logger.error(this_msg)
                 ierr += 1
             if self.burnduration <= 0.0:
-                msg = [Color.PURPLE, "missing 'burn duration' parameter", Color.END]
+                msg = [
+                    Color.PURPLE,
+                    "missing 'burn duration' parameter",
+                    Color.END,
+                ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
                 ierr += 1
@@ -685,8 +702,9 @@ class SIengine(Engine):
         return ierr
 
     def __run_model(self) -> int:
-        """Run the SI engine model after the keywords are processed."""
-        """
+        """Run the SI engine model."""
+        """Run the SI engine model after the keywords are processed.
+
         Returns
         -------
             error code: integer
@@ -697,8 +715,10 @@ class SIengine(Engine):
         return ierr
 
     def run(self) -> int:
-        """Generic Chemkin run SI engine model method."""
+        """Run Chemkin SI engine model method."""
         """
+        Run Chemkin SI engine model method.
+
         Returns
         -------
             error code: integer

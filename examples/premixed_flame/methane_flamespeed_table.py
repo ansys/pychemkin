@@ -134,7 +134,7 @@ fuel.temperature = 300.0  # inlet temperature
 
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
-air.x = ck.Air.x()
+air.x = ck.air_cap.x()
 # setting pressure and temperature is not required in this case
 air.pressure = fuel.pressure
 air.temperature = fuel.temperature

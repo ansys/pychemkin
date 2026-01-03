@@ -116,10 +116,10 @@ class SteadyStateSolver:
 
     @steady_state_tolerances.setter
     def steady_state_tolerances(self, tolerances: tuple[float, float]):
+        """Set the absolute and the relative tolerances."""
         """Set the absolute and the relative tolerances
         for the steady-state solution search algorithm.
-        """
-        """
+
         Parameters
         ----------
             tolerances: tuple, [absolute_tolerance, relative_tolerance]
@@ -164,10 +164,11 @@ class SteadyStateSolver:
 
     @time_stepping_tolerances.setter
     def time_stepping_tolerances(self, tolerances: tuple[float, float]):
-        """Set the absolute and the relative tolerances
+        """Set the absolute and the relative tolerances."""
+        """
+        Set the absolute and the relative tolerances
         for the pseudo time stepping solution algorithm.
-        """
-        """
+
         Parameters
         ----------
             tolerances: tuple, [absolute_tolerance, relative_tolerance]
@@ -234,10 +235,10 @@ class SteadyStateSolver:
             logger.error(this_msg)
 
     def set_max_search_iteration(self, maxiteration: int):
+        """Set the maximum number of iterations."""
         """Set the maximum number of iterations per search when performing
         the steady-state search algorithm.
-        """
-        """
+
         Parameters
         ----------
             maxtime: integer

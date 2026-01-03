@@ -42,7 +42,7 @@ R_GAS_CAL = (
 # == end of global constants
 
 
-class Air:
+class air_cap:
     """define the "air" composition in PyChemkin with a fixed mixture "recipe"."""
 
     """
@@ -73,12 +73,12 @@ class air:
 
     @staticmethod
     def x() -> list[tuple[str, float]]:
-        """Returns the 'air' composition in mole fractions."""
+        """Return the 'air' composition in mole fractions."""
         return [("o2", 0.21), ("n2", 0.79)]
 
     @staticmethod
     def y() -> list[tuple[str, float]]:
-        """Returns the 'air' composition in mass fractions."""
+        """Return the 'air' composition in mass fractions."""
         return [("o2", 0.23), ("n2", 0.77)]
 
 

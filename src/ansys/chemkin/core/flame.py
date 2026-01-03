@@ -40,8 +40,9 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
 
     def __init__(self, fuelstream: Stream, label: str):
         """Create a 1-D flame object."""
-
         """
+        Create a 1-D flame object.
+
         Parameters
         ----------
             fuelstream: Stream object
@@ -101,6 +102,8 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
     ) -> int:
         """Specify temperature profile."""
         """
+        Specify temperature profile.
+
         Parameters
         ----------
             x: 1D double array
@@ -120,9 +123,10 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         return ierr
 
     def use_temp_profiel_initial_mesh(self, on: bool = False):
+        """Use the temperature profile grid as the initial grid."""
         """Use the grid points in the user defined initial/estimated
-        temperature profile as the initial/starting grid points."""
-        """
+        temperature profile as the initial/starting grid points.
+
         Parameters
         ----------
             on: boolean, default = False
@@ -133,9 +137,10 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         self.grid_t_profile = on
 
     def set_convection_differencing_type(self, mode: str):
+        """Specify the finite differencing scheme."""
         """Set the finite differencing scheme for the convective terms
-        in the transport equations."""
-        """
+        in the transport equations.
+
         Parameters
         ----------
             mode: string, {"central", "upwind"}
@@ -156,6 +161,8 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
     def set_mesh_keywords(self) -> int:
         """Set mesh related keywords."""
         """
+        Set mesh related keywords.
+
         Returns
         -------
             error code: integer
@@ -275,9 +282,10 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         self.transport_mode = 2
 
     def use_fixed_lewis_number_transport(self, lewis: float = 1.0):
+        """Compute the species diffusion coefficient with fixed Lewis number."""
         """Use a fixed Lewis number to compute the species diffusion coefficient
-        from mixture conductivity."""
-        """
+        from mixture conductivity.
+
         .. math::
 
             Le = Sc/Pr = \\frac{(\\kappa/\\rho C_{p})}{D}

@@ -45,9 +45,7 @@ from ansys.chemkin.core.reactormodel import Keyword
 
 
 class HCCIengine(Engine):
-    """Single or multi- zone homogeneous charge compression ignition
-    (HCCI) engine model.
-    """
+    """Single or multi- zone HCCI engine model."""
 
     def __init__(
         self,
@@ -55,10 +53,10 @@ class HCCIengine(Engine):
         label: str = "",
         nzones: Union[int, None] = None,
     ):
+        """Initialize a single- or multi- zone HCCI engine object."""
         """Initialize a single- or multi- zone homogeneous charge compression ignition
         (HCCI) engine object.
-        """
-        """
+
         Parameters
         ----------
             reactor_condition: Mixture object
@@ -163,6 +161,8 @@ class HCCIengine(Engine):
     def get_number_of_zones(self) -> int:
         """Get the number of zones used by the current HCCI simulation."""
         """
+        Get the number of zones used by the current HCCI simulation.
+
         Returns
         -------
             nzones: integer
@@ -174,6 +174,8 @@ class HCCIengine(Engine):
     def set_zonal_temperature(self, zonetemp: list[float]):
         """Set zonal temperatures for muti-zone HCCI engine simulation."""
         """
+        Set zonal temperatures for muti-zone HCCI engine simulation.
+
         Parameters
         ----------
             zonetemp: list of doubles, dimension = [nzones]
@@ -213,6 +215,8 @@ class HCCIengine(Engine):
     def set_zonal_volume_fraction(self, zonevol: list[float]):
         """Set zonal volume fractions for muti-zone HCCI engine simulation."""
         """
+        Set zonal volume fractions for muti-zone HCCI engine simulation.
+
         Parameters
         ----------
             zonevol: list of doubles, dimension = [nzones]
@@ -253,6 +257,8 @@ class HCCIengine(Engine):
     def set_zonal_mass_fraction(self, zonemass: list[float]):
         """Set zonal mass fractions for muti-zone HCCI engine simulation."""
         """
+        Set zonal mass fractions for muti-zone HCCI engine simulation.
+
         Parameters
         ----------
             zonemass: list of doubles, dimension = [nzones]
@@ -293,10 +299,10 @@ class HCCIengine(Engine):
         self.usezonemass = True
 
     def set_zonal_heat_transfer_area_fraction(self, zonearea: list[float]):
+        """Set zonal wall heat transfer area fractions."""
         """Set zonal wall heat transfer area fractions for
         muti-zone HCCI engine simulation.
-        """
-        """
+
         Parameters
         ----------
             zonearea: list of doubles, dimension = [nzones]
@@ -335,8 +341,9 @@ class HCCIengine(Engine):
                 exit()
 
     def set_zonal_gas_mole_fractions(self, zonemolefrac: list[float]):
-        """Set zonal gas mole fractions for muti-zone HCCI engine simulation."""
-        """
+        """Set zonal gas mole fractions for muti-zone HCCI engine."""
+        """Set zonal gas mole fractions for muti-zone HCCI engine simulation.
+
         Parameters
         ----------
             zonemolefrac: list of 1-D double arrays (number of gas species),
@@ -380,10 +387,9 @@ class HCCIengine(Engine):
             self.zonemolefrac.append(x)
 
     def define_fuel_composition(self, recipe: list[tuple[str, float]]):
-        """Set the fuel composition for setting up zonal gas composition
-        by zonal equivalence ratio.
-        """
-        """
+        """Set the fuel composition by zonal equivalence ratio."""
+        """Set the fuel composition when the zonal equivalence ratio is used.
+
         Parameters
         ----------
             recipe: list of tuples formatted as (species, mole fraction) pairs
@@ -401,10 +407,9 @@ class HCCIengine(Engine):
         self.fuel_composition = copy.deepcopy(recipe)
 
     def define_oxid_composition(self, recipe: list[tuple[str, float]]):
-        """Set the oxidizer composition for setting up zonal gas composition
-        by zonal equivalence ratio.
-        """
-        """
+        """Set the oxidizer composition by zonal equivalence ratio."""
+        """Set the oxidizer composition when the zonal equivalence ratio is used.
+
         Parameters
         ----------
             recipe: list of tuples formatted as (species, mole fraction) pairs
@@ -422,10 +427,10 @@ class HCCIengine(Engine):
         self.oxid_composition = copy.deepcopy(recipe)
 
     def define_product_composition(self, products: list[str]):
-        """Set the complete combustion product species for setting up
-        zonal gas composition by zonal equivalence ratio.
-        """
-        """
+        """Set the combustion product composition by zonal equivalence ratio."""
+        """Set the complete combustion product species when
+        the zonal equivalence ratio is used.
+
         Parameters
         ----------
             products: list of strings
@@ -444,10 +449,10 @@ class HCCIengine(Engine):
         self.product_composition = copy.deepcopy(products)
 
     def define_additive_fractions(self, addfrac: list[float]):
-        """Set zonal additive gas mole fractions for setting up
-        zonal gas composition by zonal equivalence ratio.
-        """
-        """
+        """Set the additive composition by zonal equivalence ratio."""
+        """Set zonal additive gas mole fractions
+        when the zonal equivalence ratio is used.
+
         Parameters
         ----------
             addfrac: 1-D double array, dimension = [number of gas species]
@@ -482,10 +487,10 @@ class HCCIengine(Engine):
             self.zoneaddmolefrac.append(x)
 
     def set_zonal_equivalence_ratio(self, zonephi: list[float]):
+        """Set zonal wall heat transfer area fractions."""
         """Set zonal wall heat transfer area fractions for setting up
         zonal gas composition by zonal equivalence ratio.
-        """
-        """
+
         Parameters
         ----------
             zonephi: 1-D double array, dimension = [nzones]
@@ -536,10 +541,10 @@ class HCCIengine(Engine):
                 exit()
 
     def set_zonal_egr_ratio(self, zoneegr: list[float]):
+        """Set zonal exhaust gas recirculation (EGR) ratios."""
         """Set zonal exhaust gas recirculation (EGR) ratios for
         setting up zonal gas composition by zonal equivalence ratio.
-        """
-        """
+
         Parameters
         ----------
             zoneegr: 1-D double array, dimension = [nzones]
@@ -574,10 +579,10 @@ class HCCIengine(Engine):
                 exit()
 
     def set_energy_equation_switch_on_ca(self, switch_ca: float):
+        """Set the crank angle at which the energy equation will be turn ON."""
         """Set the crank angle at which the energy equation will be turn ON for
         the rest of the simulation.
-        """
-        """
+
         Before this switch crank angle the given temperature profile(s) or value(s)
         is used in the multi-zone HCCI simulation.
 
@@ -655,6 +660,7 @@ class HCCIengine(Engine):
             self.setkeyword(key=keyline, value=True)
 
     def set_zonal_condition_keywords(self):
+        """Set zonal initial condition keywords under the Full-Keywords mode."""
         """Set zonal initial condition keywords under the Full-Keywords mode
         and use raw species mole fractions to set up zonal gas compositions
         for multi-zone HCCI engine simulation.
@@ -740,6 +746,7 @@ class HCCIengine(Engine):
                 self.setkeyword(key=line, value=True)
 
     def set_zonal_equivalence_ratio_keywords(self):
+        """Set zonal initial condition keywords under the Full-Keywords mode."""
         """Set zonal initial condition keywords under the Full-Keywords mode
         and use equivalence ratios to set up zonal gas compositions
         for multi-zone HCCI engine simulation.
@@ -863,10 +870,10 @@ class HCCIengine(Engine):
                 self.setkeyword(key=line, value=True)
 
     def __process_keywords_withfullinputs(self) -> int:
+        """Process input keywords for the HCCI engine model."""
         """Process input keywords for the HCCI engine model under
         the Full-Keyword mode.
-        """
-        """
+
         Returns
         -------
             Error code: integer
@@ -981,7 +988,8 @@ class HCCIengine(Engine):
                 # uniform zonal properties
                 self.set_enginecondition_keywords()
             elif self._zonalsetupmode == 1:
-                # non-uniform zonal properties with zonal raw gas mole fractions provided
+                # non-uniform zonal properties with
+                # zonal raw gas mole fractions provided
                 self.set_zonal_condition_keywords()
             else:
                 # non-uniform zonal properties with zonal equivalence ratios provided
@@ -1035,10 +1043,10 @@ class HCCIengine(Engine):
         return ierr
 
     def __run_model_withfullinputs(self) -> int:
+        """Run the HCCI engine model."""
         """Run the HCCI engine model after the keywords are processed
         under the Full-Keyword mode.
-        """
-        """
+
         All keywords must be assigned
 
         Returns
@@ -1076,6 +1084,8 @@ class HCCIengine(Engine):
     def __process_keywords(self) -> int:
         """Process input keywords for the HCCI engine model."""
         """
+        Process input keywords for the HCCI engine model.
+
         Returns
         -------
             Error code: integer
@@ -1247,6 +1257,8 @@ class HCCIengine(Engine):
     def __run_model(self) -> int:
         """Run the HCCI engine model after the keywords are processed."""
         """
+        Run the HCCI engine model after the keywords are processed.
+
         Returns
         -------
             Error code: integer
@@ -1257,8 +1269,10 @@ class HCCIengine(Engine):
         return ierr
 
     def run(self) -> int:
-        """Generic Chemkin run HCCI engine model method."""
+        """Run Chemkin HCCI engine model method."""
         """
+        Run Chemkin HCCI engine model method.
+
         Returns
         -------
             Error code: integer

@@ -66,6 +66,8 @@ class BatchReactors(Reactor):
     def __init__(self, reactor_condition: Stream, label: str):
         """Initialize a generic Batch Reactor object."""
         """
+        Initialize a generic Batch Reactor object.
+
         Parameters
         ----------
             reactor_condition: Mixture object
@@ -108,6 +110,8 @@ class BatchReactors(Reactor):
     def volume(self) -> float:
         """Get reactor volume."""
         """
+        Get reactor volume.
+
         Returns
         -------
             volume: double
@@ -118,8 +122,10 @@ class BatchReactors(Reactor):
 
     @volume.setter
     def volume(self, value: float):
-        """Set reactor volume (required)."""
+        """Set reactor volume."""
         """
+        Set reactor volume (required).
+
         Parameters
         ----------
             value: double, default = 0.0
@@ -140,6 +146,8 @@ class BatchReactors(Reactor):
     def area(self) -> float:
         """Get reactive surface area."""
         """
+        Get reactive surface area.
+
         Returns
         -------
             area: double
@@ -152,6 +160,8 @@ class BatchReactors(Reactor):
     def area(self, value: float = 0.0e0):
         """Set reactive surface area."""
         """
+        Set reactive surface area.
+
         Parameters
         ----------
             value: double, default = 0.0
@@ -175,6 +185,8 @@ class BatchReactors(Reactor):
     def tolerances(self) -> tuple:
         """Get transient solver tolerances."""
         """
+        Get transient solver tolerances.
+
         Returns
         -------
             tolerances: tuple, [absolute_tolerance, relative_tolerance]
@@ -190,6 +202,8 @@ class BatchReactors(Reactor):
     def tolerances(self, tolerances: tuple[float, float]):
         """Set transient solver tolerances."""
         """
+        Set transient solver tolerances.
+
         Parameters
         ----------
             tolerances: tuple, [absolute_tolerance, relative_tolerance]
@@ -212,10 +226,10 @@ class BatchReactors(Reactor):
 
     @property
     def force_nonnegative(self) -> bool:
+        """Get the status of the forcing non-negative option."""
         """Get the status of the forcing non-negative option
         of the transient solver.
-        """
-        """
+
         Returns
         -------
             mode: boolean
@@ -234,6 +248,8 @@ class BatchReactors(Reactor):
     def force_nonnegative(self, mode: bool = False):
         """Set the forcing non-negative solution option."""
         """
+        Set the forcing non-negative solution option.
+
         Parameters
         ----------
             mode: boolean, default = False
@@ -244,8 +260,10 @@ class BatchReactors(Reactor):
         self.setkeyword(key="NNEG", value=mode)
 
     def set_solver_initial_timestep_size(self, size: float):
-        """Set the initial time step size to be used by the solver."""
+        """Set the initial time step size."""
         """
+        Set the initial time step size to be used by the solver.
+
         Parameters
         ----------
             size: double, default = determined by the solver
@@ -260,8 +278,9 @@ class BatchReactors(Reactor):
             logger.error(this_msg)
 
     def set_solver_max_timestep_size(self, size: float):
-        """Set the maximum time step size allowed by the solver."""
-        """
+        """Set the maximum time step size allowed."""
+        """Set the maximum time step size allowed by the solver.
+
         Parameters
         ----------
             size: double, default = 1/100 of the simulation duration
@@ -279,6 +298,8 @@ class BatchReactors(Reactor):
     def timestep_for_saving_solution(self) -> float:
         """Get the timestep size between saving the solution data."""
         """
+        Get the timestep size between saving the solution data.
+
         Returns
         -------
             delta_time: double
@@ -309,6 +330,8 @@ class BatchReactors(Reactor):
     def timestep_for_saving_solution(self, delta_time: float):
         """Set the timestep size between saving the solution data."""
         """
+        Set the timestep size between saving the solution data.
+
         Parameters
         ----------
             delta_time: double, default = 1/100 of the simulation duration
@@ -324,10 +347,10 @@ class BatchReactors(Reactor):
 
     @property
     def timestep_for_printing_solution(self) -> float:
+        """Get the timestep size between printing."""
         """Get the timestep size between printing the solution data to
         the text output file.
-        """
-        """
+
         Returns
         -------
             delta_time: double
@@ -356,10 +379,10 @@ class BatchReactors(Reactor):
 
     @timestep_for_printing_solution.setter
     def timestep_for_printing_solution(self, delta_time: float):
+        """Set the timestep size between printing."""
         """Set the timestep size between printing the solution data to
         the text output file.
-        """
-        """
+
         Parameters
         ----------
             delta_time: double, default = 1/100 of the simulation duration
@@ -382,6 +405,8 @@ class BatchReactors(Reactor):
     ):
         """Set up adaptive solution data saving."""
         """
+        Set up adaptive solution data saving.
+
         Parameters
         ----------
             mode: boolean
@@ -472,6 +497,8 @@ class BatchReactors(Reactor):
     ):
         """Set ignition detection criterion."""
         """
+        Set ignition detection criterion.
+
         Parameters
         ----------
             method: string
@@ -547,10 +574,10 @@ class BatchReactors(Reactor):
         self.setkeyword(key="IGN_STOP", value=True)
 
     def get_ignition_delay(self) -> float:
+        """Get the predicted ignition delay time."""
         """Get the predicted ignition delay time from
         the transient reactor simulation.
-        """
-        """
+
         Returns
         -------
             ignition_delay_time: double
@@ -584,7 +611,8 @@ class BatchReactors(Reactor):
             logger.info(this_msg)
             return ignitiondelaytime.value
 
-        # get the ignition delay time (batch reactor model [sec], engine model [CA])
+        # get the ignition delay time
+        # (batch reactor model [sec], engine model [CA])
         ierr = chemkin_wrapper.chemkin.KINAll0D_GetIgnitionDelay(ignitiondelaytime)
         if ierr != 0:
             msg = [
@@ -655,6 +683,8 @@ class BatchReactors(Reactor):
     ) -> int:
         """Specify reactor volume profile."""
         """
+        Specify reactor volume profile.
+
         Parameters
         ----------
             x: 1D double array
@@ -690,6 +720,8 @@ class BatchReactors(Reactor):
     ) -> int:
         """Specify reactor pressure profile."""
         """
+        Specify reactor pressure profile.
+
         Parameters
         ----------
             x: 1D double array
@@ -725,6 +757,8 @@ class BatchReactors(Reactor):
     ) -> int:
         """Specify reactor reactive surface area profile."""
         """
+        Specify reactor reactive surface area profile.
+
         Parameters
         ----------
             x: 1D double array
@@ -785,6 +819,7 @@ class BatchReactors(Reactor):
             self.setkeyword(key="ENRG", value=True)
 
     def set_reactorcondition_keywords(self):
+        """Set reactor condition keywords."""
         self.setkeyword(key="PRES", value=self._pressure.value / P_ATM)
         self.setkeyword(key="TEMP", value=self._temperature.value)
         self.setkeyword(key="TIME", value=self._endtime.value)
@@ -796,8 +831,9 @@ class BatchReactors(Reactor):
             self.setkeyword(key=line, value=True)
 
     def validate_inputs(self) -> int:
-        """Check the required inputs before running the reactor simulation."""
-        """
+        """Check the required inputs."""
+        """Check the required inputs before running the reactor simulation.
+
         Returns
         -------
             error code: integer
@@ -824,10 +860,10 @@ class BatchReactors(Reactor):
             return ierr
 
     def __process_keywords_withfullinputs(self) -> int:
+        """Process input keywords."""
         """Process input keywords for the batch reactor model
         under the Full-Keyword mode.
-        """
-        """
+
         Returns
         -------
             Error code: integer
@@ -948,10 +984,10 @@ class BatchReactors(Reactor):
         return ierr
 
     def __run_model_withfullinputs(self) -> int:
+        """Run the batch reactor model."""
         """Run the batch reactor model after the keywords are processed
         under the Full-Keyword mode. All keywords must be assigned.
-        """
-        """
+
         Returns
         -------
             error code: integer
@@ -985,8 +1021,10 @@ class BatchReactors(Reactor):
         return ierr
 
     def __process_keywords(self) -> int:
-        """Process input keywords for the batch reactor model."""
+        """Process input keywords."""
         """
+        Process input keywords for the batch reactor model.
+
         Returns
         -------
             Error code: integer
@@ -1154,8 +1192,10 @@ class BatchReactors(Reactor):
         return ierr
 
     def __run_model(self) -> int:
-        """Run the batch reactor model after the keywords are processed."""
+        """Run the batch reactor model."""
         """
+        Run the batch reactor model after the keywords are processed.
+
         Returns
         -------
             error code: integer
@@ -1166,8 +1206,9 @@ class BatchReactors(Reactor):
         return ierr
 
     def run(self) -> int:
-        """Generic Chemkin run reactor model method."""
-        """
+        """Perform steps to run the batch reactor model."""
+        """Perform simulation steps to run a Chemkin batch reactor model.
+
         Returns
         -------
             error code: integer
@@ -1268,8 +1309,9 @@ class BatchReactors(Reactor):
         return ret_val
 
     def get_solution_size(self) -> tuple[int, int]:
-        """Get the number of reactors and the number of solution points."""
-        """
+        """Get number of solution time points."""
+        """Get the number of reactors and the number of solution points.
+
         Returns
         -------
             nreactor: integer
@@ -1385,7 +1427,8 @@ class BatchReactors(Reactor):
         pres = np.zeros_like(time, dtype=np.double)
         temp = np.zeros_like(time, dtype=np.double)
         vol = np.zeros_like(time, dtype=np.double)
-        # create a species mass fraction array to hold the solution species fraction profiles
+        # create a species mass fraction array to
+        # hold the solution species fraction profiles
         frac = np.zeros(
             (
                 self.numbspecies,
@@ -1442,6 +1485,8 @@ class BatchReactors(Reactor):
     def get_solution_variable_profile(self, varname: str) -> npt.NDArray[np.double]:
         """Get the profile of the solution variable specified."""
         """
+        "Get the profile of the solution variable specified.
+
         Parameters
         ----------
             varname: string
@@ -1490,10 +1535,10 @@ class BatchReactors(Reactor):
         return var
 
     def create_solution_mixtures(self, specfrac: npt.NDArray[np.double]) -> int:
+        """Create a list of Mixtures."""
         """Create a list of Mixtures that represent the gas inside
         the reactor at a solution point.
-        """
-        """
+
         Parameters
         ----------
             specfrac: 2D double array, dimensions
@@ -1558,10 +1603,10 @@ class BatchReactors(Reactor):
         return 0
 
     def get_solution_mixture(self, time: float) -> Mixture:
+        """Get the mixture representing the solution at the given time."""
         """Get the mixture representing the solution state inside
         the reactor at the given time.
-        """
-        """
+
         Parameters
         ----------
             time: double
@@ -1610,10 +1655,10 @@ class BatchReactors(Reactor):
             return mixturetarget
 
     def get_solution_mixture_at_index(self, solution_index: int) -> Mixture:
+        """Get the mixture representing the solution at the given grid index."""
         """Get the mixture representing the solution state inside
         the reactor at the given solution point index.
-        """
-        """
+
         Parameters
         ----------
             solution_index: integer
@@ -1663,15 +1708,17 @@ class BatchReactors(Reactor):
 
 
 class GivenPressureBatchReactorFixedTemperature(BatchReactors):
+    """Chemkin 0-D transient closed homogeneous reactor model."""
+
     """Chemkin 0-D transient closed homogeneous reactor model
     with given reactor pressure (CONP) and reactor temperature (TGIV).
     """
 
     def __init__(self, reactor_condition: Stream, label: str = "CONPT"):
+        """Initialize a Given Pressure Batch Reactor object with given temperature."""
         """Initialize a Given Pressure Batch Reactor object
         with given reactor temperature.
-        """
-        """
+
         Parameters
         ----------
             reactor_condition: Mixture object
@@ -1739,8 +1786,10 @@ class GivenPressureBatchReactorFixedTemperature(BatchReactors):
 
     @property
     def time(self) -> float:
-        """Get simulation end time (required) [sec].."""
+        """Get simulation end time."""
         """
+        Get simulation end time (required) [sec].
+
         Returns
         -------
             endtime: double
@@ -1751,8 +1800,10 @@ class GivenPressureBatchReactorFixedTemperature(BatchReactors):
 
     @time.setter
     def time(self, value: float = 0.0e0):
-        """Set simulation end time (required)."""
+        """Set simulation end time."""
         """
+        Set simulation end time (required).
+
         Parameters
         ----------
             value: double, default = 0.0
@@ -1773,6 +1824,8 @@ class GivenPressureBatchReactorFixedTemperature(BatchReactors):
     ) -> int:
         """Specify reactor temperature profile."""
         """
+        Specify reactor temperature profile.
+
         Parameters
         ----------
             x: 1D double array
@@ -1791,16 +1844,17 @@ class GivenPressureBatchReactorFixedTemperature(BatchReactors):
 
 
 class GivenPressureBatchReactorEnergyConservation(BatchReactors):
+    """Chemkin 0-D transient closed homogeneous reactor model."""
+
     """Chemkin 0-D transient closed homogeneous reactor model
-    with given reactor pressure (CONP) and
-    solving the energy equation (ENRG).
+    with given reactor pressure (CONP) and solving the energy equation (ENRG).
     """
 
     def __init__(self, reactor_condition: Stream, label: str = "CONP"):
+        """Initialize a Given Pressure Batch Reactor object with Energy Equation."""
         """Initialize a Given Pressure Batch Reactor object that
         solves the Energy Equation.
-        """
-        """
+
         Parameters
         ----------
             reactor_condition: Mixture object
@@ -1871,8 +1925,10 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
 
     @property
     def time(self) -> float:
-        """Get simulation end time (required)."""
+        """Get simulation end time."""
         """
+        Get simulation end time (required).
+
         Returns
         -------
             endtime: double
@@ -1883,8 +1939,10 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
 
     @time.setter
     def time(self, value: float = 0.0e0):
-        """Set simulation end time (required)."""
+        """Set simulation end time."""
         """
+        Set simulation end time (required).
+
         Parameters
         ----------
             value: double, default = 0.0
@@ -1902,8 +1960,10 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
 
     @property
     def heat_loss_rate(self) -> float:
-        """Get heat loss rate from the reactor to the surroundings."""
+        """Get heat loss rate."""
         """
+        Get heat loss rate from the reactor to the surroundings.
+
         Returns
         -------
             heat_loss_rate: double
@@ -1914,8 +1974,10 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
 
     @heat_loss_rate.setter
     def heat_loss_rate(self, value: float):
-        """Set the heat loss rate from the reactor to the surroundings."""
+        """Set the heat loss rate."""
         """
+        Set the heat loss rate from the reactor to the surroundings.
+
         Parameters
         ----------
             value: double, default = 0.0
@@ -1928,8 +1990,10 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
 
     @property
     def heat_transfer_coefficient(self) -> float:
-        """Get heat transfer coefficient between the reactor and the surroundings."""
+        """Get heat transfer coefficient."""
         """
+        Get heat transfer coefficient between the reactor and the surroundings.
+
         Returns
         -------
             heat_transfer_coefficient: double
@@ -1940,8 +2004,10 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
 
     @heat_transfer_coefficient.setter
     def heat_transfer_coefficient(self, value: float = 0.0e0):
-        """Set heat transfer coefficient between the reactor and the surroundings."""
+        """Set heat transfer coefficient."""
         """
+        Set heat transfer coefficient between the reactor and the surroundings.
+
         Parameters
         ----------
             value: double, optional, default = 0.0
@@ -1962,6 +2028,8 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
     def ambient_temperature(self) -> float:
         """Get ambient temperature."""
         """
+        Get ambient temperature.
+
         Returns
         -------
             temperature: double
@@ -1974,6 +2042,8 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
     def ambient_temperature(self, value: float = 0.0e0):
         """Set ambient temperature."""
         """
+        Set ambient temperature.
+
         Parameters
         ----------
             value: double, optional, default = 300.0
@@ -1992,8 +2062,10 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
 
     @property
     def heat_transfer_area(self) -> float:
-        """Get heat transfer area between the reactor and the surroundings."""
+        """Get heat transfer area."""
         """
+        Get heat transfer area between the reactor and the surroundings.
+
         Returns
         -------
             area: double, optional, default = 0.0
@@ -2004,8 +2076,10 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
 
     @heat_transfer_area.setter
     def heat_transfer_area(self, value: float = 0.0e0):
-        """Set heat transfer area between the reactor and the surroundings."""
+        """Set heat transfer area."""
         """
+        Set heat transfer area between the reactor and the surroundings."
+
         Parameters
         ----------
             value: double, optional, default = 0.0
@@ -2027,6 +2101,8 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
     ) -> int:
         """Specify reactor heat transfer area profile."""
         """
+        Specify reactor heat transfer area profile.
+
         Parameters
         ----------
             x: 1D double array
@@ -2059,6 +2135,8 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
     ) -> int:
         """Specify reactor heat loss rate profile."""
         """
+        Specify reactor heat loss rate profile.
+
         Parameters
         ----------
             x: 1D double array
@@ -2088,15 +2166,17 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
 
 
 class GivenVolumeBatchReactorFixedTemperature(BatchReactors):
+    """Chemkin 0-D transient closed homogeneous reactor model."""
+
     """Chemkin 0-D transient closed homogeneous reactor model
     with given reactor volume (CONV) and reactor temperature (TGIV).
     """
 
     def __init__(self, reactor_condition: Stream, label: str = "CONVT"):
+        """Initialize a Given Volume Batch Reactor object with fixed temperature."""
         """Initialize a Given Volume Batch Reactor object with
         given reactor temperature.
-        """
-        """
+
         Parameters
         ----------
             reactor_condition: Mixture object
@@ -2164,8 +2244,10 @@ class GivenVolumeBatchReactorFixedTemperature(BatchReactors):
 
     @property
     def time(self) -> float:
-        """Get simulation end time (required)."""
+        """Get simulation end time."""
         """
+        Get simulation end time (required).
+
         Returns
         -------
             endtime: double
@@ -2176,8 +2258,10 @@ class GivenVolumeBatchReactorFixedTemperature(BatchReactors):
 
     @time.setter
     def time(self, value: float = 0.0e0):
-        """Set simulation end time (required)."""
+        """Set simulation end time."""
         """
+        Set simulation end time (required).
+
         Parameters
         ----------
             value: double, default = 0.0
@@ -2198,6 +2282,8 @@ class GivenVolumeBatchReactorFixedTemperature(BatchReactors):
     ) -> int:
         """Specify reactor temperature profile."""
         """
+        Specify reactor temperature profile.
+
         Parameters
         ----------
             x: 1D double array
@@ -2216,16 +2302,18 @@ class GivenVolumeBatchReactorFixedTemperature(BatchReactors):
 
 
 class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
+    """Chemkin 0-D transient closed homogeneous reactor model."""
+
     """Chemkin 0-D transient closed homogeneous reactor model
     with given reactor volume (CONV) and
     solving the energy equation (ENRG).
     """
 
     def __init__(self, reactor_condition: Stream, label: str = "CONV"):
+        """Initialize a Given Volume Batch Reactor object with energy equation."""
         """Initialize a Given Volume Batch Reactor object that
         solves the Energy Equation.
-        """
-        """
+
         Parameters
         ----------
             reactor_condition: Mixture object
@@ -2296,8 +2384,10 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
 
     @property
     def time(self) -> float:
-        """Get simulation end time (required)."""
+        """Get simulation end time."""
         """
+        Get simulation end time (required).
+
         Returns
         -------
             endtime: double
@@ -2308,8 +2398,10 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
 
     @time.setter
     def time(self, value: float = 0.0e0):
-        """Set simulation end time (required)."""
+        """Set simulation end time."""
         """
+        Set simulation end time (required).
+
         Parameters
         ----------
             value: double, default = 0.0
@@ -2327,8 +2419,10 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
 
     @property
     def heat_loss_rate(self) -> float:
-        """Get heat loss rate from the reactor to the surroundings."""
+        """Get heat loss rate."""
         """
+        Get heat loss rate from the reactor to the surroundings.
+
         Returns
         -------
             heat_loss_rate: double
@@ -2339,8 +2433,10 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
 
     @heat_loss_rate.setter
     def heat_loss_rate(self, value: float):
-        """Set the heat loss rate from the reactor to the surroundings (required)."""
+        """Set the heat loss rate."""
         """
+        Set the heat loss rate from the reactor to the surroundings (required)."
+
         Parameters
         ----------
             value: double, default = 0.0
@@ -2353,8 +2449,10 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
 
     @property
     def heat_transfer_coefficient(self) -> float:
-        """Get heat transfer coefficient between the reactor and the surroundings."""
+        """Get heat transfer coefficient."""
         """
+        Get heat transfer coefficient between the reactor and the surroundings.
+
         Returns
         -------
             heat_transfer_coefficient: double
@@ -2365,8 +2463,10 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
 
     @heat_transfer_coefficient.setter
     def heat_transfer_coefficient(self, value: float = 0.0e0):
-        """Set heat transfer coefficient between the reactor and the surroundings."""
+        """Set heat transfer coefficient."""
         """
+        Set heat transfer coefficient between the reactor and the surroundings.
+
         Parameters
         ----------
             value: double, optional, default = 0.0
@@ -2387,6 +2487,8 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
     def ambient_temperature(self) -> float:
         """Get ambient temperature."""
         """
+        Get ambient temperature.
+
         Returns
         -------
             temperature: double
@@ -2399,6 +2501,8 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
     def ambient_temperature(self, value: float = 0.0e0):
         """Set ambient temperature."""
         """
+        Set ambient temperature.
+
         Parameters
         ----------
             value: double, optional, default = 300.0
@@ -2417,8 +2521,10 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
 
     @property
     def heat_transfer_area(self) -> float:
-        """Get heat transfer area between the reactor and the surroundings."""
+        """Get heat transfer area."""
         """
+        Get heat transfer area between the reactor and the surroundings.
+
         Returns
         -------
             area: double, optional, default = 0.0
@@ -2429,8 +2535,10 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
 
     @heat_transfer_area.setter
     def heat_transfer_area(self, value: float = 0.0e0):
-        """Set heat transfer area between the reactor and the surroundings."""
+        """Set heat transfer area."""
         """
+        Set heat transfer area between the reactor and the surroundings.
+
         Parameters
         ----------
             value: double, optional, default = 0.0
@@ -2452,6 +2560,8 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
     ) -> int:
         """Specify reactor heat transfer area profile."""
         """
+        Specify reactor heat transfer area profile.
+
         Parameters
         ----------
             x: 1D double array
@@ -2484,6 +2594,8 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
     ) -> int:
         """Specify reactor heat loss rate profile."""
         """
+        Specify reactor heat loss rate profile.
+
         Parameters
         ----------
             x: 1D double array

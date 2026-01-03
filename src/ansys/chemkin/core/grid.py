@@ -49,6 +49,7 @@ class Grid:
         self.numb_grid_profile = 0
 
     def set_numb_grid_points(self, numb_points: int):
+        """Set the number of uniform grid points at the start of simulation."""
         """Set the number of uniform grid points at the start of simulation.
 
         Parameters
@@ -65,6 +66,7 @@ class Grid:
             logger.error(this_msg)
 
     def set_max_grid_points(self, numb_points: int):
+        """Set the max number of grid points allowed during the solution refinement."""
         """Set the max number of grid points allowed during the solution refinement.
 
         Parameters
@@ -82,6 +84,7 @@ class Grid:
 
     @property
     def start_position(self) -> float:
+        """Get the coordinate value of the first grid point."""
         """Get the coordinate value of the first grid point.
         Location/coordinate of the inlet/entrance.
 
@@ -95,6 +98,7 @@ class Grid:
 
     @start_position.setter
     def start_position(self, position: float):
+        """Reset the coordinate value of the first grid point."""
         """Reset the coordinate value of the first grid point.
         Location/coordinate of the inlet/entrance.
 
@@ -108,6 +112,7 @@ class Grid:
 
     @property
     def end_position(self) -> float:
+        """Get the coordinate value of the last grid point."""
         """Get the coordinate value of the last grid point.
         Location/coordinate of the outlet/exit/gap.
 
@@ -121,6 +126,7 @@ class Grid:
 
     @end_position.setter
     def end_position(self, position: float):
+        """Set the coordinate value of the last grid point."""
         """Set the coordinate value of the last grid point.
         Location/coordinate of the outlet/exit/gap.
 
@@ -138,6 +144,7 @@ class Grid:
             logger.error(this_msg)
 
     def set_reaction_zone_center(self, position: float):
+        """Set the coordinate value of the reaction/mixing zone center."""
         """Set the coordinate value of the reaction/mixing zone center.
 
         Parameters
@@ -158,6 +165,7 @@ class Grid:
             self.reaction_zone_center_x = position
 
     def set_reaction_zone_width(self, size: float):
+        """Set the width of the reaction/mixing."""
         """Set the width of the reaction/mixing.
 
         Parameters
@@ -174,7 +182,9 @@ class Grid:
             logger.error(this_msg)
 
     def set_max_adaptive_points(self, numb_points: int):
-        """Set the max number of adaptive grid points allowed per solution refinement.
+        """Set the max number of adaptive grid points allowed."""
+        """Set the max number of adaptive grid points
+        allowed per solution refinement.
 
         Parameters
         ----------
@@ -200,6 +210,7 @@ class Grid:
             logger.error(this_msg)
 
     def set_solution_quality(self, gradient: float = 0.1, curvature: float = 0.5):
+        """Set the maximum gradient and curvature ratios."""
         """Set the maximum gradient and curvature ratios in the final solution profile.
         The solver will attempt to add more grid points to improve the resolution
         of the solution profiles till both gradient and curvature ratios are below
@@ -238,6 +249,7 @@ class Grid:
             self.curvature = curvature
 
     def set_grid_profile(self, mesh: npt.NDArray[np.double]) -> int:
+        """Specify the grid point coordinates of the initial grid points."""
         """Specify the grid point coordinates of the initial grid points.
 
         Parameters

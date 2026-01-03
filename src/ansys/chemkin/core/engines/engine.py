@@ -43,6 +43,8 @@ class Engine(BatchReactors):
     def __init__(self, reactor_condition: Stream, label: str):
         """Initialize a generic Engine object."""
         """
+        Initialize a generic Engine object.
+
         Parameters
         ----------
             reactor_condition: Mixture object
@@ -129,6 +131,8 @@ class Engine(BatchReactors):
     def convert_ca_to_time(ca: float, start_ca: float, rpm: float) -> float:
         """Convert the current crank angle value to simulation time."""
         """
+        Convert the current crank angle value to simulation time.
+
         Parameters
         ----------
             ca: double
@@ -167,6 +171,8 @@ class Engine(BatchReactors):
     def convert_time_to_ca(time: float, start_ca: float, rpm: float) -> float:
         """Convert the current time to crank angle."""
         """
+        Convert the current time to crank angle.
+
         Parameters
         ----------
             time: double
@@ -194,6 +200,8 @@ class Engine(BatchReactors):
     def get_time(self, ca: float) -> float:
         """Convert the current crank angle value to simulation time."""
         """
+        Convert the current crank angle value to simulation time.
+
         Parameters
         ----------
             ca: double
@@ -210,6 +218,8 @@ class Engine(BatchReactors):
     def get_ca(self, time: float) -> float:
         """Convert the current time to crank angle."""
         """
+        Convert the current time to crank angle.
+
         Parameters
         ----------
             time: double
@@ -225,8 +235,9 @@ class Engine(BatchReactors):
 
     @property
     def starting_ca(self) -> float:
-        """Get the simulation starting crank angle [degree]."""
+        """Get the simulation starting crank angle."""
         """
+        Get the simulation starting crank angle [degree].
         Usually the starting CA ~ the intake valve close (IVC) timing.
 
         Returns
@@ -241,6 +252,7 @@ class Engine(BatchReactors):
     def starting_ca(self, start_ca: float):
         """Set the starting crank angle of engine simulation."""
         """
+        Set the starting crank angle of engine simulation.
         Usually this corresponds to the intake valve close (IVC) timing
         a positive starting CA implies the standard top dead center (TDC)
         is at 360 degrees CA
@@ -259,8 +271,9 @@ class Engine(BatchReactors):
 
     @property
     def ending_ca(self) -> float:
-        """Get the simulation ending crank angle [degree]."""
+        """Get the simulation ending crank angle."""
         """
+        Get the simulation ending crank angle [degree].
         Usually the ending CA ~ the exhaust valve open (EVO) timing
 
         Returns
@@ -275,6 +288,7 @@ class Engine(BatchReactors):
     def ending_ca(self, end_ca: float):
         """Set the ending crank angle of engine simulation."""
         """
+        Set the ending crank angle of engine simulation.
         Usually this corresponds to the exhaust valve open (EVO) timing
 
         Parameters
@@ -302,8 +316,10 @@ class Engine(BatchReactors):
 
     @property
     def duration_ca(self) -> float:
-        """Get the simulation duration in number of crank angles [degree]."""
+        """Get the simulation duration in number of crank angles."""
         """
+        Get the simulation duration in number of crank angles [degree].
+
         Returns
         -------
             CA: double
@@ -316,6 +332,8 @@ class Engine(BatchReactors):
     def duration_ca(self, ca: float):
         """Set the engine simulation duration in crank angle."""
         """
+        Set the engine simulation duration in crank angle.
+
         Parameters
         ----------
             ca: double
@@ -338,6 +356,8 @@ class Engine(BatchReactors):
     def bore(self) -> float:
         """Get the engine cylinder bore diameter."""
         """
+        Get the engine cylinder bore diameter.
+
         Returns
         -------
             diameter: double
@@ -350,6 +370,8 @@ class Engine(BatchReactors):
     def bore(self, diameter: float):
         """Set the engine cylinder bore diameter."""
         """
+        Set the engine cylinder bore diameter.
+
         Parameters
         ----------
             diameter: double
@@ -370,6 +392,8 @@ class Engine(BatchReactors):
     def stroke(self) -> float:
         """Get the engine stroke."""
         """
+        Get the engine stroke.
+
         Returns
         -------
             stroke: double
@@ -382,6 +406,8 @@ class Engine(BatchReactors):
     def stroke(self, s: float):
         """Set the engine stroke."""
         """
+        Set the engine stroke.
+
         Parameters
         ----------
             s: double
@@ -402,6 +428,8 @@ class Engine(BatchReactors):
     def connecting_rod_length(self) -> float:
         """Get the connecting rod length."""
         """
+        Get the connecting rod length.
+
         Returns
         -------
             length: double
@@ -414,6 +442,8 @@ class Engine(BatchReactors):
     def connecting_rod_length(self, s: float):
         """Set the engine connecting rod length."""
         """
+        Set the engine connecting rod length.
+
         Parameters
         ----------
             s: double
@@ -433,6 +463,8 @@ class Engine(BatchReactors):
     def compression_ratio(self) -> float:
         """Get the engine compression ratio."""
         """
+        Get the engine compression ratio.
+
         Returns
         -------
             cratio: double
@@ -445,6 +477,8 @@ class Engine(BatchReactors):
     def compression_ratio(self, cratio: float):
         """Set the engine compression ratio."""
         """
+        Set the engine compression ratio.
+
         Parameters
         ----------
             cratio: double
@@ -464,6 +498,8 @@ class Engine(BatchReactors):
     def rpm(self) -> float:
         """Get the engine speed in RPM."""
         """
+        Get the engine speed in RPM.
+
         Returns
         -------
             speed: double
@@ -476,6 +512,8 @@ class Engine(BatchReactors):
     def rpm(self, speed: float):
         """Set the engine speed in RPM."""
         """
+        Set the engine speed in RPM.
+
         Parameters
         ----------
             speed: double
@@ -496,6 +534,8 @@ class Engine(BatchReactors):
     def set_cylinder_head_area(self, area: float):
         """Set the cylinder head clearance surface area."""
         """
+        Set the cylinder head clearance surface area.
+
         Parameters
         ----------
             area: double
@@ -524,6 +564,8 @@ class Engine(BatchReactors):
     def set_piston_head_area(self, area: float):
         """Set the piston head top surface area."""
         """
+        Set the piston head top surface area.
+
         Parameters
         ----------
             area: double
@@ -552,6 +594,8 @@ class Engine(BatchReactors):
     def set_piston_pin_offset(self, offset: float):
         """Set the piston pin off-set distance."""
         """
+        Set the piston pin off-set distance.
+
         Parameters
         ----------
             offset: double
@@ -576,6 +620,8 @@ class Engine(BatchReactors):
     def get_clearance_volume(self) -> float:
         """Get the clearance volume."""
         """
+        Get the clearance volume.
+
         Returns
         -------
             cvolume: double
@@ -599,6 +645,8 @@ class Engine(BatchReactors):
     def get_displacement_volume(self) -> float:
         """Get the displacement volume."""
         """
+        Get the displacement volume.
+
         Returns
         -------
             dvolume: double
@@ -608,7 +656,7 @@ class Engine(BatchReactors):
         return self.enginestroke * self.borearea
 
     def list_engine_parameters(self):
-        """List engine parameters for verification"""
+        """List engine parameters for verification."""
         print("      === engine parameters ===")
         print(f"bore diameter         = {self.borediam} [cm]")
         print(f"stroke                = {self.enginestroke} [cm]")
@@ -625,6 +673,8 @@ class Engine(BatchReactors):
     def ca_step_for_saving_solution(self) -> float:
         """Get the number of crank angles between saving the solution data."""
         """
+        Get the number of crank angles between saving the solution data.
+
         Returns
         -------
             delta_ca: double
@@ -655,6 +705,8 @@ class Engine(BatchReactors):
     def ca_step_for_saving_solution(self, delta_ca: float):
         """Set the number of crank angles between saving the solution data."""
         """
+        Set the number of crank angles between saving the solution data.
+
         Parameters
         ----------
             delta_ca: double
@@ -670,10 +722,10 @@ class Engine(BatchReactors):
 
     @property
     def ca_step_for_printing_solution(self) -> float:
+        """Get the number of crank angles between printing."""
         """Get the number of crank angles between printing the solution data
         to the text output file.
-        """
-        """
+
         Returns
         -------
             delta_ca: double
@@ -702,10 +754,10 @@ class Engine(BatchReactors):
 
     @ca_step_for_printing_solution.setter
     def ca_step_for_printing_solution(self, delta_ca: float):
+        """Set the timestep size between printing."""
         """Set the timestep size between printing the solution data to
         the text output file.
-        """
-        """
+
         Parameters
         ----------
             delta_ca: double
@@ -722,6 +774,7 @@ class Engine(BatchReactors):
     def set_minimum_zone_mass(self, minmass: float):
         """Set the minimum mass in a zone."""
         """
+        Set the minimum mass in a zone.
         (for Spark Ignition and Direct Injection engine models)
 
         Parameters
@@ -744,6 +797,8 @@ class Engine(BatchReactors):
     ):
         """Set the value of the gas-phase reaction rate multiplier."""
         """
+        Set the value of the gas-phase reaction rate multiplier.
+
         Parameters
         ----------
             value: double, default = 1.0
@@ -778,6 +833,7 @@ class Engine(BatchReactors):
     ):
         """Set cylinder wall heat transfer model and parameters."""
         """
+        Set cylinder wall heat transfer model and parameters.
         engine wall heat transfer models
         ICHX: dimensionless correlation "ICHX <a> <b> <c> <Twall>"
         ICHW: dimensional correlation "ICHW <a> <b> <c> <Twall>"
@@ -854,6 +910,7 @@ class Engine(BatchReactors):
     ):
         """Set the cylinder gas velocity correlation parameters."""
         """
+        Set the cylinder gas velocity correlation parameters.
         Woschni: "GVEL <C11> <C12> <C2> <swirling ratio>"
         Huber: IMEP "HIMP <IMEP>"
 
@@ -947,6 +1004,7 @@ class Engine(BatchReactors):
         self.setkeyword(key="DEGE", value=self.evo_ca)
 
     def set_enginecondition_keywords(self):
+        """Set engine gas condition keywords."""
         self.setkeyword(key="PRES", value=self._pressure.value / P_ATM)
         self.setkeyword(key="TEMP", value=self._temperature.value)
         # initial mole fraction
@@ -959,6 +1017,8 @@ class Engine(BatchReactors):
     def get_engine_heat_release_cas(self) -> tuple[float, float, float]:
         """Get heat release crank angles from the engine solution."""
         """
+        Get heat release crank angles from the engine solution.
+
         Returns
         -------
             hr10: double
@@ -996,6 +1056,8 @@ class Engine(BatchReactors):
     def get_engine_solution_size(self, expected: int) -> tuple[int, int]:
         """Get the number of zones and the number of solution points."""
         """
+        Get the number of zones and the number of solution points.
+
         Parameters
         ----------
             expected: integer
@@ -1071,10 +1133,10 @@ class Engine(BatchReactors):
             exit()
 
     def process_engine_solution(self, zone_id: Union[int, None] = None):
+        """Post-process solution."""
         """Post-process solution to extract the raw solution variable data from
         engine simulation results.
-        """
-        """
+
         Parameters
         ----------
             zone_id: integer
@@ -1145,7 +1207,8 @@ class Engine(BatchReactors):
         pres = np.zeros_like(time, dtype=np.double)
         temp = np.zeros_like(time, dtype=np.double)
         vol = np.zeros_like(time, dtype=np.double)
-        # create a species mass fraction array to hold the solution species fraction profiles
+        # create a species mass fraction array to hold
+        # the solution species fraction profiles
         frac = np.zeros(
             (
                 self.numbspecies,
@@ -1200,6 +1263,7 @@ class Engine(BatchReactors):
         del time, pres, temp, vol, frac
 
     def process_average_engine_solution(self):
+        """Post-process the cylinder averaged solution."""
         """Post-process the cylinder averaged solution profiles from
         multi-zone engine models.
         """

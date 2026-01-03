@@ -644,7 +644,7 @@ class PerfectlyStirredReactor(OpenReactor):
         return ierr
 
     def run(self) -> int:
-        """Generic Chemkin run reactor model method."""
+        """Perform common steps to run a Chemkin reactor model."""
         """
         Returns
         -------
@@ -868,8 +868,12 @@ class PerfectlyStirredReactor(OpenReactor):
 
 
 class PSRSetResTimeEnergyConservation(PerfectlyStirredReactor):
-    """PSR model with given reactor reasidence time (CONP)
+    """PSR model with given reactor reasidence time and solve energy equation."""
+
+    """
+    PSR model with given reactor reasidence time (CONP)
     and solve energy equation (ENERGY).
+
     rho_PSR * Vol_PSR / residence_time = mass_flow_rate
     The reactor pressure and the inlet mass flow rate are always given (fixed)
     so the reactor volume and density are varying in this case.
@@ -1022,11 +1026,12 @@ class PSRSetResTimeEnergyConservation(PerfectlyStirredReactor):
 
 
 class PSRSetVolumeEnergyConservation(PerfectlyStirredReactor):
-    """PSR model with given reactor volume (CONV)
-    and solve energy equation (ENERGY).
-    """
+    """PSR model with given reactor volume and solve energy equation."""
 
     """
+    PSR model with given reactor volume (CONV)
+    and solve energy equation (ENERGY).
+
     rho_PSR * Vol_PSR / residence_time = mass_flow_rate
     The reactor pressure and the inlet mass flow rate are always given (fixed)
     so the reactor residence time and density are varying in this case.
@@ -1179,11 +1184,12 @@ class PSRSetVolumeEnergyConservation(PerfectlyStirredReactor):
 
 
 class PSRSetResTimeFixedTemperature(PerfectlyStirredReactor):
-    """PSR model with given reactor reasidence time (CONP)
-    and reactor temperature (GivenT).
-    """
+    """PSR model with given reactor reasidence time and reactor temperature."""
 
     """
+    PSR model with given reactor reasidence time (CONP)
+    and reactor temperature (GivenT).
+
     rho_PSR * Vol_PSR / residence_time = mass_flow_rate
     The reactor pressure and the inlet mass flow rate are always given (fixed)
     so the reactor volume and density are varying in this case.
@@ -1192,6 +1198,8 @@ class PSRSetResTimeFixedTemperature(PerfectlyStirredReactor):
     def __init__(self, guessedmixture: Stream, label: Union[str, None] = None):
         """Create a steady-state constant pressure perfectly-stirred reactor (PSR)."""
         """
+        Create a steady-state constant pressure perfectly-stirred reactor (PSR).
+
         Parameters
         ----------
             guessedmixture: Mixture object
@@ -1210,11 +1218,12 @@ class PSRSetResTimeFixedTemperature(PerfectlyStirredReactor):
 
 
 class PSRSetVolumeFixedTemperature(PerfectlyStirredReactor):
-    """PSR model with given reactor volume (CONV)
-    and reactor temperature (GivenT).
-    """
+    """PSR model with given reactor volume and reactor temperature."""
 
     """
+    PSR model with given reactor volume (CONV)
+    and reactor temperature (GivenT).
+
     rho_PSR * Vol_PSR / residence_time = mass_flow_rate
     The reactor pressure and the inlet mass flow rate are always given (fixed)
     so the reactor residence time and density are varying in this case.

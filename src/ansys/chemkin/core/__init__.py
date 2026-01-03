@@ -49,8 +49,8 @@ from ansys.chemkin.core.constants import (
     P_TORRS as P_TORRS,
     R_GAS as R_GAS,
     R_GAS_CAL as R_GAS_CAL,
-    Air as Air,
     air as air,
+    air_cap as air_cap,
     water_heat_vaporization as water_heat_vaporization,
 )
 from ansys.chemkin.core.info import (
@@ -67,8 +67,8 @@ from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.mixture import (
     Mixture as Mixture,
     adiabatic_mixing as adiabatic_mixing,
+    cal_mixture_temperature_from_enthalpy as cal_mixture_temperature_from_enthalpy,
     calculate_equilibrium as calculate_equilibrium,
-    calculate_mixture_temperature_from_enthalpy as calculate_mixture_temperature_from_enthalpy,
     detonation as detonation,
     equilibrium as equilibrium,
     interpolate_mixtures as interpolate_mixtures,

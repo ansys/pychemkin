@@ -33,23 +33,23 @@ from ansys.chemkin.core.constants import P_ATM
 from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.mixture import (
     Mixture,
-    calculate_mixture_temperature_from_enthalpy,
+    cal_mixture_temperature_from_enthalpy,
     compare_mixtures,
 )
 
 
 class Stream(Mixture):
-    """Generic inlet stream consists of the gas species defined in
-    the given chemistry set for Chemkin open reactor models.
-    """
+    """Generic inlet stream object for Chemkin open reactor models."""
 
     # The "Stream" class is an extension of the "Mixture" class
 
     def __init__(self, chem, label: Union[str, None] = None):
+        """Initialize an inlet object with a given chemistry set."""
         """Initialize an inlet object with a given chemistry set
-        for open reactor models.
-        """
-        """
+        for open reactor models. The Stream object contains
+        pressure, tempersture, flow rate, and gas composition
+        of the inlet gas mixture.
+
         Parameters
         ----------
             chem: Chemistry object
@@ -85,6 +85,8 @@ class Stream(Mixture):
     def convert_to_mass_flowrate(self) -> float:
         """Convert different types of flow rate value to mass flow rate."""
         """
+        Convert different types of flow rate value to mass flow rate.
+
         Returns
         -------
             mrate: double
@@ -671,7 +673,7 @@ def adiabatic_mixing_streams(stream_a: Stream, stream_b: Stream) -> Stream:
     # compute temperature of the final mixture from the mixture enthalpy
     # set the guessed temperature
     t_guessed = 0.0e0
-    ierror = calculate_mixture_temperature_from_enthalpy(
+    ierror = cal_mixture_temperature_from_enthalpy(
         mixture=final_stream, h_mixture=mix_h, guesstemperature=t_guessed
     )
     if ierror != 0:
@@ -694,6 +696,8 @@ def create_stream_from_mixture(
 ) -> Stream:
     """Create a new Stream object from the given Mixture object."""
     """
+    Create a new Stream object from the given Mixture object.
+
     Parameters
     ----------
         chem: Chemistry object
