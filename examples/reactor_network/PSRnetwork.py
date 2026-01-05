@@ -152,7 +152,7 @@ fuel.x = [("CH4", 1.0)]
 air = Mixture(MyGasMech)
 air.temperature = 650.0  # [K]
 air.pressure = 10.0 * ck.P_ATM
-air.x = ck.air_cap.x()  # mole fractions
+air.x = ck.Air.x()  # mole fractions
 
 #################################################
 # Create external inlet streams from the mixtures
@@ -167,10 +167,10 @@ air.x = ck.air_cap.x()  # mole fractions
 #
 # .. note::
 #   PyChemkin has *air* redefined as a convenient way to set up the air
-#   stream/mixture in the simulations. Use the ``ansys.chemkin.core.air_cap.x()`` or
-#   ``ansys.chemkin.core.air_cap.y()`` method when the mechanism uses ``O2`` and
-#   ``N2`` for oxygen and nitrogen. Use the ``ansys.chemkin.core.air.x()`` or
-#   ``ansys.chemkin.core.air.y()`` method when oxygen and nitrogen are represented
+#   stream/mixture in the simulations. Use the ``ansys.chemkin.core.Air.x()`` or
+#   ``ansys.chemkin.core.Air.y()`` method when the mechanism uses ``O2`` and
+#   ``N2`` for oxygen and nitrogen. Use the ``ansys.chemkin.core.Air.x('L')`` or
+#   ``ansys.chemkin.core.Air.y('L')`` method when oxygen and nitrogen are represented
 #   by ``o2`` and ``n2``.
 #
 

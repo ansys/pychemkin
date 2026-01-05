@@ -49,8 +49,7 @@ from ansys.chemkin.core.constants import (
     P_TORRS as P_TORRS,
     R_GAS as R_GAS,
     R_GAS_CAL as R_GAS_CAL,
-    air as air,
-    air_cap as air_cap,
+    Air as Air,
     water_heat_vaporization as water_heat_vaporization,
 )
 from ansys.chemkin.core.info import (

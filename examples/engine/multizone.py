@@ -352,8 +352,8 @@ MyMZEngine.set_ignition_delay(method="T_inflection")
 #####################
 # Set solver controls
 # ===================
-# You can overwrite the default solver controls by using solver-related methods, such as
-# those for tolerances.
+# You can overwrite the default solver controls by using solver-related methods,
+# such as those for tolerances.
 
 # set tolerances in tuple: (absolute tolerance, relative tolerance)
 MyMZEngine.tolerances = (1.0e-12, 1.0e-10)
@@ -366,7 +366,8 @@ MyMZEngine.force_nonnegative = True
 # show solver and output options
 # show the number of crank angles between printing solution
 print(
-    f"Crank angles between solution printing: {MyMZEngine.ca_step_for_printing_solution}"
+    f"Crank angles between solution printing: "
+    f"{MyMZEngine.ca_step_for_printing_solution}"
 )
 # show other transient solver setup
 print(f"Forced non-negative solution values: {MyMZEngine.force_nonnegative}")

@@ -42,7 +42,7 @@ R_GAS_CAL = (
 # == end of global constants
 
 
-class air_cap:
+class Air:
     """define the "air" composition in PyChemkin with a fixed mixture "recipe"."""
 
     """
@@ -52,34 +52,44 @@ class air_cap:
     """
 
     @staticmethod
-    def x() -> list[tuple[str, float]]:
-        """Returns the 'air' composition in mole fractions."""
-        return [("O2", 0.21), ("N2", 0.79)]
-
-    @staticmethod
-    def y() -> list[tuple[str, float]]:
-        """Returns the 'air' composition in mass fractions."""
-        return [("O2", 0.23), ("N2", 0.77)]
-
-
-class air:
-    """define the "air" composition in PyChemkin with a fixed mixture "recipe"."""
-
-    """
-    A "recipe" is a list of tuples of ("species symbol", fraction) to define a
-    gas mixture in PyChemkin.
-    This class uses the lower case symbols for oxygen and nitrogen.
-    """
-
-    @staticmethod
-    def x() -> list[tuple[str, float]]:
+    def x(cap: str = "U") -> list[tuple[str, float]]:
         """Return the 'air' composition in mole fractions."""
-        return [("o2", 0.21), ("n2", 0.79)]
+        """
+        Return the 'air' composition in mole fractions.
+
+        Parameters
+        ----------
+            cap: string, {"U", "L"}
+                indicating the upper or the lower case species symbols to be used
+        """
+        if cap.upper() == "L":
+            # Return the 'air' composition using
+            # the lower case symbols for oxygen and nitrogen
+            return [("o2", 0.21), ("n2", 0.79)]
+        else:
+            # Return the 'air' composition using
+            # the upper case symbols for oxygen and nitrogen
+            return [("O2", 0.21), ("N2", 0.79)]
 
     @staticmethod
-    def y() -> list[tuple[str, float]]:
+    def y(cap: str = "U") -> list[tuple[str, float]]:
         """Return the 'air' composition in mass fractions."""
-        return [("o2", 0.23), ("n2", 0.77)]
+        """
+        Return the 'air' composition in mass fractions.
+
+        Parameters
+        ----------
+            cap: string, {"U", "L"}
+                indicating the upper or the lower case species symbols to be used
+        """
+        if cap.upper() == "L":
+            # Return the 'air' composition using
+            # the lower case symbols for oxygen and nitrogen
+            return [("o2", 0.23), ("n2", 0.77)]
+        else:
+            # Return the 'air' composition using
+            # the upper case symbols for oxygen and nitrogen
+            return [("O2", 0.23), ("N2", 0.77)]
 
 
 def water_heat_vaporization(temperature: float) -> float:

@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+"""Color and print format utilities."""
+
 
 class Color:
     """Define colors used by PyChemkin for printing text messages."""
