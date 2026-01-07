@@ -107,7 +107,8 @@ def __setwindows() -> int:
         for _lib_path in _lib_paths:
             os.add_dll_directory(_lib_path)
         # set Chemkin-CFD-API shared object
-        _target_lib = str(ansyshome / "reaction" / _ckbin / "bin" / "KINeticsdll.dll")
+        my_target = ansyshome / "reaction" / _ckbin / "bin" / "KINeticsdll.dll"
+        _target_lib = str(my_target)
     return 0
 
 
@@ -242,7 +243,8 @@ def __setlinux() -> int:
     else:
         os.environ["PATH"] = os.environ["PATH"] + ":" + combined_path
     # set Chemkin-CFD-API shared object
-    _target_lib = str(ansyshome / "reaction" / _ckbin / "bin" / "libKINetics.so")
+    my_taget = ansyshome / "reaction" / _ckbin / "bin" / "libKINetics.so"
+    _target_lib = str(my_taget)
     return 0
 
 
