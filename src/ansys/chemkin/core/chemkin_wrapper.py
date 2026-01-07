@@ -45,7 +45,7 @@ def __setwindows() -> int:
     global _min_version
     global _target_lib
     global _valid_versions
-    ansyshome = Path(_ansys_dir)
+    ansyshome = Path(".")
     # set ansys installation directory (Windows)
     for v in _valid_versions:
         _ansys_ver = v
@@ -60,7 +60,7 @@ def __setwindows() -> int:
             break
 
     if _ansys_ver >= _min_version:
-        if not ansyshome.is_dir():
+        if str(ansyshome) == "." or not ansyshome.is_dir():
             # no local Ansys installation
             msg = [
                 Color.RED,
@@ -121,7 +121,7 @@ def __setlinux() -> int:
     global _target_lib
     global _valid_versions
     ierr = 0
-    ansyshome = Path(_ansys_dir)
+    ansyshome = Path(".")
     # set ansys installation directory (Linux)
     for v in _valid_versions:
         _ansys_ver = v
@@ -134,7 +134,7 @@ def __setlinux() -> int:
         else:
             break
     # try using a different method
-    if _ansys_home == "NA":
+    if _ansys_home == "NA" and _ansys_dir == "":
         # environment variable ANSYSxxx_DIR is NOT defined
         # check local Ansys installation
         _user_home = os.environ.get("HOME", "NA")
@@ -163,6 +163,9 @@ def __setlinux() -> int:
                 ierr = 1
         else:
             ierr = 1
+
+    if str(ansyshome) == ".":
+        ierr = 1
     # check Ansys version
     if _ansys_ver < _min_version:
         ierr = 2
