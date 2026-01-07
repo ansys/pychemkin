@@ -105,8 +105,8 @@ def __setwindows() -> int:
     if sys.platform == "win32":
         for _lib_path in _lib_paths:
             os.add_dll_directory(_lib_path)
-    # set Chemkin-CFD-API shared object
-    _target_lib = str(ansyshome / "reaction" / _ckbin / "bin" / "KINeticsdll.dll")
+        # set Chemkin-CFD-API shared object
+        _target_lib = str(ansyshome / "reaction" / _ckbin / "bin" / "KINeticsdll.dll")
     return 0
 
 
