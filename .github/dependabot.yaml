@@ -1,14 +1,20 @@
-
 version: 2
 updates:
-  - package-ecosystem: "pip" # See documentation for possible values
+
+  - package-ecosystem: "pip"
     directory: "/"
-    insecure-external-code-execution: allow
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 5 # Fallback cooldown if no specific rule applies
+      semver-major-days: 30 # Cooldown for major version updates
+      semver-minor-days: 7 # Cooldown for minor version updates
+      semver-patch-days: 3 # Cooldown for patch updates
+      exclude:
+        - "ansys-sphinx-theme"
+        - "ansys-tools-common"
     labels:
-      - "maintenance"
-      - "dependencies"
+      - "dependencies:pyproject"
     groups:
       general-dependencies:
         patterns:
@@ -28,7 +34,14 @@ updates:
       pyvista:
         patterns:
           - "pyvista*"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 7
+      exclude:
+        - "ansys/actions/*"
+    labels:
+      - "dependencies:ci"

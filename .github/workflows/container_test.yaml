@@ -2,40 +2,37 @@ name: Container Test
 
 on:
   workflow_dispatch:
-#  pull_request:
-#  push:
-#    tags:
-#      - "*"
-#    branches:
-#      - main
 
 env:
   DOCUMENTATION_CNAME: 'chemkin.docs.pyansys.com'
   MAIN_PYTHON_VERSION: '3.11'
-  PACKAGE_NAME: 'ansys-chemkin'
-  PACKAGE_NAMESPACE: 'ansys.chemkin'
-  CHEMKIN_IMAGE: 'ghcr.io/ansys/chemkin'
-  POETRY_VIRTUALENVS_CREATE: 'false'
+  PACKAGE_NAME: 'ansys-chemkin-core'
+  PACKAGE_NAMESPACE: 'ansys.chemkin.core'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Apply the principle of least privilege to state at job level the right
+# permissions. More information about workflow permissions in the page
+# https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#permissions
+permissions: {}
+
 jobs:
-  smoke-tests:
+
+  wheelhouse:
     name: "Wheelhouse for ${{ matrix.os }} and ${{ matrix.python-version }}"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [windows-latest]
-#        python-version: ['3.9', '3.10', '3.11', '3.12']
         python-version: ['3.11']
         should-release:
           - ${{ github.event_name == 'push' && contains(github.ref, 'refs/tags') }}
     steps:
       - name: Build wheelhouse and perform smoke test
-        uses: ansys/actions/build-wheelhouse@v10
+        uses: ansys/actions/build-wheelhouse@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           library-namespace: ${{ env.PACKAGE_NAMESPACE }}
@@ -50,14 +47,14 @@ jobs:
       matrix:
         python-version: ['3.9', '3.10', '3.11', '3.12']
     container:
-      image: ghcr.io/ansys/chemkin
+      image: 'ghcr.io/ansys/chemkin@sha256:c2d953423a76c438575064ac0a3e1897554aef68bf08b0abb34be21ed3c5b4d1'
       credentials:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
       options: --cpus 1 --user root
     steps:
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@v10
+        uses: ansys/actions/tests-pytest@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
         env:
           ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER) }}
           POETRY_VIRTUALENVS_CREATE: 'false'
@@ -66,18 +63,22 @@ jobs:
           requires-xvfb: false
           use-python-cache: false
 
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         name: 'Upload coverage to CodeCov'
 
   build-library:
     name: "Build library on ${{ matrix.os }}"
-    needs: [tests]
+    needs: tests
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [windows-latest,ubuntu-latest]
+    permissions:
+      attestations: write # Write attestations for the uploaded artifacts
+      contents: read # Read the source code of the project
+      id-token: write # Write access to a temporary token for signing attestations
     steps:
-      - uses: ansys/actions/build-library@v10
+      - uses: ansys/actions/build-library@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}

@@ -19,15 +19,19 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin.logger import logger
+"""Test for the equilibrium calculation."""
+
+from pathlib import Path
+
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core.logger import logger
+
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -38,17 +42,17 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on GRI 3.0
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
+MyGasMech.chemfile = str(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
 # transport data not needed
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 # create the fuel mixture
 fuel = ck.Mixture(MyGasMech)
 # set mole fraction
@@ -58,7 +62,7 @@ fuel.pressure = ck.P_ATM  # 1 atm
 # create the air mixture
 air = ck.Mixture(MyGasMech)
 # set mass fraction
-air.Y = [("O2", 0.23), ("N2", 0.77)]
+air.y = [("O2", 0.23), ("N2", 0.77)]
 air.temperature = 300.0
 air.pressure = ck.P_ATM  # 1 atm
 # mix the fuel and the air with an air-fuel ratio of 17.19 (almost stoichiometric?)
@@ -70,26 +74,26 @@ premixed = ck.isothermal_mixing(
 # find the equilibrium composition at different temperature
 # and create a NO mole fraction versus temperature plot
 # NO species index
-NO_index = MyGasMech.get_specindex("NO")
+no_index = MyGasMech.get_specindex("NO")
 # set up plotting temperatures
-Temp = 500.0
-dTemp = 20.0
+temp = 500.0
+dtemp = 20.0
 points = 100
 # curve
-T = np.zeros(points, dtype=np.double)
-NO = np.zeros_like(T, dtype=np.double)
+t = np.zeros(points, dtype=np.double)
+no = np.zeros_like(t, dtype=np.double)
 # start the temperature loop
 for k in range(points):
     # reset mixture temperature
-    premixed.temperature = Temp
+    premixed.temperature = temp
     # find the equilibrium state mixture at the given mixture temperature and pressure
     eqstate = ck.equilibrium(premixed, opt=1)
     #
-    NO[k] = eqstate.X[NO_index] * 1.0e6  # convert to ppm
-    T[k] = Temp
-    Temp += dTemp
+    no[k] = eqstate.X[no_index] * 1.0e6  # convert to ppm
+    t[k] = temp
+    temp += dtemp
 # create plot
-plt.plot(T, NO, "bs--", markersize=3, markevery=4)
+plt.plot(t, no, "bs--", markersize=3, markevery=4)
 plt.xlabel("Temperature [K]")
 plt.ylabel("NO [ppm]")
 # plot results
@@ -99,12 +103,12 @@ else:
     plt.savefig("equilibrium_composition.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "equilibriumcomposition.result")
+resultfile = Path(current_dir) / "equilibriumcomposition.result"
 results = {}
-results["state-temperature"] = T.tolist()
-results["species-NO_mole_fraction"] = NO.tolist()
+results["state-temperature"] = t.tolist()
+results["species-NO_mole_fraction"] = no.tolist()
 #
-r = open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

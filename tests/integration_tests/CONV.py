@@ -19,21 +19,25 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
+"""Test of the constrained volume option of the closed reactor."""
 
-# chemkin batch reactor models (transient)
-from ansys.chemkin.batchreactors.batchreactor import (
-    GivenVolumeBatchReactor_EnergyConservation,
-)
-from ansys.chemkin.logger import logger
+from pathlib import Path
+
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
+
+# chemkin batch reactor models (transient)
+from ansys.chemkin.core.batchreactors.batchreactor import (
+    GivenVolumeBatchReactorEnergyConservation,
+)
+from ansys.chemkin.core.logger import logger
+
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -44,28 +48,28 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on the diesel 14 components mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-MyGasMech.tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+MyGasMech.chemfile = str(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
+MyGasMech.tranfile = str(mechanism_dir / "grimech30_transport.dat")
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 # create a premixed fuel-oxidizer mixture by assigning the equivalence ratio
 # create the fuel mixture
 fuelmixture = ck.Mixture(MyGasMech)
 # set fuel composition
-fuelmixture.X = [("CH4", 1.0)]
+fuelmixture.x = [("CH4", 1.0)]
 # setting pressure and temperature is not required in this case
 fuelmixture.pressure = 5.0 * ck.P_ATM
 fuelmixture.temperature = 1500.0
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
-air.X = [("O2", 0.21), ("N2", 0.79)]
+air.x = [("O2", 0.21), ("N2", 0.79)]
 # setting pressure and temperature is not required in this case
 air.pressure = 5.0 * ck.P_ATM
 air.temperature = 1500.0
@@ -73,22 +77,24 @@ air.temperature = 1500.0
 premixed = ck.Mixture(MyGasMech)
 # products from the complete combustion of the fuel mixture and air
 products = ["CO2", "H2O", "N2"]
-# species mole fractions of added/inert mixture. can also create an additives mixture here
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
-iError = premixed.X_by_Equivalence_Ratio(
-    MyGasMech, fuelmixture.X, air.X, add_frac, products, equivalenceratio=0.7
+# species mole fractions of added/inert mixture.
+# can also create an additives mixture here
+add_frac = np.zeros(MyGasMech.kk, dtype=np.double)  # no additives: all zeros
+ierror = premixed.x_by_equivalence_ratio(
+    MyGasMech, fuelmixture.x, air.x, add_frac, products, equivalenceratio=0.7
 )
-if iError != 0:
+if ierror != 0:
     raise RuntimeError
 # list the composition of the premixed mixture
 premixed.list_composition(mode="mole")
-# set mixture temperature and pressure (equivalent to setting the initial temperature and pressure of the reactor)
+# set mixture temperature and pressure
+# (equivalent to setting the initial temperature and pressure of the reactor)
 premixed.temperature = 800.0
 premixed.pressure = 3.0 * ck.P_ATM
 # Rapid Compression Machine
 # create a constant volume batch reactor (with energy equation)
 #
-MyCONV = GivenVolumeBatchReactor_EnergyConservation(premixed, label="RCM")
+MyCONV = GivenVolumeBatchReactorEnergyConservation(premixed, label="RCM")
 # set the initial reactor temperature (see the warning message in the run output)
 # MyCONV.temperature = 800.0  # K
 # show initial gas composition inside the reactor
@@ -120,9 +126,9 @@ MyCONV.adaptive_solution_saving(mode=False, value_change=100, target="TEMPERATUR
 # set tolerances in tuple: (absolute tolerance, relative tolerance)
 MyCONV.tolerances = (1.0e-10, 1.0e-8)
 # get solver parameters
-ATOL, RTOL = MyCONV.tolerances
-print(f"default absolute tolerance = {ATOL}")
-print(f"default relative tolerance = {RTOL}")
+atol, rtol = MyCONV.tolerances
+print(f"default absolute tolerance = {atol}")
+print(f"default relative tolerance = {rtol}")
 # turn on the force non-negative solutions option in the solver
 MyCONV.force_nonnegative = True
 # specify the ignition definitions
@@ -167,25 +173,25 @@ volprofile = MyCONV.get_solution_variable_profile("volume")
 # mass
 massprofile = np.zeros_like(timeprofile, dtype=np.double)
 # create arrays for CH4 mole fraction, CH4 ROP, and mixture viscosity
-CH4profile = np.zeros_like(timeprofile, dtype=np.double)
-CH4ROPprofile = np.zeros_like(timeprofile, dtype=np.double)
+ch4_profile = np.zeros_like(timeprofile, dtype=np.double)
+ch4_rop_profile = np.zeros_like(timeprofile, dtype=np.double)
 viscprofile = np.zeros_like(timeprofile, dtype=np.double)
-CurrentROP = np.zeros(MyGasMech.KK, dtype=np.double)
+current_rop = np.zeros(MyGasMech.kk, dtype=np.double)
 # find CH4 species index
-CH4_index = MyGasMech.get_specindex("CH4")
+ch4_index = MyGasMech.get_specindex("CH4")
 # loop over all solution time points
 for i in range(solutionpoints):
     # get the mixture at the time point
     solutionmixture = MyCONV.get_solution_mixture_at_index(solution_index=i)
     # get gas density [g/cm3]
-    den = solutionmixture.RHO
+    den = solutionmixture.rho
     # reactor mass [g]
     massprofile[i] = den * volprofile[i]
     # get CH4 mole fraction profile
-    CH4profile[i] = solutionmixture.X[CH4_index]
+    ch4_profile[i] = solutionmixture.x[ch4_index]
     # get CH4 ROP profile
-    currentROP = solutionmixture.ROP()
-    CH4ROPprofile[i] = currentROP[CH4_index]
+    current_rop = solutionmixture.rop()
+    ch4_rop_profile[i] = current_rop[ch4_index]
     # get mixture vicosity profile
     viscprofile[i] = solutionmixture.mixture_viscosity()
 # validation
@@ -201,10 +207,10 @@ plt.subplot(221)
 plt.plot(timeprofile, tempprofile, "r-")
 plt.ylabel("Temperature [K]")
 plt.subplot(222)
-plt.plot(timeprofile, CH4profile, "b-")
+plt.plot(timeprofile, ch4_profile, "b-")
 plt.ylabel("CH4 Mole Fraction")
 plt.subplot(223)
-plt.plot(timeprofile, CH4ROPprofile, "g-")
+plt.plot(timeprofile, ch4_rop_profile, "g-")
 plt.xlabel("time [sec]")
 plt.ylabel("CH4 Production Rate [mol/cm3-sec]")
 plt.subplot(224)
@@ -218,15 +224,15 @@ else:
     plt.savefig("CONV_solution.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "CONV.result")
+resultfile = Path(current_dir) / "CONV.result"
 results = {}
 results["state-time"] = timeprofile.tolist()
 results["state-temperature"] = tempprofile.tolist()
-results["species-CH4_mole_fraction"] = CH4profile.tolist()
-results["rate-CH4_production_rate"] = CH4ROPprofile.tolist()
+results["species-CH4_mole_fraction"] = ch4_profile.tolist()
+results["rate-CH4_production_rate"] = ch4_rop_profile.tolist()
 results["state-viscocity"] = viscprofile.tolist()
 #
-r = open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

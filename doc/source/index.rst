@@ -1,66 +1,71 @@
 .. title:: PyChemkin
 
-.. figure:: _static/logo/PyChemkin.png
+.. meta::
+    :description: PyChemkin provides Pythonic access to the Ansys Chemkin for computational fluid dynamics (CFD) models.
+    :keywords: PyChemkin, CDF, Ansys, Chemkin, Python, API, CFD, Combustion, Simulation, Reactor, Thermodynamics, Kinetics, Flame Speed, Equilibrium
+
+.. figure:: _static/logo.png
+    :align: center
     :width: 640px
 
-PyChemkin provides Pythonic access to the Ansys Chemkin API for CFD (computational fluid dynamics)models. It facilitates programmatic customization of Chemkin simulation workflows within the Python ecosystem and permits access to Chemkin property and rate utilities as well as selected reactor models. With PyChemkin, you can perform these tasks:
+PyChemkin provides Pythonic access to the `Ansys Chemkin`_ for computational
+fluid dynamics (CFD) models. It facilitates programmatic customization of
+Chemkin simulation workflows within the Python ecosystem and permits access to
+Chemkin property and rate utilities as well as selected reactor. You are viewing
+version |version|.
 
-* Process Chemkin-compatible gas-phase mechanisms.
-* Evaluate species and mixture thermodynamic and transport properties.
-* Compute reaction rate of progress and species rate of production.
-* Combine gas mixtures isothermally or adiabatically.
-* Find the equilibrium state of a gas mixture.
-* Run gas-phase batch, plug-flow, and PSR (perfectly-stirred reactor) models.
-* Calculate the laminar flame speed of a combustible mixture.
-* Create and solve steady-state reactor networks.
+.. grid:: 1 1 3 3
 
-
-.. grid::   1 2 3 3
-    :gutter: 1 2 3 3
-    :padding: 1 2 3 3
-
-    .. grid-item-card:: Getting started :fa:`person-running`
-        :link: getting_started
+    .. grid-item-card:: :fa:`power-off` Getting started
+        :link: getting-started
         :link-type: doc
+        :padding: 2 2 2 2
 
-        Learn how to install PyChemkin.
+        Learn about PyChemkin, its prerequisites, and how to install it.
 
-    .. grid-item-card:: User guide :fa:`book-open-reader`
-        :link: user_guide
+    .. grid-item-card:: :fa:`list-alt` User guide
+        :link: user-guide
         :link-type: doc
+        :padding: 2 2 2 2
 
-        Understand key concepts for using PyChemkin. Also learn how to set up and run a basic
-        reactor model and where you can find supporting information.
+        Understand key concepts and the main objects of PyChemkin.
 
-    .. grid-item-card:: API reference :fa:`book-bookmark`
+    .. grid-item-card:: :fa:`wrench` API reference
         :link: api/index
         :link-type: doc
+        :padding: 2 2 2 2
 
-        Understand how to use Python to interact programmatically with PyChemkin.
+        A detailed guide describing the PyChemkin modules, classes, and enums.
 
-    .. grid-item-card:: Examples :fa:`scroll`
-        :link: auto_examples/index
+    .. grid-item-card:: :fa:`clone` Examples
+        :link: examples
         :link-type: doc
+        :padding: 2 2 2 2
 
-        Explore examples that show how to use PyChemkin utilities and
-        reactor models to perform different types of simulations.
+        Learn how to use PyChemkin with examples that demonstrate its capabilities.
 
-    .. grid-item-card:: Contribute :fa:`people-group`
-        :link: contributing
+    .. grid-item-card:: :fa:`user-group` Contribute
+        :link: contribute
         :link-type: doc
+        :padding: 2 2 2 2
 
-        Learn how to contribute to the PyChemkin codebase
-        or documentation.
+        Learn how to contribute to the project and become a part of the PyChemkin community.
 
-.. jinja:: main_toctree
+    .. grid-item-card:: :fa:`download` Artifacts
+        :link: artifacts
+        :link-type: doc
+        :padding: 2 2 2 2
 
-    .. toctree::
-       :hidden:
-       :maxdepth: 3
+        Download PyChemkin artifacts such as wheels and source distributions.
 
-       getting_started
-       user_guide
-       API reference <autoapi/index.rst>
-       Examples <auto_examples/index.rst>
-       contributing
+.. toctree::
+   :hidden:
+   :maxdepth: 3
 
+   getting-started
+   user-guide
+   api/index
+   examples
+   contribute
+   artifacts
+   changelog

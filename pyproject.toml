@@ -3,10 +3,10 @@ requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name = "ansys-chemkin"
-version = "2025.2.dev0"
-description = "PyChemkin provides Pythonic interface to Ansys chemkin utilities and reactor models"
-requires-python = ">=3.9,<4"
+name = "ansys-chemkin-core"
+version = "0.1.dev0"
+description = "PyChemkin provides Pythonic interface to Ansys Chemkin utilities and reactor models"
+requires-python = ">=3.10,<4"
 license = { file = "LICENSE" }
 authors = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
 maintainers = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
@@ -21,67 +21,79 @@ classifiers = [
     "Natural Language :: English",
 ]
 dependencies = [
-    "numpy>=1.14.0,<3.0.0",
-    "pyyaml>=6.0",
-    "matplotlib==3.9.4",
-]
-
-
-[project.optional-dependencies]
-tests = [
-    "pytest==8.4.2",
-    "pytest-cov==7.0.0",
-    "dill==0.4.0",
-    "pytest-mock==3.15.1",
-    "urllib3==2.6.2",
-    "requests==2.32.5",
-    "docker==7.1.0",
-    "usd-core>=24.11",
-    "pygltflib==1.16.5",
-    "matplotlib==3.9.4",
+    "matplotlib>=3.10.8",
     "numpy>=1.14.0,<3.0.0",
     "pyyaml>=6.0",
 ]
 
+
+[dependency-groups]
 doc = [
+    "Pillow==11.3.0",
+    "PyGitHub==2.8.1",
     "ansys-sphinx-theme==1.0.11",
-    "sphinx-autoapi==3.6.1",
-    "matplotlib==3.9.4",
     "jupytext==1.18.1",
-    "notebook==7.5.0",
     "nbsphinx==0.9.8",
+    "notebook==7.5.0",
     "numpydoc==1.9.0",
     "pandas==2.3.3",
     "pandoc==2.4.0",
-    "Pillow==11.3.0",
-    "PyGitHub==2.8.1",
     "pyvista==0.46.4",
     "requests==2.32.5",
+    "sphinx-autoapi==3.6.1",
     "sphinx-copybutton==0.5.2",
     "sphinx-design==0.6.1",
     "sphinx-gallery==0.19.0",
     "sphinx-jinja==2.0.2",
     "sphinx-notfound-page==1.1.0",
 ]
+tests = [
+    "dill==0.4.0",
+    "docker==7.1.0",
+    "pygltflib==1.16.5",
+    "pytest-cov==7.0.0",
+    "pytest-mock==3.15.1",
+    "pytest==8.4.2",
+    "requests==2.32.5",
+    "urllib3==2.6.0",
+    "usd-core==25.11",
+]
+vulnerabilities = [
+  "bandit[toml]==1.9.2",
+  "safety==3.7.0",
+  "typer==0.20.0",
+]
 
 [project.urls]
-Source = "https://github.com/ansys/pychemkin"
-Issues = "https://github.com/ansys/pychemkin/issues"
 Discussions = "https://github.com/ansys/pychemkin/discussions"
 Documentation = "https://chemkin.docs.pyansys.com/"
+Issues = "https://github.com/ansys/pychemkin/issues"
 Releases = "https://github.com/ansys/pychemkin/releases/"
+Source = "https://github.com/ansys/pychemkin"
 
 [tool.flit.module]
-name = "ansys.chemkin"
+name = "ansys.chemkin.core"
 
-[tool.black]
+[tool.ruff]
 line-length = 88
+lint.select = [
+  "D",   # pydocstyle, see https://beta.ruff.rs/docs/rules/#pydocstyle-d
+  "E",   # pycodestyle, see https://beta.ruff.rs/docs/rules/#pycodestyle-e-w
+  "F",   # pyflakes, see https://beta.ruff.rs/docs/rules/#pyflakes-f
+  "I",   # isort, see https://beta.ruff.rs/docs/rules/#isort-i
+  "N",   # pep8-naming, see https://beta.ruff.rs/docs/rules/#pep8-naming-n
+  "PTH", # flake8-use-pathlib, https://beta.ruff.rs/docs/rules/#flake8-use-pathlib-pth
+  "PYI", # flake8-pyi, see https://docs.astral.sh/ruff/rules/#flake8-pyi-pyi
+  "TD",  # flake8-todos, https://docs.astral.sh/ruff/rules/#flake8-todos-td
+]
 
-[tool.isort]
-profile = "black"
-force_sort_within_sections = true
-line_length = "88"
-src_paths = ["ansys", "tests"]
+lint.isort.combine-as-imports = true
+lint.isort.force-sort-within-sections = true
+lint.isort.known-first-party = [ "ansys" ]
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore pydocstyle rule in examples due to conflicts with sphinx-gallery syntax
+"examples/**/*.py" = ["D"]
 
 [tool.codespell]
 ignore-words-list = "delt, pres, te"
@@ -92,14 +104,13 @@ skip = "*.toml,*.pyc,*.xml,*.gif,*.png,*.jpg,*.js,*.html,*.svg,*.asc,*.out"
 addopts = "-ra --maxfail=3"
 
 [tool.towncrier]
-package = "ansys.tools.visualization_interface"
-directory = "doc/changelog.d"
-filename = "CHANGELOG.md"
-start_string = "<!-- towncrier release notes start -->\n"
-underlines = ["", "", ""]
-template = "doc/changelog.d/changelog_template.jinja"
-title_format = "## [{version}](https://github.com/ansys/pychemkin/releases/tag/v{version}) - {project_date}"
-issue_format = "[#{issue}](https://github.com/ansys/pychemkin/pull/{issue})"
+package = "ansys.chemkin.core"
+directory = "doc/source/changelog"
+filename = "doc/source/changelog.rst"
+start_string = ".. towncrier release notes start\n"
+template = "doc/source/changelog/template"
+title_format = "`{version} <https://github.com/ansys/pychemkin/releases/tag/v{version}>`_ - {project_date}"
+issue_format = "`#{issue} <https://github.com/ansys/pychemkin/pull/{issue}>`_"
 
 [[tool.towncrier.type]]
 directory = "added"

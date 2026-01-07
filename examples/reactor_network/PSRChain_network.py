@@ -20,16 +20,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_chain_reactor_network:
+r""".. _ref_chain_reactor_network:
 
 ====================================================
 Use a chain reactor network to model a gas combustor
 ====================================================
 
-This example shows how to set up and solve a series of linked PSRs (perfectly-stirred reactors).
-This is the simplest reactor network as it does not contain any recycling streams or
-outflow splittings.
+This example shows how to set up and solve a series of linked PSRs
+(perfectly-stirred reactors). This is the simplest reactor network as
+it does not contain any recycling streams or outflow splittings.
 
 Here is a PSR chain model of a fictional gas combustor:
 
@@ -37,17 +36,19 @@ Here is a PSR chain model of a fictional gas combustor:
    :scale: 80 %
    :alt: Chain reactor network
 
-The primary inlet stream to the first reactor, the *combustor*, is the fuel-lean methane-air mixture
-that is formed by mixing the fuel (methane) and the heated air. The exhaust from the combustor
-enters the second reactor, the *dilution zone*, where the hot combustion products are cooled by
-the introduction of additional cool air. The cooled and diluted gas mixture in the dilution zone then
-travel to the third reactor, the *reburning zone*. A mixture of fuel (methane) and carbon dioxide is injected
-to the gas in the reburning zone, attempting to convert any remaining carbon monoxide or nitric oxide
+The primary inlet stream to the first reactor, the *combustor*, is the fuel-lean
+methane-air mixture that is formed by mixing the fuel (methane) and the heated air.
+The exhaust from the combustor enters the second reactor, the *dilution zone*,
+where the hot combustion products are cooled by the introduction of
+additional cool air. The cooled and diluted gas mixture in the dilution zone
+then travel to the third reactor, the *reburning zone*. A mixture of fuel (methane)
+and carbon dioxide is injected to the gas in the reburning zone, attempting to
+convert any remaining carbon monoxide or nitric oxide
 in the exhaust gas to carbon dioxide or nitrogen, respectively.
 
-This example uses the ``ReactorNetwork`` module to configure and solve this chain reactor network.
-This module automatically handles the tasks of running the individual reactors and setting up
-the inlet to the downstream reactor.
+This example uses the ``ReactorNetwork`` module to configure and solve
+this chain reactor network. This module automatically handles the tasks of
+running the individual reactors and setting up the inlet to the downstream reactor.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/chain_reactor_network.png'
@@ -56,21 +57,21 @@ the inlet to the downstream reactor.
 # Import PyChemkin packages and start the logger
 # ==============================================
 
-import os
+from pathlib import Path
 import time
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
-from ansys.chemkin.hybridreactornetwork import ReactorNetwork as ERN
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.inlet import adiabatic_mixing_streams
-from ansys.chemkin.logger import logger
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
+from ansys.chemkin.core.hybridreactornetwork import ReactorNetwork as ERN
+from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.core.inlet import adiabatic_mixing_streams
+from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
+from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeEnergyConservation as Psr
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -83,21 +84,21 @@ ck.set_verbose(True)
 # installation in the ``/reaction/data`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on the GRI mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
+MyGasMech.chemfile = str(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
 
 #######################################
 # Preprocess the gasoline chemistry set
 # =====================================
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 
 ################################################################
 # Set up gas mixtures based on the species in this chemistry set
@@ -114,17 +115,18 @@ iError = MyGasMech.preprocess()
 #
 # .. note::
 #   PyChemkin has ``air`` predefined as a convenient way to set up the air
-#   stream/mixture in simulations. Use the ``ansys.chemkin.Air.X()`` or
-#   ``ansys.chemkin.Air.Y()`` method when the mechanism uses "O2" and "N2" for
-#   oxygen and nitrogen. Use the ``ansys.chemkin.air.X()`` or ``ansys.chemkin.air.Y()``
-#   method when the mechanism uses "o2" and "n2" for oxygen and nitrogen.
+#   stream/mixture in simulations. Use the ``ansys.chemkin.core.Air.x()`` or
+#   ``ansys.chemkin.core.Air.y()`` method when the mechanism uses "O2" and "N2" for
+#   oxygen and nitrogen. Use the ``ansys.chemkin.core.Air.x('L')`` or
+#   ``ansys.chemkin.core.Air.y('L')`` method when the mechanism uses "o2" and "n2"
+#   for oxygen and nitrogen.
 #
 
 # fuel is pure methane
 fuel = Stream(MyGasMech)
 fuel.temperature = 300.0  # [K]
 fuel.pressure = 2.1 * ck.P_ATM  # [atm] => [dyne/cm2]
-fuel.X = [("CH4", 1.0)]
+fuel.x = [("CH4", 1.0)]
 fuel.mass_flowrate = 3.275  # [g/sec]
 
 # air is modeled as a mixture of oxygen and nitrogen
@@ -132,7 +134,7 @@ air = Stream(MyGasMech)
 air.temperature = 550.0  # [K]
 air.pressure = 2.1 * ck.P_ATM
 # use predefined "air" recipe in mole fractions (with upper cased symbols)
-air.X = ck.Air.X()
+air.x = ck.Air.x()
 air.mass_flowrate = 45.0  # [g/sec]
 
 #################################################
@@ -141,8 +143,9 @@ air.mass_flowrate = 45.0  # [g/sec]
 # Use the ``adiabatic_mixing_streams()`` method to combine
 # the ``fuel`` and the ``air`` streams. The final gas temperature should
 # land between the temperatures of the two source streams. The mass flow
-# rate of the ``premixed`` stream should be the sum of the sources. Use a simple
-# PyChemkin composition recipe to create the ``reburn_fuel`` stream.
+# rate of the ``premixed`` stream should be the sum of the sources.
+# Use a simple PyChemkin composition recipe to create
+# the ``reburn_fuel`` stream.
 
 # premixed stream for the combustor
 premixed = adiabatic_mixing_streams(fuel, air)
@@ -155,14 +158,14 @@ print(f"Premixed stream mass flow rate = {premixed.mass_flowrate} [g/sec].")
 reburn_fuel = Stream(MyGasMech)
 reburn_fuel.temperature = 300.0  # [K]
 reburn_fuel.pressure = 2.1 * ck.P_ATM  # [atm] => [dyne/cm2]
-reburn_fuel.X = [("CH4", 0.6), ("CO2", 0.4)]
+reburn_fuel.x = [("CH4", 0.6), ("CO2", 0.4)]
 reburn_fuel.mass_flowrate = 0.12  # [g/sec]
 
 # find the species index
-CH4_index = MyGasMech.get_specindex("CH4")
-O2_index = MyGasMech.get_specindex("O2")
-NO_index = MyGasMech.get_specindex("NO")
-CO_index = MyGasMech.get_specindex("CO")
+ch4_index = MyGasMech.get_specindex("CH4")
+o2_index = MyGasMech.get_specindex("O2")
+no_index = MyGasMech.get_specindex("NO")
+co_index = MyGasMech.get_specindex("CO")
 
 ###########################
 # Create PSRs for each zone
@@ -188,17 +191,17 @@ CO_index = MyGasMech.get_specindex("CO")
 #
 
 # PSR #1: combustor
-combustor = PSR(premixed, label="combustor")
+combustor = Psr(premixed, label="combustor")
 # use the equilibrium state of the inlet gas mixture as the guessed solution
 combustor.set_estimate_conditions(option="HP")
-# set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
+# set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
 combustor.residence_time = 2.0 * 1.0e-3
 # add external inlet
 combustor.set_inlet(premixed)
 
 # PSR #2: dilution zone
-dilution = PSR(premixed, label="dilution zone")
-# set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
+dilution = Psr(premixed, label="dilution zone")
+# set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
 dilution.residence_time = 1.5 * 1.0e-3
 # add external inlet
 # assign the correct mass flow rate to the "air" stream
@@ -206,8 +209,8 @@ air.mass_flowrate = 62.0  # [g/sec]
 dilution.set_inlet(air)
 
 # PSR #3: reburning zone
-reburn = PSR(premixed, label="reburning zone")
-# set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
+reburn = Psr(premixed, label="reburning zone")
+# set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model
 reburn.residence_time = 3.5 * 1.0e-3
 # add external inlet
 reburn.set_inlet(reburn_fuel)
@@ -223,8 +226,8 @@ reburn.set_inlet(reburn_fuel)
 #
 # .. note::
 #
-#   - Use the ``show_reactors()`` method to get the list of reactors in the network in
-#     the order they are added.
+#   - Use the ``show_reactors()`` method to get the list of reactors in
+#     the network in the order they are added.
 #
 #   - Use the ``remove_reactor()`` method to remove an existing reactor from the
 #     network by the reactor ``name/label``. Similarly, use the ``clear_connections()``
@@ -248,8 +251,9 @@ PSRChain.show_reactors()
 ###########################
 # Solve the reactor network
 # =========================
-# Use the ``run()`` method to solve the entire reactor network. The hybrid reactor network
-# solves the reactors one by one in the order that they are added to the network.
+# Use the ``run()`` method to solve the entire reactor network.
+# The hybrid reactor network solves the reactors one by one in the order
+# that they are added to the network.
 #
 
 # set the start wall time
@@ -298,7 +302,7 @@ print("outflow")
 print("=" * 10)
 print(f"temperature = {network_outflow.temperature} [K]")
 print(f"mass flow rate = {network_outflow.mass_flowrate} [g/sec]")
-print(f"CH4 = {network_outflow.X[CH4_index]}")
-print(f"O2 = {network_outflow.X[O2_index]}")
-print(f"CO = {network_outflow.X[CO_index]}")
-print(f"NO = {network_outflow.X[NO_index]}")
+print(f"CH4 = {network_outflow.x[ch4_index]}")
+print(f"O2 = {network_outflow.x[o2_index]}")
+print(f"CO = {network_outflow.x[co_index]}")
+print(f"NO = {network_outflow.x[no_index]}")

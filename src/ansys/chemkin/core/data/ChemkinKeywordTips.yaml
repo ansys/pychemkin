@@ -1,0 +1,586 @@
+---
+# Solver:
+ATOL:
+    Description: 'absolute tolerance'
+    DefaultValue: '1.0E-12'
+    Units: 'none'
+RTOL:
+    Description: 'relative tolerance'
+    DefaultValue: '1.0E-6'
+    Units: 'none'
+NNEG:
+    Description: 'enforce non-negative solution values (transient solver)'
+    DefaultValue: 'no parameter'
+    Units: 'none'
+STPT:
+    Description: 'maximum solver time step size (transient solver)'
+    DefaultValue: '100th of the simulation time'
+    Units: 'sec'
+DTDEG:
+    Description: 'maximum solver time step size (engine simulation)'
+    DefaultValue: '100th of the total simulation crank angles'
+    Units: 'degree'
+HO:
+    Description: 'starting time step size used by the solver (transient solver)'
+    DefaultValue: 'determined by the solver'
+    Units: 'sec'
+USE_LEGACY_TECHNIQUE:
+    Description: 'switch to chemkin 4.x solution technique when facing converge issues'
+    DefaultValue: '4.x'
+    Units: 'none'
+ATLS:
+    Description: 'absolute tolerance for the sensitivity coefficients'
+    DefaultValue: '1.0E-6'
+    Units: 'none'
+RTLS:
+    Description: 'relative tolerance for the sensitivity coefficients'
+    DefaultValue: '1.0E-4'
+    Units: 'none'
+ISTP:
+    Description: 'specify the number of initial pseudo time steps taken by the steady-state solver before attempting a Newton iteration'
+    DefaultValue: '0'
+    Units: 'none'
+MAXIT:
+    Description: 'maximum number of iterations per step (1-4) (transient solver)'
+    DefaultValue: '4'
+    Units: 'none'
+MAXTIME:
+    Description: 'maximum number of pseudo time stepping tries'
+    DefaultValue: '100'
+    Units: 'none'
+MORD:
+    Description: 'miximum order of integration (1-5) (transient solver)'
+    DefaultValue: '5'
+    Units: 'none'
+RELAXC:
+    Description: 'controls the convergence method used for transient simulation'
+    DefaultValue: 'none'
+    Units: 'none'
+PRNT:
+    Description: 'print level (0-2) for the steady-state solver text outputs'
+    DefaultValue: '0 to print solution only'
+    Units: 'none'
+TIM1:
+    Description: 'number of steps and the initial time step size for the fixed-temperature calculation'
+    DefaultValue: '100 1.0E-6'
+    Units: 'none sec'
+TIM2:
+    Description: 'number of steps and the initial time step size for the energy balance calculation'
+    DefaultValue: '100 1.0E-6'
+    Units: 'none sec'
+ATIM:
+    Description: 'absolute tolerance for Newton iteration used in the pseudo time stepping procedure'
+    DefaultValue: '1.0E-6'
+    Units: 'none'
+RTIM:
+    Description: 'relative tolerance for Newton iteration used in the pseudo time stepping procedure'
+    DefaultValue: '1.0E-4'
+    Units: 'none'
+DTMN:
+    Description: 'minimum time step allowed in the steady-state solver'
+    DefaultValue: '1.0E-9'
+    Units: 'sec'
+DTMX:
+    Description: 'maximum time step allowed in the steady-state solver'
+    DefaultValue: '1.0E-3'
+    Units: 'sec'
+TRMAXITER:
+    Description: 'max number of iterations before reducing the time step size'
+    DefaultValue: '25'
+    Units: 'none'
+IRET:
+    Description: 'number time steps taken before increasing the step size during pseudo time stepping'
+    DefaultValue: '25'
+    Units: 'none'
+NJAC:
+    Description: 'max Newton steps taken before getting a new Jacobian during solving steady state problem'
+    DefaultValue: '20'
+    Units: 'none'
+TJAC:
+    Description: 'max Newton steps taken before getting a new Jacobian during pseudo time-stepping'
+    DefaultValue: '20'
+    Units: 'none'
+# Grid
+NPTS:
+    Description: ' number of initial mesh points'
+    DefaultValue: '6'
+    Units: 'none'
+GRAD:
+    Description: 'mesh adaptation criterion for max gradient in the solution profiles'
+    DefaultValue: '0.1'
+    Unuts: 'none'
+CURV:
+    Description: 'mesh adaptation criterion for max curvature in the solution profiles'
+    DefaultValue: '1.0'
+    Unuts: 'none'
+# Output:
+DTSV:
+    Description: 'time interval between saving solution data (transient solver)'
+    Default Value: '100th of the simulation time'
+    Units: 'sec'
+DELT:
+    Description: 'time interval between printing solution data (transient solver)'
+    Default Value: '100th of the simulation time'
+    Units: 'sec'
+DEGSAVE:
+    Description: 'crank angles between saving solution data (engine simulation)'
+    DefaultValue: '100th of the total simulation crank angles'
+    Units: 'degree'
+DEGPRINT:
+    Description: 'crank angles between printing solution data (engine simulation)'
+    DefaultValue: '100th of the total simulation crank angles'
+    Units: 'degree'
+ADAP:
+    Description: 'save additional adaptive solution data points (transient solver)'
+    Default: "no parameter; use 'ASTEPS' or 'AVAR'-'AVALUE' to set frequency"
+    Units: 'none'
+ASTEPS:
+    Description: 'insert additional adaptive solution data point every n integration time steps'
+    DefaultValue: '20'
+    Units: 'none'
+AVAR:
+    Description: 'insert additional adaptive solution data point based on a solution variable'
+    DefaultValue: 'none'
+    Units: 'none'
+AVALUE:
+    Description: "insert additional adaptive solution data point when change in value of the variable specified by 'AVAR' is at least x"
+    DefaultValue: 'none'
+    Units: 'none'
+NADAP:
+    Description: 'do not save adaptive solution points (transient solver)'
+    DefaultValue: 'no parameter'
+    Units: 'none'
+PRINT:
+    Description: 'level of diagnostic information sent to the output file'
+    DefaultValue: '1'
+    Units: 'none'
+# Sensitivity:
+ASEN:
+    Description: 'calculate the first-order, A-factor sensitivity coefficients for all solution variables'
+    DefaultValue: 'no parameter (report SEN for all solution variables)'
+    Units: 'none'
+EPSS:
+    Description: 'threshold value for reporting the A-factor sensitivity coefficients for the species'
+    DefaultValue: '0.001'
+    Units: 'none'
+EPST:
+    Description: 'threshold value for reporting the A-factor sensitivity coefficients for the gas temperature'
+    DefaultValue: '0.001'
+    Units: 'none'
+SSTT:
+    Description: 'local sensitivity analysis will be performed instead of the integrated sensitivity analysis for transient simulation'
+    DefaultValue: 'none'
+    Units: 'none'
+# Rate of production
+AROP:
+    Description: 'report species rates of production (ROP) coefficients'
+    DefaultValue: 'no parameter (report ROP for all species)'
+    Units: 'none'
+EPSR:
+    Description: 'threshold value for reporting the rate of production (ROP) coefficients'
+    DefaultValue: '0.01'
+    Units: 'none'
+# ignition
+TIFP:
+    Description: 'ignition defined as the inflection point of the temperature profile'
+    DefaultValue: 'none'
+    Units: 'none'
+TLIM:
+    Description: 'ignition defined as when temperature exceeds the given value'
+    DefaultValue: 'none'
+    Units: 'K'
+KLIM:
+    Description: 'ignition defined as the gas species specified reaches its peak value'
+    DefaultValue: 'none none'
+    Units: 'none none'
+DTIGN:
+    Description: 'ignition defined as when temperature increase exceeds the specified value'
+    DefaultValue: 'none'
+    Units: 'K'
+# Reactor types
+TRAN:
+    Description: 'transient simulation'
+    DefaultValue: 'none'
+    Units: 'none'
+STST:
+    Description: 'steady-state simulation'
+    DefaultValue: 'none'
+    Units: 'none'
+TGIV:
+    Description: 'reactor temperature (profile) given (no energy balance)'
+    DefaultValue: 'none'
+    Units: 'none'
+ENRG:
+    Description: 'reactor temperature solved from enerby balance equation'
+    DefaultValue: 'none'
+    Units: 'none'
+CONP:
+    Description: 'constrined-pressure closed homogeneous reactor'
+    DefaultValue: 'none'
+    Units: 'none'
+CONV:
+    Description: 'constrined-volume closed homogeneous reactor'
+    DefaultValue: 'none'
+    Units: 'none'
+PLUG:
+    Description: 'plug-flow reactor (given pressure)'
+    DefaultValue: 'none'
+    Units: 'none'
+ICEN:
+    Description: 'IC engine or HCCI engine'
+    DefaultValue: 'none'
+    Units: 'none'
+DIEN:
+    Description: 'Direct-Injection engine'
+    DefaultValue: 'none'
+    Units: 'none'
+# Reactor:
+NPSR:
+    Description: 'number of reactors in the PSR network simulation'
+    DefaultValue: '1'
+    Units: 'none'
+TIME:
+    Description: 'ending time of the simulation (batch reactor)'
+    DefaultValue: '0.0'
+    Units: 'sec'
+PRES:
+    Description: 'initial/guessed reactor pressure'
+    DefaultValue: '1.0'
+    Units: 'atm'
+TEMP:
+    Description: 'initial/guessed reactor gas temperature'
+    DefaultValue: 'none'
+    Units: 'K'
+VOL:
+    Description: 'reactor volume'
+    DefaultValue: 'none'
+    Units: 'cm3'
+AREA:
+    Description: 'reactor internal reactive surface area for surface chemistry'
+    DefaultValue: '0.0'
+    Units: 'cm2'
+TSRF:
+    Description: 'reactor surface temperature for surface chemistry'
+    DefaultValue: 'same as the gas temperature'
+    Units: 'K'
+GFAC:
+    Description: 'gas reaction rate multiplier'
+    DefaultValue: '1.0'
+    Units: 'none'
+SFAC:
+    Description: 'surface reaction rate multiplier'
+    DefaultValue: '1.0'
+    Units: 'none'
+REAC:
+    Description: 'initial mole fraction of a gas species in the reactor'
+    DefaultValue: 'none none'
+    Units: 'none none'
+XEST:
+    Description: 'initial/guessed mole fraction of a gas species in the reactor'
+    DefaultValue: 'none none'
+    Units: 'none none'
+EQUI:
+    Description: 'equivalence ratio of the fuel-oxidizer gas mixture'
+    DefaultValue: 'none'
+    Units: 'none'
+FUEL:
+    Description: 'mole fraction of a gas species in the fuel (assoc. with EQUI)'
+    DefaultValue: 'none none'
+    Units: 'none none'
+OXID:
+    Description: 'mole fraction of a gas species in the oxidizer (assoc. with EQUI)'
+    DefaultValue: 'none none'
+    Units: 'none none'
+CPROD:
+    Description: 'complete combustion product species (assoc. with EQUI)'
+    DefaultValue: 'none'
+    Units: 'none'
+ADD:
+    Description: 'mole fraction of an added gas species (assoc. with EQUI)'
+    DefaultValue: 'none none'
+    Units: 'none none'
+EGRR:
+    Description: 'EGR ratio (assoc. with EQUI)'
+    DefaultValue: '0.0'
+    Units: 'none'
+QRGEQ:
+    Description: 'compute accumulated heat release due to gas-phase chemistry'
+    DefaultValue: 'none'
+    Units: 'none'
+PPRO:
+    Description: 'piecewise linear pressure profile data'
+    DefaultValue: 'none'
+    Units: 'sec(cm) atm'
+VPRO:
+    Description: 'piecewise linear volume profile data'
+    DefaultValue: 'none'
+    Units: 'sec(cm) cm3'
+TPRO:
+    Description: 'piecewise linear temperature profile data'
+    DefaultValue: 'none'
+    Units: 'sec(cm) K'
+# HeatTransfer:
+QLOS:
+    Description: 'rate of heat loss to the surroundings'
+    DefaultValue: '0.0'
+    Units: 'cal/sec'
+HTC:
+    Description: 'overall wall heat transfer coefficient to the surroundings'
+    DefaultValue: '0.0'
+    Units: 'cal/cm2-K-sec'
+HTRN:
+    Description: 'overall wall heat transfer coefficient to the surroundings'
+    DefaultValue: '0.0'
+    Units: 'cal/cm2-K-sec'
+AREAQ:
+    Description: 'reactor external heat transfer surface area'
+    DefaultValue: '0.0'
+    Units: 'cm2'
+TAMB:
+    Description: 'ambient temperature'
+    DefaultValue: '300.0'
+    Units: 'K'
+QPRO:
+    Description: 'piecewise linear heat loss profile data'
+    DefaultValue: 'none'
+    Units: 'sec(cm) cal/sec'
+HTCPRO:
+    Description: 'piecewise linear heat transfer coefficient profile data'
+    DefaultValue: 'none'
+    Units: 'sec(cm) cal/cm2-K-sec'
+# Inlet:
+INLET:
+    Description: 'specify inlet name and the reactor connected'
+    DefaultValue: 'none none'
+    Units: 'none none'
+FLRT:
+    Description: 'inlet mass flow rate (or flux for the premixed flame calculation)'
+    DefaultValue: '0.0'
+    Units: 'g/sec (or g/cm2-sec for premixed flame)'
+VDOT:
+    Description: 'inlet volumetric flow rate'
+    DefaultValue: '0.0'
+    Units: 'cm3/sec'
+SCCM:
+    Description: 'inlet volumetric flow rate in standard cm3 per minute'
+    DefaultValue: '0.0'
+    Units: 'cm3/min'
+VEL:
+    Description: 'inlet velocity'
+    DefaultValue: '0.0'
+    Units: 'cm/sec'
+FPRO:
+    Description: 'piecewise linear inlet mass flow rate profile data'
+    DefaultValue: 'none none'
+    Units: 'sec(cm) g/sec (or g/cm2-sec for premixed flame)'
+VDOTPRO:
+    Description: 'piecewise linear inlet volumetric flow rate profile data'
+    DefaultValue: 'none none'
+    Units: 'sec(cm) cm3/sec'
+SCCMPRO:
+    Description: 'piecewise linear inlet SCCM volumetric flow rate profile data'
+    DefaultValue: 'none none'
+    Units: 'sec(cm) cm3/min'
+# IC engine
+NZONE:
+    Description: 'number of zones used in the multi-zone HCCI engine simulation'
+    DefaultValue: '1'
+    Units: 'none'
+SIKN:
+    Description: 'declaration of SI engine simulation'
+    DefaultValue: '2'
+    Units: 'none'
+EQRX:
+    Description: 'use equilibrium to compute gas composition from the premixed flame in SI simulation'
+    DefaultValue: 'none'
+    Units: 'none'
+BORE:
+    Description: 'bore diameter of the engine cylinder'
+    DefaultValue: 'none'
+    Units: 'cm'
+STRK:
+    Description: 'engine piston stroke length'
+    DefaultValue: 'none'
+    Units: 'cm'
+CRLEN:
+    Description: 'engine shaft crank radius'
+    DefaultValue: 'none'
+    Units: 'cm'
+POLEN:
+    Description: 'piston pin offset distance'
+    DefaultValue: 'none'
+    Units: 'cm'
+CMPR:
+    Description: 'compression ratio'
+    DefaultValue: 'none'
+    Units: 'none'
+RPM:
+    Description: 'engine speed'
+    DefaultValue: 'none'
+    Units: 'RPM'
+LODR:
+    Description: 'ratio of the piston pin offset to the crank radius'
+    DefaultValue: '0.0 (no pin offset)'
+    Units: 'none'
+LOLR:
+    Description: 'ratio of the connecting rod length to the crank radius'
+    DefaultValue: '33.3'
+    Units: 'none'
+CYBAR:
+    Description: 'cylinder head area to bore area ratio'
+    DefaultValue: '1.0'
+    Units: 'none'
+PSBAR:
+    Description: 'pipston head area to bore area ratio'
+    DefaultValue: '1.0'
+    Units: 'none'
+DEG0:
+    Description: 'starting crank angle for engine simulation'
+    DefaultValue: 'none'
+    Units: 'degree'
+DEGE:
+    Description: 'ending crank angle for engine simulation'
+    DefaultValie: 'none'
+    Units: 'degree'
+NCANG:
+    Description: 'specify the duration of the IC engine simulation in crank angles'
+    DefaultValue: '180.0'
+    Units: 'degree CA'
+NREV:
+    Description: 'specify the duration of the IC engine simulation in number of revolutions'
+    DefaultValue: '0.0'
+    Units: 'none'
+MZMAS:
+    Description: 'specify zonal mass fraction of the multi-zone HCCI engine model'
+    DefaultValue: 'same mass in all zones'
+    Units: 'none, <zone #>'
+PRDL:
+    Description: 'the Prandlt number used by the wall heat transfer correlations of the IC engine models'
+    DefaultValue: '0.7'
+    Units: 'none'
+ICHX:
+    Description: 'use generalized convective heat transfer correlation to compute cylinder wall heat transfer coefficient'
+    DefaultValue: 'a = 1.0, b = 0.0, c = 0.0, Tamb = 300.0'
+    Units: 'none, none, none, K'
+ICHW:
+    Description: 'use dimensional Woschni formulation to compute cylinder wall heat transfer coefficient'
+    DefaultValue: 'a = 1.0, b = 0.0, c = 0.0, Tamb = 300.0'
+    Units: 'none, none, none, K'
+ICHH:
+    Description: 'use Hohenberg formulation to compute cylinder wall heat transfer coefficient'
+    DefaultValue: 'a = 1.0, b = 0.0, c = 0.0, d = 0.0, e = 0.0, Tamb = 300.0'
+    Units: 'none, none, none, none, m/sec, K'
+HIMP:
+    Description: 'use Huber correlation to compute the average cylinder gas velocity'
+    DefaultValue: '0.0'
+    Units: 'atm'
+GVEL:
+    Description: 'use Woschni correlation for the average cylinder gas velocity'
+    DefaultValue: 'C11 = 1.0, C12 = 0.0, C2 = 0.0, swirl ratio = 0.0'
+    Units: 'none, cm/sec-K, none, none'
+MQAFR:
+    Description: 'zonal wall heat ttrasnfer area fraction for the mulri-zone simulation'
+    DefaultValue: '1/(total number of zones)'
+    Units: 'none'
+BINI:
+    Description: 'start of combustion crank angle for the SI engine simulation'
+    DefaultValue: 'none'
+    Units: 'degree'
+BDUR:
+    Description: 'burn duration in crank angles for the SI engine simulation'
+    DefaultValue: 'none'
+    Units: 'degree'
+WBFN:
+    Description: 'the n parameter of the Wiebe function for the SI engine burn profile'
+    DefaultValue: '0.0'
+    Units: 'none'
+WBFB:
+    Description: 'the b parameter of the Wiebe function for the SI engine burn profile'
+    DefaultValue: '0.0'
+    Units: 'none'
+CASC:
+    Description: 'the first anchor point (10% mass burned) for the SI engine burn profile'
+    DefaultValue: '0.0'
+    Units: 'degree'
+CAAC:
+    Description: 'the second anchor point (50% mass burned) for the SI engine burn profile'
+    DefaultValue: '0.0'
+    Units: 'degree'
+CAEC:
+    Description: 'the last anchor point (90% mass burned) for the SI engine burn profile'
+    DefaultValue: '0.0'
+    Units: 'degree'
+NBFP:
+    Description: 'number of burned mass fraction profle data'
+    DefaultValue: 'none'
+    Units: 'none'
+BFP:
+    Description: 'normalized crank angle - burned mass fraction profile data'
+    DefaulValue: 'none none'
+    Units: 'degree none'
+BEFF:
+    Description: 'combustion efficiency in the SI engine simulation'
+    DefaultValue: '1.0'
+    Units: 'none'
+ASWH:
+    Description: 'crank angle to switch from TGIV to ENRG in multi-zone engine simulation'
+    DefaultValue: 'none'
+    Units: 'degree'
+EQMN:
+    Description: 'min mole fraction value of products from the premixed flame'
+    DefaultValue: '1.0E-14'
+    Units: 'none'
+MLMT:
+    Description: 'min zonal mass for the SI and the DI enigne simulations'
+    DefaultValue: '1.0E-6'
+    Units: 'g'
+# plug-flow reactor
+XEND:
+    Description: 'length of the plug-flow reactor'
+    DefaultValue: 'none'
+    Units: 'cm'
+DIAM:
+    Description: "(hydraulic) diameter of the plug-flow reactor"
+    DefaultValue: 'none'
+    Units: 'cm'
+AREAF:
+    Description: 'cross-sectional flow area'
+    DefaultValue: '0.0'
+    Units: 'cm2'
+AINT:
+    Description: 'reactive surface area per unit length'
+    DefaultValue: '0.0'
+    Units: 'cm'
+PSV:
+    Description: 'pseudo-velocity to improved convergence with stiff surface chemistry'
+    DefaultValue: 'none'
+    Units: 'cm/sec'
+DPRO:
+    Description: "piecewise linear diameter profile data"
+    DefaultValue: 'none none'
+    Units: 'cm cm'
+AFLO:
+    Description: 'piecewise linear cross-sectional flow area profile data'
+    DefaulValue: 'none none'
+    Units: 'cm cm2'
+DX:
+    Description: 'distance between printing solution data'
+    Default Value: '100th of the reactor length'
+    Units: 'cm'
+DXSV:
+    Description: 'distance between saving solution data'
+    Default Value: '100th of the reactor length'
+    Units: 'cm'
+DXMX:
+    Description: 'maximum distance step size allowed in the solver'
+    DefaultValue: '100th of the reactor length'
+    Units: 'cm'
+# real-gas EOS
+RLGAS:
+    Description: 'activate the real-gas cubic EOS in the real-gas mixture property calculations'
+    DefaultValue: 'no parameter'
+    Units: 'none'
+RLMIX:
+    Description: 'select the mixing rule in the real-gas mixture property calculations'
+    DefaultValue: '0: the Van der Waals method; 1: the pseudo-critical property method'
+    Units: 'none'

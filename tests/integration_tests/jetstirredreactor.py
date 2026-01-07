@@ -19,21 +19,26 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
+
+"""Test for steady state PSR model."""
+
+from pathlib import Path
 import time
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.logger import logger
-
-# Chemkin PSR model (steady-state)
-from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_FixedTemperature as PSR
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
+from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.core.logger import logger
+
+# Chemkin PSR model (steady-state)
+from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeFixedTemperature as Psr
+from ansys.chemkin.core.utilities import find_file
+
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -44,24 +49,24 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(
-    ck.ansys_dir, "reaction", "data", "ModelFuelLibrary", "Skeletal"
-)
+data_dir = Path(ck.ansys_dir) / "reaction" / "data" / "ModelFuelLibrary" / "Skeletal"
 mechanism_dir = data_dir
 # create a chemistry set based on the hydrogen-ammonia mechanism
 MyGasMech = ck.Chemistry(label="hydrogen")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(
-    mechanism_dir, "Hydrogen-Ammonia-NOx_chem_MFL2021.inp"
+MyGasMech.chemfile = find_file(
+    str(mechanism_dir),
+    "Hydrogen-Ammonia-NOx_chem_MFL",
+    "inp",
 )
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 # create a premixed fuel-oxidizer mixture
 # create the fuel-oxidizer inlet to the JSR
 feed = Stream(MyGasMech)
 # set H2-O2-N2 composition
-feed.X = [("h2", 1.1e-2), ("n2", 9.62e-1), ("o2", 2.75e-2)]
+feed.x = [("h2", 1.1e-2), ("n2", 9.62e-1), ("o2", 2.75e-2)]
 # setting reactor pressure [dynes/cm2]
 feed.pressure = ck.P_ATM
 # set inlet gas temperature [K]
@@ -71,10 +76,10 @@ feed.temperature = temp
 feed.mass_flowrate = 0.11
 # create the Jet-Stirred Reactor
 # use the inlet gas property as the estimated reactor condition
-JSR = PSR(feed, label="JSR")
+JSR = Psr(feed, label="JSR")
 # connect the inlet to the reactor
 JSR.set_inlet(feed)
-# set PSR residence time (sec): required for PSR_SetResTime_FixedTemperature model
+# set PSR residence time (sec): required for PSRSetResTimeFixedTemperature model
 JSR.residence_time = 120.0 * 1.0e-3
 # set the number of initial pseudo time steps in the steady-state solver
 JSR.set_initial_timesteps(1000)
@@ -82,10 +87,10 @@ JSR.set_initial_timesteps(1000)
 deltatemp = 25.0
 numbruns = 19
 # find H2O species index
-H2Oindex = MyGasMech.get_specindex("h2o")
+h2o_index = MyGasMech.get_specindex("h2o")
 # solution arrays
-inletTemp = np.zeros(numbruns, dtype=np.double)
-h2oSSsolution = np.zeros_like(inletTemp, dtype=np.double)
+inlet_temp = np.zeros(numbruns, dtype=np.double)
+h2o_solution = np.zeros_like(inlet_temp, dtype=np.double)
 # set the start wall time
 start_time = time.time()
 # loop over all inlet temperature values
@@ -105,8 +110,8 @@ for i in range(numbruns):
     # print(f"steady-state temperature = {solnmixture.temperature} [K]")
     # solnmixture.list_composition(mode="mole")
     # store solution values
-    inletTemp[i] = solnmixture.temperature
-    h2oSSsolution[i] = solnmixture.X[H2Oindex]
+    inlet_temp[i] = solnmixture.temperature
+    h2o_solution[i] = solnmixture.x[h2o_index]
     # update reactor temperature
     temp += deltatemp
     JSR.temperature = temp
@@ -144,7 +149,7 @@ H2O_data = [
     0.010503,
 ]
 # plot results
-plt.plot(inletTemp, h2oSSsolution, "b-", label="prediction")
+plt.plot(inlet_temp, h2o_solution, "b-", label="prediction")
 plt.plot(TEMP_data, H2O_data, "ro", label="data", markersize=4, fillstyle="none")
 plt.xlabel("Reactor Temperature [K]")
 plt.ylabel("H2O Mole Fraction")
@@ -157,12 +162,12 @@ else:
     plt.savefig("jet_stirred_reactor.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "jetstirredreactor.result")
+resultfile = Path(current_dir) / "jetstirredreactor.result"
 results = {}
-results["state-temperature_inlet"] = inletTemp.tolist()
-results["species-H2O_mole_fraction"] = h2oSSsolution.tolist()
+results["state-temperature_inlet"] = inlet_temp.tolist()
+results["species-H2O_mole_fraction"] = h2o_solution.tolist()
 #
-r = open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

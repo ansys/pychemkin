@@ -19,21 +19,24 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
+
+"""Test for the multiple inlets feature of the PSR model."""
+
+from pathlib import Path
 import time
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.logger import logger
-
-# Chemkin PSR model (steady-state)
-from ansys.chemkin.stirreactors.PSR import PSR_SetVolume_EnergyConservation as PSR
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
+from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.stirreactors.PSR import PSRSetVolumeEnergyConservation as Psr
+from ansys.chemkin.core.utilities import find_file
+
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -44,23 +47,23 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(
-    ck.ansys_dir, "reaction", "data", "ModelFuelLibrary", "Skeletal"
-)
+data_dir = Path(ck.ansys_dir) / "reaction" / "data" / "ModelFuelLibrary" / "Skeletal"
 mechanism_dir = data_dir
 # create a chemistry set based on the gasoline 14 components mechanism
 MyGasMech = ck.Chemistry(label="hydrogen")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(
-    mechanism_dir, "Hydrogen-Ammonia-NOx_chem_MFL2021.inp"
+MyGasMech.chemfile = find_file(
+    str(mechanism_dir),
+    "Hydrogen-Ammonia-NOx_chem_MFL",
+    "inp",
 )
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 # create the fuel inlet
 fuel = Stream(MyGasMech, label="Fuel")
 # set fuel composition
-fuel.X = [("h2", 0.21), ("n2", 0.79)]
+fuel.x = [("h2", 0.21), ("n2", 0.79)]
 # setting pressure and temperature is not required in this case
 fuel.pressure = ck.P_ATM
 fuel.temperature = 450.0  # inlet temperature
@@ -68,7 +71,7 @@ fuel.temperature = 450.0  # inlet temperature
 fuel.vol_flowrate = 25.0
 # create the oxidizer inlet: air
 air = Stream(MyGasMech, label="Oxid")
-air.X = [("o2", 0.21), ("n2", 0.79)]
+air.x = [("o2", 0.21), ("n2", 0.79)]
 # setting pressure and temperature is not required in this case
 air.pressure = fuel.pressure
 air.temperature = fuel.temperature
@@ -76,10 +79,10 @@ air.temperature = fuel.temperature
 air.vol_flowrate = 50.0
 # create a PSR with fixed reactor volume and
 # with the fuel inlet composition as the estimated reactor condition
-combustor = PSR(fuel, label="tincan")
+combustor = Psr(fuel, label="tincan")
 # set the estimated reactor temperature [K]
 combustor.temperature = 2000.0
-# set the reactor volume (cm3): required for PSR_SetVolume_EnergyConservation model
+# set the reactor volume (cm3): required for PSRSetVolumeEnergyConservation model
 combustor.volume = 200.0
 # add external inlets to the PSR
 combustor.set_inlet(fuel)
@@ -90,11 +93,11 @@ combustor.timestepping_tolerances = (1.0e-9, 1.0e-6)
 # reset the gas species floor value in the steady-state solver
 combustor.set_species_floor(-1.0e-10)
 # reactor volume increment
-deltaVol = -5
+dvol = -5
 numbruns = 9
 # solution arrays
 residencetime = np.zeros(numbruns, dtype=np.double)
-tempSSsolution = np.zeros_like(residencetime, dtype=np.double)
+temp_solution = np.zeros_like(residencetime, dtype=np.double)
 # set the start wall time
 start_time = time.time()
 # loop over all inlet temperature values
@@ -120,16 +123,16 @@ for i in range(numbruns):
     # mass = density * combustor.volume
     # PSR apparent residence time [sec]
     residencetime[i] = combustor.volume / combustor.net_vol_flowrate
-    tempSSsolution[i] = solnmixture.temperature
+    temp_solution[i] = solnmixture.temperature
     # update reactor volume
-    combustor.volume += deltaVol
+    combustor.volume += dvol
 
 # compute the total runtime
 runtime = time.time() - start_time
 print(f"total simulation duration: {runtime} [sec] over {numbruns} runs")
 #
 # plot results
-plt.plot(residencetime, tempSSsolution, "bo-")
+plt.plot(residencetime, temp_solution, "bo-")
 plt.xlabel("Apparent Residence Time [sec]")
 plt.ylabel("Exit Gas Temperature [K]")
 plt.title("PSR Solution")
@@ -140,12 +143,12 @@ else:
     plt.savefig("multi_inlet_PSR.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "multi-inletPSR.result")
+resultfile = Path(current_dir) / "multi-inletPSR.result"
 results = {}
 results["state-residence_time"] = residencetime.tolist()
-results["state-temperature"] = tempSSsolution.tolist()
+results["state-temperature"] = temp_solution.tolist()
 #
-r = open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')
