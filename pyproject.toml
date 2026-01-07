@@ -86,9 +86,14 @@ lint.select = [
   "PYI", # flake8-pyi, see https://docs.astral.sh/ruff/rules/#flake8-pyi-pyi
   "TD",  # flake8-todos, https://docs.astral.sh/ruff/rules/#flake8-todos-td
 ]
+
 lint.isort.combine-as-imports = true
 lint.isort.force-sort-within-sections = true
 lint.isort.known-first-party = [ "ansys" ]
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore pydocstyle rule in examples due to conflicts with sphinx-gallery syntax
+"examples/**/*.py" = ["D"]
 
 [tool.codespell]
 ignore-words-list = "delt, pres, te"
