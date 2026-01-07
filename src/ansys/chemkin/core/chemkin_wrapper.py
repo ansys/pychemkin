@@ -28,6 +28,7 @@ import datetime
 import os
 from pathlib import Path
 import platform
+import sys
 
 import numpy as np
 
@@ -101,8 +102,9 @@ def __setwindows() -> int:
         logger.critical(this_msg)
         return 2
     # set load dll paths
-    for _lib_path in _lib_paths:
-        os.add_dll_directory(_lib_path)
+    if sys.platform == "win32":
+        for _lib_path in _lib_paths:
+            os.add_dll_directory(_lib_path)
     # set Chemkin-CFD-API shared object
     _target_lib = str(ansyshome / "reaction" / _ckbin / "bin" / "KINeticsdll.dll")
     return 0
