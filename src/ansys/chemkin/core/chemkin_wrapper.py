@@ -45,6 +45,7 @@ def __setwindows() -> int:
     global _min_version
     global _target_lib
     global _valid_versions
+    ansyshome = Path(_ansys_dir)
     # set ansys installation directory (Windows)
     for v in _valid_versions:
         _ansys_ver = v
@@ -120,6 +121,7 @@ def __setlinux() -> int:
     global _target_lib
     global _valid_versions
     ierr = 0
+    ansyshome = Path(_ansys_dir)
     # set ansys installation directory (Linux)
     for v in _valid_versions:
         _ansys_ver = v
