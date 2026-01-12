@@ -156,6 +156,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           requires-xvfb: false
           use-python-cache: false
+          group-dependencies-name: tests
 
       - name: 'Upload coverage to CodeCov'
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
