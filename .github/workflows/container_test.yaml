@@ -47,7 +47,7 @@ jobs:
       matrix:
         python-version: ['3.9', '3.10', '3.11', '3.12']
     container:
-      image: 'ghcr.io/ansys/chemkin@sha256:c2d953423a76c438575064ac0a3e1897554aef68bf08b0abb34be21ed3c5b4d1'
+      image: 'ghcr.io/ansys/chemkin@sha256:d2d01a93d656b21398bd741288ccb1ad27dbb25155da89c875e538113dbf96bf'
       credentials:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
