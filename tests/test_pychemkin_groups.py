@@ -180,9 +180,9 @@ class TestClassPFR:
     # ignition delay [msec], heat [cal]
     # species: mole/mass fraction
     # rate: reaction rate, rate of production, heat release rate
-    PFR_list = ["plugflow"]
+    pfr_list = ["plugflow"]
 
-    @pytest.mark.parametrize("test_file", PFR_list)
+    @pytest.mark.parametrize("test_file", pfr_list)
     def test_plug_flow_reactor(
         self, get_working_dir, get_source_dir, get_result_dir, test_file
     ):
@@ -201,12 +201,12 @@ class TestClassPSR:
     # define tolerances for this group of tests
     # {'type_of_variable': [absolute_tolerance, relative_tolerance], ... }
     # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s],
-    # ignition delay [msec], heat [cal]
+    # heat [cal]
     # species: mole/mass fraction
     # rate: reaction rate, rate of production, heat release rate
-    PSR_list = ["PSRgas", "jetstirredreactor", "multi-inletPSR", "PSRChain_declustered"]
+    psr_list = ["PSRgas", "jetstirredreactor", "multi-inletPSR", "PSRChain_declustered"]
 
-    @pytest.mark.parametrize("test_file", PSR_list)
+    @pytest.mark.parametrize("test_file", psr_list)
     def test_perfectly_stirred_reactor(
         self, get_working_dir, get_source_dir, get_result_dir, test_file
     ):
@@ -225,12 +225,12 @@ class TestClassERN:
     # define tolerances for this group of tests
     # {'type_of_variable': [absolute_tolerance, relative_tolerance], ... }
     # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s],
-    # ignition delay [msec], heat [cal]
+    # heat [cal]
     # species: mole/mass fraction
     # rate: reaction rate, rate of production, heat release rate
-    PSR_list = ["PSRChain_network", "PSRnetwork"]
+    ern_list = ["PSRChain_network", "PSRnetwork"]
 
-    @pytest.mark.parametrize("test_file", PSR_list)
+    @pytest.mark.parametrize("test_file", ern_list)
     def test_reactor_network(
         self, get_working_dir, get_source_dir, get_result_dir, test_file
     ):
