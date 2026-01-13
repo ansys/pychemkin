@@ -124,22 +124,14 @@ def __setlinux() -> int:
     ierr = 0
     ansyshome = Path()
     # set ansys installation directory (Linux)
-    msg = ["enter linux...", str(ansyshome)]
-    this_msg = Color.SPACE.join(msg)
-    logger.debug(this_msg)
     for v in _valid_versions:
         _ansys_ver = v
         if v >= _min_version:
             _ansys_installation = "ANSYS" + str(_ansys_ver) + "_DIR"
             _ansys_home = os.environ.get(_ansys_installation, "NA")
-            msg = ["search...", _ansys_installation, _ansys_home]
-            this_msg = Color.SPACE.join(msg)
-            logger.debug(this_msg)
             if _ansys_home != "NA":
-                _ansys_dir = str(Path(_ansys_home).parent)
-                msg = ["found...", _ansys_dir]
-                this_msg = Color.SPACE.join(msg)
-                logger.debug(this_msg)
+                ansyshome = Path(_ansys_home).parent
+                _ansys_dir = str(ansyshome)
                 break
         else:
             break
@@ -174,15 +166,6 @@ def __setlinux() -> int:
         else:
             ierr = 1
 
-    msg = [
-        "after...",
-        str(ansyshome),
-        str(_ansys_ver),
-        "ierr=",
-        str(ierr),
-    ]
-    this_msg = Color.SPACE.join(msg)
-    logger.debug(this_msg)
     if str(ansyshome) == ".":
         ierr = 1
     # check Ansys version
