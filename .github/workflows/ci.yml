@@ -59,7 +59,7 @@ jobs:
     permissions:
       contents: read # Read the dependencies and source code of the library
     steps:
-      - uses: ansys/actions/check-vulnerabilities@eb7d0fc873deeee6d4740774675ce1741cb6f154 # v10.2.2
+      - uses: ansys/actions/check-vulnerabilities@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
@@ -76,7 +76,7 @@ jobs:
     permissions:
       contents: read # Read the workflow files in the project
     steps:
-      - uses: ansys/actions/check-actions-security@eb7d0fc873deeee6d4740774675ce1741cb6f154 # v10.2.2
+      - uses: ansys/actions/check-actions-security@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
         with:
           generate-summary: true
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -93,7 +93,7 @@ jobs:
     permissions:
       contents: read # Read the source code of the project
     steps:
-      - uses: ansys/actions/code-style@eb7d0fc873deeee6d4740774675ce1741cb6f154 # v10.2.2
+      - uses: ansys/actions/code-style@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -234,7 +234,7 @@ jobs:
           skip-existing: false
 
       - name: "Release to GitHub"
-        uses: ansys/actions/release-github@eb7d0fc873deeee6d4740774675ce1741cb6f154 # v10.2.2
+        uses: ansys/actions/release-github@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
