@@ -18,7 +18,7 @@ from sphinx_gallery import sorting as sg_sorting
 
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
 
-project = "PyChemkin"
+project = "ansys-chemkin-core"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc. <ansys.support@ansys.com>"
 cname = os.getenv("DOCUMENTATION_CNAME", default="chemkin.docs.pyansys.com")
@@ -93,8 +93,20 @@ suppress_warnings = [
     "autoapi.python_import_resolution",
 ]
 
+# Excluded files
+exclude_patterns = ["links.rst"]
+
+# -- Links file configuration
+rst_epilog = ""
+links_filepath = pathlib.Path(__file__).parent.absolute() / "links.rst"
+rst_epilog += links_filepath.read_text(encoding="utf-8")
+
+
 # -- Sphinx gallery configuration --------------------------------------------
-examples_source = pathlib.Path(__file__).parent.parent / "examples"
+examples_source = pathlib.Path(__file__).parent.parent.parent / "examples"
+if not examples_source.exists():
+    raise FileNotFoundError("Could not find examples directory")
+
 examples_output = pathlib.Path(__file__) / "examples"
 example_subdir_names = ["modeling_features", "workflows", "use_cases"]
 explicit_order = [
@@ -109,8 +121,6 @@ explicit_order = [
 ]
 example_order = sg_sorting.ExplicitOrder(explicit_order)
 
-
-# sphinx gallery options
 sphinx_gallery_conf = {
     # convert rst to md for ipynb
     "pypandoc": True,

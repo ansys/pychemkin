@@ -11,8 +11,8 @@
 PyChemkin provides Pythonic access to the `Ansys Chemkin`_ for computational
 fluid dynamics (CFD) models. It facilitates programmatic customization of
 Chemkin simulation workflows within the Python ecosystem and permits access to
-Chemkin property and rate utilities as well as selected reactor. You are viewing
-version |version|.
+Chemkin property and rate utilities as well as selected reactor. You are
+viewing version |version|.
 
 .. grid:: 1 1 3 3
 
@@ -45,7 +45,7 @@ version |version|.
         Learn how to use PyChemkin with examples that demonstrate its capabilities.
 
     .. grid-item-card:: :fa:`user-group` Contribute
-        :link: contribute
+        :link: contributing
         :link-type: doc
         :padding: 2 2 2 2
 
@@ -66,6 +66,8 @@ version |version|.
    user-guide
    api/index
    examples
-   contribute
+   contributing
    artifacts
    changelog
+
+
