@@ -38,7 +38,7 @@ viewing version |version|.
         A detailed guide describing the PyChemkin modules, classes, and enums.
 
     .. grid-item-card:: :fa:`clone` Examples
-        :link: examples
+        :link: examples/index
         :link-type: doc
         :padding: 2 2 2 2
 
@@ -65,7 +65,7 @@ viewing version |version|.
    getting-started
    user-guide
    api/index
-   examples
+   examples/index
    contributing
    artifacts
    changelog
