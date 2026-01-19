@@ -18,7 +18,7 @@ from sphinx_gallery import sorting as sg_sorting
 
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
 
-project = "PyChemkin"
+project = "ansys-chemkin-core"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc. <ansys.support@ansys.com>"
 cname = os.getenv("DOCUMENTATION_CNAME", default="chemkin.docs.pyansys.com")
@@ -76,6 +76,7 @@ extensions = [
     "sphinx_design",
     "sphinx_jinja",
     "ansys_sphinx_theme.extension.autoapi",
+    "sphinx_gallery.gen_gallery",
 ]
 
 # The suffix(es) of source filenames.
@@ -93,10 +94,18 @@ suppress_warnings = [
     "autoapi.python_import_resolution",
 ]
 
+# Excluded files
+exclude_patterns = ["links.rst", "sg_execution_times.rst"]
+
+# -- Links file configuration
+rst_epilog = ""
+links_filepath = pathlib.Path(__file__).parent.absolute() / "links.rst"
+rst_epilog += links_filepath.read_text(encoding="utf-8")
+
+
 # -- Sphinx gallery configuration --------------------------------------------
-examples_source = pathlib.Path(__file__).parent.parent / "examples"
-examples_output = pathlib.Path(__file__) / "examples"
-example_subdir_names = ["modeling_features", "workflows", "use_cases"]
+nbsphinx_execute = "never"
+# explicit order of the example groups
 explicit_order = [
     "../../examples/chemistry",
     "../../examples/mixture",
@@ -108,17 +117,13 @@ explicit_order = [
     "../../examples/premixed_flame",
 ]
 example_order = sg_sorting.ExplicitOrder(explicit_order)
-
-
-# sphinx gallery options
+# sphinx gallery configurations
 sphinx_gallery_conf = {
-    # convert rst to md for ipynb
-    "pypandoc": True,
-    # path to your examples scripts
-    "examples_dirs": [str(examples_source / subdir) for subdir in example_subdir_names],
-    # path where to save gallery generated examples
-    "gallery_dirs": [str(examples_output / subdir) for subdir in example_subdir_names],
-    "thumbnail_size": (320, 240),
+    "examples_dirs": "../../examples",  # path to your example scripts
+    "gallery_dirs": "examples",  # path to where to save gallery generated output
+    "example_extensions": {".py"},
+    "subsection_order": example_order,
+    "within_subsection_order": "FileNameSortKey",
     "remove_config_comments": True,
 }
 
