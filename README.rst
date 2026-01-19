@@ -22,7 +22,7 @@
    :target: https://app.codecov.io/gh/ansys/pychemkin
    :alt: Codecov
 
-.. |GH-CI| image:: https://github.com/ansys/pychemkin/actions/workflows/cd.yml/badge.svg?label=CI
+.. |GH-CI| image:: https://github.com/ansys/pychemkin/actions/workflows/ci.yml/badge.svg
    :target: https://github.com/ansys/pychemkin/actions/workflows/ci.yml
    :alt: GH-CI
 
