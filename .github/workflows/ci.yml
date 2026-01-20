@@ -247,7 +247,7 @@ jobs:
     name: "Deploy stable documentation"
     # Deploy release documentation when creating a new tag
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     needs: release
     permissions:
       contents: write # Write to the gh-pages branch of the repository
@@ -257,5 +257,3 @@ jobs:
         with:
             cname: ${{ env.DOCUMENTATION_CNAME }}
             token: ${{ secrets.GITHUB_TOKEN }}
-
-
