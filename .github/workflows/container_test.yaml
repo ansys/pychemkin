@@ -41,7 +41,7 @@ jobs:
 
   tests:
     name: "Test ${{ matrix.python-version }} with ubuntu"
-    needs: [smoke-tests]
+    needs: wheelhouse
     runs-on: ubuntu-latest
     strategy:
       matrix:
