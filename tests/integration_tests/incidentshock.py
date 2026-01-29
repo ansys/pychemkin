@@ -19,20 +19,24 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
+
+"""Air dissociation test for the incidient shock tube model."""
+
+from pathlib import Path
 import time
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
-from ansys.chemkin.inlet import Stream
-from ansys.chemkin.logger import logger
-
-# chemkin plug flow reactor model
-from ansys.chemkin.shock.shocktubereactors import IncidentShock
 import matplotlib.pyplot as plt  # plotting
 
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
+from ansys.chemkin.core.inlet import Stream
+from ansys.chemkin.core.logger import logger
+
+# chemkin plug flow reactor model
+from ansys.chemkin.core.shock.shocktubereactors import IncidentShock
+
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set interactive mode for plotting the results
 # interactive = True: display plot
@@ -43,10 +47,11 @@ interactive = False
 # Create a new mechanism input file 'no_hot_air_chem.inp' that
 # contains the reactions to describe NO formation in heated air.
 # This file is saved to the working directory ``current_dir``.
-mymechfile = os.path.join(current_dir, "no_hot_air_chem.inp")
-m = open(mymechfile, "w")
-# the mechanism contains only the necessary species (oxygen, nitrogen, nitric oxide, and major byproducts)
-# decalre elements
+mymechfile = Path(current_dir) / "no_hot_air_chem.inp"
+m = mymechfile.open(mode="w")
+# the mechanism contains only the necessary species
+# (oxygen, nitrogen, nitric oxide, and major byproducts)
+# declare elements
 m.write("ELEMENT O N AR END\n")
 # declare species
 m.write("SPECIES\n")
@@ -54,7 +59,8 @@ m.write("O2 N2 NO N O AR\n")
 m.write("END\n")
 # write reactions for N2O dissociation
 # Reference:
-# M. Camac and R.M. Feinberg, Proceedings of Combustion Institute, vol. 11, p. 137-145 (1967)
+# M. Camac and R.M. Feinberg, Proceedings of Combustion Institute,
+# vol. 11, p. 137-145 (1967)
 m.write("REACTIONS\n")
 m.write("N2+O2=NO+NO             9.1E24   -2.5   128500.\n")
 m.write("N2+O=NO+N               7.0E13    0.     75000.\n")
@@ -72,31 +78,32 @@ m.close()
 
 # Create a chemistry set
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on the N2O dissociation mechanism
 MyGasMech = ck.Chemistry(label="NO_from_hot_air")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = mymechfile
-MyGasMech.thermfile = os.path.join(
-    data_dir,
-    "therm.dat",
-)
+MyGasMech.chemfile = str(mymechfile)
+MyGasMech.thermfile = str(data_dir / "therm.dat")
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
+if ierror != 0:
+    print("Error: Failed to preprocess the mechanism!")
+    print(f"       Error code = {ierror}")
+    exit()
 
 # Create a diluted air stream by assigning the mole fractions of the
 # species.
 diluted_air = Stream(MyGasMech)
 # initial gas state before the incident shock front
 # 5 [torrs]
-diluted_air.pressure = 5.0 * ck.Ptorrs
+diluted_air.pressure = 5.0 * ck.P_TORRS
 # 296 [K]
 diluted_air.temperature = 296.0
 # AR diluted air based on the experiment setup
-diluted_air.X = [("AR", 0.0093), ("O2", 0.2095), ("N2", 0.7812)]
+diluted_air.x = [("AR", 0.0093), ("O2", 0.2095), ("N2", 0.7812)]
 
 # Create the shock tube reactor object
 # set the incident shock velocity [cm/sec]
@@ -151,13 +158,13 @@ velprofile = Incident.get_solution_variable_profile("velocity")
 # convert to [m/sec]
 velprofile *= 1.0e-2
 # get the NO mass fraction profile [-]
-NOprofile = Incident.get_solution_variable_profile("NO")
+no_profile = Incident.get_solution_variable_profile("NO")
 # get the O mass fraction profile [-]
-Oprofile = Incident.get_solution_variable_profile("O")
+o_profile = Incident.get_solution_variable_profile("O")
 
 # clean up
-if os.path.exists(mymechfile):
-    os.remove(mymechfile)
+if mymechfile.exists() and mymechfile.is_file():
+    mymechfile.unlink()
 
 # Plot the solution profiles
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))
@@ -169,11 +176,11 @@ plt.subplot(222)
 plt.plot(timeprofile, velprofile, "b-")
 plt.ylabel("Velocity [m/sec]")
 plt.subplot(223)
-plt.plot(timeprofile, NOprofile, "g-")
+plt.plot(timeprofile, no_profile, "g-")
 plt.xlabel("time [msec]")
 plt.ylabel("NO Mass Fraction [-]")
 plt.subplot(224)
-plt.plot(timeprofile, Oprofile, "m-")
+plt.plot(timeprofile, o_profile, "m-")
 plt.xlabel("time [msec]")
 plt.ylabel("O Mass Fraction [-]")
 # plot results
@@ -183,14 +190,14 @@ else:
     plt.savefig("plot_incident_shock.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "incidentshock.result")
+resultfile = Path(current_dir) / "incidentshock.result"
 results = {}
 results["state-temperature"] = tempprofile.tolist()
 results["state-velocity"] = velprofile.tolist()
-results["species-NO_mass_fraction"] = NOprofile.tolist()
-results["species-O_mass_fraction"] = Oprofile.tolist()
+results["species-NO_mass_fraction"] = no_profile.tolist()
+results["species-O_mass_fraction"] = o_profile.tolist()
 #
-r = open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

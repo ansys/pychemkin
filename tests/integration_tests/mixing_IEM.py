@@ -19,14 +19,17 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin.logger import logger
-from ansys.chemkin.mixture import Mixture, mixing_by_exchange_with_the_mean
+"""IEM micro mixing test for the stochastic process utilities."""
+
+from pathlib import Path
+
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.mixture import Mixture, mixing_by_exchange_with_the_mean
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -37,93 +40,93 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # including the full file path is recommended
-chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+chemfile = str(mechanism_dir / "grimech30_chem.inp")
+thermfile = str(mechanism_dir / "grimech30_thermo.dat")
+tranfile = str(mechanism_dir / "grimech30_transport.dat")
 # create a chemistry set based on GRI 3.0
 MyGasMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="GRI 3.0")
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
-if iError != 0:
+ierror = MyGasMech.preprocess()
+if ierror != 0:
     print("Error: failed to preprocess the mechanism!")
-    print(f"       error code = {iError}")
+    print(f"       error code = {ierror}")
     exit()
 
-# get species sybols
+# get species symbols
 specieslist = MyGasMech.species_symbols
 
 # create mixture A
-mixtureA = Mixture(MyGasMech)
-mixtureA.X = ck.Air.X()
-mixtureA.temperature = 900.0
-mixtureA.pressure = ck.Patm
-mixtureA.volume = 1.0
+mixture_a = Mixture(MyGasMech)
+mixture_a.x = ck.Air.x()
+mixture_a.temperature = 900.0
+mixture_a.pressure = ck.P_ATM
+mixture_a.volume = 1.0
 
 # create mixture B
-mixtureB = Mixture(MyGasMech)
-mixtureB.X = [("H2", 0.2), ("CO2", 0.4), ("CH4", 0.4)]
-mixtureB.temperature = 400.0
-mixtureB.pressure = ck.Patm
-mixtureB.volume = 1.0
+mixture_b = Mixture(MyGasMech)
+mixture_b.x = [("H2", 0.2), ("CO2", 0.4), ("CH4", 0.4)]
+mixture_b.temperature = 400.0
+mixture_b.pressure = ck.P_ATM
+mixture_b.volume = 1.0
 
 # set IEM mixing parameters
 # mixing duration [sec]
 dt = 1.0e-2
 # IEM model parameter
-Cmix = 1.0e0
+c_mix = 1.0e0
 # characteristic mixing time scale [sec]
 tau = 1.0e-2
-mixtureA_new, mixtureB_new = mixing_by_exchange_with_the_mean(
-    mixtureA, mixtureB, mix_time=dt, mix_param=Cmix, tau=tau
+mixture_a_new, mixture_b_new = mixing_by_exchange_with_the_mean(
+    mixture_a, mixture_b, mix_time=dt, mix_param=c_mix, tau=tau
 )
 # compare mixture properties before and after the mixing
 # number of gas species
-numb_spec = MyGasMech.KK
+numb_spec = MyGasMech.kk
 
 print("\n*Mixture A")
 print("==Before==")
-print(f"Temperature = {mixtureA.temperature} [K].")
+print(f"Temperature = {mixture_a.temperature} [K].")
 for k in range(numb_spec):
-    x = mixtureA.X[k]
-    if x > 1.0e-8:
-        print(f"Species index {k + 1}  {specieslist[k]}: {x}")
+    x_sp = mixture_a.x[k]
+    if x_sp > 1.0e-8:
+        print(f"Species index {k + 1}  {specieslist[k]}: {x_sp}")
 print("==After==")
-print(f"Temperature = {mixtureA_new.temperature} [K].")
+print(f"Temperature = {mixture_a_new.temperature} [K].")
 for k in range(numb_spec):
-    x = mixtureA_new.X[k]
-    if x > 1.0e-8:
-        print(f"Species index {k + 1}  {specieslist[k]}: {x}")
+    x_sp = mixture_a_new.x[k]
+    if x_sp > 1.0e-8:
+        print(f"Species index {k + 1}  {specieslist[k]}: {x_sp}")
 
 print("\n*Mixture B")
 print("==Before==")
-print(f"Temperature = {mixtureB.temperature} [K].")
+print(f"Temperature = {mixture_b.temperature} [K].")
 for k in range(numb_spec):
-    x = mixtureB.X[k]
-    if x > 1.0e-8:
-        print(f"Species index {k + 1}  {specieslist[k]}: {x}")
+    x_sp = mixture_b.x[k]
+    if x_sp > 1.0e-8:
+        print(f"Species index {k + 1}  {specieslist[k]}: {x_sp}")
 print("==After==")
-print(f"Temperature = {mixtureB_new.temperature} [K].")
+print(f"Temperature = {mixture_b_new.temperature} [K].")
 for k in range(numb_spec):
-    x = mixtureB_new.X[k]
-    if x > 1.0e-8:
-        print(f"Species index {k + 1}  {specieslist[k]}: {x}")
+    x_sp = mixture_b_new.x[k]
+    if x_sp > 1.0e-8:
+        print(f"Species index {k + 1}  {specieslist[k]}: {x_sp}")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "mixing_IEM.result")
+resultfile = Path(current_dir) / "mixing_IEM.result"
 results = {}
-results["state-model_parameters"] = [dt, Cmix, tau]
-results["state-temperatureA"] = [mixtureA.temperature, mixtureA_new.temperature]
-results["state-mole_fractionA"] = mixtureA.X.tolist()
-results["state-mole_fractionA_new"] = mixtureA_new.X.tolist()
-results["state-temperatureB"] = [mixtureB.temperature, mixtureB_new.temperature]
-results["state-mole_fractionB"] = mixtureB.X.tolist()
-results["state-mole_fractionB_new"] = mixtureB_new.X.tolist()
+results["state-model_parameters"] = [dt, c_mix, tau]
+results["state-temperatureA"] = [mixture_a.temperature, mixture_a_new.temperature]
+results["state-mole_fractionA"] = mixture_a.x.tolist()
+results["state-mole_fractionA_new"] = mixture_a_new.x.tolist()
+results["state-temperatureB"] = [mixture_b.temperature, mixture_b_new.temperature]
+results["state-mole_fractionB"] = mixture_b.x.tolist()
+results["state-mole_fractionB_new"] = mixture_b_new.x.tolist()
 #
-r = open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

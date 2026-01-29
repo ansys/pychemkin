@@ -1,13 +1,16 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# For the full list of built-in configuration values, see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""Configuration file for the Sphinx documentation builder.
+
+For the full list of built-in configuration values, see the documentation:
+https://www.sphinx-doc.org/en/master/usage/configuration.html
+
+"""
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 from datetime import datetime
 import os
+import pathlib
 
 from ansys_sphinx_theme import get_version_match
 from sphinx.builders.latex import LaTeXBuilder
@@ -15,7 +18,7 @@ from sphinx_gallery import sorting as sg_sorting
 
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
 
-project = "PyChemkin"
+project = "ansys-chemkin-core"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc. <ansys.support@ansys.com>"
 cname = os.getenv("DOCUMENTATION_CNAME", default="chemkin.docs.pyansys.com")
@@ -31,6 +34,10 @@ html_context = {
     "github_version": "main",
     "doc_path": "doc/source",
 }
+html_theme = "ansys_sphinx_theme"
+html_short_title = html_title = "PyChemkin"
+html_static_path = ["_static"]
+templates_path = ["_templates"]
 html_theme_options = {
     "logo": "pyansys",
     "switcher": {
@@ -63,19 +70,14 @@ html_theme_options = {
     },
 }
 
-
 extensions = [
-    "sphinx.ext.autodoc",
-    "autoapi.extension",
-    "sphinx.ext.autosummary",
     "sphinx.ext.intersphinx",
-    "sphinx_gallery.gen_gallery",
+    "sphinx_copybutton",
     "sphinx_design",
     "sphinx_jinja",
     "ansys_sphinx_theme.extension.autoapi",
+    "sphinx_gallery.gen_gallery",
 ]
-
-templates_path = ["_templates"]
 
 # The suffix(es) of source filenames.
 source_suffix = {
@@ -92,10 +94,17 @@ suppress_warnings = [
     "autoapi.python_import_resolution",
 ]
 
-# exclude_patterns = []
+# Excluded files
+exclude_patterns = ["links.rst", "sg_execution_times.rst"]
+
+# -- Links file configuration
+rst_epilog = ""
+links_filepath = pathlib.Path(__file__).parent.absolute() / "links.rst"
+rst_epilog += links_filepath.read_text(encoding="utf-8")
+
+
+# -- Sphinx gallery configuration --------------------------------------------
 nbsphinx_execute = "never"
-autoapi_dirs = ["../../src/ansys/chemkin"]
-autoapi_ignore = ["*wrapper*", "*reactormodel*", "*color*", "*info*", "*utilities*"]
 # explicit order of the example groups
 explicit_order = [
     "../../examples/chemistry",
@@ -115,40 +124,16 @@ example_order = sg_sorting.ExplicitOrder(explicit_order)
 # sphinx gallery configurations
 sphinx_gallery_conf = {
     "examples_dirs": "../../examples",  # path to your example scripts
-    "gallery_dirs": "auto_examples",  # path to where to save gallery generated output
+    "gallery_dirs": "examples",  # path to where to save gallery generated output
     "example_extensions": {".py"},
     "subsection_order": example_order,
     "within_subsection_order": "FileNameSortKey",
     "remove_config_comments": True,
 }
 
-# -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
-html_theme = "ansys_sphinx_theme"
-html_short_title = html_title = "PyChemkin"
-html_static_path = ["_static"]
-
-# -- Declare the Jinja context -----------------------------------------------
-exclude_patterns = []
-BUILD_API = True
-if not BUILD_API:
-    exclude_patterns.append("autoapi")
-
-BUILD_EXAMPLES = True
-if not BUILD_EXAMPLES:
-    exclude_patterns.append("examples/**")
-    exclude_patterns.append("Tutorials.rst")
-
-jinja_contexts = {
-    "main_toctree": {
-        "build_api": BUILD_API,
-        "build_examples": BUILD_EXAMPLES,
-    },
-    "linux_containers": {
-        "add_windows_warnings": False,
-    },
-    "windows_containers": {
-        "add_windows_warnings": True,
-    },
-}
+# -- Lincheck configuration --------------------------------------------------
+linkcheck_ignore = [
+    r"https://www.ansys.com/*",
+    r"https://ansys.com/*",
+    r"https://ansyshelp.ansys.com/*",
+]

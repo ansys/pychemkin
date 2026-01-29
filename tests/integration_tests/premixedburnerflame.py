@@ -19,23 +19,27 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
+
+"""Burner stabilized flame test for the premixed flame model."""
+
+from pathlib import Path
 import time
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.logger import logger
-
-# Chemkin 1-D premixed freely propagating flame model (steady-state)
-from ansys.chemkin.premixedflames.premixedflame import (
-    BurnedStabilized_GivenTemperature as Burner,
-)
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
+from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.core.logger import logger
+
+# Chemkin 1-D premixed freely propagating flame model (steady-state)
+from ansys.chemkin.core.premixedflames.premixedflame import (
+    BurnedStabilizedGivenTemperature as Burner,
+)
+
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -46,33 +50,34 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # including the full file path is recommended
-chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+chemfile = str(mechanism_dir / "grimech30_chem.inp")
+thermfile = str(mechanism_dir / "grimech30_thermo.dat")
+tranfile = str(mechanism_dir / "grimech30_transport.dat")
 # create a chemistry set based on GRI 3.0
 MyGasMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="GRI 3.0")
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
-if iError != 0:
+ierror = MyGasMech.preprocess()
+if ierror != 0:
     print("Error: failed to preprocess the mechanism!")
-    print(f"       error code = {iError}")
+    print(f"       error code = {ierror}")
     exit()
 
 # create the fuel-air Stream for the premixed flame speed calculation
 premixed = Stream(MyGasMech, label="premixed")
 # set inlet premixed stream molar composition
-premixed.X = [("C2H4", 0.163), ("O2", 0.237), ("AR", 0.6)]
+premixed.x = [("C2H4", 0.163), ("O2", 0.237), ("AR", 0.6)]
 # setting inlet pressure [dynes/cm2]
-premixed.pressure = 1.0 * ck.Patm
+premixed.pressure = 1.0 * ck.P_ATM
 # set inlet/unburnt gas temperature [K]
 premixed.temperature = 300.0  # inlet temperature
 
 # set the burner outlet cross sectional flow area to unity (1 [cm2])
-# because the flame models use the "mass flux" in the calculation instead of the mass flow rate
+# because the flame models use the "mass flux" in the calculation instead of
+# the mass flow rate
 premixed.flowarea = 1.0
 # set value for the inlet mass flow rate [g/sec]
 premixed.velocity = 0.0147
@@ -81,8 +86,8 @@ premixed.velocity = 0.0147
 flatflame = Burner(premixed, label="ethylene flame")
 
 # Set up the temperature profile along the burner centerline
-TPRO_data_points = 21
-gridpoints = np.zeros(TPRO_data_points, dtype=np.double)
+tpro_data_points = 21
+gridpoints = np.zeros(tpro_data_points, dtype=np.double)
 temp_data = np.zeros_like(gridpoints, dtype=np.double)
 gridpoints = [
     0.0,
@@ -132,20 +137,24 @@ temp_data = [
 ]
 flatflame.set_temperature_profile(x=gridpoints, temp=temp_data)
 
-# set the maximum total number of grid points allowed in the calculation (optional)
+# set the maximum total number of grid points allowed in
+# the calculation (optional)
 flatflame.set_max_grid_points(250)
 # define the calculation domain [cm]
 flatflame.end_position = 1.2
-# maximum number of grid points can be added during each grid adaption event (optional)
+# maximum number of grid points can be added during
+# each grid adaption event (optional)
 flatflame.set_max_adaptive_points(10)
-# set the maximum values of the grdient and the curvature of the solution profiles (optional)
+# set the maximum values of the grdient and the curvature
+# of the solution profiles (optional)
 flatflame.set_solution_quality(gradient=0.1, curvature=0.1)
 
 # use the mixture average formulism to evaluate the mixture transport properties
 flatflame.use_mixture_averaged_transport()
 
 # specific the species composition boundary treatment ("comp" or "flux")
-# use "FLUX" to ensure that the "net" species mass fluxes are zero at the burner outlet.
+# use "FLUX" to ensure that the "net" species mass fluxes are zero
+# at the burner outlet.
 flatflame.set_species_boundary_types(mode="flux")
 
 # reset the tolerances in the steady-state solver (optional)
@@ -188,17 +197,17 @@ mesh = flatflame.get_solution_variable_profile("distance")
 # get the temperature profile
 tempprofile = flatflame.get_solution_variable_profile("temperature")
 # get OH mass fraction profile
-OHprofile = flatflame.get_solution_variable_profile("OH")
+oh_profile = flatflame.get_solution_variable_profile("OH")
 
 # create arrays for mixture conductivity, and mixture specific heat capacity
-Cpprofile = np.zeros_like(mesh, dtype=np.double)
+cp_profile = np.zeros_like(mesh, dtype=np.double)
 condprofile = np.zeros_like(mesh, dtype=np.double)
 # loop over all solution grid points
 for i in range(solutionpoints):
     # get the stream at the grid point
     solutionstream = flatflame.get_solution_stream_at_grid(grid_index=i)
     # get mixture specific heat capacity profile [erg/mole-K]
-    Cpprofile[i] = solutionstream.CPBL() / ck.ergs_per_joule * 1.0e-3
+    cp_profile[i] = solutionstream.cpbl() / ck.ERGS_PER_JOULE * 1.0e-3
     # get thermal conductivity profile [ergs/cm-K-sec]
     condprofile[i] = solutionstream.mixture_conductivity() * 1.0e-5
 
@@ -208,10 +217,10 @@ plt.subplot(221)
 plt.plot(mesh, tempprofile, "r-")
 plt.ylabel("Temperature [K]")
 plt.subplot(222)
-plt.plot(mesh, Cpprofile, "b-")
+plt.plot(mesh, cp_profile, "b-")
 plt.ylabel("Mixture Cp [kJ/mole]")
 plt.subplot(223)
-plt.plot(mesh, OHprofile, "g-")
+plt.plot(mesh, oh_profile, "g-")
 plt.xlabel("Distance [cm]")
 plt.ylabel("OH Mass Fraction")
 plt.subplot(224)
@@ -225,13 +234,13 @@ else:
     plt.savefig("plot_premixed_burner_stabilised_flame.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "burnerstabilized.result")
+resultfile = Path(current_dir) / "burnerstabilized.result"
 results = {}
 results["state-temperature"] = tempprofile.tolist()
 results["state-conductivity"] = condprofile.tolist()
-results["species-OH_mass_fraction"] = OHprofile.tolist()
+results["species-OH_mass_fraction"] = oh_profile.tolist()
 #
-r = open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

@@ -20,15 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_reactor_cluster_heat_exchange:
+r""".. _ref_reactor_cluster_heat_exchange:
 
 ============================================
 A PSR cluster with heat exchange
 ============================================
 
-This example shows how to set up and solve a series of linked PSRs (perfectly-stirred reactors)
-with heat exchange.
+This example shows how to set up and solve a series of linked PSRs
+(perfectly-stirred reactors) with heat exchange.
 
 Here is a PSR chain model of a fictional gas combustor with heat exchange:
 
@@ -36,17 +35,20 @@ Here is a PSR chain model of a fictional gas combustor with heat exchange:
    :scale: 80 %
    :alt: Chain PSR cluster with heat exchange
 
-The primary fuel inlet stream to the first reactor, the *pre-heater*, contains pure methane. The outlet
-flow from the *pre-heater* enters the second reactor, the *mixer*, where the hot fuel would mix with
-the cool air from the external inlet to form a combustible mathen-air mixture. The combustible mixture from
-the *mixer* then travel to the third reactor, the *combustor* in which the methane-air mixture would ignite
-and burn. The *combustor* is connected to the *pre-heater* by a heat exchanger so that a portion of the heat
-generated from the combustion in the *combustor* will be recycled to the *pre-heeater* to heat up
-the fuel stream.
+The primary fuel inlet stream to the first reactor, the *pre-heater*,
+contains pure methane. The outlet flow from the *pre-heater* enters
+the second reactor, the *mixer*, where the hot fuel would mix with
+the cool air from the external inlet to form a combustible mathen-air mixture.
+The combustible mixture from the *mixer* then travel to the third reactor,
+the *combustor* in which the methane-air mixture would ignite and burn.
+The *combustor* is connected to the *pre-heater* by a heat exchanger so that
+a portion of the heat generated from the combustion in the *combustor* will be
+recycled to the *pre-heeater* to heat up the fuel stream.
 
-This example uses the ``ReactorNetwork`` module to configure and solve this chain reactor network
-with heat exchange iteratively. This module automatically handles the tasks of running the individual
-reactors and setting up the inlet to the downstream reactor.
+This example uses the ``ReactorNetwork`` module to configure and solve
+this chain reactor network with heat exchange iteratively. This module automatically
+handles the tasks of running the individual reactors and setting up the inlet to
+the downstream reactor.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/reactor_network_heat_exchange.png'
@@ -55,21 +57,23 @@ reactors and setting up the inlet to the downstream reactor.
 # Import PyChemkin packages and start the logger
 # ==============================================
 
-import os
+from pathlib import Path
 import time
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.inlet import adiabatic_mixing_streams
-from ansys.chemkin.logger import logger
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
+from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.core.inlet import adiabatic_mixing_streams
+from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.stirreactors.PSR import PSR_SetResTime_EnergyConservation as PSR
-from ansys.chemkin.stirreactors.PSRcluster import PSRCluster as ERN
+from ansys.chemkin.core.stirreactors.PSR import (
+    PSRSetResTimeEnergyConservation as Psr,
+)
+from ansys.chemkin.core.stirreactors.PSRcluster import PSRCluster as Ern
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -82,14 +86,14 @@ ck.set_verbose(True)
 # installation in the ``/reaction/data`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on the GRI mechanism
 MyGasMech = ck.Chemistry(label="GRI 3.0")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-MyGasMech.thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
+MyGasMech.chemfile = str(mechanism_dir / "grimech30_chem.inp")
+MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
 
 #######################################
 # Preprocess the gasoline chemistry set
@@ -112,36 +116,37 @@ iError = MyGasMech.preprocess()
 # reburning zone is a mixture of methane and carbon dioxide.
 #
 # .. note::
-#   PyChemkin has ``air`` predefined as a convenient way to set up the air
-#   stream/mixture in simulations. Use the ``ansys.chemkin.Air.X()`` or
-#   ``ansys.chemkin.Air.Y()`` method when the mechanism uses "O2" and "N2" for
-#   oxygen and nitrogen. Use the ``ansys.chemkin.air.X()`` or ``ansys.chemkin.air.Y()``
-#   method when the mechanism uses "o2" and "n2" for oxygen and nitrogen.
+#   PyChemkin has ``Air`` predefined as a convenient way to set up the air
+#   stream/mixture in simulations. Use the ``ansys.chemkin.Air.x()`` or
+#   ``ansys.chemkin.Air.y()`` method when the mechanism uses "O2" and "N2" for
+#   oxygen and nitrogen. Use the ``ansys.chemkin.Air.x('L')`` or
+#   ``ansys.chemkin.Air.y('L')`` method when the mechanism uses
+#   "o2" and "n2" for oxygen and nitrogen.
 #
 
 # fuel is pure methane
 fuel = Stream(MyGasMech)
 fuel.temperature = 300.0  # [K]
-fuel.pressure = ck.Patm  # [atm] => [dyne/cm2]
-fuel.X = [("CH4", 1.0)]
+fuel.pressure = ck.P_ATM  # [atm] => [dyne/cm2]
+fuel.x = [("CH4", 1.0)]
 fuel.mass_flowrate = 3.275  # [g/sec]
 
 # air is modeled as a mixture of oxygen and nitrogen
 air = Stream(MyGasMech)
 air.temperature = 300.0  # [K]
-air.pressure = ck.Patm
+air.pressure = ck.P_ATM
 # use predefined "air" recipe in mole fractions (with upper cased symbols)
-air.X = ck.Air.X()
+air.x = ck.Air.x()
 air.mass_flowrate = 66.75  # [g/sec]
 
 # prepare a premixed stream as the guessed condition for the combustor
 premixed = adiabatic_mixing_streams(fuel, air)
 
 # find the species index
-CH4_index = MyGasMech.get_specindex("CH4")
-O2_index = MyGasMech.get_specindex("O2")
-NO_index = MyGasMech.get_specindex("NO")
-CO_index = MyGasMech.get_specindex("CO")
+ch4_index = MyGasMech.get_specindex("CH4")
+o2_index = MyGasMech.get_specindex("O2")
+no_index = MyGasMech.get_specindex("NO")
+co_index = MyGasMech.get_specindex("CO")
 
 ###########################
 # Create PSRs for each zone
@@ -167,14 +172,14 @@ CO_index = MyGasMech.get_specindex("CO")
 #
 
 # PSR #1: pre-heater
-preheater = PSR(air, label="pre-heater")
+preheater = Psr(air, label="pre-heater")
 # set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
 preheater.residence_time = 1.5 * 1.0e-3
 # add external inlet
 preheater.set_inlet(air)
 
 # PSR #2: mixer
-mixer = PSR(fuel, label="mixer")
+mixer = Psr(fuel, label="mixer")
 # set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
 mixer.residence_time = 0.5 * 1.0e-3
 # add external inlet
@@ -182,7 +187,7 @@ mixer.set_inlet(fuel)
 
 # PSR #3: combustor
 # use the premixed methane-air mixture to set up the combustor
-combustor = PSR(premixed, label="combustor")
+combustor = Psr(premixed, label="combustor")
 # use the equilibrium state of the premixed methane-air mixture as the guessed solution
 combustor.set_estimate_conditions(option="HP")
 # set PSR residence time (sec): required for PSR_SetResTime_EnergyConservation model
@@ -204,7 +209,7 @@ combustor.residence_time = 4.0 * 1.0e-3
 
 # instantiate the PSR network as a coupled reactor network
 PSR_list = [preheater, mixer, combustor]
-PSRcluster = ERN(PSR_list, label="combustor_cluster")
+PSRcluster = Ern(PSR_list, label="combustor_cluster")
 
 ###################################
 # Add the heat transfer connection
@@ -213,10 +218,10 @@ PSRcluster = ERN(PSR_list, label="combustor_cluster")
 # between the *pre-heater* and the *combustor*.
 
 # effecctive heat transfer coefficient of the heat exchanger [cal/cm2-K-sec]
-HT_Coeff = 0.0025
+ht_coeff = 0.0025
 # effective surface area of the heat exchanger [cm2]
-HT_area = 100.0
-PSRcluster.add_heat_exchange(preheater.label, combustor.label, HT_Coeff, HT_area)
+ht_area = 100.0
+PSRcluster.add_heat_exchange(preheater.label, combustor.label, ht_coeff, ht_area)
 
 ###########################
 # Solve the reactor network
@@ -251,21 +256,28 @@ print(f"Total simulation duration: {runtime} [sec]")
 #
 
 # postprocess the solutions of all PSRs in the cluster
-iErr = PSRcluster.process_cluster_solution()
+ierr = PSRcluster.process_cluster_solution()
 
-# verify the mass flow rate in and out of the PSR cluster
-print(
-    f"net external inlet mass flow rate = {PSRcluster.total_inlet_mass_flow_rate} [g/sec]."
-)
-print(
-    f"net outlet mass flow rate = {PSRcluster.get_cluster_outlet_flowrate()} [g/sec]."
-)
+if ierr == 0:
+    # verify the mass flow rate in and out of the PSR cluster
+    print(
+        f"net external inlet mass flow rate = "
+        f"{PSRcluster.total_inlet_mass_flow_rate} [g/sec]."
+    )
+    print(
+        f"net outlet mass flow rate = "
+        f"{PSRcluster.get_cluster_outlet_flowrate()} [g/sec]."
+    )
+else:
+    print("Failed to post-process the network solution.")
+    print(f"error code = {ierr}")
+    exit()
 
 # display the reactor solutions
 print("=" * 10)
 print("reactor/zone")
 print("=" * 10)
-for index in range(PSRcluster.numb_PSRs):
+for index in range(PSRcluster.numb_psrs):
     id = index + 1
     name = PSRcluster.get_reactor_label(id)
     # get the solution stream of the reactor
@@ -273,10 +285,10 @@ for index in range(PSRcluster.numb_PSRs):
     print(f"Reactor: {name}.")
     print(f"Temperature = {sstream.temperature} [K].")
     print(f"Mass flow rate = {sstream.mass_flowrate} [g/sec].")
-    print(f"CH4 = {sstream.X[CH4_index]}.")
-    print(f"O2 = {sstream.X[O2_index]}.")
-    print(f"CO = {sstream.X[CO_index]}.")
-    print(f"NO = {sstream.X[NO_index]}.")
+    print(f"CH4 = {sstream.x[ch4_index]}.")
+    print(f"O2 = {sstream.x[o2_index]}.")
+    print(f"CO = {sstream.x[co_index]}.")
+    print(f"NO = {sstream.x[no_index]}.")
     print("-" * 10)
 
 psr1_mixture = PSRcluster.get_reactor_stream("pre-heater")

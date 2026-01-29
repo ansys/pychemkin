@@ -41,6 +41,8 @@ CPUs
 Curl
 current_dir
 Cv
+CSV
+csv
 dCA
 dedent
 delta_time
@@ -62,6 +64,7 @@ EVO
 Feinberg
 Fenimore
 flamelet
+frac
 freestream
 GitHub
 HCCI
@@ -105,6 +108,7 @@ num_points
 Neumann
 NumPy
 numpy
+parallelization
 partlist
 peakness
 perfectly-stirred
@@ -145,6 +149,7 @@ Sandia
 SciPy
 SI
 si
+silane
 situ
 SOC
 SOx

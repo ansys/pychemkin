@@ -1,7 +1,6 @@
-"""
-Validate PyChemkin test results.
-"""
-import os
+"""Validate PyChemkin test results."""
+
+from pathlib import Path
 
 import pytest
 
@@ -9,9 +8,7 @@ from .tools import PyCKtools
 
 
 class TestCompareResults:
-    """
-    Perform test validation.
-    """
+    """Perform test validation."""
 
     line_length = 42
 
@@ -22,9 +19,7 @@ class TestCompareResults:
         get_result_dir,
         get_compare,
     ):
-        """
-        Compare current test results against the baselines.
-        """
+        """Compare current test results against the baselines."""
         if not get_compare:
             pytest.skip("no --compare option set.")
         # check the folders
@@ -32,25 +27,28 @@ class TestCompareResults:
             new_working = get_working_dir
         else:
             new_working = PyCKtools.TARGET_FOLDER
-        new_result_dir = os.path.join(new_working, get_result_dir)
-        iErr = PyCKtools.check_folder(new_result_dir)
-        assert iErr == 0, f"result folder {new_result_dir} not found."
-        baseline_dir = os.path.join(get_working_dir, get_baseline_dir)
-        iErr = PyCKtools.check_folder(baseline_dir)
-        assert iErr == 0, f"baseline folder {baseline_dir} not found."
+        new_result_dir = str(Path(new_working) / get_result_dir)
+        ierr = PyCKtools.check_folder(new_result_dir)
+        assert ierr == 0, f"result folder {new_result_dir} not found."
+        baseline_dir = str(Path(get_working_dir) / get_baseline_dir)
+        ierr = PyCKtools.check_folder(baseline_dir)
+        assert ierr == 0, f"baseline folder {baseline_dir} not found."
         # load the result file
         result_tag = ".result"
         baseline_tag = ".baseline"
         r_file_names = PyCKtools.get_file_names(new_result_dir)
         b_file_names = PyCKtools.get_file_names(baseline_dir)
         # create the comparison log file
-        logf = open(os.path.join(new_working, "compareresults.log"), "w+")
+        log = Path(new_working) / "compareresults.log"
+        logf = log.open(mode="w+")
         count_all_files = 0
         count_missing = 0
         count_skipped = 0
         count_bad = 0
         for rf in r_file_names:
-            test_name, extension = os.path.splitext(rf)
+            rf_obj = Path(rf)
+            test_name = rf_obj.stem
+            extension = rf_obj.suffix
             logf.write(f"\nchecking file {rf}...\n")
             count_all_files += 1
             if extension != result_tag:
@@ -60,18 +58,18 @@ class TestCompareResults:
                 count_skipped += 1
             else:
                 # prepare for result comparisons
-                this_result_file = os.path.join(new_result_dir, rf)
+                this_result_file = str(Path(new_result_dir) / rf)
                 this_result = PyCKtools.load_results(this_result_file)
                 msg = str(test_name) + ": bad result file format."
-                assert type(this_result) == dict, msg
+                assert isinstance(this_result, dict), msg
                 # load the baseline file
                 base_name = test_name + baseline_tag
                 if base_name in b_file_names:
-                    this_baseline_file = os.path.join(baseline_dir, base_name)
+                    this_baseline_file = str(Path(baseline_dir) / base_name)
                     # find corresponding baseline
                     this_baseline = PyCKtools.load_results(this_baseline_file)
                     msg = str(test_name) + ": trouble reading the baseline of test."
-                    assert type(this_baseline) == dict, msg
+                    assert isinstance(this_baseline, dict), msg
                     # get tolerances from the baseline file
                     state_tol = this_baseline.get("tolerance-var", [1.0e-6, 1.0e-2])
                     species_tol = this_baseline.get("tolerance-frac", [1.0e-6, 1.0e-2])
@@ -99,26 +97,26 @@ class TestCompareResults:
                             var, state_tol, species_tol, rate_tol
                         )
                         # perform the comparison
-                        iErr, bad, diff = PyCKtools.compare_list(
+                        ierr, bad, diff = PyCKtools.compare_list(
                             r_list, b_list, atol, rtol
                         )
                         #
-                        status += iErr
-                        if iErr > 0:
+                        status += ierr
+                        if ierr > 0:
                             # there are differences out of tolerances
                             logf.write("-" * self.line_length + "\n")
                             logf.write(f"{test_name}::{var}\n")
-                            for i in range(iErr):
-                                ID = bad[i]
+                            for i in range(ierr):
+                                id = bad[i]
                                 msg = [
                                     "index = ",
-                                    str(ID),
+                                    str(id),
                                     ",  ",
                                     "result value = ",
-                                    str(r_list[ID]),
+                                    str(r_list[id]),
                                     ",  ",
                                     "baseline value = ",
-                                    str(b_list[ID]),
+                                    str(b_list[id]),
                                     ",  ",
                                     "difference = ",
                                     str(diff[i]),
@@ -126,7 +124,7 @@ class TestCompareResults:
                                 ]
                                 logf.write(" ".join(msg))
                             logf.write("-" * self.line_length + "\n")
-                    if iErr == 0:
+                    if ierr == 0:
                         # no significant difference found
                         logf.write("-" * self.line_length + "\n")
                         logf.write("OK.\n")

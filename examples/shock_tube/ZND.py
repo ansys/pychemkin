@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_shock_ZND_reactor:
+r""".. _ref_shock_ZND_reactor:
 
 ==========================================================
 Perform ZND analysis of a combustible hydrogen mixture
@@ -30,23 +29,27 @@ Perform ZND analysis of a combustible hydrogen mixture
 The ZND (Zeldovich-von Neumann-Deoring) model is commonly applied to study the
 evolution of the gas mixture behind a detonation wave.
 
-The ZND model is a transient reactor, and the solutions describe the state of the gas mixture
-(particle) as it moving away from the detonation front in the shock tube reactor.
+The ZND model is a transient reactor, and the solutions describe the state of
+the gas mixture (particle) as it moving away from the detonation front in
+the shock tube reactor.
 
 Use the ``ZNDCalculator()`` method to create a ZND shock tube reactor.
-The shock tube reactor models, such as the IncidentShcok, the ReflectedShock and the ZNDCalculator models,
-are initiated by a stream, which is simply a mixture with the addition of the shock wave velocity.
-You already know how to create a stream if you know how to create
-a mixture. You can specify the shock wave velocity using the combination of the ``velocity`` method of the
-initial gas stream and the ``location`` parameter when you instantiate the ``incidentShock`` or
+The shock tube reactor models, such as the IncidentShcok, the ReflectedShock and
+the ZNDCalculator models, are initiated by a stream, which is simply a mixture with
+the addition of the shock wave velocity. You already know how to create a stream
+if you know how to create a mixture. You can specify the shock wave velocity using
+the combination of the ``velocity`` method of the initial gas stream and
+the ``location`` parameter when you instantiate the ``incidentShock`` or
 the ``ReflectedShock`` object.
 
 This example shows how to use the Chemkin ZND shock tube model to study the
-gas mixture evolution behind an incident detonation wave front. The speed of the incident shock wave
-is estimated by the ZND model automatically by finding the stable detonation wave speed corresponding to the given
-gas mixture before the incident shock front. Once the solution is obtained, you can extract the induction
-zone length behind the wave front and utilize this information to gain insights about the characteristic size of
-the cellular structure in multi-dimensional flow as well as the stability of the cellular structure.
+gas mixture evolution behind an incident detonation wave front. The speed of
+the incident shock wave is estimated by the ZND model automatically by finding
+the stable detonation wave speed corresponding to the given gas mixture before
+the incident shock front. Once the solution is obtained, you can extract the induction
+zone length behind the wave front and utilize this information to gain insights about
+the characteristic size of the cellular structure in multi-dimensional flow as well as
+the stability of the cellular structure.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_shock_ZND_reactor.png'
@@ -55,22 +58,22 @@ the cellular structure in multi-dimensional flow as well as the stability of the
 # Import PyChemkin packages and start the logger
 # ==============================================
 
-import os
+from pathlib import Path
 import time
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
-from ansys.chemkin.inlet import Stream
-from ansys.chemkin.logger import logger
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
 
 # chemkin plug flow reactor model
-from ansys.chemkin.shock.shocktubereactors import ZNDCalculator as ZND
-from ansys.chemkin.utilities import find_file
+from ansys.chemkin.core.shock.shocktubereactors import ZNDCalculator as Znd
+from ansys.chemkin.core.inlet import Stream
+from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.utilities import find_file
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set interactive mode for plotting the results
 # interactive = True: display plot
@@ -86,9 +89,7 @@ interactive = True
 # installation in the ``/reaction/data/ModelFuelLibrary/Skeletal`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(
-    ck.ansys_dir, "reaction", "data", "ModelFuelLibrary", "Skeletal"
-)
+data_dir = Path(ck.ansys_dir) / "reaction" / "data" / "ModelFuelLibrary" / "Skeletal"
 mechanism_dir = data_dir
 # create a chemistry set based on the MFL 2021 hydrogen mechanism
 MyGasMech = ck.Chemistry(label="hydrogen")
@@ -101,7 +102,7 @@ MyGasMech.chemfile = find_file(mechanism_dir, "Hydrogen_chem_MFL", "inp")
 # =====================================
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 
 ###################################
 # Instantiate and set up the stream
@@ -115,48 +116,50 @@ iError = MyGasMech.preprocess()
 # N\ :sub:`2` dilution) impacts the size of the induction zone behind
 # the detonation wave front.
 #
-streamA = Stream(MyGasMech)
+stream_a = Stream(MyGasMech)
 # initial gas state before the incident shock front
 # 1 [atm]
-streamA.pressure = ck.Patm
+stream_a.pressure = ck.P_ATM
 # 300 [K]
-streamA.temperature = 300.0
+stream_a.temperature = 300.0
 # 50% hydrogen + 50% oxygen by volume
-streamA.X = [("h2", 1.0), ("o2", 1.0)]
+stream_a.x = [("h2", 1.0), ("o2", 1.0)]
 #
-streamB = Stream(MyGasMech)
+stream_b = Stream(MyGasMech)
 # a diluted initial gas state before the incident shock front
 # 1 [atm]
-streamB.pressure = ck.Patm
+stream_b.pressure = ck.P_ATM
 # 300 [K]
-streamB.temperature = 300.0
+stream_b.temperature = 300.0
 # the 50% hydrogen + 50% oxygen mixture diluted by 40% nitrogen by volume
-streamB.X = [("h2", 0.3), ("o2", 0.3), ("n2", 0.4)]
+stream_b.x = [("h2", 0.3), ("o2", 0.3), ("n2", 0.4)]
 #
-streamC = Stream(MyGasMech)
+stream_c = Stream(MyGasMech)
 # a diluted initial gas state before the incident shock front
 # 1 [atm]
-streamC.pressure = ck.Patm
+stream_c.pressure = ck.P_ATM
 # 300 [K]
-streamC.temperature = 300.0
+stream_c.temperature = 300.0
 # the 50% hydrogen + 50% oxygen mixture diluted by 40% nitrogen by volume
-streamC.X = [("h2", 0.2), ("o2", 0.2), ("n2", 0.6)]
+stream_c.x = [("h2", 0.2), ("o2", 0.2), ("n2", 0.6)]
 
 ######################################
 # Create the shock tube reactor object
 # ====================================
 # Use the ``ZNDCalculator()`` method to create an incident shock reactor.
 # The required input parameter is the stream representing the state of the initial
-# gas mixture before the incident shock front. In this case, ``streamA``
+# gas mixture before the incident shock front. In this case, ``stream_a``
 # is used to initialize the ZND model ``ZNDIncident``.
 
-ZNDIncident = ZND(streamC, label="ZND")
+ZNDIncident = Znd(stream_c, label="ZND")
 
 ############################################
 # Set up additional reactor model parameters
 # ==========================================
-# For the ZND calculator model, the required reactor parameters is the total simulation time [sec].
-# The initial gas mixture conditions are defined by the stream when the ``ZNDIncident`` is instantiated.
+# For the ZND calculator model, the required reactor parameters is
+# the total simulation time [sec].
+# The initial gas mixture conditions are defined by the stream when
+# the ``ZNDIncident`` is instantiated.
 
 # set total simulation time (particle time) [sec]
 ZNDIncident.time = 3.0e-6
@@ -164,8 +167,8 @@ ZNDIncident.time = 3.0e-6
 #####################
 # Set solver controls
 # ===================
-# You can overwrite the default solver controls by using solver related methods, for example,
-# ``tolerances``.
+# You can overwrite the default solver controls by using solver related methods,
+# for example, ``tolerances``.
 
 # tolerances are given in tuple: (absolute tolerance, relative tolerance)
 ZNDIncident.tolerances = (1.0e-10, 1.0e-6)
@@ -205,18 +208,19 @@ print(f"Total simulation duration: {runtime * 1.0e3} [msec]")
 #   temperature, pressure, velocity, density, and species mass fractions.
 #
 # - The mixtures permit the use of all property and rate utilities to extract
-#   information such as viscosity, density, total thermicity, speed of sound, Mach number,
-#   and mole fractions.
+#   information such as viscosity, density, total thermicity, speed of sound,
+#   Mach number, and mole fractions.
 #
-# You can use the ``get_solution_variable_profile()`` method to get the raw solution profiles. You
-# can get solution mixtures using either the ``get_solution_stream_at_index()`` method for the
-# solution mixture at the given saved location or the ``get_solution_stream()`` method for the
-# solution mixture at the given distance. (In this case, the mixture is constructed by interpolation.)
+# You can use the ``get_solution_variable_profile()`` method to get the
+# raw solution profiles. You can get solution mixtures using either the
+# ``get_solution_stream_at_index()`` method for the solution mixture at the given
+# saved location or the ``get_solution_stream()`` method for the solution mixture at
+# the given distance. (In this case, the mixture is constructed by interpolation.)
 #
 # You can get ZND analysis information about the induction zone length by using the
-# ``get_inductionlength_size()`` and the ``get_induction_lengths()`` methods. The induction zone length
-# can be used to derive the characteristic cell size and the stability of the multi-dimensional cellular
-# wave structure.
+# ``get_inductionlength_size()`` and the ``get_induction_lengths()`` methods.
+# The induction zone length can be used to derive the characteristic cell size and
+# the stability of the multi-dimensional cellular wave structure.
 
 # postprocess the solution profiles
 ZNDIncident.process_solution()
@@ -230,7 +234,7 @@ print(f"number of induction length = {numb_induct_length}")
 if numb_induct_length > 0:
     induct_legth, sigmamax = ZNDIncident.get_induction_lengths(numb_induct_length)
     for i in range(numb_induct_length):
-        print(f"Induction length # {i+1}:")
+        print(f"Induction length # {i + 1}:")
         print(f"        Induction length = {induct_legth[i] * 1.0e1} [mm].")
         print(f"    Local max thermicity = {sigmamax[i]} [1/sec].\n")
 
@@ -251,7 +255,7 @@ velprofile = ZNDIncident.get_solution_variable_profile("velocity")
 sigmaprofile = ZNDIncident.get_solution_variable_profile("thermicity")
 
 # create arrays for the gas Mach number profile
-Machprofile = np.zeros_like(xprofile, dtype=np.double)
+machprofile = np.zeros_like(xprofile, dtype=np.double)
 # loop over all solution time points
 for i in range(solutionpoints):
     # get the mixture at the time point
@@ -259,7 +263,7 @@ for i in range(solutionpoints):
     # gas speed of sound [cm/sec]
     soundspeed = solutionmixture.sound_speed()
     # gas Mach number
-    Machprofile[i] = velprofile[i] / soundspeed
+    machprofile[i] = velprofile[i] / soundspeed
     # convert pressure from [dynes/cm2] to [bar]
     pressprofile[i] /= 1.0e6
 
@@ -279,7 +283,7 @@ plt.subplot(222)
 plt.plot(xprofile, pressprofile, "b-")
 plt.ylabel("Pressure [bar]")
 plt.subplot(223)
-plt.plot(xprofile, Machprofile, "g-")
+plt.plot(xprofile, machprofile, "g-")
 plt.xlabel("distance behind shock [cm]")
 plt.ylabel("Mach Number [-]")
 plt.subplot(224)

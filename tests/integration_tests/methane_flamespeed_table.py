@@ -19,21 +19,27 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
+
+"""Flame speed table test for the premixed flame model."""
+
+from pathlib import Path
 import time
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.logger import logger
-
-# Chemkin 1-D premixed freely propagating flame model (steady-state)
-from ansys.chemkin.premixedflames.premixedflame import FreelyPropagating as FlameSpeed
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
+from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.core.logger import logger
+
+# Chemkin 1-D premixed freely propagating flame model (steady-state)
+from ansys.chemkin.core.premixedflames.premixedflame import (
+    FreelyPropagating as Flamespeed,
+)
+
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -44,33 +50,33 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # including the full file path is recommended
-chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+chemfile = str(mechanism_dir / "grimech30_chem.inp")
+thermfile = str(mechanism_dir / "grimech30_thermo.dat")
+tranfile = str(mechanism_dir / "grimech30_transport.dat")
 # create a chemistry set based on GRI 3.0
 MyGasMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="GRI 3.0")
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
-if iError != 0:
+ierror = MyGasMech.preprocess()
+if ierror != 0:
     print("Error: failed to preprocess the mechanism!")
-    print(f"       error code = {iError}")
+    print(f"       error code = {ierror}")
     exit()
 
 # create the fuel mixture
 fuel = ck.Mixture(MyGasMech)
 # set fuel composition: methane
-fuel.X = [("CH4", 1.0)]
+fuel.x = [("CH4", 1.0)]
 # setting pressure and temperature condition for the flame speed calculations
-fuel.pressure = 1.0 * ck.Patm
+fuel.pressure = 1.0 * ck.P_ATM
 fuel.temperature = 300.0  # inlet temperature
 
 # create the oxidizer mixture: air
 air = ck.Mixture(MyGasMech)
-air.X = ck.Air.X()
+air.x = ck.Air.x()
 # setting pressure and temperature is not required in this case
 air.pressure = fuel.pressure
 air.temperature = fuel.temperature
@@ -79,8 +85,9 @@ air.temperature = fuel.temperature
 premixed = Stream(MyGasMech, label="premixed")
 # products from the complete combustion of the fuel mixture and air
 products = ["CO2", "H2O", "N2"]
-# species mole fractions of added/inert mixture. can also create an additives mixture here
-add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
+# species mole fractions of added/inert mixture.
+# can also create an additives mixture here
+add_frac = np.zeros(MyGasMech.kk, dtype=np.double)  # no additives: all zeros
 
 # setting pressure and temperature is not required in this case
 premixed.pressure = fuel.pressure
@@ -92,11 +99,11 @@ premixed.mass_flowrate = 0.4
 # equivalence ratio for the first case
 phi = 0.6
 # create mixture by using the equivalence ratio
-iError = premixed.X_by_Equivalence_Ratio(
-    MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=phi
+ierror = premixed.x_by_equivalence_ratio(
+    MyGasMech, fuel.x, air.x, add_frac, products, equivalenceratio=phi
 )
 # check fuel-oxidizer mixture creation status
-if iError != 0:
+if ierror != 0:
     print(
         +"Error: failed to create the methane-air mixture "
         + "for equivalence ratio = "
@@ -105,7 +112,7 @@ if iError != 0:
     exit()
 
 # Instantiate the laminar speed calculator
-flamespeedcalculator = FlameSpeed(premixed, label="premixed_methane")
+flamespeedcalculator = Flamespeed(premixed, label="premixed_methane")
 
 # Set up initial mesh and grid adaption options
 # set the maximum total number of grid points allowed in the calculation (optional)
@@ -153,11 +160,11 @@ for i in range(points):
     # update parameter
     phi += delta_phi
     # create mixture by using the equivalence ratio
-    iError = premixed.X_by_Equivalence_Ratio(
-        MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=phi
+    ierror = premixed.x_by_equivalence_ratio(
+        MyGasMech, fuel.x, air.x, add_frac, products, equivalenceratio=phi
     )
     # check fuel-oxidizer mixture creation status
-    if iError != 0:
+    if ierror != 0:
         print(
             "Error: failed to create the methane-air mixture ",
             "for equivalence ratio = ",
@@ -165,7 +172,7 @@ for i in range(points):
         )
         exit()
     # update initial gas composition
-    flamespeedcalculator.set_molefractions(premixed.X)
+    flamespeedcalculator.set_molefractions(premixed.x)
 
 # compute the total runtime
 runtime = time.time() - start_time
@@ -228,12 +235,12 @@ else:
     plt.savefig("plot_flame_speed_table.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "flamespeedtable.result")
+resultfile = Path(current_dir) / "flamespeedtable.result"
 results = {}
 results["state-equivalence_ratio"] = equival.tolist()
 results["state-flame_speed"] = flamespeed.tolist()
 #
-r = open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')

@@ -20,32 +20,36 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_reflected_shock_reactor:
+r""".. _ref_reflected_shock_reactor:
 
 ==============================================================
 Dissociation of nitrous oxide behind a reflected shock wave
 ==============================================================
 
-Shock tube experiments are commonly used to study reaction paths and to measure reaction rates
-at elevated temperatures. You can apply the incident shock reactor model ``IncidentShock()``
-to validate the reaction mechanism or kinetic parameters derived from such experiments.
+Shock tube experiments are commonly used to study reaction paths and to
+measure reaction rates at elevated temperatures. You can apply the
+incident shock reactor model ``IncidentShock()`` to validate the reaction mechanism
+or kinetic parameters derived from such experiments.
 
-The shock tube reactor models, such as the IncidentShcok, the ReflectedShock and the ZNDCalculator models,
-are initiated by a stream, which is simply a mixture with the addition of the shock wave velocity.
-You already know how to create a stream if you know how to create
-a mixture. You can specify the shock wave velocity using the combination of the ``velocity`` method of the
-initial gas stream and the ``location`` parameter when you instantiate the ``incidentShock`` or
-the ``ReflectedShock`` object.
+The shock tube reactor models, such as the IncidentShcok, the ReflectedShock and
+the ZNDCalculator models, are initiated by a stream, which is simply a mixture with
+the addition of the shock wave velocity.
+You already know how to create a stream if you know how to create a mixture. You can
+specify the shock wave velocity using the combination of the ``velocity`` method of
+the initial gas stream and the ``location`` parameter when you instantiate the
+``incidentShock`` or the ``ReflectedShock`` object.
 
-The gas condition behind a reflected shock is hot and uniform, and is favorable for studying chemical
-kinetics at high temperatures. This example utilizes the N\ :sub:`2`\ O dissociation mechanism proposed
-by Baber and Dean to simulate the evolution of N\ :sub:`2`\ O behind a reflected shock.
-The temperature profile and the mass fraction profiles of major species N\ :sub:`2`\ O, NO,
-and O\ :sub:`2` in the hot zone behind the reflected shock will be plotted as a function of time.
+The gas condition behind a reflected shock is hot and uniform, and is favorable for
+studying chemical kinetics at high temperatures. This example utilizes
+the N\ :sub:`2`\ O dissociation mechanism proposed by Baber and Dean to simulate
+the evolution of N\ :sub:`2`\ O behind a reflected shock.
+The temperature profile and the mass fraction profiles of major species N\ :sub:`2`\ O,
+NO, and O\ :sub:`2` in the hot zone behind the reflected shock will be plotted as
+a function of time.
 
 Reference:
-S.C. Baber and A.M. Dean, International Journal of Chemical Kinetics, vol. 7, pp. 381-398 (1975)
+S.C. Baber and A.M. Dean, International Journal of Chemical Kinetics, vol. 7,
+pp. 381-398 (1975)
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_reflected_shock.png'
@@ -54,20 +58,20 @@ S.C. Baber and A.M. Dean, International Journal of Chemical Kinetics, vol. 7, pp
 # Import PyChemkin packages and start the logger
 # ==============================================
 
-import os
+from pathlib import Path
 import time
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
-from ansys.chemkin.inlet import Stream
-from ansys.chemkin.logger import logger
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
 
 # chemkin plug flow reactor model
-from ansys.chemkin.shock.shocktubereactors import ReflectedShock
+from ansys.chemkin.core.shock.shocktubereactors import ReflectedShock
+from ansys.chemkin.core.inlet import Stream
+from ansys.chemkin.core.logger import logger
 import matplotlib.pyplot as plt  # plotting
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set interactive mode for plotting the results
 # interactive = True: display plot
@@ -82,10 +86,11 @@ interactive = True
 # contains the reactions to describe N2O dissociation.
 # This file is saved to the working directory ``current_dir``.
 #
-mymechfile = os.path.join(current_dir, "n2o_dissociation_chem.inp")
-m = open(mymechfile, "w")
-# the mechanism contains only the necessary species (oxygen, nitrogen, nitrous oxide, nitric oxide, and major byproducts)
-# decalre elements
+mymechfile = Path(current_dir) / "n2o_dissociation_chem.inp"
+m = mymechfile.open(mode="w")
+# the mechanism contains only the necessary species
+# (oxygen, nitrogen, nitrous oxide, nitric oxide, and major byproducts)
+# declare elements
 m.write("ELEMENT O N AR END\n")
 # declare species
 m.write("SPECIES\n")
@@ -93,8 +98,10 @@ m.write("O N O2 N2 NO N2O NO2 AR\n")
 m.write("END\n")
 # write reactions for N2O dissociation
 # Reference:
-# S.C. Baber and A.M. Dean, International Journal of Chemical Kinetics, vol. 7, pp. 381-398 (1975)
-# S.C. Baber and A.M. Dean, Journal of Chemical Physics, vol. 60, Mo. 1, pp. 307-313 (1974)
+# S.C. Baber and A.M. Dean, International Journal of Chemical Kinetics,
+# vol. 7, pp. 381-398 (1975)
+# S.C. Baber and A.M. Dean, Journal of Chemical Physics, vol. 60, Mo. 1,
+# pp. 307-313 (1974)
 m.write("REACTIONS\n")
 m.write("N2O+M=N2+O+M            7.83E+14  0.0    56845.32\n")
 m.write("N2O+O=NO+NO             1.15E+13  0.0    25078.82\n")
@@ -115,24 +122,21 @@ m.close()
 # the Ansys Chemkin installation in the ``/reaction/data`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # create a chemistry set based on the N2O dissociation mechanism
 MyGasMech = ck.Chemistry(label="N2O_dissociation")
 # set mechanism input files
 # including the full file path is recommended
-MyGasMech.chemfile = mymechfile
-MyGasMech.thermfile = os.path.join(
-    data_dir,
-    "therm.dat",
-)
+MyGasMech.chemfile = str(mymechfile)
+MyGasMech.thermfile = str(data_dir / "therm.dat")
 
 #######################################
 # Preprocess the hydrogen chemistry set
 # =====================================
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+ierror = MyGasMech.preprocess()
 
 ###################################
 # Instantiate and set up the stream
@@ -144,14 +148,14 @@ n2o_mixture = Stream(MyGasMech)
 # 2290 [K]
 n2o_mixture.temperature = 2290.0
 # AR + N2O ixture composition based on the experiment setup
-n2o_mixture.X = [("AR", 0.9899), ("N2O", 0.0101)]
+n2o_mixture.x = [("AR", 0.9899), ("N2O", 0.0101)]
 # calculate the gas pressure after the reflected shock from the temperature and density
 # density [g/cm3]
 state3_den = 0.00015937
 n2o_mixture.set_pressure_by_density(rho=state3_den)
 # check the pressure value
 print(
-    f"Gas pressure after the reflected shock = {n2o_mixture.pressure / ck.Patm} [atm]."
+    f"Gas pressure after the reflected shock = {n2o_mixture.pressure / ck.P_ATM} [atm]."
 )
 #
 ######################################
@@ -161,11 +165,12 @@ print(
 # The ``ReflectedShock()`` method has two required input parameters.
 # The first parameter is the "stream" representing the state of the initial
 # gas mixture. In this case, it is the ``n2o_mixture``. The second required parameter
-# is the location of the initial gas stream relative to the incident shock front. A value of '1'
-# indicate the initial gas stream is before the incident shock front, and a value of '2' indicates
-# the gas stream is behind the reflected shock. When the gas condition before the incident shock
-# are provided (location = 1), the gas velocity (same as the incident shock velocity)
-# must be given by the ``velocity`` method for ``ReflectedShock()`` model.
+# is the location of the initial gas stream relative to the incident shock front.
+# A value of '1' indicate the initial gas stream is before the incident shock front,
+# and a value of '2' indicates the gas stream is behind the reflected shock.
+# When the gas condition before the incident shock are provided (location = 1),
+# the gas velocity (same as the incident shock velocity) must be given by
+# the ``velocity`` method for ``ReflectedShock()`` model.
 #
 
 # instantiate the shock tube reactor
@@ -175,8 +180,10 @@ hottube = ReflectedShock(n2o_mixture, location=2, label="reflected_shock")
 ############################################
 # Set up additional reactor model parameters
 # ==========================================
-# For the reflected shock model, the required reactor parameters is the total simulation time [sec].
-# The initial gas mixture conditions are defined by the stream when the ``ReflectedShock`` is instantiated.
+# For the reflected shock model, the required reactor parameters is
+# the total simulation time [sec].
+# The initial gas mixture conditions are defined by the stream when
+# the ``ReflectedShock`` is instantiated.
 
 # set total simulation time (particle time) [sec]
 hottube.time = 3.0e-4
@@ -184,8 +191,8 @@ hottube.time = 3.0e-4
 #####################
 # Set solver controls
 # ===================
-# You can overwrite the default solver controls by using solver related methods, for example,
-# ``tolerances``.
+# You can overwrite the default solver controls by using solver related methods,
+# for example, ``tolerances``.
 
 # tolerances are given in tuple: (absolute tolerance, relative tolerance)
 hottube.tolerances = (1.0e-10, 1.0e-6)
@@ -225,13 +232,14 @@ print(f"Total simulation duration: {runtime * 1.0e3} [msec]")
 #   temperature, pressure, velocity, density, and species mass fractions.
 #
 # - The mixtures permit the use of all property and rate utilities to extract
-#   information such as viscosity, density, total thermicity, speed of sound, Mach number,
-#   and mole fractions.
+#   information such as viscosity, density, total thermicity, speed of sound
+#   Mach number, and mole fractions.
 #
-# You can use the ``get_solution_variable_profile()`` method to get the raw solution profiles. You
-# can get solution mixtures using either the ``get_solution_stream_at_index()`` method for the
-# solution mixture at the given saved location or the ``get_solution_stream()`` method for the
-# solution mixture at the given distance. (In this case, the mixture is constructed by interpolation.)
+# You can use the ``get_solution_variable_profile()`` method to get the raw
+# solution profiles. You can get solution mixtures using either the
+# ``get_solution_stream_at_index()`` method for the solution mixture at the given
+# saved location or the ``get_solution_stream()`` method for the solution mixture
+# at the given distance. (In this case, the mixture is constructed by interpolation.)
 #
 
 # postprocess the solution profiles
@@ -248,15 +256,15 @@ timeprofile *= 1.0e3
 # get the temperature profile [K]
 tempprofile = hottube.get_solution_variable_profile("temperature")
 # get the NO mass fraction profile [-]
-NOprofile = hottube.get_solution_variable_profile("NO")
+no_profile = hottube.get_solution_variable_profile("NO")
 # get the N2O mass fraction profile [-]
-N2Oprofile = hottube.get_solution_variable_profile("N2O")
+n2o_profile = hottube.get_solution_variable_profile("N2O")
 # get the O2 mass fraction profile [-]
-O2profile = hottube.get_solution_variable_profile("O2")
+o2_profile = hottube.get_solution_variable_profile("O2")
 
 # clean up
-if os.path.exists(mymechfile):
-    os.remove(mymechfile)
+if mymechfile.exists and mymechfile.is_file():
+    mymechfile.unlink()
 
 ############################
 # Plot the solution profiles
@@ -271,14 +279,14 @@ plt.subplot(221)
 plt.plot(timeprofile, tempprofile, "r-")
 plt.ylabel("Temperature [K]")
 plt.subplot(222)
-plt.plot(timeprofile, NOprofile, "b-")
+plt.plot(timeprofile, no_profile, "b-")
 plt.ylabel("NO Mass Fraction [-]")
 plt.subplot(223)
-plt.plot(timeprofile, N2Oprofile, "g-")
+plt.plot(timeprofile, n2o_profile, "g-")
 plt.xlabel("time [msec]")
 plt.ylabel("N2O Mass Fraction [-]")
 plt.subplot(224)
-plt.plot(timeprofile, O2profile, "m-")
+plt.plot(timeprofile, o2_profile, "m-")
 plt.xlabel("time [msec]")
 plt.ylabel("O2 Mass Fraction [-]")
 # plot results

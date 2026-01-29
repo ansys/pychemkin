@@ -20,8 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-.. _ref_flame_speed_pooling:
+r""".. _ref_flame_speed_pooling:
 
 =================================================================
 Setting up a multi-process laminar flame speed parameter study
@@ -29,23 +28,24 @@ Setting up a multi-process laminar flame speed parameter study
 
 One of the prevailing use case of the *freely propagating premixed flame* model is
 to build a *flame speed* table to be imported by another combustion simulation tools.
-PyChemkin provides the flexibility to customize the data structure of the flame speed table
-depending on the simulation goals and the tool. Furthermore, over the years, the chemkin
-flame speed calculator has derived a set of default solver settings that would greatly improve
-the convergence performance, especially for those widely adopted hydrocarbon fuel
-combustion mechanisms. The required input parameters the flame speed calculator are reduced
-to the composition of the fuel-oxidizer mixture, the initial/inlet pressure and temperature,
-and the calculation domain.
+PyChemkin provides the flexibility to customize the data structure of the
+flame speed table depending on the simulation goals and the tool. Furthermore,
+over the years, the chemkin flame speed calculator has derived a set of default solver
+settings that would greatly improve the convergence performance, especially for those
+widely adopted hydrocarbon fuel combustion mechanisms. The required input parameters
+the flame speed calculator are reduced to the composition of the fuel-oxidizer mixture,
+the initial/inlet pressure and temperature, and the calculation domain.
 
 This tutorial shows the steps of setting up a flame speed parameter study for
-CH\ :sub:`4`\ -air mixtures at the 5 atmosphere pressure. The predicted flame speed values are
-compared against the experimental data as a function of the mixture equivalence ratio.
-The parameter study is performed in the multi-process (or multi-core) mode by using ``ProcessPoolExecutor``
-from the ``concurrent.futures`` package. If the computer has enough number of CPU cores, the parameter
-study can be run in parallel with each case running on a designated CPU core.
+CH\ :sub:`4`\ -air mixtures at the 5 atmosphere pressure. The predicted flame speed
+values are compared against the experimental data as a function of the mixture
+equivalence ratio. The parameter study is performed in the multi-process
+(or multi-core) mode by using ``ProcessPoolExecutor`` from the ``concurrent.futures``
+package. If the computer has enough number of CPU cores, the parameter study can be
+run in parallel with each case running on a designated CPU core.
 
-Since the transport processes are critical for flame calculations, the transport data must be
-included in the mechanism data and preprocessed.
+Since the transport processes are critical for flame calculations, the transport data
+must be included in the mechanism data and preprocessed.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_flame_speed_pooling.png'
@@ -56,20 +56,23 @@ included in the mechanism data and preprocessed.
 
 from concurrent.futures import ProcessPoolExecutor
 import os
+from pathlib import Path
 import time
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.logger import logger
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.core.logger import logger
 
 # Chemkin 1-D premixed freely propagating flame model (steady-state)
-from ansys.chemkin.premixedflames.premixedflame import FreelyPropagating as FlameSpeed
-from ansys.chemkin.utilities import workingFolders
+from ansys.chemkin.core.premixedflames.premixedflame import (
+    FreelyPropagating as FlameSpeed,
+)
+from ansys.chemkin.core.utilities import WorkingFolders
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -88,14 +91,13 @@ interactive = True
 
 
 class FlameSpeedCalculator:
-    """
-    Laminar flame speed calculator with fixed set up parameters
-    """
+    """Laminar flame speed calculator with fixed set up parameters."""
 
     def __init__(self, fresh_mixture: Stream, index: int):
+        """Create a Laminar flame speed calculator."""
         """
-        Laminar flame speed calculator that instantiates a FlameSpeed object with
-        the given fresh (unburnt) mixture condition.
+        Create a Laminar flame speed calculator that instantiates a FlameSpeed object
+        with the given fresh (unburnt) mixture condition.
 
         Parameters
         ----------
@@ -108,39 +110,40 @@ class FlameSpeedCalculator:
         # set up the run and working directory name
         self.name = "Flame_Speed_" + str(index)
         # instantiate the FlameSpeed object for this run
-        self.FScalculator = FlameSpeed(fresh_mixture, label=self.name)
+        self.fs_calculator = FlameSpeed(fresh_mixture, label=self.name)
         # set the required premixed flame model parameters
         #
-        # set the maximum total number of grid points allowed in the calculation (optional)
-        # self.FScalculator.set_max_grid_points(150)
+        # set the maximum total number of grid points allowed
+        # in the calculation (optional)
+        # self.fs_calculator.set_max_grid_points(150)
         # define the calculation domain [cm]
-        self.FScalculator.end_position = 1.0
+        self.fs_calculator.end_position = 1.0
         # set the root directory
-        self.root_dir = os.getcwd()
+        self.root_dir = str(Path.cwd())
         # set the working directory
-        self.work_dir = os.path.join(self.root_dir, self.name)
+        self.work_dir = str(Path(self.root_dir) / self.name)
         # run status
         self.runstatus = -100
         # calculated laminar flame speed [cm/sec]
         self.flame_speed = 0.0
 
     def run(self):
-        """
-        Run the flame speed calculation in a separate working directory
-        """
+        """Run the flame speed calculation in a separate working directory."""
         # run the flame speed calculation
-        self.runstatus = self.FScalculator.run()
+        self.runstatus = self.fs_calculator.run()
         # extract the laminar flame speed from the solution
         if self.runstatus == 0:
             # postprocess the solutions
-            self.FScalculator.process_solution()
+            self.fs_calculator.process_solution()
             # get the flame speed value [cm/sec]
-            # because the memory is shared, it must be done as soon as the run is finished
-            self.flame_speed = self.FScalculator.get_flame_speed()
+            # because the memory is shared, it must be done as soon as
+            # the run is finished
+            self.flame_speed = self.fs_calculator.get_flame_speed()
 
     def get_flame_speed(self) -> float:
+        """Get the predicted laminar flame speed."""
         """
-        Get the predicted laminar flame speed
+        Get the predicted laminar flame speed.
 
         Returns
         -------
@@ -160,13 +163,15 @@ class FlameSpeedCalculator:
 
 
 def flame_speed_run(case: tuple[int, float]) -> tuple[float, float]:
+    """Set up the flame speed parameter study."""
     """
     Set up the parameter study runs for multi-processing.
 
     Parameters
     ----------
         case: tuple (integer, double)
-            flame speed calculation case condition: case index and the equivalence ratio
+            flame speed calculation case condition: case index and
+            the equivalence ratio
 
     Returns
     -------
@@ -188,14 +193,14 @@ def flame_speed_run(case: tuple[int, float]) -> tuple[float, float]:
     phi = case[1]
     # create and change to the working directory for this run
     name = "Flame_Speed_" + str(index)
-    work_folder = workingFolders(name, current_dir)
+    work_folder = WorkingFolders(name, current_dir)
     # set mechanism directory (the default Chemkin mechanism data directory)
-    data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+    data_dir = Path(ck.ansys_dir) / "reaction" / "data"
     mechanism_dir = data_dir
     # including the full file path is recommended
-    chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-    thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-    tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+    chemfile = str(mechanism_dir / "grimech30_chem.inp")
+    thermfile = str(mechanism_dir / "grimech30_thermo.dat")
+    tranfile = str(mechanism_dir / "grimech30_transport.dat")
     # create a chemistry set based on GRI 3.0
     MyGasMech = ck.Chemistry(
         chem=chemfile, therm=thermfile, tran=tranfile, label="GRI 3.0"
@@ -206,10 +211,10 @@ def flame_speed_run(case: tuple[int, float]) -> tuple[float, float]:
     # ============================
 
     # preprocess the mechanism files
-    iError = MyGasMech.preprocess()
-    if iError != 0:
+    ierror = MyGasMech.preprocess()
+    if ierror != 0:
         print("Error: failed to preprocess the mechanism!")
-        print(f"       error code = {iError}")
+        print(f"       error code = {ierror}")
         exit()
 
     ########################################################################
@@ -218,24 +223,25 @@ def flame_speed_run(case: tuple[int, float]) -> tuple[float, float]:
     # Instantiate a stream named ``premixed`` for the inlet gas mixture.
     # This stream  is a mixture with the addition of the
     # inlet flow rate. You can specify the inlet gas properties the same way you
-    # set up a ``Mixture``. Here the ``X_by_Equivalence_Ratio`` method is used.
+    # set up a ``Mixture``. Here the ``x_by_equivalence_ratio`` method is used.
     # You create the ``fuel`` and the ``air`` mixtures first. Then define the
     # *complete combustion product species* and provide the *additives* composition
-    # if applicable. And finally, during the parameter iteration runs, you can simply set
-    # different values to ``equivalenceratio`` to create different methane-air mixtures.
+    # if applicable. And finally, during the parameter iteration runs, you can
+    # simply set different values to ``equivalenceratio`` to create different
+    # methane-air mixtures.
     #
 
     # create the fuel mixture
     fuel = ck.Mixture(MyGasMech)
     # set fuel composition: methane
-    fuel.X = [("CH4", 1.0)]
+    fuel.x = [("CH4", 1.0)]
     # setting pressure and temperature condition for the flame speed calculations
-    fuel.pressure = 5.0 * ck.Patm
+    fuel.pressure = 5.0 * ck.P_ATM
     fuel.temperature = 300.0  # inlet temperature
 
     # create the oxidizer mixture: air
     air = ck.Mixture(MyGasMech)
-    air.X = ck.Air.X()
+    air.x = ck.Air.x()
     # setting pressure and temperature is not required in this case
     air.pressure = fuel.pressure
     air.temperature = fuel.temperature
@@ -244,8 +250,9 @@ def flame_speed_run(case: tuple[int, float]) -> tuple[float, float]:
     premixed = Stream(MyGasMech, label="premixed")
     # products from the complete combustion of the fuel mixture and air
     products = ["CO2", "H2O", "N2"]
-    # species mole fractions of added/inert mixture. can also create an additives mixture here
-    add_frac = np.zeros(MyGasMech.KK, dtype=np.double)  # no additives: all zeros
+    # species mole fractions of added/inert mixture.
+    # can also create an additives mixture here
+    add_frac = np.zeros(MyGasMech.kk, dtype=np.double)  # no additives: all zeros
 
     # setting pressure and temperature is not required in this case
     premixed.pressure = fuel.pressure
@@ -254,11 +261,11 @@ def flame_speed_run(case: tuple[int, float]) -> tuple[float, float]:
     # set estimated value of the flame mass flux [g/cm2-sec]
     premixed.mass_flowrate = 0.4
     # create mixture by using the equivalence ratio
-    iError = premixed.X_by_Equivalence_Ratio(
-        MyGasMech, fuel.X, air.X, add_frac, products, equivalenceratio=phi
+    ierror = premixed.x_by_equivalence_ratio(
+        MyGasMech, fuel.x, air.x, add_frac, products, equivalenceratio=phi
     )
     # check fuel-oxidizer mixture creation status
-    if iError != 0:
+    if ierror != 0:
         print(
             "Error: failed to create the methane-air mixture "
             + "for equivalence ratio = "
@@ -304,10 +311,10 @@ if __name__ == "__main__":
     # equivalence ratio increment
     delta_phi = 0.05
     # set up flame speed calculation runs with different equivalence ratios
-    FlameSpeed_cases: tuple[int, float] = []
+    flamespeed_cases: list[tuple[int, float]] = []
     for i in range(numb_cases):
         # create mixture by using the equivalence ratio
-        FlameSpeed_cases.append((i, phi))
+        flamespeed_cases.append((i, phi))
         # update parameter
         phi += delta_phi
     # start the multi-process
@@ -316,10 +323,10 @@ if __name__ == "__main__":
     start_time = time.time()
     #
     numb_workers = min(numb_workers, numb_cases)
-    equiv: float = []
-    flame_speed: float = []
+    equiv: list[float] = []
+    flame_speed: list[float] = []
     with ProcessPoolExecutor(max_workers=numb_workers) as e:
-        for ret_value in e.map(flame_speed_run, FlameSpeed_cases):
+        for ret_value in e.map(flame_speed_run, flamespeed_cases):
             # results returned by the flame speed calculator
             # equivalence ratio
             equiv.append(ret_value[0])

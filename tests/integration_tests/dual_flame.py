@@ -19,20 +19,24 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import os
+
+"""Double flame test for the opposed-flame flow reactor."""
+
+from pathlib import Path
 import time
 
-import ansys.chemkin as ck  # Chemkin
-from ansys.chemkin import Color
-
-# Chemkin 1-D opposed-flow flame model (steady-state)
-from ansys.chemkin.diffusionflames.opposedflowflame import OpposedFlame as Flame
-from ansys.chemkin.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.logger import logger
 import matplotlib.pyplot as plt  # plotting
 
+import ansys.chemkin.core as ck  # Chemkin
+from ansys.chemkin.core import Color
+
+# Chemkin 1-D opposed-flow flame model (steady-state)
+from ansys.chemkin.core.diffusionflames.opposedflowflame import OpposedFlame as Flame
+from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.core.logger import logger
+
 # check working directory
-current_dir = os.getcwd()
+current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
@@ -43,28 +47,28 @@ global interactive
 interactive = False
 
 # set mechanism directory (the default Chemkin mechanism data directory)
-data_dir = os.path.join(ck.ansys_dir, "reaction", "data")
+data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir
 # including the full file path is recommended
-chemfile = os.path.join(mechanism_dir, "grimech30_chem.inp")
-thermfile = os.path.join(mechanism_dir, "grimech30_thermo.dat")
-tranfile = os.path.join(mechanism_dir, "grimech30_transport.dat")
+chemfile = str(mechanism_dir / "grimech30_chem.inp")
+thermfile = str(mechanism_dir / "grimech30_thermo.dat")
+tranfile = str(mechanism_dir / "grimech30_transport.dat")
 # create a chemistry set based on GRI 3.0
 MyGasMech = ck.Chemistry(chem=chemfile, therm=thermfile, tran=tranfile, label="GRI 3.0")
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
-if iError != 0:
+ierror = MyGasMech.preprocess()
+if ierror != 0:
     print("Error: Failed to preprocess the mechanism!")
-    print(f"       Error code = {iError}")
+    print(f"       Error code = {ierror}")
     exit()
 
 # create the "fuel" stream
 fuel = Stream(MyGasMech, label="FUEL")
 # set fuel composition: fuel-rich methane-air mixture (equivalence ratio ~ 1.55)
-fuel.X = [("CH4", 0.14001807), ("O2", 0.18066847), ("N2", 0.67931346)]
+fuel.x = [("CH4", 0.14001807), ("O2", 0.18066847), ("N2", 0.67931346)]
 # system pressure [dynes/cm2]
-fuel.pressure = ck.Patm
+fuel.pressure = ck.P_ATM
 # fuel temperature [K]
 fuel.temperature = 300.0
 # fuel inlet velocity [cm/sec]
@@ -72,7 +76,7 @@ fuel.velocity = 16.0
 
 # create the oxidizer mixture: air
 air = Stream(MyGasMech, label="OXID")
-air.X = ck.Air.X()
+air.x = ck.Air.x()
 # oxidizer pressure (same as the fuel stream)
 air.pressure = fuel.pressure
 # oxidizer temperature (same as the fuel temperature)
@@ -102,7 +106,8 @@ dual_flame.set_numb_grid_points(26)
 dual_flame.set_max_grid_points(250)
 # maximum number of grid points can be added during each grid adaption event (optional)
 dual_flame.set_max_adaptive_points(5)
-# set the maximum values of the grdient and the curvature of the solution profiles (optional)
+# set the maximum values of the grdient and the curvature of
+# the solution profiles (optional)
 dual_flame.set_solution_quality(gradient=0.1, curvature=0.3)
 
 # use the mixture averaged formulism to evaluate the mixture transport properties
@@ -111,7 +116,8 @@ dual_flame.use_mixture_averaged_transport()
 dual_flame.use_thermal_diffusion(mode=False)
 
 # specific the species composition boundary treatment ('comp' or 'flux')
-# use 'flux' to keep the net species mass fluxes the same as given by the "inlet streams".
+# use 'flux' to keep the net species mass fluxes the same as given
+# by the "inlet streams".
 dual_flame.set_species_boundary_types(mode="flux")
 
 # reset the tolerances in the steady-state solver (optional)
@@ -151,7 +157,7 @@ velprofile = dual_flame.get_solution_variable_profile("axial_velocity")
 # get the mixture fraction profile
 mfprofile = dual_flame.get_solution_variable_profile("mixture_fraction")
 # get NO2 mass fraction profile
-NO2profile = dual_flame.get_solution_variable_profile("NO2")
+no2_profile = dual_flame.get_solution_variable_profile("NO2")
 
 # plot the opposed-flow flame solution profiles
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))
@@ -162,7 +168,7 @@ plt.subplot(222)
 plt.plot(mesh, velprofile, "b-")
 plt.ylabel("Axial Velocity [cm/sec]")
 plt.subplot(223)
-plt.plot(mesh, NO2profile, "g-")
+plt.plot(mesh, no2_profile, "g-")
 plt.xlabel("Distance [cm]")
 plt.ylabel("NO2 Mass Fraction")
 plt.subplot(224)
@@ -176,13 +182,13 @@ else:
     plt.savefig("plot_opposed_flow_flame.png", bbox_inches="tight")
 
 # return results for comparisons
-resultfile = os.path.join(current_dir, "dualflame.result")
+resultfile = Path(current_dir) / "dualflame.result"
 results = {}
 results["state-temperature"] = tempprofile.tolist()
 results["state-velocity"] = velprofile.tolist()
 results["species-mixture_fraction"] = mfprofile.tolist()
 #
-r = open(resultfile, "w")
+r = resultfile.open(mode="w")
 r.write("{\n")
 for k, v in results.items():
     r.write(f'"{k}": {v},\n')
