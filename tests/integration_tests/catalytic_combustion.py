@@ -25,19 +25,16 @@
 from pathlib import Path
 import time
 
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
 
-from ansys.chemkin.core.inlet import Mixture, Stream
-
-from ansys.chemkin.core.logger import logger
-
 # Chemkin PFR model (steady-state)
-from ansys.chemkin.core.flowreactors.PFR import (
-    PFREnergyConservation as Pfr
-)
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
+from ansys.chemkin.core.flowreactors.PFR import PFREnergyConservation as Pfr
+from ansys.chemkin.core.inlet import Mixture, Stream
+from ansys.chemkin.core.logger import logger
 
 # check working directory
 current_dir = str(Path.cwd())
@@ -173,7 +170,7 @@ cat_feed = Stream(mech_catalytic)
 
 # use the exhaust mixture (the solution) from the gas-phase only pre-burner
 # to set up the feed stream properties of the catalytic combustor
-cat_feed.x = preburner_exhaust.x 
+cat_feed.x = preburner_exhaust.x
 cat_feed.pressure = preburner_exhaust.pressure
 cat_feed.temperature = preburner_exhaust.temperature
 # the mass flow rate of the feed stream to the catalytic burner
@@ -285,15 +282,15 @@ n_points = cat_combustor.getnumbersolutionpoints()
 print(f"number of solution time points = {n_points}")
 # store solution profiles
 # distance from the reactor entrance [cm]
-distance = cat_combustor.get_solution_variable_profile("distance")#
+distance = cat_combustor.get_solution_variable_profile("distance")  #
 # temperature solution profile along the reactor length [K]
 temp_profile = cat_combustor.get_solution_variable_profile("temperature")
 # total heat release rate from the gas-phase reactions [erg/sec]
 gashrr_profile = cat_combustor.get_solution_variable_profile("gashrr")
-gashrr_profile /= (1.e3 * ck.ERGS_PER_JOULE)
+gashrr_profile /= 1.0e3 * ck.ERGS_PER_JOULE
 # total heat release rate from all surface reactions [erg/sec]
 surfhrr_profile = cat_combustor.get_solution_variable_profile("surfhrr")
-surfhrr_profile /= (1.e3 * ck.ERGS_PER_JOULE)
+surfhrr_profile /= 1.0e3 * ck.ERGS_PER_JOULE
 # gas phase CO solution profile [mass fraction]
 co_profile = cat_combustor.get_solution_variable_profile("CO")
 # gas phase CH4 solution profile [mass fraction]
