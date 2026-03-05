@@ -109,6 +109,41 @@ class BatchReactors(Reactor):
         self.suppress_output = False
 
     @property
+    def time(self) -> float:
+        """Get simulation end time."""
+        """
+        Get simulation end time (required).
+
+        Returns
+        -------
+            endtime: double
+                simulation duration or simulation end time [sec]
+
+        """
+        return self._endtime.value
+
+    @time.setter
+    def time(self, value: float = 0.0e0):
+        """Set simulation end time."""
+        """
+        Set simulation end time (required).
+
+        Parameters
+        ----------
+            value: double, default = 0.0
+                simulation end time [sec]
+
+        """
+        if value <= 0.0e0:
+            msg = [Color.PURPLE, "simulation end time must > 0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        else:
+            self._inputcheck.append("TIME")
+            self._endtime = c_double(value)
+
+    @property
     def volume(self) -> float:
         """Get reactor volume."""
         """
@@ -943,10 +978,14 @@ class BatchReactors(Reactor):
         # prepare initial conditions
         # initial mass fraction
         y_init = self.reactormixture.y
-        # surface sites (not applicable)
-        site_init = np.zeros(1, dtype=np.double)
-        # bulk activities (not applicable)
-        bulk_init = np.zeros_like(site_init, dtype=np.double)
+        if self.has_surface_chemistry:
+            # set surface species fractions
+            site_init, bulk_init = self.set_init_surface_coverage()
+        else:
+            # surface sites
+            site_init = np.zeros(1, dtype=np.double)
+            # bulk activities (not applicable)
+            bulk_init = np.zeros_like(site_init, dtype=np.double)
         # set reactor initial conditions and geometry parameters
         if self._reactortype.value == self.ReactorTypes.get("Batch"):
             ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupBatchInputs(
@@ -970,6 +1009,9 @@ class BatchReactors(Reactor):
         self.set_reactortype_keywords()
         # reactor initial/estimated condition
         self.set_reactorcondition_keywords()
+        if ierr == 0 and self.has_surface_chemistry:
+            # set surface related keywords
+            self.set_surface_chemistry_keywords()
         if ierr == 0 and self._numbprofiles > 0:
             # get keyword lines of all profiles
             err_profile, _, prof_lines = self.createprofileinputlines()
@@ -1087,9 +1129,11 @@ class BatchReactors(Reactor):
                 # re-size work arrays
                 self._profilesize = numbprofilepoints
                 ipoints = c_int(numbprofilepoints)
+                print("batch set ptofile points")
                 ierrc = chemkin_wrapper.chemkin.KINAll0D_SetProfilePoints(ipoints)
                 # setup reactor model working arrays
                 if ierrc == 0:
+                    print("batch set up work array")
                     ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
                         self._mylout, self._chemset_index
                     )
@@ -1107,12 +1151,17 @@ class BatchReactors(Reactor):
         # prepare initial conditions
         # initial mass fraction
         y_init = self.reactormixture.y
-        # surface sites (not applicable)
-        site_init = np.zeros(1, dtype=np.double)
-        # bulk activities (not applicable)
-        bulk_init = np.zeros_like(site_init, dtype=np.double)
+        if self.has_surface_chemistry:
+            # set surface species fractions
+            site_init, bulk_init = self.set_init_surface_coverage()
+        else:
+            # surface sites
+            site_init = np.zeros(1, dtype=np.double)
+            # bulk activities (not applicable)
+            bulk_init = np.zeros_like(site_init, dtype=np.double)
         # set reactor initial conditions and geometry parameters
         if self._reactortype.value == self.ReactorTypes.get("Batch"):
+            print("batch set up batch input")
             ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupBatchInputs(
                 self._chemset_index,
                 self._endtime,
@@ -1145,6 +1194,7 @@ class BatchReactors(Reactor):
             # ignition delay (use additional keywords)
             # solve integrated heat release rate due to chemical reactions
             if self.EnergyTypes.get("ENERGY") == self._energytype.value:
+                print("batch set up gas heat release")
                 ierrc = chemkin_wrapper.chemkin.KINAll0D_IntegrateHeatRelease()
                 ierr += ierrc
                 if ierrc != 0:
@@ -1159,12 +1209,17 @@ class BatchReactors(Reactor):
                     logger.error(this_msg)
                     return ierrc
 
+        if ierr == 0 and self.has_surface_chemistry:
+            # set surface related keywords
+            self.set_surface_chemistry_keywords()
+
         if ierr == 0 and self._numbprofiles > 0:
             for p in self._profiles_list:
                 key = bytes(p.profilekey, "utf-8")
                 npoints = c_int(p.size)
                 x = p.pos
                 y = p.value
+                print("batch set profile parameter")
                 err_profile = chemkin_wrapper.chemkin.KINAll0D_SetProfileParameter(
                     key, npoints, x, y
                 )
@@ -1190,6 +1245,7 @@ class BatchReactors(Reactor):
                     # convert string to byte
                     line = bytes(s, "utf-8")
                     # set additional keyword one by one
+                    print("batch set user keyword")
                     err_key = chemkin_wrapper.chemkin.KINAll0D_SetUserKeyword(line)
                     err_inputs += err_key
                 if err_inputs == 0:
@@ -1237,6 +1293,7 @@ class BatchReactors(Reactor):
 
         """
         # run the simulation without keyword inputs
+        print("batch run calculate ")
         ierr = chemkin_wrapper.chemkin.KINAll0D_Calculate(self._chemset_index)
         return ierr
 
@@ -1503,6 +1560,9 @@ class BatchReactors(Reactor):
         # store the raw solution data in a dictionary
         # time
         self._solution_rawarray["time"] = copy.deepcopy(time)
+        # for PFR the independent variable is distance [cm]
+        if self._reactortype.value == self.ReactorTypes.get("PFR", 3):
+            self._solution_rawarray["distance"] = copy.deepcopy(time)
         # temperature
         self._solution_rawarray["temperature"] = copy.deepcopy(temp)
         # pressure
@@ -1511,7 +1571,7 @@ class BatchReactors(Reactor):
         self._solution_rawarray["volume"] = copy.deepcopy(vol)
         # species mass fractions
         self.parsespeciessolutiondata(frac)
-        # if the energy equation is solved, get gas-phase hear release rate
+        # if the energy equation is solved, get gas-phase heat release rate
         if self._energytype.value == self.EnergyTypes.get("ENERGY", 1):
             gas_heatrelease = np.zeros_like(time, dtype=np.double)
             gas_heatrealease_rate = np.zeros_like(time, dtype=np.double)
@@ -1554,12 +1614,158 @@ class BatchReactors(Reactor):
             thermicity[i] = m.thermicity()
         # total thermicity
         self._solution_rawarray["thermicity"] = copy.deepcopy(thermicity)
+        # get surface coverage
+        if self.has_surface_chemistry:
+            print("processing surface solution")
+            self.process_surface_solution(nreac)
         # set up single point solution parameters
         delay = self.get_ignition_delay()
         if delay > 0.0e0:
             self._solution_parameters["ignition_delay"] = delay
         # clean up
         del time, pres, temp, vol, thermicity, frac
+
+    def process_surface_solution(self, nreac: int):
+        """Post-process surface solution."""
+        """Post-process surface solution to extract the raw solution variable data
+        package the steady-state solution into a mixture object.
+
+        Parameters
+        ----------
+            smixture: Stream object
+                gas stream representing the steady-state solution
+
+        """
+        #
+        icreac = c_int(nreac)
+        icnpts = c_int(self._numbsolutionpoints)
+        # get material information
+        mat_names = self.get_material_names()
+        # get the site and the bulk species sizes of the mechanism
+        max_sites = self.get_total_site_species()
+        max_bulks = self.get_total_bulk_species()
+        # set up holding arrays
+        # create arrays to hold the raw solution data
+        time = np.zeros(self._numbsolutionpoints, dtype=np.double)
+        # site fractions
+        if max_sites > 0:
+            s_frac = np.zeros(
+                (max_sites, self._numbsolutionpoints),
+                dtype=np.double,
+                order="F",
+            )
+        else:
+            s_frac = np.zeros((1, self._numbsolutionpoints), dtype=np.double, order="F")
+        # bulk activities
+        if max_bulks > 0:
+            b_act = np.zeros(
+                (max_bulks, self._numbsolutionpoints),
+                dtype=np.double,
+                order="F",
+            )
+        else:
+            b_act = np.zeros((1, self._numbsolutionpoints), dtype=np.double, order="F")
+
+        ierr_s = chemkin_wrapper.chemkin.KINAll0D_GetSurfaceSolnResponse(
+            icreac, icnpts, c_int(max_sites), c_int(max_bulks), time, s_frac, b_act
+        )
+        if ierr_s != 0:
+            msg = [
+                Color.MAGENTA,
+                "failed to fetch the raw surface solution data from memory,",
+                "error code =",
+                str(ierr_s),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+        # get surface material temperature [K]
+        n_material = self.surface_chemistry.number_materials
+        surf_temp = np.zeros(
+            (n_material, self._numbsolutionpoints),
+            dtype=np.double,
+            order="F",
+        )
+        ierr_t = chemkin_wrapper.chemkin.KINAll0D_GetSurfaceTemperature(
+            icreac, icnpts, c_int(n_material), surf_temp
+        )
+        # store surface coverage in the solution mixtures
+        # loop over all time points
+        soln_a = np.zeros(max(max_sites, max_bulks), dtype=np.double)
+        for i, m in enumerate(self._solution_mixturearray):
+            # loop over all materials of the surface mechanism
+            s_count = 0
+            b_count = 0
+            for n, mname in enumerate(mat_names):
+                # set material temperature
+                if ierr_t != 0:
+                    # make material temperature equal to the gas temperature
+                    s_temp = m.temperature
+                else:
+                    s_temp = surf_temp[n][i]
+                m.surface_chemistry.set_material_temperature(mname, s_temp)
+                # number of site species on this material
+                n_sites = self.surface_chemistry.number_site_species(mname)
+                # number of bulk species on this material
+                n_bulks = self.surface_chemistry.number_bulk_species(mname)
+                if ierr_s == 0:
+                    if n_sites > 0:
+                        soln_a[:] = 0.0
+                        for k in range(n_sites):
+                            j = k + s_count
+                            soln_a[k] = s_frac[j][i]
+                        m.surface_chemistry.set_site_frac(mname, soln_a[:n_sites])
+                    s_count += n_sites
+
+                    if n_bulks > 0:
+                        soln_a[:] = 0.0
+                        for k in range(n_bulks):
+                            j = k + b_count
+                            soln_a[k] = b_act[j][i]
+                        m.surface_chemistry.set_bulk_frac(mname, soln_a[:n_bulks])
+                    b_count += n_bulks
+        # fill the raw solution array
+        ss = np.zeros_like(time, dtype=np.double)
+        if max_sites > 0:
+            # get site symbols
+            s_symbols = self.get_site_species_names()
+            for snames in s_symbols:
+                ss[:] = 0.0
+                for k, symbol in enumerate(snames):
+                    for i in range(self._numbsolutionpoints):
+                        ss[i] = s_frac[k][i]
+                    self._solution_rawarray[symbol] = copy.deepcopy(ss)
+        if max_bulks > 0:
+            # get site symbols
+            b_symbols = self.get_bulk_species_names()
+            for bnames in b_symbols:
+                ss[:] = 0.0
+                for k, symbol in enumerate(bnames):
+                    for i in range(self._numbsolutionpoints):
+                        ss[i] = b_act[k][i]
+                    self._solution_rawarray[symbol] = copy.deepcopy(ss)
+        # if the energy equation is solved, get the total surface heat release rate
+        if self._energytype.value == self.EnergyTypes.get("ENERGY", 1):
+            surf_heatrelease_rate = np.zeros_like(time, dtype=np.double)
+            ierr = chemkin_wrapper.chemkin.KINAll0D_GetSurfaceHeatReleaseRate(
+                icreac, icnpts, surf_heatrelease_rate
+            )
+            if ierr != 0:
+                msg = [
+                    Color.RED,
+                    "failed to fetch the raw solution surface heat release rate",
+                    "from memory,",
+                    "error code =",
+                    str(ierr),
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.critical(this_msg)
+                exit()
+            # total surface chemistry heat release rate [erg/s]
+            self._solution_rawarray["surfhrr"] = copy.deepcopy(surf_heatrelease_rate)
+
+        del time, s_frac, b_act
 
     def get_solution_variable_profile(self, varname: str) -> npt.NDArray[np.double]:
         """Get the profile of the solution variable specified."""
@@ -1592,8 +1798,24 @@ class BatchReactors(Reactor):
             # is a property variable?
             vname = vname.lower()
         else:
-            if vname not in self._specieslist:
-                # is not a species?
+            is_species = False
+            if vname in self._specieslist:
+                # a gas species
+                is_species = True
+            if self.has_surface_chemistry:
+                for names in self.get_site_species_names():
+                    if vname in names:
+                        # a site species
+                        is_species = True
+                        break
+
+                for names in self.get_bulk_species_names():
+                    if vname in names:
+                        # a bulk species
+                        is_species = True
+                        break
+            if not is_species:
+                # not a species?
                 msg = [
                     Color.PURPLE,
                     "variable name",
@@ -1892,41 +2114,6 @@ class GivenPressureBatchReactorFixedTemperature(BatchReactors):
             # populate the reactor setup keywords
             self.set_reactortype_keywords()
 
-    @property
-    def time(self) -> float:
-        """Get simulation end time."""
-        """
-        Get simulation end time (required) [sec].
-
-        Returns
-        -------
-            endtime: double
-                simulation duration or simulation end time [sec]
-
-        """
-        return self._endtime.value
-
-    @time.setter
-    def time(self, value: float = 0.0e0):
-        """Set simulation end time."""
-        """
-        Set simulation end time (required).
-
-        Parameters
-        ----------
-            value: double, default = 0.0
-                simulation end time [sec]
-
-        """
-        if value <= 0.0e0:
-            msg = [Color.PURPLE, "simulation end time must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._inputcheck.append("TIME")
-            self._endtime = c_double(value)
-
     def set_temperature_profile(
         self, x: npt.NDArray[np.double], temp: npt.NDArray[np.double]
     ) -> int:
@@ -2000,6 +2187,8 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
         # GasHeatRelease: accumulated heat release [erg] due to gas-phase chemistry
         self._solution_tags.append("gashrr")
         self._solution_tags.append("gasheatrelease")
+        if self.has_surface_chemistry:
+            self._solution_tags.append("surfhrr")
         # set up basic batch reactor parameters
         ierr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,
@@ -2035,41 +2224,6 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
         if not Keyword.no_fullkeyword:
             # populate the reactor setup keywords
             self.set_reactortype_keywords()
-
-    @property
-    def time(self) -> float:
-        """Get simulation end time."""
-        """
-        Get simulation end time (required).
-
-        Returns
-        -------
-            endtime: double
-                simulation duration or simulation end time [sec]
-
-        """
-        return self._endtime.value
-
-    @time.setter
-    def time(self, value: float = 0.0e0):
-        """Set simulation end time."""
-        """
-        Set simulation end time (required).
-
-        Parameters
-        ----------
-            value: double, default = 0.0
-                simulation end time [sec]
-
-        """
-        if value <= 0.0e0:
-            msg = [Color.PURPLE, "simulation end time must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._inputcheck.append("TIME")
-            self._endtime = c_double(value)
 
     @property
     def heat_loss_rate(self) -> float:
@@ -2355,41 +2509,6 @@ class GivenVolumeBatchReactorFixedTemperature(BatchReactors):
             # populate the reactor setup keywords
             self.set_reactortype_keywords()
 
-    @property
-    def time(self) -> float:
-        """Get simulation end time."""
-        """
-        Get simulation end time (required).
-
-        Returns
-        -------
-            endtime: double
-                simulation duration or simulation end time [sec]
-
-        """
-        return self._endtime.value
-
-    @time.setter
-    def time(self, value: float = 0.0e0):
-        """Set simulation end time."""
-        """
-        Set simulation end time (required).
-
-        Parameters
-        ----------
-            value: double, default = 0.0
-                simulation end time [sec]
-
-        """
-        if value <= 0.0e0:
-            msg = [Color.PURPLE, "simulation end time must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._inputcheck.append("TIME")
-            self._endtime = c_double(value)
-
     def set_temperature_profile(
         self, x: npt.NDArray[np.double], temp: npt.NDArray[np.double]
     ) -> int:
@@ -2464,7 +2583,10 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
         # GasHeatRelease: accumulated heat release [erg] due to gas-phase chemistry
         self._solution_tags.append("gashrr")
         self._solution_tags.append("gasheatrelease")
+        if self.has_surface_chemistry:
+            self._solution_tags.append("surfhrr")
         # set up basic batch reactor parameters
+        print("batch set up")
         ierr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,
             self._reactortype,
@@ -2477,6 +2599,7 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
         )
         if ierr == 0:
             # setup reactor model working arrays
+            print("batch set work arrays 0")
             ierr = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
                 self._mylout, self._chemset_index
             )
@@ -2499,41 +2622,6 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
         if not Keyword.no_fullkeyword:
             # populate the reactor setup keywords
             self.set_reactortype_keywords()
-
-    @property
-    def time(self) -> float:
-        """Get simulation end time."""
-        """
-        Get simulation end time (required).
-
-        Returns
-        -------
-            endtime: double
-                simulation duration or simulation end time [sec]
-
-        """
-        return self._endtime.value
-
-    @time.setter
-    def time(self, value: float = 0.0e0):
-        """Set simulation end time."""
-        """
-        Set simulation end time (required).
-
-        Parameters
-        ----------
-            value: double, default = 0.0
-                simulation end time [sec]
-
-        """
-        if value <= 0.0e0:
-            msg = [Color.PURPLE, "simulation end time must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._inputcheck.append("TIME")
-            self._endtime = c_double(value)
 
     @property
     def heat_loss_rate(self) -> float:

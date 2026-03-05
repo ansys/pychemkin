@@ -522,10 +522,14 @@ class PlugFlowReactor(BatchReactors):
         self._massflowrate = c_double(self.mass_flowrate)
         # inlet mass fraction
         y_init = self.reactormixture.y
-        # surface sites (not applicable)
-        site_init = np.zeros(1, dtype=np.double)
-        # bulk activities (not applicable)
-        bulk_init = np.zeros_like(site_init, dtype=np.double)
+        if self.has_surface_chemistry:
+            # set surface species fractions
+            site_init, bulk_init = self.set_init_surface_coverage()
+        else:
+            # surface sites
+            site_init = np.zeros(1, dtype=np.double)
+            # bulk activities (not applicable)
+            bulk_init = np.zeros_like(site_init, dtype=np.double)
         # set reactor inlet conditions and geometry parameters
         if self._reactortype.value == self.ReactorTypes.get("PFR", 3):
             ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupPFRInputs(
@@ -578,6 +582,10 @@ class PlugFlowReactor(BatchReactors):
                     this_msg = Color.SPACE.join(msg)
                     logger.error(this_msg)
                     return ierrc
+
+        if ierr == 0 and self.has_surface_chemistry:
+            # set surface related keywords
+            self.set_surface_chemistry_keywords()
 
         if ierr == 0 and self._numbprofiles > 0:
             for p in self._profiles_list:
@@ -810,7 +818,10 @@ class PFREnergyConservation(PlugFlowReactor):
         # raw solution data structure
         # GasHRR: heat release rate [erg/sec] due to gas-phase chemsitry
         # GasHeatRelease: accumulated heat release [erg] due to gas-phase chemistry
-        self._solution_tags.append(["GasHRR", "GasHeatRelease"])
+        self._solution_tags.append("gashrr")
+        self._solution_tags.append("gasheatrelease")
+        if self.has_surface_chemistry:
+            self._solution_tags.append("surfhrr")
         # set up basic PFR parameters
         ierr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,

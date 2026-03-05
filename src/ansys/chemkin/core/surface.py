@@ -41,14 +41,18 @@ import numpy.typing as npt
 class Surface:
     """Chemkin surface chemistry module."""
     """
-    An extension to the Mixture and the ReactorModel classes to include
+    An extension to the Mixture/Strean and the ReactorModel classes to include
     the surface Material objects associated with the Chemistry Set.
     """
     def __init__(self, chem: Chemistry):
         """Create a Surface object."""
         """
         Create a Surface object to store and to provide the surface chemistry
-        related information and utilities.
+        related information and utilities. The surface properties included in
+        this module are the surface temperature, the surface site fractions,
+        the bulk species activities, and the bulk species linear growth rates
+        (from reactor model solution) of all surface material defined in the
+        surface mechanism of the Chemistry Set.
         """
         # chemistry set index
         self._chemset_index = chem.chemid
@@ -92,21 +96,28 @@ class Surface:
         # bulk activity of the materials: dict{material_name, bulk activities}
         self._bulk_activities: Dict[str, npt.NDArray[np.double]] = {}
         self.bulkact_set: Dict[str, bool] = {}
+        # bulk species growth rates [cm/sec]
+        self.bulk_growth_rates: Dict[str, npt.NDArray[np.double]] = {}
+        self.bulk_growth_rates_set: Dict[str, bool] = {}
         # site phase density [mole/cm2] of the materials:
         # dict{material_name, site density}
         self.site_density: Dict[str, npt.NDArray[np.double]] = {}
         self.siteden_set: Dict[str, bool] = {}
         # loop over all surface materials
+        self._total_site_species = 0
+        self._total_bulk_species = 0
         for mname in self.material_names:
             # get the corresponding Material object
             m = self.materials[mname]
             # get sizes
             n_sites = m.num_site_species
             n_bulks = m.num_bulk_species
+            self._total_site_species += n_sites
+            self._total_bulk_species += n_bulks
             #
             if n_sites > 0:
                 # get molecular weights
-                self._site_spec_wt[mname] = m.site_wt(mname)
+                self._site_spec_wt[mname] = m.site_wt
                 self._site_wt_set[mname] = True
                 # surface site coverage
                 self._site_fractions[mname] = np.zeros(n_sites, dtype=np.double)
@@ -116,10 +127,19 @@ class Surface:
                 self.siteden_set[mname] = True
             if n_bulks > 0:
                 # get molecular weights
-                self._bulk_spec_wt[mname] = m.bulk_wt(mname)
+                self._bulk_spec_wt[mname] = m.bulk_wt
                 self._bulk_wt_set[mname] = True
                 # bulk species activity
                 self._bulk_activities[mname] = np.zeros(n_bulks, dtype=np.double)
+                # bulk species linear growth rate
+                self.bulk_growth_rates[mname] = np.zeros(n_bulks, dtype=np.double)
+                self.bulk_growth_rates_set[mname] = False
+        # material surface temperature [K]
+        # by default, the surface temperature is the same as
+        # the reactor gas-phase temperature
+        self._numb_surf_temp_set = 0
+        self._surf_temp_set: list[int] = []
+        self.material_temperature: list[float] = []
 
     def check_surface_material(self, matname: str) -> int:
         """Verify the the given material name."""
@@ -137,7 +157,7 @@ class Surface:
                 material index, = -1: not found
         """
         mat_id = self.material_map.get(matname, -1)
-        if mat_id <= 0:
+        if mat_id < 0:
             self.material_not_found(matname)
         return mat_id
 
@@ -191,6 +211,104 @@ class Surface:
             logger.error(this_msg)
             return []
 
+    @property
+    def max_number_sites(self) -> int:
+        """Get the max number of site species."""
+        """
+        Get the max number of site species among all the surface
+        materials in the surface mechanism.
+
+        Returns
+        -------
+            max_site: inetger
+                max number of site species dimension
+        """
+        return self._num_max_site_species
+
+    @property
+    def max_number_bulks(self) -> int:
+        """Get the max number of bulk species."""
+        """
+        Get the max number of bulk species among all the surface
+        materials in the surface mechanism.
+
+        Returns
+        -------
+            max_bulk: inetger
+                max number of bulk species dimension
+        """
+        return self._num_max_bulk_species
+
+    @property
+    def max_number_total_species(self) -> int:
+        """Get the max total number of species."""
+        """
+        Get the max number of total (gas + site + bulk) species among all the surface
+        materials in the surface mechanism.
+
+        Returns
+        -------
+            max_spec: inetger
+                max species dimension
+        """
+        return self.max_total_species
+
+    @property
+    def max_number_surface_reactions(self) -> int:
+        """Get the max number of surface reactions."""
+        """
+        Get the max number of surface reaction among all the surface
+        materials in the surface mechanism.
+
+        Returns
+        -------
+            max_reactions: inetger
+                max surface reaction dimension
+        """
+        return self._num_max_surf_reactions
+
+    @property
+    def max_number_total_reactions(self) -> int:
+        """Get the max number of total reactions."""
+        """
+        Get the max number of gas + surface reaction among all the surface
+        materials in the surface mechanism.
+
+        Returns
+        -------
+            max_reactions: inetger
+                max total reaction dimension
+        """
+        return self.max_total_reactions
+
+    @property
+    def total_site_species(self) -> int:
+        """Get total number of site species from all materials."""
+        """
+        Get the total number of surface site species from all
+        surface materials of the surface mechanism.
+
+        Returns
+        -------
+            total_sites: integer
+                total number of site species
+        """
+        return self._total_site_species
+
+    @property
+    def total_bulk_species(self) -> int:
+        """Get total number of bulk species from all materials."""
+        """
+        Get the total number of bulk species from all
+        surface materials of the surface mechanism.
+
+        Returns
+        -------
+            total_bulks: integer
+                total number of bulk species
+        """
+        return self._total_bulk_species
+
     def get_site_frac(self, mat_name: str) -> npt.NDArray[np.double]:
         """Get surface site species fractions."""
         """
@@ -203,24 +321,25 @@ class Surface:
 
         Returns
         -------
-            frac: 1-D double array, dimension = number of bulk species
-            bulk activities/moles
+            frac: 1-D double array, dimension = number of site species
+                site species fractions
         """
         # verify the material name
         mat_id = self.check_surface_material(mat_name)
         if mat_id < 0:
             exit()
         
-        if self.number_site_species <= 0:
+        n_sites = self.number_site_species(mat_name)
+        if n_sites <= 0:
             msg = [
                 Color.MAGENTA,
                 "there is no site species on surface material",
-                mat_name,
+                mat_name.rstrip(),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
             logger.warning(this_msg)
-            exit()
+            return [0.0]
         #
         if self.sitefrac_set.get(mat_name, False):
             frac = copy.deepcopy(self._site_fractions[mat_name])
@@ -228,12 +347,12 @@ class Surface:
             msg = [
                 Color.PURPLE,
                 "site coverage is not set on surface material",
-                mat_name,
+                mat_name.rstrip(),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            logger.info(this_msg)
+            frac = np.full(n_sites, 1.0/n_sites)
         return frac
 
     def set_site_frac(
@@ -258,11 +377,11 @@ class Surface:
         if mat_id < 0:
             exit()
         #
-        if self.number_site_species <= 0:
+        if self.number_site_species(mat_name) <= 0:
             msg = [
                 Color.MAGENTA,
                 "there is no site species on surface material",
-                mat_name,
+                mat_name.rstrip(),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -282,9 +401,9 @@ class Surface:
                 else:
                     msg = [
                         Color.PURPLE,
-                        sp,
+                        sp.rstrip(),
                         "is not a valid site species of material",
-                        mat_name,
+                        mat_name.rstrip(),
                         Color.END,
                     ]
                     this_msg = Color.SPACE.join(msg)
@@ -347,6 +466,47 @@ class Surface:
         """
         return self.sitefrac_set.get(mat_name, False)
 
+    def get_all_site_frac(self) -> npt.NDArray[np.double]:
+        """Get site fractions of all materials in the mechanism."""
+        """
+        Get all site species fractions of all surface materials
+        in the mechanism into a 1-D array.
+
+        Returns
+        -------
+            site_frac: 1-D double array, dimension = total number of site species
+                site species fractions
+        """
+        # get total number of site species from all materials
+        total_sites = self.total_site_species
+        # some site species exist
+        if total_sites > 0:
+            site_frac = np.zeros(total_sites, dtype=np.double)
+            m_list = self.get_material_names()
+            s_count = 0
+            # loop over all surface materials
+            for mname in m_list:
+                # number of site species of the material
+                n_sites = self.number_site_species(mname)
+                if self.check_site_frac_set(mname):
+                    # site fractions available
+                    s_frac = self.get_site_frac(mname)
+                    for k in range(n_sites):
+                        j = s_count + k
+                        site_frac[j] = s_frac[k]
+                s_count += n_sites
+        else:
+            site_frac = np.zeros(1, dtype=np.double)
+            msg = [
+                Color.YELLOW,
+                "no site species declared in the surface mechanism.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.warning(this_msg)
+        #
+        return site_frac
+
     def get_bulk_frac(self, mat_name: str) -> npt.NDArray[np.double]:
         """Get surface bulk species activities/moles."""
         """
@@ -360,23 +520,24 @@ class Surface:
         Returns
         -------
             frac: 1-D double array, dimension = number of bulk species
-            bulk activities/moles
+                bulk activities/moles
         """
         # verify the material name
         mat_id = self.check_surface_material(mat_name)
         if mat_id < 0:
             exit()
         #
-        if self.number_bulk_species <= 0:
+        n_bulks = self.number_bulk_species(mat_name)
+        if n_bulks <= 0:
             msg = [
                 Color.MAGENTA,
                 "there is no bulk species on surface material",
-                mat_name,
+                mat_name.rstrip(),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
             logger.warning(this_msg)
-            exit()
+            return [0.0]
         #
         if self.bulkact_set.get(mat_name, False):
             frac = copy.deepcopy(self._bulk_activities[mat_name])
@@ -384,12 +545,12 @@ class Surface:
             msg = [
                 Color.PURPLE,
                 "bulk activities are not set on surface material",
-                mat_name,
+                mat_name.rstrip(),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            logger.info(this_msg)
+            frac = np.full(n_bulks, 1.0)
         return frac
 
     def set_bulk_frac(
@@ -411,11 +572,11 @@ class Surface:
         if mat_id < 0:
             exit()
         #
-        if self.number_bulk_species <= 0:
+        if self.number_bulk_species(mat_name) <= 0:
             msg = [
                 Color.MAGENTA,
                 "there is no bulk species on surface material",
-                mat_name,
+                mat_name.rstrip(),
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
@@ -423,6 +584,7 @@ class Surface:
             exit()
         # get material object
         m = self.materials[mat_name]
+        n_bulks = m.num_bulk_species
         # reset bulk activities values to 0
         self._bulk_activities[mat_name][:] = 0.0e0
         # get bulk species symbols
@@ -435,9 +597,9 @@ class Surface:
                 else:
                     msg = [
                         Color.PURPLE,
-                        sp,
+                        sp.rstrip(),
                         "is not a valid bulk species of material",
-                        mat_name,
+                        mat_name.rstrip(),
                         Color.END,
                     ]
                     this_msg = Color.SPACE.join(msg)
@@ -453,7 +615,7 @@ class Surface:
             self.bulkact_set[mat_name] = True
         elif isinstance(recipe[0], (float, np.double)):
             kbulks = len(recipe)
-            if kbulks == m.num_bulk_species:
+            if kbulks == n_bulks:
                 for k in range(kbulks):
                     self._bulk_activities[mat_name][k] = max(recipe[k], 0.0e0)
                 self.bulkact_set[mat_name] = True
@@ -499,6 +661,145 @@ class Surface:
                 the status of the bulk activity assignment
         """
         return self.bulkact_set.get(mat_name, False)
+
+    def get_bulk_growth_rates(self, mat_name: str) -> npt.NDArray[np.double]:
+        """Get bulk species linear growth rates."""
+        """
+        Get surface bulk species linear growth rates of the material.
+
+        Parameters
+        ----------
+            mat_name: string
+                surface material name/symbol
+
+        Returns
+        -------
+            rates: 1-D double array, dimension = number of bulk species
+                bulk species linear growth rates [cm/sec]
+        """
+        # verify the material name
+        mat_id = self.check_surface_material(mat_name)
+        if mat_id < 0:
+            exit()
+        #
+        n_bulks = self.number_bulk_species(mat_name)
+        if n_bulks <= 0:
+            msg = [
+                Color.MAGENTA,
+                "there is no bulk species on surface material",
+                mat_name.rstrip(),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.warning(this_msg)
+            return [0.0]
+        #
+        if self.bulk_growth_rates_set.get(mat_name, False):
+            rates = copy.deepcopy(self.bulk_growth_rates[mat_name])
+        else:
+            msg = [
+                Color.PURPLE,
+                "bulk growth rates are not set on surface material",
+                mat_name.rstrip(),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
+            rates = np.full(n_bulks, 0.0)
+        return rates
+
+    def set_bulk_growth_rates(
+            self,
+            mat_name: str,
+            rates: npt.NDArray[np.double],
+        ):
+        """
+        Parameters
+        ----------
+            mat_name: string
+                surface material name/symbol
+            rates: 1-D double array, dimension = numb of bulk species
+                bulk species linear growth rates [cm/sec]
+        """
+        # verify the material name
+        mat_id = self.check_surface_material(mat_name)
+        if mat_id < 0:
+            exit()
+        #
+        n_bulks = self.number_bulk_species(mat_name) 
+        if n_bulks <= 0:
+            msg = [
+                Color.MAGENTA,
+                "there is no bulk species on surface material",
+                mat_name.rstrip(),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.warning(this_msg)
+            exit()
+        #
+        for k in range(n_bulks):
+            self.bulk_growth_rates[mat_name][k] = rates[k]
+            self.bulk_growth_rates_set[mat_name] = True
+
+    def check_bulk_growth_rate_set(self, mat_name: str) -> bool:
+        """Check if the bulk species growth rates are provided."""
+        """
+        Check if the bulk species linear growth rates of a material are obtained.
+
+        Parameters
+        ----------
+            mat_name: string
+                surface material name/symbol
+
+        Returns
+        -------
+            set: bool
+                the status of the bulk growth rate data
+        """
+        return self.bulk_growth_rates_set.get(mat_name, False)
+
+    def get_all_bulk_growth_rates(self) -> npt.NDArray[np.double]:
+        """Get bulk growth rates of all materials in the mechanism."""
+        """
+        Get all bulk species linear growth rates of all surface materials
+        in the mechanism into a 1-D array.
+
+        Returns
+        -------
+            bulk_growth_rates: 1-D double array,
+                dimension=total number of bulk species
+                bulk species growth rates [cm/sec]
+        """
+        # get total number of bulk species from all materials
+        total_bulks = self.total_bulk_species
+        # some bulk species exist
+        if total_bulks > 0:
+            bulk_growth_rates = np.zeros(total_bulks, dtype=np.double)
+            m_list = self.get_material_names()
+            b_count = 0
+            # loop over all surface materials
+            for mname in m_list:
+                # number of bulk species of the material
+                n_bulks = self.number_bulk_species(mname)
+                if self.bulk_growth_rates_set.get(mname, False):
+                    # bulk growth rates available
+                    b_growth = self.get_bulk_growth_rates(mname)
+                    for k in range(n_bulks):
+                        j = b_count + k
+                        bulk_growth_rates[j] = b_growth[k]
+                b_count += n_bulks
+        else:
+            bulk_growth_rates = np.zeros(1, dtype=np.double)
+            msg = [
+                Color.YELLOW,
+                "no bulk species declared in the surface mechanism.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.warning(this_msg)
+        #
+        return bulk_growth_rates
 
     def get_activity_array(
             self,
@@ -549,11 +850,12 @@ class Surface:
         else:
             bulkact = np.full(1, 1.0e0)
         #
+        print(f"get activity array: {numgas}")
         act = Surface.set_activity_array(
             ngas=numgas,
             nsites=numsites,
             nbulks=numbulks,
-            frac=molfrac,
+            molfrac=molfrac,
             site_frac=sitefrac,
             bulk_act=bulkact,
         )
@@ -587,7 +889,7 @@ class Surface:
             msg = [
                 Color.MAGENTA,
                 "material",
-                mat_name,
+                mat_name.rstrip(),
                 "has no site species.",
                 Color.END,
             ]
@@ -635,7 +937,7 @@ class Surface:
             msg = [
                 Color.MAGENTA,
                 "material",
-                mat_name,
+                mat_name.rstrip(),
                 "has no bulk species.",
                 Color.END,
             ]
@@ -676,7 +978,6 @@ class Surface:
         else:
             return copy.deepcopy(m)
 
-    @property
     def number_surface_reactions(self, mat_name: str) -> int:
         """Get the number of surface reactions."""
         """
@@ -701,7 +1002,6 @@ class Surface:
         ii_surf = m.number_surface_reactions
         return ii_surf
 
-    @property
     def number_surface_species(self, mat_name: str) -> int:
         """Get the total number of surface species."""
         """
@@ -726,7 +1026,6 @@ class Surface:
         kk_surf = m.number_site_species + self.number_bulk_species
         return kk_surf
     
-    @property
     def total_number_species(self, mat_name: str) -> int:
         """Get the total number of species."""
         """
@@ -751,7 +1050,6 @@ class Surface:
         total_species = m.number_total_species
         return total_species
 
-    @property
     def number_phase(self, mat_name: str) -> int:
         """Get the number of phases."""
         """
@@ -776,7 +1074,6 @@ class Surface:
         n_phases = m.number_phases
         return n_phases
 
-    @property
     def first_site_phase_index(self, mat_name: str) -> int:
         """Get the index of the first site phase."""
         """
@@ -801,7 +1098,6 @@ class Surface:
         index = m.first_site_phase_index
         return index
 
-    @property
     def last_site_phase_index(self, mat_name: str) -> int:
         """Get the index of the last site phase."""
         """
@@ -826,7 +1122,6 @@ class Surface:
         index = m.last_site_phase_index
         return index
 
-    @property
     def first_bulk_phase_index(self, mat_name: str) -> int:
         """Get the index of the first bulk phase."""
         """
@@ -851,7 +1146,6 @@ class Surface:
         index = m.first_bulk_phase_index
         return index
 
-    @property
     def last_bulk_phase_index(self, mat_name: str) -> int:
         """Get the index of the last bulk phase."""
         """
@@ -876,7 +1170,6 @@ class Surface:
         index = m.last_bulk_phase_index
         return index
 
-    @property
     def get_phase_names(self, mat_name: str) -> List[str]:
         """Get all phase names."""
         """
@@ -901,7 +1194,6 @@ class Surface:
         psymbols = m.phase_names
         return psymbols
 
-    @property
     def number_site_species(self, mat_name: str) -> int:
         """Get the total number of site species."""
         """
@@ -926,7 +1218,6 @@ class Surface:
         n_sites = m.num_site_species
         return n_sites
 
-    @property
     def number_bulk_species(self, mat_name: str) -> int:
         """Get the total number of bulk species."""
         """
@@ -951,7 +1242,6 @@ class Surface:
         n_bulks = m.number_bulk_species
         return n_bulks
 
-    @property
     def first_site_spec_index(self, mat_name: str) -> int:
         """ Get the global index of the first site species."""
         """
@@ -976,7 +1266,6 @@ class Surface:
         global_index = m.first_site_species_index
         return global_index
 
-    @property
     def last_site_spec_index(self, mat_name: str) -> int:
         """Get the global index of the last site species."""
         """
@@ -1001,7 +1290,6 @@ class Surface:
         global_index = m.last_site_species_index
         return global_index
 
-    @property
     def first_bulk_spec_index(self, mat_name: str) -> int:
         """Get the global index of the first bulk species."""
         """
@@ -1026,7 +1314,6 @@ class Surface:
         global_index = m.first_bulk_species_index
         return global_index
 
-    @property
     def last_bulk_spec_index(self, mat_name: str) -> int:
         """Get the global index of the last bulk species."""
         """
@@ -1051,7 +1338,6 @@ class Surface:
         global_index = m.last_bulk_species_index
         return global_index
 
-    @property
     def get_site_symbols(self, mat_name: str) -> List[str]:
         """Get all site species symbols."""
         """
@@ -1076,7 +1362,6 @@ class Surface:
         ssymbols = m.site_species_names
         return ssymbols
 
-    @property
     def get_bulk_symbols(self, mat_name: str) -> List[str]:
         """Get all bulk species symbols."""
         """
@@ -1101,7 +1386,6 @@ class Surface:
         bsymbols = m.bulk_species_names
         return bsymbols
 
-    @property
     def surface_species_symbols(self, mat_name: str) -> List[str]:
         """
         Get all surface species symbols of the material
@@ -1127,7 +1411,7 @@ class Surface:
         surf_symbols = ssymbols + bsymbols
         return surf_symbols
 
-    def get_surf_specindex(self, specname: str) -> tuple[str, int]:
+    def get_surf_specindex(self, specname: str) -> tuple[str, int, int]:
         """Get the local and the global species indices."""
         """
         Get the local/surface material and the global species indices
@@ -1144,32 +1428,33 @@ class Surface:
                 the material name where the surface species belongs
             global_index: integer
                 the global index of the surface species
+            local_index: integer
+                (0-based) species index of the phase
         """
         global_index = -1
         local_index = -1
-        phase_type = ""
         n = 0
-        while global_index < 0:
+        while global_index < 0 and n < self.num_material:
             # material name
             name = self.material_names[n]
             # get the Material object
             m = self.materials[name]
-            global_index, local_index, phase_type = (
+            global_index, local_index, _ = (
                 m.get_surf_specindex(specname, mode="silent")
             )
             n += 1
         if local_index >= 0:
-            print(f"species {specname} found on material {name}")
-            print(f"species type = {phase_type}")
-            print(f"global index = {global_index}, {phase_type} index = {local_index}")
+            # print(f"species {specname} found on material {name}")
+            # print(f"species type = {phase_type}")
+            # print(f"global index = {global_index}, {phase_type} index = {local_index}")
+            pass
         else:
             name = "<not found>"
             global_index = -1
             print(f"species {specname} is not a surface species.")
         #
-        return name, global_index
+        return name, global_index, local_index
 
-    @property
     def site_phase_density(self, mat_name: str) -> npt.NDArray[np.double]:
         """Get the site density of the site phases."""
         """
@@ -1197,8 +1482,7 @@ class Surface:
         pstop = pstart + m.num_site_phase
         return site_den[pstart:pstop]
 
-    @property
-    def site_species_occupany(self, mat_name: str) -> npt.NDArray[np.double]:
+    def get_site_species_occupany(self, mat_name: str) -> npt.NDArray[np.double]:
         """Get the occupancy."""
         """
         Get the occupancy of the surface site species of the material.
@@ -1222,8 +1506,7 @@ class Surface:
         occupancy = m.get_site_occupancy()
         return occupancy
 
-    @property
-    def site_wt(self, mat_name: str) -> npt.NDArray[np.double]:
+    def get_site_wt(self, mat_name: str) -> npt.NDArray[np.double]:
         """Get the molar masses of the site species."""
         """
         Get the molar masses of the site species of the material.
@@ -1251,8 +1534,7 @@ class Surface:
             self._site_wt_set[mat_name] = True
         return site_wt
 
-    @property
-    def bulk_wt(self, mat_name: str) -> npt.NDArray[np.double]:
+    def get_bulk_wt(self, mat_name: str) -> npt.NDArray[np.double]:
         """Get the molar masses of the bulk species."""
         """
         Get the molar masses of the bulk species of the material.
@@ -1280,8 +1562,7 @@ class Surface:
             self._bulk_wt_set[mat_name] = True
         return bulk_wt
 
-    @property
-    def surf_wt(self, mat_name: str) -> npt.NDArray[np.double]:
+    def get_surf_wt(self, mat_name: str) -> npt.NDArray[np.double]:
         """Get the molar masses of all surface species."""
         """
         Get the molar masses of all surface species of the material.
@@ -1306,8 +1587,7 @@ class Surface:
         surf_wt = np.vstack(site_wt, bulk_wt)
         return surf_wt
 
-    @property
-    def site_species_h(self, mat_name: str) -> npt.NDArray[np.double]:
+    def get_site_species_h(self, mat_name: str) -> npt.NDArray[np.double]:
         """Get the site species enthalpy."""
         """
         Get the enthalpy of the site species of the material.
@@ -1331,8 +1611,7 @@ class Surface:
         site_h = m.get_site_species_h()
         return site_h
 
-    @property
-    def bulk_species_h(self, mat_name: str) -> npt.NDArray[np.double]:
+    def get_bulk_species_h(self, mat_name: str) -> npt.NDArray[np.double]:
         """Get the bulk species enthalpy."""
         """
         Get the enthalpy of the bulk species of the material.
@@ -1356,8 +1635,7 @@ class Surface:
         bulk_h = m.get_bulk_species_h()
         return bulk_h
 
-    @property
-    def surface_species_h(self, mat_name: str) -> npt.NDArray[np.double]:
+    def get_surface_species_h(self, mat_name: str) -> npt.NDArray[np.double]:
         """Get the enthalpy of all surface species."""
         """
         Get the enthalpy of all surface species of the material.
@@ -1383,8 +1661,7 @@ class Surface:
         surf_h = np.vstack(site_h, bulk_h)
         return surf_h
 
-    @property
-    def bulk_species_cp(self, mat_name: str) -> npt.NDArray[np.double]:
+    def get_bulk_species_cp(self, mat_name: str) -> npt.NDArray[np.double]:
         """Get the bulk species specific heat capacity."""
         """
         Get the specific heat capacity of the bulk species of the material.
@@ -1408,8 +1685,7 @@ class Surface:
         bulk_cp = m.get_bulk_species_cp()
         return bulk_cp
 
-    @property
-    def bulk_species_density(self, mat_name: str) -> npt.NDArray[np.double]:
+    def get_bulk_species_density(self, mat_name: str) -> npt.NDArray[np.double]:
         """Get the bulk species density."""
         """
         Get the density of the bulk species of the material
@@ -1457,7 +1733,7 @@ class Surface:
                 number of all site species of the material
             nbulks: integer
                 number of all bulk species of the material
-            frac: 1-D double array, dimension = number_gas_species
+            molfrac: 1-D double array, dimension = number_gas_species
                 gas species mole fractions
             site_frac: 1-D double array, dimension = number_site_species
                 surface site species fraction [-]
@@ -1555,25 +1831,110 @@ class Surface:
             for f in bact:
                 activity[count] = 1.0e0
                 count += 1
-        print(f"act size = {species_sum} {count + 1}")
         #
         del sfrac, bact
         #
         return activity
 
+    def check_material_temperature(self, mat_name: str) -> int:
+        """Verify the surface temperature is given."""
+        """
+        Verify the surface temperature of this material is explicitly
+        provided.
+
+        Returns
+        -------
+            status: integer
+                indication of the material temperature specification
+                = 0: not provided; > 0:  provided
+        """
+        status = -1
+        if self._numb_surf_temp_set > 0:
+            index = self.check_surface_material(mat_name)
+            if index >= 0:
+                try:
+                    status = self._surf_temp_set.index(index)
+                except ValueError:
+                    status = -1
+        return status + 1
+
+    def get_material_temperature(self, mat_name: str) -> float:
+        """Get the surface temperature."""
+        """
+        Get the surface temperature of the given material.
+
+        Parameters
+        ----------
+            mat_name: string
+                surface material name
+
+        Returns
+        -------
+            temp: double
+                surface temperature [K] of the given material
+        """
+        index = self.check_surface_material(mat_name)
+        if index >= 0:
+            try:
+                loc = self._surf_temp_set.index(index)
+                return self.material_temperature[loc]
+            except ValueError:
+                msg = [
+                    Color.YELLOW,
+                    "temperature of material",
+                    mat_name.rstrip(),
+                    "has not been assigned",
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.info(this_msg)
+                return -1.0
+        else:
+            return 0.0
+
+    def set_material_temperature(self, mat_name: str, temp: float):
+        """Set the value of the surface temperature."""
+        """
+        Set the value of the surface temperature of a material.
+
+        Parameters
+        ----------
+            mat_name: string
+                surface material name
+            temp: double
+                surface temperature [K] of the given material
+        """
+        if temp < 100.0:
+            # invalid temperature value
+            msg = [Color.PURPLE, "material temperature must >= 100. [K]", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        else:
+            index = self.check_surface_material(mat_name)
+            if index >= 0:
+                if index not in self._surf_temp_set:
+                    self._numb_surf_temp_set += 1
+                    self._surf_temp_set.append(index)
+                    self.material_temperature.append(temp)
+                else:
+                    loc = self._surf_temp_set.index(index)
+                    self.material_temperature[loc] = temp
+
     @staticmethod
     def surface_rate_of_production(
         chem_id: int,
         mat_id: int,
-        numbspecies: int,
-        numbphase: int,
+        numb_gas: int,
+        numb_phase: int,
+        numb_sites: int,
+        numb_bulks: int,
         p: float,
         t: float,
         molfrac: npt.NDArray[np.double],
         site_frac: npt.NDArray[np.double],
         bulk_act: npt.NDArray[np.double],
         site_den: npt.NDArray[np.double],
-        wt: npt.NDArray[np.double],
         mode: str,
     ) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
         """Get species molar rate of production."""
@@ -1588,16 +1949,20 @@ class Surface:
                 chemistry set index associated with the mixture
             mat_id: integer
                 surface material index
-            numberspecies: integer
-                total number of species of the surface material
-            numbphase: integer
+            numb_gas: integer
+                number of gas species
+            numb_phase: integer
                 number of phases (including the gas pahse)
                 associated with the chemistry set
+            numb_sites: integer
+                number of surface site species of the surface material
+            numb_bulks: integer
+                number of bulk species of the surface material
             p: double
                 mixture pressure in [dynes/cm2]
             t: double
                 surface temperature in [K]
-            molfrac: 1-D double array, dimension = number_species
+            molfrac: 1-D double array, dimension = number_gas_species
                 mixture composition given as mole fractions
             site_frac: 1-D double array, dimension = number_site_species
                 surface site species fraction [-]
@@ -1605,8 +1970,6 @@ class Surface:
                 bulk species activity/mole fraction [-]
             site_den: 1-D double array, dimension = number_phases
                 surface phase density [mole/cm2]
-            wt: 1-D double array, dimension = number_species
-                molar masses of the species in the mixture in [gm/mol]
             mode: string, {'mole', 'mass'}
                 flag indicates the frac array is 'mass' or 'mole' fractions
 
@@ -1634,7 +1997,7 @@ class Surface:
             exit()
         # number species
         kgas = len(molfrac)
-        if kgas != len(wt):
+        if kgas != numb_gas:
             msg = [
                 Color.PURPLE,
                 mode,
@@ -1648,9 +2011,10 @@ class Surface:
             exit()
         # initialization
         # species rate of production by surface reactions [mole/cm2-sec]
-        rop = np.zeros(numbspecies, dtype=np.double)
+        numb_species = numb_gas + numb_sites + numb_bulks
+        rop = np.zeros(numb_species, dtype=np.double)
         # surface site phase production rate by surface reactions [mole/cm2-sec]
-        phase_prod_rates = np.zeros(numbphase, dtype=np.double)
+        phase_prod_rates = np.zeros(numb_phase, dtype=np.double)
         # convert parameters to c pointers
         chemset_index = ctypes.c_int(chem_id)
         mat_index = ctypes.c_int(mat_id)
@@ -1659,7 +2023,12 @@ class Surface:
         # construct the activity array
         # (gas mole farction, site fraction, bulk activity)
         act = Surface.set_activity_array(
-            numbspecies, molfrac, site_frac, bulk_act, min_value=0.0e0
+            numb_gas,
+            numb_sites,
+            numb_bulks,
+            molfrac,
+            site_frac,
+            bulk_act,
         )
         # compute mass density from mass fraction
         ierr = ck_wrapper.chemkin.KINGetSurfaceProductionRates(
@@ -1689,15 +2058,16 @@ class Surface:
     def surface_reaction_rates(
         chem_id: int,
         mat_id: int,
-        numbspecies: int,
-        numbreaction: int,
+        numb_gas: int,
+        numb_sites: int,
+        numb_bulks: int,
+        numb_reaction: int,
         p: float,
         t: float,
         molfrac: npt.NDArray[np.double],
         site_frac: npt.NDArray[np.double],
         bulk_act: npt.NDArray[np.double],
         site_den: npt.NDArray[np.double],
-        wt: npt.NDArray[np.double],
         mode: str,
     ) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
         """Get molar reaction rates of the reactive surface."""
@@ -1712,15 +2082,19 @@ class Surface:
                 chemistry set index
             mat_id: integer
                 surface material index
-            numberspecies: integer
-                total number of species of the surface material
-            numbreaction: integer
+            numb_gas: integer
+                number of gas species
+            numb_sites: integer
+                number of surface site species of the surface material
+            numb_bulks: integer
+                number of bulk species of the surface material
+            numb_reaction: integer
                 number of gas reactions associated with the chemistry set
             p: double
                 mixture pressure in [dynes/cm2]
             t: double
                 surface temperature in [K]
-            molfrac: 1-D double array, dimension = number_species
+            molfrac: 1-D double array, dimension = number_gas_species
                 mixture composition given as mole fractions
             site_frac: 1-D double array, dimension = number_site_species
                 surface site species fraction [-]
@@ -1728,8 +2102,6 @@ class Surface:
                 bulk species activity/mole fraction [-]
             site_den: 1-D double array, dimension = number_phases
                 surface phase density [mole/cm2]
-            wt: 1-D double array, dimension = number_species
-                molar masses of the species in the mixture in [gm/mol]
             mode: string, {'mole', 'mass'}
                 flag indicates the frac array is 'mass' or 'mole' fractions
 
@@ -1757,7 +2129,7 @@ class Surface:
             exit()
         # number species
         kgas = len(molfrac)
-        if kgas != len(wt):
+        if kgas != numb_gas:
             msg = [
                 Color.PURPLE,
                 mode,
@@ -1770,7 +2142,7 @@ class Surface:
             logger.error(this_msg)
             exit()
         # initialization
-        k_forward = np.zeros(numbreaction, dtype=np.double)
+        k_forward = np.zeros(numb_reaction, dtype=np.double)
         k_reverse = np.zeros_like(k_forward, dtype=np.double)
         # convert parameters to c pointers
         chemset_index = ctypes.c_int(chem_id)
@@ -1780,7 +2152,12 @@ class Surface:
         # construct the activity array
         # (gas mole farction, site fraction, bulk activity)
         act = Surface.set_activity_array(
-            numbspecies, molfrac, site_frac, bulk_act, min_value=0.0e0
+            numb_gas,
+            numb_sites,
+            numb_bulks,
+            molfrac,
+            site_frac,
+            bulk_act,
         )
         # compute mass density from mass fraction
         ierr = ck_wrapper.chemkin.KINGetSurfaceReactionRates(
@@ -1839,16 +2216,16 @@ class Surface:
             self.siteden_set[mat_name] = True
         # get surface site fractions
         if self.sitefrac_set.get(mat_name, False):
-            sfrac = self.site_frac
+            sfrac = self.get_site_frac(mat_name)
         else:
             # surface coverage is not given
-            sfrac = np.zeros(max(self.number_site_species, 1), dtype=np.double)
+            sfrac = np.zeros(max(m.number_site_species, 1), dtype=np.double)
         # get bulk activities
         if self.bulkact_set.get(mat_name, False):
-            bfrac = self.bulk_frac
+            bfrac = self.get_bulk_frac(mat_name)
         else:
             # bulk activity is not given
-            bfrac = np.zeros(max(self.number_bulk_species, 1), dtype=np.double)
+            bfrac = np.zeros(max(m.number_bulk_species, 1), dtype=np.double)
         return sden, sfrac, bfrac
 
     def rop_surf(
@@ -1861,7 +2238,7 @@ class Surface:
         """Get species molar rate of production."""
         """
         Get species molar rate of production from the given mixture condition:
-        pressure, temperature, and species compositions.
+        pressure, surface temperature, gas mixture composition, and surface coverage.
 
         Parameters
         ----------
@@ -1902,23 +2279,26 @@ class Surface:
         # get the corresponding Material object
         m = self.materials[mat_name]
         # get sizes
-        ntotal_species = m.number_total_species
+        n_gas = self.num_gas_species
         num_phase = m.number_phases
+        n_sites = m.num_site_species
+        n_bulks= m.num_bulk_species
         # get surface overages
         sden, sfrac, bfrac = self.set_surface_coverage(mat_name)
         # compute the species production rates by surface reactions of this material
         rop_surf, site_prodrate = Surface.surface_rate_of_production(
-            chem_id=self._chemset_index.value,
+            chem_id=self._chemset_index,
             mat_id=mat_id,
-            numb_species=ntotal_species,
+            numb_gas=n_gas,
             numb_phase=num_phase,
+            numb_sites=n_sites,
+            numb_bulks=n_bulks,
             p=pres,
             t=surf_temp,
-            frac=molfrac,
+            molfrac=molfrac,
             site_frac=sfrac,
             bulk_act=bfrac,
             site_den=sden,
-            wt=self.gas_wt,
             mode="mole",
         )
         #
@@ -1931,10 +2311,11 @@ class Surface:
             surf_temp: float,
             molfrac: npt.NDArray[np.double],
         ) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
-        """Get molar rates of the gas reactions."""
+        """Get molar rates of the surface reactions."""
         """
-        Get molar rates of the gas reactions from the given gas and surface conditions:
-        pressure, temperature, and species composition.
+        Get molar rates of the surface reactions from the given gas and
+        surface conditions: pressure, surface temperature, gas mixture composition,
+        and surface coverage.
 
         Parameters
         ----------
@@ -1976,8 +2357,10 @@ class Surface:
         # get the material object
         m = self.materials[mat_name]
         # get sizes
-        ntotal_species = m.number_total_species
+        n_gas = self.num_gas_species
         numsurf_reactions = m.number_surface_reactions
+        n_sites = m.num_site_species
+        n_bulks = m.num_bulk_species
         # get surface overages
         sden, sfrac, bfrac = self.set_surface_coverage(mat_name)
         #
@@ -1986,17 +2369,18 @@ class Surface:
         #
             # mixture mole fraction given
         k_forward, k_reverse = Surface.surface_reaction_rates(
-            chem_id=self._chemset_index.value,
+            chem_id=self._chemset_index,
             mat_id=mat_id,
-            numbspecies=ntotal_species,
-            numbreaction=numsurf_reactions,
+            numb_gas=n_gas,
+            numb_sites=n_sites,
+            numb_bulks=n_bulks,
+            numb_reaction=numsurf_reactions,
             p=pres,
             t=surf_temp,
-            frac=molfrac,
+            molfrac=molfrac,
             site_frac=sfrac,
             bulk_act=bfrac,
             site_den=sden,
-            wt=self.gas_wt,
             mode="mole",
         )
         return k_forward, k_reverse
@@ -2032,7 +2416,7 @@ class Surface:
         #
         m = self.materials[mat_name]
         # check array size
-        n_species = self.total_number_species
+        n_species = self.total_number_species(mat_name)
         if len(surfrop) != n_species:
             msg = [
                 Color.PURPLE,
@@ -2141,7 +2525,7 @@ class Surface:
                 else:
                     linear_growth[k] = 0.0e0
         #
-        return growth_rates
+        return linear_growth
 
     def get_gas_production_rates(
             self,  mat_name: str, surfrop: npt.NDArray[np.double]

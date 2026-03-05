@@ -89,8 +89,8 @@ class PerfectlyStirredReactor(OpenReactor):
         self._inputcheck: list[str] = []
         # default number of reactors
         self._nreactors = 1
-        self._npsrs = c_int(1)
-        self._ninlets = np.zeros(1, dtype=np.int32)  # self.numbexternalinlets
+        self._npsrs = c_int(self._nreactors)
+        self._ninlets = np.zeros(self._nreactors, dtype=np.int32)
         self._nzones = c_int(0)
         # default reactor type settings
         # Perfectly-Stirred Reactor (PSR) model
@@ -209,33 +209,69 @@ class PerfectlyStirredReactor(OpenReactor):
         # loop over all external inlets into the reactor
         i_inlet = 0
         flowrate_sum = 0.0
+        check_total_flowrate = True
         #
         for key, inlet in self.externalinlets.items():
             # get inlet mass flow rate
-            flowrate = inlet.mass_flowrate
-            flowrate_sum += flowrate
-            # inlet temperature
-            t_inlet = inlet.temperature
-            # inlet mass fraction
-            y_inlet = inlet.y
-            #
-            if np.isclose(0.0, flowrate, atol=1.0e-6):
-                msg = [Color.PURPLE, "inlet", key, "has zero flow rate", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                ierrc = 100 + i_inlet + 1
+            if inlet._flowratemode == 0:
+                # mass flow rate is specified for this inlet
+                flowrate = inlet.mass_flowrate
+                flowrate_sum += flowrate
+                # inlet temperature
+                t_inlet = inlet.temperature
+                # inlet mass fraction
+                y_inlet = inlet.y
+                #
+                if np.isclose(0.0, flowrate, atol=1.0e-6):
+                    msg = [Color.PURPLE, "inlet", key, "has zero flow rate", Color.END]
+                    this_msg = Color.SPACE.join(msg)
+                    logger.error(this_msg)
+                    ierrc = 100 + i_inlet + 1
+                else:
+                    # set inlet inputs
+                    ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupPSRInletInputs(
+                        self._chemset_index,
+                        self.ireac,
+                        c_int(i_inlet + 1),
+                        c_double(flowrate),
+                        c_double(t_inlet),
+                        y_inlet,
+                    )
+                ierr += ierrc
             else:
-                i_inlet += 1
-                # set inlet inputs
-                ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupPSRInletInputs(
-                    self._chemset_index,
-                    self.ireac,
-                    c_int(i_inlet),
-                    c_double(flowrate),
-                    c_double(t_inlet),
-                    y_inlet,
+                # volumetric flow rate is specified for this inlet
+                # use full keyword mode for the inlet
+                key_mode = Keyword.no_fullkeyword
+                Keyword.no_fullkeyword = False
+                tag = ""
+                if self.numbexternalinlets > 1:
+                    # use the assigned inlet stream name
+                    # tag = key.rstrip()
+                    # the reactor name and the inlet name are hard coded in chemkin-CFD-API
+                    tag = "Inlet" + str(i_inlet + 1) + "_Reactor1"
+                # inlet mole fraction
+                _, species_lines = self.create_inletspeciesinputlines(
+                    inlet_name=tag,
+                    threshold=1.0e-10,
+                    molefrac=inlet.x,
                 )
-            ierr += ierrc
+                for line in species_lines:
+                    self.setkeyword(key=line, value=True)
+
+                if inlet._flowratemode == 1:
+                    this_key = "VDOT" + Keyword.fourspaces + tag
+                    self.setkeyword(key=this_key.rstrip(), value=inlet.vol_flowrate)
+                elif inlet._flowratemode == 3:
+                    this_key = "SCCM" + Keyword.fourspaces + tag
+                    self.setkeyword(key=this_key.rstrip(), value=inlet.sccm)
+                if inlet._t_set == 1:
+                # inlet temperature is provided
+                    this_key = "TINL" + Keyword.fourspaces + tag
+                    self.setkeyword(key=this_key.rstrip(), value=inlet.temperature)
+                # do not check total mass flow rate
+                check_total_flowrate = False
+                Keyword.no_fullkeyword = key_mode
+            i_inlet += 1
         # check number of external inlet
         if i_inlet == 0:
             msg = [Color.PURPLE, "PSR has no external inlet.", Color.END]
@@ -260,7 +296,7 @@ class PerfectlyStirredReactor(OpenReactor):
             ierr += 11
 
         # check total mass flow rate
-        if ierr == 0:
+        if ierr == 0 and check_total_flowrate:
             # check total mass flow rate
             if not np.isclose(flowrate_sum, self.totalmassflowrate, atol=1.0e-6):
                 msg = [
@@ -455,7 +491,7 @@ class PerfectlyStirredReactor(OpenReactor):
             return ierr
 
     def set_ss_solver_keywords(self):
-        """Add steady-state solver parameter keywoprds to the keyword list."""
+        """Add steady-state solver parameter keywords to the keyword list."""
         # steady-state solver parameter given
         if len(self.ss_solverkeywords) > 0:
             #
@@ -515,10 +551,14 @@ class PerfectlyStirredReactor(OpenReactor):
         # prepare estimated reactor conditions
         # estimated reactor mass fraction
         y_init = self.reactormixture.y
-        # surface sites (not applicable)
-        site_init = np.zeros(1, dtype=np.double)
-        # bulk activities (not applicable)
-        bulk_init = np.zeros_like(site_init, dtype=np.double)
+        if self.has_surface_chemistry:
+            # set surface species fractions
+            site_init, bulk_init = self.set_init_surface_coverage()
+        else:
+            # surface sites
+            site_init = np.zeros(1, dtype=np.double)
+            # bulk activities (not applicable)
+            bulk_init = np.zeros_like(site_init, dtype=np.double)
         # set estimated reactor conditions and geometry parameters
         if self._reactortype.value == 2:
             ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupPSRReactorInputs(
@@ -574,6 +614,9 @@ class PerfectlyStirredReactor(OpenReactor):
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
                 return err_profile
+        if ierr == 0 and self.has_surface_chemistry:
+            # set surface related keywords
+            self.set_surface_chemistry_keywords()
         if ierr == 0:
             # set additional keywords
             self.set_ss_solver_keywords()
@@ -845,6 +888,10 @@ class PerfectlyStirredReactor(OpenReactor):
         else:
             # mole fractions
             smixture.x = frac
+        # get surface coverage
+        if self.has_surface_chemistry:
+            self.process_surface_solution(smixture)
+
         # get reactor outlet mass flow rate [g/sec]
         exitmassflowrate = c_double(0.0)
         ierr = chemkin_wrapper.chemkin.KINAll0D_GetExitMassFlowRate(exitmassflowrate)
@@ -867,12 +914,92 @@ class PerfectlyStirredReactor(OpenReactor):
         # return the solution mixture
         return smixture
 
+    def process_surface_solution(self, smixture: Stream):
+        """Post-process surface solution."""
+        """Post-process surface solution to extract the raw solution variable data
+        package the steady-state solution into a mixture object.
+
+        Parameters
+        ----------
+            smixture: Stream object
+                gas stream representing the steady-state solution
+
+        """
+        # get material information
+        mat_names = self.get_material_names()
+        # get the site and the bulk species sizes of the mechanism
+        max_sites = self.get_total_site_species()
+        max_bulks = self.get_total_bulk_species()
+        # set up holding arrays
+        if max_sites > 0:
+            s_frac = np.zeros(max_sites, dtype=np.double)
+            ierr_s = chemkin_wrapper.chemkin.KINAll0D_GetSurfaceSolution(s_frac)
+            if ierr_s != 0:
+                msg = [
+                    Color.MAGENTA,
+                    "failed to fetch the raw surface solution data from memory,",
+                    "error code =",
+                    str(ierr_s),
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+        else:
+            ierr_s = -1
+            s_frac = np.zeros(1, dtype=np.double)
+        if max_bulks > 0:
+            b_rate = np.zeros(max_bulks, dtype=np.double)
+            ierr_b = chemkin_wrapper.chemkin.KINAll0D_GetBulkGrowthRate(b_rate)
+            if ierr_b != 0:
+                msg = [
+                    Color.RED,
+                    "failed to fetch the bulk growth rate solution data from memory,",
+                    "error code =",
+                    str(ierr_b),
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+        else:
+            ierr_b = -1
+            b_rate = np.zeros(1, dtype=np.double)
+        # store surface coverage in the solution mixture
+        # loop over all materials of the surface mechanism
+        s_count = 0
+        b_count = 0
+        for mname in mat_names:
+            # set material temperature
+            if self.surface_chemistry.check_material_temperature(mname) == 0:
+                # material temperature equals to the gas temperature
+                surf_temp = smixture.temperature
+            else:
+                surf_temp = self.surface_chemistry.get_material_temperature(mname)
+            smixture.surface_chemistry.set_material_temperature(mname, surf_temp)
+            # number of site species on this material
+            n_sites = self.surface_chemistry.number_site_species(mname)
+            # number of bulk species on this material
+            n_bulks = self.surface_chemistry.number_bulk_species(mname)
+            if ierr_s == 0:
+                is_start = s_count
+                is_end = is_start + n_sites
+                smixture.surface_chemistry.set_site_frac(mname, s_frac[is_start:is_end])
+            s_count += n_sites
+
+            if ierr_b == 0:
+                ib_start = b_count
+                ib_end = ib_start + n_bulks
+                smixture.surface_chemistry.set_bulk_growth_rates(
+                    mname, b_rate[ib_start:ib_end]
+                )
+            b_count += n_bulks
+        del s_frac, b_rate
+
 
 class PSRSetResTimeEnergyConservation(PerfectlyStirredReactor):
-    """PSR model with given reactor reasidence time and solve energy equation."""
+    """PSR model with given reactor residence time and solve energy equation."""
 
     """
-    PSR model with given reactor reasidence time (CONP)
+    PSR model with given reactor residence time (CONP)
     and solve energy equation (ENERGY).
 
     rho_PSR * Vol_PSR / residence_time = mass_flow_rate
@@ -1185,10 +1312,10 @@ class PSRSetVolumeEnergyConservation(PerfectlyStirredReactor):
 
 
 class PSRSetResTimeFixedTemperature(PerfectlyStirredReactor):
-    """PSR model with given reactor reasidence time and reactor temperature."""
+    """PSR model with given reactor residence time and reactor temperature."""
 
     """
-    PSR model with given reactor reasidence time (CONP)
+    PSR model with given reactor residence time (CONP)
     and reactor temperature (GivenT).
 
     rho_PSR * Vol_PSR / residence_time = mass_flow_rate

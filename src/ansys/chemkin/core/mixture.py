@@ -91,13 +91,16 @@ class Mixture:
             this_msg = Color.SPACE.join(msg)
             logger.critical(this_msg)
             exit()
+        # copy the chemistry set
+        self._chem_set = chem
         # shorthand for frequently used variables
-        self._chemset_index = ctypes.c_int(chem.chemid)  # chemistry set index
-        self._kk = chem.kk  # number of gas species
-        self._ii_gas = chem.ii_gas  # number of gas-phase reactions
+        # chemistry set index
+        self._chemset_index = ctypes.c_int(self._chem_set.chemid)
+        self._kk = self._chem_set.kk  # number of gas species
+        self._ii_gas = self._chem_set.ii_gas  # number of gas-phase reactions
         self._specieslist: list[str] = []
-        self._specieslist = chem.species_symbols  # gas species symbols
-        self._wt = chem.wt  # gas species molar masses
+        self._specieslist = self._chem_set.species_symbols  # gas species symbols
+        self._wt = self._chem_set.wt  # gas species molar masses
         # create internal arrays: array size = number of gas species
         # mixture composition given in mole fractions
         self._molefrac = np.zeros(self._kk, dtype=np.double)
@@ -106,17 +109,17 @@ class Mixture:
         # concentrations (not used)
         self._concentration = np.zeros_like(self._molefrac)
         # flag indicating there is surface chemistry (type c_int: 0 = no, 1 = yes)
-        self._surfacechem = c_int(chem.surfchem)
+        self._surfacechem = c_int(self._chem_set.surfchem)
         # flag indicating there is gas transport data (type c_int: 0 = no, 1 = yes)
-        self.transport_data = chem._index_tran.value
+        self.transport_data = self._chem_set._index_tran.value
         # real-gas EOS model in the mechanism
-        self._eos = c_int(chem.eos)
+        self._eos = c_int(self._chem_set.eos)
         # status of the real-gas EOS usage
-        self.userealgas = chem.userealgas
+        self.userealgas = self._chem_set.userealgas
         # store the surface chemistry information in the surface_chemistry object
         # this object will be passed to the reactor models
         # with surface chemistry capability
-        self._has_surface_chemistry = chem.verify_surface_mechanism()
+        self._has_surface_chemistry = self._chem_set.verify_surface_mechanism()
         if self._has_surface_chemistry:
             # instantiate a Surface object for surface chemistry applications
             self.surface_chemistry = Surface(chem=chem)
@@ -3270,13 +3273,13 @@ class Mixture:
             exit()
         # convert mass fractions to mole fractions
         fuel_molefrac = Mixture.mass_fraction_to_mole_fraction(
-            massfrac=fuel_massfrac, wt=chemistryset.WT
+            massfrac=fuel_massfrac, wt=chemistryset.wt
         )
         oxid_molefrac = Mixture.mass_fraction_to_mole_fraction(
-            massfrac=oxid_massfrac, wt=chemistryset.WT
+            massfrac=oxid_massfrac, wt=chemistryset.wt
         )
         add_molefrac = Mixture.mass_fraction_to_mole_fraction(
-            massfrac=add_massfrac, wt=chemistryset.WT
+            massfrac=add_massfrac, wt=chemistryset.wt
         )
         # find the final mixture mole fractions and set the flags
         ierr = self.x_by_equivalence_ratio(
@@ -3495,6 +3498,135 @@ class Mixture:
         self._massfrac[:] = 0.0e0
         self._x_set = 0
         self._molefrac[:] = 0.0e0
+
+    # surface chemistry (mixture mechanism contains surface mechanism)
+    def get_surf_specindex(self, symbol: str) -> tuple[int, int]:
+        """Get the index of the given surface/bulk species symbol."""
+        """
+        Get the index of the given surface site or bulk species symbol.
+
+        Parameters
+        ----------
+            symbol: string
+                surface site/bulk species symbol (case sensitive)
+
+        Returns
+        -------
+            global_index: integer
+                the global index of the surface species
+            local_index: integer
+                (0-based) species index of the phase
+        """
+        # get the surface species index
+        _, global_index, local_index = self.surface_chemistry.get_surf_specindex(symbol)
+        if global_index <= -1:
+            msg = [Color.PURPLE, "species symbol not found:", symbol, Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        else:
+            return global_index, local_index
+
+    def get_all_surface_temperature(self) -> npt.NDArray[np.double]:
+        """Get the temperatures of all materials in the mechanism."""
+        """
+        Get all surface temperatures of all surface materials
+        in the mechanism into a 1-D array.
+
+        Returns
+        -------
+            surf_temp: 1-D double array,
+                dimension=number of surface materials
+                material temperature [K]
+        """
+        # get total number of bulk species from all materials
+        n_material = self.surface_chemistry.number_materials
+        surf_temp = np.zeros(n_material, dtype=np.double)
+        m_list = self.surface_chemistry.get_material_names()
+        # loop over all surface materials
+        for k, mname in enumerate(m_list):
+            if self.surface_chemistry.check_material_temperature(mname) == 0:
+                # surface temperature is available
+                surf_temp[k] = self.surface_chemistry.get_material_temperature(mname)
+            else:
+                # use mixture gas temperature
+                surf_temp[k] = self.temperature
+        #
+        return surf_temp
+
+    def rop_surf(
+        self, mat_name: str
+    ) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
+        """Get species molar rate of production."""
+        """
+        Get species molar rate of production from the given mixture condition:
+        pressure, surface temperature, gas mixture composition, and surface coverage.
+
+        Parameters
+        ----------
+            mat_name: string
+                material name/symbol
+            pres: double
+                gas mixture pressure in [dynes/cm2]
+            surf_temp: double
+                surface temperature in [K]
+            molfrac: 1-D double array, dimension = number_gas_species
+                gas mixture composition in mole fractions
+
+        Returns
+        -------
+            rop_surf: 1-D double array, dimension = number_species
+                species molar rate of production in [mol/cm3-sec]
+            site_prodrate: 1-D double array, dimension = number of phases
+                surface site phase production rates in [mole/cm2-sec]
+        """
+        # get material temperature [K]
+        surf_temp = self.surface_chemistry.get_material_temperature(mat_name)
+        if surf_temp <= 0.0:
+            surf_temp = self.temperature
+        # compute (all) species rate of production (ROP)
+        # due to surface reactions [mole/cm2-sec]
+        rop_surf, site_prodrate = self.surface_chemistry.rop_surf(
+            mat_name, self.pressure, surf_temp, self.x
+        )
+        return rop_surf, site_prodrate
+
+    def rxnrates_surf(
+        self, mat_name: str
+    ) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
+        """Get molar rates of the surface reactions."""
+        """
+        Get molar rates of the surface reactions from the given gas and
+        surface conditions: pressure, surface temperature, gas mixture composition,
+        and surface coverage.
+
+        Parameters
+        ----------
+            mat_name: string
+                material name/symbol
+            pres: double
+                gas mixture pressure in [dynes/cm2]
+            surf_temp: double
+                surface temperature in [K]
+            molfrac: 1-D double array, dimension = number of gas species
+                gas mixture composition in mole fractions
+
+        Returns
+        -------
+            k_forward: 1-D double array, dimension = number of surface reaction
+                forward molar rates of the reactions in [mol/cm2-sec]
+            k_reverse: 1-D double array, dimension = number of surface reaction
+                reverse molar rates of the reactions in [mol/cm2-sec]
+        """
+        # get material temperature [K]
+        surf_temp = self.surface_chemistry.get_material_temperature(mat_name)
+        if surf_temp <= 0.0:
+            surf_temp = self.temperature
+        # compute surface reaction rates [mole/cm2-sec]
+        k_forward, k_reverse = self.surface_chemistry.rxnrates_surf(
+            mat_name, self.pressure, surf_temp, self.x
+        )
+        return k_forward, k_reverse
 
 
 # mixture mixing

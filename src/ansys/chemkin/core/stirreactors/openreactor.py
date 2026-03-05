@@ -77,11 +77,11 @@ class OpenReactor(ReactorModel, SteadyStateSolver):
         # total mass flow rate into this reactor [g/sec]
         self.totalmassflowrate = 0.0
         #
-        self.solver_types = {"Transient": 1, "SteadyState": 2}
-        self.energy_types = {"ENERGY": 1, "GivenT": 2}
+        self.solver_types = {"Transient": int(1), "SteadyState": int(2)}
+        self.energy_types = {"ENERGY": int(1), "GivenT": int(2)}
         # specify "reactor residence time" = "SETTAU" or
         # specify "reactor volume" = "SETVOLV"
-        self.problem_types = {"SETVOL": 1, "SETTAU": 2}
+        self.problem_types = {"SETVOL": int(1), "SETTAU": int(2)}
         # text output control flag
         self.suppress_output = False
 
