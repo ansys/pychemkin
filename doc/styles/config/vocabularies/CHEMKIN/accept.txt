@@ -143,6 +143,8 @@ reburned
 reburning
 regressors
 result_type
+ROP
+ROPs
 RPM
 rpm
 Sandia
@@ -156,6 +158,8 @@ SOx
 subpackage
 surf_file
 te
+Tetrafluoride
+tetrafluoride
 therm
 therm_file
 thermicity

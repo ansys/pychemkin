@@ -117,6 +117,7 @@ explicit_order = [
     "../../examples/reactor_network",
     "../../examples/premixed_flame",
     "../../examples/opposed_flow_flame",
+    "../../examples/surface_chemistry",
     "../../examples/multiprocessing",
     "../../examples/advanced",
 ]
