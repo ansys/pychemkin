@@ -88,8 +88,8 @@ interactive = True
 ########################
 # Create a chemistry set
 # ======================
-# The mechanism to load is the C2 NOx mechanism for the combustion o
-#  C1-C2 hydrocarbons. The mechanism comes with the standard Ansys Chemkin
+# The mechanism to load is the C2 NOx mechanism for the combustion of
+# C1-C2 hydrocarbons. The mechanism comes with the standard Ansys Chemkin
 # installation in the ``/reaction/data`` directory.
 
 # set mechanism directory (the default Chemkin mechanism data directory)
@@ -250,7 +250,7 @@ solutionpoints = tubereactor.getnumbersolutionpoints()
 print(f"number of solution points = {solutionpoints}")
 
 # get the grid profile [cm]
-xprofile = tubereactor.get_solution_variable_profile("time")
+xprofile = tubereactor.get_solution_variable_profile("distance")
 # get the temperature profile [K]
 tempprofile = tubereactor.get_solution_variable_profile("temperature")
 # get the CH4 mass fraction profile
@@ -270,13 +270,13 @@ n2_y_profile = tubereactor.get_solution_variable_profile("N2")
 no_y_inlet = exhaust.y[MyGasMech.get_specindex("NO")]
 # outlet grid index
 xout_index = solutionpoints - 1
-print("At the reactor inlet: x = 0 [xm]")
+print("At the reactor inlet: x = 0 [cm]")
 print(f"The NO mass fraction = {no_y_inlet}.")
 print(f"At the reactor outlet: x = {xprofile[xout_index]} [cm]")
 print(f"The NO mass fraction = {no_y_profile[xout_index]}.")
 print(
     "The NO conversion rate = "
-    + f"{(no_y_inlet - no_y_profile[xout_index]) / no_y_inlet * 100.0} %\n."
+    + f"{(no_y_inlet - no_y_profile[xout_index]) / no_y_inlet * 100.0} %.\n"
 )
 
 # more involved postprocessing using mixtures
@@ -329,6 +329,10 @@ plt.subplot(224)
 plt.plot(xprofile, velocityprofile, "m-")
 plt.xlabel("distance [cm]")
 plt.ylabel("Gas Velocity [cm/sec]")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

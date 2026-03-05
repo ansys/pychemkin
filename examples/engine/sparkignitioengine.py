@@ -519,6 +519,10 @@ plt.subplot(224)
 plt.plot(ca_profile, co_profile, "m-")
 plt.xlabel("Crank Angle [degree]")
 plt.ylabel("CO Mole Fraction")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

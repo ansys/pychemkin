@@ -235,3 +235,6 @@ speeds_mix1, cj_mix1 = ck.detonation(mymixture1)
 # print the detonation calculation results
 print(f"Detonation 'mymixture1' temperature: {cj_mix1.temperature} [K]")
 print(f"Detonation wave speed = {speeds_mix1[1] / 100.0} [m/sec]")
+
+# clean up
+ck.done()

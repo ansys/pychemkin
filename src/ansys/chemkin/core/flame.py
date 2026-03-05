@@ -36,7 +36,7 @@ from ansys.chemkin.core.steadystatesolver import SteadyStateSolver
 
 
 class Flame(ReactorModel, SteadyStateSolver, Grid):
-    """Generic steady state, one dimensional flame model."""
+    """Chemkin steady state, one dimensional flame model."""
 
     def __init__(self, fuelstream: Stream, label: str):
         """Create a 1-D flame object."""

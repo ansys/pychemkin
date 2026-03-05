@@ -25,23 +25,26 @@
 import copy
 import ctypes
 from ctypes import c_double, c_int
-from typing import Union
+from typing import Any, Union
 
 import numpy as np
 import numpy.typing as npt
 
-from . import chemkin_wrapper
-from .chemistry import (
+from ansys.chemkin.core import chemkin_wrapper
+from ansys.chemkin.core.chemistry import (
+    Chemistry,
     check_active_chemistryset,
     check_chemistryset,
     chemistryset_initialized,
     verbose,
+    verify_chemset_sizes,
 )
-from .color import Color
-from .constants import P_ATM
-from .inlet import Stream
-from .logger import logger
-from .mixture import Mixture
+from ansys.chemkin.core.color import Color
+from ansys.chemkin.core.constants import P_ATM
+from ansys.chemkin.core.inlet import Stream
+from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.mixture import Mixture
+from ansys.chemkin.core.surface import Surface
 
 
 #
@@ -70,9 +73,7 @@ class Keyword:
         "FLRT",
         "VDOT",
         "SCCM",
-        "VDOT",
         "DIAM",
-        "AREA",
         "REAC",
         "GAS",
         "INIT",
@@ -172,7 +173,7 @@ class Keyword:
                 ierr = 2
         if ierr > 0:
             return
-        self._key = phrase.upper()  # Chemkin keyword phrase
+        self._key = phrase  # Chemkin keyword phrase
         self._value = value  # value assigned to the keyword
         self._data_type = data_type  # data type of the values
         self._prefix = ""  # a prefix to the keyword that can be used
@@ -499,8 +500,8 @@ class Profile:
         self._profilekeyword = ""
         self._status = 0
         # check
-        if key.upper() in Keyword.profilekeywords:
-            self._profilekeyword = key.upper()
+        if key in Keyword.profilekeywords:
+            self._profilekeyword = key
         else:
             msg = [
                 Color.PURPLE,
@@ -547,6 +548,8 @@ class Profile:
     def size(self) -> int:
         """Get number of data points in the profile."""
         """
+        Get number of data points in the profile.
+
         Returns
         -------
             size: integer
@@ -559,6 +562,8 @@ class Profile:
     def status(self) -> int:
         """Get the validity of the profile object."""
         """
+        Get the validity of the profile object.
+
         Returns
         -------
             status: integer
@@ -571,6 +576,8 @@ class Profile:
     def pos(self) -> npt.NDArray[np.double]:
         """Get position values of profiles data."""
         """
+        Get position values of profiles data.
+
         Returns
         -------
             pos: 1-D double array
@@ -583,6 +590,8 @@ class Profile:
     def value(self) -> npt.NDArray[np.double]:
         """Get variable values of profile data."""
         """
+        Get variable values of profile data.
+
         Returns
         -------
             val: 1-D double array
@@ -595,6 +604,8 @@ class Profile:
     def profilekey(self) -> str:
         """Get profile keyword."""
         """
+        Get profile keyword.
+
         Returns
         -------
             profilekeyword: string
@@ -615,6 +626,8 @@ class Profile:
     ):
         """Reset the profile data."""
         """
+        Reset the profile data.
+
         Parameters
         ----------
             size: integer
@@ -657,10 +670,7 @@ class Profile:
         # special treatment for pressure profile
         factor = 1.0e0
         if self._profilekeyword == "PPRO":
-            if Keyword.no_fullkeyword:
-                # use API calls: pressure profile units = dynes/cm2
-                pass
-            else:
+            if not Keyword.no_fullkeyword:
                 # use Full Keywords: pressure units = atm
                 factor = P_ATM
         # assembly the profile keyword lines
@@ -730,13 +740,6 @@ class ReactorModel:
             # mixture pressure [dynes/cm2]
             self._pressure = ctypes.c_double(reactor_condition.pressure)
             self.numbspecies = self.reactormixture._kk
-        # elif isinstance(reactor_condition, Chemistry):
-        # if a Chemistry Set object is passed in (for flame models)
-        # chemistry set index
-        # self._chemset_index = ctypes.c_int(reactor_condition.chemid)
-        # gas species symbols
-        # self._specieslist = reactor_condition.species_symbols  # gas species symbols
-        # self.numbspecies = reactor_condition.KK
         else:
             msg = [
                 Color.PURPLE,
@@ -755,11 +758,11 @@ class ReactorModel:
         # gas reaction rate multiplier
         self._gasratemultiplier = 1.0e0
         # write text output file
-        self._TextOut = True
+        self._textout = True
         # FORTRAN file unit of the text output file
         self._mylout = c_int(154)
         # write XML solution file
-        self._XMLOut = True
+        self._xmlout = True
         # number of keywords used
         self._numbkeywords = 0
         # list of keyword phrases used for easy searching
@@ -795,12 +798,15 @@ class ReactorModel:
             "volume",
             "velocity",
             "flowrate",
+            "thermicity",
         ]
         self._speciesmode = "mass"
         self._numbsolutionpoints = 0
         self._solution_rawarray: dict[str, npt.ArrayLike] = {}
         self._numbsolutionmixtures = 0
         self._solution_mixturearray: list[Mixture] = []
+        # single point solution variables for transient models
+        self._solution_parameters: dict[str, Union[int, float]] = {}
         # initialize Chemkin-CFD-API
         if not check_chemistryset(self._chemset_index.value):
             # need to initialize Chemkin-CFD-API
@@ -825,6 +831,13 @@ class ReactorModel:
                 this_msg = Color.SPACE.join(msg)
                 logger.critical(this_msg)
                 exit()
+        # surface chemistry
+        self.has_surface_chemistry = reactor_condition._has_surface_chemistry
+        self.numbmaterials = 0
+        self.surface_chemistry: Any = None
+        if self.has_surface_chemistry:
+            # activate surface chemistry
+            self.activate_surface_chemistry(reactor_condition._chem_set, mode="silent")
 
     def usefullkeywords(self, mode: bool):
         """Specify all necessary keywords explicitly."""
@@ -889,31 +902,31 @@ class ReactorModel:
 
         """
         # find the keyword
-        i, newkey = self.__findkeywordslot(key.upper())
+        i, newkey = self.__findkeywordslot(key)
         # add the keyword to the keywords list
         if newkey:
             # a new keyword
             if isinstance(value, str):
                 # value is a string
-                self._keyword_list.append(StringKeyword(key.upper(), value))
-                self._keyword_index.append(key.upper())
+                self._keyword_list.append(StringKeyword(key, value))
+                self._keyword_index.append(key)
             elif isinstance(value, bool):
                 # value is a boolean value
                 if value:
                     # set the keyword only if the value is True
-                    self._keyword_list.append(BooleanKeyword(key.upper()))
-                    self._keyword_index.append(key.upper())
+                    self._keyword_list.append(BooleanKeyword(key))
+                    self._keyword_index.append(key)
                 else:
                     # remove the count
                     self._numbkeywords -= 1
             elif isinstance(value, int):
                 # value is an integer
-                self._keyword_list.append(IntegerKeyword(key.upper(), value))
-                self._keyword_index.append(key.upper())
+                self._keyword_list.append(IntegerKeyword(key, value))
+                self._keyword_index.append(key)
             elif isinstance(value, float):
                 # value is a real number
-                self._keyword_list.append(RealKeyword(key.upper(), value))
-                self._keyword_index.append(key.upper())
+                self._keyword_list.append(RealKeyword(key, value))
+                self._keyword_index.append(key)
             else:
                 msg = [Color.PURPLE, "invalid keyword value data type.", Color.END]
                 this_msg = Color.SPACE.join(msg)
@@ -943,7 +956,7 @@ class ReactorModel:
 
         """
         # find the keyword
-        i, newkey = self.__findkeywordslot(key.upper())
+        i, newkey = self.__findkeywordslot(key)
         if newkey:
             msg = [Color.YELLOW, "keyword", key, "not found.", Color.END]
             this_msg = Color.SPACE.join(msg)
@@ -951,13 +964,13 @@ class ReactorModel:
             exit()
         else:
             # remove keyword from the keyword index and the keyword list
-            if self._keyword_list[i].keyphrase != key.upper():
+            if self._keyword_list[i].keyphrase != key:
                 msg = [
                     Color.YELLOW,
                     "keyword index error.\n",
                     Color.SPACEx6,
                     "expected keyword",
-                    key.upper(),
+                    key,
                     "   actual keyword",
                     self._keyword_list[i].keyphrase,
                     Color.END,
@@ -967,7 +980,7 @@ class ReactorModel:
                 exit()
             # remove key from the keyword list and index
             del self._keyword_list[i]
-            self._keyword_index.remove(key.upper())
+            self._keyword_index.remove(key)
             self._numbkeywords -= 1
 
     def showkeywordinputlines(self):
@@ -1131,14 +1144,14 @@ class ReactorModel:
         #
         ierr = 0
         # find the keyword
-        i, newprofile = self.__findprofileslot(key.upper())
+        i, newprofile = self.__findprofileslot(key)
         # add the profile to the profiles index list
         if newprofile:
             # a new profile
-            self._profiles_list.append(Profile(key.upper(), x, y))
+            self._profiles_list.append(Profile(key, x, y))
             status = self._profiles_list[i].status
             if status == 0:
-                self._profiles_index.append(key.upper())
+                self._profiles_index.append(key)
                 self._numbprofiles += 1
             else:
                 msg = [
@@ -1176,6 +1189,60 @@ class ReactorModel:
                 logger.error(this_msg)
                 ierr = 1
         return ierr
+
+    def get_profile_value(self, key: str, x: float) -> float:
+        """Get the y value at given x from the profile data."""
+        """
+        Return the value of the y variable at the given x position
+        from the piecewise linear profile data by interpolation.
+
+        Parameters
+        ----------
+            key: string
+                name of the profile data
+            x: double
+                the position value
+
+        Returns
+        -------
+            value: double
+                the interpolated y variable value at the given x position
+        """
+        # find the keyword
+        i, newprofile = self.__findprofileslot(key)
+        if newprofile or i < 0:
+            # profile data does not exist
+            msg = [
+                Color.PURPLE,
+                "cannot find the profile data",
+                key,
+                ", please verify the name of the profile data set.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            return 0.0
+        # get the profile data
+        this_x = self._profiles_list[i].pos
+        this_val = self._profiles_list[i].value
+        # check x range
+        if x < np.min(this_x) or x > np.max(this_x):
+            msg = [
+                Color.PURPLE,
+                "the given x value",
+                str(x),
+                "is out of the profile data range of [",
+                str(np.min(this_x)),
+                ",",
+                str(np.max(this_x)),
+                "].",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            return 0.0
+        values = np.interp(x, this_x, this_val)
+        return values[0]
 
     def createprofileinputlines(self) -> tuple[int, int, list[str]]:
         """Create profile keyword input lines for Chemkin applications."""
@@ -1329,6 +1396,87 @@ class ReactorModel:
                 numb_lines += 1
         return numb_lines, lines
 
+    def create_inletspeciesinputlines(
+        self,
+        inlet_name: str,
+        threshold: float = 1.0e-12,
+        molefrac: npt.NDArray[np.double] = None,
+    ) -> tuple[int, list[str]]:
+        """Create keyword input lines."""
+        """Create keyword input lines for initial/estimated
+        species mole fraction inside the batch reactor.
+
+        Parameters
+        ----------
+            inlet_name: string
+                external inlet name
+            threshold: douoble
+                minimum species mole fraction value to be included in
+                the species keyword
+            molefrac: 1-D double array
+                species composition in mole fractions
+
+        Returns
+        -------
+            numb_lines: integer
+                Number of keyword lines
+            lines: list of keyword line strings
+
+        """
+        # must use inlet composition keyword 'REAC'
+        ksym = self._specieslist
+        ksize = len(molefrac)
+        if ksize != len(ksym):
+            msg = [
+                Color.PURPLE,
+                "species mole fraction array has size",
+                str(ksize),
+                "but",
+                str(len(ksym)),
+                "is expected.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        lines = []
+        numb_lines = 0
+        if len(inlet_name.rstrip()) == 0:
+            name_tag = ""
+        else:
+            name_tag = inlet_name.rstrip() + Keyword.fourspaces
+        for i in range(ksize):
+            if molefrac[i] > threshold:
+                thisline = (
+                    "REAC"
+                    + Keyword.fourspaces
+                    + name_tag
+                    + ksym[i].rstrip()
+                    + Keyword.fourspaces
+                    + str(molefrac[i])
+                )
+                lines.append(thisline)
+                numb_lines += 1
+        return numb_lines, lines
+
+    def clear_all_keywords(self):
+        """Delete all existing keyword components."""
+        # number of keywords used
+        self._numbkeywords = 0
+        # list of keyword phrases used for easy searching
+        self._keyword_index.clear()
+        # list of keyword objects defined
+        self._keyword_list.clear()
+        # list of keyword lines
+        # (each line is a string consists of: '<keyword> <parameter>',
+        # i.e., _keyword_index + _keyword_parameters)
+        self._keyword_lines.clear()
+        # number of keyword lines
+        self._numblines = 0
+        # length of each keyword line
+        self._linelength.clear()
+
     def chemid(self) -> int:
         """Get chemistry set index."""
         """
@@ -1358,7 +1506,7 @@ class ReactorModel:
 
     @temperature.setter
     def temperature(self, t: float):
-        """(Re)set reactor temperature."""
+        """Set reactor temperature."""
         """
         (Re)set reactor temperature.
 
@@ -1380,6 +1528,8 @@ class ReactorModel:
     def pressure(self) -> float:
         """Get reactor pressure."""
         """
+        Get reactor pressure.
+
         Returns
         -------
             pressure: double
@@ -1390,8 +1540,10 @@ class ReactorModel:
 
     @pressure.setter
     def pressure(self, p: float):
-        """(Re)set reactor pressure."""
+        """Set reactor pressure."""
         """
+        (Re)set reactor pressure.
+
         Parameters
         ----------
             p: double
@@ -1422,7 +1574,7 @@ class ReactorModel:
 
     @massfraction.setter
     def massfraction(self, recipe: list[tuple[str, float]]):
-        """Reset the initial/guessed/estimate gas species mass fractions."""
+        """Set the initial/guessed/estimate gas species mass fractions."""
         """(Re)set the initial/guessed/estimate gas species mass fractions
         inside the reactor.
 
@@ -1451,7 +1603,7 @@ class ReactorModel:
 
     @molefraction.setter
     def molefraction(self, recipe: list[tuple[str, float]]):
-        """Reset the initial/guessed/estimate gas species mole fractions."""
+        """Set the initial/guessed/estimate gas species mole fractions."""
         """(Re)set the initial/guessed/estimate gas species mole fractions
         inside the reactor.
 
@@ -1479,7 +1631,7 @@ class ReactorModel:
         return self.reactormixture.concentration
 
     def set_molefractions(self, molefrac: npt.NDArray[np.double]):
-        """Reset the reactor species mole fractions."""
+        """Set the reactor species mole fractions."""
         """(Re)set the reactor initial/guessed species mole fractions.
 
         Parameters
@@ -1490,7 +1642,7 @@ class ReactorModel:
         self.reactormixture.x = molefrac
 
     def set_massfractions(self, massfrac: npt.NDArray[np.double]):
-        """Reset the reactor species mass fractions."""
+        """Set the reactor species mass fractions."""
         """
         (Re)set the reactor initial/guessed species mass fractions.
 
@@ -1562,7 +1714,7 @@ class ReactorModel:
                 text output ON=True/OFF=False
 
         """
-        return self._TextOut
+        return self._textout
 
     @std_output.setter
     def std_output(self, mode: bool):
@@ -1577,7 +1729,7 @@ class ReactorModel:
         """
         off = not mode
         self.setkeyword(key="NO_SDOUTPUT_WRITE", value=off)
-        self._TextOut = mode
+        self._textout = mode
 
     @property
     def xml_output(self) -> bool:
@@ -1590,7 +1742,7 @@ class ReactorModel:
                 XML solution output ON=True/OFF=False
 
         """
-        return self._XMLOut
+        return self._xmlout
 
     @xml_output.setter
     def xml_output(self, mode: bool):
@@ -1605,7 +1757,7 @@ class ReactorModel:
         """
         off = not mode
         self.setkeyword(key="NO_XMLOUTPUT_WRITE", value=off)
-        self._XMLOut = mode
+        self._xmlout = mode
 
     def setsensitivityanalysis(
         self,
@@ -1669,9 +1821,6 @@ class ReactorModel:
                     self.setkeyword(key="EPST", value=temperature_threshold)
                 if species_threshold is not None:
                     self.setkeyword(key="EPSS", value=species_threshold)
-            else:
-                # do nothing
-                pass
 
     def set_rop_analysis(self, mode=True, threshold=None):
         """Switch ON/OFF the ROP (Rate Of Production) analysis."""
@@ -1706,9 +1855,6 @@ class ReactorModel:
                 self.setkeyword(key="AROP", value=mode)
                 if threshold is not None:
                     self.setkeyword(key="EPSR", value=threshold)
-            else:
-                # do nothing
-                pass
 
     @property
     def realgas(self) -> bool:
@@ -2029,3 +2175,598 @@ class ReactorModel:
         """
         # a shell method to be overridden by child classes
         pass
+
+    def activate_surface_chemistry(self, chem: Chemistry, mode: str = "normal"):
+        """Activate the surface chemistry."""
+        """"
+        Activate the surface chemistry on the wall surfaces of the reactor.
+
+        Parameters
+        ----------
+            chem: Chemistry Set object
+                the Chemistry Set with surface mechanism that is also used
+                to define the reactor mixture
+            mode: string, {"normal", "silent"}, optional, default = "normal"
+                controlling the amount of text outputs from the Surface module
+        """
+        # check chemistry sizes
+        chemset_index = c_int(chem.chemid)
+        if chemset_index.value != self._chemset_index.value:
+            # chemistry set mismatch
+            msg = [
+                Color.PURPLE,
+                "incompatible chemistry sets:\n",
+                Color.SPACEx6,
+                "chemistry set index of the reactor mixture =",
+                str(self._chemset_index.value),
+                "\n",
+                Color.SPACEx6,
+                "the given chemistry set index =",
+                str(chemset_index.value),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        if not verify_chemset_sizes(
+            chem_set_index=chem.chemid, num_gas_species=self.numbspecies
+        ):
+            # number of gas species mismatch
+            msg = [
+                Color.PURPLE,
+                "incompatible chemistry sets:",
+                "number of gas species in the chemistry sets are different.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        if not chem.verify_surface_mechanism():
+            chem.no_surface_mechanism_declaration()
+            exit()
+
+        # set up the surface chemistry for active reactor surfaces/materials
+        if self.surface_chemistry is not None:
+            if isinstance(self.surface_chemistry, Surface):
+                msg = [
+                    Color.YELLOW,
+                    "reactor already has surface chemistry set up",
+                    "and will be overridden.",
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.info(this_msg)
+            del self.surface_chemistry
+
+        # instantiate a new Surface object
+        self.surface_chemistry = Surface(chem)
+        # list surface materials and their properties
+        self.numbmaterials = self.surface_chemistry.number_materials
+        mat_list = self.surface_chemistry.get_material_names()
+        if mode == "normal":
+            print("List of available surface materials:\n")
+            for i, s in enumerate(mat_list):
+                # get the Material object corresponding to this material name
+                m = self.surface_chemistry.get_surface_material(s)
+                print(f"*** Material Index = {i}")
+                # display information about this surface material
+                m.information()
+        # surface reaction rate multiplier
+        # by default, the reaction rate multiplier = 1
+        self._surfaceratemultiplier = 1.0e0
+        # material surface area fraction
+        # by default, the site fractions have the same value
+        self._numb_surf_area_set = 0
+        self._surf_area_set: list[int] = []
+        self._material_area_fraction: list[float] = []
+
+    def verify_surface_chemistry(self) -> bool:
+        """Verify whether the reactor model is surfac chemistry capable."""
+        if not self.has_surface_chemistry:
+            self.no_surface_mechanism_declaration()
+        return self.has_surface_chemistry
+
+    def no_surface_mechanism_declaration(self):
+        """Inform users surface chemistry is not available for this reactor."""
+        msg = [
+            Color.PURPLE,
+            "reactor does not have surface chemistry.\n",
+            Color.SPACEx6,
+            "please instantiate the reactor with Mixture/Inlet",
+            "created from a Chemistry Set with surface chemistry.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+
+    def no_surface_material(self, mat_name: str):
+        """Send surface material not found message."""
+        """
+        Send surface material not found message.
+
+        Parameters
+        ----------
+            mat_name: string
+                material name
+        """
+        msg = [
+            Color.PURPLE,
+            mat_name.rstrip(),
+            "is not a valid surface material",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+
+    @property
+    def get_numb_material(self) -> int:
+        """Get the number of surface material."""
+        """Get the number of surface material in the surface mechanism.
+
+        Returns
+        -------
+            n_mat: integer
+                number of surface material
+        """
+        return self.numbmaterials
+
+    def get_material_names(self) -> list[str]:
+        """Get all surface material names."""
+        """
+        Get all surface material names.
+
+        Returns
+        -------
+            names: list of strings
+                MATERIAL NAMES/SYMBOLS
+        """
+        return self.surface_chemistry.get_material_names()
+
+    def get_site_species_names(self) -> list[list[str]]:
+        """Get site species names on the surface materials."""
+        """
+        Get site species names/symbols on all surface materials.
+
+        Returns
+        -------
+            list: list of list of strings
+                list of the list of surface site species names on each material
+        """
+        site_name = []
+        my_list = []
+        # get all material names
+        mat_names = self.get_material_names()
+        for mname in mat_names:
+            # get list of the surface site species names of a material
+            my_list = self.surface_chemistry.get_site_symbols(mat_name=mname)
+            site_name.append(my_list)
+        return site_name
+
+    def get_bulk_species_names(self) -> list[list[str]]:
+        """Get bulk species names on the surface materials."""
+        """
+        Get bulk species names/symbols on all surface materials.
+
+        Returns
+        -------
+            list: list of list of strings
+                list of the list of bulk species names on each material
+        """
+        bulk_name = []
+        # get all material names
+        mat_names = self.get_material_names()
+        for mname in mat_names:
+            # get list of the bulk species names of a material
+            my_list = self.surface_chemistry.get_bulk_symbols(mname)
+            bulk_name.append(my_list)
+        return bulk_name
+
+    def get_total_site_species(self) -> int:
+        """Get total number of site species from all materials."""
+        """
+        Get the total number of surface site species from all
+        surface materials of the surface mechanism.
+
+        Returns
+        -------
+            total_sites: integer
+                total number of site species
+        """
+        return self.surface_chemistry.total_site_species
+
+    def get_total_bulk_species(self) -> int:
+        """Get total number of bulk species from all materials."""
+        """
+        Get the total number of bulk species from all
+        surface materials of the surface mechanism.
+
+        Returns
+        -------
+            total_bulks: integer
+                total number of bulk species
+        """
+        return self.surface_chemistry.total_bulk_species
+
+    @property
+    def surface_ratemultiplier(self) -> float:
+        """Get the value of the surface reaction rate multiplier."""
+        """
+        Get the value of the surface reaction rate multiplier
+        of the given material.
+
+        Returns
+        -------
+            rate_factor: double
+                surface reaction rate multiplier of the given material
+        """
+        return self._surfaceratemultiplier
+
+    @surface_ratemultiplier.setter
+    def surface_ratemultiplier(self, value: float = 1.0e0):
+        """Set the value of the surface reaction rate multiplier."""
+        """
+        Set the value of the surface reaction rate multiplier (optional). When
+        the surface material name is not provided, the multiplier value applies
+        to all surface materials.
+
+        Parameters
+        ----------
+            value: double, default = 1.0
+                gas-phase reaction rate multiplier
+        """
+        if value < 0.0:
+            # invalid multiplier value
+            msg = [Color.PURPLE, "reaction rate multiplier must >= 0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        else:
+            if self.has_surface_chemistry:
+                self._surfaceratemultiplier = value
+
+    def check_material_area_fraction(self, mat_name: str) -> int:
+        """Verify the surface area fraction is given."""
+        """
+        Verify the surface area fraction of this material is explicitly
+        provided.
+
+        Returns
+        -------
+            status: integer
+                indication of the material area specification
+                = 0: not provided; > 0: provided
+        """
+        status = -1
+        if self.has_surface_chemistry:
+            if self._numb_surf_area_set > 0:
+                index = self.surface_chemistry.check_surface_material(mat_name)
+                if index >= 0:
+                    try:
+                        status = self._surf_area_set.index(index)
+                    except ValueError:
+                        status = -1
+        return status + 1
+
+    def get_material_area_fraction(self, mat_name: str) -> float:
+        """Get the surface area fraction."""
+        """
+        Get the surface area fraction of the given material.
+
+        Parameters
+        ----------
+            mat_name: string
+                surface material name
+
+        Returns
+        -------
+            area_fraction: double
+                surface area fraction of the given material
+        """
+        if self.has_surface_chemistry:
+            index = self.surface_chemistry.check_surface_material(mat_name)
+            if index >= 0:
+                try:
+                    loc = self._surf_area_set.index(index)
+                    return self._material_area_fraction[loc]
+                except ValueError:
+                    msg = [
+                        Color.YELLOW,
+                        "area fraction of material",
+                        mat_name.rstrip(),
+                        "has not been assigned",
+                        Color.END,
+                    ]
+                    this_msg = Color.SPACE.join(msg)
+                    logger.info(this_msg)
+                    return 1.0e0 / float(self.numbmaterials)
+            else:
+                return 0.0
+        else:
+            return 0.0
+
+    def set_material_area_fraction(self, mat_name: str, fraction: float):
+        """Set the value of the surface area fraction."""
+        """
+        Set the value of the surface area fraction of a material (optional).
+
+        Parameters
+        ----------
+            mat_name: string
+                surface material name
+            fraction: double
+                surface area fraction of the given material
+        """
+        if fraction < 0.0:
+            # invalid area fraction value
+            msg = [Color.PURPLE, "material area fraction must >= 0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        else:
+            if self.has_surface_chemistry:
+                index = self.surface_chemistry.check_surface_material(mat_name)
+                if index >= 0:
+                    if index not in self._surf_area_set:
+                        self._numb_surf_area_set += 1
+                        self._surf_area_set.append(index)
+                        self._material_area_fraction.append(fraction)
+                    else:
+                        loc = self._surf_area_set.index(index)
+                        self._material_area_fraction[loc] = fraction
+
+    def check_material_temperature(self, mat_name: str) -> int:
+        """Verify the surface temperature is given."""
+        """
+        Verify the surface temperature of this material is explicitly
+        provided.
+
+        Returns
+        -------
+            status: integer
+                indication of the material temperature specification
+                0 = not provided; 1 = provided
+        """
+        status = self.surface_chemistry.check_material_temperature(mat_name=mat_name)
+        return status
+
+    def get_material_temperature(self, mat_name: str) -> float:
+        """Get the surface temperature."""
+        """
+        Get the surface temperature of the given material.
+
+        Parameters
+        ----------
+            mat_name: string
+                surface material name
+
+        Returns
+        -------
+            temp: double
+                surface temperature [K] of the given material
+        """
+        if self.has_surface_chemistry:
+            temp = self.surface_chemistry.get_material_temperature(mat_name)
+            if temp < 0.0:
+                temp = self.temperature
+            return temp
+        else:
+            return 0.0
+
+    def set_material_temperature(self, mat_name: str, temp: float):
+        """Set the value of the surface temperature."""
+        """
+        Set the value of the surface temperature of a material.
+
+        Parameters
+        ----------
+            mat_name: string
+                surface material name
+            temp: double
+                surface temperature [K] of the given material
+        """
+        if temp < 100.0:
+            # invalid temperature value
+            msg = [Color.PURPLE, "material temperature must >= 100. [K]", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        else:
+            if self.has_surface_chemistry:
+                self.surface_chemistry.set_material_temperature(mat_name, temp)
+
+    def get_all_surface_temperature(self) -> npt.NDArray[np.double]:
+        """Get the temperatures of all materials in the mechanism."""
+        """
+        Get all surface temperatures of all surface materials
+        in the mechanism into a 1-D array.
+
+        Returns
+        -------
+            surf_temp: 1-D double array,
+                dimension=number of surface materials
+                material temperature [K]
+        """
+        # get total number of bulk species from all materials
+        n_material = self.surface_chemistry.number_materials
+        surf_temp = np.zeros(n_material, dtype=np.double)
+        m_list = self.surface_chemistry.get_material_names()
+        # loop over all surface materials
+        for k, mname in enumerate(m_list):
+            surf_temp[k] = self.get_material_temperature(mname)
+        #
+        return surf_temp
+
+    def get_site_fraction(self, mat_name: str) -> npt.NDArray[np.double]:
+        """Get the surface site fractions."""
+        """
+        Get the initial/guessed/estimate surface site fractions of the
+        given material in the reactor.
+
+        Parameters
+        ----------
+            mat_name: string
+                material name
+
+        Returns
+        -------
+            site_fraction: 1-D double array
+                surface site fraction
+        """
+        return self.surface_chemistry.get_site_frac(mat_name)
+
+    def set_site_fraction(self, mat_name: str, recipe: list[tuple[str, float]]):
+        """Set the surface site fractions."""
+        """
+        Set the initial/guessed/estimate surface site fractions inside the reactor.
+
+        Parameters
+        ----------
+            recipe: list of tuples, [(species_symbol, fraction), ... ]
+                non-zero mixture composition corresponding to the site fraction array
+        """
+        self.surface_chemistry.set_site_frac(mat_name, recipe)
+
+    def get_all_site_fractions(self) -> npt.NDArray[np.double]:
+        """Get site fractions of all materials in the mechanism."""
+        """
+        Get all site species fractions of all surface materials
+        in the mechanism into a 1-D array.
+
+        Returns
+        -------
+            site_frac: 1-D double array, dimension = total number of site species
+                site species fractions
+        """
+        #
+        return self.surface_chemistry.get_all_site_frac()
+
+    def get_bulk_activity(self, mat_name: str) -> npt.NDArray[np.double]:
+        """Get the bulk species activities."""
+        """
+        Get the bulk activities of the given material in the reactor.
+
+        Parameters
+        ----------
+            mat_name: string
+                material name
+
+        Returns
+        -------
+            bulk_act: 1-D double array
+                bulk species activity
+        """
+        return self.surface_chemistry.get_bulk_frac(mat_name)
+
+    def set_bulk_activity(self, mat_name: str, recipe: list[tuple[str, float]]):
+        """Set the bulk species activities."""
+        """
+        Set the bulk species activities inside the reactor.
+
+        Parameters
+        ----------
+            recipe: list of tuples, [(species_symbol, fraction), ... ]
+                non-zero mixture composition corresponding to the bulk activity array
+        """
+        self.surface_chemistry.set_bulk_frac(mat_name, recipe)
+
+    def get_all_bulk_growth_rates(self) -> npt.NDArray[np.double]:
+        """Get bulk growth rates of all materials in the mechanism."""
+        """
+        Get all bulk species linear growth rates of all surface materials
+        in the mechanism into a 1-D array.
+
+        Returns
+        -------
+            bulk_growth_rates: 1-D double array,
+                dimension=total number of bulk species
+                bulk species growth rates [cm/sec]
+        """
+        #
+        return self.surface_chemistry.get_all_bulk_growth_rates()
+
+    def set_init_surface_coverage(
+        self,
+    ) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
+        """Set up the initial surface coverage arrays."""
+        """
+        Set up initial/estimated surface site species fraction and bulk species
+        avtivity for reactor models.
+
+        Returns
+        -------
+            s_init: double array,
+                dimension = max number of site species among all surface materials
+                initial/estimated values of all site species in the surface mechanism
+            b_init: double array,
+                dimension = max number of bulk species among all surface materials
+                initial/estimated values of all bulk species in the surface mechanism
+        """
+        # find the total number of surface site species and
+        # the total number of bulk species from all materials
+        s_count = 0
+        b_count = 0
+        mat_sites = []
+        mat_bulks = []
+        for m in self.surface_chemistry.materials.values():
+            isite = m.number_site_species
+            ibulk = m.number_bulk_species
+            mat_sites.append(isite)
+            mat_bulks.append(ibulk)
+            s_count += isite
+            b_count += ibulk
+        # create the surface site fraction and the bulk activity arrays
+        s_init = np.zeros(max(1, s_count), dtype=np.double)
+        b_init = np.zeros(max(1, b_count), dtype=np.double)
+        # get the site fractions and the bulk activities from the materials
+        is_end = 0
+        ib_end = 0
+        for i, mname in enumerate(self.surface_chemistry.material_names):
+            is_start = is_end
+            is_end += mat_sites[i]
+            if mat_sites[i] > 0:
+                if self.surface_chemistry.check_site_frac_set(mname):
+                    s_init[is_start:is_end] = self.surface_chemistry.get_site_frac(
+                        mname
+                    )
+                else:
+                    # set equal-fraction (reactor model default)
+                    frac = 1.0 / mat_sites[i]
+                    s_init[is_start:is_end] = frac
+            ib_start = ib_end
+            ib_end += mat_bulks[i]
+            if mat_bulks[i] > 0:
+                if self.surface_chemistry.check_bulk_act_set(mname):
+                    b_init[ib_start:ib_end] = self.surface_chemistry.get_bulk_frac(
+                        mname
+                    )
+                else:
+                    # set all bulk species active (reactor model default)
+                    b_init[ib_start:ib_end] = 1.0
+        # clean up
+        del mat_sites, mat_bulks
+        return s_init, b_init
+
+    def set_surface_chemistry_keywords(self):
+        """Set up surface chemistry related keywords."""
+        """Add surface chemistry related keywords to the input keyword
+        lines of the reactor model.
+        """
+        # surface rate multiplier
+        self.setkeyword(key="SFAC", value=self.surface_ratemultiplier)
+        # loop over all surface materials
+        mat_list = self.surface_chemistry.get_material_names()
+        mat_tag = ""
+        for mname in mat_list:
+            mat_tag = Keyword.fourspaces + mname
+            # surface material temperature [K]
+            if self.check_material_temperature(mat_name=mname) > 0:
+                temp = self.get_material_temperature(mat_name=mname)
+                this_key = "TSRF" + mat_tag
+                self.setkeyword(key=this_key, value=temp)
+            # material area fraction
+            if self.check_material_area_fraction(mat_name=mname) > 0:
+                area_frac = self.get_material_area_fraction(mat_name=mname)
+                this_key = "AFRA" + mat_tag
+                self.setkeyword(key=this_key, value=area_frac)

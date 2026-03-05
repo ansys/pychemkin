@@ -540,6 +540,10 @@ plt.subplot(224)
 plt.plot(ca_profile, viscprofile, "m-")
 plt.xlabel("Crank Angle [degree]")
 plt.ylabel("Mixture Viscosity [cP]")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

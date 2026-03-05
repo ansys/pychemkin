@@ -194,6 +194,10 @@ plt.plot(equiv, t, "bs--")
 # set up axis labels
 plt.xlabel("Equivalence ratio")
 plt.ylabel("Temperature [K]")
+
+# clean up
+ck.done()
+
 # display or save the plot
 if interactive:
     plt.show()

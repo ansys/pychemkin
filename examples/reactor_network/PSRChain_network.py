@@ -62,7 +62,7 @@ import time
 
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
-from ansys.chemkin.core.hybridreactornetwork import ReactorNetwork as ERN
+from ansys.chemkin.core.hybridreactornetwork import ReactorNetwork as Ern
 from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.core.inlet import adiabatic_mixing_streams
 from ansys.chemkin.core.logger import logger
@@ -230,15 +230,15 @@ reburn.set_inlet(reburn_fuel)
 #     the network in the order they are added.
 #
 #   - Use the ``remove_reactor()`` method to remove an existing reactor from the
-#     network by the reactor ``name/label``. Similarly, use the ``clear_connections()``
-#     method to undo the network connectivity.
+#     network by the reactor ``name/label``. Similarly, use the
+#     ``clear_connections()`` method to undo the network connectivity.
 #
 #   - The order of the reactor addition is important as it dictates the solution
-#   sequence and thus the convergence rate.
+#     sequence and thus the convergence rate.
 #
 
 # instantiate the chain PSR network as a hybrid reactor network
-PSRChain = ERN(MyGasMech)
+PSRChain = Ern(MyGasMech)
 
 # add the reactors from upstream to downstream
 PSRChain.add_reactor(combustor)
@@ -306,3 +306,6 @@ print(f"CH4 = {network_outflow.x[ch4_index]}")
 print(f"O2 = {network_outflow.x[o2_index]}")
 print(f"CO = {network_outflow.x[co_index]}")
 print(f"NO = {network_outflow.x[no_index]}")
+
+# clean up
+ck.done()

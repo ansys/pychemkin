@@ -54,6 +54,10 @@ MyGasMech.chemfile = str(mechanism_dir / "grimech30_chem.inp")
 MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
 
 ierror = MyGasMech.preprocess()
+if ierror != 0:
+    print("Error: Failed to preprocess the mechanism!")
+    print(f"       Error code = {ierror}")
+    exit()
 
 oxid = ck.Mixture(MyGasMech)
 # set mass fraction

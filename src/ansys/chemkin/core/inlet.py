@@ -26,6 +26,7 @@ import copy
 from typing import Union
 
 import numpy as np
+import numpy.typing as npt
 
 from ansys.chemkin.core.chemistry import Chemistry
 from ansys.chemkin.core.color import Color
@@ -77,6 +78,25 @@ class Stream(Mixture):
         self._haveflowarea = False
         # cross-sectional flow area [cm2]
         self._flowarea = 1.0
+        # flag for using flow rate profile
+        # -1: no inlet flow rate profile is used
+        # 0: mass flow rate profile "FPRO"
+        # 1: volumetric flow rate profile "VDOTPRO"
+        # 2: velocity profile "VELPRO"
+        # 3: SCCM profile "SCCMPRO"
+        self._use_flow_rate_profile = False
+        self._inlet_flow_rate_profile_mode = -1
+        self.flow_rate_profile_keys: dict[int, str] = {
+            int(0): "FPRO",
+            int(1): "VDOTPRO",
+            int(2): "VELPRO",
+            int(3): "SCCMPRO",
+        }
+        self.flowrate_profile: dict[
+            str, tuple[npt.NDArray[np.double], npt.NDArray[np.double]]
+        ] = {}
+        # flag for inlet stream temperature profile "TINPRO"
+        self._use_inlet_temperature_profile = False
         # set inlet label
         if label is None:
             label = "inlet"
@@ -139,6 +159,8 @@ class Stream(Mixture):
     def convert_to_vol_flowrate(self) -> float:
         """Convert different types of flow rate value to volumetric flow rate."""
         """
+        Convert different types of flow rate value to volumetric flow rate.
+
         Returns
         -------
             vrate: double
@@ -192,6 +214,8 @@ class Stream(Mixture):
     def convert_to_sccm(self) -> float:
         """Convert different types of flow rate value to SCCM."""
         """
+        Convert different types of flow rate value to SCCM.
+
         Returns
         -------
             sccm: double
@@ -243,10 +267,48 @@ class Stream(Mixture):
             logger.error(this_msg)
             exit()
 
+    def check_flow_rate_mode(self) -> int:
+        """Get the type of flow rate is provided to this inlet."""
+        """
+        Get the type of flow rate unit is provided to this inlet.
+
+        Returns
+        -------
+            flow_rate_mode: integer
+                type of flow rate (unit) is assigned
+        """
+        return self._flowratemode
+
+    def notify_inlet_profile(self, mode: str):
+        """Display warning that flow rate profile is specified."""
+        """
+        Display warning message to instruct the user to use the flow rate
+        profile methods when the inlet flow rate profile is specified for
+        this inlet.
+
+        Parameters
+        ----------
+            mode: string
+                type of flow rate profile unit
+        """
+        msg = [
+            Color.YELLOW,
+            "Flow rate profile is assigned to this inlet",
+            self.label,
+            ".\n",
+            f"Please use the 'get_{mode}_from_profile(time)' method",
+            f"to get the {mode} at the given time [sec].",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.info(this_msg)
+
     @property
     def flowarea(self) -> float:
         """Get inlet flow area."""
         """
+        Get inlet flow area.
+
         Returns
         -------
             flowarea: double
@@ -265,6 +327,8 @@ class Stream(Mixture):
     def flowarea(self, farea: float):
         """Set inlet cross-sectional flow area."""
         """
+        Set inlet cross-sectional flow area.
+
         Parameters
         ----------
             farea: double
@@ -283,12 +347,17 @@ class Stream(Mixture):
     def mass_flowrate(self) -> float:
         """Get inlet mass flow rate."""
         """
+        Get inlet mass flow rate.
+
         Returns
         -------
             mflowrate: double
                 mass flow rate [g/sec]
 
         """
+        if self._use_flow_rate_profile:
+            self.notify_inlet_profile("mass_flowrate")
+
         if self._flowratemode == 0:
             return self._massflowrate
         else:
@@ -298,6 +367,8 @@ class Stream(Mixture):
     def mass_flowrate(self, mflowrate: float):
         """Set inlet mass flow rate."""
         """
+        Set inlet mass flow rate.
+
         Parameters
         ----------
             mflowrate: double
@@ -322,12 +393,17 @@ class Stream(Mixture):
     def vol_flowrate(self) -> float:
         """Get inlet volumetric flow rate."""
         """
+        Get inlet volumetric flow rate.
+
         Returns
         -------
             vflowrate: double
                 volumetric flow rate [cm3/sec]
 
         """
+        if self._use_flow_rate_profile:
+            self.notify_inlet_profile("vol_flowrate")
+
         if self._flowratemode == 1:
             return self._volflowrate
         else:
@@ -337,6 +413,8 @@ class Stream(Mixture):
     def vol_flowrate(self, vflowrate: float):
         """Set inlet volumetric flow rate."""
         """
+        Set inlet volumetric flow rate.
+
         Parameters
         ----------
             vflowrate: double
@@ -361,12 +439,17 @@ class Stream(Mixture):
     def sccm(self) -> float:
         """Get inlet SCCM volumetric flow rate."""
         """
+        Get inlet SCCM volumetric flow rate.
+
         Returns
         -------
             vflowrate: double
                 SCCM volumetric flow rate [standard cm3/min]
 
         """
+        if self._use_flow_rate_profile:
+            self.notify_inlet_profile("sccm_flowrate")
+            return self._sccm
         if self._flowratemode == 3:
             return self._sccm
         else:
@@ -376,6 +459,8 @@ class Stream(Mixture):
     def sccm(self, vflowrate: float):
         """Set inlet volumetric flow rate in SCCM."""
         """
+        Set inlet volumetric flow rate in SCCM.
+
         Parameters
         ----------
             vflowrate: double
@@ -400,12 +485,17 @@ class Stream(Mixture):
     def velocity(self) -> float:
         """Get inlet gas velocity."""
         """
+        Get inlet gas velocity.
+
         Returns
         -------
             vel: double
                 velocity [cm/sec]
 
         """
+        if self._use_flow_rate_profile:
+            self.notify_inlet_profile("velocity")
+
         if self._flowratemode == 2:
             return self._velocity
         else:
@@ -432,6 +522,8 @@ class Stream(Mixture):
     def velocity(self, vel: float):
         """Set inlet velocity."""
         """
+        Set inlet velocity.
+
         Parameters
         ----------
             vel: velocity [cm/sec]
@@ -469,6 +561,8 @@ class Stream(Mixture):
     def velocity_gradient(self, velgrad: float):
         """Set inlet axial velocity gradient."""
         """
+        Set inlet axial velocity gradient.
+
         Parameters
         ----------
             velgrad: double
@@ -512,11 +606,124 @@ class Stream(Mixture):
         """
         self._label = name
 
+    def profile_out_of_range(self, time: float, max: float, min: float):
+        """Report value out of the profile data range."""
+        """
+        Issue an error message when the given time value is out of the
+        time profile data range.
+
+        Parameters
+        ----------
+            time: double
+                the given time value [sec]
+            max: double
+                maximum time value in the profile data
+            min: double
+                minimum time value in the profile data
+        """
+        msg = [
+            Color.PURPLE,
+            "the given time value",
+            str(time),
+            "is out of the profile data range of [",
+            str(min),
+            ",",
+            str(max),
+            "].",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+
+    def set_mass_flowrate_profile(
+        self, x: npt.NDArray[np.double], flow_rate: npt.NDArray[np.double]
+    ):
+        """Specify inlet mass flow rate profile."""
+        """
+        Specify inlet mass flow rate profile for transient reactor models.
+
+        Parameters
+        ----------
+            x: 1D double array
+                position value of the profile data [cm or sec]
+            flow_rate: 1D double array
+                mass flow arte value of the profile data [g/sec]
+        """
+        # reset the flow rates
+        self._volflowrate = 0.0
+        self._velocity = 0.0
+        self._sccm = 0.0
+        # set flow rate mode to mass flow rate
+        self._flowratemode = 0
+        # set inlet profile flag
+        self._use_flow_rate_profile = True
+        self._inletflowrate[self._flowratemode] = flow_rate[0]
+        self._massflowrate = flow_rate[0]
+        # profile keywords will be set by the set_profile
+        if len(self.flowrate_profile.keys()) > 0:
+            msg = [
+                Color.YELLOW,
+                "existing flow rate profile will be deleted.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
+            self.flowrate_profile.clear()
+        #
+        keyword = self.flow_rate_profile_keys.get(self._flowratemode, "FPRO")
+        self.flowrate_profile[keyword] = (x, flow_rate)
+
+    def get_mass_flowrate_profile_data(self, time: float = 0.0) -> float:
+        """Get the mass flow rate at the given time from the profile data."""
+        """
+        Return the inlet mass flow rate at the given time value
+        from the inlet mass flow rate profile data by interpolation.
+
+        Parameters
+        ----------
+            time: double
+                time [sec]
+
+        Returns
+        -------
+            mass_flowrate: double
+                the interpolated inlet mass flow rate [g/sec] at the given time
+        """
+        # profile keywords will be set by the set_profile
+        if self._use_flow_rate_profile and self._flowratemode == 0:
+            # mass flow rate profile data does not exist
+            msg = [
+                Color.PURPLE,
+                "cannot find the inlet mass flow rate profile data,",
+                "please verify the profile data set.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            return 0.0
+        this_x, this_values = self.flowrate_profile.get("FPRO", ([0.0], [0.0]))
+        if len(this_x) <= 1:
+            msg = [
+                Color.PURPLE,
+                "cannot find the mass flow rate profile data.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            return 0.0
+        if time < np.min(this_x) or time > np.max(this_x):
+            self.profile_out_of_range(time, np.max(this_x), np.min(this_x))
+        values = np.interp(time, this_x, this_values)
+        mass_flowrate = values[0]
+        return mass_flowrate
+
 
 # stream utilities
 def clone_stream(source: Stream, target: Stream):
     """Copy the properties of the source Stream to the target Stream."""
     """
+    Duplicate the properties of the source Stream to the target Stream.
+
     Parameters
     ----------
         source: Stream object
@@ -551,12 +758,13 @@ def compare_streams(
     mode: str = "mass",
 ) -> tuple[bool, float, float]:
     """Compare properties of stream B against those of stream A."""
-    """The stream properties
-    include mixture properties such as pressure [atm], temperature [K], and
-    species mass/mole fractions and the stream mass flow rate. When the
-    differences in the property values satisfy both the absolute and the relative
-    tolerances, this method will return "True", that is, stream B is essentially
-    identical to stream A; otherwise, "False" will be returned.
+    """Compare properties of stream B against those of stream A.
+    The stream properties include mixture properties such as pressure [atm],
+    temperature [K], and species mass/mole fractions and the stream mass flow rate.
+    When the differences in the property values satisfy both the absolute and
+    the relative tolerances, this method will return "True", that is,
+    stream B is essentially identical to stream A; otherwise,
+    "False" will be returned.
 
     Parameters
     ----------
@@ -604,7 +812,8 @@ def compare_streams(
 
 def adiabatic_mixing_streams(stream_a: Stream, stream_b: Stream) -> Stream:
     """Create a new Stream object by mixing two streams adiabatically."""
-    """The enthalpy of the final stream is the sum of the enthalpies of
+    """Create a new Stream object by mixing two streams adiabatically.
+    The enthalpy of the final stream is the sum of the enthalpies of
     the two streams, and so is the final mass flow rate.
 
     Parameters

@@ -73,6 +73,8 @@ class TestClassUtilities:
         # skip the test below because the subprocess produces a non-zero return code
         # but the test is completed successfully
         #    "multiplemechanisms",
+        "diffusionvelocity",
+        "mixing_IEM",
     ]
 
     @pytest.mark.parametrize("test_file", utility_list)
@@ -157,7 +159,7 @@ class TestClassEngine:
     engine_list = [
         "hcciengine",
         "multizone",
-        "sparkignitioengine",
+        "sparkignitionengine",
     ]
 
     @pytest.mark.parametrize("test_file", engine_list)
@@ -204,7 +206,12 @@ class TestClassPSR:
     # heat [cal]
     # species: mole/mass fraction
     # rate: reaction rate, rate of production, heat release rate
-    psr_list = ["PSRgas", "jetstirredreactor", "multi-inletPSR", "PSRChain_declustered"]
+    psr_list = [
+        "PSRgas",
+        "jetstirredreactor",
+        "multi-inletPSR",
+        "PSRChain_declustered",
+    ]
 
     @pytest.mark.parametrize("test_file", psr_list)
     def test_perfectly_stirred_reactor(
@@ -228,13 +235,104 @@ class TestClassERN:
     # heat [cal]
     # species: mole/mass fraction
     # rate: reaction rate, rate of production, heat release rate
-    ern_list = ["PSRChain_network", "PSRnetwork"]
+    ern_list = [
+        "PSRChain_network",
+        "PSRnetwork",
+        "PSRnetwork_coupled",
+    ]
 
     @pytest.mark.parametrize("test_file", ern_list)
     def test_reactor_network(
         self, get_working_dir, get_source_dir, get_result_dir, test_file
     ):
         """Run the selected pychemin ERN model test cases."""
+        ierr = PyCKtools.run_test(
+            get_working_dir, get_source_dir, get_result_dir, test_file
+        )
+        assert 0 == ierr, "run failed."
+
+
+@pytest.mark.group("premixed", "all")
+@pytest.mark.premixed
+class TestClassPremixed:
+    """Tests to verify Chemkin premixed flame models."""
+
+    # define tolerances for this group of tests
+    # {'type_of_variable': [absolute_tolerance, relative_tolerance], ... }
+    # state: pressure [atm], temperature [K], volume [cm3], velocity [cm/s],
+    # flame speed [cm/sec], heat [cal]
+    # species: mole/mass fraction
+    # rate: reaction rate, rate of production, heat release rate
+    premixed_list = ["methane_flamespeed_table", "premixedburnerflame"]
+
+    @pytest.mark.parametrize("test_file", premixed_list)
+    def test_premixed(self, get_working_dir, get_source_dir, get_result_dir, test_file):
+        """Run the selected pychemin premixed flame model test cases."""
+        ierr = PyCKtools.run_test(
+            get_working_dir, get_source_dir, get_result_dir, test_file
+        )
+        assert 0 == ierr, "run failed."
+
+
+@pytest.mark.group("opposed", "all")
+@pytest.mark.opposed
+class TestClassOpposedFlame:
+    """Tests to verify Chemkin opposed-flow flame models."""
+
+    # define tolerances for this group of tests
+    # {'type_of_variable': [absolute_tolerance, relative_tolerance], ... }
+    # state: pressure [atm], temperature [K], axial velocity [cm/s],
+    # and mixture fraction [-]
+    # species: mole/mass fraction
+    # rate: reaction rate, rate of production, heat release rate
+    opposed_list = ["dual_flame"]
+
+    @pytest.mark.parametrize("test_file", opposed_list)
+    def test_opposed(self, get_working_dir, get_source_dir, get_result_dir, test_file):
+        """Run the selected pychemin opposed-flow flame model test case."""
+        ierr = PyCKtools.run_test(
+            get_working_dir, get_source_dir, get_result_dir, test_file
+        )
+        assert 0 == ierr, "run failed."
+
+
+@pytest.mark.group("shock", "all")
+@pytest.mark.shock
+class TestClassShockTube:
+    """Tests to verify Chemkin shock tube reactor models."""
+
+    # define tolerances for this group of tests
+    # {'type_of_variable': [absolute_tolerance, relative_tolerance], ... }
+    # state: pressure [atm], temperature [K], velocity [cm/s],
+    # Mach number [-], total thermicity [1/sec]
+    # species: mole/mass fraction
+    # rate: reaction rate, rate of production, heat release rate
+    shock_list = ["incidentshock", "ZND"]
+
+    @pytest.mark.parametrize("test_file", shock_list)
+    def test_shock(self, get_working_dir, get_source_dir, get_result_dir, test_file):
+        """Run the selected pychemin shock tube reactor model test cases."""
+        ierr = PyCKtools.run_test(
+            get_working_dir, get_source_dir, get_result_dir, test_file
+        )
+        assert 0 == ierr, "run failed."
+
+
+@pytest.mark.group("surface", "all")
+@pytest.mark.surface
+class TestClassSurface:
+    """Tests to verify Chemkin surface chemistry utilities."""
+
+    # define tolerances for this group of tests
+    # {'type_of_variable': [absolute_tolerance, relative_tolerance], ... }
+    # state: pressure [atm], temperature [K]
+    # species: mole/mass fraction, surface site fractions, bulk activities
+    # rate: reaction rate, rate of production, heat release rate
+    surface_list = ["multiple_materials", "SiC_cvd", "catalytic_combustion"]
+
+    @pytest.mark.parametrize("test_file", surface_list)
+    def test_surface(self, get_working_dir, get_source_dir, get_result_dir, test_file):
+        """Run the selected pychemin surface chemistry/materials test cases."""
         ierr = PyCKtools.run_test(
             get_working_dir, get_source_dir, get_result_dir, test_file
         )

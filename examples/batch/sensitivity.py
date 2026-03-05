@@ -374,6 +374,10 @@ plt.barh(rxnstring, fnegcoeffs, color="orange", height=0.4)
 plt.axvline(x=0, c="gray", lw=1)
 plt.xlabel("Sensitivity Coefficients")
 plt.suptitle("Ignition Delay Time Sensitivity", fontsize=16)
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()
