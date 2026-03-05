@@ -247,7 +247,8 @@ class PerfectlyStirredReactor(OpenReactor):
                 if self.numbexternalinlets > 1:
                     # use the assigned inlet stream name
                     # tag = key.rstrip()
-                    # the reactor name and the inlet name are hard coded in chemkin-CFD-API
+                    # the reactor name and the inlet name are hard coded
+                    # in chemkin-CFD-API
                     tag = "Inlet" + str(i_inlet + 1) + "_Reactor1"
                 # inlet mole fraction
                 _, species_lines = self.create_inletspeciesinputlines(
@@ -265,7 +266,7 @@ class PerfectlyStirredReactor(OpenReactor):
                     this_key = "SCCM" + Keyword.fourspaces + tag
                     self.setkeyword(key=this_key.rstrip(), value=inlet.sccm)
                 if inlet._t_set == 1:
-                # inlet temperature is provided
+                    # inlet temperature is provided
                     this_key = "TINL" + Keyword.fourspaces + tag
                     self.setkeyword(key=this_key.rstrip(), value=inlet.temperature)
                 # do not check total mass flow rate

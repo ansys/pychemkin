@@ -1190,7 +1190,7 @@ class ReactorModel:
                 ierr = 1
         return ierr
 
-    def get_profile_value(self, key:str, x: float) -> float:
+    def get_profile_value(self, key: str, x: float) -> float:
         """Get the y value at given x from the profile data."""
         """
         Return the value of the y variable at the given x position
@@ -1208,8 +1208,6 @@ class ReactorModel:
             value: double
                 the interpolated y variable value at the given x position
         """
-        #
-        ierr = 0
         # find the keyword
         i, newprofile = self.__findprofileslot(key)
         if newprofile or i < 0:
@@ -1245,7 +1243,6 @@ class ReactorModel:
             return 0.0
         values = np.interp(x, this_x, this_val)
         return values[0]
-
 
     def createprofileinputlines(self) -> tuple[int, int, list[str]]:
         """Create profile keyword input lines for Chemkin applications."""

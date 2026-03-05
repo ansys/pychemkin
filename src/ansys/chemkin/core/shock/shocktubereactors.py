@@ -20,14 +20,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-    Chemkin shock tube reactor model.
-"""
+"""Chemkin shock tube reactor model."""
 
 import copy
 from ctypes import c_double, c_int
 
-from ansys.chemkin.core import chemkin_wrapper as ck_wrapper
+import numpy as np
+import numpy.typing as npt
+
+from ansys.chemkin.core import chemkin_wrapper as ckw
 from ansys.chemkin.core.batchreactors.batchreactor import (
     calculate_effective_activation_energy,
 )
@@ -42,13 +43,11 @@ from ansys.chemkin.core.constants import P_ATM
 from ansys.chemkin.core.inlet import Stream
 from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.mixture import equilibrium, interpolate_mixtures
-from ansys.chemkin.core.reactormodel import ReactorModel as reactor
+from ansys.chemkin.core.reactormodel import ReactorModel as Reactor
 from ansys.chemkin.core.utilities import find_interpolate_parameters, interpolate_point
-import numpy as np
-import numpy.typing as npt
 
 
-class ShockTubeReactors(reactor):
+class ShockTubeReactors(Reactor):
     """Generic Chemkin 0-D transient shock tube reactor model."""
 
     def __init__(self, reactor_condition: Stream, label: str):
@@ -287,9 +286,7 @@ class ShockTubeReactors(reactor):
         if delta_time > 0.0e0:
             self.setkeyword(key="DELT", value=delta_time)
         else:
-            msg = [
-                Color.PURPLE, "solution printing timestep size must > 0.", Color.END
-            ]
+            msg = [Color.PURPLE, "solution printing timestep size must > 0.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
 
@@ -324,7 +321,7 @@ class ShockTubeReactors(reactor):
         # number of time points in the solution
         npoints = c_int(0)
         # get solution size of the batch reactor
-        ierr = ck_wrapper.chemkin.KINShock_GetSolnResponseSize(npoints)
+        ierr = ckw.chemkin.KINShock_GetSolnResponseSize(npoints)
         if ierr == 0:
             # return the solution sizes
             self._numbsolutionpoints = (
@@ -392,7 +389,7 @@ class ShockTubeReactors(reactor):
         # get raw solution data
         icnspec = c_int(self.numbspecies)
         icnpoints = c_int(npoints)
-        ierr = ck_wrapper.chemkin.KINShock_GetGasSolnResponse(
+        ierr = ckw.chemkin.KINShock_GetGasSolnResponse(
             icnpoints, icnspec, time, temp, pres, vel, density, distance, frac
         )
         if ierr != 0:
@@ -454,7 +451,7 @@ class ShockTubeReactors(reactor):
         cdetwave = c_double(0.0)
         for i in range(3):
             location = c_int(i + 1)
-            ierr = ck_wrapper.chemkin.KINShock_GetGasStates(
+            ierr = ckw.chemkin.KINShock_GetGasStates(
                 location,
                 p_state,  # pressure [atm]
                 t_state,  # gas temperature [K]
@@ -786,7 +783,7 @@ class ShockTubeReactors(reactor):
         # number of time points in the solution
         npoints = c_int(0)
         # get solution size of the batch reactor
-        ierr = ck_wrapper.chemkin.KINShock_GetInductLengthSize(npoints)
+        ierr = ckw.chemkin.KINShock_GetInductLengthSize(npoints)
         if ierr != 0:
             msg = [
                 Color.PURPLE,
@@ -849,9 +846,7 @@ class ShockTubeReactors(reactor):
         induct_length = np.zeros(npoints, dtype=np.double)
         sigmamax = np.zeros_like(induct_length, dtype=np.double)
         # get solution size of the batch reactor
-        ierr = ck_wrapper.chemkin.KINShock_GetInductLengths(
-            npts, induct_length, sigmamax
-        )
+        ierr = ckw.chemkin.KINShock_GetInductLengths(npts, induct_length, sigmamax)
         if ierr != 0:
             msg = [
                 Color.PURPLE,
@@ -911,6 +906,7 @@ class IncidentShock(ShockTubeReactors):
     """Chemkin incident shock reactor model."""
 
     def __init__(self, mixture_condition: Stream, location: int, label: str):
+        """Initialize incident shock reactor."""
         """
         Initialize a Chemkin incident Shock Tube Reactor object.
 
@@ -924,6 +920,7 @@ class IncidentShock(ShockTubeReactors):
                 1 = before, 2 = behind
             label: string, optional
                 reactor name
+
         """
         # check minimum version requirement = 2026 R1
         if not verify_version(261):
@@ -962,9 +959,7 @@ class IncidentShock(ShockTubeReactors):
                     # string type value: just assign the keyword value to 0.0
                     this_value = c_double(0.0)
                 # set the keyword
-                ierrc = ck_wrapper.chemkin.KINShock_SetParameter(
-                    this_key, this_value
-                )
+                ierrc = ckw.chemkin.KINShock_SetParameter(this_key, this_value)
                 if ierrc == 2:
                     # keyword is not available
                     msg = [
@@ -1012,7 +1007,7 @@ class IncidentShock(ShockTubeReactors):
         #
         if self.bl_correction == 0:
             # without boundary layer correction
-            ierr = ck_wrapper.chemkin.KINShock_CalcIncidentShockWithoutBoundaryLayerCorrection(
+            ierr = ckw.chemkin.KINShock_CalcIncidentShockWithoutBoundaryLayerCorrection(
                 self._mylout,
                 self._chemset_index,
                 shock_velocity,
@@ -1043,18 +1038,20 @@ class IncidentShock(ShockTubeReactors):
             else:
                 # with boundary layer correction
                 #
-                ierr = ck_wrapper.chemkin.KINShock_CalcIncidentShockWithBoundaryLayerCorrection(
-                    self._mylout,
-                    self._chemset_index,
-                    shock_velocity,
-                    self.i_type,
-                    temp,
-                    pres,
-                    y_init,
-                    self._start_time,
-                    self._end_time,
-                    self.reactor_diameter,
-                    self.init_visc,
+                ierr = (
+                    ckw.chemkin.KINShock_CalcIncidentShockWithBoundaryLayerCorrection(
+                        self._mylout,
+                        self._chemset_index,
+                        shock_velocity,
+                        self.i_type,
+                        temp,
+                        pres,
+                        y_init,
+                        self._start_time,
+                        self._end_time,
+                        self.reactor_diameter,
+                        self.init_visc,
+                    )
                 )
 
         return ierr
@@ -1089,9 +1086,7 @@ class IncidentShock(ShockTubeReactors):
             msg = [Color.YELLOW, "initializing Chemkin ...", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.info(this_msg)
-            ret_val = ck_wrapper.chemkin.KINInitialize(
-                self._chemset_index, c_int(0)
-            )
+            ret_val = ckw.chemkin.KINInitialize(self._chemset_index, c_int(0))
             if ret_val != 0:
                 msg = [
                     Color.RED,
@@ -1223,9 +1218,7 @@ class ReflectedShock(ShockTubeReactors):
                     # string type value: just assign the keyword value to 0.0
                     this_value = c_double(0.0)
                 # set the keyword
-                ierrc = ck_wrapper.chemkin.KINShock_SetParameter(
-                    this_key, this_value
-                )
+                ierrc = ckw.chemkin.KINShock_SetParameter(this_key, this_value)
                 if ierrc == 2:
                     # keyword is not available
                     msg = [
@@ -1278,7 +1271,7 @@ class ReflectedShock(ShockTubeReactors):
         # inlet mass fraction
         y_init = self.reactormixture.y
         #
-        ierr = ck_wrapper.chemkin.KINShock_CalcReflectedShock(
+        ierr = ckw.chemkin.KINShock_CalcReflectedShock(
             self._mylout,
             self._chemset_index,
             inc_shock_velocity,
@@ -1323,9 +1316,7 @@ class ReflectedShock(ShockTubeReactors):
             msg = [Color.YELLOW, "initializing Chemkin ...", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.info(this_msg)
-            ret_val = ck_wrapper.chemkin.KINInitialize(
-                self._chemset_index, c_int(0)
-            )
+            ret_val = ckw.chemkin.KINInitialize(self._chemset_index, c_int(0))
             if ret_val != 0:
                 msg = [
                     Color.RED,
@@ -1393,6 +1384,7 @@ class ZNDCalculator(ShockTubeReactors):
     """Chemkin ZND model for the detonation wave behind the incident shock."""
 
     def __init__(self, mixture_condition: Stream, label: str):
+        """Initialize a ZND model."""
         """
         Initialize a Chemkin Zeldovich-von Neumann-Doering (ZND) model for
         the detonation wave behind the incident shock.
@@ -1404,6 +1396,7 @@ class ZNDCalculator(ShockTubeReactors):
                 at the location specified by the "location" parameter
             label: string, optional
                 reactor name
+
         """
         # check minimum version requirement = 2026 R1
         if not verify_version(261):
@@ -1443,9 +1436,7 @@ class ZNDCalculator(ShockTubeReactors):
                     # string type value: just assign the keyword value to 0.0
                     this_value = c_double(0.0)
                 # set the keyword
-                ierrc = ck_wrapper.chemkin.KINShock_SetParameter(
-                    this_key, this_value
-                )
+                ierrc = ckw.chemkin.KINShock_SetParameter(this_key, this_value)
                 if ierrc == 2:
                     # keyword is not available
                     msg = [
@@ -1492,16 +1483,14 @@ class ZNDCalculator(ShockTubeReactors):
         #
         if self.bl_correction == 0:
             # without boundary layer correction
-            ierr = (
-                ck_wrapper.chemkin.KINShock_CalcZNDWithoutBoundaryLayerCorrection(
-                    self._mylout,
-                    self._chemset_index,
-                    temp,
-                    pres,
-                    y_init,
-                    self._start_time,
-                    self._end_time,
-                )
+            ierr = ckw.chemkin.KINShock_CalcZNDWithoutBoundaryLayerCorrection(
+                self._mylout,
+                self._chemset_index,
+                temp,
+                pres,
+                y_init,
+                self._start_time,
+                self._end_time,
             )
         else:
             if self.bl_correction < 2:
@@ -1522,18 +1511,16 @@ class ZNDCalculator(ShockTubeReactors):
                 exit()
             else:
                 # with boundary layer correction
-                ierr = (
-                    ck_wrapper.chemkin.KINShock_CalcZNDWithBoundaryLayerCorrection(
-                        self._mylout,
-                        self._chemset_index,
-                        temp,
-                        pres,
-                        y_init,
-                        self._start_time,
-                        self._end_time,
-                        self.reactor_diameter,
-                        self.init_visc,
-                    )
+                ierr = ckw.chemkin.KINShock_CalcZNDWithBoundaryLayerCorrection(
+                    self._mylout,
+                    self._chemset_index,
+                    temp,
+                    pres,
+                    y_init,
+                    self._start_time,
+                    self._end_time,
+                    self.reactor_diameter,
+                    self.init_visc,
                 )
 
         return ierr
@@ -1568,9 +1555,7 @@ class ZNDCalculator(ShockTubeReactors):
             msg = [Color.YELLOW, "initializing Chemkin ...", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.info(this_msg)
-            ret_val = ck_wrapper.chemkin.KINInitialize(
-                self._chemset_index, c_int(0)
-            )
+            ret_val = ckw.chemkin.KINInitialize(self._chemset_index, c_int(0))
             if ret_val != 0:
                 msg = [
                     Color.RED,

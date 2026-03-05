@@ -27,6 +27,9 @@ import ctypes
 from ctypes import c_double
 from typing import Dict, List, Union
 
+import numpy as np
+import numpy.typing as npt
+
 from ansys.chemkin.core import chemkin_wrapper as ck_wrapper
 from ansys.chemkin.core.chemistry import (
     Chemistry,
@@ -34,16 +37,16 @@ from ansys.chemkin.core.chemistry import (
 )
 from ansys.chemkin.core.color import Color
 from ansys.chemkin.core.logger import logger
-import numpy as np
-import numpy.typing as npt
 
 
 class Surface:
     """Chemkin surface chemistry module."""
+
     """
     An extension to the Mixture/Strean and the ReactorModel classes to include
     the surface Material objects associated with the Chemistry Set.
     """
+
     def __init__(self, chem: Chemistry):
         """Create a Surface object."""
         """
@@ -328,7 +331,7 @@ class Surface:
         mat_id = self.check_surface_material(mat_name)
         if mat_id < 0:
             exit()
-        
+
         n_sites = self.number_site_species(mat_name)
         if n_sites <= 0:
             msg = [
@@ -352,14 +355,14 @@ class Surface:
             ]
             this_msg = Color.SPACE.join(msg)
             logger.info(this_msg)
-            frac = np.full(n_sites, 1.0/n_sites)
+            frac = np.full(n_sites, 1.0 / n_sites)
         return frac
 
     def set_site_frac(
-            self,
-            mat_name: str,
-            recipe: Union[List[tuple[str, float]], npt.NDArray[np.double]],
-        ):
+        self,
+        mat_name: str,
+        recipe: Union[List[tuple[str, float]], npt.NDArray[np.double]],
+    ):
         """Set the surface site fractions."""
         """
         Set the fractions of all surface site species of the material.
@@ -554,11 +557,14 @@ class Surface:
         return frac
 
     def set_bulk_frac(
-            self,
-            mat_name: str,
-            recipe: Union[List[tuple[str, float]], npt.NDArray[np.double]],
-        ):
+        self,
+        mat_name: str,
+        recipe: Union[List[tuple[str, float]], npt.NDArray[np.double]],
+    ):
+        """Assign the bulk species activities."""
         """
+        Set the bulk species activities of the given material.
+
         Parameters
         ----------
             mat_name: string
@@ -566,6 +572,7 @@ class Surface:
             recipe: list of tuples, [(species_symbol, fraction), ... ]
                 non-zero mixture composition corresponding to
                 the given site fraction array
+
         """
         # verify the material name
         mat_id = self.check_surface_material(mat_name)
@@ -709,24 +716,28 @@ class Surface:
         return rates
 
     def set_bulk_growth_rates(
-            self,
-            mat_name: str,
-            rates: npt.NDArray[np.double],
-        ):
+        self,
+        mat_name: str,
+        rates: npt.NDArray[np.double],
+    ):
+        """Assign bulk species growth rate."""
         """
+        Assign the values of the bulk species growth rate of a surface material.
+
         Parameters
         ----------
             mat_name: string
                 surface material name/symbol
             rates: 1-D double array, dimension = numb of bulk species
                 bulk species linear growth rates [cm/sec]
+
         """
         # verify the material name
         mat_id = self.check_surface_material(mat_name)
         if mat_id < 0:
             exit()
         #
-        n_bulks = self.number_bulk_species(mat_name) 
+        n_bulks = self.number_bulk_species(mat_name)
         if n_bulks <= 0:
             msg = [
                 Color.MAGENTA,
@@ -802,10 +813,8 @@ class Surface:
         return bulk_growth_rates
 
     def get_activity_array(
-            self,
-            mat_name: str,
-            molfrac: npt.NDArray[np.double]
-        ) -> npt.NDArray[np.double]:
+        self, mat_name: str, molfrac: npt.NDArray[np.double]
+    ) -> npt.NDArray[np.double]:
         """Get the species activity array."""
         """
         Get the species activity array (gas, site, and bulk) of
@@ -820,7 +829,7 @@ class Surface:
 
         Returns
         -------
-            act: 1-D double array, dimesion = total number of species of the material
+            act: 1-D double array, dimension = total number of species of the material
                 activity array (gas + sites + bulks)
         """
         # verify the material name
@@ -836,15 +845,15 @@ class Surface:
         # set up site fraction array
         if numsites > 0:
             if self.sitefrac_set.get(mat_name, False):
-                sitefrac = self.site_frac(mat_name)
+                sitefrac = self.get_site_frac(mat_name)
             else:
                 sitefrac = np.full(numsites, 0.0e0)
         else:
             sitefrac = np.full(1, 1.0e0)
         # set up bulk activities/moles array
         if numbulks > 0:
-            if self.bulkact_set.get(mat_name, False): 
-                bulkact = self.bulk_frac(mat_name)
+            if self.bulkact_set.get(mat_name, False):
+                bulkact = self.get_bulk_frac(mat_name)
             else:
                 bulkact = np.full(numbulks, 1.0e0)
         else:
@@ -862,8 +871,8 @@ class Surface:
         return act
 
     def list_surface_coverage(
-            self, mat_name: str, option: str = " ", bound: float = 0.0e0
-        ):
+        self, mat_name: str, option: str = " ", bound: float = 0.0e0
+    ):
         """List the surface site fractions."""
         """
         List the surface site fractions of the given material.
@@ -910,8 +919,8 @@ class Surface:
             del site_names, site_frac
 
     def list_bulk_activity(
-            self, mat_name: str, option: str = " ", bound: float = 0.0e0
-        ):
+        self, mat_name: str, option: str = " ", bound: float = 0.0e0
+    ):
         """List the bulk species activity."""
         """
         List the bulk species activity of the given material.
@@ -955,7 +964,7 @@ class Surface:
                     if b > np.max([bound, 0.0e0]):
                         print(f"{bulk_names[k]:18} :  {b:e}")
             #
-            del bulk_names, site_frac
+            del bulk_names, bulk_frac
 
     def get_surface_material(self, mat_name: str) -> Material:
         """Get the Material object."""
@@ -1025,7 +1034,7 @@ class Surface:
         m = self.materials.get(mat_name)
         kk_surf = m.number_site_species + self.number_bulk_species
         return kk_surf
-    
+
     def total_number_species(self, mat_name: str) -> int:
         """Get the total number of species."""
         """
@@ -1243,7 +1252,7 @@ class Surface:
         return n_bulks
 
     def first_site_spec_index(self, mat_name: str) -> int:
-        """ Get the global index of the first site species."""
+        """Get the global index of the first site species."""
         """
         Get the global index of the first site species of the material.
 
@@ -1387,8 +1396,9 @@ class Surface:
         return bsymbols
 
     def surface_species_symbols(self, mat_name: str) -> List[str]:
+        """Get all surface species symbols of the material."""
         """
-        Get all surface species symbols of the material
+        Get all surface species symbols of the material.
 
         Parameters
         ----------
@@ -1399,6 +1409,7 @@ class Surface:
         -------
             surf_symbols: list of string
                 all surface species symbols of the material
+
         """
         # verify the material name
         mat_id = self.check_surface_material(mat_name)
@@ -1439,14 +1450,13 @@ class Surface:
             name = self.material_names[n]
             # get the Material object
             m = self.materials[name]
-            global_index, local_index, _ = (
-                m.get_surf_specindex(specname, mode="silent")
-            )
+            global_index, local_index, _ = m.get_surf_specindex(specname, mode="silent")
             n += 1
         if local_index >= 0:
             # print(f"species {specname} found on material {name}")
             # print(f"species type = {phase_type}")
-            # print(f"global index = {global_index}, {phase_type} index = {local_index}")
+            # print(f"global index = {global_index}, {phase_type}"
+            #      f"index = {local_index}")
             pass
         else:
             name = "<not found>"
@@ -1582,8 +1592,8 @@ class Surface:
         if mat_id < 0:
             exit()
         #
-        site_wt = self.site_wt(mat_name)
-        bulk_wt = self.bulk_wt(mat_name)
+        site_wt = self.get_site_wt(mat_name)
+        bulk_wt = self.get_bulk_wt(mat_name)
         surf_wt = np.vstack(site_wt, bulk_wt)
         return surf_wt
 
@@ -1941,7 +1951,7 @@ class Surface:
         """
         Get species molar rate of production from the given gas mixture
         and surface condition: gas pressure, gas composition, surface temperature,
-        and surface material coverage. 
+        and surface material coverage.
 
         Parameters
         ----------
@@ -2021,7 +2031,7 @@ class Surface:
         pp = c_double(p)  # pressure scalar
         tt = c_double(t)  # temperature scalar
         # construct the activity array
-        # (gas mole farction, site fraction, bulk activity)
+        # (gas mole fraction, site fraction, bulk activity)
         act = Surface.set_activity_array(
             numb_gas,
             numb_sites,
@@ -2150,7 +2160,7 @@ class Surface:
         pp = c_double(p)  # pressure scalar
         tt = c_double(t)  # temperature scalar
         # construct the activity array
-        # (gas mole farction, site fraction, bulk activity)
+        # (gas mole fraction, site fraction, bulk activity)
         act = Surface.set_activity_array(
             numb_gas,
             numb_sites,
@@ -2179,13 +2189,8 @@ class Surface:
             exit()
 
     def set_surface_coverage(
-            self,
-            mat_name: str
-        ) -> (
-            tuple[npt.NDArray[np.double],
-                  npt.NDArray[np.double],
-                  npt.NDArray[np.double]]
-            ):
+        self, mat_name: str
+    ) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double], npt.NDArray[np.double]]:
         """Get the surface coverage."""
         """
         Get the surface coverage (site phase density, site species fractions,
@@ -2229,12 +2234,12 @@ class Surface:
         return sden, sfrac, bfrac
 
     def rop_surf(
-            self,
-            mat_name: str,
-            pres: float,
-            surf_temp: float,
-            molfrac: npt.NDArray[np.double]
-        ) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
+        self,
+        mat_name: str,
+        pres: float,
+        surf_temp: float,
+        molfrac: npt.NDArray[np.double],
+    ) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
         """Get species molar rate of production."""
         """
         Get species molar rate of production from the given mixture condition:
@@ -2282,7 +2287,7 @@ class Surface:
         n_gas = self.num_gas_species
         num_phase = m.number_phases
         n_sites = m.num_site_species
-        n_bulks= m.num_bulk_species
+        n_bulks = m.num_bulk_species
         # get surface overages
         sden, sfrac, bfrac = self.set_surface_coverage(mat_name)
         # compute the species production rates by surface reactions of this material
@@ -2305,12 +2310,12 @@ class Surface:
         return rop_surf, site_prodrate
 
     def rxnrates_surf(
-            self,
-            mat_name: str,
-            pres: float,
-            surf_temp: float,
-            molfrac: npt.NDArray[np.double],
-        ) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
+        self,
+        mat_name: str,
+        pres: float,
+        surf_temp: float,
+        molfrac: npt.NDArray[np.double],
+    ) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
         """Get molar rates of the surface reactions."""
         """
         Get molar rates of the surface reactions from the given gas and
@@ -2367,7 +2372,7 @@ class Surface:
         k_forward = np.zeros(numsurf_reactions, dtype=np.double)
         k_reverse = np.zeros_like(k_forward, dtype=np.double)
         #
-            # mixture mole fraction given
+        # mixture mole fraction given
         k_forward, k_reverse = Surface.surface_reaction_rates(
             chem_id=self._chemset_index,
             mat_id=mat_id,
@@ -2386,8 +2391,8 @@ class Surface:
         return k_forward, k_reverse
 
     def get_bulk_molar_growth_rates(
-            self, mat_name: str, surfrop: npt.NDArray[np.double]
-        ) -> npt.NDArray[np.double]:
+        self, mat_name: str, surfrop: npt.NDArray[np.double]
+    ) -> npt.NDArray[np.double]:
         """Get the molar growth rates of the bulk species."""
         """
         Get the molar growth rates of the bulk species of the material
@@ -2446,8 +2451,8 @@ class Surface:
         return growth_rates
 
     def get_bulk_mass_growth_rates(
-            self, mat_name: str, surfrop: npt.NDArray[np.double]
-        ) -> npt.NDArray[np.double]:
+        self, mat_name: str, surfrop: npt.NDArray[np.double]
+    ) -> npt.NDArray[np.double]:
         """Get the mass growth rates of the bulk species."""
         """
         Get the mass growth rates of the bulk species of the material from
@@ -2482,10 +2487,8 @@ class Surface:
         return growth_rates
 
     def get_bulk_linear_growth_rates(
-            self, 
-            mat_name: str,
-            surfrop: npt.NDArray[np.double]
-        ) -> npt.NDArray[np.double]:
+        self, mat_name: str, surfrop: npt.NDArray[np.double]
+    ) -> npt.NDArray[np.double]:
         """Get the linear growth rates of the bulk species."""
         """
         Get the linear growth rates of the bulk species of the material
@@ -2528,8 +2531,8 @@ class Surface:
         return linear_growth
 
     def get_gas_production_rates(
-            self,  mat_name: str, surfrop: npt.NDArray[np.double]
-        ) -> npt.NDArray[np.double]:
+        self, mat_name: str, surfrop: npt.NDArray[np.double]
+    ) -> npt.NDArray[np.double]:
         """Get the molar production rates of the gas species."""
         """
         Get the molar production rates of the gas species from the surface
@@ -2563,9 +2566,7 @@ class Surface:
             gas_prod_rates[k] = growth_rates[k]
         return gas_prod_rates
 
-    def stefan_mass_flux(
-            self,  mat_name: str, surfrop: npt.NDArray[np.double]
-        ) -> float:
+    def stefan_mass_flux(self, mat_name: str, surfrop: npt.NDArray[np.double]) -> float:
         """Get the Stefan mass flux due to surface reactions."""
         """
         Get the Stefan mass flux due to surface reactions.

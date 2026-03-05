@@ -20,13 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-Steady state, 1-D opposed-flow flame model.
-"""
+"""Steady state, 1-D opposed-flow flame model."""
 
 import copy
 from ctypes import c_double, c_int
 from typing import Union
+
+import numpy as np
+import numpy.typing as npt
 
 from ansys.chemkin.core import chemkin_wrapper
 from ansys.chemkin.core.chemistry import (
@@ -42,13 +43,13 @@ from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.mixture import interpolate_mixtures
 from ansys.chemkin.core.reactormodel import Keyword
 from ansys.chemkin.core.utilities import find_interpolate_parameters
-import numpy as np
-import numpy.typing as npt
 
 
 class OpposedFlame(Flame):
     """One-dimensional axisymmetric/Cylindrical opposed-flow flame model."""
+
     def __init__(self, fuel_stream: Stream, label: Union[str, None] = None):
+        """Initialize an opposed-flow flame model."""
         """
         Create an axisymmetric/Cylindrical opposed-flow flame object.
 
@@ -58,6 +59,7 @@ class OpposedFlame(Flame):
                 the inlet stream on the "FUEL" side
             label: string
                 reactor name
+
         """
         # check minimum version requirement = 2026 R1
         if not verify_version(261):
@@ -625,9 +627,7 @@ class OpposedFlame(Flame):
             exit()
 
     def process_solution(self):
-        """
-        Post-process solution to extract the raw solution variable data.
-        """
+        """Post-process solution to extract the raw solution variable data."""
         # check existing raw data
         if self.getrawsolutionstatus():
             msg = [
@@ -1021,8 +1021,9 @@ class OpposedFlame(Flame):
         self.setkeyword("TPROF", value=mode)
 
 
-class OpposedFlame_Planar(OpposedFlame):
+class OpposedFlamePlanar(OpposedFlame):
     """One-dimensional planar opposed-flow flame model."""
+
     def __init__(self, fuel_stream: Stream, label: Union[str, None] = None):
         """Create a planar opposed-flow flame object."""
         """

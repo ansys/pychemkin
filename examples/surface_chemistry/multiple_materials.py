@@ -162,8 +162,9 @@ m_symbols = MySurfMech.material_names
 # in the Chemistry Set
 # get the names of all phases (gas phase and surface (site and bulk) phases)
 for s in m_symbols:
-    print(f"Material '{s.rstrip()}' "
-          f"contains phases: {MySurfMech.materials[s].phase_names}\n"
+    print(
+        f"Material '{s.rstrip()}' "
+        f"contains phases: {MySurfMech.materials[s].phase_names}\n"
     )
 
 ############################################################
@@ -192,8 +193,10 @@ for n, name in enumerate(m_symbols):
         h_site = m.get_site_species_h(temp=400.0)
         for k, h in enumerate(h_site):
             # local index among all site species of this material
-            print(f"  site species {k} {m.site_species_names[k]} "
-                  f"H = {h / ck.ERGS_PER_JOULE} [J/mole]")
+            print(
+                f"  site species {k} {m.site_species_names[k]} "
+                f"H = {h / ck.ERGS_PER_JOULE} [J/mole]"
+            )
     # list the elemental compositions of all bulk species of the material
     if m.num_bulk_species > 0:
         for i, p in enumerate(m.bulk_species_names):
@@ -205,8 +208,10 @@ for n, name in enumerate(m_symbols):
         cp_bulk = m.get_bulk_species_cp(temp=450.0)
         for k, c in enumerate(cp_bulk):
             # local index among all bulk species of this material
-            print(f"  bulk species {k} {m.bulk_species_names[k]} "
-                  f"Cp = {c / ck.ERGS_PER_JOULE} [J/mole-K]")
+            print(
+                f"  bulk species {k} {m.bulk_species_names[k]} "
+                f"Cp = {c / ck.ERGS_PER_JOULE} [J/mole-K]"
+            )
     # get all phase names of the Chemistry Set, the "Gas" phase is always included
     # as the first phase
     p_symbols = m.phase_names
@@ -221,24 +226,34 @@ for n, name in enumerate(m_symbols):
         phase_type = m.phases[p].phase_type
         #
         if phase_type == "site":
-            print(f" surface site phase: {p} "
-                  f"site density = {m.phases[p].site_density} [mole/cm2]\n")
+            print(
+                f" surface site phase: {p} "
+                f"site density = {m.phases[p].site_density} [mole/cm2]\n"
+            )
             # the global index is 1-based in Chemkin
-            print(f" 1-base species index on phase {p} = "
-                  f"{m.phases[p].first_species_index}")
+            print(
+                f" 1-base species index on phase {p} = "
+                f"{m.phases[p].first_species_index}"
+            )
             # the global index of the material, the phase, and the species
             # is 0-base in PyChemkin
-            print(f" 0-base species index on site phase {p} "
-                  f"= {m.first_site_species_index}")
+            print(
+                f" 0-base species index on site phase {p} "
+                f"= {m.first_site_species_index}"
+            )
         else:
             # the global index is 1-based in Chemkin
-            print(f" 1-base species index on phase {p} = "
-                  f"{m.phases[p].first_species_index}")
+            print(
+                f" 1-base species index on phase {p} = "
+                f"{m.phases[p].first_species_index}"
+            )
             # the global index of the material, the phase, and the species
             # is 0-base in PyChemkin
-            print(f" 0-base species index on bulk phase {p} "
-                  f"= {m.first_bulk_species_index}")
-    
+            print(
+                f" 0-base species index on bulk phase {p} "
+                f"= {m.first_bulk_species_index}"
+            )
+
     # list surface reaction information of the material, the reaction index
     # is 1-base in both Chemkin and PyChemkin.
     print("=" * 40)
@@ -266,4 +281,3 @@ for n, name in enumerate(m_symbols):
     a_factor, beta, act_energy = m.get_surface_reaction_parameters()
     print("    restored rate parameters:")
     print(f"    A = {a_factor[0]}   B = {beta[0]}  Ea = {act_energy[0]} [K]")
-

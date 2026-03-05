@@ -20,49 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-r""".. _ref_PFR_catalytic_combustion:
-
-===========================================
-Simulating CH4 catalytic Combustion process
-===========================================
-Catalytic combustion was once an promising technology
-of ultra low NOx emission for gas power generation. The catalytic combustion process
-converts the gas-phase reactants to the gas-phase products on the catalyst surface
-while releasing heat, it consists of three major steps: (1) small fuel species
-and oxygen get adsorbed onto the catalyst surface, (2) the absorbed species react on
-the catalyst surface, and (3) the products such as carbon dioxide and water get
-released from the surface into the gas stream. Catalytic combustion can exhibit
-something similar to the gas-phase "ignition" phenomenon called "light-off" when
-the net heat release from the surface reactions suddenly spikes. This is where the
-catalytic combustion process transitions from being kinetic-limited to being
-transport-limited. Hence, this is why it is appropriate to use the PFR model in this
-project. By going through the "surface route", the combustion process can
-avoid triggering the NOx formation reaction pathways, and the "flame" is anchored
-at the "light-off" location on the catalyst surface.
-
-Catalytic combustion applications might utilize a two PFRs in series configuration for
-large fuel species. The first PFR is for pure gas-phase reactions called the
-pre-oxidizer, its main purpose is to partially break down the large hydrocarbon fuel
-species for the downstream catalytic combustor. The second PFR allows both gas-phase
-and surface reactions where the broken down fuel species are oxidized on the catalyst
-surface to generate heat.
-
-This project attempts to obtain the solution profiles in order to catch the surface
-light-off in the downstream catalytic combustor. Two ``Chemistry Set`` are created
-in this project. The first ``mech_no_surface`` chemistry set is for the first PFR,
-the ``pre_burner``, and it is a modified GRI 3.0 combustion mechanism with the addition
-of the platinum element (PT). For the downstream ``cat_combustor``, the chemistry set
-``mech_catalytic`` includes the surface mechanism "surf_CH4_Cat_Combust_PT.inp" as well
-as the same gas mechanism for the ``mech_no_surface`` chemistry set. The gas-phase
-solution at the exit of the ``pre_burner`` can be applied to set up the inlet stream
-of the ``cat_combustor`` as long as they use the same gas-phase mechanism.
-"""
-
-# sphinx_gallery_thumbnail_path = '_static/plot_PFR_catalytic_combustion.png'
-
-################################################
-# Import PyChemkin packages and start the logger
-# ==============================================
+"""CH4 catalytic Combustion."""
 
 from pathlib import Path
 import time
@@ -75,7 +33,9 @@ from ansys.chemkin.core.inlet import Mixture, Stream
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PFR model (steady-state)
-from ansys.chemkin.core.flowreactors.PFR import PFREnergyConservation as Pfr
+from ansys.chemkin.core.flowreactors.PFR import (
+    PFREnergyConservation as Pfr
+)
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
@@ -88,26 +48,9 @@ ck.set_verbose(True)
 # interactive = True: display plot
 # interactive = False: save plot as a PNG file
 global interactive
-interactive = True
+interactive = False
 
-###########################
 # Create the chemistry sets
-# =========================
-# This example uses the methane catalytic combustion mechanism on platinum that
-# comes with the standard Chemkin example,
-# ``reactor_network__two_stage_catalytic_combustor``. The reaction mechanism
-# consists of two parts: the gas-phase mechanism, ``chem_GRImech3_PT.inp``,
-# describing the gas-phase combustion of methane in air; and the surface mechanism,
-# ``surf_CH4_Cat_Combust_PT.inp``, describing the reactions lead to the light-off
-# (surface ignition) of the adsorbed methane and the adsorbed oxygen (or surface C
-# and O atoms) on the platinum catalyst.
-#
-# The mechanisms are provided in the *examples\data* folder of the local
-# *PyChemkin* installation. You must provide the mechanism file names,
-# ``chem_GRImech3_PT.inp`` and  ``surf_CH4_Cat_Combust_PT.inp`` with the correct path
-# ``example_mech_data`` to the Chemistry Set before pre-processing. The thermodynamic
-# data file from the default Ansys Chemkin installation will be used.
-#
 data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 # find the location of this example py file
 try:
@@ -117,14 +60,6 @@ except NameError:
 script_dir = str(script_dir_obj)
 # use the relative path to locate the example mechanism folder
 example_mech_data = script_dir_obj / ".." / "data"
-print(f"example data = {str(example_mech_data)}")
-
-
-###########################################
-# Set up and run the gas phase only reactor
-# =========================================
-# Create a chemistry set based on the GRI 3.0 methane combustion mechanism
-# with no surface mechanism input.
 
 # gas-phase chemistry only
 mech_no_surface = ck.Chemistry(label="GRI3")
@@ -133,34 +68,11 @@ mech_no_surface = ck.Chemistry(label="GRI3")
 mech_no_surface.chemfile = str(data_dir / "grimech30_chem.inp")
 mech_no_surface.thermfile = str(data_dir / "grimech30_thermo.dat")
 
-#############################################
-# Preprocess the gas-phase only chemistry set
-# ===========================================
 # preprocess the mechanism files.
 _ = mech_no_surface.preprocess()
 
-###########################################
-# Set up the lean premixed fuel-air stream
-# =========================================
-# Instantiate a stream feed for the inlet gas mixture.
-# The stream is a mixture with the addition of the
-# inlet flow rate. You specify inlet gas properties in the same way as you
-# set up a mixture.
-#
-# Use the ``x`` method of the ``Stream`` object to specify the natural gas
-# composition with a ``recipe``. In this project, the ``sccm`` method,
-# [cm3/min] @ the standard condition, is used set the inlet volumetric flow rate.
-# The ``air`` composition is copied from the pre-defined ``Air`` object in Pychemkin.
-# To create the premixed fuel-air inlet stream with the given equivalence ratio, the
-# ``x_by_equivalence_ratio`` method is applied.
-#
-# Once the inlet stream ``lean_premix`` is created correctly, it is used to instantiate
-# the gas-only PFR ``pre-burner``. Provide the necessary input parameters and run the
-# PFR. Use the ``get_last_solution_mixture()`` method to get the solution ``Stream``
-# ``preburner_exhaust`` at the exit of the ``pre_burner``. ``preburner_exhaust`` will
-# be used to define the inlet stream properties of the down stream catalytic combustor
-# ``cat_combustor``.
 
+# Set up the lean premixed fuel-air stream
 # set the fuel composition and conditions
 natural_gas = Mixture(mech_no_surface)
 natural_gas.pressure = 2.5 * ck.P_ATM
@@ -239,12 +151,7 @@ print(f"preburner exhaust mass flow rate = {pre_burner.mass_flowrate} [g/sec]")
 # save the mass flow rate [g/cm]
 preburner_exhaust_mflrt = pre_burner.mass_flowrate
 
-######################################
 # Set up and run the catalytic reactor
-# ====================================
-# Create a new chemistry set based on the GRI 3.0 methane combustion mechanism
-# with the addition of the catalytic combustion surface mechanism.
-
 mech_catalytic = ck.Chemistry(label="catalytic")
 # set mechanism input files
 # including the full file path is recommended
@@ -256,29 +163,17 @@ mech_catalytic.surffile = str(
     example_mech_data / local_data_dir / "surf_CH4_Cat_Combust_PT.inp"
 )
 mech_catalytic.thermfile = str(data_dir / "grimech30_thermo.dat")
-###################################################
+
 # Preprocess the catalytic combustion chemistry set
-# =================================================
-# preprocess the mechanism files.
 _ = mech_catalytic.preprocess()
 
-#####################################################
-# Set up the inlet stream for the catalytic combustor
-# ===================================================
-# Use the exhaust mixture from the ``pre-burner`` to define the inlet
-# stream ``cat_feed`` for the catalytic combustor ``cat_combustor``.
-# Even though the ``Chemistry Sets`` for the two PFR have the same
-# gas phase mechanism, you should avoid applying or copying the
-# ``preburner_exhaust`` object to instantiate ``cat_combustor`` because
-# ``preburner_exhaust`` is obtained from the ``pre_burner`` which does
-# not have any surface chemistry data. You should assign individual properties
-# of the ``cat_feed`` from the ``preburner_exhaust``.
 
+# Set up the inlet stream for the catalytic combustor
 cat_feed = Stream(mech_catalytic)
 
 # use the exhaust mixture (the solution) from the gas-phase only pre-burner
 # to set up the feed stream properties of the catalytic combustor
-cat_feed.x = preburner_exhaust.x
+cat_feed.x = preburner_exhaust.x 
 cat_feed.pressure = preburner_exhaust.pressure
 cat_feed.temperature = preburner_exhaust.temperature
 # the mass flow rate of the feed stream to the catalytic burner
@@ -289,24 +184,10 @@ print(f"cat burner feed temperature = {cat_feed.temperature} [K]")
 print(f"cat burner feed mass flow rate = {cat_feed.mass_flowrate} [g/sec]")
 # cat_feed.list_composition(mode="mole")
 
-####################################################################
 # Create the PFR to predict the gas composition of the outlet stream
-# ===================================================================
-# Instantiate the PFR ``cat_combustor`` as a ``PFREnergyConservation``
-# object.
-
 cat_combustor = Pfr(cat_feed, label="cat_combustor")
 
-############################################
 # Set up additional reactor model parameters
-# ==========================================
-# Before you can run the simulation, you must provide reactor parameters,
-# solver controls, and output instructions. For PFR, you must provide
-# either the reactor length, the reactor diameter (or, separately, the flow area
-# and the surface area per reactor length). You can also use profiles to assign
-# certain reactor conditions, such as the reactor temperature, the reactor pressure,
-# and the surface area.
-
 # catalytic combustor parameters
 # reactor length [cm]
 cat_combustor.length = 10.0
@@ -325,23 +206,7 @@ pres_prof_x = [0.0, 25.0]
 pres_prof_p = [2.5 * ck.P_ATM, 2.48 * ck.P_ATM]
 cat_combustor.set_pressure_profile(pres_prof_x, pres_prof_p)
 
-#####################################
 # Set up surface chemistry parameters
-# ===================================
-# When the ``Chemistry Set`` of the ``Stream`` includes surface chemistry,
-# you need to provide some essential surface chemistry related model parameters.
-# For example, you need to specify the activate surface area as well as the
-# temperature for each material defined in the surface mechanism. You can also provide
-# the surface coverage, site fractions and bulk activities, of the materials at the
-# PFR inlet to improve convergence performance. Use the ``set_site_fraction()`` and
-# the ``set_bulk_activity()`` method to specify estimated site fractions and bulk
-# activities at the reactor entrance (x = 0). By default, all site species have the
-# same fraction and all bulk species activity is set to 1.
-#
-# You can use surface chemistry methods such as ``get_material_names()` and
-# ``get_site_species_names()`` to obtain the material names and the surface site
-# species symbols, respectively.
-
 # get the number of surface material defined in the surface mechanism
 n_material = cat_combustor.get_numb_material
 # get all surface material names
@@ -376,12 +241,7 @@ for i, mname in enumerate(cat_material_names):
 # scale surface reaction rates
 cat_combustor.surface_ratemultiplier = 1.0
 
-#####################
 # Set solver controls
-# ===================
-# You can overwrite the default solver controls by using solver-related methods,
-# such as those for tolerances.
-
 # set solver the tolerances
 cat_combustor.tolerances = (1.0e-8, 1.0e-6)
 # solver non-negative mode
@@ -391,16 +251,7 @@ cat_combustor.force_nonnegative = False
 # set adaptive solution saving distance
 cat_combustor.adaptive_solution_saving(mode=True, steps=20)
 
-###########################################
 # Run the catalytic combustor reactor model
-# =========================================
-# Once all the necessary input parameters are provided, run the ``cat_combustor`` with
-# the ``run()`` method. Use the ``process_solution()`` method to retrieve the raw
-# solution profiles. If you are interested in the exit solution, use the
-# ``get_last_solution_mixture()`` method to get the solution at the exit as a
-# ``Stream`` object ``combustor_exhaust``.
-
-
 # get gas-species index
 i_co = cat_feed.get_specindex("CO")
 i_ch4 = cat_feed.get_specindex("CH4")
@@ -434,15 +285,15 @@ n_points = cat_combustor.getnumbersolutionpoints()
 print(f"number of solution time points = {n_points}")
 # store solution profiles
 # distance from the reactor entrance [cm]
-distance = cat_combustor.get_solution_variable_profile("distance")  #
+distance = cat_combustor.get_solution_variable_profile("distance")#
 # temperature solution profile along the reactor length [K]
 temp_profile = cat_combustor.get_solution_variable_profile("temperature")
 # total heat release rate from the gas-phase reactions [erg/sec]
 gashrr_profile = cat_combustor.get_solution_variable_profile("gashrr")
-gashrr_profile /= 1.0e3 * ck.ERGS_PER_JOULE
+gashrr_profile /= (1.e3 * ck.ERGS_PER_JOULE)
 # total heat release rate from all surface reactions [erg/sec]
 surfhrr_profile = cat_combustor.get_solution_variable_profile("surfhrr")
-surfhrr_profile /= 1.0e3 * ck.ERGS_PER_JOULE
+surfhrr_profile /= (1.e3 * ck.ERGS_PER_JOULE)
 # gas phase CO solution profile [mass fraction]
 co_profile = cat_combustor.get_solution_variable_profile("CO")
 # gas phase CH4 solution profile [mass fraction]
@@ -457,14 +308,7 @@ oh_s_profile = cat_combustor.get_solution_variable_profile("OH(S)")
 # clean up
 ck.done()
 
-################################################
 # Plot the catalytic combustor solution profiles
-# ==============================================
-# Plot the solution profiles along the ``cat_combustor`` length.
-# You could observe the surface "light-off" point around x = 1.0 by the spikes
-# in the solution profiles. The much bigger peak value of the surface heat release
-# rate in comparison to the peak gas-phase heat release rate indicates the
-# combustion process takes place at the catalyst surface.
 plt.subplots(2, 2, sharex="col", figsize=(12, 6))
 plt.suptitle("PFR Catalytic Combustor Solution", fontsize=16)
 plt.subplot(221)
@@ -495,3 +339,18 @@ if interactive:
     plt.show()
 else:
     plt.savefig("plot_PFR_catalytic_combustion.png", bbox_inches="tight")
+
+resultfile = Path(current_dir) / "catalytic_combustion.result"
+results = {}
+results["state-distance"] = distance.tolist()
+results["state-temperature"] = temp_profile.tolist()
+results["species-CO_mass_fraction"] = co_profile.tolist()
+results["species-PT(S)_site_fraction"] = pt_s_profile.tolist()
+results["rate-total_surface_heat_release_rate"] = surfhrr_profile.tolist()
+#
+r = resultfile.open(mode="w")
+r.write("{\n")
+for k, v in results.items():
+    r.write(f'"{k}": {v},\n')
+r.write("}\n")
+r.close()

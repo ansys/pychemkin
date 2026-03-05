@@ -1,6 +1,6 @@
 ELEMENTS H   O  N Rh END
 SPECIES  H2 H O2 O OH HO2 H2O2 H2O
- N2  NO N NH NH2 HNO N2O NNH 
+ N2  NO N NH NH2 HNO N2O NNH
 NO2 NH3
 END
 REACTIONS
@@ -15,7 +15,7 @@ H+HO2=2OH                      0.140E+15  0.000   1073.000 ! D-L
 O+HO2=O2+OH                    0.140E+14  0.000   1073.000 ! D-L
 2OH=O+H2O                      0.600E+09  1.300      0.000 ! COHEN-WEST.
 H+H+M=H2+M                     0.100E+19 -1.000      0.000 ! D-L
- H2/0.0/ H2O/0.0/ 
+ H2/0.0/ H2O/0.0/
 H+H+H2=H2+H2                   0.920E+17 -0.600      0.000
 H+H+H2O=H2+H2O                 0.600E+20 -1.250      0.000
 H+OH+M=H2O+M                   0.160E+23 -2.000      0.000 ! D-L

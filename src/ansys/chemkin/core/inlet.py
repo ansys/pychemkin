@@ -87,12 +87,14 @@ class Stream(Mixture):
         self._use_flow_rate_profile = False
         self._inlet_flow_rate_profile_mode = -1
         self.flow_rate_profile_keys: dict[int, str] = {
-            int(0): "FPRO", 
+            int(0): "FPRO",
             int(1): "VDOTPRO",
             int(2): "VELPRO",
             int(3): "SCCMPRO",
         }
-        self.flowrate_profile: dict[str, tuple[npt.NDArray[np.double],npt.NDArray[np.double]]] = {}
+        self.flowrate_profile: dict[
+            str, tuple[npt.NDArray[np.double], npt.NDArray[np.double]]
+        ] = {}
         # flag for inlet stream temperature profile "TINPRO"
         self._use_inlet_temperature_profile = False
         # set inlet label
@@ -277,7 +279,7 @@ class Stream(Mixture):
         """
         return self._flowratemode
 
-    def notify_inlet_profile(self, mode:str):
+    def notify_inlet_profile(self, mode: str):
         """Display warning that flow rate profile is specified."""
         """
         Display warning message to instruct the user to use the flow rate
@@ -701,7 +703,7 @@ class Stream(Mixture):
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
             return 0.0
-        this_x, this_values =  self.flowrate_profile.get("FPRO", ([0.0], [0.0]))
+        this_x, this_values = self.flowrate_profile.get("FPRO", ([0.0], [0.0]))
         if len(this_x) <= 1:
             msg = [
                 Color.PURPLE,
@@ -716,6 +718,7 @@ class Stream(Mixture):
         values = np.interp(time, this_x, this_values)
         mass_flowrate = values[0]
         return mass_flowrate
+
 
 # stream utilities
 def clone_stream(source: Stream, target: Stream):

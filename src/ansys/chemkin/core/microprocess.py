@@ -24,6 +24,8 @@
 
 import copy
 
+import numpy as np
+
 from ansys.chemkin.core.color import Color as Color
 from ansys.chemkin.core.inlet import Stream
 from ansys.chemkin.core.logger import logger
@@ -32,7 +34,6 @@ from ansys.chemkin.core.mixture import (
     interpolate_mixtures,
 )
 from ansys.chemkin.core.utilities import random, random_pick_integers
-import numpy as np
 
 
 class MicroMixing:
@@ -327,7 +328,8 @@ class MicroMixing:
         for mixture_index, changed_mixtures in self.changed_mixtures.items():
             # number of particels that has been modified by the micro mixing process
             particle_count = self.mixture_particles[mixture_index - 1]
-            # find mass fraction of each partcle (the particles must have the same mass)
+            # find mass fraction of each particle
+            # (the particles must have the same mass)
             mass_frac = 1.0e0 / float(particle_count)
             # create a working copy of the zone ixture
             zone_mixture = copy.deepcopy(self.mixture_map.get(mixture_index))

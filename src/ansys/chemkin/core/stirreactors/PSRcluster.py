@@ -20,14 +20,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-    Perfectly stirred reactor cluster, a PSR *only* network, of which the PSRs are solved
-    simultaneously.
-"""
+"""Perfectly stirred reactor cluster of which the PSRs are solved simultaneously."""
 
 import copy
 from ctypes import c_double, c_int
 from typing import Union
+
+import numpy as np
 
 from ansys.chemkin.core import chemkin_wrapper
 from ansys.chemkin.core.chemistry import (
@@ -41,13 +40,13 @@ from ansys.chemkin.core.color import Color as Color
 from ansys.chemkin.core.inlet import Stream
 from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.reactormodel import Keyword
-from ansys.chemkin.core.stirreactors.PSR import PerfectlyStirredReactor as Psr
 from ansys.chemkin.core.stirreactors.openreactor import OpenReactor
-import numpy as np
+from ansys.chemkin.core.stirreactors.PSR import PerfectlyStirredReactor as Psr
 
 
 class PSRCluster(OpenReactor):
     """A cluster of perfectly-stirred reactors."""
+
     """
     A cluster of perfectly-stirred reactors. The reactor network chain must consist of
     PSRs ONLY. The first PSR must have at least ONE external inlet stream,
@@ -514,7 +513,7 @@ class PSRCluster(OpenReactor):
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-        # check heat tansfer coefficient
+        # check heat transfer coefficient
         if heat_transfer_coeff < 0.0:
             ierr += 1
             msg = [
@@ -577,9 +576,9 @@ class PSRCluster(OpenReactor):
         # loop over all PSRs in the network
         for psr in self.psr_objects.values():
             # process the keywords of the PSR
-            iErrc = psr.cluster_process_keywords()
+            ierrc = psr.cluster_process_keywords()
             # check status
-            if iErrc != 0:
+            if ierrc != 0:
                 msg = [
                     Color.PURPLE,
                     "PSR number",
@@ -593,7 +592,7 @@ class PSRCluster(OpenReactor):
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
-                iErr += iErrc
+                ierr += ierrc
                 continue
             ipsr += 1
         ipsr -= 1
@@ -962,7 +961,7 @@ class PSRCluster(OpenReactor):
                 logger.critical(this_msg)
                 return ierr
 
-            # steady-state presure solution [dynes/cm2]
+            # steady-state pressure solution [dynes/cm2]
             smixture.pressure = pres.value
             # steady-state temperature solution [K]
             smixture.temperature = temp.value

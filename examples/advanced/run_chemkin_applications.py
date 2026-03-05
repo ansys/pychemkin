@@ -276,7 +276,7 @@ if under_win:
     with bat_file.open(mode="w") as file:
         file.write("@REM Generated Batch Job Command File\n")
         file.write("REM get the runtime environment defined\n")
-        file.write(f"@CALL \"{run_env_path}\"\n")
+        file.write(f'@CALL "{run_env_path}"\n')
         file.write("@SET MKL_NUM_THREADS=1\n")
         file.write("@SET OMP_NUM_THREADS=1\n")
         file.write("@SET XERCES_DISABLE_DTD=1\n")
@@ -299,8 +299,10 @@ if under_win:
         logger.debug("Command output:")
         logger.debug(result.stdout)
     except subprocess.CalledProcessError as e:
-        logger.debug(f"Error executing command: {e.cmd} "
-                     f"with non-zero exit status {e.returncode}.")
+        logger.debug(
+            f"Error executing command: {e.cmd} "
+            f"with non-zero exit status {e.returncode}."
+        )
         logger.debug(f"Stderr: {e.stderr}")
         exit()
     except subprocess.TimeoutExpired as e:
@@ -345,8 +347,10 @@ else:
         logger.debug("Command output:")
         logger.debug(result.stdout)
     except subprocess.CalledProcessError as e:
-        logger.debug(f"Error executing command: {e.cmd} "
-                     f"with non-zero exit status {e.returncode}.")
+        logger.debug(
+            f"Error executing command: {e.cmd} "
+            f"with non-zero exit status {e.returncode}."
+        )
         logger.debug(f"Stderr: {e.stderr}")
         exit()
     except subprocess.TimeoutExpired as e:
@@ -369,7 +373,7 @@ print(f"Total simulation duration: {runtime} [sec]\n")
 # ===========================
 # Once the simulation is completed successfully, you have two options to post-process
 # the solution:
-# 
+#
 # 1. you can use open the chemkin GUI and use the ``visualizer``
 #    from the top banner. In this case, you can stop at this point. You only need the
 #    XML solution file located in the working folder.
@@ -384,7 +388,7 @@ if interactive:
     )
     if user_input.lower() == "x":
         logger.debug("example terminated by user...")
-        exit() 
+        exit()
 
 #############################
 # Load and parse the solution
