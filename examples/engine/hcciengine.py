@@ -466,6 +466,10 @@ plt.subplot(224)
 plt.plot(ca_profile, cp_profile, "m-")
 plt.xlabel("Crank Angle [degree]")
 plt.ylabel("Mixture Cp [kJ/mole]")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

@@ -448,3 +448,6 @@ for index, stream in PSRnetwork.reactor_solutions.items():
     print(f"CO = {stream.x[co_index]}.")
     print(f"NO = {stream.x[no_index]}.")
     print("-" * 10)
+
+# clean up
+ck.done()

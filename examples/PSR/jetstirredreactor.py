@@ -272,6 +272,10 @@ plt.xlabel("Reactor Temperature [K]")
 plt.ylabel("H2O Mole Fraction")
 plt.legend(loc="lower right")
 plt.title("JSR Solution")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

@@ -401,3 +401,4 @@ del hhv, lhv
 del fuel, oxid, unburned, burned
 # delete the local mechanism file just created
 Path(mymechfile).unlink()
+ck.done()

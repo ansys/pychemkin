@@ -178,6 +178,10 @@ for k in range(points):
 plt.plot(t, no, "bs--", markersize=3, markevery=4)
 plt.xlabel("Temperature [K]")
 plt.ylabel("NO [ppm]")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

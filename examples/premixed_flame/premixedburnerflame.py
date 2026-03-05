@@ -416,6 +416,10 @@ plt.subplot(224)
 plt.plot(mesh, condprofile, "m-")
 plt.xlabel("Distance [cm]")
 plt.ylabel("Mixture conductivity [W/m-K]")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

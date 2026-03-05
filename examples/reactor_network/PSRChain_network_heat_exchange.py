@@ -303,3 +303,6 @@ print(f"CH4 = {network_outflow.x[ch4_index]}")
 print(f"O2 = {network_outflow.x[o2_index]}")
 print(f"CO = {network_outflow.x[co_index]}")
 print(f"NO = {network_outflow.x[no_index]}")
+
+# clean up
+ck.done()

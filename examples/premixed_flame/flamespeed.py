@@ -406,6 +406,10 @@ plt.subplot(224)
 plt.plot(mesh, viscprofile, "m-")
 plt.xlabel("Distance [cm]")
 plt.ylabel("Mixture Viscosity [cP]")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

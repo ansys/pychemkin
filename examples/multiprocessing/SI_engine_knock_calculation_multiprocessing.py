@@ -511,6 +511,10 @@ if __name__ == "__main__":
     plt.plot(soc_ca, peak_temp, linestyle="-", marker="v", color="red")
     plt.ylabel("Peak End-Gas Temperature [K]")
     plt.xlabel("Start of Combustion [degree CA]")
+
+    # clean up
+    ck.done()
+
     # plot results
     if interactive:
         plt.show()

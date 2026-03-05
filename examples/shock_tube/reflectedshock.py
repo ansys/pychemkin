@@ -289,6 +289,10 @@ plt.subplot(224)
 plt.plot(timeprofile, o2_profile, "m-")
 plt.xlabel("time [msec]")
 plt.ylabel("O2 Mass Fraction [-]")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

@@ -396,3 +396,6 @@ for index in range(PSRcluster.numb_psrs):
     print(f"CO = {sstream.x[co_index]}.")
     print(f"NO = {sstream.x[no_index]}.")
     print("-" * 10)
+
+# clean up
+ck.done()

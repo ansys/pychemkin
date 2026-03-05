@@ -418,6 +418,10 @@ plt.subplot(224)
 plt.plot(mesh, mfprofile, "m-")
 plt.xlabel("Distance [cm]")
 plt.ylabel("Mixture Fraction [-]")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

@@ -255,6 +255,10 @@ for j in range(len(press)):
 
 # plot legends
 plt.legend(("1 atm", "5 atm", "10 atm"), loc="upper left")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

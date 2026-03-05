@@ -373,6 +373,10 @@ if __name__ == "__main__":
     plt.legend()
     plt.ylabel("Flame Speed [cm/sec]")
     plt.xlabel("Equivalence Ratio")
+
+    # clean up
+    ck.done()
+
     # plot results
     if interactive:
         plt.show()

@@ -290,6 +290,10 @@ plt.subplot(224)
 plt.plot(xprofile, sigmaprofile, "m-")
 plt.xlabel("distance behind shock [cm]")
 plt.ylabel("Total Thermicity [1/sec]")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

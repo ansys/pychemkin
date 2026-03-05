@@ -301,6 +301,10 @@ plt.subplot(224)
 plt.plot(timeprofile, o_profile, "m-")
 plt.xlabel("time [msec]")
 plt.ylabel("O Mass Fraction [-]")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

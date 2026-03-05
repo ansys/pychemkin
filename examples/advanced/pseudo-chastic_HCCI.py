@@ -653,6 +653,10 @@ for i in range(len(crank_angle_data)):
     plt.xlabel("Crank Angle [degree]")
     plt.ylabel("CO mass fraction [-]")
     plt.legend(["Zone", "Averaged"], loc="upper left")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

@@ -375,6 +375,10 @@ plt.plot(equival, flamespeed, label="GRI 3.0", linestyle="-", color="blue")
 plt.legend()
 plt.ylabel("Flame Speed [cm/sec]")
 plt.xlabel("Equivalence Ratio")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

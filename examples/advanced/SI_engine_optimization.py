@@ -834,6 +834,10 @@ if __name__ == "__main__":
     plt.title("Correlation - EGR & Power")
     plt.ylabel("IMEP [bar]")
     plt.xlabel("EGR ratio [-]")
+
+    # clean up
+    ck.done()
+
     if interactive:
         plt.show()
     else:

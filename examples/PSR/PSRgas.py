@@ -305,6 +305,10 @@ plt.plot(inletequiv, temp_ss_solution, "b-")
 plt.xlabel("Inlet Gas Equivalence Ratio")
 plt.ylabel("Reactor Temperature [K]")
 plt.title("PSR Solution")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

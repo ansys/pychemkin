@@ -295,3 +295,6 @@ psr1_mixture = PSRcluster.get_reactor_stream("pre-heater")
 psr2_mixture = PSRcluster.get_reactor_stream("mixer")
 print(f"pre-heater temperature = {psr1_mixture.temperature} [K]")
 print(f"mixer temperature = {psr2_mixture.temperature} [K]")
+
+# clean up
+ck.done()

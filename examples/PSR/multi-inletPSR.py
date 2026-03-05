@@ -302,6 +302,10 @@ plt.plot(residencetime, temp_ss_solution, "bo-")
 plt.xlabel("Apparent Residence Time [sec]")
 plt.ylabel("Exit Gas Temperature [K]")
 plt.title("PSR Solution")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

@@ -467,6 +467,10 @@ plt.ylabel("Distance From Surface [cm]")
 plt.subplot(224)
 plt.plot(mole_h2, dist, "g-")
 plt.xlabel("H2 Mole Fraction")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

@@ -225,6 +225,9 @@ print(
     f"against {plotspeclist[1]} is {c:e} [cm²/sec]."
 )
 
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

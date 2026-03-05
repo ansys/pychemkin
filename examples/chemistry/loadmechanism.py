@@ -218,3 +218,6 @@ for k in range(len(specieslist)):
     print(f"Species # {k + 1:3d}: {specieslist[k]:16}. Mass = {wt[k]:f}.")
 
 print("=" * 50)
+
+# clean up
+ck.done()
