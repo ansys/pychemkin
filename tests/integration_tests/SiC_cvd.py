@@ -25,19 +25,16 @@
 from pathlib import Path
 import time
 
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
-
 from ansys.chemkin.core.inlet import Stream
-
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import (
-    PSRSetVolumeFixedTemperature as Psr
-)
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
+from ansys.chemkin.core.stirreactors.PSR import PSRSetVolumeFixedTemperature as Psr
 
 # check working directory
 current_dir = str(Path.cwd())
@@ -162,7 +159,7 @@ i_si_d_global, i_si_d_local = precursors.get_surf_specindex("SI(D)")
 # solution arrays
 # SiF4 inlet mole fraction
 sif4_inlet = np.zeros(numb_runs, dtype=np.double)
-# staedy-state gas mole fraction of HF 
+# staedy-state gas mole fraction of HF
 hf_ss_solution = np.zeros_like(sif4_inlet, dtype=np.double)
 # steady-state site fraction of HN_SiF(S)
 hn_sif_s_ss_solution = np.zeros_like(sif4_inlet, dtype=np.double)
@@ -221,7 +218,7 @@ for i, r in enumerate(inlet_recipes):
         surf_rop, _ = solnmixture.rop_surf(m)
         # gas species net rate of production due to surface chemistry
         nh3_rop_solution[i] += surf_rop[i_nh3]
-        sif4_rop_solution[i] += surf_rop[i_sif4 ]
+        sif4_rop_solution[i] += surf_rop[i_sif4]
 
 # compute the total runtime
 runtime = time.time() - start_time
