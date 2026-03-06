@@ -138,12 +138,12 @@ def chemkin_bin_dir() -> str:
 
     Returns
     -------
-        chemkin_bin_dir: string
+        bin_dir: string
             the bin directory of local Ansys Chemkin installation
     """
     local_ansys_dir = Path(ck_wrapper._ansys_dir)
-    chemkin_bin_dir = local_ansys_dir / "reaction" / ck_wrapper._ckbin / "bin"
-    return str(chemkin_bin_dir)
+    bin_dir = local_ansys_dir / "reaction" / ck_wrapper._ckbin / "bin"
+    return str(bin_dir)
 
 
 def ansys_dir() -> str:
@@ -156,8 +156,7 @@ def ansys_dir() -> str:
         ansys_dir: string
             the local Ansys installation directory
     """
-    local_ansys_dir = ck_wrapper._ansys_dir
-    return local_ansys_dir
+    return ck_wrapper._ansys_dir
 
 
 def done():
@@ -166,7 +165,7 @@ def done():
     # if check_jupyter_notebook():
     # running in Jupyter environment
     # requires addition steps
-    #     _ = ck_wrapper.chemkin.KINExit()
+    # _ = ck_wrapper.chemkin.KINExit()
 
     # clean up
     global _active_chemistry_set
@@ -454,7 +453,7 @@ def verify_chemset_sizes(
         logger.error(this_msg)
         return False
     else:
-        match = False
+        match = True
         if has_element:
             # check number of elements
             if n_elements.value != num_elements:
@@ -547,6 +546,20 @@ def set_temp_array(
     t = np.ascontiguousarray([temp, temp_e, temp_i], dtype=np.float64)
     t_array = t.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
     return t_array
+
+
+def get_symbol_length() -> int:
+    """Get the length of Chemkin symbols."""
+    """
+    Get the default string length of Chemkin species, material, and phase
+    symbols.
+
+    Returns
+    -------
+        string_length: integer
+            default Chemkin symbol length
+    """
+    return MAX_SPECIES_LENGTH
 
 
 class Chemistry:
@@ -1232,9 +1245,9 @@ class Chemistry:
         return self.esymbol
 
     def get_specindex(self, specname: str) -> int:
-        """Get index of the gas species."""
+        """Get global index of the gas species."""
         """
-        Get species index corresponding to the given species symbol.
+        Get global species index corresponding to the given species symbol.
         The species symbols (gas species and the site and the bulk
         species of all surface materials) must be unique.
 
@@ -2245,12 +2258,12 @@ class Chemistry:
         )
         # set up surface materials
         # initialization
-        self.material_map = {}  # surface material map {str, int}
-        self.materials = {}  # surface material objects {str, Material object}
-        self.matsymbol = []  # surface material names [str]
+        self.material_map.clear()  # surface material map {str, int}
+        self.materials.clear()  # surface material objects {str, Material object}
+        self.matsymbol.clear()  # surface material names [str]
         self._materialnamedone = 0
         # get material names
-        self.material_names
+        _ = self.material_names
         # set up surface materials
         for i, key in enumerate(self.matsymbol):
             # material index is 0-based
@@ -2441,7 +2454,7 @@ class Chemistry:
                 self.material_map.clear()
                 for index in range(0, len(buff_m)):
                     mat_val = ctypes.cast(buff_m[index], c_char_p).value.decode()
-                    self.material_map[mat_val] = index
+                    self.material_map[mat_val.rstrip()] = index
                 self._materialnamedone == 1
             else:
                 # failed to get species symbols
@@ -3022,12 +3035,12 @@ class Material:
         species_type = ""
         # try site phase species
         global_index, local_index = self.get_site_specindex(symbol)
-        if global_index > 0:
+        if global_index >= 0:
             species_type = "site"
         else:
             # try bulk phase species
             global_index, local_index = self.get_bulk_specindex(symbol)
-            if global_index > 0:
+            if global_index >= 0:
                 species_type = "bulk"
             else:
                 if mode.lower() == "normal":
