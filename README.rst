@@ -122,7 +122,7 @@ to the `CHANGELOG`_ file. It provides a comprehensive list of changes
 categorized by version, along with brief descriptions of each change.
 
 
-.. Ansys Products
+.. Ansys products
 .. _Ansys Chemkin: https://www.ansys.com/products/fluids/ansys-chemkin
 
 .. Prerequisites and installation guidelines

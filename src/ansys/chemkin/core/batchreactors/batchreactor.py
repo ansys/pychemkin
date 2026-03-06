@@ -1129,11 +1129,9 @@ class BatchReactors(Reactor):
                 # re-size work arrays
                 self._profilesize = numbprofilepoints
                 ipoints = c_int(numbprofilepoints)
-                print("batch set ptofile points")
                 ierrc = chemkin_wrapper.chemkin.KINAll0D_SetProfilePoints(ipoints)
                 # setup reactor model working arrays
                 if ierrc == 0:
-                    print("batch set up work array")
                     ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
                         self._mylout, self._chemset_index
                     )
@@ -1161,7 +1159,6 @@ class BatchReactors(Reactor):
             bulk_init = np.zeros_like(site_init, dtype=np.double)
         # set reactor initial conditions and geometry parameters
         if self._reactortype.value == self.ReactorTypes.get("Batch"):
-            print("batch set up batch input")
             ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupBatchInputs(
                 self._chemset_index,
                 self._endtime,
@@ -1194,7 +1191,6 @@ class BatchReactors(Reactor):
             # ignition delay (use additional keywords)
             # solve integrated heat release rate due to chemical reactions
             if self.EnergyTypes.get("ENERGY") == self._energytype.value:
-                print("batch set up gas heat release")
                 ierrc = chemkin_wrapper.chemkin.KINAll0D_IntegrateHeatRelease()
                 ierr += ierrc
                 if ierrc != 0:
@@ -1219,7 +1215,6 @@ class BatchReactors(Reactor):
                 npoints = c_int(p.size)
                 x = p.pos
                 y = p.value
-                print("batch set profile parameter")
                 err_profile = chemkin_wrapper.chemkin.KINAll0D_SetProfileParameter(
                     key, npoints, x, y
                 )
@@ -1245,7 +1240,6 @@ class BatchReactors(Reactor):
                     # convert string to byte
                     line = bytes(s, "utf-8")
                     # set additional keyword one by one
-                    print("batch set user keyword")
                     err_key = chemkin_wrapper.chemkin.KINAll0D_SetUserKeyword(line)
                     err_inputs += err_key
                 if err_inputs == 0:
@@ -1293,7 +1287,6 @@ class BatchReactors(Reactor):
 
         """
         # run the simulation without keyword inputs
-        print("batch run calculate ")
         ierr = chemkin_wrapper.chemkin.KINAll0D_Calculate(self._chemset_index)
         return ierr
 
@@ -1616,7 +1609,6 @@ class BatchReactors(Reactor):
         self._solution_rawarray["thermicity"] = copy.deepcopy(thermicity)
         # get surface coverage
         if self.has_surface_chemistry:
-            print("processing surface solution")
             self.process_surface_solution(nreac)
         # set up single point solution parameters
         delay = self.get_ignition_delay()
@@ -2586,7 +2578,6 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
         if self.has_surface_chemistry:
             self._solution_tags.append("surfhrr")
         # set up basic batch reactor parameters
-        print("batch set up")
         ierr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,
             self._reactortype,
@@ -2599,7 +2590,6 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
         )
         if ierr == 0:
             # setup reactor model working arrays
-            print("batch set work arrays 0")
             ierr = chemkin_wrapper.chemkin.KINAll0D_SetupWorkArrays(
                 self._mylout, self._chemset_index
             )

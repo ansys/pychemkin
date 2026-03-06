@@ -586,8 +586,6 @@ class Stream(Mixture):
     def label(self) -> str:
         """Get the label of the Stream."""
         """
-        Get the label of the Stream.
-
         Returns
         -------
             label: string
