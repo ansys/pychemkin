@@ -97,6 +97,7 @@ lint.isort.known-first-party = [ "ansys" ]
 
 [tool.codespell]
 ignore-words-list = "delt, pres, te"
+ignore-words="./doc/styles/config/vocabularies/CHEMKIN/accept.txt"
 quiet-level = 3
 skip = "*.toml,*.pyc,*.xml,*.gif,*.png,*.jpg,*.js,*.html,*.svg,*.asc,*.out,*.inp,*.dtd,*.dat"
 
