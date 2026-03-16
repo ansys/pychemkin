@@ -299,9 +299,6 @@ else:
 # check set up status
 if status != 0:
     exit()
-msg = ["KINetics location = ", _target_lib]
-this_msg = Color.SPACE.join(msg)
-logger.debug(this_msg)
 # load Chemkin-CFD-API shared object
 try:
     chemkin = cdll.LoadLibrary(_target_lib)
