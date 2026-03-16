@@ -135,7 +135,7 @@ jobs:
     needs: wheelhouse
     runs-on: ubuntu-latest
     container:
-      image: 'ghcr.io/ansys/chemkin@sha256:2ba2a40abedfaa8d7f8c369f530a7ccba358dd125a22a46f5857f8245f06773b'
+      image: 'ghcr.io/ansys/chemkin@sha256:a7d63d27ca824eaaf5dd8cc4d2a42c998f7c7f258352e41c1efa086d256cbede'
       credentials:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
