@@ -3501,6 +3501,7 @@ class Material:
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
         h_all = np.zeros(self.total_species, dtype=np.double)
+        h = np.zeros(self.num_site_species, dtype=np.double)
         #
         if temp is None:
             t = max(self.surftemp, 3.0e2)
@@ -3511,8 +3512,10 @@ class Material:
         if ierr == 0:
             # extract enthalpy values for the site species only [ergs/mol]
             kstart = self.first_site_species_index
-            kstop = kstart + self.num_site_species
-            h = h_all[kstart:kstop].copy()
+            for k in range(self.num_site_species):
+                # kstop = kstart + self.num_site_species
+                # h = h_all[kstart:kstop].copy()
+                h[k] = h_all[kstart + k]
             #
             del h_all
             return h
@@ -3564,14 +3567,17 @@ class Material:
         if pres is None:
             # bulk pressure is not given
             h_all = np.zeros(self.total_species, dtype=np.double)
+            h = np.zeros(self.num_bulk_species, dtype=np.double)
             ierr = ck_wrapper.chemkin.KINGetAllSpeciesEnthalpy(
                 chem_id, mat_id, tt, h_all
             )
             if ierr == 0:
                 # extract enthalpy values for the bulk species only [ergs/mol]
                 kstart = self.first_bulk_species_index
-                kstop = kstart + self.num_bulk_species
-                h = h_all[kstart:kstop].copy()
+                for k in range(self.num_bulk_species):
+                # kstop = kstart + self.num_bulk_species
+                # h = h_all[kstart:kstop].copy()
+                    h[k] = h_all[kstart + k]
                 #
                 del h_all
                 return h
