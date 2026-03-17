@@ -34,7 +34,7 @@ doc = [
     "ansys-sphinx-theme==1.7.2",
     "jupytext==1.19.1",
     "nbsphinx==0.9.8",
-    "notebook==7.5.3",
+    "notebook==7.5.5",
     "numpydoc==1.10.0",
     "pandas==2.3.3",
     "pandoc==2.4.0",
@@ -59,9 +59,9 @@ tests = [
     "usd-core==25.11",
 ]
 vulnerabilities = [
-  "bandit[toml]==1.9.3",
+  "bandit[toml]==1.9.4",
   "safety==3.7.0",
-  "typer==0.21.2",
+  "typer==0.24.1",
 ]
 
 [project.urls]
