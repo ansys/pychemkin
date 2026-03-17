@@ -1062,14 +1062,6 @@ class Chemistry:
             self._awt = self.awt
             # check real-gas model
             self.verify_realgas_model()
-            msg = [
-                Color.BLUE,
-                "numb chem mat =",
-                str(self._num_materials.value),
-                Color.END,
-            ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
             # setup surface chemistry and materials
             if self._index_surf.value == 1 and self._num_materials.value > 0:
                 self.set_surface_chemistry()
@@ -2301,30 +2293,9 @@ class Chemistry:
         ------
             numb_materials: number of surface materials
         """
-        msg = [
-            Color.BLUE,
-            "numb material start",
-            Color.END,
-        ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
         if self.verify_surface_mechanism():
-            msg = [
-                Color.BLUE,
-                "numb material OK",
-                Color.END,
-            ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
             return self._num_materials.value
         else:
-            msg = [
-                Color.BLUE,
-                "numb material failed",
-                Color.END,
-            ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
             self.no_surface_mechanism_declaration()
             return 0
 
