@@ -61,7 +61,6 @@ if ierror != 0:
 
 # Access surface chemistry information in the Chemistry Set
 # the number of surface materials in the Chemistry Set
-logger.debug("no mat: " + str(MySurfMech.number_materials))
 print(f"Total number of surface materials = {MySurfMech.number_materials}")
 # get all surface material names in the Chemistry Set with surface chemistry
 m_symbols = MySurfMech.material_names
@@ -76,14 +75,12 @@ for s in m_symbols:
 
 # Display surface material phase and species information as well as
 # the surface reactions of the material.
-logger.debug("loca 2")
 # list the commonly used properties of all surface materials of the Chemistry Set
 for n, name in enumerate(m_symbols):
     # get the surface Material object by its name
     m = MySurfMech.materials[name]
     print("=" * 80)
     print(f"\nMaterial index = {n}")
-    logger.debug("loca 3" + str(n) + " /" + name)
     # display the general size information of the material
     m.information()
     print("=" * 40)
@@ -92,20 +89,17 @@ for n, name in enumerate(m_symbols):
     logger.debug("loca 4")
     if m.num_site_species > 0:
         for i, p in enumerate(m.site_species_names):
-            logger.debug("loca 4.1=" + str(i) + p)
             print(f"  site species {p.rstrip()}")
             k = m.site_species_map[p]
             logger.debug("loca 4.2=" + str(k))
             for e, ele in enumerate(MySurfMech.element_symbols):
                 print(f"    element {ele} = {m.material_species_composition(e, k)}")
-            logger.debug("loca 4.3=" + str(k))
         h_site = m.get_site_species_h(temp=400.0)
         logger.debug("loca 4.4")
-        for k, h in enumerate(h_site):
+        for j, h in enumerate(h_site):
             # local index among all site species of this material
-            logger.debug("loca 4.5=" + str(k) + " " + str(h))
             print(
-                f"  site species {k} {m.site_species_names[k]} "
+                f"  site species {j} {m.site_species_names[j]} "
                 f"H = {h / ck.ERGS_PER_JOULE} [J/mole]"
             )
     # list the elemental compositions of all bulk species of the material
@@ -118,29 +112,26 @@ for n, name in enumerate(m_symbols):
                 print(f"    element {ele} = {m.material_species_composition(e, k)}")
         # also the specific heat capacity of the bulk species
         cp_bulk = m.get_bulk_species_cp(temp=450.0)
-        for k, c in enumerate(cp_bulk):
+        for j, c in enumerate(cp_bulk):
             # local index among all bulk species of this material
             print(
-                f"  bulk species {k} {m.bulk_species_names[k]} "
+                f"  bulk species {j} {m.bulk_species_names[j]} "
                 f"Cp = {c / ck.ERGS_PER_JOULE} [J/mole-K]"
             )
     # get all phase names of the Chemistry Set, the "Gas" phase is always included
     # as the first phase
-    logger.debug("loca 6")
     p_symbols = m.phase_names
     # list the surface phase types and the index of the first species of the
     # surface phase.
     # There are three phase types: "Gas", "site", and "bulk". The surface species
     # (site and bulk) have two indices: global (of all species including the gas
     # species) and local (of the same type of surface species).
-    logger.debug("loca 7")
     for p in p_symbols:
         if p == "Gas":
             continue
         phase_type = m.phases[p].phase_type
         #
         if phase_type == "site":
-            logger.debug("loca 8")
             print(
                 f" surface site phase: {p} "
                 f"site density = {m.phases[p].site_density} [mole/cm2]\n"
@@ -157,7 +148,6 @@ for n, name in enumerate(m_symbols):
                 f"= {m.first_site_species_index}"
             )
         else:
-            logger.debug("loca 9")
             # the global index is 1-based in Chemkin
             print(
                 f" 1-base species index on phase {p} = "
@@ -175,46 +165,37 @@ for n, name in enumerate(m_symbols):
     print("=" * 40)
     # the first surface reaction of the material
     rxn_id = 1
-    logger.debug("loca 10")
     # the first surface reaction of the material
     rxn_id = 1
     # reaction string of the first surface reaction of the material
     print(f" surface reaction # 1 = {m.get_surface_reaction_string(rxn_id)}")
     # get the Arrhenius rate parameters of all surface reactions of the material
     a_factor, beta, act_energy = m.get_surface_reaction_parameters()
-    logger.debug("loca 11")
     # display the Arrhenius parameters of the first surface reaction of this material
     print("    original rate parameters:")
     print(f"    A = {a_factor[0]}   B = {beta[0]}  Ea = {act_energy[0]} [K]")
     # save a copy of the original value
     act_energy_org = act_energy[0]
-    logger.debug("loca 12")
     # change the activation temperature of the first surface reaction to 3000 [K]
     m.set_surface_reaction_act_energy(rxn_id, 3000.0)
     # retrieve and display the modified Arrhenius parameters
     # of the first surface reaction
-    logger.debug("loca 13")
     a_factor, beta, act_energy = m.get_surface_reaction_parameters()
     print("    modified rate parameters:")
     print(f"    A = {a_factor[0]}   B = {beta[0]}  Ea = {act_energy[0]} [K]")
     # restore the activation temperature of the first surface reaction
     m.set_surface_reaction_act_energy(rxn_id, act_energy_org)
     # verify the change
-    logger.debug("loca 14")
     a_factor, beta, act_energy = m.get_surface_reaction_parameters()
     print("    restored rate parameters:")
     print(f"    A = {a_factor[0]}   B = {beta[0]}  Ea = {act_energy[0]} [K]")
-    logger.debug("loca 15")
 
-logger.debug("loca 16")
 resultfile = Path(current_dir) / "multiple_materials.result"
-logger.debug("loca 16.5")
 results = {}
 results["state-site_H"] = h_site.tolist()
 results["state-bulk_Cp"] = cp_bulk.tolist()
 results["state-A_factor"] = a_factor.tolist()
 results["state-activation_temperature"] = act_energy.tolist()
-logger.debug("loca 17")
 #
 r = resultfile.open(mode="w")
 r.write("{\n")
@@ -222,4 +203,3 @@ for k, v in results.items():
     r.write(f'"{k}": {v},\n')
 r.write("}\n")
 r.close()
-logger.debug("loca 18")
