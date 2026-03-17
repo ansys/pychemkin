@@ -3512,7 +3512,7 @@ class Material:
             # extract enthalpy values for the site species only [ergs/mol]
             kstart = self.first_site_species_index
             kstop = kstart + self.num_site_species
-            h = h_all[kstart:kstop]
+            h = h_all[kstart:kstop].copy()
             #
             del h_all
             return h
@@ -3571,7 +3571,7 @@ class Material:
                 # extract enthalpy values for the bulk species only [ergs/mol]
                 kstart = self.first_bulk_species_index
                 kstop = kstart + self.num_bulk_species
-                h = h_all[kstart:kstop]
+                h = h_all[kstart:kstop].copy()
                 #
                 del h_all
                 return h
