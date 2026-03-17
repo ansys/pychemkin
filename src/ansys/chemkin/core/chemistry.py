@@ -3119,13 +3119,17 @@ class Material:
             exit()
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
+        logger.debug("loca site species 1")
         #
         if self._sitespeciesnamesdone == 0:
+            logger.debug("loca site species 2=" + str(self.num_site_species))
             buff_s = (LP_c_char * self.num_site_species)()
             for i in range(0, self.num_site_species):
                 buff_s[i] = ctypes.create_string_buffer(MAX_SPECIES_LENGTH)
             pp_s = ctypes.cast(buff_s, POINTER(LP_c_char))
+            logger.debug("loca site species 3=" + str(MAX_SPECIES_LENGTH))
             ierr = ck_wrapper.chemkin.KINGetSiteNames(chem_id, mat_id, pp_s)
+            logger.debug("loca site species 4=" + str(ierr))
             if ierr == 0:
                 site_symbols = []
                 for index in range(0, len(buff_s)):
@@ -3142,8 +3146,11 @@ class Material:
                 logger.error(this_msg)
                 exit()
             del buff_s
+            logger.debug("loca site species 5")
         else:
+            logger.debug("loca site species -1")
             site_symbols = self.site_symbols
+            logger.debug("loca site species -2")
         return site_symbols
 
     @property
