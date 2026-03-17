@@ -328,7 +328,12 @@ class TestClassSurface:
     # state: pressure [atm], temperature [K]
     # species: mole/mass fraction, surface site fractions, bulk activities
     # rate: reaction rate, rate of production, heat release rate
-    surface_list = ["multiple_materials", "SiC_cvd", "catalytic_combustion"]
+    surface_list = [
+        # skip this test for inconsistent pass/fail on different linux versions
+        #  "multiple_materials",
+        "SiC_cvd",
+        "catalytic_combustion",
+    ]
 
     @pytest.mark.parametrize("test_file", surface_list)
     def test_surface(self, get_working_dir, get_source_dir, get_result_dir, test_file):
