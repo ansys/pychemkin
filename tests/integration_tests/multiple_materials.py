@@ -86,16 +86,13 @@ for n, name in enumerate(m_symbols):
     print("=" * 40)
     # list the elemental compositions of all site species of the material
     print("elemental compositions of surface species on the material:")
-    logger.debug("loca 4")
     if m.num_site_species > 0:
         for i, p in enumerate(m.site_species_names):
             print(f"  site species {p.rstrip()}")
             k = m.site_species_map[p]
-            logger.debug("loca 4.2=" + str(k))
             for e, ele in enumerate(MySurfMech.element_symbols):
                 print(f"    element {ele} = {m.material_species_composition(e, k)}")
         h_site = m.get_site_species_h(temp=400.0)
-        logger.debug("loca 4.4")
         for j, h in enumerate(h_site):
             # local index among all site species of this material
             print(
@@ -103,7 +100,6 @@ for n, name in enumerate(m_symbols):
                 f"H = {h / ck.ERGS_PER_JOULE} [J/mole]"
             )
     # list the elemental compositions of all bulk species of the material
-    logger.debug("loca 5")
     if m.num_bulk_species > 0:
         for i, p in enumerate(m.bulk_species_names):
             print(f"  bulk species {p.rstrip()}")
