@@ -3575,8 +3575,8 @@ class Material:
                 # extract enthalpy values for the bulk species only [ergs/mol]
                 kstart = self.first_bulk_species_index
                 for k in range(self.num_bulk_species):
-                # kstop = kstart + self.num_bulk_species
-                # h = h_all[kstart:kstop].copy()
+                    # kstop = kstart + self.num_bulk_species
+                    # h = h_all[kstart:kstop].copy()
                     h[k] = h_all[kstart + k]
                 #
                 del h_all
