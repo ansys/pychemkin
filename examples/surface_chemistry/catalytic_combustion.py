@@ -399,6 +399,21 @@ cat_combustor.adaptive_solution_saving(mode=True, steps=20)
 # solution profiles. If you are interested in the exit solution, use the
 # ``get_last_solution_mixture()`` method to get the solution at the exit as a
 # ``Stream`` object ``combustor_exhaust``.
+#
+# .. note ::
+#   In Pychemkin, the surface material is referred by its name. Instead of
+#   the surface material index, you loop over the surface material names.
+#   Use ``get_material_names()`` method to get a list of surface material
+#   names defined in the surface mechanism.
+#
+# .. note ::
+#   For a site or a bulk species, use any ``Mixture`` or ``Stream`` created
+#   with the ``Chemistry Set`` containing the surface mechanism to get its
+#   species index. There are two type of index for surface species, the
+#   global index includes all species (the gas plus the site and the bulk of
+#   all materials); the local index includes the same type of surface species
+#   (site or bulk) of all materials.
+#
 
 
 # get gas-species index

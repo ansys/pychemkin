@@ -247,7 +247,7 @@ MyCONV.set_ignition_delay(method="T_inflection")
 MyCONV.tolerances = (1.0e-10, 1.0e-8)
 # get solver parameters
 atol, rtol = MyCONV.tolerances
-print(f"Dfault absolute tolerance = {atol}.")
+print(f"Default absolute tolerance = {atol}.")
 print(f"Default relative tolerance = {rtol}.")
 # turn on the force non-negative solutions option in the solver
 MyCONV.force_nonnegative = True
