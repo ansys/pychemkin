@@ -518,7 +518,7 @@ chemkin.KINGetAllSpeciesEnthalpy.restype = ctypes.c_int
 chemkin.KINGetAllSpeciesEnthalpy.argtypes = [
     ctypes.POINTER(ctypes.c_int),
     ctypes.POINTER(ctypes.c_int),
-    ctypes.POINTER(ctypes.c_double),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
     np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
 ]
 chemkin.KINGetSiteMolecularWeights.restype = ctypes.c_int
@@ -554,7 +554,7 @@ chemkin.KINGetBulkSpeciesSpecificHeat.argtypes = [
     ctypes.POINTER(ctypes.c_int),
     ctypes.POINTER(ctypes.c_int),
     ctypes.POINTER(ctypes.c_double),
-    ctypes.POINTER(ctypes.c_double),
+    np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
     np.ctypeslib.ndpointer(dtype=np.double, flags="C_CONTIGUOUS"),
 ]
 chemkin.KINGetBulkSpeciesEntropy.restype = ctypes.c_int

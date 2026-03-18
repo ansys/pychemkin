@@ -509,7 +509,7 @@ def set_temp_array(
     temp: float,
     temp_ele: Union[float, None] = None,
     temp_ion: Union[float, None] = None,
-):
+) -> npt.NDArray[np.double]:
     """Set up the temperature array for Chemkin-CFD-API calls."""
     """
     Set up the temperature array to be used in some Chemkin-CFD-API calls.
@@ -528,7 +528,7 @@ def set_temp_array(
 
     Returns
     -------
-        t_array: 1-D c_double array of length 3
+        t_array: 1-D double array of length 3
             temperature array containing the temperatures of
             the three different types of species
     """
@@ -543,8 +543,7 @@ def set_temp_array(
     else:
         temp_i = temp_ion
     # set the temperature used in Chemkin-CFD-API calls
-    t = np.ascontiguousarray([temp, temp_e, temp_i], dtype=np.float64)
-    t_array = t.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+    t_array = np.ascontiguousarray([temp, temp_e, temp_i], dtype=np.double)
     return t_array
 
 
