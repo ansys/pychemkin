@@ -509,7 +509,7 @@ def set_temp_array(
     temp: float,
     temp_ele: Union[float, None] = None,
     temp_ion: Union[float, None] = None,
-) -> npt.NDArray[np.double] :
+) -> npt.NDArray[np.double]:
     """Set up the temperature array for Chemkin-CFD-API calls."""
     """
     Set up the temperature array to be used in some Chemkin-CFD-API calls.

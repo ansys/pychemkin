@@ -42,7 +42,7 @@ global interactive
 interactive = False
 
 # set numpy printing option
-np.set_printoptions(legacy='1.25')
+np.set_printoptions(legacy="1.25")
 
 # This is a pychemkin equivalent of equil_test07
 
