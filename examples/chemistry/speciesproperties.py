@@ -59,7 +59,6 @@ ck.set_verbose(True)
 global interactive
 interactive = True
 
-
 ########################
 # Create a chemistry set
 # ======================
@@ -225,6 +224,9 @@ print(
     f"Diffusion coefficient for {plotspeclist[0]}"
     f"against {plotspeclist[1]} is {c:e} [cm²/sec]."
 )
+
+# clean up
+ck.done()
 
 # plot results
 if interactive:

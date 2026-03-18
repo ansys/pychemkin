@@ -75,7 +75,7 @@ from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.core.logger import logger
 
 # chemkin perfectly stirred reactor (PSR) model (steady-state)
-from ansys.chemkin.core.stirreactors.PSR import PerfectlyStirredReactor as Psr
+from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeFixedTemperature as Psr
 from ansys.chemkin.core.utilities import find_file
 
 # check working directory
@@ -149,7 +149,7 @@ feed.mass_flowrate = 0.11
 # because both the reactor temperature and residence time are fixed
 # during the experiments. The gas property of the inlet feed is applied
 # as the estimated reactor condition of the JSR.
-JSR = Psr(feed, label="JSR")
+Jsr = Psr(feed, label="JSR")
 
 ###################################
 # Connect the inlets to the reactor
@@ -159,7 +159,7 @@ JSR = Psr(feed, label="JSR")
 # use the ``remove_inlet()`` method to disconnect an inlet from the PSR.
 
 # connect the inlet to the reactor
-JSR.set_inlet(feed)
+Jsr.set_inlet(feed)
 
 ############################################
 # Set up additional reactor model parameters
@@ -169,7 +169,7 @@ JSR.set_inlet(feed)
 # either the residence time or the reactor volume.
 
 # set PSR residence time (sec): required for PSRSetResTimeFixedTemperature model
-JSR.residence_time = 120.0 * 1.0e-3
+Jsr.residence_time = 120.0 * 1.0e-3
 
 #####################
 # Set solver controls
@@ -181,7 +181,7 @@ JSR.residence_time = 120.0 * 1.0e-3
 # steady-state solver control method, ``set_initial_timesteps()``.
 
 # set the number of initial pseudo timesteps in the steady-state solver
-JSR.set_initial_timesteps(1000)
+Jsr.set_initial_timesteps(1000)
 
 ######################################################
 # Run the parameter study to replicate the experiments
@@ -206,7 +206,7 @@ start_time = time.time()
 # loop over all inlet temperature values
 for i in range(numbruns):
     # run the PSR model
-    runstatus = JSR.run()
+    runstatus = Jsr.run()
     # check run status
     if runstatus != 0:
         # Run failed.
@@ -215,7 +215,7 @@ for i in range(numbruns):
     # Run succeeded.
     print(Color.GREEN + ">>> Run completed. <<<", end=Color.END)
     # postprocess the solution profiles
-    solnmixture = JSR.process_solution()
+    solnmixture = Jsr.process_solution()
     # print the steady-state solution values
     # print(f"Steady-state temperature = {solnmixture.temperature} [K].")
     # solnmixture.list_composition(mode="mole")
@@ -224,7 +224,7 @@ for i in range(numbruns):
     h2o_ss_solution[i] = solnmixture.x[h2o_index]
     # update reactor temperature
     temp += deltatemp
-    JSR.temperature = temp
+    Jsr.temperature = temp
 
 # compute the total runtime
 runtime = time.time() - start_time
@@ -272,6 +272,10 @@ plt.xlabel("Reactor Temperature [K]")
 plt.ylabel("H2O Mole Fraction")
 plt.legend(loc="lower right")
 plt.title("JSR Solution")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

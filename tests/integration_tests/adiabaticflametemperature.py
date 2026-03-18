@@ -41,6 +41,9 @@ ck.set_verbose(True)
 global interactive
 interactive = False
 
+# set numpy printing option
+np.set_printoptions(legacy="1.25")
+
 # This is a pychemkin equivalent of equil_test07
 
 # set mechanism directory (the default Chemkin mechanism data directory)
@@ -54,17 +57,21 @@ MyGasMech.chemfile = str(mechanism_dir / "grimech30_chem.inp")
 MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
 
 ierror = MyGasMech.preprocess()
+if ierror != 0:
+    print("Error: Failed to preprocess the mechanism!")
+    print(f"       Error code = {ierror}")
+    exit()
 
 oxid = ck.Mixture(MyGasMech)
 # set mass fraction
-oxid.X = [("O2", 1.0)]
+oxid.x = [("O2", 1.0)]
 oxid.temperature = 295.15
 oxid.pressure = ck.P_ATM  # 1 atm
 # mix the fuel and the air with an air-fuel ratio of 17.19 (almost stoichiometric?
 
 fuel = ck.Mixture(MyGasMech)
 # set mole fraction
-fuel.X = [("CH4", 1.0)]
+fuel.x = [("CH4", 1.0)]
 fuel.temperature = oxid.temperature
 fuel.pressure = oxid.pressure
 

@@ -25,6 +25,7 @@
 import copy
 import ctypes
 from ctypes import c_double, c_int
+from typing import Union
 
 import numpy as np
 import numpy.typing as npt
@@ -42,8 +43,9 @@ from ansys.chemkin.core.chemistry import (
 from ansys.chemkin.core.color import Color
 from ansys.chemkin.core.constants import P_ATM
 from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.surface import Surface
 from ansys.chemkin.core.utilities import (
-    calculate_stoichiometrics,
+    _nonzero_element_in_array_1d,
     where_element_in_array_1d,
 )
 
@@ -54,6 +56,8 @@ class Mixture:
     def __init__(self, chem: Chemistry):
         """Initialize a Mixture object based on the given Chemistry set."""
         """
+        Initialize a Mixture object based on the given Chemistry set.
+
         Parameters
         ----------
             chem: Chemistry object
@@ -87,32 +91,45 @@ class Mixture:
             this_msg = Color.SPACE.join(msg)
             logger.critical(this_msg)
             exit()
+        # copy the chemistry set
+        self._chem_set = chem
         # shorthand for frequently used variables
-        self._chemset_index = ctypes.c_int(chem.chemid)  # chemistry set index
-        self._kk = chem.kk  # number of gas species
-        self._ii_gas = chem.ii_gas  # number of gas-phase reactions
+        # chemistry set index
+        self._chemset_index = ctypes.c_int(self._chem_set.chemid)
+        self._kk = self._chem_set.kk  # number of gas species
+        self._ii_gas = self._chem_set.ii_gas  # number of gas-phase reactions
         self._specieslist: list[str] = []
-        self._specieslist = chem.species_symbols  # gas species symbols
-        self._wt = chem.wt  # gas species molar masses
+        self._specieslist = self._chem_set.species_symbols  # gas species symbols
+        self._wt = self._chem_set.wt  # gas species molar masses
         # create internal arrays: array size = number of gas species
-        self._molefrac = np.zeros(
-            self._kk, dtype=np.double
-        )  # mixture composition given in mole fractions
-        self._massfrac = np.zeros_like(
-            self._molefrac
-        )  # mixture composition given in mole fractions
-        self._concentration = np.zeros_like(self._molefrac)  # concentrations (not used)
-        self._surfacechem = c_int(
-            chem.surfchem
-        )  # flag indicating there is surface chemistry (type c_int: 0 = no, 1 = yes)
-        self.transport_data = chem._index_tran.value
-        self._eos = c_int(chem.eos)  # real-gas EOS model in the mechanism
-        self.userealgas = chem.userealgas  # status of the real-gas EOS usage
+        # mixture composition given in mole fractions
+        self._molefrac = np.zeros(self._kk, dtype=np.double)
+        # mixture composition given in mass fractions
+        self._massfrac = np.zeros_like(self._molefrac)
+        # concentrations (not used)
+        self._concentration = np.zeros_like(self._molefrac)
+        # flag indicating there is surface chemistry (type c_int: 0 = no, 1 = yes)
+        self._surfacechem = c_int(self._chem_set.surfchem)
+        # flag indicating there is gas transport data (type c_int: 0 = no, 1 = yes)
+        self.transport_data = self._chem_set._index_tran.value
+        # real-gas EOS model in the mechanism
+        self._eos = c_int(self._chem_set.eos)
+        # status of the real-gas EOS usage
+        self.userealgas = self._chem_set.userealgas
+        # store the surface chemistry information in the surface_chemistry object
+        # this object will be passed to the reactor models
+        # with surface chemistry capability
+        self._has_surface_chemistry = self._chem_set.verify_surface_mechanism()
+        if self._has_surface_chemistry:
+            # instantiate a Surface object for surface chemistry applications
+            self.surface_chemistry = Surface(chem=chem)
 
     @property
     def chemid(self) -> int:
         """Get chemistry set index."""
         """
+        Get chemistry set index.
+
         Returns
         -------
             chemid: integer
@@ -125,6 +142,8 @@ class Mixture:
     def kk(self) -> int:
         """Get the number of gas species."""
         """
+        Get the number of gas species.
+
         Returns
         -------
             num_spec: integer
@@ -133,10 +152,36 @@ class Mixture:
         """
         return self._kk
 
+    def get_specindex(self, symbol: str) -> int:
+        """Get the index of the given gas species symbol."""
+        """
+        Get the index of the given gas species symbol.
+
+        Parameters
+        ----------
+            symbol: string
+                gas species symbol (case sensitive)
+
+        Returns
+        -------
+            index: integer
+                corresponding gas species index in the mechanism. =0 if not found.
+        """
+        if symbol in self._specieslist:
+            index = self._specieslist.index(symbol)
+            return index
+        else:
+            msg = [Color.PURPLE, "species symbol not found:", symbol, Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
     @property
     def pressure(self) -> float:
-        """Get gas mixture pressure [dynes/cm2]."""
+        """Get gas mixture pressure."""
         """
+        Get the gas mixture pressure [dynes/cm2].
+
         Returns
         -------
             pressure: double
@@ -155,6 +200,10 @@ class Mixture:
     def pressure(self, p: float):
         """Set gas mixture pressure."""
         """
+        Set the gas mixture pressure.
+        Note the you must set two out of these three gas mixture properties:
+        [temperature, pressure, density/volume].
+
         Parameters
         ----------
             p: double
@@ -174,6 +223,8 @@ class Mixture:
     def temperature(self) -> float:
         """Get gas mixture temperature."""
         """
+        Get the gas mixture temperature.
+
         Returns
         -------
             temperature: double
@@ -192,6 +243,10 @@ class Mixture:
     def temperature(self, t: float):
         """Set gas mixture temperature."""
         """
+        Set the gas mixture temperature.
+        Note the you must set two out of these three gas mixture properties:
+        [temperature, pressure, density/volume].
+
         Parameters
         ----------
             t: double
@@ -206,10 +261,27 @@ class Mixture:
         self._temp = t
         self._t_set = 1
 
+    def check_volume(self) -> bool:
+        """Check if volume is defined."""
+        """
+        Check if the Mixture volume is provided.
+
+        Returns
+        -------
+            status: boolean
+                True = mixture volume is provided; False = no
+        """
+        if self._vol > 0.0e0:
+            return True
+        else:
+            return False
+
     @property
     def volume(self) -> float:
         """Get mixture volume."""
         """
+        Get the mixture volume.
+
         Returns
         -------
             volume: double
@@ -228,6 +300,10 @@ class Mixture:
     def volume(self, vol: float):
         """Set mixture volume."""
         """
+        Set mixture volume.
+        Note the you must set two out of these three gas mixture properties:
+        [temperature, pressure, density/volume].
+
         Parameters
         ----------
             vol: double
@@ -245,6 +321,8 @@ class Mixture:
     def x(self) -> npt.NDArray[np.double]:
         """Get mixture mole fraction."""
         """
+        Get mixture mole fraction.
+
         Returns
         -------
             x: 1-D double array, dimensdion = number_species
@@ -269,9 +347,13 @@ class Mixture:
             exit()
 
     @x.setter
-    def x(self, recipe: list[tuple[str, float]]):
+    def x(self, recipe: Union[list[tuple[str, float]], npt.NDArray[np.double]]):
         """Set mixture molar composition."""
         """
+        Set mixture molar composition. If a 1-D array is used,
+        all species fractions must be provided (including zero),
+        and the fractions will be normalized (summed to 1).
+
         Parameters
         ----------
         recipe: list of tuples, [(species_symbol, fraction), ... ]
@@ -340,6 +422,8 @@ class Mixture:
     def y(self) -> npt.NDArray[np.double]:
         """Get mixture mass fraction."""
         """
+        Get mixture mass fraction.
+
         Returns
         -------
             y: 1-D double array, dimensdion = number_species
@@ -364,9 +448,13 @@ class Mixture:
             exit()
 
     @y.setter
-    def y(self, recipe: list[tuple[str, float]]):
+    def y(self, recipe: Union[list[tuple[str, float]], npt.NDArray[np.double]]):
         """Set mixture mass composition."""
         """
+        Set mixture mass composition. If a 1-D array is used,
+        all species fractions must be provided (including zero),
+        and the fractions will be normalized (summed to 1).
+
         Parameters
         ----------
         recipe: list of tuples, [(species_symbol, fraction), ... ]
@@ -434,6 +522,8 @@ class Mixture:
     def concentration(self) -> npt.NDArray[np.double]:
         """Get mixture molar concentrations."""
         """
+        Get mixture molar concentrations.
+
         Returns
         -------
             c: 1-D double array, dimensdion = number_species
@@ -475,6 +565,8 @@ class Mixture:
     def eos(self) -> int:
         """Get the available real-gas EOS model that is provided in the mechanism."""
         """
+        Get the available real-gas EOS model that is provided in the mechanism.
+
         Returns
         -------
             EOS: integer
@@ -488,6 +580,8 @@ class Mixture:
     def normalize(frac: npt.ArrayLike) -> tuple[int, npt.NDArray[np.double]]:
         """Normalize the mixture composition."""
         """
+        Normalize the mixture composition.
+
         Parameters
         ----------
             frac: 1-D double array
@@ -528,6 +622,8 @@ class Mixture:
     def wt(self) -> npt.NDArray[np.double]:
         """Get species molecular masses."""
         """
+        Get species molecular masses.
+
         Returns
         -------
             wt: 1-D double array, dimension = number_species
@@ -543,6 +639,8 @@ class Mixture:
     def wtm(self) -> float:
         """Get mean molar mass of the gas mixture."""
         """
+        Get mean molar mass of the gas mixture.
+
         Returns
         -------
             wtm: double
@@ -591,6 +689,8 @@ class Mixture:
     def __xtoy(self) -> tuple[int, npt.NDArray[np.double]]:
         """Convert mole fraction to mass fraction."""
         """
+        Convert mole fraction to mass fraction.
+
         Returns
         -------
             error_code: integer
@@ -621,6 +721,8 @@ class Mixture:
     def __ytox(self) -> tuple[int, npt.NDArray[np.double]]:
         """Convert mass fraction to mole fraction."""
         """
+        Convert mass fraction to mole fraction.
+
         Returns
         -------
             error_code: integer
@@ -654,6 +756,8 @@ class Mixture:
     ) -> float:
         """Get mean molar mass of the gas mixture."""
         """
+        Get the mean molar mass of the gas mixture.
+
         Parameters
         ----------
             frac: 1-D double array, dimensdion = number_species
@@ -726,6 +830,8 @@ class Mixture:
     ) -> npt.NDArray[np.double]:
         """Convert mole fraction to mass fraction."""
         """
+        Convert mole fraction to mass fraction.
+
         Parameters
         ----------
             molefrac: 1-D double array, dimension = number_species
@@ -778,6 +884,8 @@ class Mixture:
     ) -> npt.NDArray[np.double]:
         """Convert mass fraction to mole fraction."""
         """
+        Convert mass fraction to mole fraction.
+
         Parameters
         ----------
             massfrac: 1-D double array, dimension = number_species
@@ -830,6 +938,8 @@ class Mixture:
     ) -> npt.NDArray[np.double]:
         """Convert mass fractions to molar concentrations."""
         """
+        Convert mass fractions to molar concentrations.
+
         Parameters
         ----------
             chemid: integer
@@ -887,6 +997,8 @@ class Mixture:
     ) -> npt.NDArray[np.double]:
         """Convert mole fractions to molar concentrations."""
         """
+        Convert mole fractions to molar concentrations.
+
         Parameters
         ----------
             chemid: integer
@@ -940,6 +1052,11 @@ class Mixture:
     def list_composition(self, mode: str, option: str = " ", bound: float = 0.0e0):
         """List the mixture composition."""
         """
+        List the mixture composition.
+        Use 'mode' to specify the type of fractions to be printed.
+        Use 'option' to specify printing all species or just non-zero species only.
+        Use 'bound' to specify the min fraction value to be printed as non-zero.
+
         Parameters
         ----------
             mode: string, {'mole', 'mass'}
@@ -1369,6 +1486,335 @@ class Mixture:
             exit()
 
     @staticmethod
+    def calculate_pressure_from_density(
+        chemid: int,
+        rho: float,
+        temp: float,
+        frac: npt.NDArray[np.double],
+        wt: npt.NDArray[np.double],
+        mode: str,
+    ) -> float:
+        """Calculate the gas mixture pressure."""
+        """
+        Calculate the gas mixture pressure given the mixture density,
+        temperature, and species composition in mass fractions.
+
+        Parameters
+        ----------
+            chemid: integer
+                chemistry set index associated with the mixture
+            rho: double
+                density [g/cm3]
+            temp: double
+                temperature [K]
+            frac: 1-D double array, dimension = number_species
+                mixture composition in mass or mole fractions
+            wt: 1-D double array, dimension = number_species
+                molar masses of the species in the mixture in [gm/mol]
+            mode: string, {'mole', 'mass'}
+                flag indicates the frac array is 'mass' or 'mole' fractions
+
+        Returns
+        -------
+            pres: double
+                pressure [dynes/cm2]
+        """
+        # check inputs
+        if chemid < 0:
+            msg = [Color.PURPLE, "invalid chemistry.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        # number species
+        kgas = len(frac)
+        if kgas != len(wt):
+            msg = [
+                Color.PURPLE,
+                mode,
+                "fraction and molar mass arrays",
+                "must have the same size =",
+                str(kgas),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        if temp <= 10.0:
+            msg = [Color.PURPLE, "invalid temperature value.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        if rho <= 0.0:
+            msg = [Color.PURPLE, "invalid density value.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        # initialization
+        pres = c_double(0.0)
+        if mode.lower() == "mole":
+            # convert mole fraction to mass fraction and normalize
+            y = Mixture.mole_fraction_to_mass_fraction(molefrac=frac, wt=wt)
+        elif mode.lower() == "mass":
+            # normalize mass fractions
+            ierr, y = Mixture.normalize(frac=frac)
+        else:
+            # fraction type not given or incorrect
+            msg = [
+                Color.PURPLE,
+                'must specify "mole" or "mass" fractions given.',
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        # convert parameters to c pointers
+        chemset_index = ctypes.c_int(chemid)
+        tt = c_double(temp)  # temperature scalar
+        rr = c_double(rho)  # density scalar
+        yy = np.ctypeslib.as_array(y)  # mass fraction array
+        # compute pressure from density and mass fraction
+        ierr = ck_wrapper.chemkin.KINGetGasPressure(chemset_index, rr, tt, yy, pres)
+        if ierr == 0 and pres.value > 0.0:
+            return pres.value
+        else:
+            # failed to compute mixture pressure
+            msg = [Color.PURPLE, "failed to compute mixture pressure.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+    @staticmethod
+    def mixture_thermicity(
+        chemid: int,
+        pres: float,
+        temp: float,
+        rho: float,
+        frac: npt.NDArray[np.double],
+        wt: npt.NDArray[np.double],
+        mode: str,
+    ) -> float:
+        """Get mixture total thermicity."""
+        """
+        Get the gas mixture total thermicity from the given mixture condition:
+        pressure, temperature, density, and species composition
+
+        Parameters
+        ----------
+            chemid: integer
+                chemistry set index associated with the mixture
+            pres: double
+                mixture pressure in [dynes/cm2]
+            temp: double
+                mixture temperature in [K]
+            rho: double
+                mixture density in [g/cm3]
+            frac: 1-D double array, dimension = number_species
+                mixture composition given by either mass or mole fractions
+                as specified by mode
+            wt: 1-D double array, dimension = number_species
+                molar masses of the species in the mixture in [gm/mol]
+            mode: string, {'mole', 'mass'}
+                flag indicates the frac array is 'mass' or 'mole' fractions
+
+        Returns
+        -------
+            sigma: double
+                mixture total thermicity [1/sec]
+        """
+        # check inputs
+        if chemid < 0:
+            msg = [Color.PURPLE, "invalid chemistry.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        if temp <= 10.0:
+            msg = [Color.PURPLE, "invalid temperature value.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        if rho <= 0.0:
+            msg = [Color.PURPLE, "invalid density value.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        # number species
+        kgas = len(frac)
+        if kgas != len(wt):
+            msg = [
+                Color.PURPLE,
+                mode,
+                "fraction and molar mass arrays",
+                "must have the same size =",
+                str(kgas),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        # initialization
+        sigma = c_double(0.0)
+        if mode.lower() == "mole":
+            # convert mole fraction to mass fraction and normalize
+            y = Mixture.mole_fraction_to_mass_fraction(molefrac=frac, wt=wt)
+        elif mode.lower() == "mass":
+            # normalize mass fractions
+            ierr, y = Mixture.normalize(frac=frac)
+        else:
+            # fraction type not given or incorrect
+            msg = [
+                Color.PURPLE,
+                'must specify "mole" or "mass" fractions given.',
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        # convert parameters to c pointers
+        chemset_index = ctypes.c_int(chemid)
+        pp = c_double(pres)
+        tt = c_double(temp)  # temperature scalar
+        rr = c_double(rho)
+        yy = np.ctypeslib.as_array(y)  # mass fraction array
+        # real-gas
+        if check_realgas_status(chemid):
+            # real-gas cubic EOS is active, set current pressure
+            # that is required by the chemkin real-gas module
+            set_current_pressure(chemid, pres)
+            # compute total thermicity from mass fraction
+            ierr = ck_wrapper.chemkin.KINRealGas_GetMixtureThermicity(
+                chemset_index, pp, tt, rr, yy, sigma
+            )
+        else:
+            # compute total thermicity from mass fraction
+            ierr = ck_wrapper.chemkin.KINGetGasMixtureThermicity(
+                chemset_index, pp, tt, rr, yy, sigma
+            )
+        if ierr == 0:
+            return sigma.value
+        else:
+            # failed to compute mixture total thermicity
+            msg = [
+                Color.PURPLE,
+                "failed to compute mixture total thermicity.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+    @staticmethod
+    def mixture_sound_speed(
+        chemid: int,
+        pres: float,
+        temp: float,
+        frac: npt.NDArray[np.double],
+        wt: npt.NDArray[np.double],
+        mode: str,
+    ) -> float:
+        """Get mixture speed of sound."""
+        """
+        Get mixture speed of sound from the given mixture condition:
+        pressure, temperature, and species composition.
+
+        Parameters
+        ----------
+            chemid: integer
+                chemistry set index associated with the mixture
+            pres: double
+                mixture pressure in [dynes/cm2]
+            temp: double
+                mixture temperature in [K]
+            frac: 1-D double array, dimension = number_species
+                mixture composition given by either mass or mole fractions
+                as specified by mode
+            wt: 1-D double array, dimension = number_species
+                molar masses of the species in the mixture in [gm/mol]
+            mode: string, {'mole', 'mass'}
+                flag indicates the frac array is 'mass' or 'mole' fractions
+
+        Returns
+        -------
+            soundspeed: double
+                mixture speed of sound [cm/sec]
+        """
+        # check inputs
+        if chemid < 0:
+            msg = [Color.PURPLE, "invalid chemistry.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        if temp <= 10.0:
+            msg = [Color.PURPLE, "invalid temperature value.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        # number species
+        kgas = len(frac)
+        if kgas != len(wt):
+            msg = [
+                Color.PURPLE,
+                mode,
+                "fraction and molar mass arrays",
+                "must have the same size =",
+                str(kgas),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+        # initialization
+        gamma = c_double(0.0)
+        soundspeed = c_double(0.0)
+        if mode.lower() == "mole":
+            # convert mole fraction to mass fraction and normalize
+            y = Mixture.mole_fraction_to_mass_fraction(molefrac=frac, wt=wt)
+        elif mode.lower() == "mass":
+            # normalize mass fractions
+            ierr, y = Mixture.normalize(frac=frac)
+        else:
+            # fraction type not given or incorrect
+            msg = [
+                Color.PURPLE,
+                'must specify "mole" or "mass" fractions given.',
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        # convert parameters to c pointers
+        chemset_index = ctypes.c_int(chemid)
+        pp = c_double(pres)
+        tt = c_double(temp)  # temperature scalar
+        yy = np.ctypeslib.as_array(y)  # mass fraction array
+        # compute speed of sound from mass fraction
+        ierr = ck_wrapper.chemkin.KINGetGasMixtureSoundSpeed(
+            chemset_index, pp, tt, yy, gamma, soundspeed
+        )
+        if ierr == 0:
+            return soundspeed.value
+        else:
+            # failed to compute mixture spedd of sound
+            msg = [
+                Color.PURPLE,
+                "failed to compute mixture speed of sound.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+    @staticmethod
     def rate_of_production(
         chemid: int,
         p: float,
@@ -1610,7 +2056,7 @@ class Mixture:
         eq_state._y_set = 0
         eq_state._massfrac[:] = 0.0e0
         # compute the equilibrium state (mass fraction for now)
-        eqvars, eq_state._massfrac = calculate_equilibrium(
+        _, eq_state._massfrac = calculate_equilibrium(
             self._chemset_index.value,
             p=eq_state.pressure,
             t=eq_state.temperature,
@@ -1714,6 +2160,171 @@ class Mixture:
                 mode="mass",
             )
             return cpbl
+        else:
+            # mixture composition is not provided
+            msg = [Color.PURPLE, "mixture composition is not provided.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+    def set_pressure_by_density(self, rho: float):
+        """Set the gas mixture pressure value."""
+        """
+        (Re)set the gas mixture pressure value by using the mixture density.
+
+        Parameters
+        ----------
+            rho: double
+                gas mixture density [g/cm3]
+        """
+        pressure = 0.0
+        # check temperature
+        if self._t_set == 0:
+            msg = [Color.PURPLE, "mixture temperature [K] is not provided.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        #
+        if self._x_set == 1:
+            # mixture mole fraction given
+            pressure = Mixture.calculate_pressure_from_density(
+                self._chemset_index.value,
+                rho=rho,
+                temp=self._temp,
+                frac=self._molefrac,
+                wt=self._wt,
+                mode="mole",
+            )
+        elif self._y_set == 1:
+            # mixture mass fraction given
+            pressure = Mixture.calculate_pressure_from_density(
+                self._chemset_index.value,
+                rho=rho,
+                temp=self._temp,
+                frac=self._massfrac,
+                wt=self._wt,
+                mode="mass",
+            )
+        else:
+            # mixture composition is not provided
+            msg = [Color.PURPLE, "mixture composition is not provided.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        # check pressure
+        if self._p_set != 0:
+            msg = [
+                Color.YELLOW,
+                "mixture pressure [dynes/cm2] will be overwritten.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
+        # initialize mixture pressure
+        self._p_set = 1
+        self.pressure = pressure
+        self._press = pressure
+
+    def thermicity(self) -> float:
+        """Get the total thermicity of the mixture."""
+        """
+        Get the total thermicity of the mixture.
+
+        Returns
+        -------
+            thermicity: double
+                mixture total thermicity [1/sec]
+        """
+        # initialization
+        thermicity = 0.0e0
+        # check temperature
+        if self._t_set == 0:
+            msg = [
+                Color.PURPLE,
+                "mixture temperature [K] is not provided.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        # get mixture density [g/cm3]
+        rho = self.rho
+        if self._x_set == 1:
+            # mixture mole fraction given
+            thermicity = Mixture.mixture_thermicity(
+                self._chemset_index.value,
+                pres=self._press,
+                temp=self._temp,
+                rho=rho,
+                frac=self._molefrac,
+                wt=self._wt,
+                mode="mole",
+            )
+            return thermicity
+        elif self._y_set == 1:
+            # mixture mass fraction given
+            thermicity = Mixture.mixture_thermicity(
+                self._chemset_index.value,
+                pres=self._press,
+                temp=self._temp,
+                rho=rho,
+                frac=self._massfrac,
+                wt=self._wt,
+                mode="mass",
+            )
+            return thermicity
+        else:
+            # mixture composition is not provided
+            msg = [Color.PURPLE, "mixture composition is not provided.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+    def sound_speed(self) -> float:
+        """Get the speed of sound of the mixture."""
+        """
+        Get the speed of sound of the mixture.
+
+        Returns
+        -------
+            soundspeed: double
+                mixture speed of sound [cm/sec]
+        """
+        # initialization
+        soundspeed = 0.0e0
+        # check temperature
+        if self._t_set == 0:
+            msg = [
+                Color.PURPLE,
+                "mixture temperature [K] is not provided.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        #
+        if self._x_set == 1:
+            # mixture mole fraction given
+            soundspeed = Mixture.mixture_sound_speed(
+                self._chemset_index.value,
+                pres=self._press,
+                temp=self._temp,
+                frac=self._molefrac,
+                wt=self._wt,
+                mode="mole",
+            )
+            return soundspeed
+        elif self._y_set == 1:
+            # mixture mass fraction given
+            soundspeed = Mixture.mixture_sound_speed(
+                self._chemset_index.value,
+                pres=self._press,
+                temp=self._temp,
+                frac=self._massfrac,
+                wt=self._wt,
+                mode="mass",
+            )
+            return soundspeed
         else:
             # mixture composition is not provided
             msg = [Color.PURPLE, "mixture composition is not provided.", Color.END]
@@ -2643,11 +3254,11 @@ class Mixture:
                 equivalence ratio of the final mixture (double scalar)
             threshold: double, optional, default = 1.0e-10
                 minimum species fraction value to be included in
-                he stoichiometric coefficient calculation
+                the stoichiometric coefficient calculation
 
         Returns
         -------
-            Error status: integer
+            error status: integer
 
         """
         # check chemistry set
@@ -2662,13 +3273,13 @@ class Mixture:
             exit()
         # convert mass fractions to mole fractions
         fuel_molefrac = Mixture.mass_fraction_to_mole_fraction(
-            massfrac=fuel_massfrac, wt=chemistryset.WT
+            massfrac=fuel_massfrac, wt=chemistryset.wt
         )
         oxid_molefrac = Mixture.mass_fraction_to_mole_fraction(
-            massfrac=oxid_massfrac, wt=chemistryset.WT
+            massfrac=oxid_massfrac, wt=chemistryset.wt
         )
         add_molefrac = Mixture.mass_fraction_to_mole_fraction(
-            massfrac=add_massfrac, wt=chemistryset.WT
+            massfrac=add_massfrac, wt=chemistryset.wt
         )
         # find the final mixture mole fractions and set the flags
         ierr = self.x_by_equivalence_ratio(
@@ -2881,8 +3492,195 @@ class Mixture:
             logger.info(this_msg)
             self.userealgas = True
 
+    def reset_composition(self):
+        """Reset all species fractions to 0."""
+        self._y_set = 0
+        self._massfrac[:] = 0.0e0
+        self._x_set = 0
+        self._molefrac[:] = 0.0e0
+
+    # surface chemistry (mixture mechanism contains surface mechanism)
+    def get_surf_specindex(self, symbol: str) -> tuple[int, int]:
+        """Get the index of the given surface/bulk species symbol."""
+        """
+        Get the index of the given surface site or bulk species symbol.
+
+        Parameters
+        ----------
+            symbol: string
+                surface site/bulk species symbol (case sensitive)
+
+        Returns
+        -------
+            global_index: integer
+                the global index of the surface species
+            local_index: integer
+                (0-based) species index of the phase
+        """
+        # get the surface species index
+        _, global_index, local_index = self.surface_chemistry.get_surf_specindex(symbol)
+        if global_index <= -1:
+            msg = [Color.PURPLE, "species symbol not found:", symbol, Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        else:
+            return global_index, local_index
+
+    def get_all_surface_temperature(self) -> npt.NDArray[np.double]:
+        """Get the temperatures of all materials in the mechanism."""
+        """
+        Get all surface temperatures of all surface materials
+        in the mechanism into a 1-D array.
+
+        Returns
+        -------
+            surf_temp: 1-D double array,
+                dimension=number of surface materials
+                material temperature [K]
+        """
+        # get total number of bulk species from all materials
+        n_material = self.surface_chemistry.number_materials
+        surf_temp = np.zeros(n_material, dtype=np.double)
+        m_list = self.surface_chemistry.get_material_names()
+        # loop over all surface materials
+        for k, mname in enumerate(m_list):
+            if self.surface_chemistry.check_material_temperature(mname) == 0:
+                # surface temperature is available
+                surf_temp[k] = self.surface_chemistry.get_material_temperature(mname)
+            else:
+                # use mixture gas temperature
+                surf_temp[k] = self.temperature
+        #
+        return surf_temp
+
+    def rop_surf(
+        self, mat_name: str
+    ) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
+        """Get species molar rate of production."""
+        """
+        Get species molar rate of production from the given mixture condition:
+        pressure, surface temperature, gas mixture composition, and surface coverage.
+
+        Parameters
+        ----------
+            mat_name: string
+                material name/symbol
+            pres: double
+                gas mixture pressure in [dynes/cm2]
+            surf_temp: double
+                surface temperature in [K]
+            molfrac: 1-D double array, dimension = number_gas_species
+                gas mixture composition in mole fractions
+
+        Returns
+        -------
+            rop_surf: 1-D double array, dimension = number_species
+                species molar rate of production in [mol/cm3-sec]
+            site_prodrate: 1-D double array, dimension = number of phases
+                surface site phase production rates in [mole/cm2-sec]
+        """
+        # get material temperature [K]
+        surf_temp = self.surface_chemistry.get_material_temperature(mat_name)
+        if surf_temp <= 0.0:
+            surf_temp = self.temperature
+        # compute (all) species rate of production (ROP)
+        # due to surface reactions [mole/cm2-sec]
+        rop_surf, site_prodrate = self.surface_chemistry.rop_surf(
+            mat_name, self.pressure, surf_temp, self.x
+        )
+        return rop_surf, site_prodrate
+
+    def rxnrates_surf(
+        self, mat_name: str
+    ) -> tuple[npt.NDArray[np.double], npt.NDArray[np.double]]:
+        """Get molar rates of the surface reactions."""
+        """
+        Get molar rates of the surface reactions from the given gas and
+        surface conditions: pressure, surface temperature, gas mixture composition,
+        and surface coverage.
+
+        Parameters
+        ----------
+            mat_name: string
+                material name/symbol
+            pres: double
+                gas mixture pressure in [dynes/cm2]
+            surf_temp: double
+                surface temperature in [K]
+            molfrac: 1-D double array, dimension = number of gas species
+                gas mixture composition in mole fractions
+
+        Returns
+        -------
+            k_forward: 1-D double array, dimension = number of surface reaction
+                forward molar rates of the reactions in [mol/cm2-sec]
+            k_reverse: 1-D double array, dimension = number of surface reaction
+                reverse molar rates of the reactions in [mol/cm2-sec]
+        """
+        # get material temperature [K]
+        surf_temp = self.surface_chemistry.get_material_temperature(mat_name)
+        if surf_temp <= 0.0:
+            surf_temp = self.temperature
+        # compute surface reaction rates [mole/cm2-sec]
+        k_forward, k_reverse = self.surface_chemistry.rxnrates_surf(
+            mat_name, self.pressure, surf_temp, self.x
+        )
+        return k_forward, k_reverse
+
 
 # mixture mixing
+def verify_mixture(this_mixture: Mixture) -> bool:
+    """Verify the Mixture is valid and active."""
+    """
+    Verify the Mixture is valid and active.
+
+    Parameters
+    ----------
+        this_mixture: Mixture object
+            the Mixture object to be verified
+
+    Returns
+    -------
+        status: boolean, {True, False}
+            flag indicating the Mixture is valid and active
+    """
+    # check mixture
+    if not isinstance(this_mixture, Mixture):
+        msg = [
+            Color.PURPLE,
+            "the argument must be a Mixture object.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        return False
+    ierr = this_mixture.validate()
+    if ierr != 0:
+        msg = [
+            Color.PURPLE,
+            "the mixture is not fully defined.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        return False
+    # check if the chemstry set is active
+    if not check_active_chemistryset(this_mixture.chemid):
+        msg = [
+            Color.PURPLE,
+            "the Chemistry Set associated with the Mixture is not currently active.\n",
+            Color.SPACEx6,
+            "activate Chemistry Set using the 'active()' method.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        return False
+    # OK
+    return True
+
+
 def isothermal_mixing(
     recipe: list[tuple[Mixture, float]], mode: str, finaltemperature: float
 ) -> Mixture:
@@ -3362,6 +4160,612 @@ def cal_mixture_temperature_from_enthalpy(
     return ierr
 
 
+def create_mixture_recipe_from_fractions(
+    chemistry_set: Chemistry, frac: npt.NDArray[np.double]
+) -> tuple[int, list[tuple[str, float]]]:
+    """Build a PyChemkin mixture recipe/formula from a species fraction array."""
+    """Build a PyChemkin mixture recipe/formula from a species fraction array
+    (i.e., mixture mole/mass composition).
+    This mixture recipe can then be used to create the corresponding Mixture object.
+
+    Parameters
+    ----------
+    chemistry_set: Chemistry object
+        the Chemistry object will be used to create the mixture
+    frac: double array
+        mole or mass fractions of the mixture
+
+    Returns
+    -------
+        count: integer
+            the size of the recipe list containing
+            [gas species, mole/mass fraction] tuples
+        recipe: list of tuples, [(species_symbol, fraction), ... ]
+            non-zero mixture composition corresponding to
+            the given mole/mass fraction array
+
+    """
+    # initialization
+    count = 0
+    recipe = []
+    # check Chemistry object
+    if not isinstance(chemistry_set, Chemistry):
+        msg = [
+            Color.PURPLE,
+            "the first argument must be a Chemistry object.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # check array size
+    numb_species = chemistry_set.kk
+    if len(frac) != numb_species:
+        msg = [
+            Color.PURPLE,
+            "the size of the fractions array does not match",
+            "the number of species in the chemistry set.\n",
+            "the fraction array size should be",
+            str(numb_species),
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # build the recipe from frac array
+    for k in range(numb_species):
+        if frac[k] > 0.0e0:
+            species_symbol = chemistry_set.ksymbol[k]
+            recipe.append((species_symbol, frac[k]))
+            count += 1
+    return count, recipe
+
+
+def calculate_stoichiometrics(
+    chemistryset: Chemistry,
+    fuel_molefrac: npt.NDArray[np.double],
+    oxid_molefrac: npt.NDArray[np.double],
+    prod_index: npt.NDArray[np.int32],
+) -> tuple[float, npt.NDArray[np.double]]:
+    """Calculate the stoichiometric coefficients."""
+    """Calculate the stoichiometric coefficients of the complete combustion reaction
+    of the given fuel and oxidizer mixtures.
+    Consider the complete combustion of the fuel + oxidizer mixture
+    ::
+        (fuel species) + alpha*(oxidizer species) <=>
+        nu(1)*prod(1) + ... + nu(numb_prod)*prod(numb_prod)
+
+    The number of unknowns is equal to the number of elements that make of
+    all the fuel and oxidizer species. And the number of product species
+    must be one less than the number of unknowns.
+    The unknowns
+    ::
+        alpha is the stoichiometric coefficient multiplier of the oxidizer species
+        nu(1), ... nu(numb_prod) are the stoichiometric coefficients
+        of the product species
+
+    The conservation of elements yields a set of linear algebraic equations
+    ::
+        A x = b
+    in which x = [ -alpha | nu(1), ...., nu(numb_prod) ]
+    (a vector of size numb_elem ) can be obtained.
+
+    Parameters
+    ----------
+        chemistryset: Chemistry object
+            the Chemistry object used to create the fuel and the oxidizer mixtures
+        fuel_molefrac: 1-D double array
+            mole fractions of the fuel mixture
+        oxid_molefrac: 1-D double array
+            mole fractions of the oxidizer mixture
+        prod_index: 1-D integer array
+            the species indices of the complete combustion products
+
+    Returns
+    -------
+        alpha: double
+            oxidizer_coefficient_multiplier
+        nu: 1-D double array
+            stoichiometric_coefficients_of_products
+
+    """
+    # check the Chemistry object
+    if not isinstance(chemistryset, Chemistry):
+        msg = [
+            Color.PURPLE,
+            "the first argument must be a Chemistry object.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # get the number of elements and the number of gas species from the chemistry set
+    numb_elem = chemistryset.mm
+    numb_species = chemistryset.kk
+    # find fuel species array size
+    kfuel = len(fuel_molefrac)
+    # find oxidizer array size
+    koxid = len(oxid_molefrac)
+    # check fuel composition array
+    if numb_species != kfuel:
+        msg = [
+            Color.PURPLE,
+            "the fuel species array size must be",
+            str(numb_species),
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # check oxidizer composition array
+    if numb_species != koxid:
+        msg = [
+            Color.PURPLE,
+            "the oxidizer species array size must be",
+            str(numb_species),
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # find number of product species
+    numb_prod = len(prod_index)
+    # find fuel species index and count
+    _, fuel_index = _nonzero_element_in_array_1d(fuel_molefrac)
+    # find oxidizer species index and count
+    _, oxid_index = _nonzero_element_in_array_1d(oxid_molefrac)
+    # the same species cannot be fuel and oxidizer at the same time
+    for i in oxid_index:
+        j, _ = where_element_in_array_1d(fuel_index, i)
+        if j != 0:
+            msg = [
+                Color.YELLOW,
+                "species",
+                chemistryset.ksymbol[i],
+                "is in both the fuel and the oxidizer mixtures.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
+
+    # find the actual number of elements in fuel and oxidizer
+    elem_tally = np.zeros(numb_elem, dtype=np.int32)
+    # elements in the fuel species
+    for k in fuel_index:
+        for m in range(numb_elem):
+            elem_count = chemistryset.species_composition(m, k)
+            if elem_count > 0:
+                elem_tally[m] += elem_count
+    # elements in the oxidizer species
+    for k in oxid_index:
+        for m in range(numb_elem):
+            elem_count = chemistryset.species_composition(m, k)
+            if elem_count > 0:
+                elem_tally[m] += elem_count
+    numb_coreelem, coreelem_index = _nonzero_element_in_array_1d(elem_tally)
+    # check the number of product species
+    if numb_prod != (numb_coreelem - 1):
+        msg = [
+            Color.PURPLE,
+            "the number of product species must be",
+            str(numb_coreelem - 1),
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    else:
+        # check product elements
+        # find elements in product species
+        elem_prod = np.zeros(numb_elem, dtype=np.int32)
+        for k in prod_index:
+            for m in range(numb_elem):
+                elem_count = chemistryset.species_composition(m, k)
+                if elem_count > 0:
+                    elem_prod[m] += elem_count
+        numb_prodelem, prodelem_index = _nonzero_element_in_array_1d(elem_prod)
+        # check elements in the products and in the fuel and oxidzer mixtures
+        elname = ""
+        if numb_prodelem == numb_coreelem:
+            for m in prodelem_index:
+                if m not in coreelem_index:
+                    elname = chemistryset.element_symbols[m]
+                    msg = [
+                        Color.PURPLE,
+                        "element",
+                        elname,
+                        "in products is not in fuel or oxidizer mixtures.",
+                        Color.END,
+                    ]
+                    this_msg = Color.SPACE.join(msg)
+                    logger.error(this_msg)
+                    exit()
+        else:
+            msg = [
+                Color.PURPLE,
+                "the number of product elements must be the same",
+                "as the number of elements in fuel and oxidizer\n",
+                Color.SPACEx6,
+                "the number of elements in products:",
+                str(numb_prodelem),
+                "\n",
+                Color.SPACEx6,
+                "the number of elements in the fuel and the oxidizer:",
+                str(numb_coreelem),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+    # create arrays of the linear algebraic system
+    a = np.zeros((numb_coreelem, numb_coreelem), dtype=np.double)
+    b = np.zeros(numb_coreelem, dtype=np.double)
+    # construct the (numb_coreelem x 1) b array on the right-hand side
+    # b = [SUM_k(NCF(1,k)*fuel_molefrac(k)), ...
+    # SUM_k(NCF(numb_elem,k)*fuel_molefrac(k))]
+    for m in range(numb_coreelem):
+        b[m] = 0.0e0
+        this_elem = coreelem_index[m]
+        for k in range(numb_species):
+            elem_count = chemistryset.species_composition(this_elem, k)
+            b[m] += elem_count.astype(np.double) * fuel_molefrac[k]
+            # first column of A[1:numb_coreelem, 1]
+            a[m][0] += elem_count.astype(np.double) * oxid_molefrac[k]
+    # construct the sub-matrix on the right of A[1:numb_coreelem, 2:numb_prod]
+    for m in range(numb_coreelem):
+        this_elem = coreelem_index[m]
+        for k in range(numb_prod):
+            k_prod = prod_index[k]
+            a[m][k + 1] = chemistryset.species_composition(this_elem, k_prod)
+    # solve the linear system: A x = b
+    x = np.linalg.solve(a, b)
+    alpha = -x[0]
+    nu = x[1:numb_coreelem]
+    return alpha, nu
+
+
+def species_diffusion_velocity(
+    mixture_a: Mixture,
+    mixture_b: Mixture,
+    mode: str = "mix",
+    tdiff: bool = True,
+) -> npt.NDArray[np.double]:
+    """Compute species diffusive velocities between two gas mixtures."""
+    """
+    Compute species diffusive velocities between two gas mixtures.
+    In this case, the (positive) species diffusion velocities computed
+    are going in the direction from the mixture A to the mixture B.
+    To compute the actual diffusion velocities, divide the values [cm2/sec]
+    returned from this method by the "actual" distance [cm] separating the
+    two mixtures. The Chemistry Set must contain the preprocessed
+    transport data.
+
+    Consider mixture A is the gas mixture at grid point (J+1), and mixture B
+    at grid point J.
+    The actual species diffusion velocities should be -VY(k) / (X(J+1) - X(J)).
+
+    Parameters
+    ----------
+        mixture_a: Mixture object
+            "source" mixture
+        mixture_b: Mixture object
+            "target" mixture
+        mode: string, {"mix", "multi"}, default = "mix"
+            transport formulation
+        tdiff: boolean, {True, False}, default = True
+            to include species thermal diffusion (Soret) effect in
+            the species diffusion fluxe calculation
+
+    Returns
+    -------
+        v_y: 1-D double array, dimension = number of gas species
+            species diffusion velocities (Y(k) * V(k)) [cm2/sec] from mixture A
+            to mixture B separating by a distance of 1 [cm].
+            A positive YV indicates the species diffusion flux is going out of
+            mixture A and is heading towards mixture B
+    """
+    # check mixtures
+    if not verify_mixture(mixture_a):
+        exit()
+    #
+    if not verify_mixture(mixture_b):
+        exit()
+    # check chemistry sets
+    if mixture_a.chemid != mixture_b.chemid:
+        msg = [
+            Color.PURPLE,
+            "the Mixtures belong to different Chemistry Sets.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # check transport data
+    if mixture_a.transport_data == 0:
+        msg = [
+            Color.PURPLE,
+            "the Chemistry Set associated with the Mixtures",
+            "does not contain transport data.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # number of species
+    nspecies = mixture_a.kk
+    # species molecular weight [g/mol]
+    wt = mixture_a.wt
+    # find the averaged mixtue of the two mixtures
+    mixture_ave = interpolate_mixtures(mixture_a, mixture_b, ratio=0.5)
+    # mixture mean molecular weight [g/mol]
+    wtm_ave = mixture_ave.wtm
+    # species concentration gradients
+    dc_ab = np.zeros(nspecies, dtype=np.double)
+    # species diffusion flux from mixture A to mixture B
+    # YVk = Yk * Vk
+    # mass fraction of species k: Yk
+    # diffusion velocity [cm2/sec] of species k:
+    # Vk = Dm(k) * WT(k) * (X_A(k) - X_B(k)) / WTM
+    v_y = np.zeros_like(dc_ab, dtype=np.double)
+    for k in range(nspecies):
+        dc_ab[k] = (mixture_a.x[k] - mixture_b.x[k]) * wt[k] / wtm_ave
+    # check transport property formulation
+    if mode.lower() == "multi":
+        # use multi-component method to evaluate the diffusion coefficients
+        # Dkj[k][j] [cm2/sec] is a 2-D array
+        d_kj = mixture_ave.mixture_binary_diffusion_coeffs()
+        for k in range(nspecies):
+            sum_flux = 0.0
+            for j in range(nspecies):
+                sum_flux += d_kj[k][j] * dc_ab[j]
+            v_y[k] = -wt[k] * sum_flux / wtm_ave
+        # clean up
+        del d_kj
+    else:
+        # use mixture average method to evaluate the diffusion coefficients
+        # Dkm[k] [cm2/sec] is a 1-D array
+        d_km = mixture_ave.mixture_diffusion_coeffs()
+        for k in range(nspecies):
+            v_y[k] = d_km[k] * dc_ab[k]
+        # clean up
+        del d_km
+    # include thermal diffusion flux?
+    if tdiff:
+        # DTk [g/cm-sec] is a 1-D array
+        # thermal diffusion velocity [cm2/sec] of species k:
+        # Wk = -DTk(k) * (T_A - T_B) / T_ave / rho_ave
+        dt_k = mixture_ave.mixture_thermal_diffusion_coeffs()
+        rho_ave = mixture_ave.rho
+        temp_ave = mixture_ave.temperature
+        delta_temp = mixture_a.temperature - mixture_b.temperature
+        factor = delta_temp / temp_ave / rho_ave
+        for k in range(nspecies):
+            v_y[k] += dt_k[k] * factor
+        # clean up
+        del dt_k
+
+    # clean up
+    del dc_ab, wt, mixture_ave
+    #
+    return v_y
+
+
+def mixing_by_exchange_with_the_mean(
+    mixture_a: Mixture,
+    mixture_b: Mixture,
+    mix_time: float,
+    mix_param: float,
+    tau: float,
+) -> tuple[Mixture, Mixture]:
+    """Mix two mixtures of the same mass using the IEM model."""
+    """
+    Mix two mixtures of the same mass with a given mixing duration time
+    based on the Interaction-by-Exchange-with-the-Mean (IEM) model.
+    The characteristic time constant, tau, controls the extent of the mixing.
+    When tau ~ 0, no mixing takes place. When tau ~ infinity, the two mixtures
+    will be instantly incorporated at the molecular level and the two final mixtures
+    will be identical. An example of this characteristic mixing time scale is
+    the large eddy turnover time. The IEM model parameter normally has a value
+    around 1.
+
+    Parameters
+    ----------
+        mixture_a: Mixture object
+            gas mixture to be mixed
+        mixture_b: Mixture object
+            gas mixture to be mixed
+        mix_time: double
+            mixing duration [sec]
+        mix_param: double
+            IEM model parameter [-]
+        tau: double
+            characteristic mixing time scale [sec]
+
+    Returns
+    -------
+        mixture_a_new: Mixture object
+            the new state of mixture A after the mixing
+        mixture_b_new: Mixture object
+            the new state of mixture B after the mixing
+    """
+    # check mixtures
+    if not verify_mixture(mixture_a):
+        exit()
+    #
+    if not verify_mixture(mixture_b):
+        exit()
+    # check chemistry sets
+    if mixture_a.chemid != mixture_b.chemid:
+        msg = [
+            Color.PURPLE,
+            "the Mixtures belong to different Chemistry Sets.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # check the mixing duration time
+    if mix_time < 1.0e-10:
+        msg = [
+            Color.PURPLE,
+            "mixture mixing duration must > 0.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # check the IEM mxing model parameter
+    if mix_param < 1.0e-10:
+        msg = [
+            Color.PURPLE,
+            "mixing model parameter must > 0.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # check the characteristic mixing time scale
+    if tau < 1.0e-10:
+        msg = [
+            Color.PURPLE,
+            "mixing time scale must > 0.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # find the average mixtue of the two mixtures
+    mixture_ave = interpolate_mixtures(mixture_b, mixture_a, ratio=0.5)
+    # compute mixing vector
+    factor = -mix_param * mix_time / tau / 2.0e0
+    mix_v = np.exp(factor)
+    # compute the new states of the two mixtures
+    # mixture A
+    mixture_a_new = interpolate_mixtures(mixture_ave, mixture_a, mix_v)
+    # mixture B
+    mixture_b_new = interpolate_mixtures(mixture_ave, mixture_b, mix_v)
+    # clean up
+    del mixture_ave
+    #
+    return mixture_a_new, mixture_b_new
+
+
+def calculate_mass_weighted_mean_mixture(
+    mixtures: list[Mixture], masses: Union[list[float], None] = None
+) -> Mixture:
+    """Calculate the mass-weighted mean mixture from a list of mixtures."""
+    """
+    Calculate the mass-weighted mean mixture from a list of mixtures.
+
+    Parameters
+    ----------
+        mixtures: list of Mixture objects
+            list of mixtures from which the mean mixture will be determined
+        masses: list of doubles, optional
+            mass ratios of the mixtures
+
+    Returns
+    -------
+        mean_mixture: Mixture object
+            the mass weighted mean mixture
+    """
+    #
+    if not isinstance(mixtures[0], Mixture):
+        msg = [
+            Color.PURPLE,
+            "the mixtures list must contain,",
+            "Mixture objects.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    if masses is None:
+        # use the actual mixture masses to create the masses list
+        masses = []
+        for m in mixtures:
+            masses.append(m.rho * m.volume)
+    else:
+        # check list lengths
+        if len(mixtures) != len(masses):
+            msg = [
+                Color.PURPLE,
+                "the mixtures list must have the same,",
+                "length as the masses list.\n",
+                Color.SPACEx6,
+                "mixture list length =",
+                str(len(mixtures)),
+                "\n",
+                Color.SPACEx6,
+                "masses list length =",
+                str(len(masses)),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
+    # create the mean mixture object
+    mean_mixture = copy.deepcopy(mixtures[0])
+    # total mass
+    total_mass = 0.0e0
+    mean_h = 0.0e0
+    mean_y = np.zeros_like(mean_mixture.y, dtype=np.double)
+    #
+    id = 0
+    for m in mixtures:
+        if m.pressure != mean_mixture.pressure:
+            msg = [
+                Color.PURPLE,
+                "the mixtures must have the same pressure,",
+                "mixture",
+                str(id),
+                "has a different value =",
+                str(m.pressure / P_ATM),
+                "[atm].",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        # compute mean values
+        this_mass = masses[id]
+        mean_h += m.hml() * this_mass / m.wtm
+        this_y = m.y
+        this_y[:] *= this_mass
+        mean_y += this_y
+        total_mass += this_mass
+        id += 1
+    # normalization
+    mean_h /= total_mass
+    mean_y[:] /= total_mass
+    # update the species mass fractions of the mean mixture
+    mean_mixture.reset_composition()
+    mean_mixture.y = mean_y
+    # convert to molar enthalpy [erg/mol]
+    mean_h *= mean_mixture.wtm
+    # set the guessed temperature
+    t_guessed = mean_mixture.temperature
+    ierr = cal_mixture_temperature_from_enthalpy(
+        mixture=mean_mixture, h_mixture=mean_h, guesstemperature=t_guessed
+    )
+    if ierr != 0:
+        msg = [
+            Color.PURPLE,
+            "failed to determine the mean mixture temperature,",
+            "error code =",
+            str(ierr),
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.error(this_msg)
+        exit()
+    # if the masses list is assigned, the mean mixture volume
+    # is not clearly defined here
+    mean_mixture.volume = total_mass / mean_mixture.rho
+    return mean_mixture
+
+
 def interpolate_mixtures(
     mixtureleft: Mixture, mixtureright: Mixture, ratio: float
 ) -> Mixture:
@@ -3388,44 +4792,10 @@ def interpolate_mixtures(
 
     """
     # check mixtures
-    if not isinstance(mixtureleft, Mixture):
-        msg = [
-            Color.PURPLE,
-            "the first argument must be a Mixture object.",
-            Color.END,
-        ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
-        exit()
-    ierr = mixtureleft.validate()
-    if ierr != 0:
-        msg = [
-            Color.PURPLE,
-            "the first mixture is not fully defined.",
-            Color.END,
-        ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
+    if not verify_mixture(mixtureleft):
         exit()
     #
-    if not isinstance(mixtureright, Mixture):
-        msg = [
-            Color.PURPLE,
-            "the second argument must be a Mixture object.",
-            Color.END,
-        ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
-        exit()
-    ierr = mixtureright.validate()
-    if ierr != 0:
-        msg = [
-            Color.PURPLE,
-            "the second mixture is not fully defined.",
-            Color.END,
-        ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
+    if not verify_mixture(mixtureright):
         exit()
     # check ratio
     if ratio < 0.0e0 or ratio > 1.0e0:
@@ -3521,44 +4891,10 @@ def compare_mixtures(
 
     """
     # check mixtures
-    if not isinstance(mixture_a, Mixture):
-        msg = [
-            Color.PURPLE,
-            "the first argument must be a Mixture object.",
-            Color.END,
-        ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
-        exit()
-    ierr = mixture_a.validate()
-    if ierr != 0:
-        msg = [
-            Color.PURPLE,
-            "the first mixture is not fully defined.",
-            Color.END,
-        ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
+    if not verify_mixture(mixture_a):
         exit()
     #
-    if not isinstance(mixture_b, Mixture):
-        msg = [
-            Color.PURPLE,
-            "the second argument must be a Mixture object.",
-            Color.END,
-        ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
-        exit()
-    ierr = mixture_b.validate()
-    if ierr != 0:
-        msg = [
-            Color.PURPLE,
-            "the second mixture is not fully defined.",
-            Color.END,
-        ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
+    if not verify_mixture(mixture_b):
         exit()
     # check chemistry sets
     if mixture_a.chemid != mixture_b.chemid:

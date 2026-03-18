@@ -18,6 +18,10 @@ def pytest_addoption(parser):
             "PFR",
             "PSR",
             "ERN",
+            "premixed",
+            "opposed",
+            "shock",
+            "surface",
             "",
         ),
         default="all",
@@ -56,8 +60,9 @@ def pytest_configure(config):
 
 
 def pytest_runtest_setup(item):
-    """Skip PyChemkin test groups that is not specified by the '--group' option."""
+    """Specify options to PyChemkin test."""
     """
+    Run the PyChemkin test group that is specified by the '--group' option.
     By default, pytest will run all test groups (i.e., --group="all").
     """
     # run group if option "--group" is given and the group name appears
@@ -81,6 +86,10 @@ def pytest_collection_modifyitems(items):
         "TestClassPFR",
         "TestClassPSR",
         "TestClassERN",
+        "TestClassPremixed",
+        "TestClassOpposedFlame",
+        "TestClassShockTube",
+        "TestClassSurface",
         "TestCompareResults",
     ]
     class_mapping = {item: item.cls.__name__ for item in items}
@@ -96,6 +105,7 @@ def pytest_collection_modifyitems(items):
 @pytest.fixture
 def get_compare(request):
     """Get comparison options."""
+    """Perform baseline comparison when this option is given."""
     return request.config.getoption("--compare")
 
 

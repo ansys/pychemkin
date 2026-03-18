@@ -32,7 +32,7 @@ import yaml
 from ansys.chemkin.core.color import Color
 from ansys.chemkin.core.logger import logger
 
-CKdict = {}  # chemkin hints
+ck_dict = {}  # chemkin hints
 _help_loaded = False
 
 
@@ -45,19 +45,19 @@ def setup_hints():
     help_file = Path(_chemkin_resources_dir) / "ChemkinKeywordTips.yaml"
     global _help_loaded
     if not _help_loaded:
-        global CKdict
+        global ck_dict
         # load Chemkin keyword dictionary from the YAML file
         with Path.open(help_file, "r") as hints:
-            CKdict = yaml.safe_load(hints)
+            ck_dict = yaml.safe_load(hints)
             _help_loaded = True
 
 
 def clear_hints():
     """Clear the Chemkin keyword data."""
     global _help_loaded
-    global CKdict
+    global ck_dict
     if _help_loaded:
-        CKdict.clear()
+        ck_dict.clear()
 
 
 def keyword_hints(mykey: str):
@@ -71,8 +71,8 @@ def keyword_hints(mykey: str):
 
     """
     # look up the keyword
-    global CKdict
-    key = CKdict.get(mykey.upper())
+    global ck_dict
+    key = ck_dict.get(mykey.upper())
     if key is not None:
         # fetch the information about the keyword
         description, default, unit = key.values()
@@ -99,14 +99,14 @@ def phrase_hints(phrase: str):
     """
     # initialization
     keys = []
-    global CKdict
+    global ck_dict
     # search to find keyword descriptions that contain the phrase
-    for s in CKdict.values():
+    for s in ck_dict.values():
         if phrase.lower() in s.get("Description"):
             # get the dictionary index
-            k = list(CKdict.values()).index(s)
+            k = list(ck_dict.values()).index(s)
             # put the corresponding keywords into a candidate list
-            keys.append(list(CKdict.keys())[k])
+            keys.append(list(ck_dict.keys())[k])
     # show the hints for all candidate keywords
     if len(keys) > 0:
         for this_key in keys:
@@ -247,7 +247,7 @@ def show_realgas_usage():
     print(
         "       to activate the real-gas cubic EOS in mixture property calculation, use"
     )
-    print("              <mixture_object>.use_realgas_cubicEOS()")
+    print("              <mixture_object>.use_realgas_cubic_eos()")
     print("       to select the mixing rule after the real-gas EOS is activated, use")
     print("              <mixture_object>.set_realgas_mixing_rule(rule)")
     print("              rule is the mixing rule option:")
@@ -266,9 +266,9 @@ def show_realgas_usage():
 def show_equilibrium_options():
     """Show the equilibrium calculation usage and options."""
     print(Color.YELLOW + "** equilibrium calculation usage: ")
-    print("      EQ_mixture = ansys.chemkin.core.equilibrium(INIT_mixture, opt)")
-    print("      INIT_mixture is the initial mixture (object)")
-    print("      EQ_mixture is the final/equilibrium mixture (object)")
+    print("      eq_mixture = <mixture_object>.equilibrium(init_mixture, opt)")
+    print("      init_mixture is the initial mixture (object)")
+    print("      eq_mixture is the final/equilibrium mixture (object)")
     print("      opt is the equilibrium calculation option: ")
     print("           1: SPECIFIED T AND P (default)")
     print("           2: SPECIFIED T AND V")
@@ -277,9 +277,9 @@ def show_equilibrium_options():
     print("           7: SPECIFIED V AND U")
     print("           8: SPECIFIED V AND H")
     print("** Chapman-Jouguet detonation calculation usage:")
-    print("      speed_list, CJ_mixture = ansys.chemkin.core.detonation(INIT_mixture)")
-    print("      INIT_mixture is the initial mixture (object)")
-    print("      CJ_mixture is the C-J state mixture (object)")
+    print("      speed_list, cj_mixture = <mixture_object>.detonation(init_mixture)")
+    print("      init_mixture is the initial mixture (object)")
+    print("      cj_mixture is the C-J state mixture (object)")
     print("      speed_list is a list consists of two speed values at the C-J state: ")
     print(
         "           [sound_speed, detonation_wave_speed] in cm/sec",
@@ -295,7 +295,8 @@ def show_ignition_definitions():
     print("    1: 'T_inflection'")
     print("    2: 'T_rise', <val>")
     print("    3: 'T_ignition', <val>")
-    print("    4: 'Species_peak', '<target species>'", end=Color.END)
+    print("    4: 'Species_peak', '<target species>'")
+    print("    5: 'Thermicity_peak'", end=Color.END)
 
 
 def manuals():

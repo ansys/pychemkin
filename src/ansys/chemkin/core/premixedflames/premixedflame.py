@@ -76,7 +76,7 @@ class PremixedFlame(Flame):
         # constant
         self._final_mass_flow_rate = -1.0
 
-    def set_inlet(self, extinlet: Stream):
+    def set_inlet(self, extinlet: Union[Stream, None] = None):
         """Add an external inlet to the reactor."""
         """
         Add an external inlet to the reactor.
@@ -95,6 +95,7 @@ class PremixedFlame(Flame):
         ]
         this_msg = Color.SPACE.join(msg)
         logger.error(this_msg)
+        _ = extinlet
         exit()
 
     def unburnt_temperature(self, temperature: float):

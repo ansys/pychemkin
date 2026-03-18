@@ -12,7 +12,6 @@ Install prerequisites
 
 .. note:: Using the latest Ansys Chemkin version is highly recommended.
 
-.. _Ansys Chemkin: https://www.ansys.com/products/fluids/ansys-chemkin-pro
 .. _Python: https://www.python.org/downloads/windows/
 .. _NumPy: https://numpy.org/install
 .. _PyYAML: https://pypi.org/project/PyYAML/

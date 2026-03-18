@@ -146,3 +146,6 @@ air.list_composition(mode="mass")
 print(f"Mixture density   = {air.rho} [g/cm3]")
 # get 'air' mixture viscosity [g/cm-sec] or [poise]
 print(f"Mixture viscosity = {air.mixture_viscosity() * 100.0} [cP]")
+
+# clean up
+ansys.chemkin.core.done()

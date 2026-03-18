@@ -254,7 +254,7 @@ flatflame.set_solution_quality(gradient=0.1, curvature=0.1)
 #
 # - **Mixture averaged**
 # - **Multi-component**
-# - **Constant Lewis number
+# - **Constant Lewis number**
 #
 # When the system pressure is not too low, the mixture averaged method should
 # be adequate. The multi-component method, although it is slightly more accurate,
@@ -416,6 +416,10 @@ plt.subplot(224)
 plt.plot(mesh, condprofile, "m-")
 plt.xlabel("Distance [cm]")
 plt.ylabel("Mixture conductivity [W/m-K]")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

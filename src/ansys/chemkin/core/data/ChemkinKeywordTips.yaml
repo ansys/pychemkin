@@ -193,6 +193,10 @@ KLIM:
     Description: 'ignition defined as the gas species specified reaches its peak value'
     DefaultValue: 'none none'
     Units: 'none none'
+SLIM:
+    Description: 'ignition defined as the total thermicity reaches its peak value'
+    DefaultValue: 'none'
+    Units: 'none'
 DTIGN:
     Description: 'ignition defined as when temperature increase exceeds the specified value'
     DefaultValue: 'none'

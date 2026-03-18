@@ -92,7 +92,7 @@ import time
 
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
-from ansys.chemkin.core.hybridreactornetwork import ReactorNetwork as ERN
+from ansys.chemkin.core.hybridreactornetwork import ReactorNetwork as Ern
 from ansys.chemkin.core.inlet import Mixture
 from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.core.logger import logger
@@ -289,7 +289,7 @@ recirculation.residence_time = 1.5 * 1.0e-3
 #
 
 # instantiate the PSR network as a hybrid reactor network
-PSRnetwork = ERN(MyGasMech)
+PSRnetwork = Ern(MyGasMech)
 
 # add the reactors from upstream to downstream
 PSRnetwork.add_reactor(mix)
@@ -448,3 +448,6 @@ for index, stream in PSRnetwork.reactor_solutions.items():
     print(f"CO = {stream.x[co_index]}.")
     print(f"NO = {stream.x[no_index]}.")
     print("-" * 10)
+
+# clean up
+ck.done()

@@ -147,7 +147,7 @@ print("=" * 40)
 # ============================
 # Use the ``Y()`` method to automatically convert the mole fractions
 # to mass fractions and vice versa. Use the ``list_composition()`` method
-# to displayonly the non-zero components of the gas mixture.
+# to display only the non-zero components of the gas mixture.
 
 print("mixture mass fractions (raw data):")
 print(str(premixed.y))
@@ -255,6 +255,10 @@ for j in range(len(press)):
 
 # plot legends
 plt.legend(("1 atm", "5 atm", "10 atm"), loc="upper left")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()
