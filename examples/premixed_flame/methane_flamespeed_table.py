@@ -22,9 +22,9 @@
 
 r""".. _ref_flame_speed_table:
 
-=============================================================================
-Construct atmospheric  methane-air flame speed versus equivalence ratio table
-=============================================================================
+============================================================================
+Construct atmospheric methane-air flame speed versus equivalence ratio table
+============================================================================
 
 One of the prevailing use case of the *freely propagating premixed flame* model is
 to build a *flame speed* table to be imported by another combustion simulation tools.
@@ -346,6 +346,10 @@ plt.plot(equival, flamespeed, label=MyGasMech.label, linestyle="-", color="blue"
 plt.legend()
 plt.ylabel("Flame Speed [cm/sec]")
 plt.xlabel("Equivalence Ratio")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

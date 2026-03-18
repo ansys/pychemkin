@@ -91,8 +91,8 @@ thistemperature = 298.15
 # ==================================
 # Because the thermodynamic data (mainly the enthalpy) of both the vapor and the
 # liquid water are available in the standard thermodynamic data file ``therm.dat``
-# that comes with the Ansys Chemkin in the *reaction/data* directory, you can
-#  in theory, compute the water heat of vaporization at a given temperature
+# that comes with the Ansys Chemkin in the *reaction/data* directory, you can,
+# in theory, compute the water heat of vaporization at a given temperature
 # by finding the enthalpy difference between the water vapor and
 # its liquid counterpart. In the ``getwaterheatofvaporization`` method,
 # a mechanism with just the water vapor ``H2O`` and the liquid water ``H2O(L)``
@@ -401,3 +401,4 @@ del hhv, lhv
 del fuel, oxid, unburned, burned
 # delete the local mechanism file just created
 Path(mymechfile).unlink()
+ck.done()

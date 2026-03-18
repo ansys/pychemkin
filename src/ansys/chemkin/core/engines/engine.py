@@ -27,6 +27,7 @@ from ctypes import c_double, c_int
 from typing import Union
 
 import numpy as np
+import numpy.typing as npt
 
 from ansys.chemkin.core import chemkin_wrapper
 from ansys.chemkin.core.batchreactors.batchreactor import BatchReactors
@@ -126,6 +127,11 @@ class Engine(BatchReactors):
         ]
         # add engine specific keywords
         Keyword._protectedkeywords.extend(self._requiredlist)
+        # raw solution data structure
+        # GasHRR: heat release rate [erg/sec] due to gas-phase chemsitry
+        # GasHeatRelease: accumulated heat release [erg] due to gas-phase chemistry
+        self._solution_tags.append("gashrr")
+        self._solution_tags.append("gasheatrelease")
 
     @staticmethod
     def convert_ca_to_time(ca: float, start_ca: float, rpm: float) -> float:
@@ -233,6 +239,29 @@ class Engine(BatchReactors):
         """
         return self.ivc_ca + time * self.degpersec
 
+    def convert_time_array_to_ca(
+        self, time_array: npt.NDArray[np.double]
+    ) -> npt.NDArray[np.double]:
+        """Convert time array to crank angle array."""
+        """
+        Convert time array to crank angle array.
+
+        Parameters
+        ----------
+            time_array: 1-D double array
+                time points [sec]
+
+        Returns
+        -------
+            ca_array: 1-D double array
+                crank angles [degrees]
+        """
+        #
+        ca_array = np.zeros_like(time_array, dtype=np.double)
+        for i, t in enumerate(time_array):
+            ca_array[i] = self.get_ca(t)
+        return ca_array
+
     @property
     def starting_ca(self) -> float:
         """Get the simulation starting crank angle."""
@@ -266,6 +295,7 @@ class Engine(BatchReactors):
         """
         # set IVC timing in CA
         self.ivc_ca = start_ca
+        self.runduration_ca = self.ending_ca - self.ivc_ca
         # set keyword
         self._inputcheck.append("DEG0")
 
@@ -322,10 +352,11 @@ class Engine(BatchReactors):
 
         Returns
         -------
-            CA: double
+            ca: double
                 simulation duration in crank angles [degree]
 
         """
+        self.runduration_ca = self.evo_ca - self.ivc_ca
         return self.runduration_ca
 
     @duration_ca.setter
@@ -346,11 +377,20 @@ class Engine(BatchReactors):
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
             exit()
-        # set EVO timing in CA
+        # set IVC/EVO timing in CA
         self.runduration_ca = ca
-        self.evo_ca = self.ivc_ca + ca
-        # set keyword
-        self._inputcheck.append("DEGE")
+        if "DEG0" in self._inputcheck:
+            # IVC is given
+            # reset EVO
+            self.evo_ca = self.ivc_ca + ca
+            # set keyword
+            self._inputcheck.append("DEGE")
+        else:
+            # EVOCA is given
+            # reset IVC
+            self.ivc_ca = self.evo_ca - ca
+            # set keyword
+            self._inputcheck.append("DEG0")
 
     @property
     def bore(self) -> float:
@@ -668,6 +708,55 @@ class Engine(BatchReactors):
         print(f"engine speed          = {self.enginespeed} [RPM]")
         print(f"IVC crank angle       = {self.ivc_ca} [degree]")
         print(f"EVO crank angle       = {self.evo_ca} [degree]")
+
+    @property
+    def max_ca_step(self) -> float:
+        """Get the max solver step size in crank angles."""
+        """
+        Get the maximum number of crank angles the transient solver can advance.
+
+        Returns
+        -------
+            delta_ca: double
+                solver maximum crank angles [degree]
+        """
+        if "DTDEG" in self._keyword_index:
+            # defined: find index
+            i = self._keyword_index.index("DTDEG")
+            return self._keyword_list[i].value
+        else:
+            # return default value (100th of the simulation duration)
+            if self.runduration_ca > 0.0e0:
+                return self.runduration_ca / 1.0e2
+            else:
+                # not defined yet
+                msg = [
+                    Color.PURPLE,
+                    "solver max CA is not defined",
+                    "because the 'ending CA' is not set.",
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+                return 0.0
+
+    @max_ca_step.setter
+    def max_ca_step(self, delta_ca: float):
+        """Set the max solver step size in crank angles."""
+        """
+        Set the number of maximum crank angles the transient solver can advance.
+
+        Parameters
+        ----------
+            delta_ca: double
+                solver maximum number crank angles [degree]
+        """
+        if delta_ca > 0.0e0:
+            self.setkeyword(key="DTDEG", value=delta_ca)
+        else:
+            msg = [Color.PURPLE, "max solver CA step size must > 0.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
 
     @property
     def ca_step_for_saving_solution(self) -> float:
@@ -1132,7 +1221,7 @@ class Engine(BatchReactors):
             logger.error(this_msg)
             exit()
 
-    def process_engine_solution(self, zone_id: Union[int, None] = None):
+    def process_engine_solution(self, zone_id: Union[int, None] = None) -> int:
         """Post-process solution."""
         """Post-process solution to extract the raw solution variable data from
         engine simulation results.
@@ -1140,9 +1229,14 @@ class Engine(BatchReactors):
         Parameters
         ----------
             zone_id: integer
-                zone index
+                (1-base) zone index
 
+        Returns
+        -------
+            status: integer
+                error code
         """
+        ierr = 0
         # check existing raw data
         if self.getrawsolutionstatus():
             msg = [
@@ -1176,6 +1270,7 @@ class Engine(BatchReactors):
             ]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
+            ierr = 1
             if self._nreactors > 1:
                 msg = [
                     Color.YELLOW,
@@ -1187,7 +1282,7 @@ class Engine(BatchReactors):
                 ]
                 this_msg = Color.SPACE.join(msg)
                 logger.info(this_msg)
-            exit()
+            return ierr
         elif zone_id > self._nreactors:
             msg = ["Cylinder-averaged Solution"]
             Color.ckprint("info", msg)
@@ -1199,7 +1294,8 @@ class Engine(BatchReactors):
         nreac, npoints = self.get_engine_solution_size(expectedzones)
 
         if npoints == 0 or nreac != expectedzones:
-            raise ValueError
+            ierr = 10
+            return ierr
         else:
             self._numbsolutionpoints = npoints
         # create arrays to hold the raw solution data
@@ -1234,7 +1330,8 @@ class Engine(BatchReactors):
             ]
             this_msg = Color.SPACE.join(msg)
             logger.critical(this_msg)
-            exit()
+            ierr = 2
+            return ierr
         # store the raw solution data in a dictionary
         # time
         self._solution_rawarray["time"] = copy.deepcopy(time)
@@ -1246,7 +1343,29 @@ class Engine(BatchReactors):
         self._solution_rawarray["volume"] = copy.deepcopy(vol)
         # species mass fractions
         self.parsespeciessolutiondata(frac)
-        # create soolution mixture
+        gas_heatrelease = np.zeros_like(time, dtype=np.double)
+        gas_heatrealease_rate = np.zeros_like(time, dtype=np.double)
+        ierr = chemkin_wrapper.chemkin.KINAll0D_GetGasHeatReleaseRate(
+            icreac, icnpts, gas_heatrelease, gas_heatrealease_rate
+        )
+        if ierr != 0:
+            msg = [
+                Color.RED,
+                "failed to fetch the raw solution heat release rate from memory,",
+                "error code =",
+                str(ierr),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.critical(this_msg)
+            ierr = 3
+            return ierr
+        #
+        # accumulated gas-phase chemistry heat release [erg]
+        self._solution_rawarray["gasheatrelease"] = copy.deepcopy(gas_heatrelease)
+        # gas-phase chemistry heat rrelease rate [erg/sec]
+        self._solution_rawarray["gashrr"] = copy.deepcopy(gas_heatrealease_rate)
+        # create solution mixture
         ierr = self.create_solution_mixtures(frac)
         if ierr != 0:
             msg = [
@@ -1258,16 +1377,121 @@ class Engine(BatchReactors):
             ]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
-            exit()
+            ierr = 4
+            return ierr
+        # calculate total termicity [1/sec]
+        thermicity = np.zeros_like(time, dtype=np.double)
+        for i, m in enumerate(self._solution_mixturearray):
+            thermicity[i] = m.thermicity()
+        # total thermicity
+        self._solution_rawarray["thermicity"] = copy.deepcopy(thermicity)
         # clean up
-        del time, pres, temp, vol, frac
+        del (
+            time,
+            pres,
+            temp,
+            vol,
+            thermicity,
+            gas_heatrelease,
+            gas_heatrealease_rate,
+            frac,
+        )
+        return ierr
 
-    def process_average_engine_solution(self):
+    def process_average_engine_solution(self) -> int:
         """Post-process the cylinder averaged solution."""
         """Post-process the cylinder averaged solution profiles from
         multi-zone engine models.
+
+        Returns
+        -------
+            status: integer
+                error code
         """
         # set the cylinder average solution record ("zone") index
         meanzone_id = self._nreactors + 1
         # post-process mean solution
-        self.process_engine_solution(zone_id=meanzone_id)
+        status = self.process_engine_solution(zone_id=meanzone_id)
+        return status
+
+    def get_last_zone_mixtures(self) -> list[Stream]:
+        """Get all zonal solutions at the last time point."""
+        """
+        Get the solution mixtures of all zones at the last time point/crank angle.
+
+        Returns
+        -------
+            zone_mixtures: list of Mixture objects, dimension = number of zones
+                zonal solution mixture objects representing the gas properties
+                at the last time point/crank angle
+        """
+        # number of zones
+        nzones = self._nreactors
+        # initialization
+        zone_mixtures: list[Stream] = []
+        # create zone mixtures
+        for n in range(nzones):
+            # create solution mixtures
+            ierr = self.process_engine_solution(zone_id=n + 1)
+            if ierr != 0:
+                msg = [
+                    Color.MAGENTA,
+                    "failed to process solution of zone",
+                    str(n + 1),
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.info(this_msg)
+            # set index to the last solution point
+            solution_index = self._numbsolutionpoints - 1
+            # get the last solution mixture
+            mixturetarget = copy.deepcopy(self._solution_mixturearray[solution_index])
+            # save the last solution mixture of the zone
+            zone_mixtures.append(mixturetarget)
+        #
+        return zone_mixtures
+
+    def get_engine_imep(self) -> float:
+        """Get predicted engine indicated mean effective pressure."""
+        """
+        Get predicted engine indicated mean effective pressure.
+
+        Returns
+        -------
+            imep: double
+                indicated mean effective pressure [bar]
+        """
+        # initialization
+        effective_pres = 0.0
+        # check run status
+        status = self.getrunstatus(mode="silent")
+        if status == -100:
+            msg = [
+                Color.YELLOW,
+                "simulation has yet to be run.\n",
+                Color.SPACEx6,
+                "please run the reactor simulation first.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
+            # bad engine result
+            return effective_pres
+        elif status != 0:
+            msg = [
+                Color.YELLOW,
+                "simulation was failed.\n",
+                Color.SPACEx6,
+                "please correct the error(s) and rerun the reactor simulation.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
+            # bad engine result
+            return effective_pres
+        # get predicted engine IMEP [dynes/cm2]
+        pp = c_double(effective_pres)
+        ierr = chemkin_wrapper.chemkin.KINAll0D_GetEngineIMEP(pp)
+        if ierr == 0:
+            effective_pres = pp.value
+        return effective_pres * 1.0e-6

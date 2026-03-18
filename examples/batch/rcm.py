@@ -397,6 +397,10 @@ plt.subplot(224)
 plt.plot(timeprofile, viscprofile, "m-")
 plt.xlabel("time [sec]")
 plt.ylabel("Mixture Viscosity [g/cm-sec]")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

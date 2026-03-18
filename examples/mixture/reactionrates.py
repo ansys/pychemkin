@@ -300,6 +300,9 @@ plt.text(-3.0e-4, 0.5, "T = 1800K", fontsize=10)
 # use log scale on x axis
 plt.xscale("symlog")
 
+# clean up
+ck.done()
+
 # plot both ranking results
 if interactive:
     plt.show()

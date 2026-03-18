@@ -267,3 +267,6 @@ print(f"NO = {outflow.x[no_index]}.")
 runtime = time.time() - start_time
 print()
 print(f"Total simulation duration: {runtime} [sec].")
+
+# clean up
+ck.done()

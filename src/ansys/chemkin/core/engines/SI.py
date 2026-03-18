@@ -96,16 +96,16 @@ class SIengine(Engine):
         self.sparktiming = -180.0
         self.burnduration = 0.0
         self.wieben = 2.0
-        self.Wiebeb = 5.0
+        self.wiebeb = 5.0
         self.massburnedCA10 = -180.0
         self.massburnedCA50 = -180.0
         self.massburnedCA90 = -180.0
         # combustion efficiency
         self.burnefficiency = 1.0
         # numbwer of points in the mass burned fraction profile
-        self.MBpoints = 0
-        self.MBangles: list[float] = []
-        self.MBfractions: list[float] = []
+        self.mb_points = 0
+        self.mb_angles: list[float] = []
+        self.mb_fractions: list[float] = []
         # set up basic SI engine model parameters
         ierr = chemkin_wrapper.chemkin.KINAll0D_Setup(
             self._chemset_index,
@@ -291,15 +291,15 @@ class SIengine(Engine):
         """
         # set the mass burned profile
         ierror = 0
-        self.MBpoints = len(crankangles)
-        if len(fractions) != self.MBpoints:
+        self.mb_points = len(crankangles)
+        if len(fractions) != self.mb_points:
             msg = [Color.PURPLE, "data arrays must have the same size.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
             ierror = 1
-        elif self.MBpoints > 1:
-            self.MBangles = copy.deepcopy(crankangles)
-            self.MBfractions = copy.deepcopy(fractions)
+        elif self.mb_points > 1:
+            self.mb_angles = copy.deepcopy(crankangles)
+            self.mb_fractions = copy.deepcopy(fractions)
             self._burnmode = 3
         else:
             msg = [Color.PURPLE, "profile must have more than 1 data pair.", Color.END]
@@ -422,22 +422,22 @@ class SIengine(Engine):
 
         """
         ierror = 0
-        if self._burnmode == 3 and self.MBpoints > 0:
+        if self._burnmode == 3 and self.mb_points > 0:
             # set start of combustion time
             self.setkeyword(key="BINI", value=self.sparktiming)
             # set burn duration
             self.setkeyword(key="BDUR", value=self.burnduration)
             # set number of burned mass fraction profile data points
-            self.setkeyword(key="NBFP", value=self.MBpoints)
+            self.setkeyword(key="NBFP", value=self.mb_points)
             # set mass burned fraction profile keywords
-            for i in range(self.MBpoints):
+            for i in range(self.mb_points):
                 # set mass burned fraction profile
                 keyline = (
                     "BFP"
                     + Keyword.fourspaces
-                    + str(self.MBangles[i])
+                    + str(self.mb_angles[i])
                     + Keyword.fourspaces
-                    + str(self.MBfractions[i])
+                    + str(self.mb_fractions[i])
                 )
                 self.setkeyword(key=keyline, value=True)
         else:
@@ -795,6 +795,13 @@ class SIengine(Engine):
         msg = [Color.YELLOW, "running SI engine simulation ...", Color.END]
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
+        # suppress text output to file
+        if self.suppress_output:
+            ierr = chemkin_wrapper.chemkin.KINAll0D_SuppressOutput()
+            if ierr != 0:
+                msg = [Color.YELLOW, "failed to turn off text output.", Color.END]
+                this_msg = Color.SPACE.join(msg)
+                logger.info(this_msg)
         if Keyword.no_fullkeyword:
             # use API calls
             ret_val = self.__run_model()
@@ -814,3 +821,19 @@ class SIengine(Engine):
             logger.critical(this_msg)
 
         return ret_val
+
+    def check_engine_knock(self) -> float:
+        """Get the status of the engine knock analysis.
+
+        Returns
+        -------
+            knocking: double
+                end gas autoignition crank angle. if no ignition, returns -720 CA.
+
+        """
+        knock_ca = -720.0
+        kk = c_double(0.0)
+        ierr = chemkin_wrapper.chemkin.KINAll0D_GetSIEngineKnockCA(kk)
+        if ierr == 0:
+            knock_ca = kk.value
+        return knock_ca

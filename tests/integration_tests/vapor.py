@@ -126,7 +126,7 @@ volprofile = tank.get_solution_variable_profile("volume")
 # create array for mixture density
 denprofile = np.zeros_like(timeprofile, dtype=np.double)
 # create array for mixture enthalpy
-Hprofile = np.zeros_like(timeprofile, dtype=np.double)
+h_profile = np.zeros_like(timeprofile, dtype=np.double)
 # loop over all solution time points
 for i in range(solutionpoints):
     # get the mixture at the time point
@@ -134,7 +134,7 @@ for i in range(solutionpoints):
     # get mixture density profile
     denprofile[i] = solutionmixture.rho
     # get mixture enthalpy profile
-    Hprofile[i] = solutionmixture.hml() / ck.ERGS_PER_JOULE * 1.0e-3
+    h_profile[i] = solutionmixture.hml() / ck.ERGS_PER_JOULE * 1.0e-3
 
 #
 # turn off real-gas cubic equation of state
@@ -160,7 +160,7 @@ volprofile_idealgas = tank.get_solution_variable_profile("volume")
 # create array for mixture density
 denprofile_idealgas = np.zeros_like(timeprofile, dtype=np.double)
 # create array for mixture enthalpy
-Hprofile_idealgas = np.zeros_like(timeprofile, dtype=np.double)
+h_profile_idealgas = np.zeros_like(timeprofile, dtype=np.double)
 # loop over all solution time points
 for i in range(solutionpoints):
     # get the mixture at the time point
@@ -168,7 +168,7 @@ for i in range(solutionpoints):
     # get mixture density profile
     denprofile_idealgas[i] = solutionmixture.rho
     # get mixture enthalpy profile
-    Hprofile_idealgas[i] = solutionmixture.hml() / ck.ERGS_PER_JOULE * 1.0e-3
+    h_profile_idealgas[i] = solutionmixture.hml() / ck.ERGS_PER_JOULE * 1.0e-3
 
 ck.done()
 # plot the profiles
@@ -185,8 +185,8 @@ plt.plot(timeprofile_idealgas, volprofile_idealgas, "b--", label="ideal gas")
 plt.legend(loc="upper right")
 plt.ylabel("Volume [cm3]")
 plt.subplot(223)
-plt.plot(timeprofile, Hprofile, "g-", label="real gas")
-plt.plot(timeprofile_idealgas, Hprofile_idealgas, "g--", label="ideal gas")
+plt.plot(timeprofile, h_profile, "g-", label="real gas")
+plt.plot(timeprofile_idealgas, h_profile_idealgas, "g--", label="ideal gas")
 plt.legend(loc="upper right")
 plt.xlabel("time [sec]")
 plt.ylabel("Mixture Enthalpy [kJ/mole]")
@@ -209,8 +209,8 @@ results["state-time"] = timeprofile.tolist()
 results["state-temperature"] = tempprofile.tolist()
 results["state-volume_RealGas"] = volprofile.tolist()
 results["state-volume_IdealGas"] = volprofile_idealgas.tolist()
-results["state-enthalpy_RealGas"] = Hprofile.tolist()
-results["state-enthalpy_IdealGas"] = Hprofile_idealgas.tolist()
+results["state-enthalpy_RealGas"] = h_profile.tolist()
+results["state-enthalpy_IdealGas"] = h_profile_idealgas.tolist()
 results["state-density_RealGas"] = denprofile.tolist()
 results["state-density_IdealGas"] = denprofile_idealgas.tolist()
 #

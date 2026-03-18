@@ -234,7 +234,7 @@ flamespeedcalculator.set_solution_quality(gradient=0.1, curvature=0.2)
 #
 # - **Mixture averaged**
 # - **Multi-component**
-# - **Constant Lewis number
+# - **Constant Lewis number**
 #
 # When the system pressure is not too low, the mixture averaged method should
 # be adequate. The multi-component method, although it is slightly more accurate,
@@ -406,6 +406,10 @@ plt.subplot(224)
 plt.plot(mesh, viscprofile, "m-")
 plt.xlabel("Distance [cm]")
 plt.ylabel("Mixture Viscosity [cP]")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

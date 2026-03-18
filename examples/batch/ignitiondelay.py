@@ -316,6 +316,10 @@ def one_over(x):
 inverse = one_over
 ax2 = ax1.secondary_xaxis("top", functions=(one_over, inverse))
 ax2.set_xlabel("T [K]")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

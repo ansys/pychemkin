@@ -316,6 +316,10 @@ plt.subplot(224)
 plt.plot(timeprofile, h2o_rop_profile, "g-")
 plt.xlabel("time [sec]")
 plt.ylabel("H2O Production Rate [mol/cm3-sec]")
+
+# clean up
+ck.done()
+
 # display the plots
 if interactive:
     plt.show()

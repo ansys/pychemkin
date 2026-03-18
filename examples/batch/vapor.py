@@ -337,6 +337,10 @@ plt.plot(timeprofile_ig, den_profile_ig, "m--", label="ideal gas")
 plt.legend(loc="upper left")
 plt.xlabel("time [sec]")
 plt.ylabel("Mixture Density [g/cm3]")
+
+# clean up
+ck.done()
+
 # plot results
 if interactive:
     plt.show()

@@ -204,3 +204,6 @@ diluted.list_composition(mode="mole")
 print(f"The diluted mixture temperature is  {diluted.temperature:f} [K].")
 print(f"The ar mixture temperature is       {ar.temperature:f} [K].")
 print(f"The premixed mixture temperature is {premixed.temperature:f} [K].")
+
+# clean up
+ck.done()

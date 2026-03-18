@@ -24,8 +24,8 @@
 
 # == Chemkin module global parameters
 # -- DO NOT MODIFY without asking Chemkin development team members
-BOLTZMANN = 1.3806504e-16  # BOLTZMANN constant [ergs/K] (double scalar)
-AVOGADRO = 6.02214179e23  # AVOGADRO number [1/mole] (double scalar)
+BOLTZMANN = 1.3806504e-16  # Bolzmann constant [ergs/K] (double scalar)
+AVOGADRO = 6.02214179e23  # Avogadro number [1/mole] (double scalar)
 P_ATM = 1.01325e06  # atmospheric pressure [dynes/cm2] (double scalar)
 P_TORRS = P_ATM / 760.0  # 1 torr in [dynes/cm2] (double scalar)
 ERGS_PER_JOULE = 1.0e7  # ergs per joule [ergs/J] (double scalar)

@@ -27,6 +27,7 @@ from ctypes import c_double, c_int
 from typing import Union
 
 import numpy as np
+import numpy.typing as npt
 
 from ansys.chemkin.core import chemkin_wrapper
 from ansys.chemkin.core.chemistry import (
@@ -41,6 +42,7 @@ from ansys.chemkin.core.constants import P_ATM
 from ansys.chemkin.core.engines.engine import Engine
 from ansys.chemkin.core.inlet import Stream
 from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.mixture import Mixture
 from ansys.chemkin.core.reactormodel import Keyword
 
 
@@ -107,21 +109,25 @@ class HCCIengine(Engine):
         self.usezonemass = False
         self.zonemass: list[float] = []
         # zonal wall heat transfer area fraction
-        self.zoneHTarea: list[float] = []
+        self.zone_ht_area: list[float] = []
         # zonal gas compositions in mole fraction (for zonalsetupmode =1)
-        self.zonemolefrac: list[float] = []  # list of mole fraction arrays
+        self.zonemolefrac: list[
+            npt.NDArray[np.double]
+        ] = []  # list of mole fraction arrays
         # zonal equivalence ratios (for zonalsetupmode =2)
         self.zoneequivalenceratio: list[float] = []
         # fuel composition for all zones
-        self.zonefueldefined: list[tuple] = []
+        self.zonefueldefined: list[tuple[str, float]] = []
         # oxidizer composition for all zones
-        self.zoneoxiddefined: list[tuple] = []
+        self.zoneoxiddefined: list[tuple[str, float]] = []
         # product composition for all zones
         self.zoneproductdefined: list[str] = []
         # zonal additive gas composition
-        self.zoneaddmolefrac: list[float] = []
+        self.zoneaddmolefrac: list[npt.NDArray[np.double]] = []
         # zonal EGR ratios
-        self.zoneEGRR: list[float] = []
+        self.zone_egrr: list[float] = []
+        # restart/continue run flag
+        self.restartrun = False
         # FORTRAN file unit of the text output file
         self._mylout = c_int(155)
         # profile points
@@ -321,7 +327,7 @@ class HCCIengine(Engine):
             logger.error(this_msg)
             exit()
 
-        if len(self.zoneHTarea) > 0:
+        if len(self.zone_ht_area) > 0:
             msg = [
                 Color.YELLOW,
                 "zonal heat transfer area fractions will be reset.",
@@ -329,18 +335,18 @@ class HCCIengine(Engine):
             ]
             this_msg = Color.SPACE.join(msg)
             logger.info(this_msg)
-        self.zoneHTarea = []
+        self.zone_ht_area = []
         # set zonal wall heat transfer area fractions (will be normalized)
         for a in zonearea:
             if a >= 0.0:
-                self.zoneHTarea.append(a)
+                self.zone_ht_area.append(a)
             else:
                 msg = [Color.PURPLE, "zonal area must >= 0.", Color.END]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
                 exit()
 
-    def set_zonal_gas_mole_fractions(self, zonemolefrac: list[float]):
+    def set_zonal_gas_mole_fractions(self, zonemolefrac: list[npt.NDArray[np.double]]):
         """Set zonal gas mole fractions for muti-zone HCCI engine."""
         """Set zonal gas mole fractions for muti-zone HCCI engine simulation.
 
@@ -448,7 +454,7 @@ class HCCIengine(Engine):
         self.product_composition = []
         self.product_composition = copy.deepcopy(products)
 
-    def define_additive_fractions(self, addfrac: list[float]):
+    def define_additive_fractions(self, addfrac: list[npt.NDArray[np.double]]):
         """Set the additive composition by zonal equivalence ratio."""
         """Set zonal additive gas mole fractions
         when the zonal equivalence ratio is used.
@@ -563,20 +569,78 @@ class HCCIengine(Engine):
             logger.error(this_msg)
             exit()
 
-        if len(self.zoneEGRR) > 0:
+        if len(self.zone_egrr) > 0:
             msg = [Color.YELLOW, "previous zonal EGR ratios will be reset.", Color.END]
             this_msg = Color.SPACE.join(msg)
             logger.info(this_msg)
-        self.zoneEGRR = []
+        self.zone_egrr = []
         # set zonal EGR ratio
         for r in zoneegr:
             if r >= 0.0:
-                self.zoneEGRR.append(r)
+                self.zone_egrr.append(r)
             else:
                 msg = [Color.PURPLE, "zonal EGR ratio must >= 0.", Color.END]
                 this_msg = Color.SPACE.join(msg)
                 logger.error(this_msg)
                 exit()
+
+    def set_zonal_mixtures(self, zonemixtures: list[Stream]):
+        """Use zone mixtures to initialize the muti-zone HCCI engine."""
+        """
+        Use zone mixtures to initialize the muti-zone HCCI engine.
+
+        Parameters
+        ----------
+            zonemixtures: list of Mixture objects, dimension = nzones
+                mixtures representing the gas properties of each zone
+        """
+        nzones = self._nzones.value
+        if len(zonemixtures) != nzones:
+            msg = [
+                Color.PURPLE,
+                "zonal gas mixtures must be a list of",
+                str(nzones),
+                "Mixture objects.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        #
+        if len(self.zonetemperature) > 0:
+            msg = [Color.YELLOW, "zonal temperatures will be reset.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
+        self.zonetemperature = []
+        #
+        if len(self.zonevolume) > 0:
+            msg = [
+                Color.YELLOW,
+                "zonal volume fractions will be reset.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
+        self.zonevolume = []
+        #
+        if len(self.zonemolefrac) > 0:
+            msg = [Color.YELLOW, "zonal gas mole fractions will be reset.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
+        self.zonemolefrac = []
+        # set zonal definition mode
+        self._zonalsetupmode = 1
+        # set zone gas condition
+        # pressure (pressure is uniform inside the cylinder)
+        self.pressure = zonemixtures[0].pressure
+        #
+        for m in zonemixtures:
+            # set zonal temperature
+            self.zonetemperature.append(m.temperature)
+            # set zonal volume fraction
+            self.zonevolume.append(m.volume)
+            # set zonal gas mole fractions
+            self.zonemolefrac.append(m.x)
 
     def set_energy_equation_switch_on_ca(self, switch_ca: float):
         """Set the crank angle at which the energy equation will be turn ON."""
@@ -724,19 +788,19 @@ class HCCIengine(Engine):
                 )
                 self.setkeyword(key=keyline, value=True)
 
-            if len(self.zoneHTarea) > 0:
+            if len(self.zone_ht_area) > 0:
                 # set zonal heat transfer area fraction
                 keyline = (
                     "MQAFR"
                     + Keyword.fourspaces
-                    + str(self.zoneHTarea[izone])
+                    + str(self.zone_ht_area[izone])
                     + Keyword.fourspaces
                     + addon
                 )
                 self.setkeyword(key=keyline, value=True)
 
             # initial mole fraction
-            nspecieslines, species_lines = self.createspeciesinputlineswithaddon(
+            _, species_lines = self.createspeciesinputlineswithaddon(
                 "XEST",
                 threshold=1.0e-12,
                 molefrac=self.zonemolefrac[izone],
@@ -810,12 +874,12 @@ class HCCIengine(Engine):
                 )
                 self.setkeyword(key=keyline, value=True)
 
-            if len(self.zoneHTarea) > 0:
+            if len(self.zone_ht_area) > 0:
                 # set zonal heat transfer area fraction
                 keyline = (
                     "MQAFR"
                     + Keyword.fourspaces
-                    + str(self.zoneHTarea[izone])
+                    + str(self.zone_ht_area[izone])
                     + Keyword.fourspaces
                     + addon
                 )
@@ -830,12 +894,12 @@ class HCCIengine(Engine):
                 + addon
             )
             self.setkeyword(key=keyline, value=True)
-            if len(self.zoneEGRR) > 0:
+            if len(self.zone_egrr) > 0:
                 # set zonal EGR ratio
                 keyline = (
                     "EGRR"
                     + Keyword.fourspaces
-                    + str(self.zoneEGRR[izone])
+                    + str(self.zone_egrr[izone])
                     + Keyword.fourspaces
                     + addon
                 )
@@ -860,7 +924,7 @@ class HCCIengine(Engine):
                     self.setkeyword(key=keyline, value=True)
 
             # zonal additive mole fraction
-            nspecieslines, species_lines = self.createspeciesinputlineswithaddon(
+            _, species_lines = self.createspeciesinputlineswithaddon(
                 "ADD",
                 threshold=1.0e-12,
                 molefrac=self.zoneaddmolefrac[izone],
@@ -922,7 +986,10 @@ class HCCIengine(Engine):
         # connecting rod length to crank radius ratio
         lolr = c_double(self.connectrodlength / self.crankradius)
         # set reactor initial conditions and geometry parameters
-        if self._reactortype.value == self.ReactorTypes.get("HCCI"):
+        if (
+            self._reactortype.value == self.ReactorTypes.get("HCCI")
+            and not self.restartrun
+        ):
             ierrc = chemkin_wrapper.chemkin.KINAll0D_SetupHCCIInputs(
                 self._chemset_index,
                 c_double(self.ivc_ca),
@@ -997,7 +1064,7 @@ class HCCIengine(Engine):
         #
         if ierr == 0 and self._numbprofiles > 0:
             # get keyword lines of all profiles
-            err_profile, nproflines, prof_lines = self.createprofileinputlines()
+            err_profile, _, prof_lines = self.createprofileinputlines()
             ierr += err_profile
             if err_profile == 0:
                 # set the profile keywords
@@ -1051,7 +1118,7 @@ class HCCIengine(Engine):
 
         Returns
         -------
-            Error code: integer
+            error code: integer
 
         """
         # get information about the keyword inputs
@@ -1349,6 +1416,13 @@ class HCCIengine(Engine):
         msg = [Color.YELLOW, "running HCCI engine simulation ...", Color.END]
         this_msg = Color.SPACE.join(msg)
         logger.info(this_msg)
+        # suppress text output to file
+        if self.suppress_output:
+            ierr = chemkin_wrapper.chemkin.KINAll0D_SuppressOutput()
+            if ierr != 0:
+                msg = [Color.YELLOW, "failed to turn off text output.", Color.END]
+                this_msg = Color.SPACE.join(msg)
+                logger.info(this_msg)
         if self._nzones.value == 1 and Keyword.no_fullkeyword:
             # single-zone HCCI
             # use API calls
@@ -1369,4 +1443,93 @@ class HCCIengine(Engine):
             this_msg = Color.SPACE.join(msg)
             logger.critical(this_msg)
 
+        return return_value
+
+    def restart(
+        self, end_ca: float, new_mixtures: Union[list[Stream], None] = None
+    ) -> int:
+        """Restart multi-zone HCCI engine simulation."""
+        """
+        Restart the engine simulation from the solution at the previous
+        ending crank angle.
+
+        Parameters
+        ----------
+            end_ca: float
+                the new ending crank angle [degree]
+            new_mixtures: list of Mixture objects, optional
+                mixtures to be used as the starting zonal mixtures
+
+        Returns
+        -------
+            error code: integer
+        """
+        # check run completion
+        status = self.getrunstatus(mode="silent")
+        if status == -100:
+            msg = [Color.MAGENTA, "Please run the reactor simultion first.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.warning(this_msg)
+            exit()
+        elif status != 0:
+            msg = [
+                Color.PURPLE,
+                "Simulation was failed.\n",
+                Color.SPACEx6,
+                "please correct the error(s) and rerun the reactor simulation.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+        zonemixtures: list[Stream] = []
+        if new_mixtures is None:
+            # set up the "new" initial conditions for this run
+            zonemixtures = self.get_last_zone_mixtures()
+        else:
+            if isinstance(new_mixtures[0], Stream) or isinstance(
+                new_mixtures[0], Mixture
+            ):
+                if len(new_mixtures) != self._nzones.value:
+                    msg = [
+                        Color.PURPLE,
+                        "The length of the given Mixture list",
+                        "must be the same as the number of zones",
+                        "of the multi-zone HCCI engine model:",
+                        str(self._nzones.value),
+                        Color.END,
+                    ]
+                    this_msg = Color.SPACE.join(msg)
+                    logger.error(this_msg)
+                    exit()
+                else:
+                    # set up the "new" initial conditions from the input parameter
+                    for m in new_mixtures:
+                        zonemixtures.append(copy.deepcopy(m))
+            else:
+                msg = [
+                    Color.PURPLE,
+                    "The given list must contain Mixture objects.",
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+                exit()
+        # make the ending CA of the previous run as the starting CA
+        time = self.get_solution_variable_profile("time")
+        last_ca = self.get_ca(time=time[self._numbsolutionpoints - 1])
+        self.starting_ca = last_ca
+        # set the new ending CA
+        self.ending_ca = end_ca
+        # set the zone set up mode to raw species mole fractions
+        self._zonalsetupmode = 1
+        # reset the initial condition for each zone
+        self.set_zonal_mixtures(zonemixtures)
+        # set restart run flag
+        self.restartrun = True
+        # clean all existing keywords
+        self.clear_all_keywords()
+        # run the "new" simulation
+        return_value = self.run()
+        #
         return return_value
