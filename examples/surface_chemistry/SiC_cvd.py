@@ -23,7 +23,7 @@
 r""".. _ref_PSR_CVD:
 
 ======================================================
-Simulating the Chemical Vapor Deposition (CVD) process
+Simulating the chemical vapor deposition (CVD) process
 ======================================================
 The chemical vapor deposition (CVD) process plays an important part in the
 semiconductor industries, especially for manufacturing and processing the wafers.

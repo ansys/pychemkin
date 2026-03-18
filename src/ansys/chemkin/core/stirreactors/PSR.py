@@ -352,7 +352,7 @@ class PerfectlyStirredReactor(OpenReactor):
                 "TP" indicates the new guessed mixture is the
                 equilibrium state at the new given guess_temp
                 "TT" indicates the new guessed mixture has the
-                coomposition but at the new given guess_temp
+                composition but at the new given guess_temp
             guess_temp: double, optional
                 new mixture temperature [K] used by options "TP" and "TT"
 
