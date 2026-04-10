@@ -1,7 +1,7 @@
 ! Number of Continuation 2   ! Continuation Count
-! 
+!
 ! problem type definition
-! 
+!
 CHEM   ! Turn on Gas Chemistry
 COMP   ! Fixed Composition for Inlet Species
 ENRG   ! Solve Gas Energy Equation
@@ -9,9 +9,9 @@ MULT   ! Use Multicomponent Transport
 STST   ! Steady State Solver
 TDIF   ! Use Thermal Diffusion (Soret Effect)
 TRCE   ! Use Trace Species Approximation
-! 
+!
 ! physical property
-! 
+!
 OMEG 450.0   ! Disk Rotation Rate (rpm)
 PRES 0.26315789   ! Pressure (atm)
 REOR   ! Assign Error to Largest Species
@@ -19,14 +19,14 @@ TDSK 923.15   ! Surface Temperature (K)
 TINL 295.0   ! Inlet Temperature (K)
 TPRO 0.0 923.0   ! Temperature (K)
 TPRO 6.2 295.0   ! Temperature (K)
-! 
+!
 ! reactor dimension definition
-! 
+!
 NPTS 15.0   ! Number of Grid Points
 XEND 6.2   ! Ending Axial Position (cm)
-! 
+!
 ! species property
-! 
+!
 BULK SI(D) 1.0   ! Bulk Activity (mole fraction)
 REAC HE 199.89   ! Reactant Fraction (mole fraction)
 REAC SIH4 0.11   ! Reactant Fraction (mole fraction)

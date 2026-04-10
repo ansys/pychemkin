@@ -1,17 +1,17 @@
 ! Silane CVD reaction mechanism developed at Sandia National Labs.
-! P. Ho, M. E. Coltrin and W. G. Breiland, 
+! P. Ho, M. E. Coltrin and W. G. Breiland,
 !    J. Phys. Chem. Vol. 98, pg. 10138-10147, (1994)
 !
 ELEMENTS
 SI H HE
 END
 SPECIES
-SIH4 SIH2  
-H3SISIH 
-SI 
-SI2H6 H2SISIH2 
+SIH4 SIH2
+H3SISIH
+SI
+SI2H6 H2SISIH2
 SI3H8
-H2 
+H2
 HE
 END
 THERMO
@@ -64,12 +64,12 @@ H2                J 3/77H   2    0    0    0G   300.000  5000.000              1
  -.86168476E+03 -.17207073E+01  .29432327E+01  .34815509E-02 -.77713819E-05    3
   .74997496E-08 -.25203379E-11 -.97695413E+03 -.18186137E+01                   4
 END
-  
+
 REACTIONS
 SIH4(+M)=SIH2+H2(+M)           0.3119E+10   1.669  54710.    ! R1
    LOW  / 0.5214E30  -3.545  57550./
    TROE / -0.4984  888.3   209.4   2760./
-   SIH4/4./ SI2H6/4./ 
+   SIH4/4./ SI2H6/4./
 ! HF(SiH2)=64.3, anh_inc.16b,  beta(Ar,300) = 0.25 fit from 300 to 1200K
 H3SISIH(+M)=H2SISIH2(+M)       0.254E+14 -0.2239  5381.000 ! A6
    LOW  / 0.1099E34  -5.765  9152. /
@@ -78,15 +78,15 @@ H3SISIH(+M)=H2SISIH2(+M)       0.254E+14 -0.2239  5381.000 ! A6
    SIH4/4./  SI2H6/4./
 !
 !   RRKM fits 3/18/93 by MEC
-SI3H8(+M)=SIH4+H3SISIH(+M)        3.73E+12  0.992  50850.000 
+SI3H8(+M)=SIH4+H3SISIH(+M)        3.73E+12  0.992  50850.000
    LOW  / 4.36E76   -17.26  59303.  /
    TROE / 0.4157     365.3  3102.  9.724 /
    SIH4/4./ SI2H6/4./
-SI3H8(+M)=SIH2+SI2H6(+M)          6.97E+12  0.9691  52677.000 
+SI3H8(+M)=SIH2+SI2H6(+M)          6.97E+12  0.9691  52677.000
    LOW  / 1.73E69   -15.07  60491.  /
    TROE / -3.47E-5     442.0  2412.  128.3 /
    SIH4/4./ SI2H6/4./
-SI2H6(+M)=H2+H3SISIH(+M)        9.086E+9  1.834  54197.000 
+SI2H6(+M)=H2+H3SISIH(+M)        9.086E+9  1.834  54197.000
    LOW  / 1.945E44   -7.772  59023.  /
    TROE / -0.1224     793.3  2400.  11.39 /
    SIH4/4./ SI2H6/4./
@@ -108,7 +108,7 @@ SI2H6(+M)=SIH4+SIH2(+M)        1.81E+10  1.747  50203.000 ! A3
  H3SISIH+SIH4=SI2H6+SIH2        .17320E+15    .44441     .88987E+04
                        REV/     .26480E+16    .09813     .84734E+04/
 
-H3SISIH(+M)=SI+SIH4(+M)        1.416E+13  0.5395  57548.000 
+H3SISIH(+M)=SI+SIH4(+M)        1.416E+13  0.5395  57548.000
    LOW  / 2.3519E42   -7.416  60957.  /
    TROE / 0.5336    629.2  2190.  626.5 /
    SIH4/4./ SI2H6/4./
