@@ -28,6 +28,8 @@
 
 from pathlib import Path
 
+import numpy as np
+
 # import PyChemkin packages
 import ansys.chemkin.core as ck
 from ansys.chemkin.core import Color
@@ -40,6 +42,8 @@ logger.debug("working directory: " + current_dir)
 # set PyChemkin verbose mode
 ck.set_verbose(True)
 
+# set numpy printing option
+np.set_printoptions(legacy="1.25")
 
 #####################################
 # Create a chemistry set

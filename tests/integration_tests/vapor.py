@@ -45,6 +45,9 @@ logger.debug("working directory: " + current_dir)
 global interactive
 interactive = False
 
+# set numpy printing option
+np.set_printoptions(legacy="1.25")
+
 # set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir

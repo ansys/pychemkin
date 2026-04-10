@@ -47,6 +47,9 @@ ck.set_verbose(True)
 global interactive
 interactive = False
 
+# set numpy printing option
+np.set_printoptions(legacy="1.25")
+
 # Create the chemistry sets
 data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 # find the location of this example py file
@@ -67,7 +70,6 @@ mech_no_surface.thermfile = str(data_dir / "grimech30_thermo.dat")
 
 # preprocess the mechanism files.
 _ = mech_no_surface.preprocess()
-
 
 # Set up the lean premixed fuel-air stream
 # set the fuel composition and conditions

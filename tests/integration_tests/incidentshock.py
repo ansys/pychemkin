@@ -26,6 +26,7 @@ from pathlib import Path
 import time
 
 import matplotlib.pyplot as plt  # plotting
+import numpy as np
 
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
@@ -43,6 +44,9 @@ logger.debug("working directory: " + current_dir)
 # interactive = False: save plot as a PNG file
 global interactive
 interactive = False
+
+# set numpy printing option
+np.set_printoptions(legacy="1.25")
 
 # Create a new mechanism input file 'no_hot_air_chem.inp' that
 # contains the reactions to describe NO formation in heated air.

@@ -29,6 +29,8 @@
 from pathlib import Path
 import time
 
+import numpy as np
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
 from ansys.chemkin.core.hybridreactornetwork import ReactorNetwork as Ern
@@ -46,6 +48,9 @@ current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
+
+# set numpy printing option
+np.set_printoptions(legacy="1.25")
 
 #####################################
 # Create a chemistry set

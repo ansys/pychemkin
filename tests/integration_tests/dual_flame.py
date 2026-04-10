@@ -26,6 +26,7 @@ from pathlib import Path
 import time
 
 import matplotlib.pyplot as plt  # plotting
+import numpy as np
 
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
@@ -45,6 +46,9 @@ ck.set_verbose(True)
 # interactive = False: save plot as a PNG file
 global interactive
 interactive = False
+
+# set numpy printing option
+np.set_printoptions(legacy="1.25")
 
 # set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = Path(ck.ansys_dir) / "reaction" / "data"
