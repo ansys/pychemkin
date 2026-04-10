@@ -54,6 +54,9 @@ ck.set_verbose(True)
 global interactive
 interactive = True
 
+# set numpy printing option
+np.set_printoptions(legacy="1.25")
+
 #####################################
 # Create a chemistry set
 # ===================================

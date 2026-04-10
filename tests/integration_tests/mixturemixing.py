@@ -24,6 +24,8 @@
 
 from pathlib import Path
 
+import numpy as np
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core.logger import logger
 
@@ -32,6 +34,10 @@ current_dir = str(Path.cwd())
 logger.debug("working directory: " + current_dir)
 # set verbose mode
 ck.set_verbose(True)
+
+# set numpy printing option
+np.set_printoptions(legacy="1.25")
+
 # set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 mechanism_dir = data_dir

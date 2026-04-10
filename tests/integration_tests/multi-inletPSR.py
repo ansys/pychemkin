@@ -46,6 +46,9 @@ ck.set_verbose(True)
 global interactive
 interactive = False
 
+# set numpy printing option
+np.set_printoptions(legacy="1.25")
+
 # set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = Path(ck.ansys_dir) / "reaction" / "data" / "ModelFuelLibrary" / "Skeletal"
 mechanism_dir = data_dir

@@ -31,6 +31,8 @@
 from pathlib import Path
 import time
 
+import numpy as np
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
 from ansys.chemkin.core.inlet import (
@@ -52,6 +54,9 @@ ck.set_verbose(True)
 # interactive = False: save plot as a PNG file
 global interactive
 interactive = True
+
+# set numpy printing option
+np.set_printoptions(legacy="1.25")
 
 #####################################
 # Create a chemistry set
