@@ -24,6 +24,8 @@
 
 from pathlib import Path
 
+import numpy as np
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.mixture import Mixture, mixing_by_exchange_with_the_mean
@@ -38,6 +40,9 @@ ck.set_verbose(True)
 # interactive = False: save plot as a PNG file
 global interactive
 interactive = False
+
+# set numpy printing option
+np.set_printoptions(legacy="1.25")
 
 # set mechanism directory (the default Chemkin mechanism data directory)
 data_dir = Path(ck.ansys_dir) / "reaction" / "data"

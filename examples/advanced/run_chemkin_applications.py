@@ -104,6 +104,10 @@ interactive = True
 # dependent. The first task is to find out the platform and the shell environment.
 # Then you will run the environment setup script accordingly.
 
+# set the application to be executed
+# define the chemkin application
+ck_app = "CKReactorRotatingDiskCVD"
+
 # check platform
 under_win = False
 plat = platform.system()
@@ -113,7 +117,7 @@ if plat == "Windows":
     # set the chemkin runtime environment batch script
     env_file = "run_chemkin_env_setup.bat"
     # define the chemkin application
-    ck_app = "CKReactorRotatingDiskCVD.exe"
+    ck_app += ".exe"
     # post-processer
     get_soln = "GetSolution.exe"
     soln_transpose = "CKSolnTranspose.exe"
@@ -121,8 +125,6 @@ elif plat == "Linux":
     # Linux
     # set the chemkin runtime environment for the /bash shell script
     env_file = "chemkin_setup.ksh"
-    # define the chemkin application
-    ck_app = "CKReactorRotatingDiskCVD"
     # post-processer
     get_soln = "GetSolution"
     soln_transpose = "CKSolnTranspose"

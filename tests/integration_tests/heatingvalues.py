@@ -38,6 +38,10 @@ logger.debug("working directory: " + current_dir)
 global data_dir
 data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 logger.debug("data directory: " + str(data_dir))
+
+# set numpy printing option
+np.set_printoptions(legacy="1.25")
+
 # set pressure & temperature condition
 thispressure = ck.P_ATM
 thistemperature = 298.15
