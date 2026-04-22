@@ -30,7 +30,7 @@ dependencies = [
 [dependency-groups]
 doc = [
     "Pillow==12.2.0",
-    "PyGitHub==2.9.0",
+    "PyGitHub==2.9.1",
     "ansys-sphinx-theme==1.7.2",
     "jupytext==1.19.1",
     "nbsphinx==0.9.8",
