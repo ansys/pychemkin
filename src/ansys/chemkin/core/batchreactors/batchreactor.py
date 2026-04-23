@@ -296,6 +296,24 @@ class BatchReactors(Reactor):
         # set keyword
         self.setkeyword(key="NNEG", value=mode)
 
+    def set_legacy_option(self, option: bool):
+        """Turn ON or OFF the legacy transient solver."""
+        """Turn ON (True) or OFF (False) the legacy transient solver.
+
+        Parameters
+        ----------
+            option: boolean
+                turn On the legacy solver
+
+        """
+        if isinstance(option, bool):
+            if option:
+                self.setkeyword(key="USE_LEGACY_TECHNIQUE", value="4X")
+        else:
+            msg = [Color.PURPLE, "parameter must be either True or False.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+
     def set_solver_initial_timestep_size(self, size: float):
         """Set the initial time step size."""
         """
@@ -1019,8 +1037,7 @@ class BatchReactors(Reactor):
             if err_profile == 0:
                 # set the profile keywords
                 for pkey in prof_lines:
-                    for line in pkey:
-                        self.setkeyword(key=line, value=True)
+                    self.setkeyword(key=pkey, value=True)
             else:
                 msg = [
                     Color.PURPLE,
@@ -1624,8 +1641,8 @@ class BatchReactors(Reactor):
 
         Parameters
         ----------
-            smixture: Stream object
-                gas stream representing the steady-state solution
+            nreac: integer
+                number of reactors
 
         """
         #
@@ -1706,7 +1723,7 @@ class BatchReactors(Reactor):
                         for k in range(n_sites):
                             j = k + s_count
                             soln_a[k] = s_frac[j][i]
-                        m.surface_chemistry.set_site_frac(mname, soln_a[:n_sites])
+                        m.surface_chemistry.set_site_frac(mname, soln_a[0:n_sites])
                     s_count += n_sites
 
                     if n_bulks > 0:
@@ -1714,7 +1731,7 @@ class BatchReactors(Reactor):
                         for k in range(n_bulks):
                             j = k + b_count
                             soln_a[k] = b_act[j][i]
-                        m.surface_chemistry.set_bulk_frac(mname, soln_a[:n_bulks])
+                        m.surface_chemistry.set_bulk_frac(mname, soln_a[0:n_bulks])
                     b_count += n_bulks
         # fill the raw solution array
         ss = np.zeros_like(time, dtype=np.double)
