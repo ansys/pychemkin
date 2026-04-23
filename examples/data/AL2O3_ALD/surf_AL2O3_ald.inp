@@ -3,12 +3,12 @@
 !
 !
 SITE/ALO/     SDEN/2.720E-9/    
-  O(S)  
+  O(S)
   ALMe2(S)
   ALMeOALMe(S) /2/
 END
 !
-BULK/ALUMINA/    AL2O3(B) /3.97/   ! g/cm3 from CRC 
+BULK/ALUMINA/    AL2O3(B) /3.97/   ! g/cm3 from CRC
 END
 !
 THERMO ALL
@@ -35,13 +35,13 @@ ALMeOALMe(S)      J12/79AL 2.O  3.C  2.H  6.S   300.000  2327.000              1
  0.10446750E-06-0.31566330E-10-0.20262622E 06 0.15478073E 02                   4
 !
 END
-REACTIONS 
+REACTIONS
 !
 ALMe3 + O(S) => ALMe2(S) + 0.5C2H6           0.1   0.0   0.0
-   STICK     ! 
+   STICK
 2ALMe2(S) + O  => ALMeOALMe(S) + C2H6            1.0   0.0   0.0
-   STICK     ! 
+   STICK
 0.5ALMeOALMe(S) + O => O(S) + 0.5C2H6 + 0.5AL2O3(B)    1.0   0.0   0.0
-   STICK     ! 
+   STICK
 !
 END

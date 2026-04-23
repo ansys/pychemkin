@@ -34,18 +34,17 @@ from ansys.chemkin.core.chemistry import (
     check_chemistryset,
     chemistryset_initialized,
     force_activate_chemistryset,
-    set_verbose,
     verbose,
 )
 from ansys.chemkin.core.color import Color as Color
 from ansys.chemkin.core.constants import P_ATM, R_GAS_CAL
 from ansys.chemkin.core.inlet import (
-    clone_stream,
     Stream,
+    clone_stream,
 )
-from ansys.chemkin.core.reactormodel import Keyword
 from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.mixture import equilibrium
+from ansys.chemkin.core.reactormodel import Keyword
 
 class TransientPSR(BatchReactors):
     """Generic transient perfectly-stirred reactor model."""
@@ -82,7 +81,7 @@ class TransientPSR(BatchReactors):
             self._volume = c_double(reactor_condition._vol)
         else:
             self._volume = c_double(0.0)
-         # reactor residence time [sec]
+        # reactor residence time [sec]
         self._residencetime = c_double(0.0)
         # reactive surface area [cm2]
         self._reactivearea = c_double(0.0)
@@ -101,6 +100,8 @@ class TransientPSR(BatchReactors):
         self.externalinlets: dict[str, Stream] = {}
         # total mass flow rate into this reactor [g/sec]
         self.totalmassflowrate = 0.0
+        # profile points
+        self._profilesize = int(0)
 
     @property
     def residence_time(self) -> float:
@@ -132,7 +133,6 @@ class TransientPSR(BatchReactors):
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
             exit()
-
 
     def set_inlet(self, extinlet: Stream):
         """Add an external inlet to the reactor."""
@@ -389,11 +389,11 @@ class TransientPSR(BatchReactors):
                         Color.SPACEx6,
                         "the profile type =",
                         str(inlet._flowratemode),
-                        Color.END
+                        Color.END,
                     ]
                     this_msg = Color.SPACE.join(msg)
                     logger.error(this_msg)
-                    ierrc = i_inlet + 1
+                    ierrc = i + 1
                 if ierrc == 0:
                     time, flowrate = inlet.flowrate_profile.get(
                         prof_key, ([0.0], [0.0])
@@ -403,8 +403,8 @@ class TransientPSR(BatchReactors):
                         # insert inlet stream name
                         tag += Keyword.fourspaces
                         # l = inlet.label
-                        l = "Inlet" + str(i + 1) + "_Reactor1"
-                        tag += l
+                        sub_tag = "Inlet" + str(i + 1) + "_Reactor1"
+                        tag += sub_tag
                     # profile data point
                     # set up the profile data keyword
                     _ = self.setprofile(key=tag, x=time, y=flowrate, label=True)
@@ -455,9 +455,7 @@ class TransientPSR(BatchReactors):
                 y_inlet = inlet.y
                 #
                 if np.isclose(0.0, flowrate, atol=1.0e-6):
-                    msg = [
-                        Color.PURPLE, "inlet", key, "has zero flow rate", Color.END
-                    ]
+                    msg = [Color.PURPLE, "inlet", key, "has zero flow rate", Color.END]
                     this_msg = Color.SPACE.join(msg)
                     logger.error(this_msg)
                     ierrc = 100 + i_inlet + 1
@@ -500,7 +498,7 @@ class TransientPSR(BatchReactors):
                     this_key = "SCCM" + Keyword.fourspaces + tag
                     self.setkeyword(key=this_key.rstrip(), value=inlet.sccm)
                 if inlet._t_set == 1:
-                # inlet temperature is provided
+                    # inlet temperature is provided
                     this_key = "TINL" + Keyword.fourspaces + tag
                     self.setkeyword(key=this_key.rstrip(), value=inlet.temperature)
                 # do not check total mass flow rate
@@ -1066,6 +1064,7 @@ class TransientPSRSetVolumeFixedTemperature(TransientPSR):
     PSR model with given reactor volume (CONV)
     and given reactor temperature (GivenT).
     """
+
     def __init__(self, reactor_condition: Stream, label: str = ""):
         """Create a transient constant volume perfectly-stirred reactor (PSR)."""
         """
@@ -1108,6 +1107,7 @@ class TransientPSRSetVolumeEnergyConservation(TransientPSR):
     PSR model with given reactor volume (CONV)
     and solve the energy equation (ENERGY).
     """
+
     def __init__(self, reactor_condition: Stream, label: str = ""):
         """Create a transient constant volume perfectly-stirred reactor (PSR)."""
         """
@@ -1315,7 +1315,7 @@ class TransientPSRSetResTimeFixedTemperature(TransientPSR):
 
 
 class TransientPSRSetResTimeEnergyConservation(TransientPSR):
-    """Transient PSR model with given reactor residence time and solve energy equation."""
+    """Transient PSR with given reactor residence time and solve energy equation."""
 
     """
     PSR model with given reactor residence time (CONP)

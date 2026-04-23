@@ -158,40 +158,44 @@ met_organic.x = [("ALMe3", 0.01), ("AR", 0.99)]
 # TMA stream sccm flow rate profile in pulses
 # TMA stream sccm data points
 tma_time = np.array(
-    [0.0,
-     0.19, 
-     0.2,
-     5.19,
-     5.2,
-     5.39,
-     5.4,
-     10.39,
-     10.4,
-     10.59,
-     10.6,
-     15.59,
-     15.6,
-     15.79,
-     15.8,
-     20.8]
+    [
+        0.0,
+        0.19, 
+        0.2,
+        5.19,
+        5.2,
+        5.39,
+        5.4,
+        10.39,
+        10.4,
+        10.59,
+        10.6,
+        15.59,
+        15.6,
+        15.79,
+        15.8,
+        20.8,
+    ]
 )  # [sec]
 tma_profile = np.array(
-    [800.0,
-     800.0,
-     0.0,
-     0.0,
-     800.0,
-     800.0,
-     0.0,
-     0.0,
-     800.0,
-     800.0,
-     0.0,
-     0.0,
-     800.0,
-     800.0,
-     0.0,
-     0.0]
+    [
+        800.0,
+        800.0,
+        0.0,
+        0.0,
+        800.0,
+        800.0,
+        0.0,
+        0.0,
+        800.0,
+        800.0,
+        0.0,
+        0.0,
+        800.0,
+        800.0,
+        0.0,
+        0.0,
+    ]
 )  # [sccm]
 # set the TMA stream sccm profile
 met_organic.set_sccm_flowrate_profile(tma_time, tma_profile)
@@ -204,44 +208,48 @@ oxidizers.x = [("O2", 0.4), ("O3", 0.05), ("AR", 0.55)]
 # oxidizers stream sccm flow rate profile in pulses
 # oxidizers stream sccm data points
 oxid_time = np.array(
-    [0.0,
-     1.19,
-     1.2,
-     3.19,
-     3.2,
-     6.39,
-     6.4,
-     8.39,
-     8.4,
-     11.59,
-     11.6,
-     13.59,
-     13.6,
-     16.79,
-     16.8,
-     18.79,
-     18.8,
-     20.8]
+    [
+        0.0,
+        1.19,
+        1.2,
+        3.19,
+        3.2,
+        6.39,
+        6.4,
+        8.39,
+        8.4,
+        11.59,
+        11.6,
+        13.59,
+        13.6,
+        16.79,
+        16.8,
+        18.79,
+        18.8,
+        20.8
+    ]
 )  # [sec]
 oxid_profile = np.array(
-    [0.0,
-     0.0,
-     800.0,
-     800.0,
-     0.0,
-     0.0,
-     800.0,
-     800.0,
-     0.0,
-     0.0,
-     800.0,
-     800.0,
-     0.0,
-     0.0,
-     800.0,
-     800.0,
-     0.0,
-     0.0]
+    [
+        0.0,
+        0.0,
+        800.0,
+        800.0,
+        0.0,
+        0.0,
+        800.0,
+        800.0,
+        0.0,
+        0.0,
+        800.0,
+        800.0,
+        0.0,
+        0.0,
+        800.0,
+        800.0,
+        0.0,
+        0.0,
+    ]
 )  # [sccm]
 # set the oxidizers stream sccm profile
 oxidizers.set_sccm_flowrate_profile(oxid_time, oxid_profile)
@@ -254,83 +262,93 @@ purge.x = [("AR", 1.0)]
 # purge stream sccm flow rate profile in pulses
 # purge stream sccm data points
 purge_time = np.array(
-    [0.0,
-     0.19,
-     0.2,
-     1.19,
-     1.2,
-     3.19,
-     3.2,
-     5.19,
-     5.2,
-     5.39,
-     5.4,
-     6.39,
-     6.4,
-     8.39,
-     8.4,
-     10.39,
-     10.4,
-     10.59,
-     10.6,
-     11.59,
-     11.6,
-     13.59,
-     13.6,
-     15.59,
-     15.6,
-     15.79,
-     15.8,
-     16.79,
-     16.8,
-     18.79,
-     18.8,
-     20.8]
+    [
+        0.0,
+        0.19,
+        0.2,
+        1.19,
+        1.2,
+        3.19,
+        3.2,
+        5.19,
+        5.2,
+        5.39,
+        5.4,
+        6.39,
+        6.4,
+        8.39,
+        8.4,
+        10.39,
+        10.4,
+        10.59,
+        10.6,
+        11.59,
+        11.6,
+        13.59,
+        13.6,
+        15.59,
+        15.6,
+        15.79,
+        15.8,
+        16.79,
+        16.8,
+        18.79,
+        18.8,
+        20.8,
+    ]
 )  # [sec]
 purge_profile = np.array(
-    [0.0,
-     0.0,
-     800.0,
-     800.0,
-     0.0,
-     0.0,
-     800.0,
-     800.0,
-     0.0,
-     0.0,
-     800.0,
-     800.0,
-     0.0,
-     0.0,
-     800.0,
-     800.0,
-     0.0,
-     0.0,
-     800.0,
-     800.0,
-     0.0,
-     0.0,
-     800.0,
-     800.0,
-     0.0,
-     0.0,
-     800.0,
-     800.0,
-     0.0,
-     0.0,
-     800.0,
-     800.0]
+    [
+        0.0,
+        0.0,
+        800.0,
+        800.0,
+        0.0,
+        0.0,
+        800.0,
+        800.0,
+        0.0,
+        0.0,
+        800.0,
+        800.0,
+        0.0,
+        0.0,
+        800.0,
+        800.0,
+        0.0,
+        0.0,
+        800.0,
+        800.0,
+        0.0,
+        0.0,
+        800.0,
+        800.0,
+        0.0,
+        0.0,
+        800.0,
+        800.0,
+        0.0,
+        0.0,
+        800.0,
+        800.0,
+    ]
 )  # [sccm]
 # set the purge stream sccm profile
 purge.set_sccm_flowrate_profile(purge_time, purge_profile)
 # check the initial flow rates of the streams
 t = 0.0
-print("Initial 'TMA' stream flow rate = "
-      f"{met_organic.get_sccm_flowrate_profile_data(time=t)} [SCCM]")
-print("Initial 'O3' stream flow rate = "
-      f"{oxidizers.get_sccm_flowrate_profile_data(time=t)} [SCCM]")
-print("Initial 'AR purge' stream flow rate = "
-      f"{met_organic.get_sccm_flowrate_profile_data(time=t)} [SCCM]")
+print(
+    "Initial 'TMA' stream flow rate = "
+    f"{met_organic.get_sccm_flowrate_profile_data(time=t)} [SCCM]"
+)
+print(
+    "Initial 'O3' stream flow rate = "
+    f"{oxidizers.get_sccm_flowrate_profile_data(time=t)} [SCCM]"
+)
+print(
+    "Initial 'AR purge' stream flow rate = "
+    f"{purge.get_sccm_flowrate_profile_data(time=t)} [SCCM]"
+)
 
 #######################################
 # Set up the transient PSR bomb reactor
@@ -502,16 +520,14 @@ almeoalme_s_solution = ald_reactor.get_solution_variable_profile("ALMeOALMe(S)")
 for i in range(solutionpoints):
     # get the mixture at the time point
     solutionmixture = ald_reactor.get_solution_mixture_at_index(solution_index=i)
-    # calculate species production rate due to surface reactions [mole/cm2-sec] 
+    # calculate species production rate due to surface reactions [mole/cm2-sec]
     brate = 0.0
     for m in ald_material_names:
-        # calculate species ROPs due to surface reactions [mole/cm2-sec] 
+        # calculate species ROPs due to surface reactions [mole/cm2-sec]
         surf_rop, _ = solutionmixture.rop_surf(m)
         # get AL2O3(B) linear growth rate [cm/sec] due to surface reactions
-        brates = (
-            solutionmixture.surface_chemistry.get_bulk_linear_growth_rates(
-                m, surf_rop
-            )
+        brates = solutionmixture.surface_chemistry.get_bulk_linear_growth_rates(
+            m, surf_rop
         )
         brate += brates[i_al2o3_b_local]
     # linear growth rate of AL2O3(B) bulk species [cm/sec] -> [micron/sec]
@@ -520,10 +536,9 @@ for i in range(solutionpoints):
     if i > 0:
         im = i - 1
         delta_time = sim_time[i] - sim_time[im]
-        delta_grate = (al2o3_b_growth_solution[im] + al2o3_b_growth_solution[i])
+        delta_grate = al2o3_b_growth_solution[im] + al2o3_b_growth_solution[i]
         # integration
-        al2o3_b_thickness[i] = (al2o3_b_thickness[im]
-                                + delta_grate * delta_time / 2.0)
+        al2o3_b_thickness[i] = al2o3_b_thickness[im] + delta_grate * delta_time / 2.0
     # gas phase O solution profile [mole fraction]
     o_solution[i] = solutionmixture.x[i_o]
     # gas phase ALMe3 solution profile [mole fraction]

@@ -38,7 +38,7 @@ The reactor is initially filled with hot air to promote the chemical
 reactions. The fuel-air mixture must ignite within the time
 duration of 1 "residence time" or the PSR would go cold. The solution
 profiles also indicate that it takes several "residence times" for the
-PSR to reach steady state. 
+PSR to reach steady state.
 
 """
 
@@ -239,7 +239,7 @@ temp_profile = fire_bomb.get_solution_variable_profile("temperature")
 # total heat release rate from the gas-phase reactions [erg/sec]
 gashrr_profile = fire_bomb.get_solution_variable_profile("gashrr")
 # convert [erg] to [kJ]
-gashrr_profile /= (1.e3 * ck.ERGS_PER_JOULE)
+gashrr_profile /= 1.e3 * ck.ERGS_PER_JOULE
 # gas phase CO solution profile [mass fraction]
 co_profile = fire_bomb.get_solution_variable_profile("CO")
 # gas phase CH4 solution profile [mass fraction]
