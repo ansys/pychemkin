@@ -37,7 +37,6 @@ from ansys.chemkin.core.chemistry import (
     verbose,
 )
 from ansys.chemkin.core.color import Color as Color
-from ansys.chemkin.core.constants import P_ATM, R_GAS_CAL
 from ansys.chemkin.core.inlet import (
     Stream,
     clone_stream,
@@ -45,6 +44,7 @@ from ansys.chemkin.core.inlet import (
 from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.mixture import equilibrium
 from ansys.chemkin.core.reactormodel import Keyword
+
 
 class TransientPSR(BatchReactors):
     """Generic transient perfectly-stirred reactor model."""

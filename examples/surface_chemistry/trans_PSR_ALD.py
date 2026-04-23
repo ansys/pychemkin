@@ -160,7 +160,7 @@ met_organic.x = [("ALMe3", 0.01), ("AR", 0.99)]
 tma_time = np.array(
     [
         0.0,
-        0.19, 
+        0.19,
         0.2,
         5.19,
         5.2,
@@ -226,7 +226,7 @@ oxid_time = np.array(
         16.8,
         18.79,
         18.8,
-        20.8
+        20.8,
     ]
 )  # [sec]
 oxid_profile = np.array(
@@ -424,8 +424,10 @@ ald_reactor.set_inlet(purge)
 # check the net inlet flow rate to the ALD reactor at time = 0.0 [sec]
 # the net mass flow rate to the PSR must not be zero at any given time
 # during the simulation
-print(f"initial net mass flow rate to the reactor = "
-      f"{ald_reactor.net_mass_flowrate} [g/sec]")
+print(
+    f"initial net mass flow rate to the reactor = "
+    f"{ald_reactor.net_mass_flowrate} [g/sec]"
+)
 
 #####################
 # Set solver controls
