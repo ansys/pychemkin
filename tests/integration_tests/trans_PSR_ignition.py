@@ -25,6 +25,9 @@
 from pathlib import Path
 import time
 
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
 from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
@@ -34,8 +37,6 @@ from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.stirreactors.transient_PSR import (
     TransientPSRSetResTimeEnergyConservation as TransPsr,
 )
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
 
 # check working directory
 current_dir = str(Path.cwd())
@@ -49,7 +50,7 @@ global interactive
 interactive = False
 
 # set numpy printing option
-np.set_printoptions(legacy='1.25')
+np.set_printoptions(legacy="1.25")
 
 # Create an instance of the Chemistry Set
 # set mechanism directory (the default Chemkin mechanism data directory)
@@ -154,7 +155,7 @@ temp_profile = fire_bomb.get_solution_variable_profile("temperature")
 # total heat release rate from the gas-phase reactions [erg/sec]
 gashrr_profile = fire_bomb.get_solution_variable_profile("gashrr")
 # convert [erg] to [kJ]
-gashrr_profile /= (1.e3 * ck.ERGS_PER_JOULE)
+gashrr_profile /= 1.0e3 * ck.ERGS_PER_JOULE
 # gas phase CO solution profile [mass fraction]
 co_profile = fire_bomb.get_solution_variable_profile("CO")
 # gas phase CH4 solution profile [mass fraction]

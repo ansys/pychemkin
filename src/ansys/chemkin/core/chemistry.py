@@ -145,6 +145,7 @@ def chemkin_bin_dir() -> str:
     bin_dir = local_ansys_dir / "reaction" / ck_wrapper._ckbin / "bin"
     return str(bin_dir)
 
+
 def chemkin_data_dir() -> str:
     """Return the local Ansys Chemkin data directory."""
     """
@@ -162,6 +163,7 @@ def chemkin_data_dir() -> str:
     local_ansys_dir = Path(ck_wrapper._ansys_dir)
     data_dir = local_ansys_dir / "reaction" / "data"
     return str(data_dir)
+
 
 def ansys_dir() -> str:
     """Return the local Ansys installation."""
