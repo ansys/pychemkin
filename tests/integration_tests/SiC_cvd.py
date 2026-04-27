@@ -47,6 +47,9 @@ ck.set_verbose(True)
 global interactive
 interactive = False
 
+# set numpy printing option
+np.set_printoptions(legacy="1.25")
+
 # Create a chemistry set
 data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 # find the location of this example py file

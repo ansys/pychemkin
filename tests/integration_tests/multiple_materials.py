@@ -24,6 +24,8 @@
 
 from pathlib import Path
 
+import numpy as np
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core.logger import logger
 
@@ -37,6 +39,10 @@ ck.set_verbose(True)
 # interactive = False: save plot as a PNG file
 global interactive
 interactive = False
+
+# set numpy printing option
+np.set_printoptions(legacy="1.25")
+
 # Create a chemistry set with surface chemistry
 data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 # find the floder where this py example file is located
@@ -75,6 +81,7 @@ for s in m_symbols:
 
 # Display surface material phase and species information as well as
 # the surface reactions of the material.
+
 # list the commonly used properties of all surface materials of the Chemistry Set
 for n, name in enumerate(m_symbols):
     # get the surface Material object by its name
@@ -88,30 +95,30 @@ for n, name in enumerate(m_symbols):
     print("elemental compositions of surface species on the material:")
     if m.num_site_species > 0:
         for i, p in enumerate(m.site_species_names):
-            print(f"  site species {p}")
+            print(f"  site species {p.rstrip()}")
             k = m.site_species_map[p]
             for e, ele in enumerate(MySurfMech.element_symbols):
                 print(f"    element {ele} = {m.material_species_composition(e, k)}")
         h_site = m.get_site_species_h(temp=400.0)
-        for j, h in enumerate(h_site):
+        for k, h in enumerate(h_site):
             # local index among all site species of this material
             print(
-                f"  site species {j} {m.site_species_names[j]} "
+                f"  site species {k} {m.site_species_names[k]} "
                 f"H = {h / ck.ERGS_PER_JOULE} [J/mole]"
             )
     # list the elemental compositions of all bulk species of the material
     if m.num_bulk_species > 0:
         for i, p in enumerate(m.bulk_species_names):
-            print(f"  bulk species {p}")
+            print(f"  bulk species {p.rstrip()}")
             k = m.bulk_species_map[p]
             for e, ele in enumerate(MySurfMech.element_symbols):
                 print(f"    element {ele} = {m.material_species_composition(e, k)}")
         # also the specific heat capacity of the bulk species
         cp_bulk = m.get_bulk_species_cp(temp=450.0)
-        for j, c in enumerate(cp_bulk):
+        for k, c in enumerate(cp_bulk):
             # local index among all bulk species of this material
             print(
-                f"  bulk species {j} {m.bulk_species_names[j]} "
+                f"  bulk species {k} {m.bulk_species_names[k]} "
                 f"Cp = {c / ck.ERGS_PER_JOULE} [J/mole-K]"
             )
     # get all phase names of the Chemistry Set, the "Gas" phase is always included

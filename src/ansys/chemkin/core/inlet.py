@@ -89,7 +89,7 @@ class Stream(Mixture):
         self.flow_rate_profile_keys: dict[int, str] = {
             int(0): "FPRO",
             int(1): "VDOTPRO",
-            int(2): "VELPRO",
+            int(2): "VELPRO",  # not used
             int(3): "SCCMPRO",
         }
         self.flowrate_profile: dict[
@@ -296,7 +296,7 @@ class Stream(Mixture):
             "Flow rate profile is assigned to this inlet",
             self.label,
             ".\n",
-            f"Please use the 'get_{mode}_from_profile(time)' method",
+            f"Please use the 'get_{mode}_from_profile_data(time)' method",
             f"to get the {mode} at the given time [sec].",
             Color.END,
         ]
@@ -653,13 +653,8 @@ class Stream(Mixture):
         self._volflowrate = 0.0
         self._velocity = 0.0
         self._sccm = 0.0
-        # set flow rate mode to mass flow rate
-        self._flowratemode = 0
-        # set inlet profile flag
-        self._use_flow_rate_profile = True
-        self._inletflowrate[self._flowratemode] = flow_rate[0]
-        self._massflowrate = flow_rate[0]
-        # profile keywords will be set by the set_profile
+        # existing profile keywords will be reset by the set_profile
+        # because there can only be one inlet profile per inlet
         if len(self.flowrate_profile.keys()) > 0:
             msg = [
                 Color.YELLOW,
@@ -669,6 +664,13 @@ class Stream(Mixture):
             this_msg = Color.SPACE.join(msg)
             logger.info(this_msg)
             self.flowrate_profile.clear()
+        # set flow rate mode to mass flow rate
+        self._flowratemode = 0
+        self._inlet_flow_rate_profile_mode = 0
+        # set inlet profile flag
+        self._use_flow_rate_profile = True
+        self._inletflowrate[self._flowratemode] = flow_rate[0]
+        self._massflowrate = flow_rate[0]
         #
         keyword = self.flow_rate_profile_keys.get(self._flowratemode, "FPRO")
         self.flowrate_profile[keyword] = (x, flow_rate)
@@ -691,6 +693,22 @@ class Stream(Mixture):
         """
         # profile keywords will be set by the set_profile
         if self._use_flow_rate_profile and self._flowratemode == 0:
+            this_x, this_values = self.flowrate_profile.get("FPRO", ([0.0], [0.0]))
+            if len(this_x) <= 1:
+                msg = [
+                    Color.PURPLE,
+                    "cannot find the mass flow rate profile data.",
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+                return 0.0
+            if time < np.min(this_x) or time > np.max(this_x):
+                self.profile_out_of_range(time, np.max(this_x), np.min(this_x))
+            values = np.interp(time, this_x, this_values)
+            mass_flowrate = values
+            return mass_flowrate
+        else:
             # mass flow rate profile data does not exist
             msg = [
                 Color.PURPLE,
@@ -701,21 +719,177 @@ class Stream(Mixture):
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
             return 0.0
-        this_x, this_values = self.flowrate_profile.get("FPRO", ([0.0], [0.0]))
-        if len(this_x) <= 1:
+
+    def set_vol_flowrate_profile(
+        self, x: npt.NDArray[np.double], flow_rate: npt.NDArray[np.double]
+    ):
+        """Specify inlet volumetric flow rate profile."""
+        """
+        Specify inlet volumetric flow rate profile for transient reactor models.
+
+        Parameters
+        ----------
+            x: 1D double array
+                position value of the profile data [cm or sec]
+            flow_rate: 1D double array
+                volumetric flow arte value of the profile data [cm3/sec]
+        """
+        # reset the flow rates
+        self._massflowrate = 0.0
+        self._velocity = 0.0
+        self._sccm = 0.0
+        # existing profile keywords will be reset by the set_profile
+        # because there can only be one inlet profile per inlet
+        if len(self.flowrate_profile.keys()) > 0:
+            msg = [
+                Color.YELLOW,
+                "existing flow rate profile will be deleted.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
+            self.flowrate_profile.clear()
+        # set flow rate mode to mass flow rate
+        self._flowratemode = 1
+        self._inlet_flow_rate_profile_mode = 1
+        # set inlet profile flag
+        self._use_flow_rate_profile = True
+        self._inletflowrate[self._flowratemode] = flow_rate[0]
+        self._volflowrate = flow_rate[0]
+        #
+        keyword = self.flow_rate_profile_keys.get(self._flowratemode, "VDOTPRO")
+        self.flowrate_profile[keyword] = (x, flow_rate)
+
+    def get_vol_flowrate_profile_data(self, time: float = 0.0) -> float:
+        """Get the volumetric flow rate at the given time from the profile data."""
+        """
+        Return the inlet volumetric flow rate at the given time value
+        from the inlet volumetric flow rate profile data by interpolation.
+
+        Parameters
+        ----------
+            time: double
+                time [sec]
+
+        Returns
+        -------
+            vol_flowrate: double
+                the interpolated inlet volumetric flow rate [cm3/sec] at the given time
+        """
+        # profile keywords will be set by the set_profile
+        if self._use_flow_rate_profile and self._flowratemode == 1:
+            this_x, this_values = self.flowrate_profile.get("VDOTPRO", ([0.0], [0.0]))
+            if len(this_x) <= 1:
+                msg = [
+                    Color.PURPLE,
+                    "cannot find the volumetric flow rate profile data.",
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+                return 0.0
+            if time < np.min(this_x) or time > np.max(this_x):
+                self.profile_out_of_range(time, np.max(this_x), np.min(this_x))
+            values = np.interp(time, this_x, this_values)
+            vol_flowrate = values
+            return vol_flowrate
+        else:
+            # volumetric flow rate profile data does not exist
             msg = [
                 Color.PURPLE,
-                "cannot find the mass flow rate profile data.",
+                "cannot find the inlet volumetric flow rate profile data,",
+                "please verify the profile data set.",
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
             logger.error(this_msg)
             return 0.0
-        if time < np.min(this_x) or time > np.max(this_x):
-            self.profile_out_of_range(time, np.max(this_x), np.min(this_x))
-        values = np.interp(time, this_x, this_values)
-        mass_flowrate = values[0]
-        return mass_flowrate
+
+    def set_sccm_flowrate_profile(
+        self, x: npt.NDArray[np.double], flow_rate: npt.NDArray[np.double]
+    ):
+        """Specify inlet sccm flow rate profile."""
+        """
+        Specify inlet sccm flow rate profile for transient reactor models.
+
+        Parameters
+        ----------
+            x: 1D double array
+                position value of the profile data [cm or sec]
+            flow_rate: 1D double array
+                sccm flow arte value of the profile data [standard cm3/min]
+        """
+        # reset the flow rates
+        self._massflowrate = 0.0
+        self._volflowrate = 0.0
+        self._velocity = 0.0
+        # existing profile keywords will be reset by the set_profile
+        # because there can only be one inlet profile per inlet
+        if len(self.flowrate_profile.keys()) > 0:
+            msg = [
+                Color.YELLOW,
+                "existing flow rate profile will be deleted.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
+            self.flowrate_profile.clear()
+        # set flow rate mode to sccm flow rate
+        self._flowratemode = 3
+        self._inlet_flow_rate_profile_mode = 3
+        # set inlet profile flag
+        self._use_flow_rate_profile = True
+        self._inletflowrate[self._flowratemode] = flow_rate[0]
+        self._sccm = flow_rate[0]
+        #
+        keyword = self.flow_rate_profile_keys.get(self._flowratemode, "SCCMPRO")
+        self.flowrate_profile[keyword] = (x, flow_rate)
+
+    def get_sccm_flowrate_profile_data(self, time: float = 0.0) -> float:
+        """Get the sccm flow rate at the given time from the profile data."""
+        """
+        Return the inlet sccm flow rate at the given time value
+        from the inlet sccm flow rate profile data by interpolation.
+
+        Parameters
+        ----------
+            time: double
+                time [sec]
+
+        Returns
+        -------
+            sccm_flowrate: double
+                the interpolated inlet sccm flow rate [standard cm3/min]
+                at the given time
+        """
+        # profile keywords will be set by the set_profile
+        if self._use_flow_rate_profile and self._flowratemode == 3:
+            this_x, this_values = self.flowrate_profile.get("SCCMPRO", ([0.0], [0.0]))
+            if len(this_x) <= 1:
+                msg = [
+                    Color.PURPLE,
+                    "cannot find the sccm flow rate profile data.",
+                    Color.END,
+                ]
+                this_msg = Color.SPACE.join(msg)
+                logger.error(this_msg)
+                return 0.0
+            if time < np.min(this_x) or time > np.max(this_x):
+                self.profile_out_of_range(time, np.max(this_x), np.min(this_x))
+            values = np.interp(time, this_x, this_values)
+            sccm_flowrate = values
+            return sccm_flowrate
+        else:
+            # sccm flow rate profile data does not exist
+            msg = [
+                Color.PURPLE,
+                "cannot find the inlet sccm flow rate profile data,",
+                "please verify the profile data set.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            return 0.0
 
 
 # stream utilities

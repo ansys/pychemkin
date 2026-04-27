@@ -24,8 +24,13 @@
 
 from pathlib import Path
 
+import numpy as np
+
 import ansys.chemkin.core  # import PyChemkin
 from ansys.chemkin.core.logger import logger
+
+# set numpy printing option
+np.set_printoptions(legacy="1.25")
 
 # create a Chemistry Set for GRI 3.0 mechanism in the data directory
 mechanism_dir = Path(ansys.chemkin.core.ansys_dir) / "reaction" / "data"

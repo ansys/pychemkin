@@ -26,34 +26,36 @@ r""".. _ref_sparkignition_engine:
 Simulate a spark ignition engine
 ================================
 
-Ansys chemkin offers some idealized internal combustion (IC) engine models commonly
-used for fuel combustion and engine performance research.
-The Chemkin IC engine model is a specialized transient 0-D closed gas-phase reactor
-that mainly performs combustion simulation between the intake valve closing (IVC)
-and the exhaust valve opening (EVO), that is, when the engine cylinder
-resembles a closed chamber. The cylinder volume is derived from the piston motion
-as a function of the engine crank angle (CA) and engine parameters such as
-engine speed (RPM) and stroke. The energy equation is always solved.
-There are several wall heat transfer models specifically designed
-for engine simulations.
+Ansys Chemkin provides a set of idealized internal combustion (IC) engine models
+that are widely used for fuel combustion analysis and engine performance research.
+The Chemkin IC engine model is a specialized, transient, zero-dimensional (0‑D)
+closed gas-phase reactor designed to simulate combustion processes occurring between
+intake valve closing (IVC) and exhaust valve opening (EVO). During this period,
+the engine cylinder is treated as a closed chamber.
+
+The cylinder volume is calculated based on piston motion as a function of crank
+angle (CA) and key engine parameters, including engine speed (RPM) and stroke.
+The energy equation is always solved, and several wall heat transfer models
+specifically developed for engine simulations are available to account for thermal
+losses.
 
 .. note ::
     For additional information on Chemkin IC engine models, use the
     ``ansys.chemkin.core.manuals()`` method to view the online **Theory** manual.
 
-The Chemkin spark ignition (SI) engine model offers a simple way to simulate
-the chemical kinetics taking place in the spark ignition engine.
-The Chemkin SI engine model does not predict the fuel mass burning rate profile.
-On the contrary, it requires the burning rate profile as input in the form of
-the Wiebe function parameters, the burn profile anchor points,
-or normalized profile data. The main uses of the Chemkin SI engine model are
-conducting parameter studies of the burning rate profile on engine performance,
-emissions, and the onset of engine knock due to end gas autoignition.
+The Chemkin spark‑ignition (SI) engine model provides a straightforward framework for
+simulating chemical kinetics in spark‑ignition engines. Rather than predicting the
+fuel mass burning rate, the model requires the burning rate profile as an input. This
+profile can be specified using Wiebe function parameters, burn profile anchor points,
+or normalized burn rate data.
 
-This example shows how to set up and run the simplest Chemkin IC engine model,
-the SI engine model. In addition to the basic engine parameters,
-many engine model-specific features such as the exhaust gas recirculation and
-the wall heat transfer can be included in the engine simulation.
+The primary applications of the Chemkin SI engine model include parametric studies of
+combustion burn rate effects on engine performance, emission formation, and the onset
+of engine knock caused by end‑gas autoignition. This example demonstrates how to set
+up and run the simplest Chemkin IC engine configuration—the SI engine model.
+In addition to basic engine parameters, the simulation can incorporate advanced
+features such as exhaust gas recirculation (EGR) and wall heat transfer models to
+enhance realism.
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_spark_ignition_engine.png'

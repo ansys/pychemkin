@@ -1,0 +1,44 @@
+!
+! Gas-phase reaction mechanism for AL2O3 ALD from trimethyl aluminum and Ozone
+!   Pauline Ho, 2002
+!
+ELEMENTS
+AL
+C H O
+AR
+END
+SPECIES
+!AL2Me6
+ALMe3
+O O2 O3
+C2H6
+AR
+END
+THERMO
+ALMe3             032895AL  1C   3H   9     G    275.00   1700.00  600.00      1
+ 3.88474488E+00 3.46111357E-02-1.68004699E-05 4.81309526E-09-8.84698348E-13    2
+-1.24015732E+04 8.28830147E+00-1.41624498E+01 1.63966402E-01-3.73684277E-04    3
+ 4.50672758E-07-2.12254214E-10-1.03202051E+04 8.51073914E+01                   4
+AL2Me6            040596AL  2C   6H  18     G    275.00   1700.00  600.00      1
+ 9.44042301E+00 7.62324408E-02-4.26106926E-05 1.42195224E-08-2.61370786E-12    2
+-3.60199492E+04-2.04000530E+01-4.38734207E+01 4.58360165E-01-1.09686761E-03    3
+ 1.33130425E-06-6.27001229E-10-2.98712090E+04 2.06534531E+02                   4
+!  from HKM
+END
+!
+TRAN
+! extra transport data for aluminum compounds
+AL               0 3296.     4.62   0.0    0.0    1.0   ! hkm 5/94
+ALMe3            2  471.     5.30   0.0    0.0    1.0   ! hkm 11/94
+AL2Me6           2  471.     6.71   0.0    0.0    1.0   ! hkm 11/94
+END
+!
+REACTIONS
+!
+!  Ozone decomposition
+!
+O3 + M = O2 + O + M           4.51E15    0.0   24000.0 ! Benson/Axworthy
+O + O3 = 2O2                  2.96E13    0.0    6000.0 ! Benson/Axworthy
+!
+END
+

@@ -211,6 +211,7 @@ class TestClassPSR:
         "jetstirredreactor",
         "multi-inletPSR",
         "PSRChain_declustered",
+        "trans_PSR_ignition",
     ]
 
     @pytest.mark.parametrize("test_file", psr_list)
@@ -333,6 +334,7 @@ class TestClassSurface:
         #  "multiple_materials",
         "SiC_cvd",
         "catalytic_combustion",
+        "trans_PSR_ALD",
     ]
 
     @pytest.mark.parametrize("test_file", surface_list)

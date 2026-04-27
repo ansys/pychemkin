@@ -22,7 +22,7 @@ project = "ansys-chemkin-core"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc. <ansys.support@ansys.com>"
 cname = os.getenv("DOCUMENTATION_CNAME", default="chemkin.docs.pyansys.com")
-switcher_version = get_version_match("0.2.0dev")
+switcher_version = get_version_match("0.2.0")
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

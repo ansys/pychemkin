@@ -482,7 +482,13 @@ class StringKeyword(Keyword):
 class Profile:
     """Chemkin profile keyword class."""
 
-    def __init__(self, key: str, x: npt.NDArray[np.double], y: npt.NDArray[np.double]):
+    def __init__(
+        self,
+        key: str,
+        x: npt.NDArray[np.double],
+        y: npt.NDArray[np.double],
+        label: bool = False,
+    ):
         """Create a profile object."""
         """Create a profile object.
 
@@ -494,6 +500,8 @@ class Profile:
                 position of the profile data points
             y: 1-D double array
                 variable value of the profile data
+            label: boolean, optional
+                True: key includes a reactor/species/inlet name
 
         """
         # initialization
@@ -502,6 +510,10 @@ class Profile:
         # check
         if key in Keyword.profilekeywords:
             self._profilekeyword = key
+        elif label:
+            this_key = key.split()[0]
+            if this_key in Keyword.profilekeywords:
+                self._profilekeyword = key
         else:
             msg = [
                 Color.PURPLE,
@@ -1122,7 +1134,11 @@ class ReactorModel:
                 return self._numbprofiles, True
 
     def setprofile(
-        self, key: str, x: npt.NDArray[np.double], y: npt.NDArray[np.double]
+        self,
+        key: str,
+        x: npt.NDArray[np.double],
+        y: npt.NDArray[np.double],
+        label: bool = False,
     ) -> int:
         """Set a Chemkin profile and its parameter."""
         """Set a Chemkin profile and its parameter.
@@ -1135,6 +1151,8 @@ class ReactorModel:
                 position values of the profile data
             y: 1-D double array
                 variable values of the profile data
+            label: boolean, optional
+                True: key includes a reactor/species/inlet name
 
         Returns
         -------
@@ -1148,7 +1166,7 @@ class ReactorModel:
         # add the profile to the profiles index list
         if newprofile:
             # a new profile
-            self._profiles_list.append(Profile(key, x, y))
+            self._profiles_list.append(Profile(key, x, y, label))
             status = self._profiles_list[i].status
             if status == 0:
                 self._profiles_index.append(key)
@@ -1270,7 +1288,9 @@ class ReactorModel:
             numblines += n
             numbprofiles += 1
             # print the entire keyword input block per profile
-            if verbose():
+            show = verbose()
+            show = False
+            if show:
                 print("** PROFILE KEYWORDS:")
                 print(f"{n:d} keyword input lines in {p._profilekeyword} profile\n")
                 print("=" * 40)
