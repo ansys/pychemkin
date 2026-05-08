@@ -34,7 +34,7 @@ doc = [
     "ansys-sphinx-theme==1.7.2",
     "jupytext==1.19.1",
     "nbsphinx==0.9.8",
-    "notebook==7.5.5",
+    "notebook==7.5.6",
     "numpydoc==1.10.0",
     "pandas==2.3.3",
     "pandoc==2.4.0",
@@ -43,7 +43,7 @@ doc = [
     "sphinx-autoapi==3.8.0",
     "sphinx-copybutton==0.5.2",
     "sphinx-design==0.6.1",
-    "sphinx-gallery==0.20.0",
+    "sphinx-gallery==0.21.0",
     "sphinx-jinja==2.0.2",
     "sphinx-notfound-page==1.1.0",
 ]
@@ -56,12 +56,12 @@ tests = [
     "pytest==9.0.3",
     "requests==2.33.1",
     "urllib3==2.6.3",
-    "usd-core==26.3",
+    "usd-core==26.5",
 ]
 vulnerabilities = [
   "bandit[toml]==1.9.4",
   "safety==3.7.0",
-  "typer==0.24.2",
+  "typer==0.25.0",
 ]
 
 [project.urls]
