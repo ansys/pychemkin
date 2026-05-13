@@ -38,7 +38,7 @@ doc = [
     "numpydoc==1.10.0",
     "pandas==2.3.3",
     "pandoc==2.4.0",
-    "pyvista==0.47.3",
+    "pyvista==0.48.0",
     "requests==2.33.1",
     "sphinx-autoapi==3.8.0",
     "sphinx-copybutton==0.5.2",
