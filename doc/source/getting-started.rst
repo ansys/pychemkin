@@ -24,7 +24,7 @@ Install PyChemkin
 
 1. Install PyChemkin.
 
-   Download the ``ansys-chemkin`` package from the PyAnsys GitHub repository. Build the wheelhouse locally using `Flit`_:
+   Download the ``ansys-chemkin-core`` package from the PyAnsys GitHub repository. Build the wheelhouse locally using `Flit`_:
 
    ::
 
@@ -35,6 +35,12 @@ Install PyChemkin
    ::
 
       pip install dist\ansys_chemkin-*.whl
+   
+   Alternatively, you can install the package directly from the PyPI repository:
+
+   ::
+   
+      pip install ansys-chemkin-core
 
 2. Verify the installation.
 
