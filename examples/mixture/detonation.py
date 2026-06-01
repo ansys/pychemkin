@@ -222,6 +222,7 @@ for i in range(points):
 
 # stop Chemkin
 ck.done()
+
 # create plot for real-gas results
 plt.plot(p, det, "r^-", label="real gas", markersize=5, fillstyle="none")
 # plot data
@@ -240,9 +241,6 @@ plt.legend(loc="upper left")
 plt.xlabel("Pressure [atm]")
 plt.ylabel("Detonation wave speed [m/sec]")
 plt.suptitle("Natural Gas/Air Detonation", fontsize=16)
-
-# clean up
-ck.done()
 
 # plot results
 if interactive:

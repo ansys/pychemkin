@@ -112,7 +112,7 @@ data_dir = Path(ck.ansys_dir) / "reaction" / "data"
 try:
     script_dir_obj = Path(__file__).parent.resolve()
 except NameError:
-    script_dir_obj = Path(current_dir) / ".." / "data"
+    script_dir_obj = Path(current_dir)
 script_dir = str(script_dir_obj)
 # use the relative path to locate the example mechanism folder
 example_mech_data = script_dir_obj / ".." / "data"
