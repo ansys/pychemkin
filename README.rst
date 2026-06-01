@@ -128,7 +128,7 @@ categorized by version, along with brief descriptions of each change.
 .. Prerequisites and installation guidelines
 .. _prerequisites: https://chemkin.docs.pyansys.com/version/dev/getting-started/prerequisites.html
 .. _contribute: https://chemkin.docs.pyansys.com/version/dev/contribute.html
-.. _installation guidelines: https://chemkin.docs.pyansys.com/version/dev/getting-started/install.html
+.. _installation guidelines: https://chemkin.docs.pyansys.com/version/dev/getting-started.html#install-pychemkin
 
 .. Documentation chapters
 .. _official documentation: https://chemkin.docs.pyansys.com

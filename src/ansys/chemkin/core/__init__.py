@@ -112,3 +112,6 @@ if frm is not None:
     pychemkin_dir = _chemkin_module_path.parent
 # set up Chemkin keyword help data
 setup_hints()
+
+# set version number
+__version__ = "0.2.0"

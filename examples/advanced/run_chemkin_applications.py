@@ -474,7 +474,13 @@ plt.subplot(224)
 plt.plot(mole_h2, dist, "g-")
 plt.xlabel("H2 Mole Fraction")
 
-# clean up
+# clean up run script
+try:
+    bat_file.unlink()
+    logger.info(f"Deleted run script: {bat_file}")
+except Exception as e:
+    logger.warning(f"Failed to delete run script: {bat_file}. Error: {e}")
+# check in license
 ck.done()
 
 # plot results

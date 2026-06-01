@@ -302,24 +302,36 @@ if status != 0:
 # load Chemkin-CFD-API shared object
 try:
     chemkin = cdll.LoadLibrary(_target_lib)
-except OSError:
+except OSError as e:
     inst_dir = Path(_ansys_dir) / "reaction" / _ckbin / "bin"
     msg = [
         Color.RED,
         "error initializing ansys-chemkin.\n",
         Color.SPACEx6,
+        f"error message: {e.strerror}\n",
+        Color.SPACEx6,
         "please verify local Chemkin installation at",
         str(inst_dir),
         "\n",
         Color.SPACEx6,
-        "run the chemkin set up script",
-        "'source chemkin_setup.ksh' in the 'bin' directory.\n",
-        Color.SPACEx6,
         "or check for a valid Ansys-chemkin license.",
         Color.END,
     ]
+    print(f"error file path: {e.filename}")
     this_msg = Color.SPACE.join(msg)
     logger.critical(this_msg)
+    if platform.system() == "Linux":
+        msg = [
+            Color.YELLOW,
+            "For Linux,",
+            "try to run the chemkin set up script",
+            "'source chemkin_setup.ksh' in the 'bin' directory.\n",
+            Color.SPACEx6,
+            "before retrying to initialize ansys-chemkin.",
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.info(this_msg)
     exit()
 
 # Chemkin-CFD-API
