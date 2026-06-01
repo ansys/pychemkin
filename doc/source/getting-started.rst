@@ -35,11 +35,11 @@ Install PyChemkin
    ::
 
       pip install dist\ansys_chemkin-*.whl
-   
+
    Alternatively, you can install the package directly from the PyPI repository:
 
    ::
-   
+
       pip install ansys-chemkin-core
 
 2. Verify the installation.
