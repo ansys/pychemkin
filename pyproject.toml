@@ -60,8 +60,8 @@ tests = [
 ]
 vulnerabilities = [
   "bandit[toml]==1.9.4",
-  "safety==3.7.0",
-  "typer==0.25.1",
+  "safety==3.8.0",
+  "typer==0.26.2",
 ]
 
 [project.urls]
