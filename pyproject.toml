@@ -31,7 +31,7 @@ dependencies = [
 doc = [
     "Pillow==12.2.0",
     "PyGitHub==2.9.1",
-    "ansys-sphinx-theme==1.8.2",
+    "ansys-sphinx-theme==1.9.0",
     "jupytext==1.19.3",
     "nbsphinx==0.9.8",
     "notebook==7.5.7",
