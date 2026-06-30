@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 
 import numpy as np
 
@@ -135,7 +136,9 @@ class PyCKtools:
         # change working directory
         os.chdir(new_working)
         try:
-            results = subprocess.run(["python", str(frun)], stdout=fout, check=True)
+            results = subprocess.run(
+                [sys.executable, str(frun)], stdout=fout, check=True
+            )
         except subprocess.CalledProcessError as e:
             print(f"Command returned non-zero exit status: {e.returncode}")
             print(f"test = {test_file}")
