@@ -302,6 +302,9 @@ if status != 0:
 # load Chemkin-CFD-API shared object
 try:
     chemkin = cdll.LoadLibrary(_target_lib)
+    # set an environment variable for the Chemkin-CFD-API to know that
+    # it is being called from PyChemkin
+    os.environ["RD_PY_CHEMKIN"] = "1"
 except OSError as e:
     inst_dir = Path(_ansys_dir) / "reaction" / _ckbin / "bin"
     msg = [
