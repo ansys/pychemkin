@@ -77,19 +77,19 @@ utilities can be found in the "Getting Started" and the "Visualization" manuals.
 # Import PyChemkin packages and start the logger
 # ==============================================
 
-import pandas as pd
 from pathlib import Path
 import platform
 import subprocess
 import time
 
+import matplotlib.pyplot as plt
+import pandas as pd
+
 import ansys.chemkin.core as ck  # Chemkin
-from ansys.chemkin.core.chemistry import chemkin_bin_dir
 from ansys.chemkin.core import Color
+from ansys.chemkin.core.chemistry import chemkin_bin_dir
 from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.utilities import copy_file, delete_files_by_extension
-import matplotlib.pyplot as plt
-
 
 # set interactive mode for plotting the results
 # interactive = True: display plot
@@ -297,7 +297,14 @@ if under_win:
     start_time = time.time()
     logger.debug("simulation started...")
     try:
-        result = subprocess.run([bat_file], capture_output=True, text=True, check=True)
+        run_cmd = ["cmd", "/d", "/c", str(bat_file)]
+        result = subprocess.run(
+            run_cmd,
+            capture_output=True,
+            text=True,
+            check=True,
+            shell=False,
+        )
         logger.debug("Command output:")
         logger.debug(result.stdout)
     except subprocess.CalledProcessError as e:
@@ -345,7 +352,14 @@ else:
     start_time = time.time()
     logger.debug("simulation started...")
     try:
-        result = subprocess.run([bat_file], capture_output=True, text=True, check=True)
+        run_cmd = ["bash", str(bat_file)]
+        result = subprocess.run(
+            run_cmd,
+            capture_output=True,
+            text=True,
+            check=True,
+            shell=False,
+        )
         logger.debug("Command output:")
         logger.debug(result.stdout)
     except subprocess.CalledProcessError as e:

@@ -61,16 +61,17 @@ the stability of the cellular structure.
 from pathlib import Path
 import time
 
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
+from ansys.chemkin.core.inlet import Stream
+from ansys.chemkin.core.logger import logger
 
 # chemkin plug flow reactor model
 from ansys.chemkin.core.shock.shocktubereactors import ZNDCalculator as Znd
-from ansys.chemkin.core.inlet import Stream
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.utilities import find_file
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
 
 # check working directory
 current_dir = str(Path.cwd())

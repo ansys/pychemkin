@@ -99,16 +99,19 @@ no need to define any *tear stream*.
 from pathlib import Path
 import time
 
+import numpy as np  # number crunching
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
-from ansys.chemkin.core.inlet import Mixture
-from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.core.inlet import (
+    Mixture,
+    Stream,  # external gaseous inlet
+)
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
 from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeEnergyConservation as Psr
 from ansys.chemkin.core.stirreactors.PSRcluster import PSRCluster as Ern
-import numpy as np  # number crunching
 
 # check working directory
 current_dir = str(Path.cwd())

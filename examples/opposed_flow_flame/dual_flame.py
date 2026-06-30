@@ -89,6 +89,8 @@ data and pre-processed.
 from pathlib import Path
 import time
 
+import matplotlib.pyplot as plt  # plotting
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
 
@@ -96,7 +98,6 @@ from ansys.chemkin.core import Color
 from ansys.chemkin.core.diffusionflames.opposedflowflame import OpposedFlame as Flame
 from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.core.logger import logger
-import matplotlib.pyplot as plt  # plotting
 
 # check working directory
 current_dir = str(Path.cwd())
