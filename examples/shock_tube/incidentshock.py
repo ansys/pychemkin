@@ -62,14 +62,15 @@ p. 137-145 (1967)
 from pathlib import Path
 import time
 
+import matplotlib.pyplot as plt  # plotting
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
+from ansys.chemkin.core.inlet import Stream
+from ansys.chemkin.core.logger import logger
 
 # chemkin plug flow reactor model
 from ansys.chemkin.core.shock.shocktubereactors import IncidentShock
-from ansys.chemkin.core.inlet import Stream
-from ansys.chemkin.core.logger import logger
-import matplotlib.pyplot as plt  # plotting
 
 # check working directory
 current_dir = str(Path.cwd())

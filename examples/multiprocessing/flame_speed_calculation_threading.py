@@ -58,6 +58,9 @@ from pathlib import Path
 import threading
 import time
 
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.core.logger import logger
@@ -66,8 +69,6 @@ from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.premixedflames.premixedflame import (
     FreelyPropagating as FlameSpeed,
 )
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
 
 # check working directory
 current_dir = str(Path.cwd())

@@ -64,8 +64,10 @@ import time
 
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
-from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.core.inlet import adiabatic_mixing_streams
+from ansys.chemkin.core.inlet import (
+    Stream,  # external gaseous inlet
+    adiabatic_mixing_streams,
+)
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)

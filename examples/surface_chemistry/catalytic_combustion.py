@@ -67,17 +67,16 @@ of the ``cat_combustor`` as long as they use the same gas-phase mechanism.
 from pathlib import Path
 import time
 
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
 
-from ansys.chemkin.core.inlet import Mixture, Stream
-
-from ansys.chemkin.core.logger import logger
-
 # Chemkin PFR model (steady-state)
 from ansys.chemkin.core.flowreactors.PFR import PFREnergyConservation as Pfr
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
+from ansys.chemkin.core.inlet import Mixture, Stream
+from ansys.chemkin.core.logger import logger
 
 # check working directory
 current_dir = str(Path.cwd())

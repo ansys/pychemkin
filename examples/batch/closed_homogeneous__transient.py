@@ -57,6 +57,9 @@ the net production rate of H\ :sub:`2`\ O.
 
 from pathlib import Path
 
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
 
@@ -65,8 +68,6 @@ from ansys.chemkin.core.batchreactors.batchreactor import (
     GivenPressureBatchReactorEnergyConservation,
 )
 from ansys.chemkin.core.logger import logger
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
 
 # check working directory
 current_dir = str(Path.cwd())

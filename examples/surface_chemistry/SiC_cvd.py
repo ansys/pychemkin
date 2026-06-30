@@ -81,17 +81,16 @@ reactions) are the dominate decomposition pathways of the gas-phase precursors.
 from pathlib import Path
 import time
 
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
-
 from ansys.chemkin.core.inlet import Stream
-
 from ansys.chemkin.core.logger import logger
 
 # Chemkin PSR model (steady-state)
 from ansys.chemkin.core.stirreactors.PSR import PSRSetVolumeFixedTemperature as Psr
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
 
 # check working directory
 current_dir = str(Path.cwd())

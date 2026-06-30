@@ -75,6 +75,9 @@ engine model to 'extract' the impacts of the micro mixing process.
 import copy
 from pathlib import Path
 
+import matplotlib.pyplot as plt  # plotting
+import numpy as np  # number crunching
+
 import ansys.chemkin.core as ck  # Chemkin
 from ansys.chemkin.core import Color
 
@@ -83,8 +86,6 @@ from ansys.chemkin.core.engines.HCCI import HCCIengine
 from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.microprocess import MicroMixing
 from ansys.chemkin.core.utilities import random_pick_integers
-import matplotlib.pyplot as plt  # plotting
-import numpy as np  # number crunching
 
 # check working directory
 current_dir = str(Path.cwd())

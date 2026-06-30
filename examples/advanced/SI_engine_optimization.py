@@ -70,13 +70,6 @@ import multiprocessing
 import os
 from pathlib import Path
 
-import ansys.chemkin.core as ck  # Chemkin
-
-# chemkin spark ignition (SI) engine model (transient)
-from ansys.chemkin.core.engines.SI import SIengine
-from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
-from ansys.chemkin.core.logger import logger
-from ansys.chemkin.core.utilities import WorkingFolders
 import matplotlib.pyplot as plt  # plotting
 import numpy as np  # number crunching
 
@@ -86,6 +79,14 @@ from pymoo.core.problem import ElementwiseProblem, StarmapParallelization
 from pymoo.decomposition.asf import ASF
 from pymoo.operators.sampling.lhs import LHS
 from pymoo.optimize import minimize
+
+import ansys.chemkin.core as ck  # Chemkin
+
+# chemkin spark ignition (SI) engine model (transient)
+from ansys.chemkin.core.engines.SI import SIengine
+from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
+from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.utilities import WorkingFolders
 
 # check working directory
 current_dir = str(Path.cwd())
