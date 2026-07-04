@@ -251,7 +251,7 @@ def __setup_windows(
                 lib_addition = ansyshome / "tp" / "IntelCompiler" / "2023.1.0" / plat
                 lib_paths.append(str(lib_addition))
                 lib_addition = ansyshome / "tp" / "IntelMKL" / "2024.2.3" / plat
-                if Path(lib_addition).is_dir():
+                if not Path(lib_addition).is_dir():
                     lib_addition = ansyshome / "tp" / "IntelMKL" / "2023.1.0" / plat
                 lib_paths.append(str(lib_addition))
                 lib_addition = ansyshome / "tp" / "zlib" / plat
