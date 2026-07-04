@@ -146,6 +146,25 @@ def chemkin_bin_dir() -> str:
     return str(bin_dir)
 
 
+def chemkin_data_dir() -> str:
+    """Return the local Ansys Chemkin data directory."""
+    """
+    Return the local Ansys Chemkin data directory
+    currently used by Pychemkin. This is where you can find commonly
+    used reaction mechanism files, thermodynamic data, and transport
+    property data that Chemkin uses to perform chemical kinetics
+    calculations.
+
+    Returns
+    -------
+        data_dir: string
+            the data directory of local Ansys Chemkin installation
+    """
+    local_ansys_dir = Path(ck_wrapper._ansys_dir)
+    data_dir = local_ansys_dir / "reaction" / "data"
+    return str(data_dir)
+
+
 def ansys_dir() -> str:
     """Return the local Ansys installation."""
     """
@@ -157,6 +176,34 @@ def ansys_dir() -> str:
             the local Ansys installation directory
     """
     return ck_wrapper._ansys_dir
+
+
+def get_configuration() -> tuple[int, str, str, str, list[str]]:
+    """Return the Chemkin-CFD-API configuration."""
+    """
+    Return the Chemkin-CFD-API configuration.
+
+    Returns
+    -------
+        ansys_ver: integer
+            Ansys version number
+        ansys_dir: string
+            Ansys installation directory
+        ckbin: string
+            Chemkin bin directory name
+        target_lib: string
+            Chemkin shared library name
+        lib_paths: list of strings
+            list of paths to required third-party shared libraries
+
+    """
+    return (
+        ck_wrapper._ansys_ver,
+        ck_wrapper._ansys_dir,
+        ck_wrapper._ckbin,
+        ck_wrapper._target_lib,
+        ck_wrapper._lib_paths,
+    )
 
 
 def done():
