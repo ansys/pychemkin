@@ -78,11 +78,21 @@ from ansys.chemkin.core.realgaseos import (
     set_current_pressure as set_current_pressure,
 )
 
+# set PyChemkin version number
+__version__ = "0.2.0"
 # show ansys (chemkin) version number
 msg = [
     Color.YELLOW,
     "Chemkin version number =",
     str(chemkin_version()),
+    Color.END,
+]
+this_msg = Color.SPACE.join(msg)
+logger.info(this_msg)
+msg = [
+    Color.YELLOW,
+    "PyChemkin version number =",
+    str(__version__),
     Color.END,
 ]
 this_msg = Color.SPACE.join(msg)
@@ -112,6 +122,3 @@ if frm is not None:
     pychemkin_dir = _chemkin_module_path.parent
 # set up Chemkin keyword help data
 setup_hints()
-
-# set version number
-__version__ = "0.2.0"
