@@ -28,6 +28,7 @@ import os
 from pathlib import Path
 import platform
 import sys
+from typing import Any, cast
 
 from ansys.chemkin.core.color import Color
 from ansys.chemkin.core.logger import logger
@@ -47,9 +48,14 @@ def __diagnose_windows_dll_dependencies(target_lib: Path) -> list[tuple[str, str
     for entry in getattr(pe, "DIRECTORY_ENTRY_IMPORT", []):
         dep_name = entry.dll.decode(errors="ignore")
         try:
-            ctypes.WinDLL(dep_name)
+            # getattr returns Any so mypy will not complain about missing WinDLL
+            # on some platforms/stubs
+            getattr(ctypes, "WinDLL")(dep_name)
         except OSError as exc:
             unresolved.append((dep_name, str(exc)))
+        except AttributeError:
+            # If WinDLL isn't available on this Python build, record as unresolved
+            unresolved.append((dep_name, "WinDLL not available in ctypes"))
     return unresolved
 
 
@@ -73,10 +79,10 @@ def get_runtime_diagnostics(
 
     """
     # unpack the configuration tuple
-    ansys_ver = config[0]
-    ansys_dir = config[1]
-    target_lib = config[3]
-    lib_paths = config[4]
+    ansys_ver = int(config[0])
+    ansys_dir = str(config[1])
+    target_lib = str(config[3])
+    lib_paths = cast(list[str], config[4])
     #
     target_path = Path(target_lib) if target_lib else Path()
     diagnostics: dict[str, object] = {
@@ -124,7 +130,7 @@ def get_runtime_diagnostics(
 
     dependency_probes: list[dict[str, object]] = []
     for dep_name, dep_error in unresolved:
-        dep_result: dict[str, object] = {
+        dep_result: dict[str, Any] = {
             "name": dep_name,
             "search_path_load_error": dep_error,
             "found_in_configured_paths": [],
@@ -141,7 +147,7 @@ def get_runtime_diagnostics(
             if candidate_paths:
                 full_path = candidate_paths[0]
                 try:
-                    ctypes.WinDLL(full_path)
+                    getattr(ctypes, "WinDLL")(full_path)
                     dep_result["full_path_probe"] = {
                         "success": True,
                         "path": full_path,
@@ -167,15 +173,15 @@ def get_runtime_diagnostics(
 
 
 def __setup_windows(
-    min_ver: int = 251, valid_vers: list[int] = None
+    min_ver: int, valid_vers: list[int]
 ) -> tuple[int, tuple[int, str, str, str, list[str]]]:
     """Set up PyChemkin environment on Windows platforms.
 
     Parameters
     ----------
-    min_ver : int, default: 251
+    min_ver : int
         Minimum version of Ansys to consider.
-    valid_vers : list[int], optional
+    valid_vers : list[int]
         List of valid Ansys versions to check.
 
     Returns
@@ -189,7 +195,7 @@ def __setup_windows(
     ansys_dir = ""
     ckbin = ""
     target_lib = ""
-    lib_paths = []
+    lib_paths: list[str] = []
     ansyshome = Path()
     # set ansys installation directory (Windows)
     for v in valid_vers:
@@ -281,15 +287,15 @@ def __setup_windows(
 
 
 def __setup_linux(
-    min_ver: int = 251, valid_vers: list[int] = None
+    min_ver: int, valid_vers: list[int]
 ) -> tuple[int, tuple[int, str, str, str, list[str]]]:
     """Set up PyChemkin environment on Linux platforms.
 
     Parameters
     ----------
-    min_ver : int, default: 251
+    min_ver : int
         Minimum version of Ansys to consider.
-    valid_vers : list[int], optional
+    valid_vers : list[int]
         List of valid Ansys versions to check.
 
     Returns
@@ -302,8 +308,9 @@ def __setup_linux(
     ansys_ver = min_ver
     ansys_dir = ""
     ckbin = ""
-    lib_paths = ""
-    target_lib = []
+    target_lib = ""
+    lib_paths: list[str] = []
+    #
     ierr = 0
     ansyshome = Path()
     # set ansys installation directory (Linux)
@@ -434,8 +441,8 @@ def __setup_linux(
     else:
         os.environ["PATH"] = os.environ["PATH"] + ":" + combined_path
     # set Chemkin-CFD-API shared object
-    my_taget = ansyshome / "reaction" / ckbin / "bin" / "libKINetics.so"
-    target_lib = str(my_taget)
+    my_target = ansyshome / "reaction" / ckbin / "bin" / "libKINetics.so"
+    target_lib = str(my_target)
     return 0, (ansys_ver, ansys_dir, ckbin, target_lib, lib_paths)
 
 

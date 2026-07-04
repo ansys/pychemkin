@@ -26,6 +26,7 @@ import ctypes
 import os
 from pathlib import Path
 import platform
+from typing import cast
 
 import numpy as np
 
@@ -102,7 +103,7 @@ _ansys_ver = pyck_config[0]
 _ansys_dir = pyck_config[1]
 _ckbin = pyck_config[2]
 _target_lib = pyck_config[3]
-_lib_paths = pyck_config[4]
+_lib_paths = cast(list[str], pyck_config[4])
 #
 # load Chemkin-CFD-API shared object
 if not Path(_target_lib).is_file():
