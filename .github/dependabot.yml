@@ -8,6 +8,8 @@ updates:
     allow:
       - dependency-type: "all"
     open-pull-requests-limit: 5
+    pull-request-branch-name:
+      separator: "/"
 
   # Enable version updates for GitHub Actions
   - package-ecosystem: "github-actions"
@@ -17,6 +19,8 @@ updates:
     allow:
       - dependency-type: "all"
     open-pull-requests-limit: 5
+    pull-request-branch-name:
+      separator: "/"
 
   # Enable version updates for pre-commit hooks
   - package-ecosystem: "pre-commit"
@@ -26,3 +30,5 @@ updates:
     allow:
       - dependency-type: "all"
     open-pull-requests-limit: 5
+    pull-request-branch-name:
+      separator: "/"
