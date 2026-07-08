@@ -7,6 +7,7 @@ updates:
       interval: "weekly"
     allow:
       - dependency-type: "all"
+    open-pull-requests-limit: 5
 
   # Enable version updates for GitHub Actions
   - package-ecosystem: "github-actions"
@@ -15,6 +16,7 @@ updates:
       interval: "weekly"
     allow:
       - dependency-type: "all"
+    open-pull-requests-limit: 5
 
   # Enable version updates for pre-commit hooks
   - package-ecosystem: "pre-commit"
@@ -23,3 +25,4 @@ updates:
       interval: "weekly"
     allow:
       - dependency-type: "all"
+    open-pull-requests-limit: 5
