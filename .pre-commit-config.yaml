@@ -20,7 +20,7 @@ repos:
         #exclude: "^src|^tests|^examples/.*_.*"
 
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.18.0 # 1.18.0
+    rev: v1.26.1 # 1.18.0
     hooks:
       - id: zizmor
         args: ["--pedantic"]
@@ -35,7 +35,7 @@ repos:
         args: ["--line-length=88"]
 
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.1
+    rev: v2.4.2
     hooks:
       - id: codespell
         additional_dependencies: ["tomli"]
