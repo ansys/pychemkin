@@ -24,7 +24,7 @@
 
 import importlib.resources
 from pathlib import Path
-from typing import Union
+from typing import Any, Union
 import webbrowser
 
 import yaml
@@ -32,7 +32,7 @@ import yaml
 from ansys.chemkin.core.color import Color
 from ansys.chemkin.core.logger import logger
 
-ck_dict = {}  # chemkin hints
+ck_dict: dict[str, Any] = {}  # chemkin hints
 _help_loaded = False
 
 
