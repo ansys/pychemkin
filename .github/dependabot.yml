@@ -4,67 +4,36 @@ updates:
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     allow:
       - dependency-type: "all"
     open-pull-requests-limit: 5
     pull-request-branch-name:
       separator: "/"
+    cooldown:
+      default-days: 7
 
   # Enable version updates for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     allow:
       - dependency-type: "all"
     open-pull-requests-limit: 5
     pull-request-branch-name:
       separator: "/"
-
+    cooldown:
+      default-days: 7
   # Enable version updates for pre-commit hooks
   - package-ecosystem: "pre-commit"
     directory: "/"
     schedule:
-      interval: "weekly"
-    allow:
-      - dependency-type: "all"
-    open-pull-requests-limit: 5
-    pull-request-branch-name:
-      separator: "/"
-
-  # Enable security updates for pip
-  - package-ecosystem: "pip"
-    directory: "/"
-    schedule:
       interval: "daily"
-    security-updates-only: true
     allow:
       - dependency-type: "all"
     open-pull-requests-limit: 5
     pull-request-branch-name:
       separator: "/"
-
-  # Enable security updates for GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "daily"
-    security-updates-only: true
-    allow:
-      - dependency-type: "all"
-    open-pull-requests-limit: 5
-    pull-request-branch-name:
-      separator: "/"
-
-  # Enable security updates for pre-commit
-  - package-ecosystem: "pre-commit"
-    directory: "/"
-    schedule:
-      interval: "daily"
-    security-updates-only: true
-    allow:
-      - dependency-type: "all"
-    open-pull-requests-limit: 5
-    pull-request-branch-name:
-      separator: "/"
+    cooldown:
+      default-days: 7
