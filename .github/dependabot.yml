@@ -6,7 +6,6 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    auto_merge_enabled: true
     cooldown:
       default-days: 7
       semver-major-days: 30
@@ -42,7 +41,6 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    auto_merge_enabled: true
     cooldown:
       default-days: 7
       exclude:
@@ -55,7 +53,6 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    auto_merge_enabled: true
     allow:
       - dependency-type: "all"
     open-pull-requests-limit: 5
