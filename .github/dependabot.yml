@@ -1,38 +1,58 @@
 version: 2
 updates:
-  # Enable version updates for Python dependencies
+
+  # pip (Python) updates with groups and cooldowns
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
-      interval: "daily"
-    auto_merge_enabled: true
-    allow:
-      - dependency-type: "all"
-    open-pull-requests-limit: 5
-    pull-request-branch-name:
-      separator: "/"
+      interval: "weekly"
     cooldown:
       default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
+      exclude:
+        - "ansys-sphinx-theme"
+        - "ansys-tools-common"
+    labels:
+      - "dependencies:pyproject"
+    groups:
+      general-dependencies:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "*sphinx*"
+          - "numpydoc"
+          - "pyvista*"
+          - "pytest*"
+      test-dependencies:
+        patterns:
+          - "pytest*"
+      doc-dependencies:
+        patterns:
+          - "*sphinx*"
+          - "numpydoc"
+      pyvista:
+        patterns:
+          - "pyvista*"
 
-  # Enable version updates for GitHub Actions
+  # GitHub Actions updates
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
-    auto_merge_enabled: true
-    allow:
-      - dependency-type: "all"
-    open-pull-requests-limit: 5
-    pull-request-branch-name:
-      separator: "/"
+      interval: "weekly"
     cooldown:
       default-days: 7
-  # Enable version updates for pre-commit hooks
+      exclude:
+        - "ansys/actions/*"
+    labels:
+      - "dependencies:ci"
+
+  # pre-commit hooks
   - package-ecosystem: "pre-commit"
     directory: "/"
     schedule:
-      interval: "daily"
-    auto_merge_enabled: true
+      interval: "weekly"
     allow:
       - dependency-type: "all"
     open-pull-requests-limit: 5
