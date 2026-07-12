@@ -69,8 +69,22 @@ this_msg = Color.SPACE.join(msg)
 logger.debug(this_msg)
 # find all the valid Ansys versions installed on the local machine
 _valid_versions = find_valid_ansys_versions(_min_version)
-# uncomment the following line to force pychemkin to use a specific Ansys version
-# _valid_versions = [261]
+# check the environment variable "PYCK_CHEMKIN_VER"
+# if a specific Ansys version is requested
+_requested_ver = int(os.getenv("PYCK_CHEMKIN_VER", "0"))
+if _requested_ver in _valid_versions:
+    _valid_versions = [_requested_ver]
+else:
+    if _requested_ver != 0:
+        msg = [
+            Color.RED,
+            "requested Ansys version not found or not valid:",
+            str(_requested_ver),
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.critical(this_msg)
+        exit()
 # check os platform
 if platform.system() == "Windows":
     # set pychemkin configuration for Windows
@@ -201,6 +215,17 @@ else:
         ]
         this_msg = Color.SPACE.join(msg)
         logger.critical(this_msg)
+        intel_link = "https://www.intel.com/content/www/us/en/developer/articles/tool"
+        intel_link += "/compilers-redistributable-libraries-by-version.html"
+        msg = [
+            Color.YELLOW,
+            "For Intel compiler runtime libraries related issues,",
+            "please install Intel® oneAPI DPC++/C++",
+            "and Fortran Compilers Runtime Libraries",
+            "at the link below:\n",
+            intel_link,
+            Color.END,
+        ]
         if platform.system() == "Linux":
             msg = [
                 Color.YELLOW,

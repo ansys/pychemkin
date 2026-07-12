@@ -212,7 +212,8 @@ def done():
     # if check_jupyter_notebook():
     # running in Jupyter environment
     # requires addition steps
-    # _ = ck_wrapper.chemkin.KINExit()
+    if chemkin_version() >= 271:
+        _ = ck_wrapper.chemkin.KINExit()
 
     # clean up
     global _active_chemistry_set
