@@ -248,14 +248,12 @@ def __setup_windows(
                 lib_paths.append(str(lib_addition))
             else:
                 # >= 27R1
-                lib_addition = ansyshome / "tp" / "IntelCompiler" / "2023.1.0" / plat
-                lib_paths.append(str(lib_addition))
-                lib_addition = ansyshome / "tp" / "IntelMKL" / "2024.2.3" / plat
-                if not Path(lib_addition).is_dir():
-                    lib_addition = ansyshome / "tp" / "IntelMKL" / "2023.1.0" / plat
-                lib_paths.append(str(lib_addition))
-                lib_addition = ansyshome / "tp" / "zlib" / plat
-                lib_paths.append(str(lib_addition))
+                # configuration file for the 3rd-party dlls
+                third_party_config = ansyshome / "reaction" / ckbin / "bin"
+                third_party_paths: list[str] = set_3rd_party_dll_paths(
+                    str(ansyshome), str(third_party_config), plat
+                )
+                lib_paths.extend(third_party_paths)
     else:
         msg = [
             Color.RED,
@@ -270,6 +268,8 @@ def __setup_windows(
         for path in lib_paths:
             if Path(path).is_dir():
                 os.add_dll_directory(path)
+                # Append it to the existing system PATH variable
+                os.environ["PATH"] += os.pathsep + path
             else:
                 msg = [
                     Color.RED,
@@ -419,14 +419,13 @@ def __setup_linux(
         lib_paths.append(str(lib_addition))
     else:
         # >= 27R1
-        lib_addition = ansyshome / "tp" / "IntelCompiler" / "2023.1.0" / plat
-        lib_paths.append(str(lib_addition))
-        lib_addition = ansyshome / "tp" / "IntelMKL" / "2024.2.3" / plat
-        if not Path(lib_addition).is_dir():
-            lib_addition = ansyshome / "tp" / "IntelMKL" / "2023.1.0" / plat
-        lib_paths.append(str(lib_addition))
-        lib_addition = ansyshome / "tp" / "zlib" / plat
-        lib_paths.append(str(lib_addition))
+        # configuration file for the 3rd-party dlls
+        third_party_config = ansyshome / "reaction" / ckbin / "bin"
+        third_party_paths: list[str] = set_3rd_party_dll_paths(
+            str(ansyshome), str(third_party_config), plat
+        )
+        lib_paths.extend(third_party_paths)
+
     # set load shared object paths
     combined_path = ":".join(lib_paths)
     if "LD_LIBRARY_PATH" not in os.environ.keys():
@@ -435,6 +434,7 @@ def __setup_linux(
         os.environ["LD_LIBRARY_PATH"] = (
             os.environ["LD_LIBRARY_PATH"] + ":" + combined_path
         )
+        os.environ["PATH"] = os.environ["PATH"] + ":" + combined_path
 
     if "PATH" not in os.environ.keys():
         os.environ["PATH"] = combined_path
@@ -478,3 +478,72 @@ def find_valid_ansys_versions(min_ver: int = 251) -> list[int]:
         test_release -= 10
 
     return valid_versions
+
+
+def set_3rd_party_dll_paths(
+    ansys_folder: str, data_folder: str, lib_platform: str
+) -> list[str]:
+    """Set up the shared third-party dll paths.
+
+    Parameters
+    ----------
+    ansys_folder: str, required
+        location of the ANSYS installation folder.
+    data_folder: str, required
+        location of the text file containing the shared third-party dll paths.
+    lib_platform: str, required
+        platform label for the shared third-party dlls (e.g., "winx64").
+
+    Returns
+    -------
+    third_party_paths: list[str]
+        list of the shared third-party dll paths.
+
+    """
+    third_party_paths: list[str] = []
+    third_party_file = Path(data_folder) / "third-party_path_config.txt"
+    if not Path(third_party_file).is_file():
+        msg = [
+            Color.RED,
+            "Cannot find the third-party dll information file:\n",
+            str(third_party_file),
+            Color.END,
+        ]
+        this_msg = Color.SPACE.join(msg)
+        logger.critical(this_msg)
+        exit()
+    else:
+        line_error = False
+        with Path(third_party_file).open("r") as f:
+            for line in f:
+                if line.startswith("tp/"):
+                    parts = line.strip().split("/")
+                    if len(parts) == 4:
+                        lib_dir, lib_name, lib_version = (
+                            parts[0],
+                            parts[1],
+                            parts[2],
+                        )
+                        lib_addition = (
+                            Path(ansys_folder)
+                            / lib_dir
+                            / lib_name
+                            / lib_version
+                            / lib_platform
+                        )
+
+                        print(f"Adding third-party library path: {str(lib_addition)}")
+                        third_party_paths.append(str(lib_addition))
+                    else:
+                        msg = [
+                            Color.RED,
+                            "Invalid line in third-party dll information file:\n",
+                            line.strip(),
+                            Color.END,
+                        ]
+                        this_msg = Color.SPACE.join(msg)
+                        logger.critical(this_msg)
+                        line_error = True
+        if line_error:
+            exit()
+    return third_party_paths

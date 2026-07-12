@@ -44,7 +44,8 @@ Install PyChemkin
 
 2. Verify the installation.
 
-   Open the Python interpreter from the Windows command prompt and import the ``ansys-chemkin`` package:
+   Open the Python interpreter from the Windows command prompt and import the
+   ``ansys-chemkin-core`` package:
 
    ::
 
@@ -55,6 +56,7 @@ Install PyChemkin
    ::
 
       Chemkin version number = xxx
+      PyChemkin version number = x.x.x
 
    PyChemkin is probably not installed locally if Python displays nothing:
 
@@ -62,10 +64,17 @@ Install PyChemkin
 
       >>>
 
-   If Python displays the following statement, update the local Ansys Chemkin installation to 2025 R2 or later:
+   If Python displays the following statement, update the local Ansys Chemkin installation
+   to 2025 R2 or later:
 
    ::
 
       PyChemkin does not support Chemkin versions older than 2025 R2
 
-.. note:: You must have a valid Ansys license to run PyChemkin after installation.
+.. note::
+   1. You must have a valid Ansys license to run PyChemkin after installation.
+
+   2. PyChemkin will search for the latest version of the local Ansys Chemkin installation
+      and use it automatically. Use the ``PYCK_CHEMKIN_VER`` environment variable to specify
+      the desired local Ansys Chemkin installation. For example, set ``PYCK_CHEMKIN_VER="261"``
+      to force PyChemkin to use Ansys Chemkin 2026 R1.
