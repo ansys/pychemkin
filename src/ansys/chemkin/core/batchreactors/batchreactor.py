@@ -107,7 +107,7 @@ class BatchReactors(Reactor):
         self._profilesize = int(0)
         # text output control flag
         self.suppress_output = False
-        # repot ignition delay flag
+        # report ignition delay flag
         self.report_ignition_delay: bool = False
 
     @property
