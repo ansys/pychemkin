@@ -107,6 +107,8 @@ class BatchReactors(Reactor):
         self._profilesize = int(0)
         # text output control flag
         self.suppress_output = False
+        # report ignition delay flag
+        self.report_ignition_delay: bool = False
 
     @property
     def time(self) -> float:
@@ -570,6 +572,8 @@ class BatchReactors(Reactor):
             if method == "T_inflection":
                 # use inflection points in the temperature profile
                 self.setkeyword(key="TIFP", value=True)
+                # set flag
+                self.report_ignition_delay = True
             elif method == "T_rise":
                 # use temperature rise
                 if val <= 0.0:
@@ -582,6 +586,8 @@ class BatchReactors(Reactor):
                     logger.error(this_msg)
                 else:
                     self.setkeyword(key="DTIGN", value=val)
+                    # set flag
+                    self.report_ignition_delay = True
             elif method == "T_ignition":
                 # use temperature value
                 if val <= 0.0:
@@ -594,6 +600,8 @@ class BatchReactors(Reactor):
                     logger.error(this_msg)
                 else:
                     self.setkeyword(key="TLIM", value=val)
+                    # set flag
+                    self.report_ignition_delay = True
             elif method == "Species_peak":
                 # use species peak location
                 if target not in self._specieslist:
@@ -607,9 +615,13 @@ class BatchReactors(Reactor):
                     logger.error(this_msg)
                 else:
                     self.setkeyword(key="KLIM", value=target)
+                    # set flag
+                    self.report_ignition_delay = True
             elif method == "Thermicity_peak":
                 # use  peak total thermicity location
                 self.setkeyword(key="SLIM", value=True)
+                # set flag
+                self.report_ignition_delay = True
             else:
                 # incorrect ignition detection method given
                 msg = [
@@ -646,7 +658,18 @@ class BatchReactors(Reactor):
         ignitiondelaytime = c_double(0.0e0)
         # check run status
         status = self.getrunstatus(mode="silent")
-        if status == -100:
+        if not self.report_ignition_delay:
+            msg = [
+                Color.YELLOW,
+                "ignition delay has not been set.\n",
+                Color.SPACEx6,
+                "please set the ignition delay definition first.",
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.info(this_msg)
+            return ignitiondelaytime.value
+        elif status == -100:
             msg = [
                 Color.YELLOW,
                 "simulation has yet to be run.\n",
@@ -696,7 +719,7 @@ class BatchReactors(Reactor):
                     "potential bad ignition delay time value.\n",
                     Color.SPACEx6,
                     "please check the text output and",
-                    " revisit the reactor/solver settings.",
+                    "revisit the reactor/solver settings.",
                     Color.END,
                 ]
                 this_msg = Color.SPACE.join(msg)
@@ -1628,9 +1651,10 @@ class BatchReactors(Reactor):
         if self.has_surface_chemistry:
             self.process_surface_solution(nreac)
         # set up single point solution parameters
-        delay = self.get_ignition_delay()
-        if delay > 0.0e0:
-            self._solution_parameters["ignition_delay"] = delay
+        if self.report_ignition_delay:
+            delay = self.get_ignition_delay()
+            if delay > 0.0e0:
+                self._solution_parameters["ignition_delay"] = delay
         # clean up
         del time, pres, temp, vol, thermicity, frac
 
