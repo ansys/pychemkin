@@ -54,7 +54,7 @@ jobs:
       options: --cpus 1 --user root
     steps:
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@a5b0351dc277d68c2dc1beca2d2674c7dfa4fc55 # v10.3.3
+        uses: ansys/actions/tests-pytest@7419880d64bb0bba83f968ca803611df0b76faf0 # v10.3.4
         env:
           ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER) }}
           POETRY_VIRTUALENVS_CREATE: 'false'
