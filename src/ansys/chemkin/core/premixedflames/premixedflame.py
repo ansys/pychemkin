@@ -221,6 +221,37 @@ class PremixedFlame(Flame):
         ierr = numblines - npoints
         return ierr
 
+    def set_auto_ignition_check(self, check: bool = False):
+        """Set the auto-ignition check mode."""
+        """
+        Set the auto-ignition check mode for the premixed flame model.
+
+        Parameters
+        ----------
+            check: boolean {True, False}
+                False: no auto-ignition check
+                True: check auto-ignition
+
+        """
+        # set the auto-ignition check mode
+        this_mode = c_int(1)
+        if check:
+            this_mode = c_int(1)
+        else:
+            this_mode = c_int(0)
+        ierr = chemkin_wrapper.chemkin.KINPremix_SetAutoIgnitionCheck(this_mode)
+        if ierr != 0:
+            msg = [
+                Color.PURPLE,
+                "failed to set the auto-ignition check mode,",
+                "error code =",
+                str(ierr),
+                Color.END,
+            ]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
+
     def __run_model(self) -> int:
         """Run the reactor model after the keywords are processed."""
         """

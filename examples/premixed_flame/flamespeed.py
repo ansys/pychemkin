@@ -166,7 +166,7 @@ premixed.pressure = fuel.pressure
 # set inlet/unburnt gas temperature [K]
 premixed.temperature = fuel.temperature
 # set estimated value of the flame speed [cm/sec]
-premixed.velocity = 65.0
+premixed.velocity = 80.0
 
 ##################################################
 # Instantiate the laminar speed calculator
@@ -287,6 +287,10 @@ flamespeedcalculator.set_species_floor(-1.0e-4)
 flamespeedcalculator.skip_fix_t_solution(mode=True)
 # reduce the Jacobian age during the pseudo time stepping phase
 flamespeedcalculator.set_pseudo_jacobian_age(10)
+
+# turn ON/OFF auto ignition check (optional)
+if ck.chemkin_version() >= 271:
+    flamespeedcalculator.set_auto_ignition_check(check=False)
 
 ####################################
 # Run the premixed flame calculation
