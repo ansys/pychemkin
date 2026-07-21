@@ -274,8 +274,9 @@ chemkin.KINInitialize.argtypes = [
 chemkin.KINFinish.restype = None
 chemkin.KINFinish.argtypes = []
 # (2027 R1 feature)
-# chemkin.KINExit.restype = ctypes.c_int
-# chemkin.KINExit.argtypes = []
+if _ansys_ver >= 271:
+    chemkin.KINExit.restype = ctypes.c_int
+    chemkin.KINExit.argtypes = []
 chemkin.KINUpdateChemistrySet.restype = ctypes.c_int
 chemkin.KINUpdateChemistrySet.argtypes = [
     ctypes.POINTER(ctypes.c_int),
@@ -1067,6 +1068,12 @@ chemkin.KINPremix_GetFlameMassFlux.restype = ctypes.c_int
 chemkin.KINPremix_GetFlameMassFlux.argtypes = [
     ctypes.POINTER(ctypes.c_double),
 ]
+# (2027 R1 feature)
+if _ansys_ver >= 271:
+    chemkin.KINPremix_SetAutoIgnitionCheck.restype = ctypes.c_int
+    chemkin.KINPremix_SetAutoIgnitionCheck.argtypes = [
+        ctypes.POINTER(ctypes.c_int),
+    ]
 
 # Oppdif interfaces
 chemkin.KINOppdif_SetInlet.restype = ctypes.c_int
