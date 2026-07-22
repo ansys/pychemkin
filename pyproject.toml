@@ -49,7 +49,7 @@ doc = [
 ]
 tests = [
     "dill==0.4.1",
-    "docker==7.1.0",
+    "docker==7.2.0",
     "pygltflib==1.16.5",
     "pytest-cov==7.1.0",
     "pytest-mock==3.15.1",
