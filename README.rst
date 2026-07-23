@@ -126,17 +126,17 @@ categorized by version, along with brief descriptions of each change.
 .. _Ansys Chemkin: https://www.ansys.com/products/fluids/ansys-chemkin
 
 .. Prerequisites and installation guidelines
-.. _prerequisites: https://chemkin.docs.pyansys.com/version/dev/getting-started/prerequisites.html
-.. _contribute: https://chemkin.docs.pyansys.com/version/dev/contribute.html
+.. _prerequisites: https://chemkin.docs.pyansys.com/version/dev/getting-started.html#prerequisites
+.. _contribute: https://chemkin.docs.pyansys.com/version/dev/contributing.html
 .. _installation guidelines: https://chemkin.docs.pyansys.com/version/dev/getting-started.html#install-pychemkin
 
 .. Documentation chapters
 .. _official documentation: https://chemkin.docs.pyansys.com
 .. _getting started: https://chemkin.docs.pyansys.com/version/dev/getting-started.html
 .. _user guide: https://chemkin.docs.pyansys.com/version/dev/user-guide.html
-.. _api reference: https://chemkin.docs.pyansys.com/version/dev/api.html
-.. _examples: https://chemkin.docs.pyansys.com/version/dev/examples.html
-.. _contribute: https://chemkin.docs.pyansys.com/version/dev/contribute.html
+.. _api reference: https://chemkin.docs.pyansys.com/version/dev/api/index.html
+.. _examples: https://chemkin.docs.pyansys.com/version/dev/examples/index.html
+.. _contribute: https://chemkin.docs.pyansys.com/version/dev/contributing.html
 .. _artifacts: https://chemkin.docs.pyansys.com/version/dev/artifacts.html
 
 .. _LICENSE: https://github.com/ansys/pychemkin/blob/main/LICENSE
