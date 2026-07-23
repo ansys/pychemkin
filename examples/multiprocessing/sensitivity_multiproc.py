@@ -197,7 +197,7 @@ def run_cases(work_path: str, chemfile: str, thermfile: str, ids: list, factors:
         f.flush()
         # loop over all reactions in the array
         for i in range(len(ids)):
-            # Skip negtive A factors
+            # Skip negative A factors
             if afactor[ids[i]] < 0:
                 delaytime = conv_bomb.time
             else:
