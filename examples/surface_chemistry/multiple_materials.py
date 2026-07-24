@@ -79,6 +79,8 @@ the species. For site species, you can get the "site occupancy". For bulk specie
 you can get the "enthalpy" and the "specific heat capacity".
 """
 
+# sphinx_gallery_thumbnail_path = '_static/multiple_surface_materials.png'
+
 ################################################
 # Import PyChemkin packages and start the logger
 # ==============================================
