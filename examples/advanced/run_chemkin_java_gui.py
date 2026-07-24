@@ -33,6 +33,8 @@ the command line, which consists of the following steps:
 2) execute the script with subprocess.
 """
 
+# sphinx_gallery_thumbnail_path = '_static/GUI_chemkin.png'
+
 ################################################
 # Import PyChemkin packages and start the logger
 # ==============================================
