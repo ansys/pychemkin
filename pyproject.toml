@@ -32,9 +32,9 @@ doc = [
     "Pillow==12.3.0",
     "PyGitHub==2.9.1",
     "ansys-sphinx-theme==1.9.0",
-    "jupytext==1.19.4",
+    "jupytext==1.19.5",
     "nbsphinx==0.9.8",
-    "notebook==7.6.0",
+    "notebook==7.6.1",
     "numpydoc==1.10.0",
     "pandas==2.3.3",
     "pandoc==2.4.0",
@@ -56,7 +56,7 @@ tests = [
     "pytest==9.1.1",
     "requests==2.34.2",
     "urllib3==2.7.0",
-    "usd-core==26.5",
+    "usd-core==26.8",
 ]
 vulnerabilities = [
   "bandit[toml]==1.9.4",
