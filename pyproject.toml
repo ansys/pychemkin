@@ -106,10 +106,10 @@ addopts = "-ra --maxfail=3"
 
 [tool.towncrier]
 package = "ansys.chemkin.core"
-directory = "doc/source/changelog"
+directory = "doc/source/changelog.d"
 filename = "doc/source/changelog.rst"
 start_string = ".. towncrier release notes start\n"
-template = "doc/source/changelog/template"
+template = "doc/source/changelog.d/changelog_template.jinja"
 title_format = "`{version} <https://github.com/ansys/pychemkin/releases/tag/v{version}>`_ - {project_date}"
 issue_format = "`#{issue} <https://github.com/ansys/pychemkin/pull/{issue}>`_"
 
@@ -137,6 +137,7 @@ showcontent = true
 directory = "miscellaneous"
 name = "Miscellaneous"
 showcontent = true
+
 [[tool.towncrier.type]]
 directory = "documentation"
 name = "Documentation"
