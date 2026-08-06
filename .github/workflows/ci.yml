@@ -59,7 +59,22 @@ jobs:
     permissions:
       contents: read # Read the dependencies and source code of the library
     steps:
+      - name: "Set up Python for vulnerability check"
+        uses: actions/setup-python@7f4fc3e22c37d6ff65e88745f38bd3157c663f7c # v4.9.1
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+      - name: "Get site-packages for this interpreter"
+        id: get_site
+        run: |
+          # Capture site-packages for the selected interpreter and expose to later steps
+          paths=$(python -c "import site; print(':'.join(site.getsitepackages()))")
+          echo "paths=$paths" >> $GITHUB_OUTPUT
+
       - uses: ansys/actions/check-vulnerabilities@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+        env:
+          # Prevent Python from searching the repository working directory for imports.
+          PYTHONSAFEPATH: ${{ steps.get_site.outputs.paths }}
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
