@@ -34,7 +34,7 @@ from ansys.chemkin.core.reactormodel import Keyword
 class SteadyStateSolver:
     """Common steady-state solver controlling parameters."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Create a steady state solver object."""
         # steady-state solver control parameter class
         # mostly just keyword processing

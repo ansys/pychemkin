@@ -24,19 +24,18 @@
 
 import copy
 import ctypes
-from ctypes import c_double
-from typing import Dict, List, Union
+from typing import TYPE_CHECKING, Dict, List, Union
 
 import numpy as np
 import numpy.typing as npt
 
 from ansys.chemkin.core import chemkin_wrapper as ck_wrapper
-from ansys.chemkin.core.chemistry import (
-    Chemistry,
-    Material,
-)
 from ansys.chemkin.core.color import Color
 from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.surface_components import Material
+
+if TYPE_CHECKING:
+    from ansys.chemkin.core.chemistry import Chemistry
 
 
 class Surface:
@@ -47,7 +46,7 @@ class Surface:
     the surface Material objects associated with the Chemistry Set.
     """
 
-    def __init__(self, chem: Chemistry):
+    def __init__(self, chem: "Chemistry"):
         """Create a Surface object."""
         """
         Create a Surface object to store and to provide the surface chemistry
@@ -2028,8 +2027,8 @@ class Surface:
         # convert parameters to c pointers
         chemset_index = ctypes.c_int(chem_id)
         mat_index = ctypes.c_int(mat_id)
-        pp = c_double(p)  # pressure scalar
-        tt = c_double(t)  # temperature scalar
+        pp = ctypes.c_double(p)  # pressure scalar
+        tt = ctypes.c_double(t)  # temperature scalar
         # construct the activity array
         # (gas mole fraction, site fraction, bulk activity)
         act = Surface.set_activity_array(
@@ -2042,10 +2041,10 @@ class Surface:
         )
         # compute mass density from mass fraction
         ierr = ck_wrapper.chemkin.KINGetSurfaceProductionRates(
-            chemset_index,
-            mat_index,
-            pp,
-            tt,
+            ctypes.byref(chemset_index),
+            ctypes.byref(mat_index),
+            ctypes.byref(pp),
+            ctypes.byref(tt),
             act,
             site_den,
             rop,
@@ -2157,8 +2156,8 @@ class Surface:
         # convert parameters to c pointers
         chemset_index = ctypes.c_int(chem_id)
         mat_index = ctypes.c_int(mat_id)
-        pp = c_double(p)  # pressure scalar
-        tt = c_double(t)  # temperature scalar
+        pp = ctypes.c_double(p)  # pressure scalar
+        tt = ctypes.c_double(t)  # temperature scalar
         # construct the activity array
         # (gas mole fraction, site fraction, bulk activity)
         act = Surface.set_activity_array(
