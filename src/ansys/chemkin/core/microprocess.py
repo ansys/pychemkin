@@ -39,7 +39,7 @@ from ansys.chemkin.core.utilities import random, random_pick_integers
 class MicroMixing:
     """Micro mixing process module."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Create a stochastic micro mixing process object."""
         """
         Create a stochastic micro mixing process object.

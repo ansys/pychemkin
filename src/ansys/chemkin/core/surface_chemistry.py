@@ -25,6 +25,7 @@
 import copy
 import ctypes
 from ctypes import POINTER, c_char_p
+from typing import Any, Protocol
 
 from ansys.chemkin.core import chemkin_wrapper as ck_wrapper
 from ansys.chemkin.core.color import Color
@@ -36,10 +37,43 @@ MAX_SPECIES_LENGTH = _symbol_length + 1  # Chemkin element/species symbol length
 LP_c_char = ctypes.POINTER(ctypes.c_char)  # pointer to C type character array
 
 
+class _ValueHolder(Protocol):
+    """Protocol for ctypes scalar wrappers exposing a ``value`` attribute."""
+
+    value: int
+
+
+class _SurfaceChemistryHost(Protocol):
+    """Structural contract implemented by ``Chemistry`` for this mixin."""
+
+    label: str
+    matsymbol: list[str]
+    material_map: dict[str, int]
+    materials: dict[str, Any]
+    numb_mat: int
+    _materialnamedone: int
+    _chemset_index: Any
+    _num_materials: _ValueHolder
+    _num_gas_species: _ValueHolder
+    _num_max_site_species: _ValueHolder
+    _num_max_bulk_species: _ValueHolder
+    _num_gas_reactions: _ValueHolder
+    _num_max_surf_reactions: _ValueHolder
+    _num_max_phases: _ValueHolder
+    max_total_species: int
+    max_total_reactions: int
+
+    def verify_surface_mechanism(self) -> bool: ...
+    def no_surface_mechanism_declaration(self) -> None: ...
+
+    @property
+    def material_names(self) -> list[str]: ...
+
+
 class SurfaceChemistryMixin:
     """Surface chemistry related methods for the Chemistry class."""
 
-    def set_surface_chemistry(self):
+    def set_surface_chemistry(self: _SurfaceChemistryHost):
         """Set up the surface chemistry data."""
         """
         Set up the surface chemistry data of the Chemistry Set.
@@ -75,7 +109,7 @@ class SurfaceChemistryMixin:
             m = Material(mat_index=i, chem=self, label=key)
             self.materials[key] = copy.deepcopy(m)
 
-    def no_surface_mechanism_declaration(self):
+    def no_surface_mechanism_declaration(self: _SurfaceChemistryHost):
         """Inform users the Chemistry Set does not have surface chemistry."""
         msg = [
             Color.YELLOW,
@@ -88,7 +122,7 @@ class SurfaceChemistryMixin:
         logger.info(this_msg)
 
     @property
-    def number_materials(self) -> int:
+    def number_materials(self: _SurfaceChemistryHost) -> int:
         """Get the number of surface materials."""
         """
         Get the number of surface materials in the Chemistry Set.
@@ -104,7 +138,7 @@ class SurfaceChemistryMixin:
             return 0
 
     @property
-    def max_number_phases(self) -> int:
+    def max_number_phases(self: _SurfaceChemistryHost) -> int:
         """Get the maximum number of phases."""
         """
         Get the maximum number of phases among the surface materials
@@ -126,7 +160,7 @@ class SurfaceChemistryMixin:
             return 1
 
     @property
-    def max_number_sites(self) -> int:
+    def max_number_sites(self: _SurfaceChemistryHost) -> int:
         """Get the maximum number of surface site species."""
         """
         Get the maximum number of surface site species among the
@@ -146,7 +180,7 @@ class SurfaceChemistryMixin:
             return 0
 
     @property
-    def max_number_bulks(self) -> int:
+    def max_number_bulks(self: _SurfaceChemistryHost) -> int:
         """Get the maximum number of surface bulk species."""
         """
         Get the maximum number of surface bulk species among the
@@ -166,7 +200,7 @@ class SurfaceChemistryMixin:
             return 0
 
     @property
-    def max_total_number_species(self) -> int:
+    def max_total_number_species(self: _SurfaceChemistryHost) -> int:
         """Get the maximum number of all species."""
         """
         Get the maximum number of all species (gas, site and bulk) among the surface
@@ -190,7 +224,7 @@ class SurfaceChemistryMixin:
             return self._num_gas_species.value
 
     @property
-    def max_number_surface_reactions(self) -> int:
+    def max_number_surface_reactions(self: _SurfaceChemistryHost) -> int:
         """Get the maximum number of surface reactions."""
         """
         Get the maximum number of surface reactions among the
@@ -211,7 +245,7 @@ class SurfaceChemistryMixin:
             return 0
 
     @property
-    def max_total_number_reactions(self) -> int:
+    def max_total_number_reactions(self: _SurfaceChemistryHost) -> int:
         """Get the maximum number of gas and surface reactions."""
         """
         Get the maximum number of all (gas and surface) reactions among the
@@ -232,7 +266,7 @@ class SurfaceChemistryMixin:
             return self._num_gas_reactions.value
 
     @property
-    def material_names(self):
+    def material_names(self: _SurfaceChemistryHost) -> list[str]:
         """Get list of surface material names."""
         """
         Get list of surface material names of the Chemistry Set.
@@ -250,14 +284,18 @@ class SurfaceChemistryMixin:
         if self._materialnamedone == 0:
             # recycle existing data
             buff_m = (LP_c_char * self._num_materials.value)()
+            char_buffers = []
             for i in range(0, self._num_materials.value):
-                buff_m[i] = ctypes.create_string_buffer(MAX_SPECIES_LENGTH)
+                char_buf = ctypes.create_string_buffer(MAX_SPECIES_LENGTH)
+                char_buffers.append(char_buf)
+                buff_m[i] = ctypes.cast(char_buf, LP_c_char)
             pp_m = ctypes.cast(buff_m, POINTER(LP_c_char))
             ierr = ck_wrapper.chemkin.KINGetMaterialNames(self._chemset_index, pp_m)
             if ierr == 0:
                 self.material_map.clear()
                 for index in range(0, len(buff_m)):
-                    mat_val = ctypes.cast(buff_m[index], c_char_p).value.decode()
+                    mat_bytes = ctypes.cast(buff_m[index], c_char_p).value
+                    mat_val = "" if mat_bytes is None else mat_bytes.decode()
                     self.material_map[mat_val.rstrip()] = index
                 self._materialnamedone == 1
             else:
@@ -267,6 +305,7 @@ class SurfaceChemistryMixin:
                 logger.error(this_msg)
                 exit()
             del buff_m
+            del char_buffers
         # convert string type
         mylist = list(self.material_map.keys())
         self.matsymbol.clear()
@@ -275,7 +314,7 @@ class SurfaceChemistryMixin:
         del mylist
         return self.matsymbol
 
-    def get_material_index(self, mat_name: str) -> int:
+    def get_material_index(self: _SurfaceChemistryHost, mat_name: str) -> int:
         """Get the surface material index."""
         """
         Get the surface material index by its name.
