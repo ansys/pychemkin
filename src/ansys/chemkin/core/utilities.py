@@ -38,6 +38,26 @@ from ansys.chemkin.core.logger import logger
 ck_rng = None  # random number generator object
 
 
+def error_and_exit(msg_parts: list[str]):
+    """Log an error message and terminate execution."""
+    logger.error(Color.SPACE.join(msg_parts))
+
+
+def critical_and_exit(msg_parts: list[str]):
+    """Log a critical message and terminate execution."""
+    logger.critical(Color.SPACE.join(msg_parts))
+
+
+def log_error_message(msg_parts: list[str]) -> None:
+    """Log an error message without terminating execution."""
+    logger.error(Color.SPACE.join(msg_parts))
+
+
+def log_info_message(msg_parts: list[str]) -> None:
+    """Log an informational message without additional formatting."""
+    logger.info(Color.SPACE.join(msg_parts))
+
+
 def where_element_in_array_1d(
     arr: Union[npt.NDArray[np.double], npt.NDArray[np.int32]], target: float
 ) -> tuple[int, npt.NDArray[np.int32]]:
@@ -66,7 +86,7 @@ def where_element_in_array_1d(
     arr_size = len(arr)
     if arr_size == 0:
         # nothing in arr
-        return count, []
+        return count, np.zeros(0, dtype=np.int32)
     temp_index = np.zeros(arr_size, dtype=np.int32)
     value = type(arr[0])(target)
     # find all the matching occurrences
@@ -76,7 +96,7 @@ def where_element_in_array_1d(
             count += 1
     if count == 0:
         # target is not in arr
-        where_index = []
+        where_index = np.zeros(0, dtype=np.int32)
     else:
         where_index = temp_index[:count]
     return count, where_index
@@ -166,9 +186,7 @@ def find_interpolate_parameters(
             str(xarray[iarraysize - 1]),
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
-        exit()
+        error_and_exit(msg)
     # bisect method
     ileft = 0
     iright = iarraysize - 1
@@ -238,7 +256,7 @@ def _nonzero_element_in_array_1d(
     # find the number of non-zero counts
     nonzero_count = np.count_nonzero(arr)
     if nonzero_count == 0:
-        return nonzero_count, []
+        return int(nonzero_count), np.zeros(0, dtype=np.int32)
     nonzero_index = np.zeros(nonzero_count, dtype=np.int32)
     thrd = type(arr[0])(threshold)
     j = 0
@@ -247,7 +265,7 @@ def _nonzero_element_in_array_1d(
         if arr[m] > thrd:
             nonzero_index[j] = m
             j += 1
-    return nonzero_count, nonzero_index
+    return int(nonzero_count), nonzero_index
 
 
 def random(range: Union[None, tuple[float, float]] = None) -> float:
@@ -506,9 +524,10 @@ def check_jupyter_notebook() -> bool:
             False: not in Jupyter environment
     """
     try:
-        from IPython import get_ipython
+        import IPython  # pyright: ignore[reportMissingModuleSource]
 
-        if "IPKernelApp" in get_ipython().config:
+        ip = IPython.get_ipython()
+        if ip is not None and "IPKernelApp" in ip.config:
             return True
     except (ImportError, AttributeError):
         pass
@@ -573,7 +592,7 @@ def interpolate_point(
     # find the x range and verify x_array is monotonic
     # ascending order: up = True
     change = xlast - x0
-    not_good = np.isclose(np.abs(change), 0.0, atol=1.0e-8)
+    not_good = bool(np.isclose(np.abs(change), 0.0, atol=1.0e-8))
     if not not_good:
         up = change > 0.0
         x_old = xlast
@@ -583,10 +602,10 @@ def interpolate_point(
                 change = x - x_old
                 if change < 0.0:
                     # x value decreases for ascending array
-                    not_good = up
+                    not_good = bool(up)
                 elif change > 0.0:
                     # x value increases for descending array
-                    not_good = not up
+                    not_good = bool(not up)
                 else:
                     # flat
                     not_good = True

@@ -230,7 +230,7 @@ class Material:
             # get site species molecular weights [g/mole]
             self.site_wt = self.get_site_molar_weights()
         else:
-            self.site_density = []
+            self.site_density = np.zeros(0, dtype=np.double)
         #
         if self.num_bulk_phase > 0:
             # bulk species symbols of this material
@@ -244,7 +244,7 @@ class Material:
             # get site species molecular weights [g/mole]
             self.bulk_wt = self.get_bulk_molar_weights()
         else:
-            self.bulk_density = []
+            self.bulk_density = np.zeros(0, dtype=np.double)
         # set up surface phases on this materials
         sp_count = 0
         bp_count = 0

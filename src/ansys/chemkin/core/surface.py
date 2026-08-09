@@ -341,7 +341,7 @@ class Surface:
             ]
             this_msg = Color.SPACE.join(msg)
             logger.warning(this_msg)
-            return [0.0]
+            return np.array([0.0], dtype=np.double)
         #
         if self.sitefrac_set.get(mat_name, False):
             frac = copy.deepcopy(self._site_fractions[mat_name])
@@ -539,7 +539,7 @@ class Surface:
             ]
             this_msg = Color.SPACE.join(msg)
             logger.warning(this_msg)
-            return [0.0]
+            return np.array([0.0], dtype=np.double)
         #
         if self.bulkact_set.get(mat_name, False):
             frac = copy.deepcopy(self._bulk_activities[mat_name])
@@ -698,7 +698,7 @@ class Surface:
             ]
             this_msg = Color.SPACE.join(msg)
             logger.warning(this_msg)
-            return [0.0]
+            return np.array([0.0], dtype=np.double)
         #
         if self.bulk_growth_rates_set.get(mat_name, False):
             rates = copy.deepcopy(self.bulk_growth_rates[mat_name])
@@ -1536,10 +1536,11 @@ class Surface:
             exit()
         #
         if self._site_wt_set.get(mat_name, False):
-            site_wt = self._site_spec_wt
+            site_wt = self._site_spec_wt[mat_name]
         else:
             m = self.materials.get(mat_name)
             site_wt = m.get_site_molar_weights()
+            self._site_spec_wt[mat_name] = site_wt
             self._site_wt_set[mat_name] = True
         return site_wt
 
@@ -1564,10 +1565,11 @@ class Surface:
             exit()
         #
         if self._bulk_wt_set.get(mat_name, False):
-            bulk_wt = self._bulk_spec_wt
+            bulk_wt = self._bulk_spec_wt[mat_name]
         else:
             m = self.materials.get(mat_name)
             bulk_wt = m.get_bulk_molar_weights()
+            self._bulk_spec_wt[mat_name] = bulk_wt
             self._bulk_wt_set[mat_name] = True
         return bulk_wt
 
@@ -1593,7 +1595,7 @@ class Surface:
         #
         site_wt = self.get_site_wt(mat_name)
         bulk_wt = self.get_bulk_wt(mat_name)
-        surf_wt = np.vstack(site_wt, bulk_wt)
+        surf_wt = np.hstack((site_wt, bulk_wt))
         return surf_wt
 
     def get_site_species_h(self, mat_name: str) -> npt.NDArray[np.double]:
@@ -1667,7 +1669,7 @@ class Surface:
         m = self.materials.get(mat_name)
         bulk_h = m.get_bulk_species_h()
         site_h = m.get_site_species_h()
-        surf_h = np.vstack(site_h, bulk_h)
+        surf_h = np.hstack((site_h, bulk_h))
         return surf_h
 
     def get_bulk_species_cp(self, mat_name: str) -> npt.NDArray[np.double]:
@@ -2213,10 +2215,11 @@ class Surface:
         m = self.materials[mat_name]
         # get surface site phase density [mole/cm2]
         if self.siteden_set.get(mat_name, False):
-            sden = self.site_density.get(mat_name)
+            sden = self.site_density[mat_name]
         else:
             # get the site density from surface data
             sden = m.get_site_density()
+            self.site_density[mat_name] = sden
             self.siteden_set[mat_name] = True
         # get surface site fractions
         if self.sitefrac_set.get(mat_name, False):

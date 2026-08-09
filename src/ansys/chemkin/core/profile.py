@@ -22,8 +22,6 @@
 
 """Chemkin profile keyword data model."""
 
-import copy
-
 import numpy as np
 import numpy.typing as npt
 
@@ -47,6 +45,9 @@ class Profile:
         # initialization
         self._profilekeyword = ""
         self._status = 0
+        self._size = 0
+        self._pos = np.zeros(0, dtype=np.double)
+        self._val = np.zeros(0, dtype=np.double)
         # check
         if key in Keyword.profilekeywords:
             self._profilekeyword = key
@@ -70,15 +71,9 @@ class Profile:
         if xsize == ysize:
             self._size = xsize
             # independent variable (time, location, grid, ...)
-            if isinstance(x, np.double):
-                self._pos = copy.deepcopy(x)
-            else:
-                self._pos = np.array(x, dtype=np.double)
+            self._pos = np.array(x, dtype=np.double)
             # dependent variable value at the corresponding position
-            if isinstance(y, np.double):
-                self._val = copy.deepcopy(y)
-            else:
-                self._val = np.array(y, dtype=np.double)
+            self._val = np.array(y, dtype=np.double)
         else:
             msg = [
                 Color.PURPLE,

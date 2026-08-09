@@ -667,7 +667,7 @@ class ReactorModel:
         self,
         solvertype: int,
         threshold: float = 1.0e-12,
-        molefrac: npt.NDArray[np.double] = None,
+        molefrac: Union[None, npt.NDArray[np.double]] = None,
     ) -> tuple[int, list[str]]:
         """Create keyword input lines."""
         """Create keyword input lines for initial/estimated
@@ -695,6 +695,11 @@ class ReactorModel:
         # depends on the solver type
         key = Keyword.gasspecieskeywords[solvertype - 1]
         ksym = self._specieslist
+        if molefrac is None:
+            msg = [Color.PURPLE, "species composition is not provided.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         lines = []
         numb_lines = 0
         for i in range(len(molefrac)):
@@ -714,7 +719,7 @@ class ReactorModel:
         self,
         key: str = "XEST",
         threshold: float = 1.0e-12,
-        molefrac: npt.NDArray[np.double] = None,
+        molefrac: Union[None, npt.NDArray[np.double]] = None,
         addon: str = "",
     ) -> tuple[int, list[str]]:
         """Create keyword input lines."""
@@ -743,6 +748,11 @@ class ReactorModel:
         """
         # must use estimate composition keyword 'XEST'
         # (the 'REAC' keyword does not accept reactor/zone number)
+        if molefrac is None:
+            msg = [Color.PURPLE, "species composition is not provided.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         ksym = self._specieslist
         ksize = len(molefrac)
         if ksize != len(ksym):
@@ -780,7 +790,7 @@ class ReactorModel:
         self,
         inlet_name: str,
         threshold: float = 1.0e-12,
-        molefrac: npt.NDArray[np.double] = None,
+        molefrac: Union[None, npt.NDArray[np.double]] = None,
     ) -> tuple[int, list[str]]:
         """Create keyword input lines."""
         """Create keyword input lines for initial/estimated
@@ -804,6 +814,11 @@ class ReactorModel:
 
         """
         # must use inlet composition keyword 'REAC'
+        if molefrac is None:
+            msg = [Color.PURPLE, "species composition is not provided.", Color.END]
+            this_msg = Color.SPACE.join(msg)
+            logger.error(this_msg)
+            exit()
         ksym = self._specieslist
         ksize = len(molefrac)
         if ksize != len(ksym):
