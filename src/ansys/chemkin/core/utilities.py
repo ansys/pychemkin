@@ -27,7 +27,7 @@ from pathlib import Path
 import re
 import secrets
 import shutil
-from typing import Union
+from typing import NoReturn, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -38,14 +38,14 @@ from ansys.chemkin.core.logger import logger
 ck_rng = None  # random number generator object
 
 
-def error_and_exit(msg_parts: list[str]):
-    """Log an error message and terminate execution."""
-    logger.error(Color.SPACE.join(msg_parts))
-
-
-def critical_and_exit(msg_parts: list[str]):
-    """Log a critical message and terminate execution."""
+def log_critical_error(msg_parts: list[str]) -> None:
+    """Log a critical error message."""
     logger.critical(Color.SPACE.join(msg_parts))
+
+
+def log_critical_message(msg_parts: list[str]) -> None:
+    """Log a critical message without additional formatting."""
+    log_critical_error(msg_parts)
 
 
 def log_error_message(msg_parts: list[str]) -> None:
@@ -56,6 +56,23 @@ def log_error_message(msg_parts: list[str]) -> None:
 def log_info_message(msg_parts: list[str]) -> None:
     """Log an informational message without additional formatting."""
     logger.info(Color.SPACE.join(msg_parts))
+
+
+def error_and_exit(msg_parts: list[str]) -> NoReturn:
+    """Log an error message and terminate execution."""
+    log_error_message(msg_parts)
+    raise SystemExit()
+
+
+def critical_and_exit(msg_parts: list[str]):
+    """Log a critical message and terminate execution."""
+    log_critical_message(msg_parts)
+    raise SystemExit()
+
+
+def _log_warning_message(msg_parts: list[str]) -> None:
+    """Log a warning message with consistent message joining."""
+    logger.warning(Color.SPACE.join(msg_parts))
 
 
 def where_element_in_array_1d(
@@ -186,7 +203,7 @@ def find_interpolate_parameters(
             str(xarray[iarraysize - 1]),
             Color.END,
         ]
-        error_and_exit(msg)
+        log_error_message(msg)
     # bisect method
     ileft = 0
     iright = iarraysize - 1

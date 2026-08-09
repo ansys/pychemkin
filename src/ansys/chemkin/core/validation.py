@@ -23,44 +23,48 @@
 """Reusable validation helpers for core modules."""
 
 from ansys.chemkin.core.color import Color
-from ansys.chemkin.core.utilities import error_and_exit
+from ansys.chemkin.core.utilities import log_error_message
 
 
 def validate_chemid(chemid: int) -> None:
     """Validate Chemistry set index."""
     if chemid < 0:
-        error_and_exit([Color.PURPLE, "invalid chemistry.", Color.END])
+        log_error_message([Color.PURPLE, "invalid chemistry.", Color.END])
+        exit()
 
 
 def validate_temperature(temp: float) -> None:
     """Validate gas temperature."""
     if temp <= 10.0:
-        error_and_exit([Color.PURPLE, "invalid temperature value.", Color.END])
+        log_error_message([Color.PURPLE, "invalid temperature value.", Color.END])
+        exit()
 
 
 def validate_pressure_temperature(pressure: float, temp: float) -> None:
     """Validate pressure and temperature pair."""
     if pressure <= 0.0 or (pressure * temp) <= 0.0:
-        error_and_exit(
+        log_error_message(
             [
                 Color.PURPLE,
                 "invalid pressure and/or temperature value(s).",
                 Color.END,
             ]
         )
+        exit()
 
 
 def validate_density(density: float) -> None:
     """Validate density value."""
     if density <= 0.0:
-        error_and_exit([Color.PURPLE, "invalid density value.", Color.END])
+        log_error_message([Color.PURPLE, "invalid density value.", Color.END])
+        exit()
 
 
 def validate_fraction_arrays(frac, wt, mode: str) -> int:
     """Validate fraction and molecular-weight arrays are same size."""
     kgas = len(frac)
     if kgas != len(wt):
-        error_and_exit(
+        log_error_message(
             [
                 Color.PURPLE,
                 mode,
@@ -70,13 +74,14 @@ def validate_fraction_arrays(frac, wt, mode: str) -> int:
                 Color.END,
             ]
         )
+        exit()
     return kgas
 
 
 def validate_species_array_size(expected: int, actual: int, context: str) -> None:
     """Validate a species-array size against expected species count."""
     if expected != actual:
-        error_and_exit(
+        log_error_message(
             [
                 Color.PURPLE,
                 "the",
@@ -86,12 +91,14 @@ def validate_species_array_size(expected: int, actual: int, context: str) -> Non
                 Color.END,
             ]
         )
+        exit()
 
 
 def validate_minimum_value(value: float, minimum: float, message: str) -> None:
     """Validate that a scalar value is greater than or equal to a minimum."""
     if value < minimum:
-        error_and_exit([Color.PURPLE, message, Color.END])
+        log_error_message([Color.PURPLE, message, Color.END])
+        exit()
 
 
 def validate_equal_list_lengths(
@@ -102,7 +109,7 @@ def validate_equal_list_lengths(
 ) -> None:
     """Validate that two list lengths are equal."""
     if first_len != second_len:
-        error_and_exit(
+        log_error_message(
             [
                 Color.PURPLE,
                 "the",
@@ -123,12 +130,13 @@ def validate_equal_list_lengths(
                 Color.END,
             ]
         )
+        exit()
 
 
 def validate_fraction_array_size(actual: int, expected: int) -> None:
     """Validate fractions-array size against chemistry species count."""
     if actual != expected:
-        error_and_exit(
+        log_error_message(
             [
                 Color.PURPLE,
                 "the size of the fractions array does not match",
@@ -138,3 +146,4 @@ def validate_fraction_array_size(actual: int, expected: int) -> None:
                 Color.END,
             ]
         )
+        exit()
