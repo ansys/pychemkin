@@ -47,6 +47,7 @@ from ansys.chemkin.core.utilities import (
     _nonzero_element_in_array_1d,
     critical_and_exit,
     error_and_exit,
+    log_critical_error,
     log_error_message,
     log_info_message,
     where_element_in_array_1d,
@@ -98,7 +99,6 @@ class Mixture:
                     Color.END,
                 ]
             )
-            exit()
         if chem.chemid < 0:
             critical_and_exit(
                 [
@@ -108,7 +108,6 @@ class Mixture:
                     Color.END,
                 ]
             )
-            exit()
         # copy the chemistry set
         self._chem_set = chem
         # shorthand for frequently used variables
@@ -179,7 +178,7 @@ class Mixture:
         if index >= 0:
             return index
         msg = [Color.PURPLE, "species symbol not found:", symbol, Color.END]
-        error_and_exit(msg)
+        log_error_message(msg)
         exit()
 
     def get_specindex(self, symbol: str) -> int:
@@ -219,7 +218,7 @@ class Mixture:
             return self._press
         else:
             msg = [Color.PURPLE, "mixture pressure is not provided.", Color.END]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
 
     @pressure.setter
@@ -239,7 +238,6 @@ class Mixture:
         if p <= 0.0:
             msg = [Color.PURPLE, "invalid pressure value.", Color.END]
             error_and_exit(msg)
-            exit()
 
         self._press = p
         self._p_set = 1
@@ -260,7 +258,7 @@ class Mixture:
             return self._temp
         else:
             msg = [Color.PURPLE, "mixture temperature is not provided.", Color.END]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
 
     @temperature.setter
@@ -280,7 +278,6 @@ class Mixture:
         if t <= 10.0:
             msg = [Color.PURPLE, "invalid temperature value.", Color.END]
             error_and_exit(msg)
-            exit()
         self._temp = t
         self._t_set = 1
 
@@ -315,7 +312,7 @@ class Mixture:
             return self._vol
         else:
             msg = [Color.PURPLE, "mixture volume is not provided.", Color.END]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
 
     @volume.setter
@@ -335,7 +332,6 @@ class Mixture:
         if vol <= 0.0e0:
             msg = [Color.PURPLE, "invalid volume value.", Color.END]
             error_and_exit(msg)
-            exit()
         self._vol = vol
 
     @property
@@ -358,12 +354,10 @@ class Mixture:
             if ierr != 0:
                 msg = [Color.PURPLE, "fraction conversion failed.", Color.END]
                 error_and_exit(msg)
-                exit()
             return x
         else:
             msg = [Color.PURPLE, "mixture composition not yet defined.", Color.END]
             error_and_exit(msg)
-            exit()
 
     @x.setter
     def x(self, recipe: Union[list[tuple[str, float]], npt.NDArray[np.double]]):
@@ -389,11 +383,9 @@ class Mixture:
                 if index < 0:
                     msg = [Color.PURPLE, sp, "is not a valid gas species.", Color.END]
                     error_and_exit(msg)
-                    exit()
                 if x < 0.0:
                     msg = [Color.PURPLE, "negative mole fraction.", Color.END]
                     error_and_exit(msg)
-                    exit()
                 # set mole fraction
                 self._molefrac[index] = x
         elif isinstance(recipe[0], (float, np.double)):
@@ -410,7 +402,6 @@ class Mixture:
                     Color.END,
                 ]
                 error_and_exit(msg)
-                exit()
         else:
             msg = [
                 Color.PURPLE,
@@ -423,7 +414,6 @@ class Mixture:
                 Color.END,
             ]
             error_and_exit(msg)
-            exit()
         # reset mass fraction
         self._y_set = 0
         self._massfrac[:] = 0.0e0
@@ -452,12 +442,10 @@ class Mixture:
             if ierr != 0:
                 msg = [Color.PURPLE, "fraction conversion failed.", Color.END]
                 error_and_exit(msg)
-                exit()
             return y
         else:
             msg = [Color.PURPLE, "mixture composition not yet defined.", Color.END]
             error_and_exit(msg)
-            exit()
 
     @y.setter
     def y(self, recipe: Union[list[tuple[str, float]], npt.NDArray[np.double]]):
@@ -482,11 +470,9 @@ class Mixture:
                 if index < 0:
                     msg = [Color.PURPLE, sp, "is not a valid gas species.", Color.END]
                     error_and_exit(msg)
-                    exit()
                 if y < 0.0:
                     msg = [Color.PURPLE, "negative mass fraction value.", Color.END]
                     error_and_exit(msg)
-                    exit()
                 # set mass fraction
                 self._massfrac[index] = y
         elif isinstance(recipe[0], (float, np.double)):
@@ -503,7 +489,6 @@ class Mixture:
                     Color.END,
                 ]
                 error_and_exit(msg)
-                exit()
         else:
             msg = [
                 Color.PURPLE,
@@ -516,7 +501,6 @@ class Mixture:
                 Color.END,
             ]
             error_and_exit(msg)
-            exit()
         # reset mole fraction
         self._x_set = 0
         self._molefrac[:] = 0.0e0
@@ -624,7 +608,7 @@ class Mixture:
         else:
             # fractions summed to zero
             msg = [Color.PURPLE, "fractions summed to zero.", Color.END]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
 
     @property
@@ -721,7 +705,7 @@ class Mixture:
         else:
             # zero mean molar mass
             msg = [Color.PURPLE, "mean molar mass = 0.", Color.END]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
 
     def __ytox(self) -> tuple[int, npt.NDArray[np.double]]:
@@ -752,7 +736,7 @@ class Mixture:
         else:
             # zero mean molar mass
             msg = [Color.PURPLE, "mean molar mass = 0.", Color.END]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
 
     @staticmethod
@@ -855,7 +839,7 @@ class Mixture:
         else:
             # zero mean molar mass
             msg = [Color.PURPLE, "mean molar mass = 0.", Color.END]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
 
     @staticmethod
@@ -1056,7 +1040,6 @@ class Mixture:
             error_and_exit(
                 [Color.PURPLE, "mixture temperature [K] is not provided.", Color.END]
             )
-            exit()
 
     def _require_pressure_set(self) -> None:
         """Ensure mixture pressure has been provided."""
@@ -1068,7 +1051,6 @@ class Mixture:
                     Color.END,
                 ]
             )
-            exit()
 
     def _require_composition_set(self) -> None:
         """Ensure mixture composition has been provided."""
@@ -1076,7 +1058,6 @@ class Mixture:
             error_and_exit(
                 [Color.PURPLE, "mixture composition is not provided.", Color.END]
             )
-            exit()
 
     def _get_active_fraction_data(self) -> tuple[npt.NDArray[np.double], str]:
         """Return the active composition array and its mode."""
@@ -1120,7 +1101,6 @@ class Mixture:
         ierr = kernel(self._chemset_index, tt, values)
         if ierr != 0:
             error_and_exit([Color.PURPLE, error_message, Color.END])
-            exit()
         else:
             values *= self._wt
         return values
@@ -1136,7 +1116,6 @@ class Mixture:
         ierr = kernel(self._chemset_index, tt, values)
         if ierr != 0:
             error_and_exit([Color.PURPLE, error_message, Color.END])
-            exit()
         return values
 
     def _mixture_transport_scalar(
@@ -1150,7 +1129,6 @@ class Mixture:
         ierr = kernel(self._chemset_index, tt, self.y, value)
         if ierr != 0:
             error_and_exit([Color.PURPLE, error_message, Color.END])
-            exit()
         return value.value
 
     @staticmethod
@@ -1160,7 +1138,6 @@ class Mixture:
         if mode_lower in ("mole", "mass"):
             return mode_lower
         error_and_exit([Color.PURPLE, message, Color.END])
-        exit()
         return mode_lower
 
     @staticmethod
@@ -1197,7 +1174,6 @@ class Mixture:
                     Color.END,
                 ]
             )
-            exit()
         return kgas
 
     @staticmethod
@@ -1275,7 +1251,7 @@ class Mixture:
         else:
             # failed to compute mixture density
             msg = [Color.PURPLE, "failed to compute mixture density.", Color.END]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
 
     @property
@@ -1372,7 +1348,7 @@ class Mixture:
                 "failed to compute mixture specific heat capacity.",
                 Color.END,
             ]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
 
     @staticmethod
@@ -1436,7 +1412,7 @@ class Mixture:
         else:
             # failed to compute mixture enthalpy
             msg = [Color.PURPLE, "failed to compute mixture enthalpy.", Color.END]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
 
     @staticmethod
@@ -1494,7 +1470,7 @@ class Mixture:
         else:
             # failed to compute mixture pressure
             msg = [Color.PURPLE, "failed to compute mixture pressure.", Color.END]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
 
     @staticmethod
@@ -1573,7 +1549,7 @@ class Mixture:
                 "failed to compute mixture total thermicity.",
                 Color.END,
             ]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
 
     @staticmethod
@@ -1638,7 +1614,7 @@ class Mixture:
                 "failed to compute mixture speed of sound.",
                 Color.END,
             ]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
 
     @staticmethod
@@ -1701,7 +1677,7 @@ class Mixture:
                 "failed to compute species molar rates of production.",
                 Color.END,
             ]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
 
     @staticmethod
@@ -1774,7 +1750,7 @@ class Mixture:
                 str(ierr),
                 Color.END,
             ]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
 
     def find_equilibrium(self):
@@ -2082,7 +2058,7 @@ class Mixture:
                 "failed to compute species diffusion coefficients.",
                 Color.END,
             ]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
         return diffusioncoeffs
 
@@ -2144,6 +2120,7 @@ class Mixture:
                 Color.END,
             ]
             log_error_message(msg)
+            exit()
         # mixture-averaged diffusion coefficients in cm2/sec
         return diffusioncoeffs
 
@@ -2175,7 +2152,7 @@ class Mixture:
                 "multi-component binary diffusion coefficients.",
                 Color.END,
             ]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
         # mixture multi-component binary diffusion coefficients in cm2/sec
         return binarydiffusioncoeffs
@@ -2207,7 +2184,7 @@ class Mixture:
                 "mixture thermal diffusion coefficients.",
                 Color.END,
             ]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
         # mixture thermal diffusion coefficients in gm/cm-sec
         return thermaldiffusioncoeffs
@@ -2583,7 +2560,7 @@ class Mixture:
                 "the first argument must be a Chemistry object.",
                 Color.END,
             ]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
         # convert mass fractions to mole fractions
         fuel_molefrac = Mixture.mass_fraction_to_mole_fraction(
@@ -2688,7 +2665,6 @@ class Mixture:
                 Color.END,
             ]
             error_and_exit(msg)
-            exit()
         if iflag.value == 0:
             msg = [
                 Color.YELLOW,
@@ -2726,7 +2702,6 @@ class Mixture:
                 Color.END,
             ]
             error_and_exit(msg)
-            exit()
         if iflag.value == 0:
             msg = [Color.YELLOW, "the ideal gas law is turned ON.", Color.END]
             log_info_message(msg)
@@ -2765,7 +2740,6 @@ class Mixture:
                 Color.END,
             ]
             error_and_exit(msg)
-            exit()
         if iflag.value == 2:
             # real-gas cubic EOS is turned OFF
             msg = [Color.YELLOW, "the ideal gas law is in use.", Color.END]
@@ -2780,7 +2754,6 @@ class Mixture:
                 Color.END,
             ]
             error_and_exit(msg)
-            exit()
         else:
             msg = [
                 Color.YELLOW,
@@ -2821,7 +2794,7 @@ class Mixture:
         _, global_index, local_index = self.surface_chemistry.get_surf_specindex(symbol)
         if global_index <= -1:
             msg = [Color.PURPLE, "species symbol not found:", symbol, Color.END]
-            error_and_exit(msg)
+            log_error_message(msg)
             exit()
         else:
             return global_index, local_index
@@ -2940,7 +2913,6 @@ def _require_recipe_mixture_object(candidate: object) -> None:
                 Color.END,
             ]
         )
-        exit()
 
 
 def _require_recipe_chemid_match(
@@ -2960,7 +2932,6 @@ def _require_recipe_chemid_match(
                 Color.END,
             ]
         )
-        exit()
 
 
 def _require_positive_recipe_ratio(ratio_value: float) -> None:
@@ -2974,14 +2945,12 @@ def _require_positive_recipe_ratio(ratio_value: float) -> None:
                 Color.END,
             ]
         )
-        exit()
 
 
 def _require_nonempty_recipe(recipe: list[tuple[Mixture, float]]) -> None:
     """Validate that a mixing recipe has at least one entry."""
     if len(recipe) == 0:
         error_and_exit([Color.PURPLE, "the mixing recipe is empty.", Color.END])
-        exit()
 
 
 def _require_valid_recipe_chemid(chem_index: int) -> None:
@@ -2994,7 +2963,6 @@ def _require_valid_recipe_chemid(chem_index: int) -> None:
                 Color.END,
             ]
         )
-        exit()
 
 
 def _clone_with_cleared_composition(mixture: Mixture) -> Mixture:
@@ -3164,7 +3132,6 @@ def isothermal_mixing(
                 Color.END,
             ]
         )
-        exit()
 
     _accumulate_mixing_composition(
         recipe=recipe,
@@ -3231,7 +3198,6 @@ def adiabatic_mixing(recipe: list[tuple[Mixture, float]], mode: str) -> Mixture:
                 Color.END,
             ]
         )
-        exit()
     if verbose():
         print(f"final mixture temperature = {finalmixture.temperature}[K]")
     return finalmixture
@@ -3349,7 +3315,6 @@ def _require_validated_mixture_pair(mixture_a: Mixture, mixture_b: Mixture) -> N
                 Color.END,
             ]
         )
-        exit()
 
 
 def _require_nonempty_mixture_list(mixtures: list[Mixture]) -> None:
@@ -3362,10 +3327,9 @@ def _require_nonempty_mixture_list(mixtures: list[Mixture]) -> None:
                 Color.END,
             ]
         )
-        exit()
     for this_mixture in mixtures:
         if not isinstance(this_mixture, Mixture):
-            error_and_exit(
+            log_error_message(
                 [
                     Color.PURPLE,
                     "the mixtures list must contain,",
@@ -3373,7 +3337,6 @@ def _require_nonempty_mixture_list(mixtures: list[Mixture]) -> None:
                     Color.END,
                 ]
             )
-            exit()
 
 
 def _require_transport_mode(mode: str) -> str:
@@ -3381,7 +3344,7 @@ def _require_transport_mode(mode: str) -> str:
     mode_lower = mode.lower()
     if mode_lower in ("mix", "multi"):
         return mode_lower
-    error_and_exit(
+    log_error_message(
         [
             Color.PURPLE,
             'must specify transport mode as "mix" or "multi".',
@@ -3401,14 +3364,12 @@ def _require_chemistry_set_object(chemistry_set: Chemistry) -> None:
                 Color.END,
             ]
         )
-        exit()
 
 
 def _require_mixture_object(candidate: object, message: str) -> None:
     """Validate Mixture object argument."""
     if not isinstance(candidate, Mixture):
         error_and_exit([Color.PURPLE, message, Color.END])
-        exit()
 
 
 def _require_same_pressure(
@@ -3428,7 +3389,6 @@ def _require_same_pressure(
                 Color.END,
             ]
         )
-        exit()
 
 
 def _require_transport_data(mixture: Mixture) -> None:
@@ -3442,7 +3402,6 @@ def _require_transport_data(mixture: Mixture) -> None:
                 Color.END,
             ]
         )
-        exit()
 
 
 # mixing operations
@@ -3592,7 +3551,6 @@ def calculate_stoichiometrics(
                 Color.END,
             ]
         )
-        exit()
     else:
         # check product elements
         # find elements in product species
@@ -3618,7 +3576,6 @@ def calculate_stoichiometrics(
                             Color.END,
                         ]
                     )
-                    exit()
         else:
             error_and_exit(
                 [
@@ -3635,7 +3592,6 @@ def calculate_stoichiometrics(
                     Color.END,
                 ]
             )
-            exit()
     # create arrays of the linear algebraic system
     a = np.zeros((numb_coreelem, numb_coreelem), dtype=np.double)
     b = np.zeros(numb_coreelem, dtype=np.double)
@@ -3902,7 +3858,6 @@ def calculate_mass_weighted_mean_mixture(
                 Color.END,
             ]
         )
-        exit()
     # if the masses list is assigned, the mean mixture volume
     # is not clearly defined here
     mean_mixture.volume = total_mass / mean_mixture.rho
@@ -3945,7 +3900,6 @@ def interpolate_mixtures(
                 Color.END,
             ]
         )
-        exit()
     ratiom = 1.0e0 - ratio
     # interpolate the mixture properties
     mixturenew = copy.deepcopy(mixtureleft)
@@ -4114,14 +4068,12 @@ def _require_active_chemistry_set(chemid: int) -> None:
                 Color.END,
             ]
         )
-        exit()
 
 
 def _require_active_mixture_chemistry_set(mixture: Mixture, arg_msg: str) -> None:
     """Validate mixture object type and active Chemistry Set."""
     if not isinstance(mixture, Mixture):
         error_and_exit([Color.PURPLE, arg_msg, Color.END])
-        exit()
     _require_active_chemistry_set(mixture.chemid)
 
 
@@ -4137,7 +4089,6 @@ def _require_supported_equilibrium_option(opt: int) -> None:
                 Color.END,
             ]
         )
-        exit()
 
 
 def _resolve_realgas_usage(mixture: Mixture) -> int:
@@ -4281,7 +4232,7 @@ def calculate_equilibrium(
 
         ierr = ck_wrapper.chemkin.KINInitialize(_chemset_index, c_int(0))
         if ierr != 0:
-            critical_and_exit(
+            log_critical_error(
                 [
                     Color.RED,
                     "Chemkin-CFD-API initialization failed;",
@@ -4346,7 +4297,7 @@ def calculate_equilibrium(
             return statevars, x_eq
 
     else:
-        error_and_exit(
+        log_error_message(
             [Color.PURPLE, "failed to find the equilibrium state.", Color.END]
         )
         exit()

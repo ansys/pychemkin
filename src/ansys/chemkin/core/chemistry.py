@@ -38,6 +38,13 @@ from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.realgaseos import check_realgas_status, set_current_pressure
 from ansys.chemkin.core.surface_chemistry import SurfaceChemistryMixin
 from ansys.chemkin.core.surface_components import Material
+from ansys.chemkin.core.utilities import (
+    _log_warning_message,
+    critical_and_exit,
+    error_and_exit,
+    log_error_message,
+    log_info_message,
+)
 
 _symbol_length = 16  # Chemkin element/species symbol length
 MAX_SPECIES_LENGTH = _symbol_length + 1  # Chemkin element/species symbol length + 1
@@ -55,9 +62,9 @@ _CKInitialized: Dict = {}
 # == end of global parameters
 
 
-#
-# Chemkin module level methods
-#
+# -----------------------------------------------------------------------------
+# Module-level: runtime mode helpers
+# -----------------------------------------------------------------------------
 def verbose() -> bool:
     """Get current Pychemkin verbose mode."""
     """Return the global verbose mode indicating the status (ON/OFF)
@@ -126,8 +133,7 @@ def verify_version(min_version: int) -> bool:
             str(min_version),
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
+        log_error_message(msg)
     return status
 
 
@@ -235,11 +241,12 @@ def done():
         ">>> Chemkin-CFD-API stopped <<<",
         Color.END,
     ]
-    this_msg = Color.SPACE.join(msg)
-    logger.info(this_msg)
+    log_info_message(msg)
 
 
-# utilities
+# -----------------------------------------------------------------------------
+# Module-level: Chemistry Set state helpers
+# -----------------------------------------------------------------------------
 def check_chemistryset(chem_index: int) -> bool:
     """Check whether the Chemistry Set is initialized in Chemkin-CFD-API."""
     """
@@ -289,8 +296,7 @@ def activate_chemistryset(chem_index: int) -> int:
             "failed to reactivate the Chemistry Set work spaces.",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
+        log_error_message(msg)
     return ierr
 
 
@@ -309,7 +315,13 @@ def force_activate_chemistryset(chem_index: int):
         # the Chemistry Set is not currently active
         ierr = activate_chemistryset(chem_index)
         if ierr != 0:
-            exit()
+            critical_and_exit(
+                [
+                    Color.RED,
+                    "failed to activate the Chemistry Set work spaces.",
+                    Color.END,
+                ]
+            )
 
 
 def chemistryset_new(chem_index: int):
@@ -364,6 +376,9 @@ def check_active_chemistryset(chem_index: int) -> bool:
     return _active_chemistry_set == chem_index
 
 
+# -----------------------------------------------------------------------------
+# Module-level: Chemistry Set inspection helpers
+# -----------------------------------------------------------------------------
 def verify_chemset_surface(chem_set_index: int) -> bool:
     """Check the chemistry set has surface chemistry data."""
     """
@@ -412,8 +427,7 @@ def verify_chemset_surface(chem_set_index: int) -> bool:
             str(ierr),
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
+        log_error_message(msg)
         return False
     else:
         n_surface_species = n_sites.value + n_bulks.value
@@ -464,8 +478,7 @@ def verify_chemset_sizes(
             "or number of gas reactions.",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.warning(this_msg)
+        _log_warning_message(msg)
         return False
     # initialization
     chemset_id = c_int(chem_set_index)
@@ -498,8 +511,7 @@ def verify_chemset_sizes(
             str(ierr),
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
+        log_error_message(msg)
         return False
     else:
         match = True
@@ -516,8 +528,7 @@ def verify_chemset_sizes(
                     str(n_elements.value),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
                 match = False
         if has_species:
             # check number of gas species
@@ -532,8 +543,7 @@ def verify_chemset_sizes(
                     str(n_gas_species.value),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
                 match = False
         if has_reaction:
             # check number of gas phase reactions
@@ -548,10 +558,13 @@ def verify_chemset_sizes(
                     str(n_gas_reactions.value),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
                 match = False
         return match
+
+    # -----------------------------------------------------------------------------
+    # Module-level: shared numeric/string utility helpers
+    # -----------------------------------------------------------------------------
 
 
 def set_temp_array(
@@ -714,6 +727,13 @@ class Chemistry(SurfaceChemistryMixin):
         self._material_temperature: list[float] = []
         self._material_area: list[float] = []
 
+    @staticmethod
+    def _critical_file_not_found(file_description: str, file_path: str):
+        """Log a fatal missing-file message and stop execution."""
+        critical_and_exit(
+            [Color.RED, file_description, file_path, "not found.", Color.END]
+        )
+
     @property
     def chemfile(self) -> str:
         """Get gas-phase mechanism file name of this chemistry set."""
@@ -801,16 +821,7 @@ class Chemistry(SurfaceChemistryMixin):
             self._index_tran = ctypes.c_int(1)
         else:
             self._index_tran = c_int(0)
-            msg = [
-                Color.RED,
-                "transport data file",
-                self._tran_file,
-                "not found.",
-                Color.END,
-            ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            self._critical_file_not_found("transport data file", self._tran_file)
 
     @property
     def summaryfile(self) -> str:
@@ -835,8 +846,7 @@ class Chemistry(SurfaceChemistryMixin):
                 "make sure the gas mechanism contains the 'TRANSPORT ALL' block.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            _log_warning_message(msg)
             self._index_tran = ctypes.c_int(1)
         else:
             # send the confirmation message
@@ -848,8 +858,7 @@ class Chemistry(SurfaceChemistryMixin):
                     "will be processed.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
             else:
                 msg = [
                     Color.YELLOW,
@@ -858,8 +867,7 @@ class Chemistry(SurfaceChemistryMixin):
                     "will be processed.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
 
     @property
     def surffile(self) -> str:
@@ -892,16 +900,7 @@ class Chemistry(SurfaceChemistryMixin):
             self._index_surf = ctypes.c_int(1)
         else:
             self._index_surf = c_int(0)
-            msg = [
-                Color.RED,
-                "surface mechanism file",
-                self._surf_file,
-                "not found.",
-                Color.END,
-            ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            self._critical_file_not_found("surface mechanism file", self._surf_file)
 
     def set_file_names(
         self,
@@ -937,16 +936,7 @@ class Chemistry(SurfaceChemistryMixin):
                 self._index_surf = ctypes.c_int(1)
             else:
                 self._index_surf = ctypes.c_int(0)
-                msg = [
-                    Color.RED,
-                    "surface mechanism file",
-                    self._surf_file,
-                    "not found",
-                    Color.END,
-                ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
-                exit()
+                self._critical_file_not_found("surface mechanism file", self._surf_file)
         else:
             self._surf_file = "surf.inp"
             self._index_surf = c_int(0)
@@ -960,16 +950,7 @@ class Chemistry(SurfaceChemistryMixin):
                 self._index_tran = ctypes.c_int(1)
             else:
                 self._index_tran = c_int(0)
-                msg = [
-                    Color.RED,
-                    "transport data file",
-                    self._tran_file,
-                    "not found.",
-                    Color.END,
-                ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
-                exit()
+                self._critical_file_not_found("transport data file", self._tran_file)
         else:
             self._tran_file = "tran.dat"
             self._index_tran = c_int(0)
@@ -986,24 +967,14 @@ class Chemistry(SurfaceChemistryMixin):
         """
         # check minimum set of required files
         if not Path(self._gas_file).is_file():
-            msg = [
-                Color.RED,
-                "gas mechanism file",
-                self._gas_file,
-                "not found.",
-                Color.END,
-            ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            self._critical_file_not_found("gas mechanism file", self._gas_file)
         if not Path(self._therm_file).is_file():
             msg = [
                 Color.MAGENTA,
                 "thermodynamic data file not found/specified.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            _log_warning_message(msg)
             msg = [
                 Color.YELLOW,
                 "make sure the mechanism file",
@@ -1011,8 +982,7 @@ class Chemistry(SurfaceChemistryMixin):
                 "contains the 'THERM ALL' keyword.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
 
         # verify chemistry set
         # create a new identifier for this chemistry set
@@ -1034,8 +1004,7 @@ class Chemistry(SurfaceChemistryMixin):
                 str(myindex),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         else:
             # new chemistry set
             # add the identifier to the chemistry identifiers list
@@ -1096,9 +1065,7 @@ class Chemistry(SurfaceChemistryMixin):
                     str(ierr),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
-                exit()
+                critical_and_exit(msg)
 
             # get species symbols in a dictionary
             self.species_symbols
@@ -1133,9 +1100,7 @@ class Chemistry(SurfaceChemistryMixin):
                 str(self._chemset_index.value),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
 
         return self._error_code
 
@@ -1156,8 +1121,7 @@ class Chemistry(SurfaceChemistryMixin):
                         "is available.",
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.info(this_msg)
+                    log_info_message(msg)
                     del eos_model
                     return
 
@@ -1167,14 +1131,12 @@ class Chemistry(SurfaceChemistryMixin):
             self._eos = c_int(0)
             if verbose():
                 msg = [Color.PURPLE, "accessing the real gas information.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
 
         del eos_model
         if verbose():
             msg = [Color.YELLOW, "mechanism is for ideal gas law only.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
 
     def verify_transport_data(self) -> bool:
         """Verify the availability of transport property data in the mechanism."""
@@ -1235,13 +1197,11 @@ class Chemistry(SurfaceChemistryMixin):
                 for index in range(0, len(buff)):
                     str_val = ctypes.cast(buff[index], c_char_p).value.decode()
                     self._gas_species[str_val] = index
-                self._ksym_done == 1
+                self._ksym_done = 1
             else:
                 # failed to get species symbols
                 msg = [Color.PURPLE, "failed to get species symbols.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
             del buff, pp
 
         # convert string type
@@ -1275,13 +1235,11 @@ class Chemistry(SurfaceChemistryMixin):
                 for index in range(0, len(buff_ele)):
                     ele_val = ctypes.cast(buff_ele[index], c_char_p).value.decode()
                     self._elements[ele_val] = index
-                self._esym_done == 1
+                self._esym_done = 1
             else:
                 # failed to get element symbols
                 msg = [Color.PURPLE, "failed to get element symbols.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
             del buff_ele, pp_ele
 
         # convert string type
@@ -1331,9 +1289,7 @@ class Chemistry(SurfaceChemistryMixin):
         #
         if specindex < 0:
             msg = [Color.PURPLE, "species symbol not found:", specname, Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         return specindex
 
     @property
@@ -1440,9 +1396,7 @@ class Chemistry(SurfaceChemistryMixin):
                 "please preprocess the chemistry set first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         del self._awt  # clear the "original" definition in __init__
         self._awt = np.zeros(self._num_elements.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetAtomicWeights(self._chemset_index, self._awt)
@@ -1451,9 +1405,7 @@ class Chemistry(SurfaceChemistryMixin):
         else:
             # failed to find atomic masses
             msg = [Color.PURPLE, "failed to get atomic masses.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         return self._awt
 
     # alias
@@ -1479,9 +1431,7 @@ class Chemistry(SurfaceChemistryMixin):
                 "please preprocess the chemistry set first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         del self._wt  # clear the "original" definition in __init__
         self._wt = np.zeros(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetGasMolecularWeights(
@@ -1492,9 +1442,7 @@ class Chemistry(SurfaceChemistryMixin):
         else:
             # failed to find molecular masses
             msg = [Color.PURPLE, "failed to get species molecular masses.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         return self._wt
 
     # alias
@@ -1526,14 +1474,10 @@ class Chemistry(SurfaceChemistryMixin):
                 "please preprocess the chemistry set first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         if temp <= 1.0e0:
             msg = [Color.PURPLE, "temperature value is too low.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # check real-gas
         if check_realgas_status(self.chemid):
             if pres is None:
@@ -1546,9 +1490,7 @@ class Chemistry(SurfaceChemistryMixin):
                     "usage: <Chemistry_Obj>.species_cp(temperature, pressure)",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
             else:
                 # set current pressure for the real-gas
                 set_current_pressure(self.chemid, pres)
@@ -1564,9 +1506,7 @@ class Chemistry(SurfaceChemistryMixin):
         else:
             # failed to compute specific heats
             msg = [Color.PURPLE, "failed to compute specific heats.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         return cp
 
@@ -1600,9 +1540,7 @@ class Chemistry(SurfaceChemistryMixin):
                 "usage: <Chemistry_Obj>.species_cv(temperature, pressure)",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         cv = self.species_cp(temp, pres)
         rgas = R_GAS
         # for k in range(len(Cp)):
@@ -1637,14 +1575,10 @@ class Chemistry(SurfaceChemistryMixin):
                 "please preprocess the chemistry set first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         if temp <= 1.0e0:
             msg = [Color.PURPLE, "temperature value is too low.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # check real-gas
         if check_realgas_status(self.chemid):
             if pres is None:
@@ -1657,9 +1591,7 @@ class Chemistry(SurfaceChemistryMixin):
                     "usage: <Chemistry_Obj>.species_h(temperature, pressure)",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
             else:
                 # set current pressure for the real-gas
                 set_current_pressure(self.chemid, pres)
@@ -1674,9 +1606,7 @@ class Chemistry(SurfaceChemistryMixin):
         else:
             # failed to compute enthalpies
             msg = [Color.PURPLE, "failed to compute specific enthalpies.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         return h
 
@@ -1706,14 +1636,10 @@ class Chemistry(SurfaceChemistryMixin):
                 "please preprocess the chemistry set first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         if temp <= 1.0e0:
             msg = [Color.PURPLE, "temperature value is too low.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # check real-gas
         if check_realgas_status(self.chemid):
             if pres is None:
@@ -1726,9 +1652,7 @@ class Chemistry(SurfaceChemistryMixin):
                     "usage: <Chemistry_Obj>.species_u(temperature, pressure)",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
             else:
                 # set current pressure for the real-gas
                 set_current_pressure(self.chemid, pres)
@@ -1749,9 +1673,7 @@ class Chemistry(SurfaceChemistryMixin):
                 "failed to compute specific internal energies.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         return u
 
@@ -1777,28 +1699,20 @@ class Chemistry(SurfaceChemistryMixin):
                 "please preprocess the chemistry set first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         if self._index_tran.value != 1:
             msg = [Color.PURPLE, "no transport data processed.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         if temp <= 1.0e0:
             msg = [Color.PURPLE, "temperature value is too low.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         tt = c_double(temp)
         visc = np.zeros(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetViscosity(self._chemset_index, tt, visc)
         if ierr != 0:
             # failed to compute viscosity
             msg = [Color.PURPLE, "failed to compute specific viscosities.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         return visc
 
@@ -1824,19 +1738,13 @@ class Chemistry(SurfaceChemistryMixin):
                 "please preprocess the chemistry set first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         if self._index_tran.value != 1:
             msg = [Color.PURPLE, "no transport data processed.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         if temp <= 1.0e0:
             msg = [Color.PURPLE, "temperature value is too low.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         tt = c_double(temp)
         cond = np.zeros(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetConductivity(self._chemset_index, tt, cond)
@@ -1847,9 +1755,7 @@ class Chemistry(SurfaceChemistryMixin):
                 "failed to compute specific conductivities.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         return cond
 
@@ -1880,24 +1786,16 @@ class Chemistry(SurfaceChemistryMixin):
                 "please preprocess the chemistry set first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         if self._index_tran.value != 1:
             msg = [Color.PURPLE, "no transport data processed.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         if temp <= 1.0e0:
             msg = [Color.PURPLE, "temperature value is too low.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         if press <= 1.0e0:
             msg = [Color.PURPLE, "pressure value is too low.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         pp = c_double(press)
         tt = c_double(temp)
         dim = (self._num_gas_species.value, self._num_gas_species.value)
@@ -1912,9 +1810,7 @@ class Chemistry(SurfaceChemistryMixin):
                 "failed to compute specific diffusion coefficients.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         return diffusioncoeffs
 
@@ -1950,24 +1846,18 @@ class Chemistry(SurfaceChemistryMixin):
                     "failed to compute elemental compositions.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
             else:
                 self.ncf_done = 1
 
         # check element index
         if elemindex < 0 or elemindex >= self._num_elements.value:
             msg = [Color.PURPLE, "element index is out of bound.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # check species index
         if specindex < 0 or specindex >= self._num_gas_species.value:
             msg = [Color.PURPLE, "species index is out of bound.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         return self.elementalcomp[elemindex][specindex]
 
@@ -1992,8 +1882,7 @@ class Chemistry(SurfaceChemistryMixin):
         if self._eos.value < 1:
             # no real gas EOS data in the mechanism
             msg = [Color.YELLOW, "mechanism is for ideal gas law only.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             return
         # check real-gas EOS status
         iflag = c_int(0)
@@ -2006,9 +1895,7 @@ class Chemistry(SurfaceChemistryMixin):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         if iflag.value == 0:
             msg = [
                 Color.YELLOW,
@@ -2017,8 +1904,7 @@ class Chemistry(SurfaceChemistryMixin):
                 "is turned ON.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             self.userealgas = True
         else:
             self.userealgas = False
@@ -2028,8 +1914,7 @@ class Chemistry(SurfaceChemistryMixin):
         if self._eos.value < 1:
             # no real gas EOS data in the mechanism
             msg = [Color.YELLOW, "mechanism is for ideal gas law only.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             self.userealgas = False
             return
         # check real-gas EOS status
@@ -2043,13 +1928,10 @@ class Chemistry(SurfaceChemistryMixin):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         if iflag.value == 0:
             msg = [Color.YELLOW, "ideal gas law is turned ON.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             self.userealgas = False
 
     def get_reaction_parameters(
@@ -2108,14 +1990,10 @@ class Chemistry(SurfaceChemistryMixin):
                 "range = [1 ~ " + str(self.ii_gas) + "].",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         if a_factor < 0.0e0:
             msg = [Color.PURPLE, "A-Factor must >= 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # convert the reaction parameters
         ireac = c_int(-reaction_index)  # negative index to "put" A-factor value
         ierr = ck_wrapper.chemkin.KINSetAFactorForAReaction(
@@ -2129,9 +2007,7 @@ class Chemistry(SurfaceChemistryMixin):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     def get_reaction_afactor(self, reaction_index: int) -> float:
         """Get the Arrhenius A-Factor of the given reaction."""
@@ -2159,9 +2035,7 @@ class Chemistry(SurfaceChemistryMixin):
                 "range = [1 ~ " + str(self.ii_gas) + "].",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # convert the reaction parameters
         ireac = c_int(reaction_index)
         # get the A-factor value
@@ -2176,9 +2050,7 @@ class Chemistry(SurfaceChemistryMixin):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         return a_factor.value
 
     def get_gas_reaction_string(self, reaction_index: int) -> str:
@@ -2206,14 +2078,10 @@ class Chemistry(SurfaceChemistryMixin):
                 str(self._num_gas_reactions.value),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         elif reaction_index <= 0:
             msg = [Color.PURPLE, "reaction index must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # convert the reaction parameters
         ireac = c_int(reaction_index)
         i_string_size = c_int(0)
@@ -2230,9 +2098,7 @@ class Chemistry(SurfaceChemistryMixin):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # convert C string back to string
         # print(rstring.decode()[0:i_string_size.value])  # check
         reactionstring = rstring.decode()[0 : i_string_size.value]
@@ -2255,12 +2121,10 @@ class Chemistry(SurfaceChemistryMixin):
                 self.label,
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         else:
             msg = [Color.PURPLE, "saving the Chemistry Set work spaces.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def activate(self):
         """Activate the work spaces of the Chemistry Set."""
@@ -2277,7 +2141,13 @@ class Chemistry(SurfaceChemistryMixin):
                 "activated.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         else:
-            exit()
+            critical_and_exit(
+                [
+                    Color.RED,
+                    "failed to activate Chemistry Set",
+                    self.label,
+                    Color.END,
+                ]
+            )
