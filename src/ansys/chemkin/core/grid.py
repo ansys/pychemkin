@@ -28,7 +28,8 @@ import numpy as np
 import numpy.typing as npt
 
 from ansys.chemkin.core.color import Color
-from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.utilities import error_and_exit, log_error_message
+from ansys.chemkin.core.validation import validate_minimum_value
 
 
 class Grid:
@@ -62,8 +63,7 @@ class Grid:
             self.numb_grid_points = numb_points
         else:
             msg = [Color.PURPLE, "number of points must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            error_and_exit(msg)
 
     def set_max_grid_points(self, numb_points: int):
         """Set the max number of grid points allowed during the solution refinement."""
@@ -79,8 +79,7 @@ class Grid:
             self.max_numb_grid_points = numb_points
         else:
             msg = [Color.PURPLE, "number of points must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            error_and_exit(msg)
 
     @property
     def start_position(self) -> float:
@@ -140,8 +139,7 @@ class Grid:
             self.ending_x = position
         else:
             msg = [Color.PURPLE, "ending position must > starting position.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            error_and_exit(msg)
 
     def set_reaction_zone_center(self, position: float):
         """Set the coordinate value of the reaction/mixing zone center."""
@@ -155,12 +153,10 @@ class Grid:
         """
         if position < self.starting_x:
             msg = [Color.PURPLE, "zone center must >= starting position.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            error_and_exit(msg)
         elif position > self.ending_x:
             msg = [Color.PURPLE, "ending position must <= ending position.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            error_and_exit(msg)
         else:
             self.reaction_zone_center_x = position
 
@@ -174,12 +170,12 @@ class Grid:
                 width of the reaction/mixing zone [cm]
 
         """
-        if size > 0.0:
-            self.reaction_zone_width = size
-        else:
-            msg = [Color.PURPLE, "zone width must > 0.0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+        validate_minimum_value(
+            value=size,
+            minimum=np.finfo(float).eps,
+            message="zone width must > 0.0.",
+        )
+        self.reaction_zone_width = size
 
     def set_max_adaptive_points(self, numb_points: int):
         """Set the max number of adaptive grid points allowed."""
@@ -202,12 +198,10 @@ class Grid:
                 "set 'GRID' and 'CURV' to 1 to turn OFF grid adaption.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            error_and_exit(msg)
         else:
             msg = [Color.PURPLE, "number of points must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            error_and_exit(msg)
 
     def set_solution_quality(self, gradient: float = 0.1, curvature: float = 0.5):
         """Set the maximum gradient and curvature ratios."""
@@ -226,25 +220,25 @@ class Grid:
 
         """
         # check gradient ratio value
-        if gradient <= 0.0:
-            msg = [Color.PURPLE, "gradient ratio must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-        elif gradient > 1.0:
+        validate_minimum_value(
+            value=gradient,
+            minimum=np.finfo(float).eps,
+            message="gradient ratio must > 0.",
+        )
+        if gradient > 1.0:
             msg = [Color.PURPLE, "gradient ratio must <= 1.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            error_and_exit(msg)
         else:
             self.gradient = gradient
         # check curvature ratio value
-        if curvature <= 0.0:
-            msg = [Color.PURPLE, "curvature ratio must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-        elif curvature > 1.0:
+        validate_minimum_value(
+            value=curvature,
+            minimum=np.finfo(float).eps,
+            message="curvature ratio must > 0.",
+        )
+        if curvature > 1.0:
             msg = [Color.PURPLE, "curvature ratio must <= 1.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            error_and_exit(msg)
         else:
             self.curvature = curvature
 
@@ -267,8 +261,7 @@ class Grid:
         #
         if ngrids == 0:
             msg = [Color.PURPLE, "the 'mesh' parameter is empty.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             ierror = 1
             exit()
         # check first grid point = starting position
@@ -285,8 +278,7 @@ class Grid:
                 str(mesh[0]),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             ierror = 2
         # check last grid point = ending position
         if mesh[ngrids - 1] != self.ending_x:
@@ -302,8 +294,7 @@ class Grid:
                 str(mesh[ngrids - 1]),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             ierror = 3
 
         if ierror == 0:

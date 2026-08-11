@@ -41,10 +41,18 @@ from ansys.chemkin.core.color import Color as Color
 from ansys.chemkin.core.constants import P_ATM, R_GAS_CAL
 from ansys.chemkin.core.info import show_ignition_definitions
 from ansys.chemkin.core.inlet import Stream
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.mixture import Mixture, interpolate_mixtures
 from ansys.chemkin.core.reactormodel import Keyword, ReactorModel as Reactor
-from ansys.chemkin.core.utilities import find_interpolate_parameters
+from ansys.chemkin.core.utilities import (
+    critical_and_exit,
+    error_and_exit,
+    find_interpolate_parameters,
+    log_critical_message,
+    log_error_message,
+    log_info_message,
+    log_warning_message,
+)
+from ansys.chemkin.core.validation import validate_minimum_value
 
 
 class BatchReactors(Reactor):
@@ -136,14 +144,13 @@ class BatchReactors(Reactor):
                 simulation end time [sec]
 
         """
-        if value <= 0.0e0:
-            msg = [Color.PURPLE, "simulation end time must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._inputcheck.append("TIME")
-            self._endtime = c_double(value)
+        validate_minimum_value(
+            value=value,
+            minimum=np.finfo(float).eps,
+            message="simulation end time must > 0.",
+        )
+        self._inputcheck.append("TIME")
+        self._endtime = c_double(value)
 
     @property
     def volume(self) -> float:
@@ -207,18 +214,18 @@ class BatchReactors(Reactor):
                 surface area [cm2]
 
         """
-        if value < 0.0e0:
-            msg = [Color.PURPLE, "reactor active surface area must >= 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-        else:
-            self._reactivearea = c_double(value)
-            # set internal surface area keyword for PFR
-            if (
-                self._reactortype.value == self.ReactorTypes.get("PFR", 3)
-                or Keyword.no_fullkeyword
-            ):
-                self.setkeyword(key="AREA", value=value)
+        validate_minimum_value(
+            value=value,
+            minimum=0.0,
+            message="reactor active surface area must >= 0.",
+        )
+        self._reactivearea = c_double(value)
+        # set internal surface area keyword for PFR
+        if (
+            self._reactortype.value == self.ReactorTypes.get("PFR", 3)
+            or Keyword.no_fullkeyword
+        ):
+            self.setkeyword(key="AREA", value=value)
 
     @property
     def tolerances(self) -> tuple:
@@ -313,8 +320,7 @@ class BatchReactors(Reactor):
                 self.setkeyword(key="USE_LEGACY_TECHNIQUE", value="4X")
         else:
             msg = [Color.PURPLE, "parameter must be either True or False.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_solver_initial_timestep_size(self, size: float):
         """Set the initial time step size."""
@@ -331,8 +337,7 @@ class BatchReactors(Reactor):
             self.setkeyword(key="HO", value=size)
         else:
             msg = [Color.PURPLE, "solver timestep size must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_solver_max_timestep_size(self, size: float):
         """Set the maximum time step size allowed."""
@@ -348,8 +353,7 @@ class BatchReactors(Reactor):
             self.setkeyword(key="STPT", value=size)
         else:
             msg = [Color.PURPLE, "solver timestep size must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     @property
     def timestep_for_saving_solution(self) -> float:
@@ -379,8 +383,7 @@ class BatchReactors(Reactor):
                     'because "end time" has not been set,',
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.warning(this_msg)
+                log_warning_message(msg)
                 return 0.0
 
     @timestep_for_saving_solution.setter
@@ -399,8 +402,7 @@ class BatchReactors(Reactor):
             self.setkeyword(key="DTSV", value=delta_time)
         else:
             msg = [Color.PURPLE, "solution saving timestep size must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     @property
     def timestep_for_printing_solution(self) -> float:
@@ -430,8 +432,7 @@ class BatchReactors(Reactor):
                     'because "end time" has not been set,',
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.warning(this_msg)
+                log_warning_message(msg)
                 return 0.0
 
     @timestep_for_printing_solution.setter
@@ -450,8 +451,7 @@ class BatchReactors(Reactor):
             self.setkeyword(key="DELT", value=delta_time)
         else:
             msg = [Color.PURPLE, "solution printing timestep size must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def adaptive_solution_saving(
         self,
@@ -493,8 +493,7 @@ class BatchReactors(Reactor):
                     "the number of steps per adaptive solution saving must > 0.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
             else:
                 # set parameters
                 self.setkeyword(key="ADAP", value=True)
@@ -509,8 +508,7 @@ class BatchReactors(Reactor):
                     "for value-change adaptive saving.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
             elif not isinstance(target, str):
                 # not given as string
                 msg = [
@@ -518,8 +516,7 @@ class BatchReactors(Reactor):
                     "a reference variable is assigned as a string, e.g., 'OH'.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
             elif value_change <= 0.0:
                 # non-positive change value
                 msg = [
@@ -527,8 +524,7 @@ class BatchReactors(Reactor):
                     "the value change per adaptive solution saving must > 0.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
             else:
                 # set parameters
                 self.setkeyword(key="ADAP", value=True)
@@ -543,8 +539,7 @@ class BatchReactors(Reactor):
                 "or the 'change value' + 'target variable' pair.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_ignition_delay(
         self,
@@ -582,8 +577,7 @@ class BatchReactors(Reactor):
                         "temperature rise value must > 0.",
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                 else:
                     self.setkeyword(key="DTIGN", value=val)
                     # set flag
@@ -596,8 +590,7 @@ class BatchReactors(Reactor):
                         "ignition temperature value must > 0.",
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                 else:
                     self.setkeyword(key="TLIM", value=val)
                     # set flag
@@ -611,8 +604,7 @@ class BatchReactors(Reactor):
                         "target species is assigned as a string, e.g., 'OH'.",
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                 else:
                     self.setkeyword(key="KLIM", value=target)
                     # set flag
@@ -631,8 +623,7 @@ class BatchReactors(Reactor):
                     "is not recognized.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 show_ignition_definitions()
         else:
             # use error
@@ -666,8 +657,7 @@ class BatchReactors(Reactor):
                 "please set the ignition delay definition first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             return ignitiondelaytime.value
         elif status == -100:
             msg = [
@@ -677,8 +667,7 @@ class BatchReactors(Reactor):
                 "please run the reactor simulation first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             return ignitiondelaytime.value
         elif status != 0:
             msg = [
@@ -688,8 +677,7 @@ class BatchReactors(Reactor):
                 "please correct the error(s) and rerun the reactor simulation.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             return ignitiondelaytime.value
 
         # get the ignition delay time
@@ -707,8 +695,7 @@ class BatchReactors(Reactor):
                 "revisit the reactor/solver settings.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             return ignitiondelaytime.value
         # check reactor model
         if self._reactortype.value == self.ReactorTypes.get("Batch", 1):
@@ -722,8 +709,7 @@ class BatchReactors(Reactor):
                     "revisit the reactor/solver settings.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.warning(this_msg)
+                log_warning_message(msg)
                 return ignitiondelaytime.value * 1.0e3
             else:
                 # convert ignition  delay time from [sec] to [msec]
@@ -750,8 +736,7 @@ class BatchReactors(Reactor):
                     "revisit the reactor/solver settings.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.warning(this_msg)
+                log_warning_message(msg)
                 return ignitiondelaytime.value
             else:
                 # return ignition distance [cm]
@@ -781,9 +766,7 @@ class BatchReactors(Reactor):
                 "the parameter must be a Mixture object.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     def set_volume_profile(
         self, x: npt.NDArray[np.double], vol: npt.NDArray[np.double]
@@ -814,8 +797,7 @@ class BatchReactors(Reactor):
                 "batch reactor",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return 10
         else:
             keyword = "VPRO"
@@ -851,8 +833,7 @@ class BatchReactors(Reactor):
                 "batch reactor",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return 10
         else:
             keyword = "PPRO"
@@ -958,15 +939,13 @@ class BatchReactors(Reactor):
         else:
             if len(self._inputcheck) < self._numb_requiredinput:
                 msg = [Color.PURPLE, "some required inputs are missing.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
             # verify required inputs one by one
             for k in self._requiredlist:
                 if k not in self._inputcheck:
                     ierr += 1
                     msg = [Color.PURPLE, "missing required input:", k, Color.END]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
 
             return ierr
 
@@ -986,8 +965,7 @@ class BatchReactors(Reactor):
         ierr = self.validate_inputs()
         if ierr != 0:
             msg = [Color.PURPLE, "missing required input keywords.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return ierr
         # re-size work arrays if profile is used
         if self._numbprofiles > 0:
@@ -1013,8 +991,7 @@ class BatchReactors(Reactor):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return ierr
         # prepare initial conditions
         # initial mass fraction
@@ -1043,7 +1020,9 @@ class BatchReactors(Reactor):
             )
             ierr += ierrc
             if ierrc != 0:
-                logger.error("failed to set up basic reactor keywords")
+                log_error_message(
+                    [Color.PURPLE, "failed to set up basic reactor keywords", Color.END]
+                )
                 return ierrc
 
         # set reactor type
@@ -1069,8 +1048,7 @@ class BatchReactors(Reactor):
                     str(err_profile),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return err_profile
         # solve integrated heat release rate due to chemical reactions
         if self.EnergyTypes.get("ENERGY") == self._energytype.value:
@@ -1087,16 +1065,14 @@ class BatchReactors(Reactor):
                     "input lines are added.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
         else:
             msg = [
                 Color.PURPLE,
                 "failed to create additional keyword lines.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
         return ierr
 
@@ -1132,8 +1108,7 @@ class BatchReactors(Reactor):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
         return ierr
 
@@ -1156,8 +1131,7 @@ class BatchReactors(Reactor):
         ierr = self.validate_inputs()
         if ierr != 0:
             msg = [Color.PURPLE, "missing required input keywords.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return ierr
         # re-size work arrays if profile is used
         if self._numbprofiles > 0:
@@ -1183,8 +1157,7 @@ class BatchReactors(Reactor):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return ierr
         # prepare initial conditions
         # initial mass fraction
@@ -1220,8 +1193,7 @@ class BatchReactors(Reactor):
                     str(ierrc),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return ierrc
             # heat transfer (use additional keywords)
             # solver parameters (use additional keywords)
@@ -1241,8 +1213,7 @@ class BatchReactors(Reactor):
                         str(ierrc),
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                     return ierrc
 
         if ierr == 0 and self.has_surface_chemistry:
@@ -1267,8 +1238,7 @@ class BatchReactors(Reactor):
                     str(err_profile),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return err_profile
         if ierr == 0:
             # set additional keywords
@@ -1290,8 +1260,7 @@ class BatchReactors(Reactor):
                             "additional input lines are added.",
                             Color.END,
                         ]
-                        this_msg = Color.SPACE.join(msg)
-                        logger.info(this_msg)
+                        log_info_message(msg)
                 else:
                     msg = [
                         Color.PURPLE,
@@ -1300,8 +1269,7 @@ class BatchReactors(Reactor):
                         str(err_inputs),
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
             else:
                 msg = [
                     Color.PURPLE,
@@ -1309,8 +1277,7 @@ class BatchReactors(Reactor):
                     str(err_inputs),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
         #
         ierr = ierr + err_inputs + err_key
 
@@ -1353,13 +1320,11 @@ class BatchReactors(Reactor):
             str(check_chemistryset(self._chemset_index.value)),
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         if not check_chemistryset(self._chemset_index.value):
             # Chemkin-CFD-API is not initialized: reinitialize Chemkin-CFD-API
             msg = [Color.YELLOW, "initializing Chemkin ...", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             ret_val = chemkin_wrapper.chemkin.KINInitialize(
                 self._chemset_index, c_int(0)
             )
@@ -1371,14 +1336,13 @@ class BatchReactors(Reactor):
                     str(ret_val),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
+                log_critical_message(msg)
                 exit()
             else:
                 chemistryset_initialized(self._chemset_index.value)
 
         # output initialization
-        logger.debug("clearing output ...")
+        log_info_message([Color.YELLOW, "clearing output ...", Color.END])
 
         # keyword processing
         msg = [
@@ -1386,8 +1350,7 @@ class BatchReactors(Reactor):
             "processing and generating keyword inputs ...",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         if Keyword.no_fullkeyword:
             # use API calls
             ret_val = (
@@ -1404,22 +1367,19 @@ class BatchReactors(Reactor):
                 str(ret_val),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
             return ret_val
-        logger.debug("Processing keywords complete")
+        log_info_message([Color.YELLOW, "Processing keywords complete", Color.END])
 
         # run reactor model
         msg = [Color.YELLOW, "running reactor simulation ...", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         # suppress text output to file
         if self.suppress_output:
             ierr = chemkin_wrapper.chemkin.KINAll0D_SuppressOutput()
             if ierr != 0:
                 msg = [Color.YELLOW, "failed to turn off text output.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
         # reset run status
         self.setrunstatus(code=-100)
         #
@@ -1434,12 +1394,10 @@ class BatchReactors(Reactor):
         msg = ["simulation completed,", "status =", str(ret_val), Color.END]
         if ret_val == 0:
             msg.insert(0, Color.GREEN)
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         else:
             msg.insert(0, Color.RED)
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
 
         return ret_val
 
@@ -1459,8 +1417,7 @@ class BatchReactors(Reactor):
         status = self.getrunstatus(mode="silent")
         if status == -100:
             msg = [Color.MAGENTA, "please run the reactor simultion first.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         elif status != 0:
             msg = [
@@ -1470,8 +1427,7 @@ class BatchReactors(Reactor):
                 "please correct the error(s) and rerun the reactor simulation.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # number of reactor
         nreac = c_int(0)
@@ -1495,8 +1451,7 @@ class BatchReactors(Reactor):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         else:
             # incorrect number of reactor (batch reactor is single reactor)
@@ -1512,8 +1467,7 @@ class BatchReactors(Reactor):
                 "found in the solution.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
 
     def process_solution(self):
@@ -1526,12 +1480,10 @@ class BatchReactors(Reactor):
                 "any existing solution data will be deleted from the memory.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
 
         msg = [Color.YELLOW, "post-processing raw solution data ...", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         # reset raw and mixture solution parameters
         self._numbsolutionpoints = 0
         self._solution_rawarray.clear()
@@ -1552,9 +1504,7 @@ class BatchReactors(Reactor):
                 str(nreac),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             self._numbsolutionpoints = npoints
         # create arrays to hold the raw solution data
@@ -1587,9 +1537,7 @@ class BatchReactors(Reactor):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
         # store the raw solution data in a dictionary
         # time
         self._solution_rawarray["time"] = copy.deepcopy(time)
@@ -1619,9 +1567,7 @@ class BatchReactors(Reactor):
                     str(ierr),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
-                exit()
+                critical_and_exit(msg)
             #
             # accumulated gas-phase chemistry heat release [erg]
             self._solution_rawarray["gasheatrelease"] = copy.deepcopy(gas_heatrelease)
@@ -1638,9 +1584,7 @@ class BatchReactors(Reactor):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # calculate total termicity [1/sec]
         thermicity = np.zeros_like(time, dtype=np.double)
         for i, m in enumerate(self._solution_mixturearray):
@@ -1710,8 +1654,7 @@ class BatchReactors(Reactor):
                 str(ierr_s),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
         # get surface material temperature [K]
         n_material = self.surface_chemistry.number_materials
         surf_temp = np.zeros(
@@ -1792,9 +1735,7 @@ class BatchReactors(Reactor):
                     str(ierr),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
-                exit()
+                critical_and_exit(msg)
             # total surface chemistry heat release rate [erg/s]
             self._solution_rawarray["surfhrr"] = copy.deepcopy(surf_heatrelease_rate)
 
@@ -1822,9 +1763,8 @@ class BatchReactors(Reactor):
                 "to post-process the raw solution data first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
-            return 1
+            log_info_message(msg)
+            return np.zeros(0, dtype=np.double)
         # check variable name
         vname = varname.rstrip()
         if vname.lower() in self._solution_tags:
@@ -1858,8 +1798,7 @@ class BatchReactors(Reactor):
                     "and has to be derived from other variable(s).",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 exit()
 
         # create variable arrays to hold the solution profile
@@ -1892,8 +1831,7 @@ class BatchReactors(Reactor):
                 "to post-process the raw solution data first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             return 1
         # create a temporary Mixture object to hold the mixture properties
         # at current solution point
@@ -1961,8 +1899,7 @@ class BatchReactors(Reactor):
                 "to post-process the raw solution data first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             exit()
         # get the time point array
         timearray = self.get_solution_variable_profile("time")
@@ -2013,8 +1950,7 @@ class BatchReactors(Reactor):
                 "to post-process the raw solution data first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             exit()
         # check index
         if solution_index > self._numbsolutionpoints - 1:
@@ -2033,8 +1969,7 @@ class BatchReactors(Reactor):
                 "]",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # get the mixture
         mixturetarget = copy.deepcopy(self._solution_mixturearray[solution_index])
@@ -2060,8 +1995,7 @@ class BatchReactors(Reactor):
                 "to post-process the raw solution data first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             exit()
         # set index to the last solution point
         solution_index = self._numbsolutionpoints - 1
@@ -2139,9 +2073,7 @@ class GivenPressureBatchReactorFixedTemperature(BatchReactors):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
         # if full-keyword mode is turned ON
         if not Keyword.no_fullkeyword:
             # populate the reactor setup keywords
@@ -2250,9 +2182,7 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
         # if full-keyword mode is turned ON
         if not Keyword.no_fullkeyword:
             # populate the reactor setup keywords
@@ -2316,9 +2246,7 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
         """
         if value < 0.0e0:
             msg = [Color.PURPLE, "heat transfer coefficient must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             self._heat_transfer_coefficient = value
             # set the corresponding keyword
@@ -2352,9 +2280,7 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
         """
         if value <= 0.0e0:
             msg = [Color.PURPLE, "ambient temperature must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             self._ambient_temperature = value
             # set the corresponding keyword
@@ -2388,9 +2314,7 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
         """
         if value < 0.0e0:
             msg = [Color.PURPLE, "heat transfer area must >= 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             self._heat_transfer_area = value
             # set the corresponding keyword
@@ -2422,8 +2346,7 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
                 "a Fixed-Temperature batch reactor",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return 10
         else:
             keyword = "AEXT"
@@ -2456,8 +2379,7 @@ class GivenPressureBatchReactorEnergyConservation(BatchReactors):
                 "a Fixed-Temperature batch reactor",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return 10
         else:
             keyword = "QPRO"
@@ -2534,9 +2456,7 @@ class GivenVolumeBatchReactorFixedTemperature(BatchReactors):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
         # if full-keyword mode is turned ON
         if not Keyword.no_fullkeyword:
             # populate the reactor setup keywords
@@ -2646,9 +2566,7 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
         # if full-keyword mode is turned ON
         if not Keyword.no_fullkeyword:
             # populate the reactor setup keywords
@@ -2712,9 +2630,7 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
         """
         if value < 0.0e0:
             msg = [Color.PURPLE, "heat transfer coefficient must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             self._heat_transfer_coefficient = value
             # set the corresponding keyword
@@ -2748,9 +2664,7 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
         """
         if value <= 0.0e0:
             msg = [Color.PURPLE, "ambient temperature must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             self._ambient_temperature = value
             # set the corresponding keyword
@@ -2784,9 +2698,7 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
         """
         if value < 0.0e0:
             msg = [Color.PURPLE, "heat transfer area must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             self._heat_transfer_area = value
             # set the corresponding keyword
@@ -2818,8 +2730,7 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
                 "a Fixed-Temperature batch reactor",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return 10
         else:
             keyword = "AEXT"
@@ -2852,8 +2763,7 @@ class GivenVolumeBatchReactorEnergyConservation(BatchReactors):
                 "a Fixed-Temperature batch reactor",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return 10
         else:
             keyword = "QPRO"
@@ -2896,8 +2806,7 @@ def calculate_effective_activation_energy(
             "the first parameter must be a Mixture object",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
+        log_error_message(msg)
         exit()
     # check reactor volume
     if not initial_mixture.check_volume():
@@ -2918,8 +2827,7 @@ def calculate_effective_activation_energy(
             "'CONV' for constant volume reactor model.",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
+        log_error_message(msg)
         exit()
     # initialization
     reduced_act_energy = 0.0e0
@@ -2964,8 +2872,7 @@ def calculate_effective_activation_energy(
                 str(t),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
     # verify the ignition delay times
     for case in range(len(delaytime)):
@@ -2980,8 +2887,7 @@ def calculate_effective_activation_energy(
                 ", most likely the simulation time is too short.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
     # estimate the effective reduced activation energy
     termn = np.log(delaytime[0]) - np.log(delaytime[1])

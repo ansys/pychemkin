@@ -28,12 +28,17 @@ import numpy as np
 
 from ansys.chemkin.core.color import Color as Color
 from ansys.chemkin.core.inlet import Stream
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.mixture import (
     cal_mixture_temperature_from_enthalpy,
     interpolate_mixtures,
 )
-from ansys.chemkin.core.utilities import random, random_pick_integers
+from ansys.chemkin.core.utilities import (
+    error_and_exit,
+    log_error_message,
+    random,
+    random_pick_integers,
+)
+from ansys.chemkin.core.validation import validate_minimum_value
 
 
 class MicroMixing:
@@ -94,9 +99,7 @@ class MicroMixing:
                 "the total number of particles must > 1.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     def set_mixing_time_step(self, dtime: float):
         """Set the time duration of the micro mixing process."""
@@ -108,17 +111,12 @@ class MicroMixing:
             dtime: double
                 time step size (duration) of the micro mixing process [sec]
         """
-        if dtime > 0.0e0:
-            self.delta_time = dtime
-        else:
-            msg = [
-                Color.PURPLE,
-                "the time step size must > 0.",
-                Color.END,
-            ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_minimum_value(
+            value=dtime,
+            minimum=np.finfo(float).eps,
+            message="the time step size must > 0.",
+        )
+        self.delta_time = dtime
 
     def set_mixing_time_scale(self, tau: float):
         """Set the characteristic scalar mixing time scale."""
@@ -130,17 +128,12 @@ class MicroMixing:
             tau: double
                 characteristic scalar mixing time scale [sec]
         """
-        if tau > 0.0e0:
-            self.mixing_time_scale = tau
-        else:
-            msg = [
-                Color.PURPLE,
-                "the scalar mixing time scale must > 0.",
-                Color.END,
-            ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_minimum_value(
+            value=tau,
+            minimum=np.finfo(float).eps,
+            message="the scalar mixing time scale must > 0.",
+        )
+        self.mixing_time_scale = tau
 
     def set_mixing_model_parameter(self, cmix: float):
         """Set the micro mixing model parameter."""
@@ -152,17 +145,12 @@ class MicroMixing:
             cmix: double
                 micro mixing model parameter
         """
-        if cmix > 0.0e0:
-            self.mixing_model_parameter = cmix
-        else:
-            msg = [
-                Color.PURPLE,
-                "the model parameter must > 0.",
-                Color.END,
-            ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_minimum_value(
+            value=cmix,
+            minimum=np.finfo(float).eps,
+            message="the model parameter must > 0.",
+        )
+        self.mixing_model_parameter = cmix
 
     def set_particle_mixtures(self, particle_mixtures: list[Stream]):
         """Set up the particle mixtures."""
@@ -183,9 +171,7 @@ class MicroMixing:
                 "the mixture list provided is empty.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # set up mixtures
         self.mixture_map.clear()
         # 1-base mixture index
@@ -210,9 +196,7 @@ class MicroMixing:
                 "use 'set_particle_mixtures()' to provide particle properties.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         if self._numb_mixtures == self.numb_particles:
             # 1 particle per mixture
@@ -310,8 +294,7 @@ class MicroMixing:
                 str(max_integer),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         source_list = []
         for i in range(min_integer, max_integer + 1):
@@ -380,9 +363,7 @@ class MicroMixing:
                     str(ierr),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
             # update the zone mixture properties
             self.mixture_map[mixture_index] = copy.deepcopy(zone_mixture)
             # clean up
@@ -417,8 +398,7 @@ class MicroMixing:
                 "the total number of particles must > 1.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # model parameters
         self.set_mixing_model_parameter(cmix)
@@ -435,8 +415,7 @@ class MicroMixing:
                 "to provide particle properties as Mixtures",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         else:
             # set up mappings

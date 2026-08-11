@@ -38,10 +38,17 @@ from ansys.chemkin.core.chemistry import (
 )
 from ansys.chemkin.core.color import Color as Color
 from ansys.chemkin.core.inlet import Stream
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.reactormodel import Keyword
 from ansys.chemkin.core.stirreactors.openreactor import OpenReactor
 from ansys.chemkin.core.stirreactors.PSR import PerfectlyStirredReactor as Psr
+from ansys.chemkin.core.utilities import (
+    error_and_exit,
+    log_critical_message,
+    log_error_message,
+    log_info_message,
+    log_warning_message,
+)
+from ansys.chemkin.core.validation import validate_minimum_value
 
 
 class PSRCluster(OpenReactor):
@@ -96,8 +103,7 @@ class PSRCluster(OpenReactor):
                     "is NOT a PSR object.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 ierror += 1
                 continue
             else:
@@ -109,8 +115,7 @@ class PSRCluster(OpenReactor):
                         "Leading PSR must have at least 1 external inlet.",
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.critical(this_msg)
+                    log_critical_message(msg)
                     ierror += 1
                     continue
                 elif ireac == 0:
@@ -133,8 +138,7 @@ class PSRCluster(OpenReactor):
                             "has a different problem type.",
                             Color.END,
                         ]
-                        this_msg = Color.SPACE.join(msg)
-                        logger.error(this_msg)
+                        log_error_message(msg)
                         ierror += 1
                     if psr._energytype.value != self._energytype.value:
                         msg = [
@@ -144,8 +148,7 @@ class PSRCluster(OpenReactor):
                             "has a different energy type.",
                             Color.END,
                         ]
-                        this_msg = Color.SPACE.join(msg)
-                        logger.error(this_msg)
+                        log_error_message(msg)
                         ierror += 1
                 # total number of external inlets to the cluster
                 self.total_external_inlets += n
@@ -244,8 +247,7 @@ class PSRCluster(OpenReactor):
         id = self.psr_map.get(name, 0)
         if id == 0:
             msg = [Color.PURPLE, name, "is NOT in the PSR cluster.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return 0
         return self._ninlets[id - 1]
 
@@ -304,8 +306,7 @@ class PSRCluster(OpenReactor):
             "is NOT found in the network.",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.warning(this_msg)
+        log_warning_message(msg)
         return ""
 
     def set_recycling_stream(
@@ -324,9 +325,7 @@ class PSRCluster(OpenReactor):
         """
         if source_psr not in self.psr_map:
             msg = [Color.PURPLE, source_psr, "is NOT in the PSR cluster.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         this_psr = self.psr_map[source_psr]
         if this_psr in self.recycling_connections.keys():
@@ -339,13 +338,12 @@ class PSRCluster(OpenReactor):
                 "this new connection will override the existing one.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             #
             self.recycling_connections[this_psr] = []
             self.numb_recycling_streams -= 1
         # check connections
-        sum = 0.0
+        total_fraction = 0.0
         throughflow = False
         for outflow in connections:
             psr_name = outflow[0]
@@ -353,9 +351,7 @@ class PSRCluster(OpenReactor):
             id = -1
             if psr_name not in self.psr_map:
                 msg = [Color.PURPLE, psr_name, "is NOT in the PSR cluster.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
             else:
                 id = self.psr_map[psr_name]
             #
@@ -371,24 +367,13 @@ class PSRCluster(OpenReactor):
                     "self recycling is NOT allowed.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
             elif frac < 0.0:
-                msg = [
-                    Color.PURPLE,
-                    "(",
-                    psr_name,
-                    ",",
-                    str(frac),
-                    ")\n",
-                    Color.SPACEx6,
+                validate_minimum_value(
+                    frac,
+                    0.0,
                     "recycling outflow fraction must >= 0.",
-                    Color.END,
-                ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                )
             else:
                 if id == this_psr + 1:
                     msg = [
@@ -399,59 +384,43 @@ class PSRCluster(OpenReactor):
                         str(frac),
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.info(this_msg)
+                    log_info_message(msg)
                     throughflow = True
-                sum += frac
+                total_fraction += frac
         #
-        diff = 1.0e0 - sum
-        if diff < 0.0:
+        diff = 1.0e0 - total_fraction
+        validate_minimum_value(diff, 0.0, "total outflow mass fraction > 1.0")
+        if throughflow:
+            # through flow fraction is given
+            if diff > 1.0e-6:
+                # the total outflow mass fraction is NOT summed to 1
+                msg = [
+                    Color.PURPLE,
+                    "total outflow mass fraction",
+                    str(total_fraction),
+                    "< 1.0 with through flow",
+                    Color.END,
+                ]
+                error_and_exit(msg)
+        else:
             msg = [
-                Color.PURPLE,
-                "total outflow mass fraction",
-                str(sum),
-                "> 1.0",
+                Color.YELLOW,
+                "PSR",
+                source_psr,
+                "through-flow mass fraction =",
+                str(diff),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            if throughflow:
-                # through flow fraction is given
-                if diff > 1.0e-6:
-                    # the total outflow mass fraction is NOT summed to 1
-                    msg = [
-                        Color.PURPLE,
-                        "total outflow mass fraction",
-                        str(sum),
-                        "< 1.0 with through flow",
-                        Color.END,
-                    ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
-                    exit()
-            else:
+            log_info_message(msg)
+            if this_psr == self.npsrs:
                 msg = [
                     Color.YELLOW,
                     "PSR",
                     source_psr,
-                    "through-flow mass fraction =",
-                    str(diff),
+                    "the through-flow is the net network outflow.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
-                if this_psr == self.npsrs:
-                    msg = [
-                        Color.YELLOW,
-                        "PSR",
-                        source_psr,
-                        "the through-flow is the net network outflow.",
-                        Color.END,
-                    ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.info(this_msg)
+                log_info_message(msg)
         # set the outflow connection of this PSR
         self.recycling_connections[this_psr] = copy.deepcopy(connections)
         self.numb_recycling_streams += 1
@@ -511,8 +480,7 @@ class PSRCluster(OpenReactor):
                     "in the network.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
         # check heat transfer coefficient
         if heat_transfer_coeff < 0.0:
             ierr += 1
@@ -521,8 +489,7 @@ class PSRCluster(OpenReactor):
                 "heat transfer coefficient must >= 0.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
         # check heat transfer area
         if heat_transfer_area < 0.0:
             ierr += 1
@@ -531,8 +498,7 @@ class PSRCluster(OpenReactor):
                 "heat transfer area must >= 0.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
         if ierr > 0:
             exit()
         # set up the heat exchange pair
@@ -590,8 +556,7 @@ class PSRCluster(OpenReactor):
                     str(ierrc),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 ierr += ierrc
                 continue
             ipsr += 1
@@ -629,8 +594,7 @@ class PSRCluster(OpenReactor):
                         "additional input lines are added.",
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.info(this_msg)
+                    log_info_message(msg)
             else:
                 msg = [
                     Color.PURPLE,
@@ -639,8 +603,7 @@ class PSRCluster(OpenReactor):
                     str(ierr_inputs),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
         else:
             msg = [
                 Color.PURPLE,
@@ -648,8 +611,7 @@ class PSRCluster(OpenReactor):
                 str(ierr_inputs),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
         return ierr + ierr_inputs
 
     def __run_model(self) -> int:
@@ -707,8 +669,7 @@ class PSRCluster(OpenReactor):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         #
         # get ready to run the reactor network model
@@ -724,13 +685,11 @@ class PSRCluster(OpenReactor):
             str(check_chemistryset(self._chemset_index.value)),
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         if not check_chemistryset(self._chemset_index.value):
             # Chemkin-CFD-API is not initialized: reinitialize Chemkin-CFD-API
             msg = [Color.YELLOW, "initializing Chemkin ...", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             ret_val = chemkin_wrapper.chemkin.KINInitialize(
                 self._chemset_index, c_int(0)
             )
@@ -742,8 +701,7 @@ class PSRCluster(OpenReactor):
                     str(ret_val),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
+                log_critical_message(msg)
                 exit()
             else:
                 chemistryset_initialized(self._chemset_index.value)
@@ -754,8 +712,7 @@ class PSRCluster(OpenReactor):
             "processing and generating keyword inputs ...",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         if Keyword.no_fullkeyword:
             # use API calls
             ret_val = (
@@ -768,8 +725,7 @@ class PSRCluster(OpenReactor):
                 "full keyword option not available for PSR network model.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
             ret_val = 100
         if ret_val != 0:
             msg = [
@@ -779,15 +735,13 @@ class PSRCluster(OpenReactor):
                 str(ret_val),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
             return ret_val
-        logger.debug("processing keywords complete")
+        log_info_message([Color.YELLOW, "processing keywords complete", Color.END])
 
         # run reactor network model
         msg = [Color.YELLOW, "running reactor network simulation ...", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         # suppress text output to file
         if self.suppress_output:
             ierr = chemkin_wrapper.chemkin.KINAll0D_SuppressOutput()
@@ -799,12 +753,10 @@ class PSRCluster(OpenReactor):
         msg = ["simulation completed,", "status =", str(ret_val), Color.END]
         if ret_val == 0:
             msg.insert(0, Color.GREEN)
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         else:
             msg.insert(0, Color.RED)
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
 
         return ret_val
 
@@ -846,8 +798,7 @@ class PSRCluster(OpenReactor):
                 "rerun the reactor network.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         # check reactor
         id = self.psr_map.get(reactor_name, 0)
@@ -860,8 +811,7 @@ class PSRCluster(OpenReactor):
                 "is NOT found in the network.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         # prepare reactor solution
         return self._solution_streamarray[id - 1]
@@ -904,8 +854,7 @@ class PSRCluster(OpenReactor):
                 "rerun the reactor network.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         # check existing raw data
         if self.get_cluster_solutionstatus():
@@ -915,8 +864,7 @@ class PSRCluster(OpenReactor):
                 "any existing solution data will be deleted from the memory.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
 
         # reset mixture solution parameters
         self._solution_streamarray.clear()
@@ -936,8 +884,7 @@ class PSRCluster(OpenReactor):
                 psr.label,
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             ipsr = c_int(ireac)
             # create a Stream object to hold the mixture properties of current solution
             smixture = copy.deepcopy(psr.reactormixture)
@@ -957,8 +904,7 @@ class PSRCluster(OpenReactor):
                     psr.label,
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
+                log_critical_message(msg)
                 return ierr
 
             # steady-state pressure solution [dynes/cm2]
@@ -990,8 +936,7 @@ class PSRCluster(OpenReactor):
                     str(ierr),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
+                log_critical_message(msg)
                 return ierr
             # update Stream solution
             self._solution_streamarray.insert(ireac - 1, copy.deepcopy(smixture))
@@ -1029,7 +974,6 @@ class PSRCluster(OpenReactor):
                 "rerun the reactor network.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         return self.outlet_mass_flow_rate

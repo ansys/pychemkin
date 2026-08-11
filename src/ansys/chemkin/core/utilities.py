@@ -70,9 +70,20 @@ def critical_and_exit(msg_parts: list[str]):
     raise SystemExit()
 
 
+def log_warning_message(msg_parts: list[str]) -> None:
+    """Log a warning message without terminating execution."""
+    logger.warning(Color.SPACE.join(msg_parts))
+
+
+def warning_and_exit(msg_parts: list[str]) -> NoReturn:
+    """Log a warning message and terminate execution."""
+    log_warning_message(msg_parts)
+    raise SystemExit()
+
+
 def _log_warning_message(msg_parts: list[str]) -> None:
     """Log a warning message with consistent message joining."""
-    logger.warning(Color.SPACE.join(msg_parts))
+    log_warning_message(msg_parts)
 
 
 def where_element_in_array_1d(

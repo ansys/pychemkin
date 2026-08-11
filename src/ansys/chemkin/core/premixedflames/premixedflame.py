@@ -39,10 +39,19 @@ from ansys.chemkin.core.chemistry import (
 from ansys.chemkin.core.color import Color as Color
 from ansys.chemkin.core.flame import Flame
 from ansys.chemkin.core.inlet import Stream
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.mixture import interpolate_mixtures
 from ansys.chemkin.core.reactormodel import Keyword
-from ansys.chemkin.core.utilities import find_interpolate_parameters
+from ansys.chemkin.core.utilities import (
+    critical_and_exit,
+    error_and_exit,
+    find_interpolate_parameters,
+    log_critical_message,
+    log_error_message,
+    log_info_message,
+    log_warning_message,
+    warning_and_exit,
+)
+from ansys.chemkin.core.validation import validate_minimum_value
 
 
 class PremixedFlame(Flame):
@@ -58,9 +67,7 @@ class PremixedFlame(Flame):
                 "the first argument must be a Mixture object.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
         # set label
         if label is None:
             self.label = "premixedflame"
@@ -93,10 +100,8 @@ class PremixedFlame(Flame):
             "Premixed flame models do NOT allow the second inlet stream.",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
         _ = extinlet
-        exit()
+        error_and_exit(msg)
 
     def unburnt_temperature(self, temperature: float):
         """Set the unburnt fuel-oxidizer gas temperature."""
@@ -111,11 +116,11 @@ class PremixedFlame(Flame):
                 unburnt gas temperature [K]
 
         """
-        if temperature <= 200.0:
-            msg = [Color.PURPLE, "invalid temperature value.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_minimum_value(
+            temperature,
+            200.0,
+            "invalid temperature value.",
+        )
         # set unburnt temperature
         self.temperature = temperature
         self.setkeyword("TUNB", value=temperature)
@@ -175,8 +180,7 @@ class PremixedFlame(Flame):
         else:
             # no temperature profile found
             msg = [Color.PURPLE, "no temperature profile found.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return -1
 
     def use_tpro_grids(self, mode: bool = True):
@@ -248,9 +252,7 @@ class PremixedFlame(Flame):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     def __run_model(self) -> int:
         """Run the reactor model after the keywords are processed."""
@@ -309,8 +311,7 @@ class PremixedFlame(Flame):
                     "with given temperature profile.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return ierr
         else:
             # burner stabilized flame and solve the energy equation
@@ -358,8 +359,7 @@ class PremixedFlame(Flame):
                             "is not available through PyChemkin.",
                             Color.END,
                         ]
-                        this_msg = Color.SPACE.join(msg)
-                        logger.error(this_msg)
+                        log_error_message(msg)
                         ierr += ierrc
                     elif ierrc != 0:
                         msg = [
@@ -370,8 +370,7 @@ class PremixedFlame(Flame):
                             str(ierrc),
                             Color.END,
                         ]
-                        this_msg = Color.SPACE.join(msg)
-                        logger.error(this_msg)
+                        log_error_message(msg)
                         ierr += ierrc
         #
         self.showkeywordinputlines()
@@ -403,13 +402,11 @@ class PremixedFlame(Flame):
             str(check_chemistryset(self._chemset_index.value)),
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         if not check_chemistryset(self._chemset_index.value):
             # Chemkin-CFD-API is not initialized: reinitialize Chemkin-CFD-API
             msg = [Color.YELLOW, "initializing Chemkin ...", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             ret_val = chemkin_wrapper.chemkin.KINInitialize(
                 self._chemset_index, self._solvertype
             )
@@ -421,14 +418,13 @@ class PremixedFlame(Flame):
                     str(ret_val),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
+                log_critical_message(msg)
                 exit()
             else:
                 chemistryset_initialized(self._chemset_index.value)
 
         # output initialization
-        logger.debug("clearing output ...")
+        log_info_message([Color.YELLOW, "clearing output ...", Color.END])
 
         # keyword processing
         msg = [
@@ -436,8 +432,7 @@ class PremixedFlame(Flame):
             "processing and generating keyword inputs ...",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         ret_val = (
             self.__process_keywords()
         )  # each reactor model subclass to perform its own keyword processing
@@ -449,15 +444,13 @@ class PremixedFlame(Flame):
                 str(ret_val),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
             return ret_val
-        logger.debug("processing keywords complete")
+        log_info_message([Color.YELLOW, "processing keywords complete", Color.END])
 
         # run reactor model
         msg = [Color.YELLOW, "running premixed flame simulation ...", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         # use API calls
         ret_val = self.__run_model()
         # update run status
@@ -465,12 +458,10 @@ class PremixedFlame(Flame):
         msg = ["simulation completed,", "status =", str(ret_val), Color.END]
         if ret_val == 0:
             msg.insert(0, Color.GREEN)
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         else:
             msg.insert(0, Color.RED)
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
 
         return ret_val
 
@@ -488,8 +479,7 @@ class PremixedFlame(Flame):
         status = self.getrunstatus(mode="silent")
         if status == -100:
             msg = [Color.MAGENTA, "please run the flame simulation first.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         elif status != 0:
             msg = [
@@ -499,8 +489,7 @@ class PremixedFlame(Flame):
                 "please correct the error(s) and rerun the flame simulation.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # insert the continuation keyword
         key_continue = bytes("CNTN", "utf-8")
@@ -513,8 +502,7 @@ class PremixedFlame(Flame):
                 "continuation run starting...",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             # run the model
             ierr = self.run()
             status += ierr
@@ -534,8 +522,7 @@ class PremixedFlame(Flame):
         status = self.getrunstatus(mode="silent")
         if status == -100:
             msg = [Color.MAGENTA, "please run the flame simulation first.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         elif status != 0:
             msg = [
@@ -545,8 +532,7 @@ class PremixedFlame(Flame):
                 "please correct the error(s) and rerun the flame simulation.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # number of time points in the solution
         npoints = c_int(0)
@@ -567,8 +553,7 @@ class PremixedFlame(Flame):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
 
     def process_solution(self):
@@ -581,8 +566,7 @@ class PremixedFlame(Flame):
                 "any existing solution data will be deleted from the memory.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
 
         # reset raw and mixture solution parameters
         self._numbsolutionpoints = 0
@@ -600,9 +584,7 @@ class PremixedFlame(Flame):
                 str(npoints),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             self._numbsolutionpoints = npoints
         # create arrays to hold the raw solution data
@@ -619,8 +601,7 @@ class PremixedFlame(Flame):
             order="F",
         )
         msg = [Color.YELLOW, "post-processing raw solution data ...", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         # create a species mass fraction array to hold the steady-state solution
         frac = np.zeros(
             (
@@ -644,9 +625,7 @@ class PremixedFlame(Flame):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
         # get the flame mass flux [g/sec-cm2]
         massflux = c_double(0.0)
         ierr = chemkin_wrapper.chemkin.KINPremix_GetFlameMassFlux(massflux)
@@ -660,9 +639,7 @@ class PremixedFlame(Flame):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
         # store the raw solution data in a dictionary
         # grid
         self._solution_rawarray["distance"] = copy.deepcopy(pos)
@@ -680,9 +657,7 @@ class PremixedFlame(Flame):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # compute laminar flame speed
         if self._flamemode == 0:
             inlet_density = self._solution_mixturearray[0].rho
@@ -712,9 +687,8 @@ class PremixedFlame(Flame):
                 "to post-process the raw solution data first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
-            return 1
+            log_info_message(msg)
+            return np.zeros(0, dtype=np.double)
         # check variable name
         vname = varname.rstrip()
         if vname.lower() in ["distance", "temperature"]:
@@ -732,8 +706,7 @@ class PremixedFlame(Flame):
                     "and has to be derived from other variable(s).",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 exit()
 
         # create variable arrays to hold the solution profile
@@ -767,8 +740,7 @@ class PremixedFlame(Flame):
                 "to post-process the raw solution data first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             return 1
         # create a temporary Stream object to hold the mixture properties
         # at current solution point
@@ -831,8 +803,7 @@ class PremixedFlame(Flame):
                 "to post-process the raw solution data first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             exit()
         # get the time point array
         posarray = self.get_solution_variable_profile("distance")
@@ -884,8 +855,7 @@ class PremixedFlame(Flame):
                 "to post-process the raw solution data first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             exit()
         # check index
         if grid_index > self._numbsolutionpoints - 1:
@@ -904,8 +874,7 @@ class PremixedFlame(Flame):
                 "]",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # get the mixture
         mixturetarget = copy.deepcopy(self._solution_mixturearray[grid_index])
@@ -1072,8 +1041,7 @@ class FreelyPropagating(PremixedFlame):
                 "the pinned temperature is ignired.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             # remove the pinned temperature
             self.removekeyword("TFIX")
 
@@ -1091,11 +1059,11 @@ class FreelyPropagating(PremixedFlame):
                 pinned gas temperature [K]
 
         """
-        if temperature <= self.temperature:
-            msg = [Color.PURPLE, "invalid temperature value.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_minimum_value(
+            temperature,
+            self.temperature,
+            "invalid temperature value.",
+        )
         # check
         if "TPROF" in self._keyword_index:
             msg = [
@@ -1104,9 +1072,7 @@ class FreelyPropagating(PremixedFlame):
                 "the pinned temperature is ignired.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
-            exit()
+            warning_and_exit(msg)
         else:
             # set the pinned temperature
             self.setkeyword("TFIX", value=temperature)
@@ -1128,8 +1094,7 @@ class FreelyPropagating(PremixedFlame):
                 "to post-process the raw solution data first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             return 0.0
         # return the computed laminar flame speed
         return self.flamespeed

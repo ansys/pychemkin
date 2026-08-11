@@ -31,12 +31,18 @@ import numpy.typing as npt
 from ansys.chemkin.core.chemistry import Chemistry
 from ansys.chemkin.core.color import Color
 from ansys.chemkin.core.constants import P_ATM
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.mixture import (
     Mixture,
     cal_mixture_temperature_from_enthalpy,
     compare_mixtures,
 )
+from ansys.chemkin.core.utilities import (
+    error_and_exit,
+    log_error_message,
+    log_info_message,
+    log_warning_message,
+)
+from ansys.chemkin.core.validation import validate_minimum_value
 
 
 class Stream(Mixture):
@@ -131,8 +137,7 @@ class Stream(Mixture):
                     "flow area is not given for this inlet.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 exit()
 
         elif self._flowratemode == 3:
@@ -152,8 +157,7 @@ class Stream(Mixture):
             return mrate
         else:
             msg = [Color.PURPLE, "unknown flow rate units.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
 
     def convert_to_vol_flowrate(self) -> float:
@@ -185,8 +189,7 @@ class Stream(Mixture):
                     "flow area is not given for this inlet.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 exit()
 
         elif self._flowratemode == 3:
@@ -207,8 +210,7 @@ class Stream(Mixture):
             return vrate
         else:
             msg = [Color.PURPLE, "unknown flow rate units.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
 
     def convert_to_sccm(self) -> float:
@@ -258,13 +260,11 @@ class Stream(Mixture):
                     "flow area is not given for this inlet.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 exit()
         else:
             msg = [Color.PURPLE, "unknown flow rate units.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
 
     def check_flow_rate_mode(self) -> int:
@@ -300,8 +300,7 @@ class Stream(Mixture):
             f"to get the {mode} at the given time [sec].",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
 
     @property
     def flowarea(self) -> float:
@@ -319,8 +318,7 @@ class Stream(Mixture):
             return self._flowarea
         else:
             msg = [Color.PURPLE, "flow area is not given for this inlet.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
 
     @flowarea.setter
@@ -335,11 +333,11 @@ class Stream(Mixture):
                 cross-sectional flow area [cm2]
 
         """
-        if farea <= 0.0:
-            msg = [Color.PURPLE, "invalid flow area value.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_minimum_value(
+            value=farea,
+            minimum=np.finfo(float).eps,
+            message="invalid flow area value.",
+        )
         self._haveflowarea = True
         self._flowarea = farea
 
@@ -375,11 +373,11 @@ class Stream(Mixture):
                 mass flow rate [g/sec]
 
         """
-        if mflowrate <= 0.0:
-            msg = [Color.PURPLE, "invalid mass flow rate value.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_minimum_value(
+            value=mflowrate,
+            minimum=np.finfo(float).eps,
+            message="invalid mass flow rate value.",
+        )
         # reset the flow rates
         self._volflowrate = 0.0
         self._velocity = 0.0
@@ -421,11 +419,11 @@ class Stream(Mixture):
                 volumetric flow rate [cm3/sec]
 
         """
-        if vflowrate <= 0.0:
-            msg = [Color.PURPLE, "invalid volumetric flow rate value.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_minimum_value(
+            value=vflowrate,
+            minimum=np.finfo(float).eps,
+            message="invalid volumetric flow rate value.",
+        )
         # reset the flow rates
         self._massflowrate = 0.0
         self._velocity = 0.0
@@ -467,11 +465,11 @@ class Stream(Mixture):
                 SCCM volumetric flow rate [standard cm3/min]
 
         """
-        if vflowrate <= 0.0:
-            msg = [Color.PURPLE, "invalid SCCM volumetric flow rate value.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_minimum_value(
+            value=vflowrate,
+            minimum=np.finfo(float).eps,
+            message="invalid SCCM volumetric flow rate value.",
+        )
         # reset the flow rates
         self._massflowrate = 0.0
         self._volflowrate = 0.0
@@ -514,8 +512,7 @@ class Stream(Mixture):
                     "flow area is not given for this inlet.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 exit()
 
     @velocity.setter
@@ -529,11 +526,11 @@ class Stream(Mixture):
             vel: velocity [cm/sec]
 
         """
-        if vel <= 0.0:
-            msg = [Color.PURPLE, "invalid inlet velocity value.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_minimum_value(
+            value=vel,
+            minimum=np.finfo(float).eps,
+            message="invalid inlet velocity value.",
+        )
         # reset the flow rates
         self._massflowrate = 0.0
         self._volflowrate = 0.0
@@ -570,15 +567,11 @@ class Stream(Mixture):
         :return: None
 
         """
-        if velgrad <= 0.0:
-            msg = [
-                Color.PURPLE,
-                "invalid inlet radial velocity spreading rate value.",
-                Color.END,
-            ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_minimum_value(
+            value=velgrad,
+            minimum=np.finfo(float).eps,
+            message="invalid inlet radial velocity spreading rate value.",
+        )
         # set velocity gradient
         self._velgrad = velgrad
 
@@ -632,8 +625,7 @@ class Stream(Mixture):
             "].",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
+        log_error_message(msg)
 
     def set_mass_flowrate_profile(
         self, x: npt.NDArray[np.double], flow_rate: npt.NDArray[np.double]
@@ -661,8 +653,7 @@ class Stream(Mixture):
                 "existing flow rate profile will be deleted.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             self.flowrate_profile.clear()
         # set flow rate mode to mass flow rate
         self._flowratemode = 0
@@ -700,8 +691,7 @@ class Stream(Mixture):
                     "cannot find the mass flow rate profile data.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return 0.0
             if time < np.min(this_x) or time > np.max(this_x):
                 self.profile_out_of_range(time, np.max(this_x), np.min(this_x))
@@ -716,8 +706,7 @@ class Stream(Mixture):
                 "please verify the profile data set.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return 0.0
 
     def set_vol_flowrate_profile(
@@ -746,8 +735,7 @@ class Stream(Mixture):
                 "existing flow rate profile will be deleted.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             self.flowrate_profile.clear()
         # set flow rate mode to mass flow rate
         self._flowratemode = 1
@@ -785,8 +773,7 @@ class Stream(Mixture):
                     "cannot find the volumetric flow rate profile data.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return 0.0
             if time < np.min(this_x) or time > np.max(this_x):
                 self.profile_out_of_range(time, np.max(this_x), np.min(this_x))
@@ -801,8 +788,7 @@ class Stream(Mixture):
                 "please verify the profile data set.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return 0.0
 
     def set_sccm_flowrate_profile(
@@ -831,8 +817,7 @@ class Stream(Mixture):
                 "existing flow rate profile will be deleted.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             self.flowrate_profile.clear()
         # set flow rate mode to sccm flow rate
         self._flowratemode = 3
@@ -871,8 +856,7 @@ class Stream(Mixture):
                     "cannot find the sccm flow rate profile data.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return 0.0
             if time < np.min(this_x) or time > np.max(this_x):
                 self.profile_out_of_range(time, np.max(this_x), np.min(this_x))
@@ -887,8 +871,7 @@ class Stream(Mixture):
                 "please verify the profile data set.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return 0.0
 
 
@@ -919,9 +902,7 @@ def clone_stream(source: Stream, target: Stream):
             "the streams have different Chemistry Sets.",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
-        exit()
+        error_and_exit(msg)
 
 
 def compare_streams(
@@ -1012,8 +993,7 @@ def adiabatic_mixing_streams(stream_a: Stream, stream_b: Stream) -> Stream:
                 "the streams have different Chemistry Sets.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
     else:
         msg = [
@@ -1021,8 +1001,7 @@ def adiabatic_mixing_streams(stream_a: Stream, stream_b: Stream) -> Stream:
             "the streams must be Stream objects.",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
+        log_error_message(msg)
         exit()
 
     # number of gas species
@@ -1067,8 +1046,7 @@ def adiabatic_mixing_streams(stream_a: Stream, stream_b: Stream) -> Stream:
             str(ierror),
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
+        log_error_message(msg)
         exit()
     print(f"final stream temperature = {final_stream.temperature} [K]")
     return final_stream
@@ -1112,8 +1090,7 @@ def create_stream_from_mixture(
             "the second parameter must be a Mixture object.",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
+        log_error_message(msg)
         exit()
     # set the flow rate of the new Stream object
     if flow_rate > 0.0:
@@ -1130,11 +1107,9 @@ def create_stream_from_mixture(
                 'remember to provide "flow area" to this Stream.',
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
     else:
         msg = [Color.PURPLE, "flow rate must > 0.", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
+        log_error_message(msg)
         exit()
     return new_stream

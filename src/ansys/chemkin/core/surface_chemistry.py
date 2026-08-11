@@ -29,8 +29,11 @@ from typing import Any, Protocol
 
 from ansys.chemkin.core import chemkin_wrapper as ck_wrapper
 from ansys.chemkin.core.color import Color
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.surface_components import Material
+from ansys.chemkin.core.utilities import (
+    log_error_message,
+    log_info_message,
+)
 
 _symbol_length = 16  # Chemkin element/species symbol length
 MAX_SPECIES_LENGTH = _symbol_length + 1  # Chemkin element/species symbol length + 1
@@ -118,8 +121,7 @@ class SurfaceChemistryMixin:
             "does not contain surface chemistry.",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
 
     @property
     def number_materials(self: _SurfaceChemistryHost) -> int:
@@ -301,8 +303,7 @@ class SurfaceChemistryMixin:
             else:
                 # failed to get species symbols
                 msg = [Color.PURPLE, "failed to get surface material names.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 exit()
             del buff_m
             del char_buffers
