@@ -24,7 +24,6 @@
 
 import copy
 import ctypes
-from pathlib import Path
 from typing import Any, Union
 
 import numpy as np
@@ -51,6 +50,18 @@ from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.mixture import Mixture
 from ansys.chemkin.core.profile import Profile
 from ansys.chemkin.core.surface_chemistry_controller import SurfaceChemistryController
+from ansys.chemkin.core.utilities import (
+    critical_and_exit,
+    error_and_exit,
+    log_error_message,
+    warning_and_exit,
+)
+from ansys.chemkin.core.validation import (
+    validate_file_exists,
+    validate_minimum_value,
+    validate_species_array_size,
+    validate_temperature,
+)
 
 
 #
@@ -79,9 +90,7 @@ class ReactorModel:
             ierr = reactor_condition.validate()
             if ierr != 0:
                 msg = [Color.PURPLE, "the mixture is not fully defined.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
             # check if the chemstry set is active
             if not check_active_chemistryset(reactor_condition.chemid):
                 msg = [
@@ -92,9 +101,7 @@ class ReactorModel:
                     "activate Chemistry Set using the 'active()' method.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
             # chemistry set index
             self._chemset_index = ctypes.c_int(reactor_condition.chemid)
             # mixture
@@ -116,9 +123,7 @@ class ReactorModel:
                 "a Chemistry object or a Mixture object.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # initialization
         self.label = label
         # number of required input
@@ -199,9 +204,7 @@ class ReactorModel:
                     str(ierr),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
-                exit()
+                critical_and_exit(msg)
         # surface chemistry
         self.has_surface_chemistry = reactor_condition._has_surface_chemistry
         self.numbmaterials = 0
@@ -301,9 +304,7 @@ class ReactorModel:
                 self._keyword_index.append(key)
             else:
                 msg = [Color.PURPLE, "invalid keyword value data type.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
             self._numbkeywords += 1
         else:
             # an existing keyword, just update its value
@@ -313,9 +314,7 @@ class ReactorModel:
                 self._keyword_list[i].resetvalue(value)
             else:
                 msg = [Color.PURPLE, "invalid keyword value data type.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
 
     def removekeyword(self, key: str):
         """Remove an existing Chemkin keyword and its parameter."""
@@ -331,9 +330,7 @@ class ReactorModel:
         i, newkey = self.__findkeywordslot(key)
         if newkey:
             msg = [Color.YELLOW, "keyword", key, "not found.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
-            exit()
+            warning_and_exit(msg)
         else:
             # remove keyword from the keyword index and the keyword list
             if self._keyword_list[i].keyphrase != key:
@@ -347,9 +344,7 @@ class ReactorModel:
                     self._keyword_list[i].keyphrase,
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.warning(this_msg)
-                exit()
+                warning_and_exit(msg)
             # remove key from the keyword list and index
             del self._keyword_list[i]
             self._keyword_index.remove(key)
@@ -663,6 +658,16 @@ class ReactorModel:
         ierr: int = numbprofiles - self._numbprofiles
         return ierr, numblines, keyword_lines
 
+    def _require_molefrac(
+        self, molefrac: Union[None, npt.NDArray[np.double]]
+    ) -> npt.NDArray[np.double]:
+        """Return mole fractions when provided; terminate otherwise."""
+        if molefrac is None:
+            msg = [Color.PURPLE, "species composition is not provided.", Color.END]
+            log_error_message(msg)
+            exit()
+        return molefrac
+
     def createspeciesinputlines(
         self,
         solvertype: int,
@@ -695,11 +700,7 @@ class ReactorModel:
         # depends on the solver type
         key = Keyword.gasspecieskeywords[solvertype - 1]
         ksym = self._specieslist
-        if molefrac is None:
-            msg = [Color.PURPLE, "species composition is not provided.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        molefrac = self._require_molefrac(molefrac)
         lines = []
         numb_lines = 0
         for i in range(len(molefrac)):
@@ -748,26 +749,14 @@ class ReactorModel:
         """
         # must use estimate composition keyword 'XEST'
         # (the 'REAC' keyword does not accept reactor/zone number)
-        if molefrac is None:
-            msg = [Color.PURPLE, "species composition is not provided.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        molefrac = self._require_molefrac(molefrac)
         ksym = self._specieslist
         ksize = len(molefrac)
-        if ksize != len(ksym):
-            msg = [
-                Color.PURPLE,
-                "species mole fraction array has size",
-                str(ksize),
-                "but",
-                str(len(ksym)),
-                "is expected.",
-                Color.END,
-            ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_species_array_size(
+            expected=len(ksym),
+            actual=ksize,
+            context="mole fraction",
+        )
 
         lines = []
         numb_lines = 0
@@ -814,26 +803,14 @@ class ReactorModel:
 
         """
         # must use inlet composition keyword 'REAC'
-        if molefrac is None:
-            msg = [Color.PURPLE, "species composition is not provided.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        molefrac = self._require_molefrac(molefrac)
         ksym = self._specieslist
         ksize = len(molefrac)
-        if ksize != len(ksym):
-            msg = [
-                Color.PURPLE,
-                "species mole fraction array has size",
-                str(ksize),
-                "but",
-                str(len(ksym)),
-                "is expected.",
-                Color.END,
-            ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_species_array_size(
+            expected=len(ksym),
+            actual=ksize,
+            context="mole fraction",
+        )
 
         lines = []
         numb_lines = 0
@@ -911,11 +888,7 @@ class ReactorModel:
                 temperature [K]
 
         """
-        if t <= 1.0e1:
-            msg = [Color.PURPLE, "invalid temperature value.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_temperature(t)
         self._temperature = ctypes.c_double(t)
         self.reactormixture.temperature = t
 
@@ -945,11 +918,11 @@ class ReactorModel:
                 pressure [dynes/cm2]
 
         """
-        if p <= 0.0e0:
-            msg = [Color.PURPLE, "invalid pressure value.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_minimum_value(
+            value=p,
+            minimum=0.0e0,
+            message="invalid pressure value.",
+        )
         self._pressure = ctypes.c_double(p)
         self.reactormixture.pressure = p
 
@@ -1089,14 +1062,13 @@ class ReactorModel:
                 gas-phase reaction rate multiplier
 
         """
-        if value < 0.0:
-            msg = [Color.PURPLE, "reaction rate multiplier must >= 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._gasratemultiplier = value
-            self.setkeyword(key="GFAC", value=value)
+        validate_minimum_value(
+            value=value,
+            minimum=0.0,
+            message="reaction rate multiplier must >= 0.",
+        )
+        self._gasratemultiplier = value
+        self.setkeyword(key="GFAC", value=value)
 
     @property
     def std_output(self) -> bool:
@@ -1303,9 +1275,7 @@ class ReactorModel:
                     str(ierr),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
 
     def setrealgasmixingmodel(self, model: int):
         """Set the real gas mixing rule/model."""
@@ -1349,9 +1319,7 @@ class ReactorModel:
                 "mixing model",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     def use_rgp_table(self, data_file: str = ""):
         """Set the option to turn ON/OFF the use of the RGP table."""
@@ -1365,16 +1333,7 @@ class ReactorModel:
 
         """
         # check file existence
-        if not Path(data_file).is_file():
-            msg = [
-                Color.PURPLE,
-                "the specified RGP table file does not exist:",
-                data_file,
-                Color.END,
-            ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_file_exists(data_file, context_label="RGP table file")
         # check the mechanism to make sure that there is no gas-phase reaction
         # and there is only one gas species.
         if self.numbspecies > 1 or self.num_gas_reactions > 0:
@@ -1384,9 +1343,7 @@ class ReactorModel:
                 "and no gas-phase reaction.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # check the cubic EOS real-gas model status
         if self.realgas:
             msg = [
@@ -1404,8 +1361,6 @@ class ReactorModel:
 
     def disable_rgp_table(self):
         """Turn OFF the use of the RGP table."""
-        """Turn OFF the use of the RGP table.
-        """
         if self._use_rgp_table:
             # reset RGP table flag
             self._use_rgp_table = False
@@ -1537,9 +1492,7 @@ class ReactorModel:
                 'use mode = "mass" or mode = "mole"',
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     def getrawsolutionstatus(self) -> bool:
         """Get the status of the post-process."""
@@ -1623,10 +1576,7 @@ class ReactorModel:
         del y
 
     def process_solution(self):
-        """Post-process solution."""
-        """Post-process solution to extract the raw solution variable data
-        to be overridden by child classes.
-        """
+        """Post-process solution to extract the raw solution variable data."""
         # a shell method to be overridden by child classes
         pass
 

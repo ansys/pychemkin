@@ -34,8 +34,14 @@ from ansys.chemkin.core.inlet import (
     clone_stream,
     compare_streams,
 )
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.stirreactors.PSR import PerfectlyStirredReactor as Psr
+from ansys.chemkin.core.utilities import (
+    error_and_exit,
+    log_error_message,
+    log_info_message,
+    log_warning_message,
+)
+from ansys.chemkin.core.validation import validate_minimum_value
 
 
 class ReactorNetwork:
@@ -66,9 +72,7 @@ class ReactorNetwork:
                 'the parameter must be a "Chemistry Set" object',
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             self.network_chem = chem
         # number of reactors in the network
@@ -172,8 +176,7 @@ class ReactorNetwork:
             "is NOT found in the network.",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.warning(this_msg)
+        log_warning_message(msg)
         return ""
 
     def add_reactor(self, reactor: Union[Psr, Pfr]):
@@ -196,8 +199,7 @@ class ReactorNetwork:
         if reactor_label in self.reactor_map:
             # reactor already exists in the network
             msg = [Color.MAGENTA, "reactor already in the network.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             return
         else:
             # check: the first reactor must have at least one external inlet
@@ -212,9 +214,7 @@ class ReactorNetwork:
                         "has NO external inlet.",
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
-                    exit()
+                    error_and_exit(msg)
             # add new reactor
             self.numb_reactors += 1
             # set the current reactor as the last reactor in the network
@@ -238,8 +238,7 @@ class ReactorNetwork:
                     "of the network.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
 
     def add_reactor_list(self, reactor_list: list[Union[Psr, Pfr]]):
         """Add a list of reactors to the network in order."""
@@ -267,8 +266,7 @@ class ReactorNetwork:
                 "reactor network contains no reactor.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         else:
             for name, id in self.reactor_map.items():
                 print(f"  Reactor No. {id}: {name}")
@@ -422,8 +420,7 @@ class ReactorNetwork:
                         "is NOT in the network.",
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                     ierror += 1
                 elif id == reactor_index:
                     # recycle stream back to the source reactor is not allowed
@@ -434,8 +431,7 @@ class ReactorNetwork:
                         "is not allowed.",
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                     ierror += 1
                 elif id == downstream:
                     # through flow fraction is given in the data
@@ -450,8 +446,7 @@ class ReactorNetwork:
                         "must 0 <= and <= 1.",
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                     ierror += 1
                 else:
                     # find the total outflow fraction
@@ -466,8 +461,7 @@ class ReactorNetwork:
                     "which is > 1.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 ierror += 1
 
             if ierror > 0:
@@ -487,8 +481,7 @@ class ReactorNetwork:
                     "the existing connection data will be reset.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.warning(this_msg)
+                log_warning_message(msg)
                 # clear the existing connection
                 self.outflow_targets[reactor_index].clear()
             # add the split table to the connection table
@@ -507,9 +500,7 @@ class ReactorNetwork:
                         "which is ~ 0.",
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
-                    exit()
+                    error_and_exit(msg)
                 # add the split table to the connection table
                 new_table = []
                 for con in connect_table:
@@ -532,8 +523,7 @@ class ReactorNetwork:
                 "to the network first",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def clear_connections(self):
         """Clear the internal connection configurations."""
@@ -570,8 +560,7 @@ class ReactorNetwork:
                 "is NOT in the network.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             return
         else:
             # remove flow connections
@@ -781,8 +770,7 @@ class ReactorNetwork:
                                 "cannot be found.",
                                 Color.END,
                             ]
-                            this_msg = Color.SPACE.join(msg)
-                            logger.error(this_msg)
+                            log_error_message(msg)
                             exit()
                         #
                         merging_flowrate = this_stream.mass_flowrate * frac
@@ -852,8 +840,7 @@ class ReactorNetwork:
                     "is not connected to other reactors",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 exit()
         else:
             # update internal flow inlet
@@ -925,8 +912,7 @@ class ReactorNetwork:
                         "is not a PSR.",
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
             else:
                 # reactor named does not exist in the network
                 ierr += 1
@@ -937,8 +923,7 @@ class ReactorNetwork:
                     "in the network.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
         # check heat transfer coefficient
         if heat_transfer_coeff < 0.0:
             ierr += 1
@@ -947,8 +932,7 @@ class ReactorNetwork:
                 "heat transfer coefficient must >= 0.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
         # check heat transfer area
         if heat_transfer_area < 0.0:
             ierr += 1
@@ -957,8 +941,7 @@ class ReactorNetwork:
                 "heat transfer area must >= 0.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
         if ierr > 0:
             exit()
         # set up the heat exchange pair
@@ -1092,8 +1075,7 @@ class ReactorNetwork:
                 "rerun the reactor network.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         # check reactor
         id = self.reactor_map.get(reactor_name, 0)
@@ -1106,8 +1088,7 @@ class ReactorNetwork:
                 "is NOT found in the network.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         # prepare reactor solution
         return self.reactor_solutions[id]
@@ -1126,8 +1107,7 @@ class ReactorNetwork:
                 "rerun the reactor network.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
 
         # loop over all external outlets
         for ioutlet, nrxtor in self.external_outlets.items():
@@ -1175,8 +1155,7 @@ class ReactorNetwork:
         # check external oulet setup
         if self.numb_external_outlet <= 0:
             msg = [Color.MAGENTA, "no external outlet defined.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         # validate solution
         if self.get_network_run_status() != 0:
@@ -1188,8 +1167,7 @@ class ReactorNetwork:
                 "rerun the reactor network.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         # prepare the outlet stream
         return self.external_outlet_streams[stream_index]
@@ -1233,8 +1211,7 @@ class ReactorNetwork:
                     str(reactor_run_status),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 exit()
             else:
                 # process the solution and add the solution stream to
@@ -1291,8 +1268,7 @@ class ReactorNetwork:
                             "might have faulty connection configuration",
                             Color.END,
                         ]
-                        this_msg = Color.SPACE.join(msg)
-                        logger.error(this_msg)
+                        log_error_message(msg)
                         exit()
                 # update the heat transfer rates between the reactors
                 # due to heat exchange
@@ -1314,8 +1290,7 @@ class ReactorNetwork:
                         str(reactor_run_status),
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                     exit()
                 else:
                     # process the solution and add the solution stream to
@@ -1407,8 +1382,7 @@ class ReactorNetwork:
                 str(loop_residual),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             # construct the outlet stream properties
             self.set_external_streams()
         else:
@@ -1425,8 +1399,7 @@ class ReactorNetwork:
                 str(loop_residual),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             status = 10
         # clear up
         del last_reactor_solutions
@@ -1457,14 +1430,12 @@ class ReactorNetwork:
                 self.numb_tearpoints -= 1
             else:
                 msg = [Color.MAGENTA, "reactor is NOT a tear point.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.warning(this_msg)
+                log_warning_message(msg)
                 exit()
         else:
             # reactor does not exist in the network
             msg = [Color.MAGENTA, "reactor is NOT in the network.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
 
     def add_tearingpoint(self, reactor_name: str):
@@ -1492,8 +1463,7 @@ class ReactorNetwork:
                     "already declared as a tear point.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.warning(this_msg)
+                log_warning_message(msg)
                 exit()
             else:
                 # add new tear point
@@ -1511,13 +1481,11 @@ class ReactorNetwork:
                         "of the network.",
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.info(this_msg)
+                    log_info_message(msg)
         else:
             # reactor does not exist in the network
             msg = [Color.MAGENTA, "reactor is NOT in the network.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
 
     def set_tear_tolerance(self, tol: float = 1.0e-6):
@@ -1530,13 +1498,12 @@ class ReactorNetwork:
                 relative tolerance
 
         """
-        if tol > 0.0:
-            self.tolerance = tol
-        else:
-            msg = [Color.PURPLE, "tolerance must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_minimum_value(
+            value=tol,
+            minimum=1.0e-300,
+            message="tolerance must > 0.",
+        )
+        self.tolerance = tol
 
     def set_tear_iteration_limit(self, max_count: int):
         """Set the maximum number of tear loop iterations."""
@@ -1549,13 +1516,12 @@ class ReactorNetwork:
                 tear loop iteration limit
 
         """
-        if max_count > 0:
-            self.max_tearloop_count = max_count
-        else:
-            msg = [Color.PURPLE, "iteration limit must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_minimum_value(
+            value=max_count,
+            minimum=1,
+            message="iteration limit must > 0.",
+        )
+        self.max_tearloop_count = max_count
 
     def check_iteration_count(self, count: int) -> bool:
         """Check the iteration count for over the set limit."""
@@ -1590,13 +1556,12 @@ class ReactorNetwork:
                 iteration relaxation factor
 
         """
-        if relax > 0.0:
-            self.relaxation_factor = relax
-        else:
-            msg = [Color.PURPLE, "relaxation factor must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_minimum_value(
+            value=relax,
+            minimum=1.0e-300,
+            message="relaxation factor must > 0.",
+        )
+        self.relaxation_factor = relax
 
     def check_tearstream_convergence(self, stream_a, stream_b) -> tuple[bool, float]:
         """Check solution convergency at the tear point."""

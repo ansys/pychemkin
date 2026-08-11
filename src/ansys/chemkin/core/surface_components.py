@@ -33,7 +33,14 @@ import numpy.typing as npt
 from ansys.chemkin.core import chemkin_wrapper as ck_wrapper
 from ansys.chemkin.core.color import Color
 from ansys.chemkin.core.constants import P_ATM
-from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.utilities import (
+    critical_and_exit,
+    error_and_exit,
+    log_error_message,
+    log_info_message,
+    log_warning_message,
+)
+from ansys.chemkin.core.validation import validate_minimum_value
 
 if TYPE_CHECKING:
     from ansys.chemkin.core.chemistry import Chemistry
@@ -81,9 +88,7 @@ class Material:
                 "The Chemistry set does not contain surface chemistry.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
         # chemistry set index
         self._chemset_index = chem.chemid
         self._material_index = mat_index
@@ -142,9 +147,7 @@ class Material:
             self.total_reactions = 0
             #
             msg = [Color.PURPLE, "failed to process surface material data.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # process additional material data
         ibase0 = c_int(0)  # array index is 1-based
         # mapping of the surface species symbols (for all site and bulk species)
@@ -621,8 +624,7 @@ class Material:
                         self.label,
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                     exit()
                 else:
                     return -1, -1, ""
@@ -657,9 +659,7 @@ class Material:
             else:
                 # failed to get species symbols
                 msg = [Color.PURPLE, "failed to get phase names.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
             del buff_p
         # convert string type
         mylist = list(self.phase_map.keys())
@@ -682,9 +682,7 @@ class Material:
         """
         if self.num_site_species <= 0:
             msg = [Color.PURPLE, "no site species found.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
         #
@@ -706,9 +704,7 @@ class Material:
                     "failed to get surface site species names.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
             del buff_s
         else:
             site_symbols = self.site_symbols
@@ -727,9 +723,7 @@ class Material:
         """
         if self.num_bulk_species <= 0:
             msg = [Color.PURPLE, "no bulk species found.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
         #
@@ -751,9 +745,7 @@ class Material:
                     "failed to get surface bulk species names.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
             del buff_b, pp_b
         else:
             bulk_symbols = self.bulk_symbols
@@ -771,8 +763,7 @@ class Material:
         """
         if self.num_site_species <= 0:
             msg = [Color.PURPLE, "no site species found.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
@@ -781,8 +772,7 @@ class Material:
         if ierr != 0:
             # failed to get surface site species density
             msg = [Color.PURPLE, "failed to get surface site density.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         return site_density
 
@@ -799,8 +789,7 @@ class Material:
         """
         if self.num_bulk_species <= 0:
             msg = [Color.PURPLE, "no bulk species found.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
@@ -815,8 +804,8 @@ class Material:
         if ierr != 0:
             # failed to get surface bulk species density
             msg = [Color.PURPLE, "failed to get surface bulk density.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
+            exit()
         return density
 
     def get_site_molar_weights(self) -> npt.NDArray[np.double]:
@@ -838,8 +827,7 @@ class Material:
                 self.label,
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             return wt
         if self.sitewt_done == 0:
             chem_id = c_int(self._chemset_index)
@@ -853,8 +841,7 @@ class Material:
                     "failed to get site species molecular weights.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 exit()
             # check for non-positive molar weights (possible for surface chemistry)
             for k, w in enumerate(wt):
@@ -867,8 +854,7 @@ class Material:
                     "has non-positive molecular weight.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
             self.sitewt_done = 1
         else:
             wt = copy.deepcopy(self.site_wt)
@@ -893,8 +879,7 @@ class Material:
                 self.label,
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             return wt
         if self.bulkwt_done == 0:
             chem_id = c_int(self._chemset_index)
@@ -908,8 +893,7 @@ class Material:
                     "failed to get bulk species molecular weights.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 exit()
             # check for non-positive molar weights (possible for surface chemistry)
             for k, w in enumerate(wt):
@@ -922,8 +906,7 @@ class Material:
                     "has non-positive molecular weight.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
             self.bulkwt_done = 1
         else:
             wt = copy.deepcopy(self.bulk_wt)
@@ -1008,8 +991,7 @@ class Material:
         """
         if self.num_site_species <= 0:
             msg = [Color.PURPLE, "no site species found.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
@@ -1039,8 +1021,7 @@ class Material:
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
 
     def get_site_species_h(
@@ -1063,8 +1044,7 @@ class Material:
         """
         if self.num_site_species <= 0:
             msg = [Color.PURPLE, "no site species found.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
@@ -1090,8 +1070,7 @@ class Material:
                 "failed to compute site species enthalpies.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
 
     def get_bulk_species_h(
@@ -1116,8 +1095,7 @@ class Material:
         """
         if self.num_bulk_species <= 0:
             msg = [Color.PURPLE, "no bulk species found.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
@@ -1148,8 +1126,7 @@ class Material:
                     "failed to compute bulk species enthalpies.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 exit()
         else:
             # bulk pressure is given
@@ -1173,8 +1150,7 @@ class Material:
                     "failed to compute bulk species enthalpies.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 exit()
 
     def get_bulk_species_cp(
@@ -1199,8 +1175,7 @@ class Material:
         """
         if self.num_bulk_species <= 0:
             msg = [Color.PURPLE, "no bulk species found.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
@@ -1234,8 +1209,7 @@ class Material:
                 "failed to compute bulk species specific heat capacity.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         return cp
 
@@ -1275,8 +1249,7 @@ class Material:
                     "failed to compute elemental compositions.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 exit()
             else:
                 self.ncf_done = 1
@@ -1284,14 +1257,12 @@ class Material:
         # check element index
         if elemindex < 0 or elemindex >= self.num_element:
             msg = [Color.PURPLE, "element index is out of bound.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # check species index
         if specindex < 0 or specindex >= self.total_species:
             msg = [Color.PURPLE, "species index is out of bound.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
 
         return self.elementalcomp[elemindex][specindex]
@@ -1324,9 +1295,7 @@ class Material:
             self.surftemp = temp
         else:
             msg = [Color.PURPLE, "surface temperature must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     @property
     def surface_area(self) -> float:
@@ -1356,9 +1325,7 @@ class Material:
             self.activearea = area
         else:
             msg = [Color.PURPLE, "surface area must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     def get_surface_reaction_parameters(
         self,
@@ -1420,14 +1387,12 @@ class Material:
                 "range = [1 ~ " + str(self.num_surf_reactions) + "].",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        if a_factor < 0.0e0:
-            msg = [Color.PURPLE, "A-Factor must >= 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
+        validate_minimum_value(
+            value=a_factor,
+            minimum=0.0,
+            message="A-Factor must >= 0.",
+        )
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
         # convert the reaction parameters
@@ -1443,9 +1408,7 @@ class Material:
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     def get_surface_reaction_afactor(self, reaction_index: int) -> float:
         """Get the Arrhenius A-Factor of the given surface reaction."""
@@ -1472,8 +1435,7 @@ class Material:
                 "range = [1 ~ " + str(self.num_surf_reactions) + "].",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
@@ -1491,8 +1453,7 @@ class Material:
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         return a_factor.value
 
@@ -1518,9 +1479,7 @@ class Material:
                 "range = [1 ~ " + str(self.num_surf_reactions) + "].",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # if act_energy < 0.0e0:
         #     msg = [Color.PURPLE, "activation energy must >= 0.", Color.END]
         #     this_msg = Color.SPACE.join(msg)
@@ -1542,9 +1501,7 @@ class Material:
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     def get_surface_reaction_act_energy(self, reaction_index: int) -> float:
         """Get the Arrhenius activation energy."""
@@ -1572,8 +1529,7 @@ class Material:
                 "range = [1 ~ " + str(self.num_surf_reactions) + "].",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
@@ -1591,8 +1547,7 @@ class Material:
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         return act_energy.value
 
@@ -1622,13 +1577,11 @@ class Material:
                 str(self.num_surf_reactions),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         elif reaction_index <= 0:
             msg = [Color.PURPLE, "reaction index must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
@@ -1648,8 +1601,7 @@ class Material:
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # convert C string back to string
         # print(rstring.decode()[0:iStringSize.value])
@@ -1678,9 +1630,7 @@ class SurfacePhase:
                 "phase type must be either 'site' or 'bulk'",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         self._numb_species = 0
         self.first_spec_index = 0
         self.last_spec_index = 0
@@ -1714,9 +1664,7 @@ class SurfacePhase:
             self._numb_species = count
         else:
             msg = [Color.PURPLE, "number of species must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     @property
     def site_density(self) -> float:
@@ -1746,9 +1694,7 @@ class SurfacePhase:
             self._density = den
         else:
             msg = [Color.PURPLE, "surface site phase density must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     @property
     def first_species_index(self) -> int:
@@ -1778,9 +1724,7 @@ class SurfacePhase:
             self.first_spec_index = id
         else:
             msg = [Color.PURPLE, "global index must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     @property
     def last_species_index(self) -> int:
@@ -1810,6 +1754,4 @@ class SurfacePhase:
             self.last_spec_index = id
         else:
             msg = [Color.PURPLE, "global index must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)

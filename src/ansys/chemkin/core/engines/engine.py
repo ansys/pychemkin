@@ -34,8 +34,15 @@ from ansys.chemkin.core.batchreactors.batchreactor import BatchReactors
 from ansys.chemkin.core.color import Color as Color
 from ansys.chemkin.core.constants import P_ATM
 from ansys.chemkin.core.inlet import Stream
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.reactormodel import Keyword
+from ansys.chemkin.core.utilities import (
+    error_and_exit,
+    log_critical_message,
+    log_error_message,
+    log_info_message,
+    log_warning_message,
+)
+from ansys.chemkin.core.validation import validate_minimum_value
 
 
 class Engine(BatchReactors):
@@ -156,8 +163,7 @@ class Engine(BatchReactors):
         """
         if rpm <= 0.0:
             msg = [Color.PURPLE, "engine speed RPM must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return 0.0
         #
         time = (ca - start_ca) / rpm / 6.0e0
@@ -167,8 +173,7 @@ class Engine(BatchReactors):
                 "given CA is less then the starting CA @ IVC.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return 0.0
         else:
             return time
@@ -196,8 +201,7 @@ class Engine(BatchReactors):
         """
         if time < 0.0:
             msg = [Color.PURPLE, "simulation time must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return 0.0
         #
         ca = start_ca + time * rpm * 6.0e0
@@ -335,9 +339,7 @@ class Engine(BatchReactors):
                 str(self.starting_ca),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # set EVO timing in CA
         self.evo_ca = end_ca
         self.runduration_ca = self.ending_ca - self.starting_ca
@@ -372,11 +374,11 @@ class Engine(BatchReactors):
 
         """
         # check EVO timing value
-        if ca <= 0.0:
-            msg = [Color.PURPLE, "duration CA must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_minimum_value(
+            value=ca,
+            minimum=np.finfo(float).eps,
+            message="duration CA must > 0.",
+        )
         # set IVC/EVO timing in CA
         self.runduration_ca = ca
         if "DEG0" in self._inputcheck:
@@ -425,8 +427,7 @@ class Engine(BatchReactors):
             self._inputcheck.append("BORE")
         else:
             msg = [Color.PURPLE, "engine bore diameter must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     @property
     def stroke(self) -> float:
@@ -461,8 +462,7 @@ class Engine(BatchReactors):
             self._inputcheck.append("STRK")
         else:
             msg = [Color.PURPLE, "piston stroke must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     @property
     def connecting_rod_length(self) -> float:
@@ -496,8 +496,7 @@ class Engine(BatchReactors):
             self._inputcheck.append("CRLEN")
         else:
             msg = [Color.PURPLE, "piston connecting rod length must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     @property
     def compression_ratio(self) -> float:
@@ -531,8 +530,7 @@ class Engine(BatchReactors):
             self._inputcheck.append("CMPR")
         else:
             msg = [Color.PURPLE, "engine compression ratio must > 1.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     @property
     def rpm(self) -> float:
@@ -568,8 +566,7 @@ class Engine(BatchReactors):
             self._inputcheck.append("RPM")
         else:
             msg = [Color.PURPLE, "engine speed RPM must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_cylinder_head_area(self, area: float):
         """Set the cylinder head clearance surface area."""
@@ -594,12 +591,10 @@ class Engine(BatchReactors):
                     "please set cylinder BORE diameter first.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
         else:
             msg = [Color.PURPLE, "cylinder head surface area must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_piston_head_area(self, area: float):
         """Set the piston head top surface area."""
@@ -624,12 +619,10 @@ class Engine(BatchReactors):
                     "please set cylinder BORE diameter first.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
         else:
             msg = [Color.PURPLE, "piston head surface area must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_piston_pin_offset(self, offset: float):
         """Set the piston pin off-set distance."""
@@ -654,8 +647,7 @@ class Engine(BatchReactors):
                 "[cm]",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def get_clearance_volume(self) -> float:
         """Get the clearance volume."""
@@ -677,8 +669,7 @@ class Engine(BatchReactors):
                 "please set engine compression ratio first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             cvolume = 0.0
         return cvolume
 
@@ -736,8 +727,7 @@ class Engine(BatchReactors):
                     "because the 'ending CA' is not set.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return 0.0
 
     @max_ca_step.setter
@@ -755,8 +745,7 @@ class Engine(BatchReactors):
             self.setkeyword(key="DTDEG", value=delta_ca)
         else:
             msg = [Color.PURPLE, "max solver CA step size must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     @property
     def ca_step_for_saving_solution(self) -> float:
@@ -786,8 +775,7 @@ class Engine(BatchReactors):
                     "because the 'ending CA' is not set.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return 0.0
 
     @ca_step_for_saving_solution.setter
@@ -806,8 +794,7 @@ class Engine(BatchReactors):
             self.setkeyword(key="DEGSAVE", value=delta_ca)
         else:
             msg = [Color.PURPLE, "solution saving CA interval must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     @property
     def ca_step_for_printing_solution(self) -> float:
@@ -837,8 +824,7 @@ class Engine(BatchReactors):
                     "because the 'ending CA' is not set.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return 0.0
 
     @ca_step_for_printing_solution.setter
@@ -857,8 +843,7 @@ class Engine(BatchReactors):
             self.setkeyword(key="DEGPRINT", value=delta_ca)
         else:
             msg = [Color.PURPLE, "solution printing CA interval must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_minimum_zone_mass(self, minmass: float):
         """Set the minimum mass in a zone."""
@@ -877,9 +862,7 @@ class Engine(BatchReactors):
             self.setkeyword(key="MLMT", value=minmass)
         else:
             msg = [Color.PURPLE, "minimum zonal mass must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     def set_zonal_gas_rate_multiplier(
         self, value: float = 1.0e0, zone_id: Union[int, None] = None
@@ -899,8 +882,7 @@ class Engine(BatchReactors):
         """
         if value < 0.0:
             msg = [Color.PURPLE, "reaction rate multiplier must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
         else:
             if zone_id is None:
                 self._gasratemultiplier = value
@@ -945,8 +927,7 @@ class Engine(BatchReactors):
                 "previously defined wall heat transfer model will be overridden.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         #
         mymodel = model.lower()
         # check model
@@ -967,9 +948,7 @@ class Engine(BatchReactors):
                 "'dimensionless', and 'hohenburg'",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # check number of parameters
         if len(ht_parameters) != self.numbHTmodelparameters[self.heattransfermodel]:
             msg = [
@@ -983,9 +962,7 @@ class Engine(BatchReactors):
                 "check Chemkin Input manual for more information.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         self.heattransferparameters = []
         # set model parameters
         self.heattransferparameters = copy.copy(ht_parameters)
@@ -1019,9 +996,7 @@ class Engine(BatchReactors):
                 "please specify the wall heat transfer model first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # check existing gas velocity correlation parameter
         if len(self.gasvelocity) > 0:
             msg = [
@@ -1029,8 +1004,7 @@ class Engine(BatchReactors):
                 "previously defined gas velocity correlation will be overridden.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         # check number of parameters
         if len(gasvelparameters) != 4:
             msg = [
@@ -1044,9 +1018,7 @@ class Engine(BatchReactors):
                 "please check Chemkin Input manual for more information.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         self.gasvelocity = []
         # set model parameters
         self.gasvelocity = copy.copy(gasvelparameters)
@@ -1164,8 +1136,7 @@ class Engine(BatchReactors):
         status = self.getrunstatus(mode="silent")
         if status == -100:
             msg = [Color.MAGENTA, "please run the engine simultion first.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         elif status != 0:
             msg = [
@@ -1175,8 +1146,7 @@ class Engine(BatchReactors):
                 "please correct the error(s) and rerun the engine simulation.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # number of zone
         nzone = c_int(0)
@@ -1200,8 +1170,7 @@ class Engine(BatchReactors):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         else:
             # incorrect number of zones
@@ -1217,8 +1186,7 @@ class Engine(BatchReactors):
                 "found in the solution.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
 
     def process_engine_solution(self, zone_id: Union[int, None] = None) -> int:
@@ -1245,8 +1213,7 @@ class Engine(BatchReactors):
                 "any existing solution data will be deleted from the memory.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
 
         if zone_id is None:
             zone_id = 1
@@ -1268,8 +1235,7 @@ class Engine(BatchReactors):
                 str(self._nreactors + 1),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             ierr = 1
             if self._nreactors > 1:
                 msg = [
@@ -1280,8 +1246,7 @@ class Engine(BatchReactors):
                     "indicates the cylinder-averaged solution.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
             return ierr
         elif zone_id > self._nreactors:
             msg = ["Cylinder-averaged Solution"]
@@ -1328,8 +1293,7 @@ class Engine(BatchReactors):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
             ierr = 2
             return ierr
         # store the raw solution data in a dictionary
@@ -1356,8 +1320,7 @@ class Engine(BatchReactors):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
             ierr = 3
             return ierr
         #
@@ -1375,8 +1338,7 @@ class Engine(BatchReactors):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             ierr = 4
             return ierr
         # calculate total termicity [1/sec]
@@ -1440,8 +1402,7 @@ class Engine(BatchReactors):
                     str(n + 1),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
             # set index to the last solution point
             solution_index = self._numbsolutionpoints - 1
             # get the last solution mixture
@@ -1473,8 +1434,7 @@ class Engine(BatchReactors):
                 "please run the reactor simulation first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             # bad engine result
             return effective_pres
         elif status != 0:
@@ -1485,8 +1445,7 @@ class Engine(BatchReactors):
                 "please correct the error(s) and rerun the reactor simulation.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             # bad engine result
             return effective_pres
         # get predicted engine IMEP [dynes/cm2]

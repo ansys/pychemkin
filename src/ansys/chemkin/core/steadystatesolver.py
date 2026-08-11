@@ -27,8 +27,9 @@ from typing import Union
 import numpy as np
 
 from ansys.chemkin.core.color import Color
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.reactormodel import Keyword
+from ansys.chemkin.core.utilities import error_and_exit, log_error_message
+from ansys.chemkin.core.validation import validate_minimum_value
 
 
 class SteadyStateSolver:
@@ -144,8 +145,7 @@ class SteadyStateSolver:
 
         if ierr > 0:
             msg = [Color.PURPLE, "tolerance must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     @property
     def time_stepping_tolerances(self) -> tuple[float, float]:
@@ -193,8 +193,7 @@ class SteadyStateSolver:
 
         if ierr > 0:
             msg = [Color.PURPLE, "tolerance must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_max_pseudo_transient_call(self, maxtime: int):
         """Set max number of the pseudo transient operation."""
@@ -212,8 +211,7 @@ class SteadyStateSolver:
             self.maxpseudotransient = maxtime
         else:
             msg = [Color.PURPLE, "parameter must >= 1.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_max_timestep_iteration(self, maxiteration: int):
         """Set max number of iterations per time step."""
@@ -231,8 +229,7 @@ class SteadyStateSolver:
             self.tr_maxiteration = maxiteration
         else:
             msg = [Color.PURPLE, "parameter must >= 1.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_max_search_iteration(self, maxiteration: int):
         """Set the maximum number of iterations."""
@@ -250,8 +247,7 @@ class SteadyStateSolver:
             self.ss_maxiteration = maxiteration
         else:
             msg = [Color.PURPLE, "parameter must >= 1.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_initial_timesteps(self, initsteps: int):
         """Set the number of pseudo time steps to be performed."""
@@ -270,8 +266,7 @@ class SteadyStateSolver:
             self.numbinitialpseudosteps = initsteps
         else:
             msg = [Color.PURPLE, "parameter must >= 1.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_species_floor(self, floor_value: float):
         """Set the minimum species fraction value allowed."""
@@ -289,8 +284,7 @@ class SteadyStateSolver:
             self.speciesfloor = floor_value
         else:
             msg = [Color.PURPLE, "species floor value must < 1.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_temperature_ceiling(self, ceilingvalue: float):
         """Set the maximum temperature value allowed."""
@@ -308,8 +302,7 @@ class SteadyStateSolver:
             self.maxTbound = ceilingvalue
         else:
             msg = [Color.PURPLE, "temperature value must > 300.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_species_reset_value(self, resetvalue: float):
         """Set the positive reset value for any negative species fraction."""
@@ -327,8 +320,7 @@ class SteadyStateSolver:
             self.species_positive = resetvalue
         else:
             msg = [Color.PURPLE, "species fraction value must >= 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_max_pseudo_timestep_size(self, dtmax: float):
         """Set max time step sizes allowed by the pseudo time stepping."""
@@ -346,8 +338,7 @@ class SteadyStateSolver:
             self.tr_maxstepsize = dtmax
         else:
             msg = [Color.PURPLE, "time step size must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_min_pseudo_timestep_size(self, dtmin: float):
         """Set min time step size of the pseudo time stepping operation."""
@@ -365,8 +356,7 @@ class SteadyStateSolver:
             self.tr_minstepsize = dtmin
         else:
             msg = [Color.PURPLE, "time step size must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_pseudo_timestep_age(self, age: int):
         """Set min number of time steps before time step size increase."""
@@ -384,8 +374,7 @@ class SteadyStateSolver:
             self.timestepsizeage = age
         else:
             msg = [Color.PURPLE, "number of time step must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_jacobian_age(self, age: int):
         """Set the number of searches before Jacobian matrix evaluation."""
@@ -403,8 +392,7 @@ class SteadyStateSolver:
             self.ss_jacobianage = age
         else:
             msg = [Color.PURPLE, "number of time step must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_pseudo_jacobian_age(self, age: int):
         """Set the number of time steps before Jacobian matrix evaluation."""
@@ -422,8 +410,7 @@ class SteadyStateSolver:
             self.tr_jacobianage = age
         else:
             msg = [Color.PURPLE, "number of time step must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_damping_option(self, status: bool):
         """Turn ON or OFF the damping option of the steady-state solver."""
@@ -444,8 +431,7 @@ class SteadyStateSolver:
             self.ss_solverkeywords["TWOPNT_DAMPING_OPTIN"] = self.ss_damping
         else:
             msg = [Color.PURPLE, "parameter must be either True or False.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_legacy_option(self, option: bool):
         """Turn ON or OFF the legacy steady-state solver."""
@@ -463,8 +449,7 @@ class SteadyStateSolver:
                 self.ss_solverkeywords["USE_LEGACY_TECHNIQUE"] = "4X"
         else:
             msg = [Color.PURPLE, "parameter must be either True or False.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_print_level(self, level: int):
         """Set the text output level of the steady-state solver."""
@@ -482,8 +467,7 @@ class SteadyStateSolver:
             self.print_level = level
         else:
             msg = [Color.PURPLE, "print level must be either 0, 1, or 2.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_pseudo_timestepping_parameters(
         self, numb_steps: int = 100, step_size: float = 1.0e-6, stage: int = 1
@@ -505,12 +489,20 @@ class SteadyStateSolver:
                 2 = solving energy equation
 
         """
+        validate_minimum_value(
+            value=float(numb_steps),
+            minimum=1.0,
+            message="number of pseudo time steps must >= 1.",
+        )
+        validate_minimum_value(
+            value=step_size,
+            minimum=np.finfo(float).eps,
+            message="pseudo time-step size must > 0.",
+        )
         if stage in [1, 2]:
             this_key = "TIM" + str(stage)
             this_phrase = this_key + Keyword.fourspaces + str(numb_steps)
             self.ss_solverkeywords[this_phrase] = step_size
         else:
             msg = [Color.PURPLE, "the stage must be either 1 or 2.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)

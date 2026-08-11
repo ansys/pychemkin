@@ -37,8 +37,13 @@ import numpy.typing as npt
 
 from ansys.chemkin.core.chemistry import Chemistry, verify_chemset_sizes
 from ansys.chemkin.core.color import Color
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.surface import Surface
+from ansys.chemkin.core.utilities import (
+    error_and_exit,
+    log_error_message,
+    log_info_message,
+)
+from ansys.chemkin.core.validation import validate_minimum_value
 
 
 class SurfaceChemistryHost(Protocol):
@@ -87,8 +92,7 @@ class SurfaceChemistryController:
                 str(chemset_index.value),
                 Color.END,
             ]
-            logger.error(Color.SPACE.join(msg))
-            exit()
+            error_and_exit(msg)
 
         if not verify_chemset_sizes(
             chem_set_index=chem.chemid, num_gas_species=self._reactor.numbspecies
@@ -99,8 +103,7 @@ class SurfaceChemistryController:
                 "number of gas species in the chemistry sets are different.",
                 Color.END,
             ]
-            logger.error(Color.SPACE.join(msg))
-            exit()
+            error_and_exit(msg)
 
         if not chem.verify_surface_mechanism():
             chem.no_surface_mechanism_declaration()
@@ -114,7 +117,7 @@ class SurfaceChemistryController:
                     "and will be overridden.",
                     Color.END,
                 ]
-                logger.info(Color.SPACE.join(msg))
+                log_info_message(msg)
             del self._reactor.surface_chemistry
 
         self._reactor.surface_chemistry = Surface(chem)
@@ -149,7 +152,14 @@ class SurfaceChemistryController:
             "created from a Chemistry Set with surface chemistry.",
             Color.END,
         ]
-        logger.error(Color.SPACE.join(msg))
+        log_error_message(msg)
+
+    def require_surface_chemistry(self) -> bool:
+        """Return availability and log guidance when surface chemistry is absent."""
+        if not self._reactor.has_surface_chemistry:
+            self.no_surface_mechanism_declaration()
+            return False
+        return True
 
     def no_surface_material(self, mat_name: str):
         """Log an error for an unknown surface material."""
@@ -159,7 +169,7 @@ class SurfaceChemistryController:
             "is not a valid surface material",
             Color.END,
         ]
-        logger.error(Color.SPACE.join(msg))
+        log_error_message(msg)
 
     @property
     def get_numb_material(self) -> int:
@@ -204,20 +214,18 @@ class SurfaceChemistryController:
     @surface_ratemultiplier.setter
     def surface_ratemultiplier(self, value: float = 1.0e0):
         """Set the global surface reaction-rate multiplier."""
-        if value < 0.0:
-            msg = [Color.PURPLE, "reaction rate multiplier must >= 0.", Color.END]
-            logger.error(Color.SPACE.join(msg))
-            exit()
-        if self._reactor.has_surface_chemistry:
+        validate_minimum_value(
+            value=value,
+            minimum=0.0,
+            message="reaction rate multiplier must >= 0.",
+        )
+        if self.require_surface_chemistry():
             self._reactor._surfaceratemultiplier = value
 
     def check_material_area_fraction(self, mat_name: str) -> int:
         """Return whether a material-specific area fraction is set."""
         status = -1
-        if (
-            self._reactor.has_surface_chemistry
-            and self._reactor._numb_surf_area_set > 0
-        ):
+        if self.require_surface_chemistry() and self._reactor._numb_surf_area_set > 0:
             index = self._reactor.surface_chemistry.check_surface_material(mat_name)
             if index >= 0:
                 try:
@@ -228,7 +236,7 @@ class SurfaceChemistryController:
 
     def get_material_area_fraction(self, mat_name: str) -> float:
         """Return the area fraction for a given surface material."""
-        if not self._reactor.has_surface_chemistry:
+        if not self.require_surface_chemistry():
             return 0.0
 
         index = self._reactor.surface_chemistry.check_surface_material(mat_name)
@@ -246,17 +254,18 @@ class SurfaceChemistryController:
                 "has not been assigned",
                 Color.END,
             ]
-            logger.info(Color.SPACE.join(msg))
+            log_info_message(msg)
             return 1.0e0 / float(self._reactor.numbmaterials)
 
     def set_material_area_fraction(self, mat_name: str, fraction: float):
         """Set the area fraction for a given surface material."""
-        if fraction < 0.0:
-            msg = [Color.PURPLE, "material area fraction must >= 0.", Color.END]
-            logger.error(Color.SPACE.join(msg))
-            exit()
+        validate_minimum_value(
+            value=fraction,
+            minimum=0.0,
+            message="material area fraction must >= 0.",
+        )
 
-        if self._reactor.has_surface_chemistry:
+        if self.require_surface_chemistry():
             index = self._reactor.surface_chemistry.check_surface_material(mat_name)
             if index >= 0:
                 if index not in self._reactor._surf_area_set:
@@ -275,7 +284,7 @@ class SurfaceChemistryController:
 
     def get_material_temperature(self, mat_name: str) -> float:
         """Return temperature for a given surface material."""
-        if not self._reactor.has_surface_chemistry:
+        if not self.require_surface_chemistry():
             return 0.0
 
         temp = self._reactor.surface_chemistry.get_material_temperature(mat_name)
@@ -285,12 +294,13 @@ class SurfaceChemistryController:
 
     def set_material_temperature(self, mat_name: str, temp: float):
         """Set temperature for a given surface material."""
-        if temp < 100.0:
-            msg = [Color.PURPLE, "material temperature must >= 100. [K]", Color.END]
-            logger.error(Color.SPACE.join(msg))
-            exit()
+        validate_minimum_value(
+            value=temp,
+            minimum=100.0,
+            message="material temperature must >= 100. [K]",
+        )
 
-        if self._reactor.has_surface_chemistry:
+        if self.require_surface_chemistry():
             self._reactor.surface_chemistry.set_material_temperature(mat_name, temp)
 
     def get_all_surface_temperature(self) -> npt.NDArray[np.double]:

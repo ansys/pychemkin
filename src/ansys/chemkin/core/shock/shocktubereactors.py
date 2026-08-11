@@ -41,10 +41,19 @@ from ansys.chemkin.core.chemistry import (
 from ansys.chemkin.core.color import Color as Color
 from ansys.chemkin.core.constants import P_ATM
 from ansys.chemkin.core.inlet import Stream
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.mixture import equilibrium, interpolate_mixtures
 from ansys.chemkin.core.reactormodel import ReactorModel as Reactor
-from ansys.chemkin.core.utilities import find_interpolate_parameters, interpolate_point
+from ansys.chemkin.core.utilities import (
+    critical_and_exit,
+    error_and_exit,
+    find_interpolate_parameters,
+    interpolate_point,
+    log_critical_message,
+    log_error_message,
+    log_info_message,
+    log_warning_message,
+)
+from ansys.chemkin.core.validation import validate_minimum_value
 
 
 class ShockTubeReactors(Reactor):
@@ -122,13 +131,12 @@ class ShockTubeReactors(Reactor):
             value: double, default = 0.0
                 simulation end time [sec]
         """
-        if value <= 0.0e0:
-            msg = [Color.PURPLE, "simulation end time must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._end_time = c_double(value)
+        validate_minimum_value(
+            value,
+            np.nextafter(0.0, 1.0),
+            "simulation end time must > 0.",
+        )
+        self._end_time = c_double(value)
 
     @property
     def starttime(self) -> float:
@@ -180,19 +188,18 @@ class ShockTubeReactors(Reactor):
             diam: double
                 reactor diameter [cm]
         """
-        if diam <= 0.0:
-            msg = [Color.PURPLE, "reactor diameter must > 0.0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self.bl_correction += 1
-            self.reactor_diameter = c_double(diam)
-            # set flow area at the inlet
-            self.reactormixture._haveflowarea = True
-            area = np.pi * diam * diam / 4.0
-            self.reactormixture._flowarea = area
-            self.reactorflowarea = area
+        validate_minimum_value(
+            diam,
+            np.nextafter(0.0, 1.0),
+            "reactor diameter must > 0.0.",
+        )
+        self.bl_correction += 1
+        self.reactor_diameter = c_double(diam)
+        # set flow area at the inlet
+        self.reactormixture._haveflowarea = True
+        area = np.pi * diam * diam / 4.0
+        self.reactormixture._flowarea = area
+        self.reactorflowarea = area
 
     @property
     def tolerances(self) -> tuple:
@@ -245,15 +252,14 @@ class ShockTubeReactors(Reactor):
             visc: double, default = 0.0
                 mixture viscosity [g/cm-sec] or [Poise]
         """
-        if visc <= 0.0:
-            msg = [Color.PURPLE, "gas mixture viscosity must > 0.0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            # set the initial gas viscosity
-            self.bl_correction += 1
-            self.init_visc = c_double(visc)
+        validate_minimum_value(
+            visc,
+            np.nextafter(0.0, 1.0),
+            "gas mixture viscosity must > 0.0.",
+        )
+        # set the initial gas viscosity
+        self.bl_correction += 1
+        self.init_visc = c_double(visc)
 
     def set_solver_max_timestep_size(self, size: float):
         """Set the maximum time step size."""
@@ -269,8 +275,7 @@ class ShockTubeReactors(Reactor):
             self.setkeyword(key="STPT", value=size)
         else:
             msg = [Color.PURPLE, "solver timestep size must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def set_solution_printing_timestep_size(self, delta_time: float):
         """Set the timestep size for solution printing."""
@@ -287,8 +292,7 @@ class ShockTubeReactors(Reactor):
             self.setkeyword(key="DELT", value=delta_time)
         else:
             msg = [Color.PURPLE, "solution printing timestep size must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
     def get_solution_size(self) -> int:
         """Get solution size."""
@@ -304,8 +308,7 @@ class ShockTubeReactors(Reactor):
         status = self.getrunstatus(mode="silent")
         if status == -100:
             msg = [Color.MAGENTA, "please run the reactor simultion first.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         elif status != 0:
             msg = [
@@ -315,22 +318,16 @@ class ShockTubeReactors(Reactor):
                 "please correct the error(s) and rerun the reactor simulation.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # number of time points in the solution
         npoints = c_int(0)
         # get solution size of the batch reactor
         ierr = ckw.chemkin.KINShock_GetSolnResponseSize(npoints)
-        if ierr == 0:
-            # return the solution sizes
-            self._numbsolutionpoints = (
-                npoints.value
-            )  # number of time points in the solution profile
-            return self._numbsolutionpoints
-        else:
-            #
-            return npoints.value
+        if ierr != 0:
+            return 0
+        self._numbsolutionpoints = npoints.value
+        return self._numbsolutionpoints
 
     def process_solution(self):
         """Post-process solution to extract the raw solution variable data."""
@@ -342,12 +339,10 @@ class ShockTubeReactors(Reactor):
                 "any existing solution data will be deleted from the memory.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
 
         msg = [Color.YELLOW, "post-processing raw solution data ...", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         # reset raw and mixture solution parameters
         self._numbsolutionpoints = 0
         self._solution_rawarray.clear()
@@ -364,9 +359,7 @@ class ShockTubeReactors(Reactor):
                 str(npoints),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             self._numbsolutionpoints = npoints
         # create arrays to hold the raw solution data
@@ -400,9 +393,7 @@ class ShockTubeReactors(Reactor):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
         # store the raw solution data in a dictionary
         # time
         self._solution_rawarray["time"] = copy.deepcopy(time)
@@ -428,9 +419,7 @@ class ShockTubeReactors(Reactor):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # calculate total termicity [1/sec]
         thermicity = np.zeros_like(time, dtype=np.double)
         for i, m in enumerate(self._solution_mixturearray):
@@ -485,9 +474,7 @@ class ShockTubeReactors(Reactor):
                     str(ierr),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
-                exit()
+                critical_and_exit(msg)
         # maximum thermicity [1/sec] and induction length [cm]
         # induction length where the maximum thermicity is located
         nindlength = self.get_inductionlength_size()
@@ -510,8 +497,7 @@ class ShockTubeReactors(Reactor):
                 "No induction length found.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
         # clean up
         del time, pres, temp, vel, density, distance, thermicity, frac
 
@@ -536,9 +522,8 @@ class ShockTubeReactors(Reactor):
                 "to post-process the raw solution data first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
-            return 1
+            log_info_message(msg)
+            return np.zeros(0, dtype=np.double)
         # check variable name
         vname = varname.rstrip()
         if vname.lower() in self._solution_tags:
@@ -556,8 +541,7 @@ class ShockTubeReactors(Reactor):
                     "and has to be derived from other variable(s).",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 exit()
 
         # create variable arrays to hold the solution profile
@@ -590,8 +574,7 @@ class ShockTubeReactors(Reactor):
                 "to post-process the raw solution data first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             return 1
         # create a temporary Mixture object to hold the mixture properties
         # at current solution point
@@ -668,8 +651,7 @@ class ShockTubeReactors(Reactor):
                 "to post-process the raw solution data first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             exit()
         # get the time point array
         timearray = self.get_solution_variable_profile("time")
@@ -725,8 +707,7 @@ class ShockTubeReactors(Reactor):
                 "to post-process the raw solution data first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             exit()
         # check index
         if solution_index > self._numbsolutionpoints - 1:
@@ -745,8 +726,7 @@ class ShockTubeReactors(Reactor):
                 "]",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # get the stream
         mixturetarget = copy.deepcopy(self._solution_mixturearray[solution_index])
@@ -766,8 +746,7 @@ class ShockTubeReactors(Reactor):
         status = self.getrunstatus(mode="silent")
         if status == -100:
             msg = [Color.MAGENTA, "please run the reactor simultion first.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         elif status != 0:
             msg = [
@@ -777,8 +756,7 @@ class ShockTubeReactors(Reactor):
                 "please correct the error(s) and rerun the reactor simulation.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # number of time points in the solution
         npoints = c_int(0)
@@ -790,8 +768,7 @@ class ShockTubeReactors(Reactor):
                 "failed to access the induction length solution data.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         if npoints.value == 0:
             msg = [
@@ -799,8 +776,7 @@ class ShockTubeReactors(Reactor):
                 "no induction length data available.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         return npoints.value
 
     def get_induction_lengths(
@@ -826,8 +802,7 @@ class ShockTubeReactors(Reactor):
         status = self.getrunstatus(mode="silent")
         if status == -100:
             msg = [Color.MAGENTA, "please run the reactor simultion first.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         elif status != 0:
             msg = [
@@ -837,8 +812,7 @@ class ShockTubeReactors(Reactor):
                 "please correct the error(s) and rerun the reactor simulation.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # number of time points in the solution
         npts = c_int(npoints)
@@ -853,8 +827,7 @@ class ShockTubeReactors(Reactor):
                 "failed to process the induction length solution data.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         return induct_length, sigmamax
 
@@ -877,8 +850,7 @@ class ShockTubeReactors(Reactor):
         status = self.getrunstatus(mode="silent")
         if status == -100:
             msg = [Color.MAGENTA, "please run the reactor simultion first.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         elif status != 0:
             msg = [
@@ -888,15 +860,13 @@ class ShockTubeReactors(Reactor):
                 "please correct the error(s) and rerun the reactor simulation.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # get the variable value
         this_value = self._solution_parameters.get(varname, None)
         if this_value is None:
             msg = [Color.MAGENTA, varname, "is not recognized.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         else:
             return this_value
@@ -969,8 +939,7 @@ class IncidentShock(ShockTubeReactors):
                         "is not available through PyChemkin.",
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                     ierr += ierrc
                 elif ierrc != 0:
                     msg = [
@@ -981,8 +950,7 @@ class IncidentShock(ShockTubeReactors):
                         str(ierrc),
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                     ierr += ierrc
         #
         self.showkeywordinputlines()
@@ -1032,8 +1000,7 @@ class IncidentShock(ShockTubeReactors):
                     missed_parameter,
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 exit()
             else:
                 # with boundary layer correction
@@ -1079,13 +1046,11 @@ class IncidentShock(ShockTubeReactors):
             str(check_chemistryset(self._chemset_index.value)),
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         if not check_chemistryset(self._chemset_index.value):
             # Chemkin-CFD-API is not initialized: reinitialize Chemkin-CFD-API
             msg = [Color.YELLOW, "initializing Chemkin ...", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             ret_val = ckw.chemkin.KINInitialize(self._chemset_index, c_int(0))
             if ret_val != 0:
                 msg = [
@@ -1095,14 +1060,13 @@ class IncidentShock(ShockTubeReactors):
                     str(ret_val),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
+                log_critical_message(msg)
                 exit()
             else:
                 chemistryset_initialized(self._chemset_index.value)
 
         # output initialization
-        logger.debug("clearing output ...")
+        log_info_message([Color.YELLOW, "clearing output ...", Color.END])
 
         # keyword processing
         msg = [
@@ -1110,8 +1074,7 @@ class IncidentShock(ShockTubeReactors):
             "processing and generating keyword inputs ...",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         # use API calls
         ret_val = (
             self.__process_keywords()
@@ -1124,15 +1087,13 @@ class IncidentShock(ShockTubeReactors):
                 str(ret_val),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
             return ret_val
-        logger.debug("Processing keywords complete")
+        log_info_message([Color.YELLOW, "Processing keywords complete", Color.END])
 
         # run reactor model
         msg = [Color.YELLOW, "running reactor simulation ...", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         # use API calls
         ret_val = self.__run_model()
         # update run status
@@ -1140,12 +1101,10 @@ class IncidentShock(ShockTubeReactors):
         msg = ["simulation completed,", "status =", str(ret_val), Color.END]
         if ret_val == 0:
             msg.insert(0, Color.GREEN)
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         else:
             msg.insert(0, Color.RED)
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
 
         return ret_val
 
@@ -1228,8 +1187,7 @@ class ReflectedShock(ShockTubeReactors):
                         "is not available through PyChemkin.",
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                     ierr += ierrc
                 elif ierrc != 0:
                     msg = [
@@ -1240,8 +1198,7 @@ class ReflectedShock(ShockTubeReactors):
                         str(ierrc),
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                     ierr += ierrc
         #
         self.showkeywordinputlines()
@@ -1309,13 +1266,11 @@ class ReflectedShock(ShockTubeReactors):
             str(check_chemistryset(self._chemset_index.value)),
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         if not check_chemistryset(self._chemset_index.value):
             # Chemkin-CFD-API is not initialized: reinitialize Chemkin-CFD-API
             msg = [Color.YELLOW, "initializing Chemkin ...", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             ret_val = ckw.chemkin.KINInitialize(self._chemset_index, c_int(0))
             if ret_val != 0:
                 msg = [
@@ -1325,14 +1280,13 @@ class ReflectedShock(ShockTubeReactors):
                     str(ret_val),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
+                log_critical_message(msg)
                 exit()
             else:
                 chemistryset_initialized(self._chemset_index.value)
 
         # output initialization
-        logger.debug("clearing output ...")
+        log_info_message([Color.YELLOW, "clearing output ...", Color.END])
 
         # keyword processing
         msg = [
@@ -1340,8 +1294,7 @@ class ReflectedShock(ShockTubeReactors):
             "processing and generating keyword inputs ...",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         # use API calls
         ret_val = (
             self.__process_keywords()
@@ -1354,15 +1307,13 @@ class ReflectedShock(ShockTubeReactors):
                 str(ret_val),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
             return ret_val
-        logger.debug("Processing keywords complete")
+        log_info_message([Color.YELLOW, "Processing keywords complete", Color.END])
 
         # run reactor model
         msg = [Color.YELLOW, "running reactor simulation ...", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         # use API calls
         ret_val = self.__run_model()
         # update run status
@@ -1370,12 +1321,10 @@ class ReflectedShock(ShockTubeReactors):
         msg = ["simulation completed,", "status =", str(ret_val), Color.END]
         if ret_val == 0:
             msg.insert(0, Color.GREEN)
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         else:
             msg.insert(0, Color.RED)
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
 
         return ret_val
 
@@ -1446,8 +1395,7 @@ class ZNDCalculator(ShockTubeReactors):
                         "is not available through PyChemkin.",
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                     ierr += ierrc
                 elif ierrc != 0:
                     msg = [
@@ -1458,8 +1406,7 @@ class ZNDCalculator(ShockTubeReactors):
                         str(ierrc),
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                     ierr += ierrc
         #
         self.showkeywordinputlines()
@@ -1506,8 +1453,7 @@ class ZNDCalculator(ShockTubeReactors):
                     missed_parameter,
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 exit()
             else:
                 # with boundary layer correction
@@ -1548,13 +1494,11 @@ class ZNDCalculator(ShockTubeReactors):
             str(check_chemistryset(self._chemset_index.value)),
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         if not check_chemistryset(self._chemset_index.value):
             # Chemkin-CFD-API is not initialized: reinitialize Chemkin-CFD-API
             msg = [Color.YELLOW, "initializing Chemkin ...", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             ret_val = ckw.chemkin.KINInitialize(self._chemset_index, c_int(0))
             if ret_val != 0:
                 msg = [
@@ -1564,14 +1508,13 @@ class ZNDCalculator(ShockTubeReactors):
                     str(ret_val),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
+                log_critical_message(msg)
                 exit()
             else:
                 chemistryset_initialized(self._chemset_index.value)
 
         # output initialization
-        logger.debug("clearing output ...")
+        log_info_message([Color.YELLOW, "clearing output ...", Color.END])
 
         # keyword processing
         msg = [
@@ -1579,8 +1522,7 @@ class ZNDCalculator(ShockTubeReactors):
             "processing and generating keyword inputs ...",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         # use API calls
         ret_val = (
             self.__process_keywords()
@@ -1593,15 +1535,13 @@ class ZNDCalculator(ShockTubeReactors):
                 str(ret_val),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
             return ret_val
-        logger.debug("Processing keywords complete")
+        log_info_message([Color.YELLOW, "Processing keywords complete", Color.END])
 
         # run reactor model
         msg = [Color.YELLOW, "running reactor simulation ...", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         # use API calls
         ret_val = self.__run_znd_model()
         # update run status
@@ -1609,12 +1549,10 @@ class ZNDCalculator(ShockTubeReactors):
         msg = ["simulation completed,", "status =", str(ret_val), Color.END]
         if ret_val == 0:
             msg.insert(0, Color.GREEN)
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         else:
             msg.insert(0, Color.RED)
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
 
         return ret_val
 
@@ -1666,8 +1604,7 @@ class ZNDCalculator(ShockTubeReactors):
                 "Maximum thermicity ~ 0.0.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         else:
             react_length = vel2 / sigma_max
@@ -1707,8 +1644,7 @@ class ZNDCalculator(ShockTubeReactors):
                 "<= 0.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # induction length where the maximum thermicity is located
         induct_length = self.get_single_point_solution("induction_length")
@@ -1770,8 +1706,7 @@ class ZNDCalculator(ShockTubeReactors):
                 "<= 0.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # calculate the equilibrium mixture with const internal energy
         # and specific volume

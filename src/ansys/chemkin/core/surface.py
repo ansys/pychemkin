@@ -31,8 +31,18 @@ import numpy.typing as npt
 
 from ansys.chemkin.core import chemkin_wrapper as ck_wrapper
 from ansys.chemkin.core.color import Color
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.surface_components import Material
+from ansys.chemkin.core.utilities import (
+    error_and_exit,
+    log_error_message,
+    log_info_message,
+    log_warning_message,
+    warning_and_exit,
+)
+from ansys.chemkin.core.validation import (
+    validate_minimum_value,
+    validate_species_array_size,
+)
 
 if TYPE_CHECKING:
     from ansys.chemkin.core.chemistry import Chemistry
@@ -158,6 +168,10 @@ class Surface:
             mat_id: inetger
                 material index, = -1: not found
         """
+        return self.require_surface_material(matname)
+
+    def require_surface_material(self, matname: str) -> int:
+        """Return the material index or terminate if not found."""
         mat_id = self.material_map.get(matname, -1)
         if mat_id < 0:
             self.material_not_found(matname)
@@ -175,9 +189,7 @@ class Surface:
             str(self.material_names),
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.error(this_msg)
-        exit()
+        error_and_exit(msg)
 
     @property
     def number_materials(self) -> int:
@@ -209,9 +221,8 @@ class Surface:
                 "mechanism contains no surface material",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            return []
+            log_error_message(msg)
+            exit()
 
     @property
     def max_number_sites(self) -> int:
@@ -327,9 +338,7 @@ class Surface:
                 site species fractions
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
 
         n_sites = self.number_site_species(mat_name)
         if n_sites <= 0:
@@ -339,8 +348,7 @@ class Surface:
                 mat_name.rstrip(),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             return np.array([0.0], dtype=np.double)
         #
         if self.sitefrac_set.get(mat_name, False):
@@ -352,8 +360,7 @@ class Surface:
                 mat_name.rstrip(),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             frac = np.full(n_sites, 1.0 / n_sites)
         return frac
 
@@ -375,9 +382,7 @@ class Surface:
                 the given site fraction array
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         if self.number_site_species(mat_name) <= 0:
             msg = [
@@ -386,9 +391,7 @@ class Surface:
                 mat_name.rstrip(),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
-            exit()
+            warning_and_exit(msg)
         # get material object
         m = self.materials[mat_name]
         # reset site fraction values to 0
@@ -408,34 +411,26 @@ class Surface:
                         mat_name.rstrip(),
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
-                    exit()
-                if x < 0.0:
-                    msg = [Color.PURPLE, "negative site fraction.", Color.END]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
-                    exit()
+                    error_and_exit(msg)
+                validate_minimum_value(
+                    value=x,
+                    minimum=0.0,
+                    message="negative site fraction.",
+                )
                 # set site fraction
                 self._site_fractions[mat_name][index] = x
             self.sitefrac_set[mat_name] = True
         elif isinstance(recipe[0], (float, np.double)):
             ksites = len(recipe)
+            validate_species_array_size(
+                expected=m.num_site_species,
+                actual=ksites,
+                context="site fraction",
+            )
             if ksites == m.num_site_species:
                 for k in range(ksites):
                     self._site_fractions[mat_name][k] = max(recipe[k], 0.0e0)
                 self.sitefrac_set[mat_name] = True
-            else:
-                msg = [
-                    Color.PURPLE,
-                    "size of the site fraction array must equal to",
-                    "the number of site species of the material:",
-                    str(m.num_site_species),
-                    Color.END,
-                ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
         else:
             msg = [
                 Color.PURPLE,
@@ -447,9 +442,7 @@ class Surface:
                 "(2) a site fraction array of size = <number of site species>",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     def check_site_frac_set(self, mat_name: str) -> bool:
         """Check if the surface site species fractions are provided."""
@@ -504,8 +497,7 @@ class Surface:
                 "no site species declared in the surface mechanism.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
         #
         return site_frac
 
@@ -525,9 +517,7 @@ class Surface:
                 bulk activities/moles
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         n_bulks = self.number_bulk_species(mat_name)
         if n_bulks <= 0:
@@ -537,8 +527,7 @@ class Surface:
                 mat_name.rstrip(),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             return np.array([0.0], dtype=np.double)
         #
         if self.bulkact_set.get(mat_name, False):
@@ -550,8 +539,7 @@ class Surface:
                 mat_name.rstrip(),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             frac = np.full(n_bulks, 1.0)
         return frac
 
@@ -574,9 +562,7 @@ class Surface:
 
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         if self.number_bulk_species(mat_name) <= 0:
             msg = [
@@ -585,9 +571,7 @@ class Surface:
                 mat_name.rstrip(),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
-            exit()
+            warning_and_exit(msg)
         # get material object
         m = self.materials[mat_name]
         n_bulks = m.num_bulk_species
@@ -608,34 +592,26 @@ class Surface:
                         mat_name.rstrip(),
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
-                    exit()
-                if x < 0.0:
-                    msg = [Color.PURPLE, "negative bulk activity.", Color.END]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
-                    exit()
+                    error_and_exit(msg)
+                validate_minimum_value(
+                    value=x,
+                    minimum=0.0,
+                    message="negative bulk activity.",
+                )
                 # set bulk activity
                 self._bulk_activities[mat_name][index] = x
             self.bulkact_set[mat_name] = True
         elif isinstance(recipe[0], (float, np.double)):
             kbulks = len(recipe)
+            validate_species_array_size(
+                expected=n_bulks,
+                actual=kbulks,
+                context="bulk activity",
+            )
             if kbulks == n_bulks:
                 for k in range(kbulks):
                     self._bulk_activities[mat_name][k] = max(recipe[k], 0.0e0)
                 self.bulkact_set[mat_name] = True
-            else:
-                msg = [
-                    Color.PURPLE,
-                    "size of the bulk activity array must equal to",
-                    "the number of bulk species of the material:",
-                    str(m.num_site_species),
-                    Color.END,
-                ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
         else:
             msg = [
                 Color.PURPLE,
@@ -647,9 +623,7 @@ class Surface:
                 "(2) a site fraction array of size = <number of site species>",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     def check_bulk_act_set(self, mat_name: str) -> bool:
         """Check if the bulk species activities are provided."""
@@ -684,9 +658,7 @@ class Surface:
                 bulk species linear growth rates [cm/sec]
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         n_bulks = self.number_bulk_species(mat_name)
         if n_bulks <= 0:
@@ -696,8 +668,7 @@ class Surface:
                 mat_name.rstrip(),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             return np.array([0.0], dtype=np.double)
         #
         if self.bulk_growth_rates_set.get(mat_name, False):
@@ -709,8 +680,7 @@ class Surface:
                 mat_name.rstrip(),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             rates = np.full(n_bulks, 0.0)
         return rates
 
@@ -732,9 +702,7 @@ class Surface:
 
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         n_bulks = self.number_bulk_species(mat_name)
         if n_bulks <= 0:
@@ -744,8 +712,7 @@ class Surface:
                 mat_name.rstrip(),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         #
         for k in range(n_bulks):
@@ -806,8 +773,7 @@ class Surface:
                 "no bulk species declared in the surface mechanism.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
         #
         return bulk_growth_rates
 
@@ -832,9 +798,7 @@ class Surface:
                 activity array (gas + sites + bulks)
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         # get the corresponding Material object
         m = self.materials[mat_name]
         # get dimensions
@@ -901,8 +865,7 @@ class Surface:
                 "has no site species.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
         else:
             print(f'listing surface coverage on material "{mat_name}"\n')
             #
@@ -949,8 +912,7 @@ class Surface:
                 "has no bulk species.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
         else:
             print(f'listing surface coverage on material "{mat_name}"\n')
             #
@@ -976,9 +938,7 @@ class Surface:
                 Material object with the given material name
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         m = self.materials.get(mat_name, None)
         if m is None:
@@ -1194,9 +1154,7 @@ class Surface:
                 phase names of the surface material
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         m = self.materials.get(mat_name)
         psymbols = m.phase_names
@@ -1362,9 +1320,7 @@ class Surface:
                 all site species symbols of the material
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         m = self.materials.get(mat_name)
         ssymbols = m.site_species_names
@@ -1386,9 +1342,7 @@ class Surface:
                 all bulk species symbols of the material
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         m = self.materials.get(mat_name)
         bsymbols = m.bulk_species_names
@@ -1411,9 +1365,7 @@ class Surface:
 
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         m = self.materials.get(mat_name)
         ssymbols = m.site_species_names
@@ -1480,9 +1432,7 @@ class Surface:
                 site density [mole/cm2]
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         m = self.materials.get(mat_name)
         site_den = m.get_site_density()
@@ -1507,9 +1457,7 @@ class Surface:
                 site occupancy [-]
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         m = self.materials.get(mat_name)
         occupancy = m.get_site_occupancy()
@@ -1531,9 +1479,7 @@ class Surface:
                 molecular weight [g/mole]
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         if self._site_wt_set.get(mat_name, False):
             site_wt = self._site_spec_wt[mat_name]
@@ -1560,9 +1506,7 @@ class Surface:
                 molecular weight [g/mole]
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         if self._bulk_wt_set.get(mat_name, False):
             bulk_wt = self._bulk_spec_wt[mat_name]
@@ -1589,9 +1533,7 @@ class Surface:
                 molecular weight [g/mole]
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         site_wt = self.get_site_wt(mat_name)
         bulk_wt = self.get_bulk_wt(mat_name)
@@ -1614,9 +1556,7 @@ class Surface:
                 enthalpy [ergs/mole]
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         m = self.materials.get(mat_name)
         site_h = m.get_site_species_h()
@@ -1638,9 +1578,7 @@ class Surface:
                 enthalpy [ergs/mole]
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         m = self.materials.get(mat_name)
         bulk_h = m.get_bulk_species_h()
@@ -1662,9 +1600,7 @@ class Surface:
                 enthalpy [ergs/mole]
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         m = self.materials.get(mat_name)
         bulk_h = m.get_bulk_species_h()
@@ -1688,9 +1624,7 @@ class Surface:
                 specific heat capacity [ergs/mole-K]
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         m = self.materials.get(mat_name)
         bulk_cp = m.get_bulk_species_cp()
@@ -1712,9 +1646,7 @@ class Surface:
                 mass density [g/cm3]
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         m = self.materials.get(mat_name)
         bulk_den = m.get_bulk_density()
@@ -1767,8 +1699,7 @@ class Surface:
                 str(ngas),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # check site species fractions
         if nsites > 0:
@@ -1805,8 +1736,7 @@ class Surface:
                 str(x_sum),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # set up surface site species portion of the activity array
         x_sum = 0.0e0
@@ -1897,8 +1827,7 @@ class Surface:
                     "has not been assigned",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
                 return -1.0
         else:
             return 0.0
@@ -1918,9 +1847,7 @@ class Surface:
         if temp < 100.0:
             # invalid temperature value
             msg = [Color.PURPLE, "material temperature must >= 100. [K]", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             index = self.check_surface_material(mat_name)
             if index >= 0:
@@ -1994,8 +1921,7 @@ class Surface:
         # check inputs
         if chem_id < 0:
             msg = [Color.PURPLE, "invalid chemistry.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         if p <= 0.0 or (p * t) <= 0.0:
             msg = [
@@ -2003,8 +1929,7 @@ class Surface:
                 "invalid pressure and/or temperature value(s).",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # number species
         kgas = len(molfrac)
@@ -2017,8 +1942,7 @@ class Surface:
                 str(kgas),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # initialization
         # species rate of production by surface reactions [mole/cm2-sec]
@@ -2061,8 +1985,7 @@ class Surface:
                 "failed to compute species molar rates of production.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
 
     @staticmethod
@@ -2126,8 +2049,7 @@ class Surface:
         # check inputs
         if chem_id < 0:
             msg = [Color.PURPLE, "invalid chemistry.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         if p <= 0.0 or (p * t) <= 0.0:
             msg = [
@@ -2135,8 +2057,7 @@ class Surface:
                 "invalid pressure and/or temperature value(s).",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # number species
         kgas = len(molfrac)
@@ -2149,8 +2070,7 @@ class Surface:
                 str(kgas),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # initialization
         k_forward = np.zeros(numb_reaction, dtype=np.double)
@@ -2185,8 +2105,7 @@ class Surface:
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
 
     def set_surface_coverage(
@@ -2270,8 +2189,7 @@ class Surface:
         # check temperature
         if surf_temp <= 250.0:
             msg = [Color.PURPLE, "surface temperature must > 250.0 [K]", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # check pressure
         if pres <= 0.0:
@@ -2280,8 +2198,7 @@ class Surface:
                 "mixture pressure [dynes/cm2] must > 0.0.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # get the corresponding Material object
         m = self.materials[mat_name]
@@ -2347,8 +2264,7 @@ class Surface:
         # check temperature
         if surf_temp <= 250.0:
             msg = [Color.PURPLE, "surface temperature must > 250.0 [K]", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # check pressure
         if pres <= 0.0:
@@ -2357,8 +2273,7 @@ class Surface:
                 "mixture pressure [dynes/cm2] must > 0.0.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # initialization
         # get the material object
@@ -2417,9 +2332,7 @@ class Surface:
                 molar growth rates of the bulk species [mole/cm2-sec]
         """
         # verify the material name
-        mat_id = self.check_surface_material(mat_name)
-        if mat_id < 0:
-            exit()
+        self.require_surface_material(mat_name)
         #
         m = self.materials[mat_name]
         # check array size
@@ -2436,8 +2349,7 @@ class Surface:
                 str(len(surfrop)),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         bulk1 = m.first_bulk_species_index
         nbulks = m.num_bulk_species

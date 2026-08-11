@@ -22,6 +22,8 @@
 
 """Reusable validation helpers for core modules."""
 
+from pathlib import Path
+
 from ansys.chemkin.core.color import Color
 from ansys.chemkin.core.utilities import log_error_message
 
@@ -143,6 +145,22 @@ def validate_fraction_array_size(actual: int, expected: int) -> None:
                 "the number of species in the chemistry set.\n",
                 "the fraction array size should be",
                 str(expected),
+                Color.END,
+            ]
+        )
+        exit()
+
+
+def validate_file_exists(file_path: str, context_label: str = "file") -> None:
+    """Validate that a filesystem path points to an existing file."""
+    if not Path(file_path).is_file():
+        log_error_message(
+            [
+                Color.PURPLE,
+                "the specified",
+                context_label,
+                "does not exist:",
+                file_path,
                 Color.END,
             ]
         )

@@ -27,10 +27,15 @@ from typing import Union
 
 from ansys.chemkin.core.color import Color as Color
 from ansys.chemkin.core.inlet import Stream, clone_stream
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.mixture import Mixture
 from ansys.chemkin.core.reactormodel import Keyword, ReactorModel
 from ansys.chemkin.core.steadystatesolver import SteadyStateSolver
+from ansys.chemkin.core.utilities import (
+    critical_and_exit,
+    error_and_exit,
+    log_info_message,
+)
+from ansys.chemkin.core.validation import validate_minimum_value
 
 
 class OpenReactor(ReactorModel, SteadyStateSolver):
@@ -60,9 +65,7 @@ class OpenReactor(ReactorModel, SteadyStateSolver):
         else:
             # wrong argument type
             msg = [Color.RED, "the first argument must be a Mixture object.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
         # initialize steady-state solver
         SteadyStateSolver.__init__(self)
         # use API mode for steady-state open reactor/flame simulations
@@ -98,9 +101,7 @@ class OpenReactor(ReactorModel, SteadyStateSolver):
         if not isinstance(extinlet, Stream):
             # wrong argument type
             msg = [Color.RED, "the argument must be a Stream object", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
         # current external inlet count
         count = self.numbexternalinlets + 1
         if extinlet.label is None:
@@ -124,8 +125,7 @@ class OpenReactor(ReactorModel, SteadyStateSolver):
                 inletname,
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         # check inlet flow rate
         if extinlet._flowratemode < 0:
             # no given in the inlet
@@ -136,30 +136,21 @@ class OpenReactor(ReactorModel, SteadyStateSolver):
                 "specify flow rate of the 'Inlet' object",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             flowrate = extinlet.mass_flowrate
-            if flowrate <= 0.0:
-                msg = [
-                    Color.PURPLE,
-                    "inlet flow rate < 0.\n",
-                    Color.SPACEx6,
-                    "specify flow rate of the 'Stream' object.",
-                    Color.END,
-                ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+            validate_minimum_value(
+                flowrate,
+                1.0e-30,
+                "inlet flow rate must > 0.\n specify flow rate of the 'Stream' object.",
+            )
         # add the inlet object to the inlet dict of the reactor
         self.externalinlets[inletname] = extinlet
         self.numbexternalinlets = count
         self.totalmassflowrate += flowrate
         #
         msg = [Color.YELLOW, "new inlet", inletname, "is added.", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
 
     def reset_inlet(self, new_stream: Stream):
         """Reset the properties of an existing external inlet."""
@@ -175,9 +166,7 @@ class OpenReactor(ReactorModel, SteadyStateSolver):
         # check input
         if not isinstance(new_stream, Stream):
             msg = [Color.PURPLE, "the argument must be a Stream.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # update the named inlet from the externalinlets dict
         missed = True
         # construct the full inlet name
@@ -196,9 +185,7 @@ class OpenReactor(ReactorModel, SteadyStateSolver):
 
         if missed:
             msg = [Color.PURPLE, "inlet", new_stream.label, "is not found.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     def remove_inlet(self, name: str):
         """Delete an existing external inlet from the reactor by the inlet name."""
@@ -212,9 +199,7 @@ class OpenReactor(ReactorModel, SteadyStateSolver):
         # check input
         if not isinstance(name, str):
             msg = [Color.PURPLE, "the argument must be a string.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # delete the named inlet from the externalinlets dict
         missed = False
         inletname = self.label + "_" + name
@@ -227,9 +212,7 @@ class OpenReactor(ReactorModel, SteadyStateSolver):
                 # some internal messed up
                 missed = True
                 msg = [Color.RED, name, "is not an inlet.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
-                exit()
+                critical_and_exit(msg)
             else:
                 # decrease the external inlet count by 1
                 self.numbexternalinlets -= 1
@@ -244,16 +227,13 @@ class OpenReactor(ReactorModel, SteadyStateSolver):
                     self.label,
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
         else:
             # not in the external inlet dict
             missed = True
         if missed:
             msg = [Color.PURPLE, "inlet", name, "is not found.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     @property
     def net_mass_flowrate(self) -> float:

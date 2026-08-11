@@ -38,10 +38,15 @@ from ansys.chemkin.core.chemistry import (
 )
 from ansys.chemkin.core.color import Color as Color
 from ansys.chemkin.core.inlet import Stream
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.mixture import equilibrium
 from ansys.chemkin.core.reactormodel import Keyword
 from ansys.chemkin.core.stirreactors.openreactor import OpenReactor
+from ansys.chemkin.core.utilities import (
+    log_critical_message,
+    log_error_message,
+    log_info_message,
+)
+from ansys.chemkin.core.validation import validate_minimum_value
 
 
 class PerfectlyStirredReactor(OpenReactor):
@@ -125,13 +130,8 @@ class PerfectlyStirredReactor(OpenReactor):
                 reactive surface area [cm2]
 
         """
-        if value < 0.0e0:
-            msg = [Color.PURPLE, "reactive surface area must >= 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._reactivearea = c_double(value)
+        validate_minimum_value(value, 0.0e0, "reactive surface area must >= 0.")
+        self._reactivearea = c_double(value)
 
     @property
     def volume(self) -> float:
@@ -155,16 +155,15 @@ class PerfectlyStirredReactor(OpenReactor):
                 reactor volume [cm3]
 
         """
-        if value > 0.0e0:
-            # set reactor volume
-            self._volume = c_double(value)
-            # set initial mixture volume
-            self.reactormixture.volume = value
-        else:
-            msg = [Color.PURPLE, "reactor volume must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_minimum_value(
+            value,
+            np.nextafter(0.0, 1.0),
+            "reactor volume must > 0.",
+        )
+        # set reactor volume
+        self._volume = c_double(value)
+        # set initial mixture volume
+        self.reactormixture.volume = value
 
     @property
     def residence_time(self) -> float:
@@ -188,14 +187,13 @@ class PerfectlyStirredReactor(OpenReactor):
                 reactor residence time [sec]
 
         """
-        if value > 0.0e0:
-            # set reactor residence time
-            self._residencetime = c_double(value)
-        else:
-            msg = [Color.PURPLE, "residence time must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_minimum_value(
+            value,
+            np.nextafter(0.0, 1.0),
+            "residence time must > 0.",
+        )
+        # set reactor residence time
+        self._residencetime = c_double(value)
 
     def set_inlet_keywords(self) -> int:
         """Set up inlet keywords."""
@@ -224,8 +222,7 @@ class PerfectlyStirredReactor(OpenReactor):
                 #
                 if np.isclose(0.0, flowrate, atol=1.0e-6):
                     msg = [Color.PURPLE, "inlet", key, "has zero flow rate", Color.END]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                     ierrc = 100 + i_inlet + 1
                 else:
                     # set inlet inputs
@@ -276,8 +273,7 @@ class PerfectlyStirredReactor(OpenReactor):
         # check number of external inlet
         if i_inlet == 0:
             msg = [Color.PURPLE, "PSR has no external inlet.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             ierr += 10
         elif i_inlet != self.numbexternalinlets:
             msg = [
@@ -292,8 +288,7 @@ class PerfectlyStirredReactor(OpenReactor):
                 str(i_inlet),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             ierr += 11
 
         # check total mass flow rate
@@ -312,8 +307,7 @@ class PerfectlyStirredReactor(OpenReactor):
                     str(flowrate_sum),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 ierr += 12
         return ierr
 
@@ -376,8 +370,7 @@ class PerfectlyStirredReactor(OpenReactor):
                     "is applied.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
             elif guess_temp < 250.0:
                 # use the current mixture temperature
                 msg = [
@@ -388,8 +381,7 @@ class PerfectlyStirredReactor(OpenReactor):
                     "is applied.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
             else:
                 # use the given temperature
                 self.reactormixture.temperature = guess_temp
@@ -421,8 +413,7 @@ class PerfectlyStirredReactor(OpenReactor):
                 "is applied.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             exit()
         else:
             # use the given temperature
@@ -458,8 +449,7 @@ class PerfectlyStirredReactor(OpenReactor):
                 'should be either "mole" or "mass".',
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             exit()
 
     def validate_inputs(self) -> int:
@@ -480,15 +470,13 @@ class PerfectlyStirredReactor(OpenReactor):
         else:
             if len(self._inputcheck) < self._numb_requiredinput:
                 msg = [Color.PURPLE, "some required inputs are missing.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
             # verify required inputs one by one
             for k in self._requiredlist:
                 if k not in self._inputcheck:
                     ierr += 1
                     msg = [Color.PURPLE, "missing required input", k, Color.END]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
             return ierr
 
     def set_ss_solver_keywords(self):
@@ -527,8 +515,7 @@ class PerfectlyStirredReactor(OpenReactor):
         ierr = self.validate_inputs()
         if ierr != 0:
             msg = [Color.PURPLE, "missing required input keywords.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return ierr
         # check external inlet
         if self.numbexternalinlets <= 0 or self.totalmassflowrate <= 0.0:
@@ -540,8 +527,7 @@ class PerfectlyStirredReactor(OpenReactor):
                     "missing external inlet for an open reactor.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return ierr
         else:
             # set up inlets
@@ -585,8 +571,7 @@ class PerfectlyStirredReactor(OpenReactor):
                     str(ierrc),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return ierrc
             # heat transfer (use additional keywords)
             # solver parameters (use additional keywords)
@@ -612,8 +597,7 @@ class PerfectlyStirredReactor(OpenReactor):
                     str(err_profile),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return err_profile
         if ierr == 0 and self.has_surface_chemistry:
             # set surface related keywords
@@ -644,8 +628,7 @@ class PerfectlyStirredReactor(OpenReactor):
                             "additional input lines are added.",
                             Color.END,
                         ]
-                        this_msg = Color.SPACE.join(msg)
-                        logger.info(this_msg)
+                        log_info_message(msg)
                 else:
                     msg = [
                         Color.PURPLE,
@@ -654,8 +637,7 @@ class PerfectlyStirredReactor(OpenReactor):
                         str(err_inputs),
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
             elif err_inputs == 0:
                 # do nothing
                 pass
@@ -666,8 +648,7 @@ class PerfectlyStirredReactor(OpenReactor):
                     str(err_inputs),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
         #
         ierr = ierr + err_inputs + err_key
 
@@ -728,8 +709,7 @@ class PerfectlyStirredReactor(OpenReactor):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         #
         # get ready to run the reactor model
@@ -745,13 +725,11 @@ class PerfectlyStirredReactor(OpenReactor):
             str(check_chemistryset(self._chemset_index.value)),
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         if not check_chemistryset(self._chemset_index.value):
             # Chemkin-CFD-API is not initialized: reinitialize Chemkin-CFD-API
             msg = [Color.YELLOW, "initializing Chemkin ...", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             ret_val = chemkin_wrapper.chemkin.KINInitialize(
                 self._chemset_index, c_int(0)
             )
@@ -763,14 +741,13 @@ class PerfectlyStirredReactor(OpenReactor):
                     str(ret_val),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
+                log_critical_message(msg)
                 exit()
             else:
                 chemistryset_initialized(self._chemset_index.value)
 
         # output initialization
-        logger.debug("clearing output ...")
+        log_info_message([Color.YELLOW, "clearing output ...", Color.END])
 
         # keyword processing
         msg = [
@@ -778,8 +755,7 @@ class PerfectlyStirredReactor(OpenReactor):
             "processing and generating keyword inputs ...",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         if Keyword.no_fullkeyword:
             # use API calls
             ret_val = (
@@ -792,8 +768,7 @@ class PerfectlyStirredReactor(OpenReactor):
                 "full keyword option not available for PSR models.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
             ret_val = 100
         if ret_val != 0:
             msg = [
@@ -803,15 +778,13 @@ class PerfectlyStirredReactor(OpenReactor):
                 str(ret_val),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
             return ret_val
-        logger.debug("processing keywords complete")
+        log_info_message([Color.YELLOW, "processing keywords complete", Color.END])
 
         # run reactor model
         msg = [Color.YELLOW, "running reactor simulation ...", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         # suppress text output to file
         if self.suppress_output:
             ierr = chemkin_wrapper.chemkin.KINAll0D_SuppressOutput()
@@ -823,12 +796,10 @@ class PerfectlyStirredReactor(OpenReactor):
         msg = ["simulation completed,", "status =", str(ret_val), Color.END]
         if ret_val == 0:
             msg.insert(0, Color.GREEN)
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         else:
             msg.insert(0, Color.RED)
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
 
         return ret_val
 
@@ -851,12 +822,10 @@ class PerfectlyStirredReactor(OpenReactor):
                 "any existing solution data will be deleted from the memory.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
 
         msg = [Color.YELLOW, "post-processing raw solution data ...", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         # create a Stream object to hold the mixture properties of current solution
         smixture = copy.deepcopy(self.reactormixture)
         # create a species mass fraction array to hold the steady-state solution
@@ -873,8 +842,7 @@ class PerfectlyStirredReactor(OpenReactor):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
             exit()
         # set solution mixture
         self._numbsolutionpoints = self._nreactors
@@ -907,8 +875,7 @@ class PerfectlyStirredReactor(OpenReactor):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
             exit()
         # clean up
         del frac
@@ -943,8 +910,7 @@ class PerfectlyStirredReactor(OpenReactor):
                     str(ierr_s),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
         else:
             ierr_s = -1
             s_frac = np.zeros(1, dtype=np.double)
@@ -959,8 +925,7 @@ class PerfectlyStirredReactor(OpenReactor):
                     str(ierr_b),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
         else:
             ierr_b = -1
             b_rate = np.zeros(1, dtype=np.double)
@@ -1079,15 +1044,14 @@ class PSRSetResTimeEnergyConservation(PerfectlyStirredReactor):
                 heat transfer coefficient [cal/cm2-K-sec]
 
         """
-        if value < 0.0e0:
-            msg = [Color.PURPLE, "heat transfer coefficient must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._heat_transfer_coefficient = value
-            # set the corresponding keyword
-            self.setkeyword(key="HTC", value=value)
+        validate_minimum_value(
+            value,
+            0.0e0,
+            "heat transfer coefficient must > 0.",
+        )
+        self._heat_transfer_coefficient = value
+        # set the corresponding keyword
+        self.setkeyword(key="HTC", value=value)
 
     @property
     def ambient_temperature(self) -> float:
@@ -1111,15 +1075,14 @@ class PSRSetResTimeEnergyConservation(PerfectlyStirredReactor):
                 ambient temperature [K]
 
         """
-        if value <= 0.0e0:
-            msg = [Color.PURPLE, "ambient temperature must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._ambient_temperature = value
-            # set the corresponding keyword
-            self.setkeyword(key="TAMB", value=value)
+        validate_minimum_value(
+            value,
+            np.nextafter(0.0, 1.0),
+            "ambient temperature must > 0.",
+        )
+        self._ambient_temperature = value
+        # set the corresponding keyword
+        self.setkeyword(key="TAMB", value=value)
 
     @property
     def heat_transfer_area(self) -> float:
@@ -1143,15 +1106,10 @@ class PSRSetResTimeEnergyConservation(PerfectlyStirredReactor):
                 heat transfer area [cm2]
 
         """
-        if value < 0.0e0:
-            msg = [Color.PURPLE, "heat transfer area must >= 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._heat_transfer_area = value
-            # set the corresponding keyword
-            self.setkeyword(key="AREAQ", value=value)
+        validate_minimum_value(value, 0.0e0, "heat transfer area must >= 0.")
+        self._heat_transfer_area = value
+        # set the corresponding keyword
+        self.setkeyword(key="AREAQ", value=value)
 
 
 class PSRSetVolumeEnergyConservation(PerfectlyStirredReactor):
@@ -1237,15 +1195,14 @@ class PSRSetVolumeEnergyConservation(PerfectlyStirredReactor):
                 heat transfer coefficient [cal/cm2-K-sec]
 
         """
-        if value < 0.0e0:
-            msg = [Color.PURPLE, "heat transfer coefficient must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._heat_transfer_coefficient = value
-            # set the corresponding keyword
-            self.setkeyword(key="HTC", value=value)
+        validate_minimum_value(
+            value,
+            0.0e0,
+            "heat transfer coefficient must > 0.",
+        )
+        self._heat_transfer_coefficient = value
+        # set the corresponding keyword
+        self.setkeyword(key="HTC", value=value)
 
     @property
     def ambient_temperature(self) -> float:
@@ -1269,15 +1226,14 @@ class PSRSetVolumeEnergyConservation(PerfectlyStirredReactor):
                 ambient temperature [K]
 
         """
-        if value <= 0.0e0:
-            msg = [Color.PURPLE, "ambient temperature must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._ambient_temperature = value
-            # set the corresponding keyword
-            self.setkeyword(key="TAMB", value=value)
+        validate_minimum_value(
+            value,
+            np.nextafter(0.0, 1.0),
+            "ambient temperature must > 0.",
+        )
+        self._ambient_temperature = value
+        # set the corresponding keyword
+        self.setkeyword(key="TAMB", value=value)
 
     @property
     def heat_transfer_area(self) -> float:
@@ -1301,15 +1257,10 @@ class PSRSetVolumeEnergyConservation(PerfectlyStirredReactor):
                 heat transfer area [cm2]
 
         """
-        if value < 0.0e0:
-            msg = [Color.PURPLE, "heat transfer area must >= 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._heat_transfer_area = value
-            # set the corresponding keyword
-            self.setkeyword(key="AREAQ", value=value)
+        validate_minimum_value(value, 0.0e0, "heat transfer area must >= 0.")
+        self._heat_transfer_area = value
+        # set the corresponding keyword
+        self.setkeyword(key="AREAQ", value=value)
 
 
 class PSRSetResTimeFixedTemperature(PerfectlyStirredReactor):

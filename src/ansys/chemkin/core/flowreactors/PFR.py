@@ -38,8 +38,15 @@ from ansys.chemkin.core.chemistry import (
 )
 from ansys.chemkin.core.color import Color as Color
 from ansys.chemkin.core.inlet import Stream
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.reactormodel import Keyword
+from ansys.chemkin.core.utilities import (
+    critical_and_exit,
+    error_and_exit,
+    log_critical_message,
+    log_error_message,
+    log_info_message,
+)
+from ansys.chemkin.core.validation import validate_minimum_value
 
 
 class PlugFlowReactor(BatchReactors):
@@ -66,9 +73,7 @@ class PlugFlowReactor(BatchReactors):
         else:
             # wrong argument type
             msg = [Color.RED, "the first argument must be an Inlet object.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
 
         # set reactor type
         self._reactortype = c_int(self.ReactorTypes.get("PFR", 3))
@@ -102,8 +107,7 @@ class PlugFlowReactor(BatchReactors):
             self.reactordiameter = c_double(dia)
             if self.reactorflowarea <= 0.0:
                 msg = [Color.YELLOW, "inlet flow area is not set.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
         # inlet mass flow rate [g/sec]
         self._massflowrate = c_double(0.0)
         self._flowrate = 0.0
@@ -116,9 +120,7 @@ class PlugFlowReactor(BatchReactors):
                 "please specify the flow rate of the 'Inlet' object.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             self.inletflowratemode = inlet._flowratemode
             self._flowrate = inlet._inletflowrate[inlet._flowratemode]
@@ -131,9 +133,7 @@ class PlugFlowReactor(BatchReactors):
                     "please specify the flow rate of the 'Inlet' object.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
         # solver parameters
         self._absolute_tolerance = 1.0e-12
         self._relative_tolerance = 1.0e-6
@@ -175,14 +175,13 @@ class PlugFlowReactor(BatchReactors):
                 reactor length [cm]
 
         """
-        if length <= 0.0e0:
-            msg = [Color.PURPLE, "reactor length must > 0.0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._inputcheck.append("XEND")
-            self.reactorlength = c_double(length)
+        validate_minimum_value(
+            value=length,
+            minimum=np.finfo(float).eps,
+            message="reactor length must > 0.0.",
+        )
+        self._inputcheck.append("XEND")
+        self.reactorlength = c_double(length)
 
     def set_start_position(self, x0: float):
         """Set the PFR simulation starting position."""
@@ -198,14 +197,10 @@ class PlugFlowReactor(BatchReactors):
         """
         if x0 >= self.reactorlength.value:
             msg = [Color.PURPLE, "starting position must < reactor length.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         elif x0 <= 0.0:
             msg = [Color.PURPLE, "reactor diameter must > 0.0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             self.startposition = c_double(x0)
 
@@ -237,9 +232,7 @@ class PlugFlowReactor(BatchReactors):
         """
         if diam <= 0.0:
             msg = [Color.PURPLE, "reactor diameter must > 0.0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             self._inputcheck.append("AREAF")
             self.reactordiameter = c_double(diam)
@@ -308,9 +301,7 @@ class PlugFlowReactor(BatchReactors):
         """
         if area <= 0.0:
             msg = [Color.PURPLE, "cross-sectional flow area must > 0.0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             # set the flow area keyword
             self._inputcheck.append("AREAF")
@@ -367,9 +358,7 @@ class PlugFlowReactor(BatchReactors):
         """
         if visc <= 0.0:
             msg = [Color.PURPLE, "gas mixture viscosity must > 0.0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             # set the mixture viscosity keyword
             self.setkeyword(key="VISC", value=visc)
@@ -388,9 +377,7 @@ class PlugFlowReactor(BatchReactors):
             self.setkeyword(key="DXMX", value=size)
         else:
             msg = [Color.PURPLE, "solver timestep size must > 0.0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     def set_pseudo_surface_velocity(self, vel: float):
         """Set the pseudo surface velocity at the active surface."""
@@ -410,9 +397,7 @@ class PlugFlowReactor(BatchReactors):
             self.setkeyword(key="PSV", value=vel)
         else:
             msg = [Color.PURPLE, "pseudo velocity must > 0.0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     @property
     def mass_flowrate(self) -> float:
@@ -487,8 +472,7 @@ class PlugFlowReactor(BatchReactors):
         ierr = self.validate_inputs()
         if ierr != 0:
             msg = [Color.PURPLE, "missing required input keywords.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return ierr
         # re-size work arrays if profile is used
         if self._numbprofiles > 0:
@@ -514,8 +498,7 @@ class PlugFlowReactor(BatchReactors):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return ierr
         # prepare inlet conditions
         # get inlet mass flow rate
@@ -554,8 +537,7 @@ class PlugFlowReactor(BatchReactors):
                     str(ierrc),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return ierrc
             # turn OFF the momentum equation when pressure profile is set
             if self._numbprofiles > 0:
@@ -579,8 +561,7 @@ class PlugFlowReactor(BatchReactors):
                         str(ierrc),
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                     return ierrc
 
         if ierr == 0 and self.has_surface_chemistry:
@@ -605,8 +586,7 @@ class PlugFlowReactor(BatchReactors):
                     str(ierr_prof),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return ierr_prof
         if ierr == 0:
             # set additional keywords
@@ -627,8 +607,7 @@ class PlugFlowReactor(BatchReactors):
                             "additional input lines are added.",
                             Color.END,
                         ]
-                        this_msg = Color.SPACE.join(msg)
-                        logger.info(this_msg)
+                        log_info_message(msg)
                 else:
                     msg = [
                         Color.PURPLE,
@@ -637,8 +616,7 @@ class PlugFlowReactor(BatchReactors):
                         str(err_inputs),
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
             else:
                 msg = [
                     Color.PURPLE,
@@ -646,8 +624,7 @@ class PlugFlowReactor(BatchReactors):
                     str(err_inputs),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
         #
         ierr = ierr + err_inputs + err_key
 
@@ -691,13 +668,11 @@ class PlugFlowReactor(BatchReactors):
             str(check_chemistryset(self._chemset_index.value)),
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         if not check_chemistryset(self._chemset_index.value):
             # Chemkin-CFD-API is not initialized: reinitialize Chemkin-CFD-API
             msg = [Color.YELLOW, "initializing Chemkin ...", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             ret_val = chemkin_wrapper.chemkin.KINInitialize(
                 self._chemset_index, c_int(0)
             )
@@ -709,14 +684,13 @@ class PlugFlowReactor(BatchReactors):
                     str(ret_val),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
+                log_critical_message(msg)
                 exit()
             else:
                 chemistryset_initialized(self._chemset_index.value)
 
         # output initialization
-        logger.debug("clearing output ...")
+        log_info_message([Color.YELLOW, "clearing output ...", Color.END])
 
         # keyword processing
         msg = [
@@ -724,8 +698,7 @@ class PlugFlowReactor(BatchReactors):
             "processing and generating keyword inputs ...",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         if Keyword.no_fullkeyword:
             # use API calls
             ret_val = (
@@ -742,22 +715,19 @@ class PlugFlowReactor(BatchReactors):
                 str(ret_val),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
             return ret_val
-        logger.debug("Processing keywords complete")
+        log_info_message([Color.YELLOW, "Processing keywords complete", Color.END])
 
         # run reactor model
         msg = [Color.YELLOW, "running reactor simulation ...", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         # suppress text output to file
         if self.suppress_output:
             ierr = chemkin_wrapper.chemkin.KINAll0D_SuppressOutput()
             if ierr != 0:
                 msg = [Color.YELLOW, "failed to turn off text output.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
         if Keyword.no_fullkeyword:
             # use API calls
             ret_val = self.__run_model()
@@ -769,12 +739,10 @@ class PlugFlowReactor(BatchReactors):
         msg = ["simulation completed,", "status =", str(ret_val), Color.END]
         if ret_val == 0:
             msg.insert(0, Color.GREEN)
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         else:
             msg.insert(0, Color.RED)
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
 
         return ret_val
 
@@ -803,9 +771,7 @@ class PFREnergyConservation(PlugFlowReactor):
         else:
             # wrong argument type
             msg = [Color.RED, "the first argument must be an Inlet object.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
 
         # set reactor type
         self._energytype = c_int(self.EnergyTypes.get("ENERGY", 1))
@@ -850,9 +816,7 @@ class PFREnergyConservation(PlugFlowReactor):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
 
     @property
     def heat_loss_rate(self) -> float:
@@ -912,9 +876,7 @@ class PFREnergyConservation(PlugFlowReactor):
         """
         if value < 0.0e0:
             msg = [Color.PURPLE, "heat transfer coefficient must >= 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             self._heat_transfer_coefficient = value
             # set the corresponding keyword
@@ -948,9 +910,7 @@ class PFREnergyConservation(PlugFlowReactor):
         """
         if value <= 0.0e0:
             msg = [Color.PURPLE, "ambient temperature must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             self._ambient_temperature = value
             # set the corresponding keyword
@@ -984,9 +944,7 @@ class PFREnergyConservation(PlugFlowReactor):
         """
         if value < 0.0e0:
             msg = [Color.PURPLE, "heat transfer area must >= 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             self._heat_transfer_area = value
             # set the corresponding keyword
@@ -1090,9 +1048,7 @@ class PFRFixedTemperature(PlugFlowReactor):
                 "the first argument must be an Inlet object",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         # set reactor type
         self._energytype = c_int(self.EnergyTypes.get("GivenT", 2))
@@ -1124,9 +1080,7 @@ class PFRFixedTemperature(PlugFlowReactor):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
 
     def set_temperature_profile(
         self, x: npt.NDArray[np.double], temp: npt.NDArray[np.double]

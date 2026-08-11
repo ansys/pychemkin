@@ -41,9 +41,17 @@ from ansys.chemkin.core.color import Color as Color
 from ansys.chemkin.core.constants import P_ATM
 from ansys.chemkin.core.engines.engine import Engine
 from ansys.chemkin.core.inlet import Stream
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.mixture import Mixture
 from ansys.chemkin.core.reactormodel import Keyword
+from ansys.chemkin.core.utilities import (
+    critical_and_exit,
+    error_and_exit,
+    log_critical_message,
+    log_error_message,
+    log_info_message,
+    log_warning_message,
+)
+from ansys.chemkin.core.validation import validate_minimum_value
 
 
 class HCCIengine(Engine):
@@ -160,9 +168,7 @@ class HCCIengine(Engine):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
 
     def get_number_of_zones(self) -> int:
         """Get the number of zones used by the current HCCI simulation."""
@@ -196,24 +202,20 @@ class HCCIengine(Engine):
                 str(nzones),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         if len(self.zonetemperature) > 0:
             msg = [Color.YELLOW, "zonal temperatures will be reset.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         self.zonetemperature = []
         # set zonal temperatures
         for t in zonetemp:
-            if t > 0.0:
-                self.zonetemperature.append(t)
-            else:
-                msg = [Color.PURPLE, "zonal temperature must > 0.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+            validate_minimum_value(
+                value=t,
+                minimum=np.finfo(float).eps,
+                message="zonal temperature must > 0.",
+            )
+            self.zonetemperature.append(t)
         # set zonal definition mode
         if self._zonalsetupmode == 0:
             self._zonalsetupmode = 1
@@ -237,9 +239,7 @@ class HCCIengine(Engine):
                 str(nzones),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         if len(self.zonevolume) > 0:
             msg = [
@@ -247,8 +247,7 @@ class HCCIengine(Engine):
                 "zonal volume fractions will be reset.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         self.zonevolume = []
         # set zonal volume fractions (will be normalized)
         for v in zonevol:
@@ -256,9 +255,7 @@ class HCCIengine(Engine):
                 self.zonevolume.append(v)
             else:
                 msg = [Color.PURPLE, "zonal volume must > 0.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
 
     def set_zonal_mass_fraction(self, zonemass: list[float]):
         """Set zonal mass fractions for muti-zone HCCI engine simulation."""
@@ -279,9 +276,7 @@ class HCCIengine(Engine):
                 str(nzones),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         if len(self.zonemass) > 0:
             msg = [
@@ -289,8 +284,7 @@ class HCCIengine(Engine):
                 "zonal mass fractions will be reset.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         self.zonemass = []
         # set zonal mass fractions (will be normalized)
         for v in zonemass:
@@ -298,9 +292,7 @@ class HCCIengine(Engine):
                 self.zonemass.append(v)
             else:
                 msg = [Color.PURPLE, "zonal mass must > 0.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
         # set flag
         self.usezonemass = True
 
@@ -323,9 +315,7 @@ class HCCIengine(Engine):
                 str(nzones),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         if len(self.zone_ht_area) > 0:
             msg = [
@@ -333,8 +323,7 @@ class HCCIengine(Engine):
                 "zonal heat transfer area fractions will be reset.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         self.zone_ht_area = []
         # set zonal wall heat transfer area fractions (will be normalized)
         for a in zonearea:
@@ -342,9 +331,7 @@ class HCCIengine(Engine):
                 self.zone_ht_area.append(a)
             else:
                 msg = [Color.PURPLE, "zonal area must >= 0.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
 
     def set_zonal_gas_mole_fractions(self, zonemolefrac: list[npt.NDArray[np.double]]):
         """Set zonal gas mole fractions for muti-zone HCCI engine."""
@@ -366,9 +353,7 @@ class HCCIengine(Engine):
                 "mole fraction arrays of size = number_species",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         if self._zonalsetupmode == 2:
             msg = [
@@ -377,13 +362,11 @@ class HCCIengine(Engine):
                 "to set up the zonal gas compositions",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
 
         if len(self.zonemolefrac) > 0:
             msg = [Color.YELLOW, "zonal gas mole fractions will be reset.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         self.zonemolefrac = []
         # set zonal definition mode
         self._zonalsetupmode = 1
@@ -407,8 +390,7 @@ class HCCIengine(Engine):
                 "previous fuel definition will be reset.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         self.fuel_composition = []
         self.fuel_composition = copy.deepcopy(recipe)
 
@@ -427,8 +409,7 @@ class HCCIengine(Engine):
                 "previous oxidizer definition will be reset.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         self.oxid_composition = []
         self.oxid_composition = copy.deepcopy(recipe)
 
@@ -449,8 +430,7 @@ class HCCIengine(Engine):
                 "previous product definition will be reset.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         self.product_composition = []
         self.product_composition = copy.deepcopy(products)
 
@@ -474,9 +454,7 @@ class HCCIengine(Engine):
                 "mole fraction arrays of size = number_species",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         if len(self.zoneaddmolefrac) > 0:
             msg = [
@@ -484,8 +462,7 @@ class HCCIengine(Engine):
                 "zonal additive gas mole fractions will be reset.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         self.zoneaddmolefrac = []
         # set zonal gas mole fractions
         for x in addfrac:
@@ -511,9 +488,7 @@ class HCCIengine(Engine):
                 str(nzones),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         if self._zonalsetupmode == 1:
             msg = [
@@ -522,8 +497,7 @@ class HCCIengine(Engine):
                 "to set up the zonal gas compositions",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
 
         if len(self.zoneequivalenceratio) > 0:
             msg = [
@@ -531,8 +505,7 @@ class HCCIengine(Engine):
                 "previous zonal equivalence ratios will be reset.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         self.zoneequivalenceratio = []
         # set zonal definition mode
         self._zonalsetupmode = 2
@@ -542,9 +515,7 @@ class HCCIengine(Engine):
                 self.zoneequivalenceratio.append(p)
             else:
                 msg = [Color.PURPLE, "zonal equivalence ratio must >= 0.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
 
     def set_zonal_egr_ratio(self, zoneegr: list[float]):
         """Set zonal exhaust gas recirculation (EGR) ratios."""
@@ -565,14 +536,11 @@ class HCCIengine(Engine):
                 str(nzones),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         if len(self.zone_egrr) > 0:
             msg = [Color.YELLOW, "previous zonal EGR ratios will be reset.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         self.zone_egrr = []
         # set zonal EGR ratio
         for r in zoneegr:
@@ -580,9 +548,7 @@ class HCCIengine(Engine):
                 self.zone_egrr.append(r)
             else:
                 msg = [Color.PURPLE, "zonal EGR ratio must >= 0.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
-                exit()
+                error_and_exit(msg)
 
     def set_zonal_mixtures(self, zonemixtures: list[Stream]):
         """Use zone mixtures to initialize the muti-zone HCCI engine."""
@@ -603,14 +569,11 @@ class HCCIengine(Engine):
                 "Mixture objects.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         #
         if len(self.zonetemperature) > 0:
             msg = [Color.YELLOW, "zonal temperatures will be reset.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         self.zonetemperature = []
         #
         if len(self.zonevolume) > 0:
@@ -619,14 +582,12 @@ class HCCIengine(Engine):
                 "zonal volume fractions will be reset.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         self.zonevolume = []
         #
         if len(self.zonemolefrac) > 0:
             msg = [Color.YELLOW, "zonal gas mole fractions will be reset.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         self.zonemolefrac = []
         # set zonal definition mode
         self._zonalsetupmode = 1
@@ -663,9 +624,7 @@ class HCCIengine(Engine):
                 "is valid for the multi-zone HCCI engine model only.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         if switch_ca > self.ivc_ca:
             # set keyword
@@ -677,9 +636,7 @@ class HCCIengine(Engine):
                 str(self.ivc_ca),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     def set_zonal_volume_keyword(self):
         """Set zonal volume keyword for the multi-zone HCCI engine simulation."""
@@ -691,9 +648,7 @@ class HCCIengine(Engine):
                 "to set up zonal conditions.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         for izone in range(self._nzones.value):
             # set the zonal number string
@@ -737,9 +692,7 @@ class HCCIengine(Engine):
                 "to set up zonal conditions.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         # set zonal pressure (same for all zones)
         self.setkeyword(key="PRES", value=self._pressure.value / P_ATM)
@@ -823,9 +776,7 @@ class HCCIengine(Engine):
                 "to set up zonal conditions.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
         # set zonal pressure (same for all zones)
         self.setkeyword(key="PRES", value=self._pressure.value / P_ATM)
@@ -950,8 +901,7 @@ class HCCIengine(Engine):
         ierr = self.validate_inputs()
         if ierr != 0:
             msg = [Color.PURPLE, "missing required input keywords", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return ierr
         # re-size work arrays if profile is used
         if self._numbprofiles > 0:
@@ -977,8 +927,7 @@ class HCCIengine(Engine):
                 str(err_profile),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return ierr
         # prepare initial conditions
         # initial mass fraction
@@ -1006,7 +955,9 @@ class HCCIengine(Engine):
             )
             ierr += ierrc
             if ierrc != 0:
-                logger.error("failed to set up basic reactor keywords")
+                log_error_message(
+                    [Color.PURPLE, "failed to set up basic reactor keywords", Color.END]
+                )
                 return ierrc
 
         # set reactor type
@@ -1079,8 +1030,7 @@ class HCCIengine(Engine):
                     str(err_profile),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return err_profile
         # solve integrated heat release rate due to chemical reactions
         self.setkeyword(key="QRGEQ", value=True)
@@ -1096,16 +1046,14 @@ class HCCIengine(Engine):
                     "input lines are added.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
         else:
             msg = [
                 Color.PURPLE,
                 "failed to create additional keyword lines.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
         return ierr
 
@@ -1143,8 +1091,7 @@ class HCCIengine(Engine):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
 
         return ierr
 
@@ -1167,8 +1114,7 @@ class HCCIengine(Engine):
         ierr = self.validate_inputs()
         if ierr != 0:
             msg = [Color.PURPLE, "missing required input keywords", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return ierr
         # re-size work arrays if profile is used
         if self._numbprofiles > 0:
@@ -1194,8 +1140,7 @@ class HCCIengine(Engine):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return ierr
         # prepare initial conditions
         # initial mass fraction
@@ -1227,8 +1172,7 @@ class HCCIengine(Engine):
                     str(ierrc),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return ierrc
             # heat transfer (use additional keywords)
             # solver parameters (use additional keywords)
@@ -1247,8 +1191,7 @@ class HCCIengine(Engine):
                     str(ierrc),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return ierrc
 
         # check if the wall heat transfer model is set up
@@ -1273,8 +1216,7 @@ class HCCIengine(Engine):
                     str(err_profile),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return err_profile
         if ierr == 0:
             # set additional keywords
@@ -1295,8 +1237,7 @@ class HCCIengine(Engine):
                             "additional input lines are added.",
                             Color.END,
                         ]
-                        this_msg = Color.SPACE.join(msg)
-                        logger.info(this_msg)
+                        log_info_message(msg)
                 else:
                     msg = [
                         Color.PURPLE,
@@ -1305,8 +1246,7 @@ class HCCIengine(Engine):
                         str(err_inputs),
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
             else:
                 msg = [
                     Color.PURPLE,
@@ -1314,8 +1254,7 @@ class HCCIengine(Engine):
                     str(err_inputs),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
         #
         ierr = ierr + err_inputs + err_key
 
@@ -1359,13 +1298,11 @@ class HCCIengine(Engine):
             str(check_chemistryset(self._chemset_index.value)),
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         if not check_chemistryset(self._chemset_index.value):
             # Chemkin-CFD-API is not initialized: reinitialize Chemkin-CFD-API
             msg = [Color.YELLOW, "initializing Chemkin ...", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             return_value = chemkin_wrapper.chemkin.KINInitialize(
                 self._chemset_index, c_int(0)
             )
@@ -1377,19 +1314,17 @@ class HCCIengine(Engine):
                     str(return_value),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
+                log_critical_message(msg)
                 exit()
             else:
                 chemistryset_initialized(self._chemset_index.value)
 
         # output initialization
-        logger.debug("clearing output ...")
+        log_info_message([Color.YELLOW, "clearing output ...", Color.END])
 
         # keyword processing
         msg = [Color.YELLOW, "processing and generating keyword inputs ...", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         #
         if self._nzones.value == 1 and Keyword.no_fullkeyword:
             # use API calls
@@ -1407,22 +1342,19 @@ class HCCIengine(Engine):
                 str(return_value),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
             return return_value
-        logger.debug("Processing keywords complete")
+        log_info_message([Color.YELLOW, "Processing keywords complete", Color.END])
 
         # run reactor model
         msg = [Color.YELLOW, "running HCCI engine simulation ...", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         # suppress text output to file
         if self.suppress_output:
             ierr = chemkin_wrapper.chemkin.KINAll0D_SuppressOutput()
             if ierr != 0:
                 msg = [Color.YELLOW, "failed to turn off text output.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
         if self._nzones.value == 1 and Keyword.no_fullkeyword:
             # single-zone HCCI
             # use API calls
@@ -1436,12 +1368,10 @@ class HCCIengine(Engine):
         msg = ["simulation completed,", "status =", str(return_value), Color.END]
         if return_value == 0:
             msg.insert(0, Color.GREEN)
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         else:
             msg.insert(0, Color.RED)
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
 
         return return_value
 
@@ -1468,8 +1398,7 @@ class HCCIengine(Engine):
         status = self.getrunstatus(mode="silent")
         if status == -100:
             msg = [Color.MAGENTA, "Please run the reactor simultion first.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         elif status != 0:
             msg = [
@@ -1479,8 +1408,7 @@ class HCCIengine(Engine):
                 "please correct the error(s) and rerun the reactor simulation.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         zonemixtures: list[Stream] = []
         if new_mixtures is None:
@@ -1499,8 +1427,7 @@ class HCCIengine(Engine):
                         str(self._nzones.value),
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                     exit()
                 else:
                     # set up the "new" initial conditions from the input parameter
@@ -1512,8 +1439,7 @@ class HCCIengine(Engine):
                     "The given list must contain Mixture objects.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 exit()
         # make the ending CA of the previous run as the starting CA
         time = self.get_solution_variable_profile("time")

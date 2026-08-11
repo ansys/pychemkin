@@ -30,9 +30,13 @@ import numpy.typing as npt
 from ansys.chemkin.core.color import Color as Color
 from ansys.chemkin.core.grid import Grid
 from ansys.chemkin.core.inlet import Stream
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.reactormodel import Keyword, ReactorModel
 from ansys.chemkin.core.steadystatesolver import SteadyStateSolver
+from ansys.chemkin.core.utilities import (
+    critical_and_exit,
+    log_error_message,
+)
+from ansys.chemkin.core.validation import validate_minimum_value
 
 
 class Flame(ReactorModel, SteadyStateSolver, Grid):
@@ -59,15 +63,11 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
         else:
             # wrong argument type
             msg = [Color.RED, "the first argument must be a Stream object.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
         if self.reactormixture.transport_data == 0:
             # transport property is required by the flame models
             msg = [Color.RED, "transport properties are required.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
         # initialize steady-state solver
         SteadyStateSolver.__init__(self)
         # initialize mesh quality control
@@ -177,8 +177,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
                 self.setkeyword(key="USE_TPRO_GRID", value=True)
             else:
                 msg = [Color.PURPLE, "temperature profile is NOT set.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 ierr = 1
                 return ierr
         elif self.numb_grid_profile > 0:
@@ -197,8 +196,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
                     str(self.grid_profile[0]),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 ierr = 2
                 return ierr
             if self.grid_profile[self.numb_grid_profile - 1] != self.ending_x:
@@ -215,8 +213,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
                     str(self.grid_profile[self.numb_grid_profile - 1]),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 ierr = 3
                 return ierr
             count = 0
@@ -226,8 +223,7 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
                 count += 1
             if count != self.numb_grid_profile:
                 msg = [Color.PURPLE, "grid profile has problem.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 ierr = abs(count - self.numb_grid_profile) * 10
                 return ierr
         else:
@@ -296,18 +292,18 @@ class Flame(ReactorModel, SteadyStateSolver, Grid):
                 Lewis number
 
         """
-        if lewis > 0.0:
-            self.setkeyword(key="LEWIS", value=lewis)
-            # turn OFF the multi-component transport properties
-            if self.transport_mode == 2:
-                self.use_mixture_averaged_transport()
-            # turn OFF thermal diffusion
-            if "TDIF" in self._keyword_index:
-                self.removekeyword(key="TDIF")
-        else:
-            msg = [Color.PURPLE, "Lewis number > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+        validate_minimum_value(
+            value=lewis,
+            minimum=np.finfo(float).eps,
+            message="Lewis number > 0.",
+        )
+        self.setkeyword(key="LEWIS", value=lewis)
+        # turn OFF the multi-component transport properties
+        if self.transport_mode == 2:
+            self.use_mixture_averaged_transport()
+        # turn OFF thermal diffusion
+        if "TDIF" in self._keyword_index:
+            self.removekeyword(key="TDIF")
 
     def use_thermal_diffusion(self, mode: bool = True):
         """Include the thermal diffusion (Doret) effect."""

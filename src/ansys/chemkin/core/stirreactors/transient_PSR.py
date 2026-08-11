@@ -41,9 +41,16 @@ from ansys.chemkin.core.inlet import (
     Stream,
     clone_stream,
 )
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.mixture import equilibrium
 from ansys.chemkin.core.reactormodel import Keyword
+from ansys.chemkin.core.utilities import (
+    critical_and_exit,
+    error_and_exit,
+    log_critical_message,
+    log_error_message,
+    log_info_message,
+)
+from ansys.chemkin.core.validation import validate_minimum_value
 
 
 class TransientPSR(BatchReactors):
@@ -125,14 +132,13 @@ class TransientPSR(BatchReactors):
                 reactor residence time [sec]
 
         """
-        if value > 0.0e0:
-            # set reactor residence time
-            self._residencetime = c_double(value)
-        else:
-            msg = [Color.PURPLE, "residence time must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+        validate_minimum_value(
+            value,
+            np.nextafter(0.0, 1.0),
+            "residence time must > 0.",
+        )
+        # set reactor residence time
+        self._residencetime = c_double(value)
 
     def set_inlet(self, extinlet: Stream):
         """Add an external inlet to the reactor."""
@@ -147,9 +153,7 @@ class TransientPSR(BatchReactors):
         if not isinstance(extinlet, Stream):
             # wrong argument type
             msg = [Color.RED, "the argument must be a Stream object", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
         # current external inlet count
         count = self.numbexternalinlets + 1
         if extinlet.label is None:
@@ -173,8 +177,7 @@ class TransientPSR(BatchReactors):
                 inletname,
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         # check inlet flow rate
         if extinlet._flowratemode < 0:
             # no given in the inlet
@@ -185,9 +188,7 @@ class TransientPSR(BatchReactors):
                 "specify flow rate of the 'Inlet' object",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             if extinlet._use_flow_rate_profile:
                 # use the first profile data point value
@@ -200,8 +201,7 @@ class TransientPSR(BatchReactors):
                         "<= 0.\n",
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.info(this_msg)
+                    log_info_message(msg)
                     if count == 1:
                         # first inlet cannot have zero flow rate
                         # at the start of simulation
@@ -218,17 +218,14 @@ class TransientPSR(BatchReactors):
                         "specify flow rate of the 'Stream'.",
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
-                    exit()
+                    error_and_exit(msg)
         # add the inlet object to the inlet dict of the reactor
         self.externalinlets[inletname] = extinlet
         self.numbexternalinlets = count
         self.totalmassflowrate += flowrate
         #
         msg = [Color.YELLOW, "new inlet", inletname, "is added.", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
 
     def reset_inlet(self, new_stream: Stream):
         """Reset the properties of an existing external inlet."""
@@ -244,9 +241,7 @@ class TransientPSR(BatchReactors):
         # check input
         if not isinstance(new_stream, Stream):
             msg = [Color.PURPLE, "the argument must be a Stream.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # update the named inlet from the externalinlets dict
         missed = True
         # construct the full inlet name
@@ -265,9 +260,7 @@ class TransientPSR(BatchReactors):
 
         if missed:
             msg = [Color.PURPLE, "inlet", new_stream.label, "is not found.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     def remove_inlet(self, name: str):
         """Delete an existing external inlet from the reactor by the inlet name."""
@@ -281,9 +274,7 @@ class TransientPSR(BatchReactors):
         # check input
         if not isinstance(name, str):
             msg = [Color.PURPLE, "the argument must be a string.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # delete the named inlet from the externalinlets dict
         missed = False
         inletname = self.label + "_" + name
@@ -296,9 +287,7 @@ class TransientPSR(BatchReactors):
                 # some internal messed up
                 missed = True
                 msg = [Color.RED, name, "is not an inlet.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
-                exit()
+                critical_and_exit(msg)
             else:
                 # decrease the external inlet count by 1
                 self.numbexternalinlets -= 1
@@ -313,16 +302,13 @@ class TransientPSR(BatchReactors):
                     self.label,
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
         else:
             # not in the external inlet dict
             missed = True
         if missed:
             msg = [Color.PURPLE, "inlet", name, "is not found.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     @property
     def net_mass_flowrate(self) -> float:
@@ -391,8 +377,7 @@ class TransientPSR(BatchReactors):
                         str(inlet._flowratemode),
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                     ierrc = i + 1
                 if ierrc == 0:
                     time, flowrate = inlet.flowrate_profile.get(
@@ -456,8 +441,7 @@ class TransientPSR(BatchReactors):
                 #
                 if np.isclose(0.0, flowrate, atol=1.0e-6):
                     msg = [Color.PURPLE, "inlet", key, "has zero flow rate", Color.END]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                     ierrc = 100 + i_inlet + 1
                 else:
                     # set inlet inputs
@@ -508,8 +492,7 @@ class TransientPSR(BatchReactors):
         # check number of external inlet
         if i_inlet == 0:
             msg = [Color.PURPLE, "PSR has no external inlet.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             ierr += 10
         elif i_inlet != self.numbexternalinlets:
             msg = [
@@ -524,8 +507,7 @@ class TransientPSR(BatchReactors):
                 str(i_inlet),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             ierr += 11
 
         # check total mass flow rate
@@ -544,8 +526,7 @@ class TransientPSR(BatchReactors):
                     str(flowrate_sum),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 ierr += 12
         return ierr
 
@@ -591,8 +572,7 @@ class TransientPSR(BatchReactors):
                     "is applied.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
             elif guess_temp < 250.0:
                 # use the current mixture temperature
                 msg = [
@@ -603,8 +583,7 @@ class TransientPSR(BatchReactors):
                     "is applied.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.info(this_msg)
+                log_info_message(msg)
             else:
                 # use the given temperature
                 self.reactormixture.temperature = guess_temp
@@ -636,8 +615,7 @@ class TransientPSR(BatchReactors):
                 "is applied.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             exit()
         else:
             # use the given temperature
@@ -673,8 +651,7 @@ class TransientPSR(BatchReactors):
                 'should be either "mole" or "mass".',
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             exit()
 
     def validate_inputs(self) -> int:
@@ -695,15 +672,13 @@ class TransientPSR(BatchReactors):
         else:
             if len(self._inputcheck) < self._numb_requiredinput:
                 msg = [Color.PURPLE, "some required inputs are missing.", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
             # verify required inputs one by one
             for k in self._requiredlist:
                 if k not in self._inputcheck:
                     ierr += 1
                     msg = [Color.PURPLE, "missing required input", k, Color.END]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
             return ierr
 
     def __process_keywords(self) -> int:
@@ -723,8 +698,7 @@ class TransientPSR(BatchReactors):
         ierr = self.validate_inputs()
         if ierr != 0:
             msg = [Color.PURPLE, "missing required input keywords.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return ierr
         # check external inlet
         if self.numbexternalinlets <= 0 or self.totalmassflowrate <= 0.0:
@@ -736,8 +710,7 @@ class TransientPSR(BatchReactors):
                     "missing external inlet for an open reactor.",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return ierr
         else:
             # set up inlets
@@ -769,8 +742,7 @@ class TransientPSR(BatchReactors):
                     str(ierrc),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return ierrc
         # prepare estimated reactor conditions
         # estimated reactor mass fraction
@@ -808,8 +780,7 @@ class TransientPSR(BatchReactors):
                     str(ierrc),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return ierrc
             # heat transfer (use additional keywords)
             # solver parameters (use additional keywords)
@@ -828,8 +799,7 @@ class TransientPSR(BatchReactors):
                         str(ierrc),
                         Color.END,
                     ]
-                    this_msg = Color.SPACE.join(msg)
-                    logger.error(this_msg)
+                    log_error_message(msg)
                     return ierrc
 
         if ierr == 0 and self._numbprofiles > 0 and self.standalone:
@@ -848,8 +818,7 @@ class TransientPSR(BatchReactors):
                     str(err_profile),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 return err_profile
         if ierr == 0 and self.has_surface_chemistry:
             # set surface related keywords
@@ -878,8 +847,7 @@ class TransientPSR(BatchReactors):
                             "additional input lines are added.",
                             Color.END,
                         ]
-                        this_msg = Color.SPACE.join(msg)
-                        logger.info(this_msg)
+                        log_info_message(msg)
             elif err_inputs == 0:
                 # do nothing
                 pass
@@ -890,8 +858,7 @@ class TransientPSR(BatchReactors):
                     str(err_inputs),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
         #
         ierr = ierr + err_inputs + err_key
 
@@ -952,8 +919,7 @@ class TransientPSR(BatchReactors):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         #
         # get ready to run the reactor model
@@ -969,13 +935,11 @@ class TransientPSR(BatchReactors):
             str(check_chemistryset(self._chemset_index.value)),
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         if not check_chemistryset(self._chemset_index.value):
             # Chemkin-CFD-API is not initialized: reinitialize Chemkin-CFD-API
             msg = [Color.YELLOW, "initializing Chemkin ...", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             ret_val = chemkin_wrapper.chemkin.KINInitialize(
                 self._chemset_index, c_int(0)
             )
@@ -987,14 +951,13 @@ class TransientPSR(BatchReactors):
                     str(ret_val),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
+                log_critical_message(msg)
                 exit()
             else:
                 chemistryset_initialized(self._chemset_index.value)
 
         # output initialization
-        logger.debug("clearing output ...")
+        log_info_message([Color.YELLOW, "clearing output ...", Color.END])
 
         # keyword processing
         msg = [
@@ -1002,8 +965,7 @@ class TransientPSR(BatchReactors):
             "processing and generating keyword inputs ...",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         if Keyword.no_fullkeyword:
             # use API calls
             ret_val = (
@@ -1016,8 +978,7 @@ class TransientPSR(BatchReactors):
                 "full keyword option not available for PSR models.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
             ret_val = 100
         if ret_val != 0:
             msg = [
@@ -1027,15 +988,13 @@ class TransientPSR(BatchReactors):
                 str(ret_val),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
             return ret_val
-        logger.debug("processing keywords complete")
+        log_info_message([Color.YELLOW, "processing keywords complete", Color.END])
 
         # run reactor model
         msg = [Color.YELLOW, "running reactor simulation ...", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         # suppress text output to file
         if self.suppress_output:
             ierr = chemkin_wrapper.chemkin.KINAll0D_SuppressOutput()
@@ -1047,12 +1006,10 @@ class TransientPSR(BatchReactors):
         msg = ["simulation completed,", "status =", str(ret_val), Color.END]
         if ret_val == 0:
             msg.insert(0, Color.GREEN)
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         else:
             msg.insert(0, Color.RED)
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
 
         return ret_val
 
@@ -1196,15 +1153,14 @@ class TransientPSRSetVolumeEnergyConservation(TransientPSR):
                 heat transfer coefficient [cal/cm2-K-sec]
 
         """
-        if value < 0.0e0:
-            msg = [Color.PURPLE, "heat transfer coefficient must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._heat_transfer_coefficient = value
-            # set the corresponding keyword
-            self.setkeyword(key="HTC", value=value)
+        validate_minimum_value(
+            value,
+            0.0e0,
+            "heat transfer coefficient must > 0.",
+        )
+        self._heat_transfer_coefficient = value
+        # set the corresponding keyword
+        self.setkeyword(key="HTC", value=value)
 
     @property
     def ambient_temperature(self) -> float:
@@ -1228,15 +1184,14 @@ class TransientPSRSetVolumeEnergyConservation(TransientPSR):
                 ambient temperature [K]
 
         """
-        if value <= 0.0e0:
-            msg = [Color.PURPLE, "ambient temperature must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._ambient_temperature = value
-            # set the corresponding keyword
-            self.setkeyword(key="TAMB", value=value)
+        validate_minimum_value(
+            value,
+            np.nextafter(0.0, 1.0),
+            "ambient temperature must > 0.",
+        )
+        self._ambient_temperature = value
+        # set the corresponding keyword
+        self.setkeyword(key="TAMB", value=value)
 
     @property
     def heat_transfer_area(self) -> float:
@@ -1260,15 +1215,10 @@ class TransientPSRSetVolumeEnergyConservation(TransientPSR):
                 heat transfer area [cm2]
 
         """
-        if value < 0.0e0:
-            msg = [Color.PURPLE, "heat transfer area must >= 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._heat_transfer_area = value
-            # set the corresponding keyword
-            self.setkeyword(key="AREAQ", value=value)
+        validate_minimum_value(value, 0.0e0, "heat transfer area must >= 0.")
+        self._heat_transfer_area = value
+        # set the corresponding keyword
+        self.setkeyword(key="AREAQ", value=value)
 
 
 class TransientPSRSetResTimeFixedTemperature(TransientPSR):
@@ -1414,15 +1364,14 @@ class TransientPSRSetResTimeEnergyConservation(TransientPSR):
                 heat transfer coefficient [cal/cm2-K-sec]
 
         """
-        if value < 0.0e0:
-            msg = [Color.PURPLE, "heat transfer coefficient must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._heat_transfer_coefficient = value
-            # set the corresponding keyword
-            self.setkeyword(key="HTC", value=value)
+        validate_minimum_value(
+            value,
+            0.0e0,
+            "heat transfer coefficient must > 0.",
+        )
+        self._heat_transfer_coefficient = value
+        # set the corresponding keyword
+        self.setkeyword(key="HTC", value=value)
 
     @property
     def ambient_temperature(self) -> float:
@@ -1446,15 +1395,14 @@ class TransientPSRSetResTimeEnergyConservation(TransientPSR):
                 ambient temperature [K]
 
         """
-        if value <= 0.0e0:
-            msg = [Color.PURPLE, "ambient temperature must > 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._ambient_temperature = value
-            # set the corresponding keyword
-            self.setkeyword(key="TAMB", value=value)
+        validate_minimum_value(
+            value,
+            np.nextafter(0.0, 1.0),
+            "ambient temperature must > 0.",
+        )
+        self._ambient_temperature = value
+        # set the corresponding keyword
+        self.setkeyword(key="TAMB", value=value)
 
     @property
     def heat_transfer_area(self) -> float:
@@ -1478,12 +1426,7 @@ class TransientPSRSetResTimeEnergyConservation(TransientPSR):
                 heat transfer area [cm2]
 
         """
-        if value < 0.0e0:
-            msg = [Color.PURPLE, "heat transfer area must >= 0.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            self._heat_transfer_area = value
-            # set the corresponding keyword
-            self.setkeyword(key="AREAQ", value=value)
+        validate_minimum_value(value, 0.0e0, "heat transfer area must >= 0.")
+        self._heat_transfer_area = value
+        # set the corresponding keyword
+        self.setkeyword(key="AREAQ", value=value)

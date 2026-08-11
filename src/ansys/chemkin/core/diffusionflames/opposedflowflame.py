@@ -39,10 +39,18 @@ from ansys.chemkin.core.chemistry import (
 from ansys.chemkin.core.color import Color as Color
 from ansys.chemkin.core.flame import Flame
 from ansys.chemkin.core.inlet import Stream
-from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.mixture import interpolate_mixtures
 from ansys.chemkin.core.reactormodel import Keyword
-from ansys.chemkin.core.utilities import find_interpolate_parameters
+from ansys.chemkin.core.utilities import (
+    critical_and_exit,
+    error_and_exit,
+    find_interpolate_parameters,
+    log_critical_message,
+    log_error_message,
+    log_info_message,
+    log_warning_message,
+)
+from ansys.chemkin.core.validation import validate_minimum_value
 
 
 class OpposedFlame(Flame):
@@ -68,9 +76,7 @@ class OpposedFlame(Flame):
         if not isinstance(fuel_stream, Stream):
             # wrong argument type
             msg = [Color.RED, "the first argument must be a Stream object.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
         # set label
         if label is None:
             self.label = "oppdifflame"
@@ -119,9 +125,7 @@ class OpposedFlame(Flame):
             if not isinstance(oxid_stream, Stream):
                 # wrong argument type
                 msg = [Color.RED, "the argument must be a Stream object", Color.END]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
-                exit()
+                critical_and_exit(msg)
             else:
                 # oxidizer stream is not set
                 # clone the stream
@@ -140,9 +144,7 @@ class OpposedFlame(Flame):
                 "opposed-flow flame model does NOT allow more than TWO inlet streams.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
 
     def lump_diffusion_imbalance(self, mode: bool = True):
         """Lump species mass balance uncertainty to the last species."""
@@ -196,8 +198,7 @@ class OpposedFlame(Flame):
         else:
             # no temperature profile found
             msg = [Color.PURPLE, "no temperature profile found.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             return -1
 
     def use_tpro_grids(self, mode: bool = True):
@@ -261,19 +262,14 @@ class OpposedFlame(Flame):
                 "this maximum temperature setting is ignored.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        #
-        if max_temp <= 200.0:
-            # max temperature is too small
-            msg = [Color.PURPLE, "max temperature value must > 200K.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
-        else:
-            # set maximum flame temperature value
-            self.setkeyword("TMAX", max_temp)
+            error_and_exit(msg)
+        validate_minimum_value(
+            value=max_temp,
+            minimum=200.0 + np.finfo(float).eps,
+            message="max temperature value must > 200K.",
+        )
+        # set maximum flame temperature value
+        self.setkeyword("TMAX", max_temp)
 
     def set_inlet_keywords(self, inlet: Stream) -> int:
         """Set inlet stream properties."""
@@ -320,8 +316,7 @@ class OpposedFlame(Flame):
                 "].",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
         return ierr
 
     def __run_model(self) -> int:
@@ -411,8 +406,7 @@ class OpposedFlame(Flame):
                             "is not available through PyChemkin.",
                             Color.END,
                         ]
-                        this_msg = Color.SPACE.join(msg)
-                        logger.error(this_msg)
+                        log_error_message(msg)
                         ierr += ierrc
                     elif ierrc != 0:
                         msg = [
@@ -423,8 +417,7 @@ class OpposedFlame(Flame):
                             str(ierrc),
                             Color.END,
                         ]
-                        this_msg = Color.SPACE.join(msg)
-                        logger.error(this_msg)
+                        log_error_message(msg)
                         ierr += ierrc
         #
         self.showkeywordinputlines()
@@ -457,13 +450,11 @@ class OpposedFlame(Flame):
             str(check_chemistryset(self._chemset_index.value)),
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         if not check_chemistryset(self._chemset_index.value):
             # Chemkin-CFD-API is not initialized: reinitialize Chemkin-CFD-API
             msg = [Color.YELLOW, "initializing Chemkin ...", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             ret_val = chemkin_wrapper.chemkin.KINInitialize(
                 self._chemset_index, self._solvertype
             )
@@ -475,14 +466,13 @@ class OpposedFlame(Flame):
                     str(ret_val),
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.critical(this_msg)
+                log_critical_message(msg)
                 exit()
             else:
                 chemistryset_initialized(self._chemset_index.value)
 
         # output initialization
-        logger.debug("clearing output ...")
+        log_info_message([Color.YELLOW, "clearing output ...", Color.END])
 
         # keyword processing
         msg = [
@@ -490,8 +480,7 @@ class OpposedFlame(Flame):
             "processing and generating keyword inputs ...",
             Color.END,
         ]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         ret_val = (
             self.__process_keywords()
         )  # each reactor model subclass to perform its own keyword processing
@@ -503,15 +492,13 @@ class OpposedFlame(Flame):
                 str(ret_val),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
             return ret_val
-        logger.debug("processing keywords complete")
+        log_info_message([Color.YELLOW, "processing keywords complete", Color.END])
 
         # run reactor model
         msg = [Color.YELLOW, "running premixed flame simulation ...", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         # use API calls
         ret_val = self.__run_model()
         # update run status
@@ -519,12 +506,10 @@ class OpposedFlame(Flame):
         msg = ["simulation completed,", "status =", str(ret_val), Color.END]
         if ret_val == 0:
             msg.insert(0, Color.GREEN)
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
         else:
             msg.insert(0, Color.RED)
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
+            log_critical_message(msg)
 
         return ret_val
 
@@ -542,8 +527,7 @@ class OpposedFlame(Flame):
         status = self.getrunstatus(mode="silent")
         if status == -100:
             msg = [Color.MAGENTA, "please run the flame simulation first.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         elif status != 0:
             msg = [
@@ -553,8 +537,7 @@ class OpposedFlame(Flame):
                 "please correct the error(s) and rerun the flame simulation.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # insert the continuation keyword
         key_continue = bytes("CNTN", "utf-8")
@@ -567,8 +550,7 @@ class OpposedFlame(Flame):
                 "continuation run starting...",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             # run the model
             ierr = self.run()
             status += ierr
@@ -589,8 +571,7 @@ class OpposedFlame(Flame):
         status = self.getrunstatus(mode="silent")
         if status == -100:
             msg = [Color.MAGENTA, "please run the flame simulation first.", Color.END]
-            this_msg = Color.SPACE.join(msg)
-            logger.warning(this_msg)
+            log_warning_message(msg)
             exit()
         elif status != 0:
             msg = [
@@ -600,8 +581,7 @@ class OpposedFlame(Flame):
                 "please correct the error(s) and rerun the flame simulation.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # number of time points in the solution
         npoints = c_int(0)
@@ -622,8 +602,7 @@ class OpposedFlame(Flame):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
 
     def process_solution(self):
@@ -636,8 +615,7 @@ class OpposedFlame(Flame):
                 "any existing solution data will be deleted from the memory.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
 
         # reset raw and mixture solution parameters
         self._numbsolutionpoints = 0
@@ -655,9 +633,7 @@ class OpposedFlame(Flame):
                 str(npoints),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         else:
             self._numbsolutionpoints = npoints
         # create arrays to hold the raw solution data
@@ -674,8 +650,7 @@ class OpposedFlame(Flame):
             order="F",
         )
         msg = [Color.YELLOW, "post-processing raw solution data ...", Color.END]
-        this_msg = Color.SPACE.join(msg)
-        logger.info(this_msg)
+        log_info_message(msg)
         # create a species mass fraction array to hold the steady-state solution
         frac = np.zeros(
             (
@@ -699,9 +674,7 @@ class OpposedFlame(Flame):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
         # get the flow field
         npoint = c_int(npoints)
         # axial velocity [cm/sec]
@@ -719,9 +692,7 @@ class OpposedFlame(Flame):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
         # get mixture fraction [-]
         npoint = c_int(npoints)
         mix_frac = np.zeros_like(pos, dtype=np.double)
@@ -737,9 +708,7 @@ class OpposedFlame(Flame):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.critical(this_msg)
-            exit()
+            critical_and_exit(msg)
         # store the raw solution data in a dictionary
         # grid
         self._solution_rawarray["distance"] = copy.deepcopy(pos)
@@ -763,9 +732,7 @@ class OpposedFlame(Flame):
                 str(ierr),
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
-            exit()
+            error_and_exit(msg)
         # clean up
         del pos, temp, axial_vel, radial_vel, mix_frac, frac
 
@@ -790,9 +757,8 @@ class OpposedFlame(Flame):
                 "to post-process the raw solution data first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
-            return 1
+            log_info_message(msg)
+            return np.zeros(0, dtype=np.double)
         # check variable name
         vname = varname.rstrip()
         if vname.lower() in self._solution_tags:
@@ -810,8 +776,7 @@ class OpposedFlame(Flame):
                     "and has to be derived from other variable(s).",
                     Color.END,
                 ]
-                this_msg = Color.SPACE.join(msg)
-                logger.error(this_msg)
+                log_error_message(msg)
                 exit()
 
         # create variable arrays to hold the solution profile
@@ -843,8 +808,7 @@ class OpposedFlame(Flame):
                 "to post-process the raw solution data first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             return 1
         # create a temporary Stream object to hold the mixture properties
         # at current solution point
@@ -913,8 +877,7 @@ class OpposedFlame(Flame):
                 "to post-process the raw solution data first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             exit()
         # get the time point array
         posarray = self.get_solution_variable_profile("distance")
@@ -966,8 +929,7 @@ class OpposedFlame(Flame):
                 "to post-process the raw solution data first.",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            log_info_message(msg)
             exit()
         # check index
         if grid_index > self._numbsolutionpoints - 1:
@@ -986,8 +948,7 @@ class OpposedFlame(Flame):
                 "]",
                 Color.END,
             ]
-            this_msg = Color.SPACE.join(msg)
-            logger.error(this_msg)
+            log_error_message(msg)
             exit()
         # get the mixture
         mixturetarget = copy.deepcopy(self._solution_mixturearray[grid_index])

@@ -25,6 +25,7 @@
 from ctypes import c_double, c_int
 
 from ansys.chemkin.core import chemkin_wrapper as ck_wrapper
+from ansys.chemkin.core.validation import validate_chemid, validate_minimum_value
 
 
 def check_realgas_status(chem_index: int) -> bool:
@@ -43,6 +44,7 @@ def check_realgas_status(chem_index: int) -> bool:
     """
     # initialization assuming the real-gas EOS is not ON
     status = False
+    validate_chemid(chem_index)
 
     chemset_index = c_int(chem_index)
     mode = c_int(0)
@@ -68,6 +70,12 @@ def set_current_pressure(chem_index: int, pressure: float) -> int:
             error code
 
     """
+    validate_chemid(chem_index)
+    validate_minimum_value(
+        value=pressure,
+        minimum=0.0,
+        message="invalid pressure value.",
+    )
     # convert variables
     chemset_index = c_int(chem_index)
     p = c_double(pressure)
