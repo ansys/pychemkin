@@ -20,7 +20,7 @@ repos:
         #exclude: "^src|^tests|^examples/.*_.*"
 
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.28.0 # 1.18.0
+    rev: v1.29.0 # 1.18.0
     hooks:
       - id: zizmor
         args: ["--pedantic"]
