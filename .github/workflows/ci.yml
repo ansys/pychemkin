@@ -214,7 +214,7 @@ jobs:
     permissions:
       contents: write # Write to the gh-pages branch of the repository
     steps:
-      - uses: ansys/actions/doc-deploy-dev@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+      - uses: ansys/actions/doc-deploy-dev@d98e1a4008dab392f8c114a483c2c5624076ccd6 # v11.0.1
         with:
             cname: ${{ env.DOCUMENTATION_CNAME }}
             token: ${{ secrets.GITHUB_TOKEN }}
