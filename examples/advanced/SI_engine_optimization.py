@@ -396,7 +396,7 @@ def setup_fresh_mixture(
 
     # mean equivalence ratio
     equiv = phi
-    iError = fresh.x_by_equivalence_ratio(
+    _ = fresh.x_by_equivalence_ratio(
         MyGasMech, fuelmixture.x, air.x, add_frac, products, equivalenceratio=equiv
     )
 

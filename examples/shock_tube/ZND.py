@@ -103,7 +103,7 @@ MyGasMech.chemfile = find_file(mechanism_dir, "Hydrogen_chem_MFL", "inp")
 # =====================================
 
 # preprocess the mechanism files
-ierror = MyGasMech.preprocess()
+_ = MyGasMech.preprocess()
 
 ###################################
 # Instantiate and set up the stream

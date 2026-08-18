@@ -118,7 +118,7 @@ MyGasMech.chemfile = find_file(
 # =====================================
 
 # preprocess the mechanism files
-ierror = MyGasMech.preprocess()
+_ = MyGasMech.preprocess()
 
 #####################################
 # Set up the H\ :sub:`2`\ -air stream

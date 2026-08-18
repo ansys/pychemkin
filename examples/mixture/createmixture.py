@@ -114,7 +114,7 @@ MyGasMech.preprocess_transportdata()
 # ``real-gas cubic EOS 'Soave' is available``.
 
 # preprocess the mechanism files
-ierror = MyGasMech.preprocess()
+_ = MyGasMech.preprocess()
 
 ######################################################################
 # Set up gas mixtures based on the species in the C2 NOx chemistry set

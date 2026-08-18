@@ -137,7 +137,7 @@ MyGasMech.thermfile = str(data_dir / "therm.dat")
 # =====================================
 
 # preprocess the mechanism files
-ierror = MyGasMech.preprocess()
+_ = MyGasMech.preprocess()
 
 ###################################
 # Instantiate and set up the stream

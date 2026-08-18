@@ -86,7 +86,7 @@ MyMech.chemfile = str(mechanism_dir / "C2_NOx_SRK.inp")
 # method is not used, transport property methods are not available in this project.
 
 # preprocess the mechanism files
-ierror = MyMech.preprocess()
+_ = MyMech.preprocess()
 
 ######################################################################
 # Set up gas mixtures based on the species in the C2 NOx chemistry set

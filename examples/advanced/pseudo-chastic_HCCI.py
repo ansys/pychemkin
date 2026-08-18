@@ -121,7 +121,7 @@ MyGasMech.tranfile = str(mechanism_dir / "grimech30_transport.dat")
 # ============================
 
 # preprocess the mechanism files
-iError = MyGasMech.preprocess()
+_ = MyGasMech.preprocess()
 
 #############################
 # Set up the fuel-air mixture
@@ -525,17 +525,19 @@ for end_ca in ca_stops:
             zonemixing = MicroMixing()
             # set the total number of particles
             zonemixing.set_numb_particles(numb_particles)
-            # set the zone mixture
+            # get the zonal mixtures from the last multi-zone solution
             zonemixtures = MyMZEngine.get_last_zone_mixtures()
+            # set up the particle properties based on the zonal mixtures
             zonemixing.set_particle_mixtures(zonemixtures)
-            # use the modified Curl's mixing model
+            # perform micro-mixing of the particles to create mixed zonal mixtures
+            # using the modified Curl's mixing model
             mixed_zones = zonemixing.modified_curls(
                 delta_time,
                 mixing_time_scale,
                 mixing_model_parameter,
             )
             # restart run(s)
-            # reset the simulation end CA [degree]
+            # use the mixed zonal mixtures to reset the simulation end CA [degree]
             runstatus = MyMZEngine.restart(end_ca=end_ca, new_mixtures=mixed_zones)
         else:
             # restart run(s)
@@ -560,8 +562,8 @@ for end_ca in ca_stops:
     # To process the result of the zone number :math:`j`\ , :math:`(1 \leq j \leq n)`\ ,
     # set the parameter value of ``zoneID`` to :math:`j` when you call the engine
     # postprocessor with the ``process_engine_solution()`` method. Otherwise, the
-    # cylinder averaged results are postprocessed by default, that is, when the ``zoneID``
-    # parameter is omitted.
+    # cylinder averaged results are postprocessed by default, that is, when the
+    # ``zoneID`` parameter is omitted.
     #
     # .. note ::
     #   Because The ``process_engine_solution()`` method can process only one set of
