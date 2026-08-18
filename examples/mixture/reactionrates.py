@@ -91,7 +91,7 @@ MyGasMech.tranfile = str(mechanism_dir / "grimech30_transport.dat")
 # ============================
 
 # preprocess the mechanism files
-ierror = MyGasMech.preprocess()
+_ = MyGasMech.preprocess()
 
 
 ################################################################

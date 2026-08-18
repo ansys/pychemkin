@@ -186,7 +186,7 @@ egr_ratio = 0.3
 # compute the EGR stream composition in mole fractions
 add_frac = fresh.get_egr_mole_fraction(egr_ratio, threshold=1.0e-8)
 # re-create the initial mixture with EGR
-ierror = fresh.x_by_equivalence_ratio(
+_ = fresh.x_by_equivalence_ratio(
     MyGasMech,
     fuelmixture.x,
     air.x,

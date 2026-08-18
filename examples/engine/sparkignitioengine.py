@@ -114,7 +114,7 @@ MyGasMech.chemfile = str(mechanism_dir / "gasoline_14comp_WBencrypt.inp")
 # =====================================
 
 # preprocess the mechanism files
-ierror = MyGasMech.preprocess()
+_ = MyGasMech.preprocess()
 print("Mechanism information:")
 print(f"Number of gas species = {MyGasMech.kk:d}.")
 print(f"Number of gas reactions = {MyGasMech.ii_gas:d}.")
@@ -202,7 +202,7 @@ egr_ratio = 0.3
 # compute the EGR stream composition in mole fractions
 add_frac = fresh.get_egr_mole_fraction(egr_ratio, threshold=1.0e-8)
 # recreate the initial mixture with EGR
-ierror = fresh.x_by_equivalence_ratio(
+_ = fresh.x_by_equivalence_ratio(
     MyGasMech,
     fuelmixture.x,
     air.x,

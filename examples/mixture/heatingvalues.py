@@ -347,7 +347,7 @@ for f in fuels:
     # re-set the fuel composition (mole/volume fractions)
     fuel.x = f
     # create a soichiometric fuel-oxygen mixture
-    ierror = unburned.x_by_equivalence_ratio(
+    _ = unburned.x_by_equivalence_ratio(
         MyGasMech, fuel.x, oxid.x, add_frac, products, equivalenceratio=1.0
     )
     # get the mixture enthalpy of the initial mixture [erg/g]

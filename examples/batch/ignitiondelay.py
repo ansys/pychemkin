@@ -107,7 +107,7 @@ gasoline.chemfile = str(mechanism_dir / "gasoline_14comp_WBencrypt.inp")
 # ==========================================
 
 # preprocess the mechanism files
-ierror = gasoline.preprocess()
+_ = gasoline.preprocess()
 
 ################################################
 # Set up the stoichiometric gasoline-air mixture

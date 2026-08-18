@@ -82,7 +82,7 @@ MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
 # ============================
 
 # preprocess the mechanism files
-ierror = MyGasMech.preprocess()
+_ = MyGasMech.preprocess()
 
 #####################
 # Set up gas mixtures

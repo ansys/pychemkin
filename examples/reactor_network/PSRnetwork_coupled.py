@@ -146,7 +146,7 @@ MyGasMech.thermfile = str(mechanism_dir / "grimech30_thermo.dat")
 # =====================================
 
 # preprocess the mechanism files
-ierror = MyGasMech.preprocess()
+_ = MyGasMech.preprocess()
 
 ################################################################
 # Set up gas mixtures based on the species in this chemistry set
@@ -371,7 +371,7 @@ print()
 #
 
 # postprocess the solutions of all PSRs in the cluster
-iErr = PSRcluster.process_cluster_solution()
+_ = PSRcluster.process_cluster_solution()
 
 # verify the mass flow rate in and out of the PSR cluster
 print(
