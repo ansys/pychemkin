@@ -1508,13 +1508,13 @@ class BatchReactors(Reactor):
         else:
             self._numbsolutionpoints = npoints
         # create arrays to hold the raw solution data
-        time = np.zeros(self._numbsolutionpoints, dtype=np.double)
-        pres = np.zeros_like(time, dtype=np.double)
-        temp = np.zeros_like(time, dtype=np.double)
-        vol = np.zeros_like(time, dtype=np.double)
+        time = np.empty(self._numbsolutionpoints, dtype=np.double)
+        pres = np.empty_like(time, dtype=np.double)
+        temp = np.empty_like(time, dtype=np.double)
+        vol = np.empty_like(time, dtype=np.double)
         # create a species mass fraction array to
         # hold the solution species fraction profiles
-        frac = np.zeros(
+        frac = np.empty(
             (
                 self.numbspecies,
                 self._numbsolutionpoints,
@@ -1554,8 +1554,8 @@ class BatchReactors(Reactor):
         self.parsespeciessolutiondata(frac)
         # if the energy equation is solved, get gas-phase heat release rate
         if self._energytype.value == self.EnergyTypes.get("ENERGY", 1):
-            gas_heatrelease = np.zeros_like(time, dtype=np.double)
-            gas_heatrealease_rate = np.zeros_like(time, dtype=np.double)
+            gas_heatrelease = np.empty_like(time, dtype=np.double)
+            gas_heatrealease_rate = np.empty_like(time, dtype=np.double)
             ierr = chemkin_wrapper.chemkin.KINAll0D_GetGasHeatReleaseRate(
                 icreac, icnpts, gas_heatrelease, gas_heatrealease_rate
             )
@@ -1623,25 +1623,25 @@ class BatchReactors(Reactor):
         max_bulks = self.get_total_bulk_species()
         # set up holding arrays
         # create arrays to hold the raw solution data
-        time = np.zeros(self._numbsolutionpoints, dtype=np.double)
+        time = np.empty(self._numbsolutionpoints, dtype=np.double)
         # site fractions
         if max_sites > 0:
-            s_frac = np.zeros(
+            s_frac = np.empty(
                 (max_sites, self._numbsolutionpoints),
                 dtype=np.double,
                 order="F",
             )
         else:
-            s_frac = np.zeros((1, self._numbsolutionpoints), dtype=np.double, order="F")
+            s_frac = np.empty((1, self._numbsolutionpoints), dtype=np.double, order="F")
         # bulk activities
         if max_bulks > 0:
-            b_act = np.zeros(
+            b_act = np.empty(
                 (max_bulks, self._numbsolutionpoints),
                 dtype=np.double,
                 order="F",
             )
         else:
-            b_act = np.zeros((1, self._numbsolutionpoints), dtype=np.double, order="F")
+            b_act = np.empty((1, self._numbsolutionpoints), dtype=np.double, order="F")
 
         ierr_s = chemkin_wrapper.chemkin.KINAll0D_GetSurfaceSolnResponse(
             icreac, icnpts, c_int(max_sites), c_int(max_bulks), time, s_frac, b_act
@@ -1657,7 +1657,7 @@ class BatchReactors(Reactor):
             log_error_message(msg)
         # get surface material temperature [K]
         n_material = self.surface_chemistry.number_materials
-        surf_temp = np.zeros(
+        surf_temp = np.empty(
             (n_material, self._numbsolutionpoints),
             dtype=np.double,
             order="F",
@@ -1722,7 +1722,7 @@ class BatchReactors(Reactor):
                     self._solution_rawarray[symbol] = copy.deepcopy(ss)
         # if the energy equation is solved, get the total surface heat release rate
         if self._energytype.value == self.EnergyTypes.get("ENERGY", 1):
-            surf_heatrelease_rate = np.zeros_like(time, dtype=np.double)
+            surf_heatrelease_rate = np.empty_like(time, dtype=np.double)
             ierr = chemkin_wrapper.chemkin.KINAll0D_GetSurfaceHeatReleaseRate(
                 icreac, icnpts, surf_heatrelease_rate
             )

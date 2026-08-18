@@ -1091,7 +1091,7 @@ class Engine(BatchReactors):
 
         """
         # heat loss rate per CA [erg/degree] sized = 1 + number of surface materials
-        qlossrate_ca = np.zeros(1, dtype=np.double)
+        qlossrate_ca = np.empty(1, dtype=np.double)
         # apparent heat release rate per CA [erg/degree]
         ahrr = c_double(0.0)
         # apparent heat release rate per CA from PV-ConGamma [erg/degree]
@@ -1264,13 +1264,13 @@ class Engine(BatchReactors):
         else:
             self._numbsolutionpoints = npoints
         # create arrays to hold the raw solution data
-        time = np.zeros(self._numbsolutionpoints, dtype=np.double)
-        pres = np.zeros_like(time, dtype=np.double)
-        temp = np.zeros_like(time, dtype=np.double)
-        vol = np.zeros_like(time, dtype=np.double)
+        time = np.empty(self._numbsolutionpoints, dtype=np.double)
+        pres = np.empty_like(time, dtype=np.double)
+        temp = np.empty_like(time, dtype=np.double)
+        vol = np.empty_like(time, dtype=np.double)
         # create a species mass fraction array to hold
         # the solution species fraction profiles
-        frac = np.zeros(
+        frac = np.empty(
             (
                 self.numbspecies,
                 self._numbsolutionpoints,
@@ -1307,8 +1307,8 @@ class Engine(BatchReactors):
         self._solution_rawarray["volume"] = copy.deepcopy(vol)
         # species mass fractions
         self.parsespeciessolutiondata(frac)
-        gas_heatrelease = np.zeros_like(time, dtype=np.double)
-        gas_heatrealease_rate = np.zeros_like(time, dtype=np.double)
+        gas_heatrelease = np.empty_like(time, dtype=np.double)
+        gas_heatrealease_rate = np.empty_like(time, dtype=np.double)
         ierr = chemkin_wrapper.chemkin.KINAll0D_GetGasHeatReleaseRate(
             icreac, icnpts, gas_heatrelease, gas_heatrealease_rate
         )

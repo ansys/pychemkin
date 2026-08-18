@@ -363,15 +363,15 @@ class ShockTubeReactors(Reactor):
         else:
             self._numbsolutionpoints = npoints
         # create arrays to hold the raw solution data
-        time = np.zeros(self._numbsolutionpoints, dtype=np.double)
-        pres = np.zeros_like(time, dtype=np.double)
-        temp = np.zeros_like(time, dtype=np.double)
-        vel = np.zeros_like(time, dtype=np.double)
-        density = np.zeros_like(time, dtype=np.double)
-        distance = np.zeros_like(time, dtype=np.double)
+        time = np.empty(self._numbsolutionpoints, dtype=np.double)
+        pres = np.empty_like(time, dtype=np.double)
+        temp = np.empty_like(time, dtype=np.double)
+        vel = np.empty_like(time, dtype=np.double)
+        density = np.empty_like(time, dtype=np.double)
+        distance = np.empty_like(time, dtype=np.double)
         # create a species mass fraction array to
         # hold the solution species fraction profiles
-        frac = np.zeros(
+        frac = np.empty(
             (
                 self.numbspecies,
                 self._numbsolutionpoints,
@@ -817,8 +817,8 @@ class ShockTubeReactors(Reactor):
         # number of time points in the solution
         npts = c_int(npoints)
         # create data lists
-        induct_length = np.zeros(npoints, dtype=np.double)
-        sigmamax = np.zeros_like(induct_length, dtype=np.double)
+        induct_length = np.empty(npoints, dtype=np.double)
+        sigmamax = np.empty_like(induct_length, dtype=np.double)
         # get solution size of the batch reactor
         ierr = ckw.chemkin.KINShock_GetInductLengths(npts, induct_length, sigmamax)
         if ierr != 0:

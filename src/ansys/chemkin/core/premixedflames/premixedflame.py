@@ -588,11 +588,11 @@ class PremixedFlame(Flame):
         else:
             self._numbsolutionpoints = npoints
         # create arrays to hold the raw solution data
-        pos = np.zeros(self._numbsolutionpoints, dtype=np.double)
-        temp = np.zeros_like(pos, dtype=np.double)
+        pos = np.empty(self._numbsolutionpoints, dtype=np.double)
+        temp = np.empty_like(pos, dtype=np.double)
         # create a species mass fraction array to hold
         # the solution species fraction profiles
-        frac = np.zeros(
+        frac = np.empty(
             (
                 self.numbspecies,
                 self._numbsolutionpoints,
@@ -603,7 +603,7 @@ class PremixedFlame(Flame):
         msg = [Color.YELLOW, "post-processing raw solution data ...", Color.END]
         log_info_message(msg)
         # create a species mass fraction array to hold the steady-state solution
-        frac = np.zeros(
+        frac = np.empty(
             (
                 self.numbspecies,
                 self._numbsolutionpoints,

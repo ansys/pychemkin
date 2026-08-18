@@ -637,11 +637,11 @@ class OpposedFlame(Flame):
         else:
             self._numbsolutionpoints = npoints
         # create arrays to hold the raw solution data
-        pos = np.zeros(self._numbsolutionpoints, dtype=np.double)
-        temp = np.zeros_like(pos, dtype=np.double)
+        pos = np.empty(self._numbsolutionpoints, dtype=np.double)
+        temp = np.empty_like(pos, dtype=np.double)
         # create a species mass fraction array to hold
         # the solution species fraction profiles
-        frac = np.zeros(
+        frac = np.empty(
             (
                 self.numbspecies,
                 self._numbsolutionpoints,
@@ -652,7 +652,7 @@ class OpposedFlame(Flame):
         msg = [Color.YELLOW, "post-processing raw solution data ...", Color.END]
         log_info_message(msg)
         # create a species mass fraction array to hold the steady-state solution
-        frac = np.zeros(
+        frac = np.empty(
             (
                 self.numbspecies,
                 self._numbsolutionpoints,
@@ -678,9 +678,9 @@ class OpposedFlame(Flame):
         # get the flow field
         npoint = c_int(npoints)
         # axial velocity [cm/sec]
-        axial_vel = np.zeros_like(pos, dtype=np.double)
+        axial_vel = np.empty_like(pos, dtype=np.double)
         # radial velocity gradient [1/sec]
-        radial_vel = np.zeros_like(pos, dtype=np.double)
+        radial_vel = np.empty_like(pos, dtype=np.double)
         ierr = chemkin_wrapper.chemkin.KINOppdif_GetVelocityField(
             npoint, axial_vel, radial_vel
         )
@@ -695,7 +695,7 @@ class OpposedFlame(Flame):
             critical_and_exit(msg)
         # get mixture fraction [-]
         npoint = c_int(npoints)
-        mix_frac = np.zeros_like(pos, dtype=np.double)
+        mix_frac = np.empty_like(pos, dtype=np.double)
         ierr = chemkin_wrapper.chemkin.KINOppdif_GetMixtureFraction(
             npoint,
             mix_frac,

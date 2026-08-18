@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (c) 2026 Synopsys, Inc. and ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -299,7 +299,7 @@ class SurfaceChemistryMixin:
                     mat_bytes = ctypes.cast(buff_m[index], c_char_p).value
                     mat_val = "" if mat_bytes is None else mat_bytes.decode()
                     self.material_map[mat_val.rstrip()] = index
-                self._materialnamedone == 1
+                self._materialnamedone = 1
             else:
                 # failed to get species symbols
                 msg = [Color.PURPLE, "failed to get surface material names.", Color.END]
@@ -307,12 +307,7 @@ class SurfaceChemistryMixin:
                 exit()
             del buff_m
             del char_buffers
-        # convert string type
-        mylist = list(self.material_map.keys())
-        self.matsymbol.clear()
-        for s in mylist:
-            self.matsymbol.append(s)
-        del mylist
+        self.matsymbol[:] = self.material_map
         return self.matsymbol
 
     def get_material_index(self: _SurfaceChemistryHost, mat_name: str) -> int:
