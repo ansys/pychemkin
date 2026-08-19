@@ -1957,9 +1957,9 @@ class Surface:
         # initialization
         # species rate of production by surface reactions [mole/cm2-sec]
         numb_species = numb_gas + numb_sites + numb_bulks
-        rop = np.empty(numb_species, dtype=np.double)
+        rop = np.zeros(numb_species, dtype=np.double)
         # surface site phase production rate by surface reactions [mole/cm2-sec]
-        phase_prod_rates = np.empty(numb_phase, dtype=np.double)
+        phase_prod_rates = np.zeros(numb_phase, dtype=np.double)
         # convert parameters to c pointers
         chemset_index = ctypes.c_int(chem_id)
         mat_index = ctypes.c_int(mat_id)
@@ -2083,8 +2083,8 @@ class Surface:
             log_error_message(msg)
             exit()
         # initialization
-        k_forward = np.empty(numb_reaction, dtype=np.double)
-        k_reverse = np.empty_like(k_forward, dtype=np.double)
+        k_forward = np.zeros(numb_reaction, dtype=np.double)
+        k_reverse = np.zeros_like(k_forward)
         # convert parameters to c pointers
         chemset_index = ctypes.c_int(chem_id)
         mat_index = ctypes.c_int(mat_id)
@@ -2296,8 +2296,8 @@ class Surface:
         # get surface overages
         sden, sfrac, bfrac = self.set_surface_coverage(mat_name)
         #
-        k_forward = np.empty(numsurf_reactions, dtype=np.double)
-        k_reverse = np.empty_like(k_forward, dtype=np.double)
+        k_forward = np.zeros(numsurf_reactions, dtype=np.double)
+        k_reverse = np.zeros_like(k_forward)
         #
         # mixture mole fraction given
         k_forward, k_reverse = Surface.surface_reaction_rates(

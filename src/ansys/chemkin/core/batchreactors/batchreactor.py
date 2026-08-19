@@ -1508,13 +1508,13 @@ class BatchReactors(Reactor):
         else:
             self._numbsolutionpoints = npoints
         # create arrays to hold the raw solution data
-        time = np.empty(self._numbsolutionpoints, dtype=np.double)
-        pres = np.empty_like(time, dtype=np.double)
-        temp = np.empty_like(time, dtype=np.double)
-        vol = np.empty_like(time, dtype=np.double)
+        time = np.zeros(self._numbsolutionpoints, dtype=np.double)
+        pres = np.zeros_like(time)
+        temp = np.zeros_like(time)
+        vol = np.zeros_like(time)
         # create a species mass fraction array to
         # hold the solution species fraction profiles
-        frac = np.empty(
+        frac = np.zeros(
             (
                 self.numbspecies,
                 self._numbsolutionpoints,
@@ -1554,8 +1554,8 @@ class BatchReactors(Reactor):
         self.parsespeciessolutiondata(frac)
         # if the energy equation is solved, get gas-phase heat release rate
         if self._energytype.value == self.EnergyTypes.get("ENERGY", 1):
-            gas_heatrelease = np.empty_like(time, dtype=np.double)
-            gas_heatrealease_rate = np.empty_like(time, dtype=np.double)
+            gas_heatrelease = np.zeros_like(time)
+            gas_heatrealease_rate = np.zeros_like(time)
             ierr = chemkin_wrapper.chemkin.KINAll0D_GetGasHeatReleaseRate(
                 icreac, icnpts, gas_heatrelease, gas_heatrealease_rate
             )
@@ -1623,25 +1623,25 @@ class BatchReactors(Reactor):
         max_bulks = self.get_total_bulk_species()
         # set up holding arrays
         # create arrays to hold the raw solution data
-        time = np.empty(self._numbsolutionpoints, dtype=np.double)
+        time = np.zeros(self._numbsolutionpoints, dtype=np.double)
         # site fractions
         if max_sites > 0:
-            s_frac = np.empty(
+            s_frac = np.zeros(
                 (max_sites, self._numbsolutionpoints),
                 dtype=np.double,
                 order="F",
             )
         else:
-            s_frac = np.empty((1, self._numbsolutionpoints), dtype=np.double, order="F")
+            s_frac = np.zeros((1, self._numbsolutionpoints), dtype=np.double, order="F")
         # bulk activities
         if max_bulks > 0:
-            b_act = np.empty(
+            b_act = np.zeros(
                 (max_bulks, self._numbsolutionpoints),
                 dtype=np.double,
                 order="F",
             )
         else:
-            b_act = np.empty((1, self._numbsolutionpoints), dtype=np.double, order="F")
+            b_act = np.zeros((1, self._numbsolutionpoints), dtype=np.double, order="F")
 
         ierr_s = chemkin_wrapper.chemkin.KINAll0D_GetSurfaceSolnResponse(
             icreac, icnpts, c_int(max_sites), c_int(max_bulks), time, s_frac, b_act
@@ -1657,7 +1657,7 @@ class BatchReactors(Reactor):
             log_error_message(msg)
         # get surface material temperature [K]
         n_material = self.surface_chemistry.number_materials
-        surf_temp = np.empty(
+        surf_temp = np.zeros(
             (n_material, self._numbsolutionpoints),
             dtype=np.double,
             order="F",
@@ -1722,7 +1722,7 @@ class BatchReactors(Reactor):
                     self._solution_rawarray[symbol] = copy.deepcopy(ss)
         # if the energy equation is solved, get the total surface heat release rate
         if self._energytype.value == self.EnergyTypes.get("ENERGY", 1):
-            surf_heatrelease_rate = np.empty_like(time, dtype=np.double)
+            surf_heatrelease_rate = np.zeros_like(time)
             ierr = chemkin_wrapper.chemkin.KINAll0D_GetSurfaceHeatReleaseRate(
                 icreac, icnpts, surf_heatrelease_rate
             )
@@ -1835,7 +1835,7 @@ class BatchReactors(Reactor):
             return 1
         # create a temporary Mixture object to hold the mixture properties
         # at current solution point
-        smixture = copy.deepcopy(self.reactormixture)
+        smixture = self.reactormixture._clone()
         # create variable arrays to hold the solution profile
         species = []
         # create a species fraction array to
@@ -1868,7 +1868,7 @@ class BatchReactors(Reactor):
                 # mole fractions
                 smixture.x = frac
             # add to the solution mixture list
-            self._solution_mixturearray.append(copy.deepcopy(smixture))
+            self._solution_mixturearray.append(smixture._clone())
         # clean up
         species.clear()
         del pres, temp, vol, frac, species, smixture
@@ -1908,16 +1908,16 @@ class BatchReactors(Reactor):
         # find the mixture
         if ratio == 0.0e0:
             # get the mixtures
-            mixtureleft = copy.deepcopy(self._solution_mixturearray[ileft])
+            mixtureleft = self._solution_mixturearray[ileft]._clone()
             return mixtureleft
         elif ratio == 1.0e0:
             # get the mixtures
-            mixtureright = copy.deepcopy(self._solution_mixturearray[ileft + 1])
+            mixtureright = self._solution_mixturearray[ileft + 1]._clone()
             return mixtureright
         else:
             # get the mixtures
-            mixtureleft = copy.deepcopy(self._solution_mixturearray[ileft])
-            mixtureright = copy.deepcopy(self._solution_mixturearray[ileft + 1])
+            mixtureleft = self._solution_mixturearray[ileft]._clone()
+            mixtureright = self._solution_mixturearray[ileft + 1]._clone()
             # interpolate the mixture properties
             mixturetarget = interpolate_mixtures(mixtureleft, mixtureright, ratio)
             # clean up
@@ -1972,7 +1972,7 @@ class BatchReactors(Reactor):
             log_error_message(msg)
             exit()
         # get the mixture
-        mixturetarget = copy.deepcopy(self._solution_mixturearray[solution_index])
+        mixturetarget = self._solution_mixturearray[solution_index]._clone()
         return mixturetarget
 
     def get_last_solution_mixture(self) -> Mixture:
@@ -2000,7 +2000,7 @@ class BatchReactors(Reactor):
         # set index to the last solution point
         solution_index = self._numbsolutionpoints - 1
         # get the mixture
-        mixturetarget = copy.deepcopy(self._solution_mixturearray[solution_index])
+        mixturetarget = self._solution_mixturearray[solution_index]._clone()
         return mixturetarget
 
 
