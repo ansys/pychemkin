@@ -10,11 +10,16 @@ class TestClassCleanup:
         """An OS error from native shutdown does not escape ``done``."""
 
         class FailingChemkin:
-            def KINExit(self):
-                raise OSError("native shutdown failure")
+            pass
+
+        def failing_kin_exit():
+            raise OSError("native shutdown failure")
+
+        failing_chemkin = FailingChemkin()
+        setattr(failing_chemkin, "KINExit", failing_kin_exit)
 
         monkeypatch.setattr(chemistry, "chemkin_version", lambda: 271)
-        monkeypatch.setattr(chemistry.ck_wrapper, "chemkin", FailingChemkin())
+        monkeypatch.setattr(chemistry.ck_wrapper, "chemkin", failing_chemkin)
         monkeypatch.setattr(chemistry, "clear_hints", lambda: None)
         warnings = []
         monkeypatch.setattr(chemistry, "_log_warning_message", warnings.append)
