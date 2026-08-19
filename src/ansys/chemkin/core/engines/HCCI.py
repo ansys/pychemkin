@@ -1432,7 +1432,7 @@ class HCCIengine(Engine):
                 else:
                     # set up the "new" initial conditions from the input parameter
                     for m in new_mixtures:
-                        zonemixtures.append(copy.deepcopy(m))
+                        zonemixtures.append(m._clone())
             else:
                 msg = [
                     Color.PURPLE,

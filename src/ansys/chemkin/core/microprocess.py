@@ -22,8 +22,6 @@
 
 """Micro mixing model for the multi-zone engine models."""
 
-import copy
-
 import numpy as np
 
 from ansys.chemkin.core.color import Color as Color
@@ -179,7 +177,7 @@ class MicroMixing:
         for m in particle_mixtures:
             # mapping mixture index to mixture objects for
             # the particles {mixture index: mixture object}
-            self.mixture_map[mixture_index] = copy.deepcopy(m)
+            self.mixture_map[mixture_index] = m._clone()
             mixture_index += 1
 
     def calculate_particles_per_mixture(self):
@@ -315,7 +313,7 @@ class MicroMixing:
             # (the particles must have the same mass)
             mass_frac = 1.0e0 / float(particle_count)
             # create a working copy of the zone ixture
-            zone_mixture = copy.deepcopy(self.mixture_map.get(mixture_index))
+            zone_mixture = self.mixture_map.get(mixture_index)._clone()
             # compute the net changes of total enthalpy and species mass fractions
             h_sum = 0.0e0
             y_sum = np.zeros_like(zone_mixture.y, dtype=np.double)
@@ -365,7 +363,7 @@ class MicroMixing:
                 ]
                 error_and_exit(msg)
             # update the zone mixture properties
-            self.mixture_map[mixture_index] = copy.deepcopy(zone_mixture)
+            self.mixture_map[mixture_index] = zone_mixture._clone()
             # clean up
             del y_sum, zone_mixture
 
@@ -468,7 +466,7 @@ class MicroMixing:
         # compile the updated mixtures
         new_mixtures: list[Stream] = []
         for m in self.mixture_map.values():
-            new_mixtures.append(copy.deepcopy(m))
+            new_mixtures.append(m._clone())
         return new_mixtures
 
     def particle_mixing_curls(self, numb_picks: int, source_list: list[int]):
@@ -511,14 +509,18 @@ class MicroMixing:
                 mixture_new = interpolate_mixtures(mixture_ave, mixture_a, change)
                 # store the modified properties in the changed dictionary
                 this_list = self.changed_mixtures.get(mixture_id_a, [])
-                this_list.append(copy.deepcopy(mixture_new))
-                self.changed_mixtures[mixture_id_a] = copy.deepcopy(this_list)
+                this_list.append(mixture_new._clone())
+                self.changed_mixtures[mixture_id_a] = [
+                    mixture._clone() for mixture in this_list
+                ]
                 # modify the properties of the second particle B of the pair
                 mixture_new = interpolate_mixtures(mixture_ave, mixture_b, change)
                 # store the modified properties in the changed dictionary
                 this_list = self.changed_mixtures.get(mixture_id_b, [])
-                this_list.append(copy.deepcopy(mixture_new))
-                self.changed_mixtures[mixture_id_b] = copy.deepcopy(this_list)
+                this_list.append(mixture_new._clone())
+                self.changed_mixtures[mixture_id_b] = [
+                    mixture._clone() for mixture in this_list
+                ]
         # update the mixtures after each micro mixing subprocess
         self.update_mixtures()
         # clean up
