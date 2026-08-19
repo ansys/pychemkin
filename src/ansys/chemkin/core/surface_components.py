@@ -191,9 +191,9 @@ class Material:
             self.first_bulk_phase = self.last_site_phase + 1
             self.last_bulk_phase = self.first_bulk_phase + self.num_bulk_phase - 1
         # get number of surface/bulk species and their indices on this material
-        self.nspecies_of_phase = np.empty(self.num_phases, dtype=np.int32)
-        self.first_species_id_of_phase = np.empty(self.num_phases, dtype=np.int32)
-        self.last_species_id_of_phase = np.empty(self.num_phases, dtype=np.int32)
+        self.nspecies_of_phase = np.zeros(self.num_phases, dtype=np.int32)
+        self.first_species_id_of_phase = np.zeros(self.num_phases, dtype=np.int32)
+        self.last_species_id_of_phase = np.zeros(self.num_phases, dtype=np.int32)
         ierr = ck_wrapper.chemkin.KINGetPhaseSpeciesIndices(
             chemset_index,
             material_id,
@@ -779,7 +779,7 @@ class Material:
             exit()
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
-        site_density = np.empty(self.num_phases, dtype=np.double)
+        site_density = np.zeros(self.num_phases, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetSiteDensity(chem_id, mat_id, site_density)
         if ierr != 0:
             # failed to get surface site species density
@@ -805,7 +805,7 @@ class Material:
             exit()
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
-        density = np.empty(self.num_bulk_species, dtype=np.double)
+        density = np.zeros(self.num_bulk_species, dtype=np.double)
         # "fake" pressure and temperature since density of
         # solid bulk species is ~ constant
         temp = c_double(300.0)
@@ -844,7 +844,7 @@ class Material:
         if self.sitewt_done == 0:
             chem_id = c_int(self._chemset_index)
             mat_id = c_int(self._material_index)
-            wt = np.empty(self.num_site_species, dtype=np.double)
+            wt = np.zeros(self.num_site_species, dtype=np.double)
             ierr = ck_wrapper.chemkin.KINGetSiteMolecularWeights(chem_id, mat_id, wt)
             if ierr != 0:
                 # failed to get surface site species molecular weights
@@ -896,7 +896,7 @@ class Material:
         if self.bulkwt_done == 0:
             chem_id = c_int(self._chemset_index)
             mat_id = c_int(self._material_index)
-            wt = np.empty(self.num_bulk_species, dtype=np.double)
+            wt = np.zeros(self.num_bulk_species, dtype=np.double)
             ierr = ck_wrapper.chemkin.KINGetBulkMolecularWeights(chem_id, mat_id, wt)
             if ierr != 0:
                 # failed to get bulk species molecular weights
@@ -1007,7 +1007,7 @@ class Material:
             exit()
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
-        occ = np.empty(self.total_species, dtype=np.int32)
+        occ = np.zeros(self.total_species, dtype=np.int32)
         ierr = ck_wrapper.chemkin.KINGetSpeciesOccupancy(chem_id, mat_id, occ)
         # get the global index of the first site species
         kstart = self.first_site_species_index
@@ -1016,7 +1016,7 @@ class Material:
         if kstart < 0:
             ierr = 10
         if ierr == 0:
-            site_occupancy = np.empty(self.num_site_species, dtype=np.int32)
+            site_occupancy = np.zeros(self.num_site_species, dtype=np.int32)
             i = 0
             for k in range(kstart, kstop):
                 site_occupancy[i] = occ[k]
@@ -1060,7 +1060,7 @@ class Material:
             exit()
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
-        h_all = np.empty(self.total_species, dtype=np.double)
+        h_all = np.zeros(self.total_species, dtype=np.double)
         #
         if temp is None:
             t = max(self.surftemp, 3.0e2)
@@ -1120,7 +1120,7 @@ class Material:
         #
         if pres is None:
             # bulk pressure is not given
-            h_all = np.empty(self.total_species, dtype=np.double)
+            h_all = np.zeros(self.total_species, dtype=np.double)
             ierr = ck_wrapper.chemkin.KINGetAllSpeciesEnthalpy(
                 chem_id, mat_id, tt, h_all
             )
@@ -1143,7 +1143,7 @@ class Material:
         else:
             # bulk pressure is given
             pp = c_double(pres)
-            h = np.empty(self.num_bulk_species, dtype=np.double)
+            h = np.zeros(self.num_bulk_species, dtype=np.double)
             ierr = ck_wrapper.chemkin.KINGetBulkSpeciesEnthalpy(
                 chem_id, mat_id, pp, tt, h
             )
@@ -1191,7 +1191,7 @@ class Material:
             exit()
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
-        cp = np.empty(self.num_bulk_species, dtype=np.double)
+        cp = np.zeros(self.num_bulk_species, dtype=np.double)
         #
         if pres is None:
             pp = c_double(P_ATM)
@@ -1259,7 +1259,7 @@ class Material:
         chem_id = c_int(self._chemset_index)
         mat_id = c_int(self._material_index)
         dim = (self.num_element, self.total_species)
-        elementalcomp = np.empty(dim, dtype=np.int32, order="F")
+        elementalcomp = np.zeros(dim, dtype=np.int32, order="F")
         ierr = ck_wrapper.chemkin.KINGetSurfaceSpeciesComposition(
             chem_id, mat_id, elementalcomp
         )
@@ -1356,13 +1356,13 @@ class Material:
         mat_id = c_int(self._material_index)
         # pre-exponent A factor of all surface reactions in the mechanism
         # in cgs units [mole-cm-sec-K]
-        a_factor = np.empty(shape=reactionsize, dtype=np.double)
+        a_factor = np.zeros(shape=reactionsize, dtype=np.double)
         # temperature exponent of all reactions [-]
-        beta = np.empty_like(a_factor, dtype=np.double)
+        beta = np.zeros_like(a_factor, dtype=np.double)
         # activation energy/temperature of all reactions [K]
-        act_energy = np.empty_like(a_factor, dtype=np.double)
+        act_energy = np.zeros_like(a_factor, dtype=np.double)
         # flag for using A factor as the sticking coefficient
-        is_stick = np.empty_like(a_factor, dtype=np.int32)
+        is_stick = np.zeros_like(a_factor, dtype=np.int32)
         # get the reaction parameters
         ierr = ck_wrapper.chemkin.KINGetSurfaceReactionRateParameters(
             chem_id, mat_id, a_factor, beta, act_energy, is_stick
@@ -1594,14 +1594,12 @@ class Material:
         ireac = c_int(reaction_index)
         i_string_size = c_int(0)
         reaction_string_length = c_int(0)
-        ierr = ck_wrapper.chemkin.KINGetReactionStringLength(reaction_string_length)
-        if ierr != 0 or reaction_string_length.value <= 0:
+        _ = ck_wrapper.chemkin.KINGetReactionStringLength(reaction_string_length)
+        if reaction_string_length.value <= 0:
             msg = [
                 Color.YELLOW,
                 "failed to determine the maximum reaction-string length,",
                 "using a 1024-byte buffer.",
-                "error code =",
-                str(ierr),
                 Color.END,
             ]
             _log_warning_message(msg)

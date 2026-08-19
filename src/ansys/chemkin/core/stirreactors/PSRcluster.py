@@ -871,7 +871,7 @@ class PSRCluster(OpenReactor):
 
         # extract the solution mixture from the PSRs
         # create a species mass fraction array to hold the steady-state solution
-        frac = np.empty(self.numbspecies, dtype=np.double)
+        frac = np.zeros(self.numbspecies, dtype=np.double)
         #
         for ireac, psr in self.psr_objects.items():
             msg = [

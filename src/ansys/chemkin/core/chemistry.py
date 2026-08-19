@@ -1464,7 +1464,7 @@ class Chemistry(SurfaceChemistryMixin):
             ]
             error_and_exit(msg)
         del self._awt  # clear the "original" definition in __init__
-        self._awt = np.empty(self._num_elements.value, dtype=np.double)
+        self._awt = np.zeros(self._num_elements.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetAtomicWeights(self._chemset_index, self._awt)
         if ierr == 0:
             self._awt_done = 1
@@ -1499,7 +1499,7 @@ class Chemistry(SurfaceChemistryMixin):
             ]
             error_and_exit(msg)
         del self._wt  # clear the "original" definition in __init__
-        self._wt = np.empty(self._num_gas_species.value, dtype=np.double)
+        self._wt = np.zeros(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetGasMolecularWeights(
             self._chemset_index, self._wt
         )
@@ -1562,7 +1562,7 @@ class Chemistry(SurfaceChemistryMixin):
                 set_current_pressure(self.chemid, pres)
         #
         tt = c_double(temp)
-        cp = np.empty(self._num_gas_species.value, dtype=np.double)
+        cp = np.zeros(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetGasSpecificHeat(self._chemset_index, tt, cp)
         if ierr == 0:
             # convert [ergs/g-K] to [ergs/mol-K]
@@ -1662,7 +1662,7 @@ class Chemistry(SurfaceChemistryMixin):
                 # set current pressure for the real-gas
                 set_current_pressure(self.chemid, pres)
         tt = c_double(temp)
-        h = np.empty(self._num_gas_species.value, dtype=np.double)
+        h = np.zeros(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetGasSpeciesEnthalpy(self._chemset_index, tt, h)
         if ierr == 0:
             # convert [ergs/gm] to [ergs/mol]
@@ -1723,7 +1723,7 @@ class Chemistry(SurfaceChemistryMixin):
                 # set current pressure for the real-gas
                 set_current_pressure(self.chemid, pres)
         tt = c_double(temp)
-        u = np.empty(self._num_gas_species.value, dtype=np.double)
+        u = np.zeros(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetGasSpeciesInternalEnergy(
             self._chemset_index, tt, u
         )
@@ -1773,7 +1773,7 @@ class Chemistry(SurfaceChemistryMixin):
             msg = [Color.PURPLE, "temperature value is too low.", Color.END]
             error_and_exit(msg)
         tt = c_double(temp)
-        visc = np.empty(self._num_gas_species.value, dtype=np.double)
+        visc = np.zeros(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetViscosity(self._chemset_index, tt, visc)
         if ierr != 0:
             # failed to compute viscosity
@@ -1812,7 +1812,7 @@ class Chemistry(SurfaceChemistryMixin):
             msg = [Color.PURPLE, "temperature value is too low.", Color.END]
             error_and_exit(msg)
         tt = c_double(temp)
-        cond = np.empty(self._num_gas_species.value, dtype=np.double)
+        cond = np.zeros(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetConductivity(self._chemset_index, tt, cond)
         if ierr != 0:
             # failed to compute conductivities
@@ -1865,7 +1865,7 @@ class Chemistry(SurfaceChemistryMixin):
         pp = c_double(press)
         tt = c_double(temp)
         dim = (self._num_gas_species.value, self._num_gas_species.value)
-        diffusioncoeffs = np.empty(dim, dtype=np.double, order="F")
+        diffusioncoeffs = np.zeros(dim, dtype=np.double, order="F")
         ierr = ck_wrapper.chemkin.KINGetDiffusionCoeffs(
             self._chemset_index, pp, tt, diffusioncoeffs
         )
@@ -1908,7 +1908,7 @@ class Chemistry(SurfaceChemistryMixin):
             error_and_exit(msg)
 
         dim = (self._num_elements.value, self._num_gas_species.value)
-        elementalcomp = np.empty(dim, dtype=np.int32, order="F")
+        elementalcomp = np.zeros(dim, dtype=np.int32, order="F")
         ierr = ck_wrapper.chemkin.KINGetGasSpeciesComposition(
             self._chemset_index, elementalcomp
         )
@@ -2024,11 +2024,11 @@ class Chemistry(SurfaceChemistryMixin):
         reactionsize = self.ii_gas
         # pre-exponent A factor of all gas-phase reactions in the mechanism
         # in cgs units [mole-cm3-sec-K]
-        a_factor = np.empty(shape=reactionsize, dtype=np.double)
+        a_factor = np.zeros(shape=reactionsize, dtype=np.double)
         # temperature exponent of all reactions [-]
-        beta = np.empty_like(a_factor, dtype=np.double)
+        beta = np.zeros_like(a_factor, dtype=np.double)
         # activation energy/temperature of all reactions [K]
-        act_energy = np.empty_like(a_factor, dtype=np.double)
+        act_energy = np.zeros_like(a_factor, dtype=np.double)
         # get the reaction parameters
         ierr = ck_wrapper.chemkin.KINGetReactionRateParameters(
             self._chemset_index, a_factor, beta, act_energy
@@ -2160,14 +2160,12 @@ class Chemistry(SurfaceChemistryMixin):
         ireac = c_int(reaction_index)
         i_string_size = c_int(0)
         reaction_string_length = c_int(0)
-        ierr = ck_wrapper.chemkin.KINGetReactionStringLength(reaction_string_length)
-        if ierr != 0 or reaction_string_length.value <= 0:
+        _ = ck_wrapper.chemkin.KINGetReactionStringLength(reaction_string_length)
+        if reaction_string_length.value <= 0:
             msg = [
                 Color.YELLOW,
                 "failed to determine the maximum reaction-string length,",
                 "using a 1024-byte buffer.",
-                "error code =",
-                str(ierr),
                 Color.END,
             ]
             _log_warning_message(msg)

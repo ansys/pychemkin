@@ -121,6 +121,7 @@ class Stream(Mixture):
         cloned._molefrac[:] = self._molefrac
         cloned._massfrac[:] = self._massfrac
         cloned.userealgas = self.userealgas
+        self._copy_mutable_surface_state_to(cloned)
 
         mixture_attributes = {
             "_temp",

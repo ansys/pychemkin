@@ -22,6 +22,7 @@
 
 """Chemkin Mixture utilities."""
 
+import copy
 import ctypes
 from ctypes import c_double, c_int
 from typing import Union
@@ -190,6 +191,18 @@ class Mixture:
         cloned._molefrac[:] = self._molefrac
         cloned._massfrac[:] = self._massfrac
         cloned.userealgas = self.userealgas
+        self._copy_mutable_surface_state_to(cloned)
+        return cloned
+
+    def _copy_mutable_surface_state_to(self, cloned: "Mixture") -> None:
+        """Copy mutable surface state without duplicating Chemistry metadata."""
+        if self._has_surface_chemistry:
+            cloned.surface_chemistry = copy.deepcopy(self.surface_chemistry)
+
+    def __deepcopy__(self, memo: dict[int, object]) -> "Mixture":
+        """Support copy.deepcopy without copying immutable Chemistry metadata."""
+        cloned = self._clone()
+        memo[id(self)] = cloned
         return cloned
 
     def get_specindex(self, symbol: str) -> int:
@@ -1106,7 +1119,7 @@ class Mixture:
     ) -> npt.NDArray[np.double]:
         """Compute a species property and convert from mass- to molar-basis."""
         tt = self._temperature_scalar()
-        values = np.empty(self._kk, dtype=np.double)
+        values = np.zeros(self._kk, dtype=np.double)
         ierr = kernel(self._chemset_index, tt, values)
         if ierr != 0:
             error_and_exit([Color.PURPLE, error_message, Color.END])
@@ -1121,7 +1134,7 @@ class Mixture:
     ) -> npt.NDArray[np.double]:
         """Compute a species transport property at mixture temperature."""
         tt = self._transport_temperature_scalar()
-        values = np.empty(self._kk, dtype=np.double)
+        values = np.zeros(self._kk, dtype=np.double)
         ierr = kernel(self._chemset_index, tt, values)
         if ierr != 0:
             error_and_exit([Color.PURPLE, error_message, Color.END])
@@ -1667,7 +1680,7 @@ class Mixture:
         kgas = validate_fraction_arrays(frac, wt, mode)
 
         # initialization
-        rop = np.empty(kgas, dtype=np.double)
+        rop = np.zeros(kgas, dtype=np.double)
         y = Mixture._mass_fractions_from_mode(frac, wt, mode)
 
         # convert parameters to c pointers
@@ -1735,8 +1748,8 @@ class Mixture:
         _ = validate_fraction_arrays(frac, wt, mode)
 
         # initialization
-        k_forward = np.empty(numbreaction, dtype=np.double)
-        k_reverse = np.empty_like(k_forward, dtype=np.double)
+        k_forward = np.zeros(numbreaction, dtype=np.double)
+        k_reverse = np.zeros_like(k_forward)
         y = Mixture._mass_fractions_from_mode(frac, wt, mode)
 
         # convert parameters to c pointers
@@ -2052,7 +2065,7 @@ class Mixture:
         """
         pp, tt = self._transport_pressure_temperature_scalars()
         dim = (self._kk, self._kk)
-        diffusioncoeffs = np.empty(dim, dtype=np.double, order="F")
+        diffusioncoeffs = np.zeros(dim, dtype=np.double, order="F")
         ierr = ck_wrapper.chemkin.KINGetDiffusionCoeffs(
             self._chemset_index, pp, tt, diffusioncoeffs
         )
@@ -2111,7 +2124,7 @@ class Mixture:
 
         """
         # initialization
-        diffusioncoeffs = np.empty(self._kk, dtype=np.double)
+        diffusioncoeffs = np.zeros(self._kk, dtype=np.double)
         pp, tt = self._transport_pressure_temperature_scalars()
         ierr = ck_wrapper.chemkin.KINGetMixtureDiffusionCoeffs(
             self._chemset_index, pp, tt, self.y, diffusioncoeffs
@@ -2144,7 +2157,7 @@ class Mixture:
         """
         # initialization
         dim = (self._kk, self._kk)
-        binarydiffusioncoeffs = np.empty(dim, dtype=np.double, order="F")
+        binarydiffusioncoeffs = np.zeros(dim, dtype=np.double, order="F")
         pp, tt = self._transport_pressure_temperature_scalars()
         ierr = ck_wrapper.chemkin.KINGetOrdinaryDiffusionCoeffs(
             self._chemset_index, pp, tt, self.y, binarydiffusioncoeffs
@@ -2175,7 +2188,7 @@ class Mixture:
 
         """
         # initialization
-        thermaldiffusioncoeffs = np.empty(self._kk, dtype=np.double)
+        thermaldiffusioncoeffs = np.zeros(self._kk, dtype=np.double)
         cond = c_double(0.0e0)  # mixture thermal conductivity
         pp, tt = self._transport_pressure_temperature_scalars()
         ierr = ck_wrapper.chemkin.KINGetThermalDiffusionCoeffs(
@@ -2318,13 +2331,13 @@ class Mixture:
         return new_order, sorted_rop
 
     def list_reaction_rates(
-        self, threshold: float = 0.0
+        self, threshold: float = 1.0e-12
     ) -> tuple[npt.NDArray[np.int32], npt.NDArray[np.double]]:
         """List information about reaction rate in descending order."""
         """
         Parameters
         ----------
-            threshold: double, optional, default = 0.0
+            threshold: double, optional, default = 1.0e-12
                 minimum absolute reaction rate value to be printed
 
         Returns
@@ -2338,7 +2351,11 @@ class Mixture:
         # molar rates of reactions
         rf, rr = self.rxn_rates()
         net_rr = rf - rr
-        new_order, sorted_rr = self._rank_values_descending(net_rr, threshold)
+        nonzero_mask = np.abs(net_rr) > threshold
+        reaction_indices = np.nonzero(nonzero_mask)[0].astype(np.int32, copy=False)
+        nonzero_net_rr = net_rr[nonzero_mask]
+        ranked_indices, sorted_rr = self._rank_values_descending(nonzero_net_rr, 0.0)
+        new_order = reaction_indices[ranked_indices]
         # print out the list of reaction with its net reaction rate value
         # in descending order
         if verbose():
@@ -4184,7 +4201,7 @@ def calculate_equilibrium(
     )
 
     # initialization
-    xx_eq = np.empty(kgas, dtype=np.double)
+    xx_eq = np.zeros(kgas, dtype=np.double)
     x = Mixture._mole_fractions_from_mode(frac=frac, wt=wt, mode=mode_in)
     # check equilibrium calculation option
     if eq_option in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10):

@@ -828,7 +828,7 @@ class PerfectlyStirredReactor(OpenReactor):
         # create a Stream object to hold the mixture properties of current solution
         smixture = self.reactormixture._clone()
         # create a species mass fraction array to hold the steady-state solution
-        frac = np.empty(self.numbspecies, dtype=np.double)
+        frac = np.zeros(self.numbspecies, dtype=np.double)
         # get raw solution data
         temp = c_double(0.0)
         pres = c_double(0.0)
@@ -899,7 +899,7 @@ class PerfectlyStirredReactor(OpenReactor):
         max_bulks = self.get_total_bulk_species()
         # set up holding arrays
         if max_sites > 0:
-            s_frac = np.empty(max_sites, dtype=np.double)
+            s_frac = np.zeros(max_sites, dtype=np.double)
             ierr_s = chemkin_wrapper.chemkin.KINAll0D_GetSurfaceSolution(s_frac)
             if ierr_s != 0:
                 msg = [
@@ -914,7 +914,7 @@ class PerfectlyStirredReactor(OpenReactor):
             ierr_s = -1
             s_frac = np.zeros(1, dtype=np.double)
         if max_bulks > 0:
-            b_rate = np.empty(max_bulks, dtype=np.double)
+            b_rate = np.zeros(max_bulks, dtype=np.double)
             ierr_b = chemkin_wrapper.chemkin.KINAll0D_GetBulkGrowthRate(b_rate)
             if ierr_b != 0:
                 msg = [
