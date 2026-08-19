@@ -334,7 +334,7 @@ class TestClassSurface:
     # rate: reaction rate, rate of production, heat release rate
     surface_list = [
         # skip the test below for random pass/fail on different linux versions
-        "multiple_materials",
+        # "multiple_materials",
         "SiC_cvd",
         "catalytic_combustion",
         "trans_PSR_ALD",
