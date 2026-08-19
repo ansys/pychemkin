@@ -1097,7 +1097,7 @@ class Mixture:
     ) -> npt.NDArray[np.double]:
         """Compute a species property and convert from mass- to molar-basis."""
         tt = self._temperature_scalar()
-        values = np.zeros(self._kk, dtype=np.double)
+        values = np.empty(self._kk, dtype=np.double)
         ierr = kernel(self._chemset_index, tt, values)
         if ierr != 0:
             error_and_exit([Color.PURPLE, error_message, Color.END])
@@ -1112,7 +1112,7 @@ class Mixture:
     ) -> npt.NDArray[np.double]:
         """Compute a species transport property at mixture temperature."""
         tt = self._transport_temperature_scalar()
-        values = np.zeros(self._kk, dtype=np.double)
+        values = np.empty(self._kk, dtype=np.double)
         ierr = kernel(self._chemset_index, tt, values)
         if ierr != 0:
             error_and_exit([Color.PURPLE, error_message, Color.END])
@@ -1658,7 +1658,7 @@ class Mixture:
         kgas = validate_fraction_arrays(frac, wt, mode)
 
         # initialization
-        rop = np.zeros(kgas, dtype=np.double)
+        rop = np.empty(kgas, dtype=np.double)
         y = Mixture._mass_fractions_from_mode(frac, wt, mode)
 
         # convert parameters to c pointers
@@ -1726,8 +1726,8 @@ class Mixture:
         _ = validate_fraction_arrays(frac, wt, mode)
 
         # initialization
-        k_forward = np.zeros(numbreaction, dtype=np.double)
-        k_reverse = np.zeros_like(k_forward, dtype=np.double)
+        k_forward = np.empty(numbreaction, dtype=np.double)
+        k_reverse = np.empty_like(k_forward, dtype=np.double)
         y = Mixture._mass_fractions_from_mode(frac, wt, mode)
 
         # convert parameters to c pointers
@@ -1953,8 +1953,8 @@ class Mixture:
         # check pressure
         self._require_pressure_set()
         # initialization
-        k_forward = np.zeros(self._ii_gas, dtype=np.double)
-        k_reverse = np.zeros_like(k_forward, dtype=np.double)
+        k_forward = np.empty(self._ii_gas, dtype=np.double)
+        k_reverse = np.empty_like(k_forward, dtype=np.double)
 
         k_forward, k_reverse = self._run_with_active_composition(
             Mixture.reaction_rates,
@@ -2047,7 +2047,7 @@ class Mixture:
         """
         pp, tt = self._transport_pressure_temperature_scalars()
         dim = (self._kk, self._kk)
-        diffusioncoeffs = np.zeros(dim, dtype=np.double, order="F")
+        diffusioncoeffs = np.empty(dim, dtype=np.double, order="F")
         ierr = ck_wrapper.chemkin.KINGetDiffusionCoeffs(
             self._chemset_index, pp, tt, diffusioncoeffs
         )
@@ -2106,7 +2106,7 @@ class Mixture:
 
         """
         # initialization
-        diffusioncoeffs = np.zeros(self._kk, dtype=np.double)
+        diffusioncoeffs = np.empty(self._kk, dtype=np.double)
         pp, tt = self._transport_pressure_temperature_scalars()
         ierr = ck_wrapper.chemkin.KINGetMixtureDiffusionCoeffs(
             self._chemset_index, pp, tt, self.y, diffusioncoeffs
@@ -2139,7 +2139,7 @@ class Mixture:
         """
         # initialization
         dim = (self._kk, self._kk)
-        binarydiffusioncoeffs = np.zeros(dim, dtype=np.double, order="F")
+        binarydiffusioncoeffs = np.empty(dim, dtype=np.double, order="F")
         pp, tt = self._transport_pressure_temperature_scalars()
         ierr = ck_wrapper.chemkin.KINGetOrdinaryDiffusionCoeffs(
             self._chemset_index, pp, tt, self.y, binarydiffusioncoeffs
@@ -2170,7 +2170,7 @@ class Mixture:
 
         """
         # initialization
-        thermaldiffusioncoeffs = np.zeros(self._kk, dtype=np.double)
+        thermaldiffusioncoeffs = np.empty(self._kk, dtype=np.double)
         cond = c_double(0.0e0)  # mixture thermal conductivity
         pp, tt = self._transport_pressure_temperature_scalars()
         ierr = ck_wrapper.chemkin.KINGetThermalDiffusionCoeffs(
@@ -4197,7 +4197,7 @@ def calculate_equilibrium(
     )
 
     # initialization
-    xx_eq = np.zeros(kgas, dtype=np.double)
+    xx_eq = np.empty(kgas, dtype=np.double)
     x = Mixture._mole_fractions_from_mode(frac=frac, wt=wt, mode=mode_in)
     # check equilibrium calculation option
     if eq_option in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10):

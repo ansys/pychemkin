@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (c) 2026 Synopsys, Inc. and ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -89,14 +89,14 @@ class Surface:
         self._num_max_surf_reactions = chem.max_number_surface_reactions
         self.max_total_reactions = chem.max_total_number_reactions
         # get surface material names List[str]
-        self.material_names = copy.deepcopy(chem.matsymbol)
+        self.material_names = list(chem.matsymbol)
         # construct material map from information in the chemistry set
         # material name mapping: dict{material name, surface material index}
         # surface material index starts from 1
-        self.material_map = copy.deepcopy(chem.material_map)
+        self.material_map = dict(chem.material_map)
         # copy all Material objects
         # material objects mapping: dict{material name, Material object}
-        self.materials = copy.deepcopy(chem.materials)
+        self.materials = dict(chem.materials)
         # molecular masses: dict{material name, molar weights}
         self._site_spec_wt: Dict[str, npt.NDArray[np.double]] = {}
         self._bulk_spec_wt: Dict[str, npt.NDArray[np.double]] = {}
@@ -394,6 +394,9 @@ class Surface:
             warning_and_exit(msg)
         # get material object
         m = self.materials[mat_name]
+        if len(recipe) == 0:
+            msg = [Color.PURPLE, "site fraction recipe cannot be empty.", Color.END]
+            error_and_exit(msg)
         # reset site fraction values to 0
         self._site_fractions[mat_name][:] = 0.0e0
         # get site species symbols
@@ -575,6 +578,9 @@ class Surface:
         # get material object
         m = self.materials[mat_name]
         n_bulks = m.num_bulk_species
+        if len(recipe) == 0:
+            msg = [Color.PURPLE, "bulk activity recipe cannot be empty.", Color.END]
+            error_and_exit(msg)
         # reset bulk activities values to 0
         self._bulk_activities[mat_name][:] = 0.0e0
         # get bulk species symbols
@@ -715,9 +721,14 @@ class Surface:
             log_warning_message(msg)
             exit()
         #
+        validate_species_array_size(
+            expected=n_bulks,
+            actual=len(rates),
+            context="bulk growth rate",
+        )
         for k in range(n_bulks):
             self.bulk_growth_rates[mat_name][k] = rates[k]
-            self.bulk_growth_rates_set[mat_name] = True
+        self.bulk_growth_rates_set[mat_name] = True
 
     def check_bulk_growth_rate_set(self, mat_name: str) -> bool:
         """Check if the bulk species growth rates are provided."""
@@ -822,7 +833,6 @@ class Surface:
         else:
             bulkact = np.full(1, 1.0e0)
         #
-        print(f"get activity array: {numgas}")
         act = Surface.set_activity_array(
             ngas=numgas,
             nsites=numsites,
@@ -966,7 +976,7 @@ class Surface:
         if mat_id < 0:
             return 0
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         ii_surf = m.number_surface_reactions
         return ii_surf
 
@@ -990,7 +1000,7 @@ class Surface:
         if mat_id < 0:
             return 0
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         kk_surf = m.number_site_species + self.number_bulk_species
         return kk_surf
 
@@ -1014,7 +1024,7 @@ class Surface:
         if mat_id < 0:
             return self.num_gas_species
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         total_species = m.number_total_species
         return total_species
 
@@ -1038,7 +1048,7 @@ class Surface:
         if mat_id < 0:
             return 1
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         n_phases = m.number_phases
         return n_phases
 
@@ -1062,7 +1072,7 @@ class Surface:
         if mat_id < 0:
             return -1
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         index = m.first_site_phase_index
         return index
 
@@ -1086,7 +1096,7 @@ class Surface:
         if mat_id < 0:
             return -1
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         index = m.last_site_phase_index
         return index
 
@@ -1110,7 +1120,7 @@ class Surface:
         if mat_id < 0:
             return -1
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         index = m.first_bulk_phase_index
         return index
 
@@ -1134,7 +1144,7 @@ class Surface:
         if mat_id < 0:
             return -1
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         index = m.last_bulk_phase_index
         return index
 
@@ -1156,7 +1166,7 @@ class Surface:
         # verify the material name
         self.require_surface_material(mat_name)
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         psymbols = m.phase_names
         return psymbols
 
@@ -1180,7 +1190,7 @@ class Surface:
         if mat_id < 0:
             return 0
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         n_sites = m.num_site_species
         return n_sites
 
@@ -1204,7 +1214,7 @@ class Surface:
         if mat_id < 0:
             return 0
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         n_bulks = m.number_bulk_species
         return n_bulks
 
@@ -1228,7 +1238,7 @@ class Surface:
         if mat_id < 0:
             return -1
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         global_index = m.first_site_species_index
         return global_index
 
@@ -1252,7 +1262,7 @@ class Surface:
         if mat_id < 0:
             return -1
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         global_index = m.last_site_species_index
         return global_index
 
@@ -1276,7 +1286,7 @@ class Surface:
         if mat_id < 0:
             return -1
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         global_index = m.first_bulk_species_index
         return global_index
 
@@ -1300,7 +1310,7 @@ class Surface:
         if mat_id < 0:
             return -1
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         global_index = m.last_bulk_species_index
         return global_index
 
@@ -1322,7 +1332,7 @@ class Surface:
         # verify the material name
         self.require_surface_material(mat_name)
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         ssymbols = m.site_species_names
         return ssymbols
 
@@ -1344,7 +1354,7 @@ class Surface:
         # verify the material name
         self.require_surface_material(mat_name)
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         bsymbols = m.bulk_species_names
         return bsymbols
 
@@ -1367,7 +1377,7 @@ class Surface:
         # verify the material name
         self.require_surface_material(mat_name)
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         ssymbols = m.site_species_names
         bsymbols = m.bulk_species_names
         surf_symbols = ssymbols + bsymbols
@@ -1434,7 +1444,7 @@ class Surface:
         # verify the material name
         self.require_surface_material(mat_name)
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         site_den = m.get_site_density()
         # the first site phase
         pstart = m.first_site_phase_index
@@ -1459,7 +1469,7 @@ class Surface:
         # verify the material name
         self.require_surface_material(mat_name)
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         occupancy = m.get_site_occupancy()
         return occupancy
 
@@ -1484,7 +1494,7 @@ class Surface:
         if self._site_wt_set.get(mat_name, False):
             site_wt = self._site_spec_wt[mat_name]
         else:
-            m = self.materials.get(mat_name)
+            m = self.materials[mat_name]
             site_wt = m.get_site_molar_weights()
             self._site_spec_wt[mat_name] = site_wt
             self._site_wt_set[mat_name] = True
@@ -1511,7 +1521,7 @@ class Surface:
         if self._bulk_wt_set.get(mat_name, False):
             bulk_wt = self._bulk_spec_wt[mat_name]
         else:
-            m = self.materials.get(mat_name)
+            m = self.materials[mat_name]
             bulk_wt = m.get_bulk_molar_weights()
             self._bulk_spec_wt[mat_name] = bulk_wt
             self._bulk_wt_set[mat_name] = True
@@ -1558,7 +1568,7 @@ class Surface:
         # verify the material name
         self.require_surface_material(mat_name)
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         site_h = m.get_site_species_h()
         return site_h
 
@@ -1580,7 +1590,7 @@ class Surface:
         # verify the material name
         self.require_surface_material(mat_name)
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         bulk_h = m.get_bulk_species_h()
         return bulk_h
 
@@ -1602,7 +1612,7 @@ class Surface:
         # verify the material name
         self.require_surface_material(mat_name)
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         bulk_h = m.get_bulk_species_h()
         site_h = m.get_site_species_h()
         surf_h = np.hstack((site_h, bulk_h))
@@ -1626,7 +1636,7 @@ class Surface:
         # verify the material name
         self.require_surface_material(mat_name)
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         bulk_cp = m.get_bulk_species_cp()
         return bulk_cp
 
@@ -1648,7 +1658,7 @@ class Surface:
         # verify the material name
         self.require_surface_material(mat_name)
         #
-        m = self.materials.get(mat_name)
+        m = self.materials[mat_name]
         bulk_den = m.get_bulk_density()
         return bulk_den
 
@@ -1947,9 +1957,9 @@ class Surface:
         # initialization
         # species rate of production by surface reactions [mole/cm2-sec]
         numb_species = numb_gas + numb_sites + numb_bulks
-        rop = np.zeros(numb_species, dtype=np.double)
+        rop = np.empty(numb_species, dtype=np.double)
         # surface site phase production rate by surface reactions [mole/cm2-sec]
-        phase_prod_rates = np.zeros(numb_phase, dtype=np.double)
+        phase_prod_rates = np.empty(numb_phase, dtype=np.double)
         # convert parameters to c pointers
         chemset_index = ctypes.c_int(chem_id)
         mat_index = ctypes.c_int(mat_id)
@@ -2073,8 +2083,8 @@ class Surface:
             log_error_message(msg)
             exit()
         # initialization
-        k_forward = np.zeros(numb_reaction, dtype=np.double)
-        k_reverse = np.zeros_like(k_forward, dtype=np.double)
+        k_forward = np.empty(numb_reaction, dtype=np.double)
+        k_reverse = np.empty_like(k_forward, dtype=np.double)
         # convert parameters to c pointers
         chemset_index = ctypes.c_int(chem_id)
         mat_index = ctypes.c_int(mat_id)
@@ -2286,8 +2296,8 @@ class Surface:
         # get surface overages
         sden, sfrac, bfrac = self.set_surface_coverage(mat_name)
         #
-        k_forward = np.zeros(numsurf_reactions, dtype=np.double)
-        k_reverse = np.zeros_like(k_forward, dtype=np.double)
+        k_forward = np.empty(numsurf_reactions, dtype=np.double)
+        k_reverse = np.empty_like(k_forward, dtype=np.double)
         #
         # mixture mole fraction given
         k_forward, k_reverse = Surface.surface_reaction_rates(

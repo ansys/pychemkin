@@ -158,6 +158,7 @@ SOC
 SOx
 subpackage
 surf_file
+Synopsys
 te
 Tetrafluoride
 tetrafluoride

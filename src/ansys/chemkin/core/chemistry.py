@@ -50,6 +50,7 @@ _symbol_length = 16  # Chemkin element/species symbol length
 MAX_SPECIES_LENGTH = _symbol_length + 1  # Chemkin element/species symbol length + 1
 LP_c_char = ctypes.POINTER(ctypes.c_char)  # pointer to C type character array
 COMPLETE = 0
+_chemset_identifier_separator = "\x1f"
 
 # string used to identify different chemistry sets in the same project
 _chemset_identifiers: List = []
@@ -220,7 +221,19 @@ def done():
     # running in Jupyter environment
     # requires addition steps
     if chemkin_version() >= 271:
-        _ = ck_wrapper.chemkin.KINExit()
+        try:
+            _ = ck_wrapper.chemkin.KINExit()
+        except OSError as exc:
+            # KINExit() is a native shutdown call. On some installations it
+            # can report an OS-level shutdown error after calculations have
+            # completed. Continue cleaning up the Python-side state.
+            _log_warning_message(
+                [
+                    "KINExit() reported an OS error during Chemkin shutdown;",
+                    "continuing cleanup.",
+                    str(exc),
+                ]
+            )
 
     # clean up
     global _active_chemistry_set
@@ -675,7 +688,6 @@ class Chemistry(SurfaceChemistryMixin):
         self.userealgas = False  # use ideal gas law by default
         self._awt_done = 0
         self._wt_done = 0
-        self.ncf_done = 0
         # fake initialization
         self._awt = np.zeros(1, dtype=np.double)
         self._wt = np.zeros(1, dtype=np.double)
@@ -734,6 +746,37 @@ class Chemistry(SurfaceChemistryMixin):
             [Color.RED, file_description, file_path, "not found.", Color.END]
         )
 
+    def _invalidate_chemistry_cache(self):
+        """Clear data derived from the current chemistry input files."""
+        self._chemset_index = c_int(-1)
+        self._num_elements = c_int(0)
+        self._num_gas_species = c_int(0)
+        self._num_gas_reactions = c_int(0)
+        self._eos = c_int(0)
+        self.userealgas = False
+        self._awt_done = 0
+        self._wt_done = 0
+        self._awt = np.zeros(1, dtype=np.double)
+        self._wt = np.zeros(1, dtype=np.double)
+        self._elements.clear()
+        self.esymbol.clear()
+        self._esym_done = 0
+        self._gas_species.clear()
+        self.ksymbol.clear()
+        self._ksym_done = 0
+        if hasattr(self, "_num_materials"):
+            self._num_materials = c_int(0)
+            self.material_map.clear()
+            self.materials.clear()
+            self.matsymbol.clear()
+            self._materialnamedone = 0
+            self._num_max_site_species = c_int(0)
+            self._num_max_bulk_species = c_int(0)
+            self._num_max_phases = c_int(0)
+            self._num_max_surf_reactions = c_int(0)
+            self._material_temperature.clear()
+            self._material_area.clear()
+
     @property
     def chemfile(self) -> str:
         """Get gas-phase mechanism file name of this chemistry set."""
@@ -760,6 +803,7 @@ class Chemistry(SurfaceChemistryMixin):
                 name of the gas-phase mechanism file with the full path
 
         """
+        self._invalidate_chemistry_cache()
         self._gas_file = filename
 
     @property
@@ -788,6 +832,7 @@ class Chemistry(SurfaceChemistryMixin):
                 name of the thermodynamic data file with the full path
 
         """
+        self._invalidate_chemistry_cache()
         self._therm_file = filename
 
     @property
@@ -816,6 +861,7 @@ class Chemistry(SurfaceChemistryMixin):
                 name of the transport data file with the full path
 
         """
+        self._invalidate_chemistry_cache()
         self._tran_file = filename
         if Path(self._tran_file).is_file():
             self._index_tran = ctypes.c_int(1)
@@ -895,6 +941,7 @@ class Chemistry(SurfaceChemistryMixin):
                 name of the surface mechanism file with the full path
 
         """
+        self._invalidate_chemistry_cache()
         self._surf_file = filename
         if Path(self._surf_file).is_file():
             self._index_surf = ctypes.c_int(1)
@@ -925,7 +972,7 @@ class Chemistry(SurfaceChemistryMixin):
                 name of the transport data file with the full path
 
         """
-        self._chemset_index = c_int(-1)
+        self._invalidate_chemistry_cache()
         if len(chem) > 1:
             self._gas_file = chem
         else:
@@ -985,13 +1032,16 @@ class Chemistry(SurfaceChemistryMixin):
             log_info_message(msg)
 
         # verify chemistry set
-        # create a new identifier for this chemistry set
-        name = self._gas_file + self._therm_file
+        # Delimit paths so distinct file combinations cannot collide.
+        identifier_parts = [
+            str(Path(self._gas_file).resolve()),
+            str(Path(self._therm_file).resolve()),
+        ]
         if self._index_tran.value == 1:
-            name = name + self._tran_file
+            identifier_parts.append(str(Path(self._tran_file).resolve()))
         if self._index_surf.value == 1:
-            name = name + self._surf_file
-        identifier = name
+            identifier_parts.append(str(Path(self._surf_file).resolve()))
+        identifier = _chemset_identifier_separator.join(identifier_parts)
         # check if this chemistry set is already processed by this project
         if identifier in _chemset_identifiers:
             # existing chemistry set
@@ -1204,12 +1254,7 @@ class Chemistry(SurfaceChemistryMixin):
                 error_and_exit(msg)
             del buff, pp
 
-        # convert string type
-        mylist = list(self._gas_species.keys())
-        self.ksymbol.clear()
-        for s in mylist:
-            self.ksymbol.append(s)
-        del mylist
+        self.ksymbol[:] = self._gas_species
         return self.ksymbol
 
     @property
@@ -1242,12 +1287,7 @@ class Chemistry(SurfaceChemistryMixin):
                 error_and_exit(msg)
             del buff_ele, pp_ele
 
-        # convert string type
-        my_ele_list = list(self._elements.keys())
-        self.esymbol.clear()
-        for s_ele in my_ele_list:
-            self.esymbol.append(s_ele)
-        del my_ele_list
+        self.esymbol[:] = self._elements
         return self.esymbol
 
     def get_specindex(self, specname: str) -> int:
@@ -1369,8 +1409,7 @@ class Chemistry(SurfaceChemistryMixin):
         -------
             ii_gas: integer
                 total number of gas-phase reactions in the Chemistry set
-
-        """
+            """
         return self._num_gas_reactions.value
 
     # alias
@@ -1398,7 +1437,7 @@ class Chemistry(SurfaceChemistryMixin):
             ]
             error_and_exit(msg)
         del self._awt  # clear the "original" definition in __init__
-        self._awt = np.zeros(self._num_elements.value, dtype=np.double)
+        self._awt = np.empty(self._num_elements.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetAtomicWeights(self._chemset_index, self._awt)
         if ierr == 0:
             self._awt_done = 1
@@ -1433,7 +1472,7 @@ class Chemistry(SurfaceChemistryMixin):
             ]
             error_and_exit(msg)
         del self._wt  # clear the "original" definition in __init__
-        self._wt = np.zeros(self._num_gas_species.value, dtype=np.double)
+        self._wt = np.empty(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetGasMolecularWeights(
             self._chemset_index, self._wt
         )
@@ -1496,7 +1535,7 @@ class Chemistry(SurfaceChemistryMixin):
                 set_current_pressure(self.chemid, pres)
         #
         tt = c_double(temp)
-        cp = np.zeros(self._num_gas_species.value, dtype=np.double)
+        cp = np.empty(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetGasSpecificHeat(self._chemset_index, tt, cp)
         if ierr == 0:
             # convert [ergs/g-K] to [ergs/mol-K]
@@ -1596,7 +1635,7 @@ class Chemistry(SurfaceChemistryMixin):
                 # set current pressure for the real-gas
                 set_current_pressure(self.chemid, pres)
         tt = c_double(temp)
-        h = np.zeros(self._num_gas_species.value, dtype=np.double)
+        h = np.empty(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetGasSpeciesEnthalpy(self._chemset_index, tt, h)
         if ierr == 0:
             # convert [ergs/gm] to [ergs/mol]
@@ -1657,7 +1696,7 @@ class Chemistry(SurfaceChemistryMixin):
                 # set current pressure for the real-gas
                 set_current_pressure(self.chemid, pres)
         tt = c_double(temp)
-        u = np.zeros(self._num_gas_species.value, dtype=np.double)
+        u = np.empty(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetGasSpeciesInternalEnergy(
             self._chemset_index, tt, u
         )
@@ -1707,7 +1746,7 @@ class Chemistry(SurfaceChemistryMixin):
             msg = [Color.PURPLE, "temperature value is too low.", Color.END]
             error_and_exit(msg)
         tt = c_double(temp)
-        visc = np.zeros(self._num_gas_species.value, dtype=np.double)
+        visc = np.empty(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetViscosity(self._chemset_index, tt, visc)
         if ierr != 0:
             # failed to compute viscosity
@@ -1746,7 +1785,7 @@ class Chemistry(SurfaceChemistryMixin):
             msg = [Color.PURPLE, "temperature value is too low.", Color.END]
             error_and_exit(msg)
         tt = c_double(temp)
-        cond = np.zeros(self._num_gas_species.value, dtype=np.double)
+        cond = np.empty(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetConductivity(self._chemset_index, tt, cond)
         if ierr != 0:
             # failed to compute conductivities
@@ -1799,7 +1838,7 @@ class Chemistry(SurfaceChemistryMixin):
         pp = c_double(press)
         tt = c_double(temp)
         dim = (self._num_gas_species.value, self._num_gas_species.value)
-        diffusioncoeffs = np.zeros(dim, dtype=np.double, order="F")
+        diffusioncoeffs = np.empty(dim, dtype=np.double, order="F")
         ierr = ck_wrapper.chemkin.KINGetDiffusionCoeffs(
             self._chemset_index, pp, tt, diffusioncoeffs
         )
@@ -1832,24 +1871,6 @@ class Chemistry(SurfaceChemistryMixin):
                 number of the element in the given gas species
 
         """
-        if self.ncf_done == 0:
-            # initialize the NCF matrix
-            dim = (self._num_elements.value, self._num_gas_species.value)
-            self.elementalcomp = np.zeros(dim, dtype=np.int32, order="F")
-            # load the NCF matrix
-            ierr = ck_wrapper.chemkin.KINGetGasSpeciesComposition(
-                self._chemset_index, self.elementalcomp
-            )
-            if ierr != 0:
-                msg = [
-                    Color.PURPLE,
-                    "failed to compute elemental compositions.",
-                    Color.END,
-                ]
-                error_and_exit(msg)
-            else:
-                self.ncf_done = 1
-
         # check element index
         if elemindex < 0 or elemindex >= self._num_elements.value:
             msg = [Color.PURPLE, "element index is out of bound.", Color.END]
@@ -1859,7 +1880,20 @@ class Chemistry(SurfaceChemistryMixin):
             msg = [Color.PURPLE, "species index is out of bound.", Color.END]
             error_and_exit(msg)
 
-        return self.elementalcomp[elemindex][specindex]
+        dim = (self._num_elements.value, self._num_gas_species.value)
+        elementalcomp = np.empty(dim, dtype=np.int32, order="F")
+        ierr = ck_wrapper.chemkin.KINGetGasSpeciesComposition(
+            self._chemset_index, elementalcomp
+        )
+        if ierr != 0:
+            msg = [
+                Color.PURPLE,
+                "failed to compute elemental compositions.",
+                Color.END,
+            ]
+            error_and_exit(msg)
+
+        return elementalcomp[elemindex][specindex]
 
     @property
     def eos(self) -> int:
@@ -1951,22 +1985,37 @@ class Chemistry(SurfaceChemistryMixin):
                 activation temperature [K]
 
         """
+        if self._chemset_index.value < 0:
+            msg = [
+                Color.PURPLE,
+                "please preprocess the chemistry set first.",
+                Color.END,
+            ]
+            log_error_message(msg)
+            exit()
+
         reactionsize = self.ii_gas
         # pre-exponent A factor of all gas-phase reactions in the mechanism
         # in cgs units [mole-cm3-sec-K]
-        a_factor = np.zeros(shape=reactionsize, dtype=np.double)
+        a_factor = np.empty(shape=reactionsize, dtype=np.double)
         # temperature exponent of all reactions [-]
-        beta = np.zeros_like(a_factor, dtype=np.double)
+        beta = np.empty_like(a_factor, dtype=np.double)
         # activation energy/temperature of all reactions [K]
-        act_energy = np.zeros_like(a_factor, dtype=np.double)
+        act_energy = np.empty_like(a_factor, dtype=np.double)
         # get the reaction parameters
         ierr = ck_wrapper.chemkin.KINGetReactionRateParameters(
             self._chemset_index, a_factor, beta, act_energy
         )
         if ierr != 0:
-            a_factor[:] = 0.0e0
-            beta[:] = 0.0e0
-            act_energy[:] = 0.0e0
+            msg = [
+                Color.PURPLE,
+                "failed to get Arrhenius reaction-rate parameters,",
+                "error code =",
+                str(ierr),
+                Color.END,
+            ]
+            log_error_message(msg)
+            exit()
         return a_factor, beta, act_energy
 
     def set_reaction_afactor(self, reaction_index: int, a_factor: float):
@@ -2069,8 +2118,6 @@ class Chemistry(SurfaceChemistryMixin):
                 reaction string of the given reaction
 
         """
-        # initialization
-        reactionstring = ""
         if reaction_index > self._num_gas_reactions.value:
             msg = [
                 Color.PURPLE,
@@ -2085,8 +2132,21 @@ class Chemistry(SurfaceChemistryMixin):
         # convert the reaction parameters
         ireac = c_int(reaction_index)
         i_string_size = c_int(0)
-        # get reaction string (might have to be increased to 2048 for 26R1)
-        rstring = bytes(" " * 1024, "utf-8")
+        reaction_string_length = c_int(0)
+        ierr = ck_wrapper.chemkin.KINGetReactionStringLength(reaction_string_length)
+        if ierr != 0 or reaction_string_length.value <= 0:
+            msg = [
+                Color.YELLOW,
+                "failed to determine the maximum reaction-string length,",
+                "using a 1024-byte buffer.",
+                "error code =",
+                str(ierr),
+                Color.END,
+            ]
+            _log_warning_message(msg)
+            reaction_string_length = c_int(1024)
+
+        rstring = ctypes.create_string_buffer(reaction_string_length.value + 1)
         ierr = ck_wrapper.chemkin.KINGetGasReactionString(
             self._chemset_index, ireac, i_string_size, rstring
         )
@@ -2100,10 +2160,7 @@ class Chemistry(SurfaceChemistryMixin):
             ]
             error_and_exit(msg)
         # convert C string back to string
-        # print(rstring.decode()[0:i_string_size.value])  # check
-        reactionstring = rstring.decode()[0 : i_string_size.value]
-        del rstring
-        return reactionstring
+        return rstring.raw[: i_string_size.value].decode("utf-8")
 
     def save(self):
         """Store the work spaces of the current Chemistry Set."""
