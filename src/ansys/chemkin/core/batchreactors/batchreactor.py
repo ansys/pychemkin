@@ -1835,7 +1835,7 @@ class BatchReactors(Reactor):
             return 1
         # create a temporary Mixture object to hold the mixture properties
         # at current solution point
-        smixture = copy.deepcopy(self.reactormixture)
+        smixture = self.reactormixture._clone()
         # create variable arrays to hold the solution profile
         species = []
         # create a species fraction array to
@@ -1868,7 +1868,7 @@ class BatchReactors(Reactor):
                 # mole fractions
                 smixture.x = frac
             # add to the solution mixture list
-            self._solution_mixturearray.append(copy.deepcopy(smixture))
+            self._solution_mixturearray.append(smixture._clone())
         # clean up
         species.clear()
         del pres, temp, vol, frac, species, smixture
@@ -1908,16 +1908,16 @@ class BatchReactors(Reactor):
         # find the mixture
         if ratio == 0.0e0:
             # get the mixtures
-            mixtureleft = copy.deepcopy(self._solution_mixturearray[ileft])
+            mixtureleft = self._solution_mixturearray[ileft]._clone()
             return mixtureleft
         elif ratio == 1.0e0:
             # get the mixtures
-            mixtureright = copy.deepcopy(self._solution_mixturearray[ileft + 1])
+            mixtureright = self._solution_mixturearray[ileft + 1]._clone()
             return mixtureright
         else:
             # get the mixtures
-            mixtureleft = copy.deepcopy(self._solution_mixturearray[ileft])
-            mixtureright = copy.deepcopy(self._solution_mixturearray[ileft + 1])
+            mixtureleft = self._solution_mixturearray[ileft]._clone()
+            mixtureright = self._solution_mixturearray[ileft + 1]._clone()
             # interpolate the mixture properties
             mixturetarget = interpolate_mixtures(mixtureleft, mixtureright, ratio)
             # clean up
@@ -1972,7 +1972,7 @@ class BatchReactors(Reactor):
             log_error_message(msg)
             exit()
         # get the mixture
-        mixturetarget = copy.deepcopy(self._solution_mixturearray[solution_index])
+        mixturetarget = self._solution_mixturearray[solution_index]._clone()
         return mixturetarget
 
     def get_last_solution_mixture(self) -> Mixture:
@@ -2000,7 +2000,7 @@ class BatchReactors(Reactor):
         # set index to the last solution point
         solution_index = self._numbsolutionpoints - 1
         # get the mixture
-        mixturetarget = copy.deepcopy(self._solution_mixturearray[solution_index])
+        mixturetarget = self._solution_mixturearray[solution_index]._clone()
         return mixturetarget
 
 

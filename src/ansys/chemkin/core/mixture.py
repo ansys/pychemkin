@@ -22,7 +22,6 @@
 
 """Chemkin Mixture utilities."""
 
-import copy
 import ctypes
 from ctypes import c_double, c_int
 from typing import Union
@@ -115,8 +114,7 @@ class Mixture:
         self._chemset_index = ctypes.c_int(self._chem_set.chemid)
         self._kk = self._chem_set.kk  # number of gas species
         self._ii_gas = self._chem_set.ii_gas  # number of gas-phase reactions
-        self._specieslist: list[str] = []
-        self._specieslist = self._chem_set.species_symbols  # gas species symbols
+        self._specieslist: list[str] = self._chem_set.species_symbols
         self._species_index_map = {
             symbol: index for index, symbol in enumerate(self._specieslist)
         }
@@ -126,8 +124,6 @@ class Mixture:
         self._molefrac = np.zeros(self._kk, dtype=np.double)
         # mixture composition given in mass fractions
         self._massfrac = np.zeros_like(self._molefrac)
-        # concentrations (not used)
-        self._concentration = np.zeros_like(self._molefrac)
         # flag indicating there is surface chemistry (type c_int: 0 = no, 1 = yes)
         self._surfacechem = c_int(self._chem_set.surfchem)
         # flag indicating there is gas transport data (type c_int: 0 = no, 1 = yes)
@@ -180,6 +176,21 @@ class Mixture:
         msg = [Color.PURPLE, "species symbol not found:", symbol, Color.END]
         log_error_message(msg)
         exit()
+
+    def _clone(self) -> "Mixture":
+        """Clone mutable mixture state while sharing immutable Chemistry metadata."""
+        cloned = Mixture(self._chem_set)
+        cloned._temp = self._temp
+        cloned._press = self._press
+        cloned._vol = self._vol
+        cloned._t_set = self._t_set
+        cloned._p_set = self._p_set
+        cloned._x_set = self._x_set
+        cloned._y_set = self._y_set
+        cloned._molefrac[:] = self._molefrac
+        cloned._massfrac[:] = self._massfrac
+        cloned.userealgas = self.userealgas
+        return cloned
 
     def get_specindex(self, symbol: str) -> int:
         """Get the index of the given gas species symbol."""
@@ -537,7 +548,6 @@ class Mixture:
                 fac = den / mwt
                 for k in range(self._kk):
                     c[k] *= fac
-                self._concentration[:] = c[:]
             return c
         elif self._y_set == 1:
             # mass fractions are given
@@ -548,7 +558,6 @@ class Mixture:
                 den = self.rho
                 for k in range(self._kk):
                     c[k] = c[k] * den / self._wt[k]
-                self._concentration[:] = c[:]
             return c
         else:
             self._require_composition_set()
@@ -1952,10 +1961,6 @@ class Mixture:
         self._require_temperature_set()
         # check pressure
         self._require_pressure_set()
-        # initialization
-        k_forward = np.empty(self._ii_gas, dtype=np.double)
-        k_reverse = np.empty_like(k_forward, dtype=np.double)
-
         k_forward, k_reverse = self._run_with_active_composition(
             Mixture.reaction_rates,
             chemid=self._chemset_index.value,
@@ -2234,24 +2239,10 @@ class Mixture:
         self, values: npt.NDArray[np.double], threshold: float
     ) -> tuple[npt.NDArray[np.int32], npt.NDArray[np.double]]:
         """Return source indices and sorted values above an absolute threshold."""
-        temp_values = np.zeros_like(values, dtype=np.double)
-        temp_order = np.zeros(len(values), dtype=np.int32)
-
-        count = 0
-        for i in range(len(values)):
-            if abs(values[i]) > threshold:
-                temp_values[count] = values[i]
-                temp_order[count] = i
-                count += 1
-
-        sorted_values = np.flip(np.sort(temp_values[:count]))
-        sorted_order = np.zeros_like(sorted_values, dtype=np.int32)
-        remaining = copy.deepcopy(sorted_values)
-        for i in range(len(sorted_values)):
-            _, source_id = where_element_in_array_1d(temp_values, remaining[i])
-            sorted_order[i] = temp_order[source_id[0]]
-            remaining[i] = 0.0e0
-
+        sorted_order = np.argsort(-values, kind="mergesort")
+        sorted_order = sorted_order[np.abs(values[sorted_order]) > threshold]
+        sorted_order = sorted_order.astype(np.int32, copy=False)
+        sorted_values = values[sorted_order]
         return sorted_order, sorted_values
 
     def list_rop(
@@ -2966,8 +2957,8 @@ def _require_valid_recipe_chemid(chem_index: int) -> None:
 
 
 def _clone_with_cleared_composition(mixture: Mixture) -> Mixture:
-    """Deep-copy a mixture and clear composition flags and arrays."""
-    cloned = copy.deepcopy(mixture)
+    """Clone a mixture and clear its composition flags and arrays."""
+    cloned = mixture._clone()
     cloned._x_set = 0
     cloned._molefrac[:] = 0.0e0
     cloned._y_set = 0
@@ -3230,7 +3221,7 @@ def calculate_mixture_temperature_from_enthalpy(
     # check argument
     _require_mixture_object(mixture, "the first argument must be a Mixture object.")
     # make a copy of the mixture object
-    localmixture = copy.deepcopy(mixture)
+    localmixture = mixture._clone()
     # set converge tolerance
     tolerance = 0.1  # accurate to 0.1 K
     # iteration count limit
@@ -3818,7 +3809,7 @@ def calculate_mass_weighted_mean_mixture(
         )
 
     # create the mean mixture object
-    mean_mixture = copy.deepcopy(mixtures[0])
+    mean_mixture = mixtures[0]._clone()
     # total mass
     total_mass = 0.0e0
     mean_h = 0.0e0
@@ -3902,7 +3893,7 @@ def interpolate_mixtures(
         )
     ratiom = 1.0e0 - ratio
     # interpolate the mixture properties
-    mixturenew = copy.deepcopy(mixtureleft)
+    mixturenew = mixtureleft._clone()
     # temperature
     mixturenew.temperature = (
         ratiom * mixtureleft.temperature + ratio * mixtureright.temperature
@@ -3914,12 +3905,8 @@ def interpolate_mixtures(
     # species composition
     fracleft = mixtureleft.y
     fracright = mixtureright.y
-    frac = np.zeros(len(fracleft), dtype=np.double)
     frac = ratiom * fracleft + ratio * fracright
     mixturenew.y = frac
-    # clean up
-    del frac
-    #
     return mixturenew
 
 

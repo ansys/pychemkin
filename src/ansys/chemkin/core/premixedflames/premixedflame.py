@@ -744,7 +744,7 @@ class PremixedFlame(Flame):
             return 1
         # create a temporary Stream object to hold the mixture properties
         # at current solution point
-        sstream = copy.deepcopy(self.reactormixture)
+        sstream = self.reactormixture._clone()
         # create variable arrays to hold the solution profile
         species = []
         # create a species fraction array to hold the solution species fraction profiles
@@ -774,7 +774,7 @@ class PremixedFlame(Flame):
                 # mole fractions
                 sstream.x = frac
             # add to the solution stream list
-            self._solution_mixturearray.append(copy.deepcopy(sstream))
+            self._solution_mixturearray.append(sstream._clone())
         # clean up
         species.clear()
         del temp, frac, species, sstream
@@ -812,16 +812,16 @@ class PremixedFlame(Flame):
         # find the mixture
         if ratio == 0.0e0:
             # get the mixtures
-            mixtureleft = copy.deepcopy(self._solution_mixturearray[ileft])
+            mixtureleft = self._solution_mixturearray[ileft]._clone()
             return mixtureleft
         elif ratio == 1.0e0:
             # get the mixtures
-            mixtureright = copy.deepcopy(self._solution_mixturearray[ileft + 1])
+            mixtureright = self._solution_mixturearray[ileft + 1]._clone()
             return mixtureright
         else:
             # get the mixtures
-            mixtureleft = copy.deepcopy(self._solution_mixturearray[ileft])
-            mixtureright = copy.deepcopy(self._solution_mixturearray[ileft + 1])
+            mixtureleft = self._solution_mixturearray[ileft]._clone()
+            mixtureright = self._solution_mixturearray[ileft + 1]._clone()
             # interpolate the mixture properties
             mixturetarget = interpolate_mixtures(mixtureleft, mixtureright, ratio)
             # set mass flow rate
@@ -877,7 +877,7 @@ class PremixedFlame(Flame):
             log_error_message(msg)
             exit()
         # get the mixture
-        mixturetarget = copy.deepcopy(self._solution_mixturearray[grid_index])
+        mixturetarget = self._solution_mixturearray[grid_index]._clone()
         return mixturetarget
 
 

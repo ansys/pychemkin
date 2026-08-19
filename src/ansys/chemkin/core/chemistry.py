@@ -25,7 +25,8 @@
 import ctypes
 from ctypes import POINTER, c_char_p, c_double, c_int
 from pathlib import Path
-from typing import Dict, List, Union
+from types import MappingProxyType
+from typing import Dict, List, Mapping, Sequence, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -648,6 +649,19 @@ class Chemistry(SurfaceChemistryMixin):
         "Peng-Robinson",
     ]
     realgas_mixing_rules = ["Van der Waals", "pseudocritical"]
+    _writable_after_preprocess = frozenset({"label", "userealgas"})
+
+    def __setattr__(self, name: str, value) -> None:
+        """Prevent Chemistry metadata reassignment after preprocessing."""
+        if (
+            getattr(self, "_metadata_frozen", False)
+            and name not in self._writable_after_preprocess
+        ):
+            raise AttributeError(
+                "Chemistry metadata is immutable after preprocessing; "
+                f"cannot assign {name!r}."
+            )
+        super().__setattr__(name, value)
 
     def __init__(
         self,
@@ -675,6 +689,7 @@ class Chemistry(SurfaceChemistryMixin):
                 label/name of the chemistry set
 
         """
+        self._metadata_frozen = False
         # set flags
         self._index_surf = c_int(0)
         self._index_tran = c_int(0)
@@ -692,12 +707,12 @@ class Chemistry(SurfaceChemistryMixin):
         self._awt = np.zeros(1, dtype=np.double)
         self._wt = np.zeros(1, dtype=np.double)
         # information about elements
-        self._elements: dict[str, int] = {}  # element symbols dictionary
-        self.esymbol: list[str] = []
+        self._elements: Mapping[str, int] = {}  # element symbols dictionary
+        self.esymbol: Sequence[str] = []
         self._esym_done = 0
         # information about gas-phase species
-        self._gas_species: dict[str, int] = {}  # gas species symbols dictionary
-        self.ksymbol: list[str] = []
+        self._gas_species: Mapping[str, int] = {}  # gas species symbols dictionary
+        self.ksymbol: Sequence[str] = []
         self._ksym_done = 0
         # chemistry set label
         self.label = " "
@@ -721,11 +736,11 @@ class Chemistry(SurfaceChemistryMixin):
         # number of surface materials
         self._num_materials = c_int(0)
         # surface material map {str, int}
-        self.material_map: dict[str, int] = {}
+        self.material_map: Mapping[str, int] = {}
         # surface material objects {str, Material object}
-        self.materials: dict[str, Material] = {}
+        self.materials: Mapping[str, Material] = {}
         # surface material names [str]
-        self.matsymbol: list[str] = []
+        self.matsymbol: Sequence[str] = []
         self._materialnamedone = 0
         # total number of surface site species
         self._num_max_site_species = c_int(0)
@@ -738,6 +753,19 @@ class Chemistry(SurfaceChemistryMixin):
         #
         self._material_temperature: list[float] = []
         self._material_area: list[float] = []
+
+    def _freeze_metadata(self) -> None:
+        """Freeze preprocessed Chemistry metadata for safe sharing."""
+        self._awt.setflags(write=False)
+        self._wt.setflags(write=False)
+        self._elements = MappingProxyType(dict(self._elements))
+        self._gas_species = MappingProxyType(dict(self._gas_species))
+        self.esymbol = tuple(self.esymbol)
+        self.ksymbol = tuple(self.ksymbol)
+        self.material_map = MappingProxyType(dict(self.material_map))
+        self.materials = MappingProxyType(dict(self.materials))
+        self.matsymbol = tuple(self.matsymbol)
+        self._metadata_frozen = True
 
     @staticmethod
     def _critical_file_not_found(file_description: str, file_path: str):
@@ -1134,6 +1162,7 @@ class Chemistry(SurfaceChemistryMixin):
             chemistryset_new(self._chemset_index.value)
             # save the chemkin work spaces for later use (by using active())
             self.save()
+            self._freeze_metadata()
         else:
             # fail to preprocess the chemistry files
             details = "\n"
@@ -1253,8 +1282,7 @@ class Chemistry(SurfaceChemistryMixin):
                 msg = [Color.PURPLE, "failed to get species symbols.", Color.END]
                 error_and_exit(msg)
             del buff, pp
-
-        self.ksymbol[:] = self._gas_species
+            self.ksymbol[:] = self._gas_species
         return self.ksymbol
 
     @property
@@ -1286,8 +1314,7 @@ class Chemistry(SurfaceChemistryMixin):
                 msg = [Color.PURPLE, "failed to get element symbols.", Color.END]
                 error_and_exit(msg)
             del buff_ele, pp_ele
-
-        self.esymbol[:] = self._elements
+            self.esymbol[:] = self._elements
         return self.esymbol
 
     def get_specindex(self, specname: str) -> int:

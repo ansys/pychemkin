@@ -22,7 +22,6 @@
 
 """Perfectly stirred reactor (PSR) model."""
 
-import copy
 from ctypes import c_double, c_int
 from typing import Union
 
@@ -827,7 +826,7 @@ class PerfectlyStirredReactor(OpenReactor):
         msg = [Color.YELLOW, "post-processing raw solution data ...", Color.END]
         log_info_message(msg)
         # create a Stream object to hold the mixture properties of current solution
-        smixture = copy.deepcopy(self.reactormixture)
+        smixture = self.reactormixture._clone()
         # create a species mass fraction array to hold the steady-state solution
         frac = np.empty(self.numbspecies, dtype=np.double)
         # get raw solution data

@@ -578,7 +578,7 @@ class ShockTubeReactors(Reactor):
             return 1
         # create a temporary Mixture object to hold the mixture properties
         # at current solution point
-        sstream = copy.deepcopy(self.reactormixture)
+        sstream = self.reactormixture._clone()
         # create variable arrays to hold the solution profile
         species = []
         # create a species fraction array to
@@ -620,7 +620,7 @@ class ShockTubeReactors(Reactor):
                 # mole fractions
                 sstream.x = frac
             # add to the solution mixture list
-            self._solution_mixturearray.append(copy.deepcopy(sstream))
+            self._solution_mixturearray.append(sstream._clone())
         # clean up
         species.clear()
         del pres, temp, vel, frac, species, sstream
@@ -660,16 +660,16 @@ class ShockTubeReactors(Reactor):
         # find the stream
         if ratio == 0.0e0:
             # get the streams
-            mixtureleft = copy.deepcopy(self._solution_mixturearray[ileft])
+            mixtureleft = self._solution_mixturearray[ileft]._clone()
             return mixtureleft
         elif ratio == 1.0e0:
             # get the streams
-            mixtureright = copy.deepcopy(self._solution_mixturearray[ileft + 1])
+            mixtureright = self._solution_mixturearray[ileft + 1]._clone()
             return mixtureright
         else:
             # get the streams
-            mixtureleft = copy.deepcopy(self._solution_mixturearray[ileft])
-            mixtureright = copy.deepcopy(self._solution_mixturearray[ileft + 1])
+            mixtureleft = self._solution_mixturearray[ileft]._clone()
+            mixtureright = self._solution_mixturearray[ileft + 1]._clone()
             # interpolate the mixture properties
             mixturetarget = interpolate_mixtures(mixtureleft, mixtureright, ratio)
             # set velocity
@@ -729,7 +729,7 @@ class ShockTubeReactors(Reactor):
             log_error_message(msg)
             exit()
         # get the stream
-        mixturetarget = copy.deepcopy(self._solution_mixturearray[solution_index])
+        mixturetarget = self._solution_mixturearray[solution_index]._clone()
         return mixturetarget
 
     def get_inductionlength_size(self) -> int:
@@ -1576,7 +1576,7 @@ class ZNDCalculator(ShockTubeReactors):
                 the Ng Chi parameter
         """
         # gas mixture condition before the incident shock
-        location1_mixture = copy.deepcopy(self.reactormixture)
+        location1_mixture = self.reactormixture._clone()
         # pressure behind the incident shock [dynes/cm2]
         pres2 = self.get_single_point_solution("P2")
         # gas temperature behind the incident shock [K]
@@ -1683,7 +1683,7 @@ class ZNDCalculator(ShockTubeReactors):
                 cell size [cm]
         """
         # gas mixture condition before the incident shock
-        location1_mixture = copy.deepcopy(self.reactormixture)
+        location1_mixture = self.reactormixture._clone()
         # gas temperature before the incident shock [K]
         temp1 = self.get_single_point_solution("T1")
         # gas temperature behind the incident shock [K]

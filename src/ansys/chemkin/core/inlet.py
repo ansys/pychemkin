@@ -108,6 +108,49 @@ class Stream(Mixture):
             label = "inlet"
         self._label = label
 
+    def _clone(self) -> "Stream":
+        """Clone mutable stream state while sharing immutable Chemistry metadata."""
+        cloned = Stream(self._chem_set, label=self._label)
+        cloned._temp = self._temp
+        cloned._press = self._press
+        cloned._vol = self._vol
+        cloned._t_set = self._t_set
+        cloned._p_set = self._p_set
+        cloned._x_set = self._x_set
+        cloned._y_set = self._y_set
+        cloned._molefrac[:] = self._molefrac
+        cloned._massfrac[:] = self._massfrac
+        cloned.userealgas = self.userealgas
+
+        mixture_attributes = {
+            "_temp",
+            "_press",
+            "_vol",
+            "_t_set",
+            "_p_set",
+            "_x_set",
+            "_y_set",
+            "_chem_set",
+            "_chemset_index",
+            "_kk",
+            "_ii_gas",
+            "_specieslist",
+            "_species_index_map",
+            "_wt",
+            "_molefrac",
+            "_massfrac",
+            "_surfacechem",
+            "transport_data",
+            "_eos",
+            "userealgas",
+            "_has_surface_chemistry",
+            "surface_chemistry",
+        }
+        for name, value in self.__dict__.items():
+            if name not in mixture_attributes:
+                setattr(cloned, name, copy.deepcopy(value))
+        return cloned
+
     def convert_to_mass_flowrate(self) -> float:
         """Convert different types of flow rate value to mass flow rate."""
         """
@@ -986,7 +1029,7 @@ def adiabatic_mixing_streams(stream_a: Stream, stream_b: Stream) -> Stream:
     """
     if isinstance(stream_a, Stream) and isinstance(stream_b, Stream):
         if stream_a.chemid == stream_b.chemid:
-            final_stream = copy.deepcopy(stream_a)
+            final_stream = stream_a._clone()
         else:
             msg = [
                 Color.PURPLE,

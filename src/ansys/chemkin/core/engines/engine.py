@@ -1406,7 +1406,7 @@ class Engine(BatchReactors):
             # set index to the last solution point
             solution_index = self._numbsolutionpoints - 1
             # get the last solution mixture
-            mixturetarget = copy.deepcopy(self._solution_mixturearray[solution_index])
+            mixturetarget = self._solution_mixturearray[solution_index]._clone()
             # save the last solution mixture of the zone
             zone_mixtures.append(mixturetarget)
         #
