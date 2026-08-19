@@ -75,10 +75,11 @@ import numpy as np  # number crunching
 
 # pymoo: multi-objective optimization in Python
 from pymoo.algorithms.moo.nsga2 import NSGA2
-from pymoo.core.problem import ElementwiseProblem, StarmapParallelization
+from pymoo.core.problem import ElementwiseProblem
 from pymoo.decomposition.asf import ASF
 from pymoo.operators.sampling.lhs import LHS
 from pymoo.optimize import minimize
+from pymoo.parallelization.starmap import StarmapParallelization
 
 import ansys.chemkin.core as ck  # Chemkin
 
@@ -87,22 +88,6 @@ from ansys.chemkin.core.engines.SI import SIengine
 from ansys.chemkin.core.inlet import Stream  # external gaseous inlet
 from ansys.chemkin.core.logger import logger
 from ansys.chemkin.core.utilities import WorkingFolders
-
-# check working directory
-current_dir = str(Path.cwd())
-# create a separate working folder for the optimization runs
-top_level = WorkingFolders("SI_optimize", current_dir)
-top_dir = top_level.work
-top_level.done()
-#
-logger.debug("working directory: " + str(Path.cwd()))
-# set verbose mode
-ck.set_verbose(False)
-# set interactive mode for plotting the results
-# interactive = True: display plot
-# interactive = False: save plot as a PNG file
-global interactive
-interactive = False
 
 
 #######################################
@@ -238,7 +223,7 @@ class SIengineCalculator:
         # set minimum zonal mass [g]
         self.si_calculator.set_minimum_zone_mass(minmass=1.0e-5)
         # set the maximum solver time step
-        self.si_calculator.max_ca_step = 0.1
+        self.si_calculator.max_ca_step = 0.05  # 0.1
         # set the number of crank angles between saving solution
         self.si_calculator.ca_step_for_saving_solution = 0.5
         # set the number of crank angles between printing solution
@@ -307,8 +292,27 @@ class SIengineCalculator:
 # named ``gasoline``.
 
 
+def create_chemistry_set() -> ck.Chemistry:
+    """Create and preprocess the gasoline chemistry set."""
+    # Change to root of the project folder
+    os.chdir(top_dir)
+    # mechanism directory and files
+    data_dir = Path(ck.ansys_dir) / "reaction" / "data"
+    mechanism_dir = data_dir
+    # create a Chemistry object for the gasoline mechanism
+    my_gas_mech = ck.Chemistry(label="Gasoline")
+    # set the mechanism input file for the Chemistry object
+    my_gas_mech.chemfile = str(mechanism_dir / "gasoline_14comp_WBencrypt.inp")
+    # preprocess the mechanism files
+    _ = my_gas_mech.preprocess()
+    return my_gas_mech
+
+
 def setup_fresh_mixture(
-    fuel_compo: list[tuple[str, float]], phi: float, egr_rate: float
+    my_gas_mech: ck.Chemistry,
+    fuel_compo: list[tuple[str, float]],
+    phi: float,
+    egr_rate: float,
 ) -> Stream:
     """Set up the chemistry set and create the unburned mixture."""
     """
@@ -317,7 +321,9 @@ def setup_fresh_mixture(
 
     Parameters
     ----------
-        fuel: tuple (str, double)
+        my_gas_mech: ck.Chemistry
+            the chemistry set for the fuel-air mixture
+        fuel_compo: list[tuple[str, float]]
             fuel species mole fractions
         phi: double
             equivalence ratio
@@ -329,21 +335,6 @@ def setup_fresh_mixture(
         fresh: Mixture object
             fresh unburned mixture (initial charge)
     """
-    # set mechanism directory (the default Chemkin mechanism data directory)
-    data_dir = Path(ck.ansys_dir) / "reaction" / "data"
-    mechanism_dir = data_dir
-    # create a chemistry set based on the gasoline 14 components mechanism
-    MyGasMech = ck.Chemistry(label="Gasoline")
-    # set mechanism input files
-    # including the full file path is recommended
-    MyGasMech.chemfile = str(mechanism_dir / "gasoline_14comp_WBencrypt.inp")
-
-    #######################################
-    # Preprocess the gasoline chemistry set
-    # =====================================
-
-    # preprocess the mechanism files
-    _ = MyGasMech.preprocess()
 
     ################################################
     # Set up the stoichiometric gasoline-air mixture
@@ -365,7 +356,7 @@ def setup_fresh_mixture(
     #
 
     # create the fuel mixture
-    fuelmixture = ck.Mixture(MyGasMech)
+    fuelmixture = ck.Mixture(my_gas_mech)
     # set fuel composition
     fuelmixture.x = fuel_compo
     # setting pressure and temperature is not required in this case
@@ -379,7 +370,7 @@ def setup_fresh_mixture(
     fuelmixture.temperature = (1.0 - egr_rate) * temp_intake + egr_rate * temp_egr
 
     # create the oxidizer mixture: air
-    air = ck.Mixture(MyGasMech)
+    air = ck.Mixture(my_gas_mech)
     air.x = [("o2", 0.21), ("n2", 0.79)]
     # setting pressure and temperature is not required in this case
     air.pressure = fuelmixture.pressure
@@ -389,15 +380,15 @@ def setup_fresh_mixture(
     products = ["co2", "h2o", "n2"]
     # species mole fractions of added/inert mixture.
     # You can also create an additives mixture here.
-    add_frac = np.zeros(MyGasMech.kk, dtype=np.double)  # no additives: all zeros
+    add_frac = np.zeros(my_gas_mech.kk, dtype=np.double)  # no additives: all zeros
 
     # create the unburned fuel-air mixture
-    fresh = ck.Mixture(MyGasMech)
+    fresh = ck.Mixture(my_gas_mech)
 
     # mean equivalence ratio
     equiv = phi
     _ = fresh.x_by_equivalence_ratio(
-        MyGasMech, fuelmixture.x, air.x, add_frac, products, equivalenceratio=equiv
+        my_gas_mech, fuelmixture.x, air.x, add_frac, products, equivalenceratio=equiv
     )
 
     ##########################################################
@@ -433,7 +424,7 @@ def setup_fresh_mixture(
     add_frac = fresh.get_egr_mole_fraction(egr_ratio, threshold=1.0e-8)
     # recreate the initial mixture with EGR
     ierror = fresh.x_by_equivalence_ratio(
-        MyGasMech,
+        my_gas_mech,
         fuelmixture.x,
         air.x,
         add_frac,
@@ -473,7 +464,7 @@ def setup_fresh_mixture(
 #   See the *pymoo* documentation for details about how the optimization problem is
 #   set up and evaluated.
 #
-class SI_engine_opt(ElementwiseProblem):
+class SIEngineOptimization(ElementwiseProblem):
     """SI engine optimization object."""
 
     def __init__(
@@ -532,6 +523,8 @@ class SI_engine_opt(ElementwiseProblem):
         self.fuel = fuel
         # equivalence ratio
         self.phi = phi
+        # create and preprocess the chemistry set
+        self.my_gas_mech = create_chemistry_set()
 
     def _evaluate(self, x, out, *args, **kwargs):
         """Evaluate the objective function values."""
@@ -559,7 +552,7 @@ class SI_engine_opt(ElementwiseProblem):
         name = "SI_engine_" + str(self.call_count)
         sub_work_folder = WorkingFolders(name, top_dir)
         # set up the unburned mixture of the SI engine at IVC
-        init_mixture = setup_fresh_mixture(self.fuel, self.phi, x[1])
+        init_mixture = setup_fresh_mixture(self.my_gas_mech, self.fuel, self.phi, x[1])
         # instantiate the SI engine
         engine_case = SIengineCalculator(init_mixture)
         # set the burned mass fraction profile
@@ -585,6 +578,7 @@ class SI_engine_opt(ElementwiseProblem):
         # f1: IMEP [bar] (to be maximized)
         # f2: peak cylinder-averaged NO mass fraction [-] (to be minimized)
         runstatus = engine_case.run()
+        #
         if runstatus == 0:
             # get the results only when the simulation is successful
             f1, f2, max_sigma = engine_case.get_solution_parameters()
@@ -596,6 +590,10 @@ class SI_engine_opt(ElementwiseProblem):
             # tally the number of failed runs
             self.fail_count += 1
             self.failed_cases.append(self.call_count)
+            # use bad values for the objectives and constraints
+            f1 = -1.0e3  # a very low IMEP
+            f2 = 1.0  # a high NO mass fraction
+            g1 = 1.0e3  # a large constraint violation
         # clean up
         del engine_case
         sub_work_folder.done()
@@ -664,7 +662,7 @@ def run_optimization(
         pool = multiprocessing.Pool(numb_workers)
         runner = StarmapParallelization(pool.starmap)
         # define the problem by passing the starmap interface of the thread pool
-        problem = SI_engine_opt(
+        problem = SIEngineOptimization(
             numb_vars=numb_vars,
             numb_objs=numb_objs,
             fuel=fuel,
@@ -673,17 +671,23 @@ def run_optimization(
         )
     else:
         # serial mode
-        problem = SI_engine_opt(
+        problem = SIEngineOptimization(
             numb_vars=numb_vars, numb_objs=numb_objs, fuel=fuel, phi=phi
         )
 
-    res = minimize(problem, algorithm, termination=("n_gen", 1), seed=1)
+    res = minimize(
+        problem,
+        algorithm,
+        termination=("n_gen", 1),
+        seed=11,
+    )
     # run summary
     # execution time [sec]
     print(f"Total wall time: {datetime.timedelta(seconds=res.exec_time)}")
     # run statistics
     print(f"Failed runs: {problem.fail_count}/{problem.call_count}")
     if problem.fail_count > 0:
+        print("Optimization outcome may not be reliable due to failed runs.")
         print("failed cases")
         for n in problem.failed_cases:
             print(f"run # {n}")
@@ -720,8 +724,10 @@ def run_optimization(
         nf = (f - approx_ideal) / (approx_ideal - approx_nadir)
     # set the weight factors
     weight = np.zeros(n_objs, dtype=np.double)
-    weight[0] = 1.0 / 0.6
-    weight[1] = 1.0 / 0.4
+    # IMEP weight factor
+    weight[0] = 1.0 / 0.55
+    # NO emission weight factor
+    weight[1] = 1.0 / 0.45
     # find the best solution
     # use the Augmented Scalarization Function (ASF) method
     decomp = ASF()
@@ -801,6 +807,20 @@ def run_optimization(
 # find out additional information offered by the ``Result`` object.
 #
 if __name__ == "__main__":
+    # check working directory
+    current_dir = str(Path.cwd())
+    # create a separate working folder for the optimization runs
+    top_level = WorkingFolders("SI_optimize", current_dir)
+    top_dir = top_level.work
+    top_level.done()
+    #
+    logger.debug("project root directory: " + top_dir)
+    # set verbose mode
+    ck.set_verbose(False)
+    # set interactive mode for plotting the results
+    # interactive = True: display plot
+    # interactive = False: save plot as a PNG file
+    interactive = False
     # properties of the initial gas charge
     # fuel composition
     # the "surrogate blend utility" from the Chemkin "reaction workbench" can be
