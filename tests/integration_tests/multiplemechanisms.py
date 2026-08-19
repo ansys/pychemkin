@@ -66,7 +66,7 @@ else:
     print(Color.GREEN + "Preprocessing succeeded.", end=Color.END)
     print("mechanism information:")
     print(f"number of elements = {My1stMech.mm:d}")
-    print(f"number of gas species = {My1stMech.KK:d}")
+    print(f"number of gas species = {My1stMech.kk:d}")
     print(f"number of gas reactions = {My1stMech.ii_gas:d}")
 
 # create a mixture with My1stMech
@@ -106,7 +106,7 @@ else:
     print(Color.GREEN + "Preprocessing succeeded.", end=Color.END)
     print("mechanism information:")
     print(f"number of elements = {My2ndMech.mm:d}")
-    print(f"number of gas species = {My2ndMech.KK:d}")
+    print(f"number of gas species = {My2ndMech.kk:d}")
     print(f"number of gas reactions = {My2ndMech.ii_gas:d}")
 
 # create the 2nd mixture with the My2ndMech

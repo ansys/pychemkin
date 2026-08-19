@@ -70,9 +70,7 @@ class TestClassUtilities:
         "mixturemixing",
         "speciesproperties",
         "reactionrates",
-        # skip the test below because the subprocess produces a non-zero return code
-        # but the test is completed successfully
-        #    "multiplemechanisms",
+        "multiplemechanisms",
         "diffusionvelocity",
         "mixing_IEM",
     ]
@@ -211,6 +209,7 @@ class TestClassPSR:
         "jetstirredreactor",
         "multi-inletPSR",
         "PSRChain_declustered",
+        "trans_PSR_ignition",
     ]
 
     @pytest.mark.parametrize("test_file", psr_list)
@@ -330,9 +329,10 @@ class TestClassSurface:
     # rate: reaction rate, rate of production, heat release rate
     surface_list = [
         # skip this test for inconsistent pass/fail on different linux versions
-        #  "multiple_materials",
+        "multiple_materials",
         "SiC_cvd",
         "catalytic_combustion",
+        "trans_PSR_ALD",
     ]
 
     @pytest.mark.parametrize("test_file", surface_list)
