@@ -758,10 +758,8 @@ class ReactorNetwork:
                         # already created merge the internal flow from
                         # the source PSR into the total internal inlet stream
                         # to the current PSR
-                        this_stream = copy.deepcopy(
-                            self.reactor_solutions.get(id, None)
-                        )
-                        if this_stream is None:
+                        source_stream = self.reactor_solutions.get(id)
+                        if source_stream is None:
                             # failed to find the solution mixture of the source reactor
                             msg = [
                                 Color.PURPLE,
@@ -773,6 +771,7 @@ class ReactorNetwork:
                             log_error_message(msg)
                             exit()
                         #
+                        this_stream = source_stream._clone()
                         merging_flowrate = this_stream.mass_flowrate * frac
                         this_stream.mass_flowrate = merging_flowrate
                         new_stream = adiabatic_mixing_streams(
@@ -844,7 +843,7 @@ class ReactorNetwork:
                 exit()
         else:
             # update internal flow inlet
-            self.internal_inflow[id] = copy.deepcopy(inlet_stream)
+            self.internal_inflow[id] = inlet_stream._clone()
         del inlet_stream
         return status
 
@@ -1119,7 +1118,7 @@ class ReactorNetwork:
                     if v[0] == self._exit_index:
                         frac = v[1]
             # update the external outlet properties
-            this_outlet = copy.deepcopy(self.reactor_solutions[nrxtor])
+            this_outlet = self.reactor_solutions[nrxtor]._clone()
             self.external_outlet_streams[ioutlet] = this_outlet
             self.external_outlet_streams[ioutlet].mass_flowrate *= frac
             del this_outlet
@@ -1357,9 +1356,7 @@ class ReactorNetwork:
                     # there is no previous reactor solution
                     # create storage for the last reactor solution and save
                     # the current reactor solution there
-                    last_reactor_solutions[id] = copy.deepcopy(
-                        self.reactor_solutions[id]
-                    )
+                    last_reactor_solutions[id] = self.reactor_solutions[id]._clone()
                     self.tear_converged = False
 
             # increment the tear loop iteration count
@@ -1609,7 +1606,7 @@ class ReactorNetwork:
 
         """
         #
-        updated_stream = copy.deepcopy(new_stream)
+        updated_stream = new_stream._clone()
         # relaxation factor
         fac = self.relaxation_factor
         # compute the new property values

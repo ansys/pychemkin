@@ -307,7 +307,7 @@ class SurfaceChemistryMixin:
                 exit()
             del buff_m
             del char_buffers
-        self.matsymbol[:] = self.material_map
+            self.matsymbol[:] = self.material_map
         return self.matsymbol
 
     def get_material_index(self: _SurfaceChemistryHost, mat_name: str) -> int:

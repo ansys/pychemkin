@@ -871,7 +871,7 @@ class PSRCluster(OpenReactor):
 
         # extract the solution mixture from the PSRs
         # create a species mass fraction array to hold the steady-state solution
-        frac = np.empty(self.numbspecies, dtype=np.double)
+        frac = np.zeros(self.numbspecies, dtype=np.double)
         #
         for ireac, psr in self.psr_objects.items():
             msg = [
@@ -887,7 +887,7 @@ class PSRCluster(OpenReactor):
             log_info_message(msg)
             ipsr = c_int(ireac)
             # create a Stream object to hold the mixture properties of current solution
-            smixture = copy.deepcopy(psr.reactormixture)
+            smixture = psr.reactormixture._clone()
             # get raw solution data
             temp = c_double(0.0)
             pres = c_double(0.0)
@@ -939,7 +939,7 @@ class PSRCluster(OpenReactor):
                 log_critical_message(msg)
                 return ierr
             # update Stream solution
-            self._solution_streamarray.insert(ireac - 1, copy.deepcopy(smixture))
+            self._solution_streamarray.insert(ireac - 1, smixture._clone())
             # celan up
             del smixture
 
