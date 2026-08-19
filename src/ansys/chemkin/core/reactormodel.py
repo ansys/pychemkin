@@ -105,7 +105,7 @@ class ReactorModel:
             # chemistry set index
             self._chemset_index = ctypes.c_int(reactor_condition.chemid)
             # mixture
-            self.reactormixture = copy.deepcopy(reactor_condition)
+            self.reactormixture = reactor_condition._clone()
             # mixture gas species symbols
             self._specieslist = reactor_condition._specieslist  # gas species symbols
             # mixture temperature [K]

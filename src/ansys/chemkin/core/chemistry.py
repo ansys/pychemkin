@@ -25,7 +25,8 @@
 import ctypes
 from ctypes import POINTER, c_char_p, c_double, c_int
 from pathlib import Path
-from typing import Dict, List, Union
+from types import MappingProxyType
+from typing import Dict, List, Mapping, Sequence, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -648,6 +649,19 @@ class Chemistry(SurfaceChemistryMixin):
         "Peng-Robinson",
     ]
     realgas_mixing_rules = ["Van der Waals", "pseudocritical"]
+    _writable_after_preprocess = frozenset({"label", "userealgas"})
+
+    def __setattr__(self, name: str, value) -> None:
+        """Prevent Chemistry metadata reassignment after preprocessing."""
+        if (
+            getattr(self, "_metadata_frozen", False)
+            and name not in self._writable_after_preprocess
+        ):
+            raise AttributeError(
+                "Chemistry metadata is immutable after preprocessing; "
+                f"cannot assign {name!r}."
+            )
+        super().__setattr__(name, value)
 
     def __init__(
         self,
@@ -675,6 +689,7 @@ class Chemistry(SurfaceChemistryMixin):
                 label/name of the chemistry set
 
         """
+        self._metadata_frozen = False
         # set flags
         self._index_surf = c_int(0)
         self._index_tran = c_int(0)
@@ -692,12 +707,12 @@ class Chemistry(SurfaceChemistryMixin):
         self._awt = np.zeros(1, dtype=np.double)
         self._wt = np.zeros(1, dtype=np.double)
         # information about elements
-        self._elements: dict[str, int] = {}  # element symbols dictionary
-        self.esymbol: list[str] = []
+        self._elements: Mapping[str, int] = {}  # element symbols dictionary
+        self.esymbol: Sequence[str] = []
         self._esym_done = 0
         # information about gas-phase species
-        self._gas_species: dict[str, int] = {}  # gas species symbols dictionary
-        self.ksymbol: list[str] = []
+        self._gas_species: Mapping[str, int] = {}  # gas species symbols dictionary
+        self.ksymbol: Sequence[str] = []
         self._ksym_done = 0
         # chemistry set label
         self.label = " "
@@ -721,11 +736,11 @@ class Chemistry(SurfaceChemistryMixin):
         # number of surface materials
         self._num_materials = c_int(0)
         # surface material map {str, int}
-        self.material_map: dict[str, int] = {}
+        self.material_map: Mapping[str, int] = {}
         # surface material objects {str, Material object}
-        self.materials: dict[str, Material] = {}
+        self.materials: Mapping[str, Material] = {}
         # surface material names [str]
-        self.matsymbol: list[str] = []
+        self.matsymbol: Sequence[str] = []
         self._materialnamedone = 0
         # total number of surface site species
         self._num_max_site_species = c_int(0)
@@ -738,6 +753,19 @@ class Chemistry(SurfaceChemistryMixin):
         #
         self._material_temperature: list[float] = []
         self._material_area: list[float] = []
+
+    def _freeze_metadata(self) -> None:
+        """Freeze preprocessed Chemistry metadata for safe sharing."""
+        self._awt.setflags(write=False)
+        self._wt.setflags(write=False)
+        self._elements = MappingProxyType(dict(self._elements))
+        self._gas_species = MappingProxyType(dict(self._gas_species))
+        self.esymbol = tuple(self.esymbol)
+        self.ksymbol = tuple(self.ksymbol)
+        self.material_map = MappingProxyType(dict(self.material_map))
+        self.materials = MappingProxyType(dict(self.materials))
+        self.matsymbol = tuple(self.matsymbol)
+        self._metadata_frozen = True
 
     @staticmethod
     def _critical_file_not_found(file_description: str, file_path: str):
@@ -1134,6 +1162,7 @@ class Chemistry(SurfaceChemistryMixin):
             chemistryset_new(self._chemset_index.value)
             # save the chemkin work spaces for later use (by using active())
             self.save()
+            self._freeze_metadata()
         else:
             # fail to preprocess the chemistry files
             details = "\n"
@@ -1253,8 +1282,7 @@ class Chemistry(SurfaceChemistryMixin):
                 msg = [Color.PURPLE, "failed to get species symbols.", Color.END]
                 error_and_exit(msg)
             del buff, pp
-
-        self.ksymbol[:] = self._gas_species
+            self.ksymbol[:] = self._gas_species
         return self.ksymbol
 
     @property
@@ -1286,8 +1314,7 @@ class Chemistry(SurfaceChemistryMixin):
                 msg = [Color.PURPLE, "failed to get element symbols.", Color.END]
                 error_and_exit(msg)
             del buff_ele, pp_ele
-
-        self.esymbol[:] = self._elements
+            self.esymbol[:] = self._elements
         return self.esymbol
 
     def get_specindex(self, specname: str) -> int:
@@ -1437,7 +1464,7 @@ class Chemistry(SurfaceChemistryMixin):
             ]
             error_and_exit(msg)
         del self._awt  # clear the "original" definition in __init__
-        self._awt = np.empty(self._num_elements.value, dtype=np.double)
+        self._awt = np.zeros(self._num_elements.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetAtomicWeights(self._chemset_index, self._awt)
         if ierr == 0:
             self._awt_done = 1
@@ -1472,7 +1499,7 @@ class Chemistry(SurfaceChemistryMixin):
             ]
             error_and_exit(msg)
         del self._wt  # clear the "original" definition in __init__
-        self._wt = np.empty(self._num_gas_species.value, dtype=np.double)
+        self._wt = np.zeros(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetGasMolecularWeights(
             self._chemset_index, self._wt
         )
@@ -1535,7 +1562,7 @@ class Chemistry(SurfaceChemistryMixin):
                 set_current_pressure(self.chemid, pres)
         #
         tt = c_double(temp)
-        cp = np.empty(self._num_gas_species.value, dtype=np.double)
+        cp = np.zeros(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetGasSpecificHeat(self._chemset_index, tt, cp)
         if ierr == 0:
             # convert [ergs/g-K] to [ergs/mol-K]
@@ -1635,7 +1662,7 @@ class Chemistry(SurfaceChemistryMixin):
                 # set current pressure for the real-gas
                 set_current_pressure(self.chemid, pres)
         tt = c_double(temp)
-        h = np.empty(self._num_gas_species.value, dtype=np.double)
+        h = np.zeros(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetGasSpeciesEnthalpy(self._chemset_index, tt, h)
         if ierr == 0:
             # convert [ergs/gm] to [ergs/mol]
@@ -1696,7 +1723,7 @@ class Chemistry(SurfaceChemistryMixin):
                 # set current pressure for the real-gas
                 set_current_pressure(self.chemid, pres)
         tt = c_double(temp)
-        u = np.empty(self._num_gas_species.value, dtype=np.double)
+        u = np.zeros(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetGasSpeciesInternalEnergy(
             self._chemset_index, tt, u
         )
@@ -1746,7 +1773,7 @@ class Chemistry(SurfaceChemistryMixin):
             msg = [Color.PURPLE, "temperature value is too low.", Color.END]
             error_and_exit(msg)
         tt = c_double(temp)
-        visc = np.empty(self._num_gas_species.value, dtype=np.double)
+        visc = np.zeros(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetViscosity(self._chemset_index, tt, visc)
         if ierr != 0:
             # failed to compute viscosity
@@ -1785,7 +1812,7 @@ class Chemistry(SurfaceChemistryMixin):
             msg = [Color.PURPLE, "temperature value is too low.", Color.END]
             error_and_exit(msg)
         tt = c_double(temp)
-        cond = np.empty(self._num_gas_species.value, dtype=np.double)
+        cond = np.zeros(self._num_gas_species.value, dtype=np.double)
         ierr = ck_wrapper.chemkin.KINGetConductivity(self._chemset_index, tt, cond)
         if ierr != 0:
             # failed to compute conductivities
@@ -1838,7 +1865,7 @@ class Chemistry(SurfaceChemistryMixin):
         pp = c_double(press)
         tt = c_double(temp)
         dim = (self._num_gas_species.value, self._num_gas_species.value)
-        diffusioncoeffs = np.empty(dim, dtype=np.double, order="F")
+        diffusioncoeffs = np.zeros(dim, dtype=np.double, order="F")
         ierr = ck_wrapper.chemkin.KINGetDiffusionCoeffs(
             self._chemset_index, pp, tt, diffusioncoeffs
         )
@@ -1881,7 +1908,7 @@ class Chemistry(SurfaceChemistryMixin):
             error_and_exit(msg)
 
         dim = (self._num_elements.value, self._num_gas_species.value)
-        elementalcomp = np.empty(dim, dtype=np.int32, order="F")
+        elementalcomp = np.zeros(dim, dtype=np.int32, order="F")
         ierr = ck_wrapper.chemkin.KINGetGasSpeciesComposition(
             self._chemset_index, elementalcomp
         )
@@ -1997,11 +2024,11 @@ class Chemistry(SurfaceChemistryMixin):
         reactionsize = self.ii_gas
         # pre-exponent A factor of all gas-phase reactions in the mechanism
         # in cgs units [mole-cm3-sec-K]
-        a_factor = np.empty(shape=reactionsize, dtype=np.double)
+        a_factor = np.zeros(shape=reactionsize, dtype=np.double)
         # temperature exponent of all reactions [-]
-        beta = np.empty_like(a_factor, dtype=np.double)
+        beta = np.zeros_like(a_factor, dtype=np.double)
         # activation energy/temperature of all reactions [K]
-        act_energy = np.empty_like(a_factor, dtype=np.double)
+        act_energy = np.zeros_like(a_factor, dtype=np.double)
         # get the reaction parameters
         ierr = ck_wrapper.chemkin.KINGetReactionRateParameters(
             self._chemset_index, a_factor, beta, act_energy
@@ -2133,14 +2160,12 @@ class Chemistry(SurfaceChemistryMixin):
         ireac = c_int(reaction_index)
         i_string_size = c_int(0)
         reaction_string_length = c_int(0)
-        ierr = ck_wrapper.chemkin.KINGetReactionStringLength(reaction_string_length)
-        if ierr != 0 or reaction_string_length.value <= 0:
+        _ = ck_wrapper.chemkin.KINGetReactionStringLength(reaction_string_length)
+        if reaction_string_length.value <= 0:
             msg = [
                 Color.YELLOW,
                 "failed to determine the maximum reaction-string length,",
                 "using a 1024-byte buffer.",
-                "error code =",
-                str(ierr),
                 Color.END,
             ]
             _log_warning_message(msg)
