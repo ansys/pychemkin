@@ -34,7 +34,7 @@ doc = [
     "ansys-sphinx-theme==1.9.0",
     "jupytext==1.19.5",
     "nbsphinx==0.9.8",
-    "notebook==7.6.1",
+    "notebook==7.6.2",
     "numpydoc==1.10.0",
     "pandas==2.3.3",
     "pandoc==2.4.0",
