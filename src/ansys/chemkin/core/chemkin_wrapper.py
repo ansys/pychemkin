@@ -136,6 +136,7 @@ else:
         # set an environment variable for the Chemkin-CFD-API to know
         # the calling application is PyChemkin
         os.environ["RD_PY_CHEMKIN"] = "1"
+        os.environ["CHEMKIN_INT_VERS"] = str(_ansys_ver)
     except OSError as e:
         # error and diagnostic messages
         inst_dir = Path(_ansys_dir) / "reaction" / _ckbin / "bin"
