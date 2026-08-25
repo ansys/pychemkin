@@ -24,7 +24,6 @@ dependencies = [
     "matplotlib>=3.10.8",
     "numpy>=1.14.0,<3.0.0",
     "pyyaml>=6.0",
-    "pandas>=2.0,<3.0",
 ]
 
 
@@ -37,7 +36,7 @@ doc = [
     "nbsphinx==0.9.8",
     "notebook==7.6.2",
     "numpydoc==1.10.0",
-    "pandas==2.2.3",
+    "pandas==2.3.3",
     "pandoc==2.4.0",
     "pyvista==0.48.4",
     "requests==2.34.2",
