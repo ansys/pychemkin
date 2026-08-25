@@ -1,6 +1,0 @@
-matplotlib>=3.10.8
-numpy>=1.14.0,<3.0.0
-pyyaml>=6.0
-bandit[toml]==1.9.4
-safety==3.8.1
-typer==0.27.1
