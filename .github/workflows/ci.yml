@@ -71,7 +71,7 @@ jobs:
           paths=$(python -c "import site; print(':'.join(site.getsitepackages()))")
           echo "paths=$paths" >> $GITHUB_OUTPUT
 
-      - uses: ansys/actions/check-vulnerabilities@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+      - uses: ansys/actions/check-vulnerabilities@7e7af221736bc4d9fb84a2ab28f99518e9bca84c # v11.0.5
         env:
           # Prevent Python from searching the repository working directory for imports.
           PYTHONSAFEPATH: ${{ steps.get_site.outputs.paths }}
