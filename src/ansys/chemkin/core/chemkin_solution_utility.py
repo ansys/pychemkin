@@ -27,7 +27,7 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 import platform
-import subprocess
+import subprocess  # nosec B404
 from typing import Union
 
 import numpy
@@ -175,7 +175,7 @@ class ChemkinSolutionImporter:
         msg = [Color.YELLOW, "Running Chemkin GetSolution utility...", Color.END]
         logger.info(Color.SPACE.join(msg))
         try:
-            _ = subprocess.run(
+            _ = subprocess.run(  # nosec B603
                 command,
                 check=True,
                 cwd=self.work_dir_path,
@@ -240,7 +240,7 @@ class ChemkinSolutionImporter:
         """Get help information from the Chemkin solution utility."""
         command = [self.get_soln_path, "-help"]
         try:
-            res = subprocess.run(command, check=True, capture_output=True, text=True)
+            res = subprocess.run(command, check=True, capture_output=True, text=True)  # nosec B603
             print("\n" + Color.YELLOW + "GetSolution help information:\n")
             print(res.stdout)
             print(Color.END)
@@ -288,7 +288,7 @@ class ChemkinSolutionImporter:
             critical_and_exit(Color.SPACE.join(msg))
         # run the command to generate the preference file
         try:
-            res = subprocess.run(
+            res = subprocess.run(  # nosec B603
                 command,
                 check=True,
                 capture_output=True,
