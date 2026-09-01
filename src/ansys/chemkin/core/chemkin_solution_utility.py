@@ -25,11 +25,10 @@
 from __future__ import annotations
 
 import csv
-import io
 from pathlib import Path
 import platform
 import subprocess
-from typing import Any, Union
+from typing import Union
 
 import numpy
 import pandas as pd
@@ -39,7 +38,6 @@ from ansys.chemkin.core.utilities import (
     Color,
     critical_and_exit,
     error_and_exit,
-    find_string_in_list,
     log_error_message,
     logger,
 )
@@ -104,7 +102,7 @@ class ChemkinSolutionImporter:
         self._get_everything = False
         self._first_run = True
         # solution data
-        self._solution_data: "SolutionData" | None = None
+        self._solution_data: SolutionData | None = None
 
     def _set_ck_postprocessor(self):
         """Determine the solution utility name for post-processing."""
@@ -167,18 +165,27 @@ class ChemkinSolutionImporter:
             command.append("-mass")
         if self._use_pref_file:
             # the preference file "CKSolnList.txt" will be used if enabled
-            command.append("-p " + self._pref_file)
+            command.extend(["-p", self._pref_file])
         if soln_file:
             command.append(soln_file)
         else:
             # use default XML data file if no solution file is provided
             command.append(self.xml_data_file)
         # get solution from the XML data file
+        msg = [Color.YELLOW, "Running Chemkin GetSolution utility...", Color.END]
+        logger.info(Color.SPACE.join(msg))
         try:
-            _ = subprocess.run(command, check=True, capture_output=True, text=True)
+            _ = subprocess.run(
+                command,
+                check=True,
+                cwd=self.work_dir_path,
+                stderr=subprocess.PIPE,
+                text=True,
+                stdout=subprocess.DEVNULL,
+            )
             msg = [
                 Color.GREEN,
-                "Chemkin CKCSV file generated:",
+                "Chemkin ckcsv file generated:",
                 self._ckcsv_file,
                 Color.END,
             ]
@@ -188,6 +195,7 @@ class ChemkinSolutionImporter:
                 Color.RED,
                 "Failed to get solution from Chemkin utility:",
                 str(e),
+                e.stderr or "",
                 Color.END,
             ]
             critical_and_exit(Color.SPACE.join(msg))
@@ -205,7 +213,7 @@ class ChemkinSolutionImporter:
         if not csv_file.exists():
             msg = [
                 Color.RED,
-                "Chemkin CKCSV file does not exist:",
+                "Chemkin ckcsv file does not exist:",
                 str(csv_file),
                 Color.END,
             ]
@@ -215,6 +223,8 @@ class ChemkinSolutionImporter:
             logger.info(Color.SPACE.join(msg))
             self._solution_data = None
         #
+        msg = [Color.YELLOW, "Processing Chemkin ckcsv file:", str(csv_file), Color.END]
+        logger.info(Color.SPACE.join(msg))
         self._solution_data = SolutionData(csv_file)
         #
         if self._first_run:
@@ -266,7 +276,7 @@ class ChemkinSolutionImporter:
         # define the program and its flags/arguments as separate list items
         command = [self.get_soln_path, "-listonly"]
 
-        if Path(xml_file).exists():
+        if (self.work_dir_path / xml_file).exists():
             command.append(xml_file)
         else:
             msg = [
@@ -278,8 +288,14 @@ class ChemkinSolutionImporter:
             critical_and_exit(Color.SPACE.join(msg))
         # run the command to generate the preference file
         try:
-            res = subprocess.run(command, check=True, capture_output=True, text=True)
-            if not Path(self._pref_file).exists():
+            res = subprocess.run(
+                command,
+                check=True,
+                capture_output=True,
+                cwd=self.work_dir_path,
+                text=True,
+            )
+            if not (self.work_dir_path / self._pref_file).exists():
                 msg = [
                     Color.PURPLE,
                     "Preference file not generated:",
@@ -312,7 +328,7 @@ class ChemkinSolutionImporter:
 
     def set_xml_data_file(self, xml_file: str):
         """Set the XML data file for the Chemkin solution utility."""
-        if not Path(xml_file).exists():
+        if not (self.work_dir_path / xml_file).exists():
             msg = [
                 Color.RED,
                 "XML data file does not exist:",
@@ -331,7 +347,7 @@ class ChemkinSolutionImporter:
 
     def use_preference_file(self, pref_file: str):
         """Enable the use of the preference file for the Chemkin solution utility."""
-        if not Path(pref_file).exists():
+        if not (self.work_dir_path / pref_file).exists():
             self._use_pref_file = False
             msg = [
                 Color.RED,
@@ -401,13 +417,13 @@ class ChemkinSolutionImporter:
             return []
         return list(self._solution_data.get_solution_variables(solution_group))
 
-    def get_group_data(self, solution_group: str) -> "pd.DataFrame":
+    def get_group_data(self, solution_group: str) -> pd.DataFrame | None:
         """Get the data for a specific solution group."""
         if not self.validate_solution_data():
             return None
         return self._solution_data.get_solution_group_data(solution_group)
 
-    def get_group_object(self, solution_group: str) -> "SolutionData":
+    def get_group_object(self, solution_group: str) -> "SolutionGroup" | None:
         """Get the solution group object for a specific solution group."""
         if not self.validate_solution_data():
             return None
@@ -415,12 +431,12 @@ class ChemkinSolutionImporter:
 
     def get_solution_variable_array(
         self, solution_group: str, variable_label: str
-    ) -> Any:
+    ) -> pd.Series[float] | None:
         """Get the array of data for a specific variable within a solution group."""
         if not self.validate_solution_data():
             return None
 
-        soln_array = self._solution_data.get_solution_variable_array(
+        soln_array = self._solution_data.get_solution_array(
             solution_group, variable_label
         )
         return soln_array
@@ -447,12 +463,13 @@ class SolutionData:
     solution arrays and associated variable labels.
     """
 
-    def __init__(self, ckcsv: str):
+    def __init__(self, ckcsv: str | Path):
         """Initialize the Chemkin solution data utility."""
         # Initialize the solution group utility with the provided CKCSV file.
-        self._solutions: dict[tuple[str, str], "pd.DataFrame"] = {}
-        self._current_solution: Any | None = None
-        self._current_rows: list[Any] = []
+        self._solutions: dict[str, pd.DataFrame] = {}
+        self._current_solution: str | None = None
+        self._current_rows: list[list[str | numpy.float64]] = []
+        self._skip_data_block = False
         # solution labels
         self._soln_groups: list[str] = []
         # number of gas species in the solution data
@@ -461,6 +478,8 @@ class SolutionData:
         self._gas_species_symbols: list[str] = []
         # number of data points in the solution data
         self._number_of_points: int = 0
+        # cache of constructed SolutionGroup objects keyed by group name
+        self._group_objects: dict[str, SolutionGroup] = {}
         # read the prepared ckcsv solution file
         self.call_reader(ckcsv)
         # get gas species information from the solution data
@@ -470,68 +489,114 @@ class SolutionData:
         # get number of solution points from the solution data
         self._number_of_points = self.get_number_of_points()
 
-    def call_reader(self, csv_file: str):
+    def call_reader(self, csv_file: str | Path):
         """Read the solution data from the CSV file."""
-        # open the CKCSV file and create a reader object
-        soln_reader = csv.reader(io.open(csv_file))
         # initialization
         if len(self._solutions) > 0:
             self._solutions.clear()
             self._soln_groups.clear()
+            self._group_objects.clear()
         #
         self._current_solution = None
         self._current_rows.clear()
         # read each row from the CSV file and process it accordingly
-        for row in soln_reader:
-            if not row:
-                continue
-            if row[0].strip() == "label_2D":
-                # do not process 2D solution data in this reader
-                msg = [Color.YELLOW, "Skipping 2D solution data.", Color.END]
-                logger.info(Color.SPACE.join(msg))
-                break
-            if "rate-of-production" in row[0].strip():
-                # do not process rate-of-production data in this reader
-                msg = [Color.YELLOW, "Skipping rate-of-production data.", Color.END]
-                logger.info(Color.SPACE.join(msg))
-                break
-            if "solution_point_value" in row[1].strip():
-                msg = [Color.YELLOW, "Skipping single point value data.", Color.END]
-                logger.info(Color.SPACE.join(msg))
-                break
-            # Check if the line signals a new metadata block
-            if row[0].strip() == "label":
-                # Save the previous block before moving on
-                self.save_current_soln_group()
-                # Set new dictionary key (e.g., 'solution_no_1')
-                self._current_solution = row[1].strip()
-                self._current_rows = []
-            else:
-                self._current_rows.append(row)
+        with Path(csv_file).open(encoding="utf-8", newline="") as file:
+            soln_reader = csv.reader(file)
+            for row_number, row in enumerate(soln_reader, start=1):
+                if not row:
+                    continue
+                if len(row) < 2:
+                    msg = [
+                        Color.RED,
+                        "Malformed Chemkin CKCSV row",
+                        str(row_number),
+                        "must contain at least a variable and unit field.",
+                        Color.END,
+                    ]
+                    critical_and_exit(Color.SPACE.join(msg))
+                #
+                # Check if the line signals a new metadata block
+                if row[0].strip() == "label_2D":
+                    # do not process 2D solution data in this reader
+                    msg = [Color.YELLOW, "Skipping 2D solution data.", Color.END]
+                    logger.info(Color.SPACE.join(msg))
+                    # Save the previous block before moving on
+                    self.save_current_soln_group()
+                    # don't process this block of data
+                    self._skip_data_block = True
+                elif "rate-of-production" in row[0].strip():
+                    # do not process rate-of-production data in this reader
+                    msg = [
+                        Color.YELLOW,
+                        "Skipping rate-of-production data.",
+                        Color.END,
+                    ]
+                    logger.info(Color.SPACE.join(msg))
+                    # Save the previous block before moving on
+                    self.save_current_soln_group()
+                    # don't process this block of data
+                    self._skip_data_block = True
+                elif row[0].strip() == "label":
+                    # Save the previous block before moving on
+                    self.save_current_soln_group()
+                    if "solution_point_value" in row[1].strip():
+                        # do not process single point value data in this reader
+                        msg = [
+                            Color.YELLOW,
+                            "Skipping single point value data.",
+                            Color.END,
+                        ]
+                        logger.info(Color.SPACE.join(msg))
+                        # don't process this block of data
+                        self._skip_data_block = True
+                    else:
+                        # Reset the skip flag for the new block
+                        self._skip_data_block = False
+                        # Set new dictionary key (e.g., 'solution_no_1')
+                        self._current_solution = row[1].strip()
+                elif not self._skip_data_block:
+                    # process the current row only if the block is not skipped
+                    try:
+                        values = [numpy.float64(value) for value in row[2:]]
+                    except ValueError:
+                        msg = [
+                            Color.RED,
+                            "Malformed Chemkin CKCSV row",
+                            str(row_number),
+                            "contains a nonnumeric solution value.",
+                            Color.END,
+                        ]
+                        critical_and_exit(Color.SPACE.join(msg))
+                    self._current_rows.append([row[0].strip(), row[1].strip(), *values])
         # Save the last group after finishing the loop
         self.save_current_soln_group()
+        if not self._solutions:
+            msg = [
+                Color.RED,
+                "No supported solution groups found in Chemkin CKCSV file:",
+                str(csv_file),
+                Color.END,
+            ]
+            critical_and_exit(Color.SPACE.join(msg))
         #
-        logger.debug("Current solutions imported...")
+        msg = [Color.GREEN, "Finished processing Chemkin ckcsv file.", Color.END]
+        logger.info(Color.SPACE.join(msg))
         #
         self._soln_groups = list(self._solutions.keys())
-        # clean up
-        del soln_reader
 
     def save_current_soln_group(self):
         """Convert the collected rows into a wide-format DataFrame."""
+        if self._skip_data_block:
+            return
         if self._current_solution and self._current_rows:
             # Create DataFrame from rows
             df = pd.DataFrame(self._current_rows)
-            # Clean strings: strip whitespace from names and units
-            df[0] = df[0].str.strip()
-            df[1] = df[1].str.strip()
-
             # Combine first two columns into a MultiIndex (Property, Unit)
             df.set_index([0, 1], inplace=True)
             df.index.names = ["Variable", "Unit"]
 
-            # Convert remaining text columns into float numbers
-            self._solutions[self._current_solution] = df.astype(numpy.double)
+            self._solutions[self._current_solution] = df
+            self._current_rows = []
 
     def list_solution_groups(self):
         """List all solution groups for the Chemkin solution utility."""
@@ -572,52 +637,53 @@ class SolutionData:
         """Return a list of all solution variables for the specified group."""
         if not self.validate_group(group_name):
             return []
-        this_group = self._solutions.get(group_name)
-        group_data = SolutionGroup(group_name, this_group)
-        return group_data.variable_names
+        return self._get_group_object(group_name).variable_names
 
-    def get_solution_group_data(self, group_name: str) -> "pd.DataFrame":
+    def get_solution_group_data(self, group_name: str) -> pd.DataFrame | None:
         """Return the raw data for the specified solution group."""
         if not self.validate_group(group_name):
             return None
         group_data = self._solutions.get(group_name)
         return group_data
 
-    def get_solution_group_object(self, group_name: str) -> "SolutionGroup":
+    def get_solution_group_object(self, group_name: str) -> "SolutionGroup" | None:
         """Return the SolutionGroup object for the specified solution group."""
         if not self.validate_group(group_name):
             return None
-        this_group = self._solutions.get(group_name)
-        group_obj = SolutionGroup(group_name, this_group)
-        return group_obj
+        return self._get_group_object(group_name)
 
-    def get_solution_array(self, group_name: str, var_name: str) -> list[float]:
+    def get_solution_array(
+        self, group_name: str, var_name: str
+    ) -> pd.Series[float] | None:
         """Return the array for the specified variable in the given solution group."""
         if not self.validate_group(group_name):
             return None
-        this_group = self._solutions.get(group_name)
-        group_obj = SolutionGroup(group_name, this_group)
-        return group_obj.get_variable_array(var_name)
+        return self._get_group_object(group_name).get_variable_array(var_name)
 
     def get_number_of_points(self) -> int:
         """Return the number of data points in solution data."""
         group_name = self._soln_groups[0]
-        this_group = self._solutions.get(group_name)
-        group_obj = SolutionGroup(group_name, this_group)
-        return group_obj.number_of_points
+        return self._get_group_object(group_name).number_of_points
 
     def get_gas_species_info(self) -> tuple[int, list[str]]:
         """Return the number of gas species and their symbols in solution data."""
         num = 0
         symbols = []
         for group_name in self._soln_groups:
-            this_group = self._solutions.get(group_name)
-            group_obj = SolutionGroup(group_name, this_group)
+            group_obj = self._get_group_object(group_name)
             if group_obj.has_gas_species:
                 if group_obj.number_of_gas_species > num:
                     num = group_obj.number_of_gas_species
                     symbols = group_obj.gas_species_symbols
         return num, symbols
+
+    def _get_group_object(self, group_name: str) -> "SolutionGroup":
+        """Return the cached SolutionGroup for a group, building it if needed."""
+        group_obj = self._group_objects.get(group_name)
+        if group_obj is None:
+            group_obj = SolutionGroup(group_name, self._solutions.get(group_name))
+            self._group_objects[group_name] = group_obj
+        return group_obj
 
     def get_number_of_gas_species(self) -> int:
         """Return the number of gas species in the solution data."""
@@ -673,20 +739,30 @@ class SolutionGroup:
         self._has_gas_species = False
         self._solution_type = ""
         suffix = ""
+        zone_tag = ""
+        burn_tag = ""
+        unburn_tag = ""
         if group_name.lower().find("solution_vs_") != -1:
+            # line profiles of the averaged values of the solutions
             self._solution_type = "solution"
             self._has_gas_species = False
-            print(f"average: {group_name}")
         elif group_name.lower().find("solution") != -1:
             self._solution_type = "solution"
             self._has_gas_species = True
+            zone_tag = "_Zone"
+            burn_tag = "_Burn"
+            unburn_tag = "_Unburn"
         elif group_name.lower().find("slice") != -1:
+            # pseudo 2-D solutions
             self._solution_type = "solution"
             self._has_gas_species = True
             suffix = "_Slice"
         self._variable_name: list[str] = []
+        self._variable_index: dict[str, int] = {}
         self._units: list[str] = []
-        self._species_map: dict[str, int] = {}
+        self._species_map: dict[str, str] = {}
+        self._species_symbols: list[str] = []
+        self._species_index: dict[str, int] = {}
         self._species_unit: str = "mole"
         self._separator = "_"
         # set up the variable names and units of this solution group
@@ -702,7 +778,8 @@ class SolutionGroup:
             else:
                 this_name = prop[0]
             if self._has_gas_species:
-                # map species symbol to solution variable name
+                # extract species symbols from the variable name and
+                # build a dictionary to map species symbol to solution variable name
                 positions = [
                     index
                     for index, char in enumerate(this_name)
@@ -711,19 +788,46 @@ class SolutionGroup:
                 if len(positions) > 0:
                     # extract species symbols and use them as the variable names
                     head = this_name[: positions[0]]
+                    # remove the zone tag from the variable name if present
+                    b_pos = this_name.rfind(burn_tag)
+                    u_pos = this_name.rfind(unburn_tag)
+                    if b_pos >= 0 or u_pos >= 0:
+                        z_pos = max(b_pos, u_pos)
+                    else:
+                        z_pos = this_name.rfind(zone_tag)
+
                     if head == "Mass" and len(positions) > 1:
-                        self._species_unit = "mass"
-                        species_symbol = this_name[positions[1] + 1 :]
-                        self._species_map[species_symbol] = this_name
+                        if z_pos == -1:
+                            species_symbol = this_name[positions[1] + 1 :]
+                        elif z_pos > positions[1]:
+                            species_symbol = this_name[positions[1] + 1 : z_pos]
+                        else:
+                            species_symbol = ""
+                        if len(species_symbol) > 0:
+                            self._species_unit = "mass"
+                            self._add_species(species_symbol, this_name)
                     elif head == "Mole" and len(positions) > 1:
-                        self._species_unit = "mole"
-                        species_symbol = this_name[positions[1] + 1 :]
-                        self._species_map[species_symbol] = this_name
+                        if z_pos == -1:
+                            species_symbol = this_name[positions[1] + 1 :]
+                        elif z_pos > positions[1]:
+                            species_symbol = this_name[positions[1] + 1 : z_pos]
+                        else:
+                            species_symbol = ""
+                        if len(species_symbol) > 0:
+                            self._species_unit = "mole"
+                            self._add_species(species_symbol, this_name)
                     elif head == "Concentration":
-                        self._species_unit = "concentration"
-                        species_symbol = this_name[positions[0] + 1 :]
-                        self._species_map[species_symbol] = this_name
+                        if z_pos == -1:
+                            species_symbol = this_name[positions[0] + 1 :]
+                        elif z_pos > positions[0]:
+                            species_symbol = this_name[positions[0] + 1 : z_pos]
+                        else:
+                            species_symbol = ""
+                        if len(species_symbol) > 0:
+                            self._species_unit = "concentration"
+                            self._add_species(species_symbol, this_name)
             #
+            self._variable_index[this_name] = len(self._variable_name)
             self._variable_name.append(this_name)
             # extract units
             self._units.append(prop[1])
@@ -745,7 +849,7 @@ class SolutionGroup:
         return self._group_name
 
     @property
-    def group_data(self) -> list[dict[tuple[str, str], list[float]]]:
+    def group_data(self) -> pd.DataFrame:
         """Return the raw data of the solution group."""
         return self._group_data
 
@@ -755,7 +859,7 @@ class SolutionGroup:
         return self._variable_name
 
     @property
-    def species_unit(self) -> list[str]:
+    def species_unit(self) -> str:
         """Return the species units of the solution group."""
         return self._species_unit
 
@@ -773,24 +877,31 @@ class SolutionGroup:
     def number_of_gas_species(self) -> int:
         """Return the number of gas species in the solution group."""
         if self.has_gas_species:
-            return len(list(self._species_map.keys()))
+            return len(self._species_symbols)
         return 0
 
     @property
     def gas_species_symbols(self) -> list[str]:
         """Return the list of gas species symbols in the solution group."""
         if self.has_gas_species:
-            return list(self._species_map.keys())
+            return self._species_symbols
         return []
+
+    def _add_species(self, species_symbol: str, variable_name: str) -> None:
+        """Store a gas-species symbol and its associated variable name."""
+        if species_symbol not in self._species_map:
+            self._species_index[species_symbol] = len(self._species_symbols)
+            self._species_symbols.append(species_symbol)
+        self._species_map[species_symbol] = variable_name
 
     def get_variable_index(self, variable_name: str) -> int:
         """Get the index of a variable in the solution group by its name."""
-        return find_string_in_list(variable_name, self._variable_name)
+        return self._variable_index.get(variable_name, -1)
 
     def get_species_index(self, species_symbol: str) -> int:
         """Get the index of a gas species by its symbol."""
         if self.has_gas_species:
-            return find_string_in_list(species_symbol, list(self._species_map.keys()))
+            return self._species_index.get(species_symbol, -1)
         return -1
 
     def get_gas_species_variable_name(self, species_symbol: str) -> str:
@@ -805,7 +916,7 @@ class SolutionGroup:
             return self.get_variable_index(self._species_map[species_symbol])
         return -1
 
-    def get_variable_array(self, variable_name: str) -> list[float]:
+    def get_variable_array(self, variable_name: str) -> pd.Series[float]:
         """Get the array of values for a variable by its name."""
         pos_idx = self.get_species_index(variable_name)
         if pos_idx >= 0:
@@ -826,15 +937,50 @@ class SolutionGroup:
         log_error_message(msg)
         return []
 
+    def get_variable_array_with_tag(
+        self, variable_name: str, tag: str
+    ) -> pd.Series[float]:
+        """Get the array of values for a variable by its name and a tag."""
+        pos_idx = self.get_species_index(variable_name)
+        if pos_idx >= 0:
+            # name is gas species symbol
+            if self._species_unit == "mass":
+                prefix = "Mass_fraction_"
+            elif self._species_unit == "mole":
+                prefix = "Mole_fraction_"
+            elif self._species_unit == "concentration":
+                prefix = "Concentration_"
+            else:
+                prefix = ""
+            suffix = f"_{tag.replace(' ', '_')}"
+            this_name = f"{prefix}{variable_name}{suffix}"
+        else:
+            # name is not a gas species symbol
+            this_name = f"{variable_name}_{tag.replace(' ', '_')}"
+        soln_idx = self.get_variable_index(this_name)
+        if soln_idx >= 0:
+            return self._group_data.iloc[soln_idx]
+        msg = [
+            Color.PURPLE,
+            "Solution variable",
+            variable_name,
+            "not found in the solution group.",
+            Color.END,
+        ]
+        log_error_message(msg)
+        return []
+
     def get_variable_unit(self, variable_name: str) -> str:
         """Get the unit of a variable by its name."""
         pos_idx = self.get_species_index(variable_name)
         if pos_idx >= 0:
             # name is gas species symbol
             if self._species_unit in ["mole", "mass"]:
-                return self._separator.join([self._species_unit, "fraction"])
+                this_unit = self._separator.join([self._species_unit, "fraction"])
+                return f"({this_unit})"
             else:
-                return self._species_unit
+                this_unit = self._species_unit
+                return f"({this_unit})"
         else:
             # name is not a gas species symbol
             soln_idx = self.get_variable_index(variable_name)
@@ -849,3 +995,30 @@ class SolutionGroup:
         ]
         log_error_message(msg)
         return ""
+
+    def get_variable_unit_with_tag(self, variable_name: str, tag: str) -> str:
+        """Get the unit of a variable by its name."""
+        pos_idx = self.get_species_index(variable_name)
+        if pos_idx >= 0:
+            # name is gas species symbol
+            if self._species_unit in ["mole", "mass"]:
+                this_unit = self._separator.join([self._species_unit, "fraction"])
+                return f"({this_unit})"
+            else:
+                this_unit = self._species_unit
+                return f"({this_unit})"
+        else:
+            # name is not a gas species symbol
+            this_name = f"{variable_name}_{tag.replace(' ', '_')}"
+            soln_idx = self.get_variable_index(this_name)
+            if soln_idx >= 0:
+                return self._units[soln_idx]
+            msg = [
+                Color.PURPLE,
+                "Solution variable",
+                variable_name,
+                "not found in the solution group.",
+                Color.END,
+            ]
+            log_error_message(msg)
+            return ""
