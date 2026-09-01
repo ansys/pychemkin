@@ -740,5 +740,14 @@ class WorkingFolders:
         """
         Change back to the root directory.
         """
-        # change to the working directory for this run
+        # change to the root directory for this run
         os.chdir(self.root_dir)
+
+
+def find_string_in_list(target: str, string_list: list[str]) -> int:
+    """Find the index of a string in a list of strings."""
+    try:
+        position = string_list.index(target)
+        return position
+    except ValueError:
+        return -1

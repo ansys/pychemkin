@@ -241,6 +241,23 @@ else:
             logger.info(this_msg)
         exit()
 
+
+def get_chemkin_bin_dir() -> str:
+    """Return the local Ansys Chemkin bin directory."""
+    """
+    Return the local Ansys Chemkin bin directory
+    currently used by Pychemkin.
+
+    Returns
+    -------
+        bin_dir: string
+            the bin directory of local Ansys Chemkin installation
+    """
+    local_ansys_dir = Path(_ansys_dir)
+    bin_dir = local_ansys_dir / "reaction" / _ckbin / "bin"
+    return str(bin_dir)
+
+
 # Chemkin-CFD-API prototypes
 # document: Chemkin-CFD-API Reference Guide (Ansys Help portal)
 #
