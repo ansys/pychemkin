@@ -78,6 +78,7 @@ class TestClassUtilities:
         # "multiplemechanisms",
         "diffusionvelocity",
         "mixing_IEM",
+        "post_process_flame_solution",
     ]
 
     @pytest.mark.parametrize("test_file", utility_list)
