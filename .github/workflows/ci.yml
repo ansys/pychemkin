@@ -79,8 +79,8 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+          safety-configfile: .github/safety-ignore.yml
           dev-mode: true
-          hide-log: false
 
   actions-style:
     name: "Actions style checks"

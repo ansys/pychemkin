@@ -1,0 +1,10 @@
+# Safety policy for accepted vulnerabilities.
+security:
+  ignore-vulnerabilities:
+    "SFTY-20260721-58460":
+      reason: >-
+        setuptools is not a declared project dependency and the package uses
+        flit_core as its build backend. This vulnerability requires building
+        an sdist on macOS APFS or HFS+, which is not part of this repository's
+        build or release process.
+      expires: null
