@@ -177,6 +177,14 @@ class PyCKtools:
             Path.unlink(asc_files)
         for inp_files in new.glob("*.inp"):
             Path.unlink(inp_files)
+        for dtd_files in new.glob("*.dtd"):
+            Path.unlink(dtd_files)
+        for zip_files in new.glob("*.zip"):
+            Path.unlink(zip_files)
+        for txt_files in new.glob("*.txt"):
+            Path.unlink(txt_files)
+        for csv_files in new.glob("*.ckcsv"):
+            Path.unlink(csv_files)
         # return the return code from the subprocess run
         # change working directory
         os.chdir(current_dir)
