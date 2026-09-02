@@ -54,7 +54,7 @@ jobs:
       options: --cpus 1 --user root
     steps:
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@7e7af221736bc4d9fb84a2ab28f99518e9bca84c # v11.0.5
+        uses: ansys/actions/tests-pytest@3ad3b285bd9b67045477dafc7f9865a3aa39f692 # v11.0.6
         env:
           ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER) }}
           POETRY_VIRTUALENVS_CREATE: 'false'
@@ -78,7 +78,7 @@ jobs:
       contents: read # Read the source code of the project
       id-token: write # Write access to a temporary token for signing attestations
     steps:
-      - uses: ansys/actions/build-library@7e7af221736bc4d9fb84a2ab28f99518e9bca84c # v11.0.5
+      - uses: ansys/actions/build-library@3ad3b285bd9b67045477dafc7f9865a3aa39f692 # v11.0.6
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
