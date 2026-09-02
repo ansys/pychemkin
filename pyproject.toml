@@ -31,7 +31,7 @@ dependencies = [
 [dependency-groups]
 doc = [
     "Pillow==12.3.0",
-    "PyGitHub==2.9.1",
+    "PyGitHub==2.10.0",
     "ansys-sphinx-theme==1.9.0",
     "jupytext==1.19.5",
     "nbsphinx==0.9.8",
@@ -41,7 +41,7 @@ doc = [
     "pandoc==2.4.0",
     "pyvista==0.48.4",
     "requests==2.34.2",
-    "sphinx-autoapi==3.8.0",
+    "sphinx-autoapi==3.8.1",
     "sphinx-copybutton==0.5.2",
     "sphinx-design==0.6.1",
     "sphinx-gallery==0.21.0",
@@ -62,7 +62,7 @@ tests = [
 vulnerabilities = [
   "bandit[toml]==1.9.4",
   "safety==3.8.1",
-  "typer==0.27.1",
+  "typer==0.27.2",
 ]
 
 [project.urls]
