@@ -31,9 +31,24 @@ to import the XML solution data from selected Chemkin reactor models into Python
 This example shows how use some of objects and utilities from the
 ``ChemkinSolutionImporter``, the ``SolutionData``, and the ``SolutionGroup`` modules
 to extract the solution variables from a planar shear-layer flow simulation.
+
+The Chemkin shear-layer reactor models store the solutions in "slices" along
+the flow direction. This project extracts and processes the cross-flow profiles of
+an intermediate species (Si\ :sub:`2`\ Cl\ :sub:`6`\ ) at different streamwise
+locations.
+These profiles illustrate how the species gets formed and released from
+the active surface and subsequently diffuses across the channel as the gas mixture
+travels along the length of the reactor.
+
 In combination of other PyChemkin modules,
 such as ``Chemistry`` and ``Mixture``, you can further analyze and visualize
 the simulation results.
+
+.. note::
+
+   The Chemkin *shear-layer reactor models* are **not** available through the
+   PyChemkin APIs.
+
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_post_process_cvd_flow.png'

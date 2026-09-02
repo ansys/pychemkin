@@ -31,9 +31,30 @@ to import the XML solution data from selected Chemkin reactor models into Python
 This example shows how use some of objects and utilities from the
 ``ChemkinSolutionImporter``, the ``SolutionData``, and the ``SolutionGroup`` modules
 to extract the solution variables from a transient multi-zone direct-injection (DI)
-engine simulation. In combination of other PyChemkin modules,
+engine simulation.
+
+The Chemkin DI engine model discretizes the liquid fuel spray into multiple
+parcels (or zones) allowing for detailed tracking of fuel evaporation, mixing,
+and combustion within each zone. This examples shows how to extract the
+parcel-wise (zonal) information from the XML solution data. The "life-time" of
+the liquid fuel (n-heptane nC\ :sub:`7`\ H\ :sub:`16`\ ) and its vapor are
+compared from two parcels representing the conditions at the tip and
+at the tail-end of the spray. It can be seen that as the atomized liquid fuel
+droplets are injected into the spray parcel, they mix with the hot air
+in the cylinder and start to evaporate leading to the formation of fuel vapor.
+Subsequently, the fuel vapor decomposes and participates in the combustion
+reactions within the spray parcel. The parcel at the spray tail-end exhibits
+similar process but both the liquid evaporation rate and the vapor consumption
+rate are higher due to the higher cylinder temperature and pressure.
+
+In combination of other PyChemkin modules,
 such as ``Chemistry`` and ``Mixture``, you can further analyze and visualize
 the simulation results.
+
+.. note::
+
+   The *multi-zone DI engine model* is **not** available through the PyChemkin APIs.
+
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_post_process_DI_engine.png'

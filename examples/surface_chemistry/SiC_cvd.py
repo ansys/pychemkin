@@ -107,8 +107,8 @@ interactive = True
 # Create a chemistry set
 # ======================
 # This example uses the surface mechanism of Si-N chemical vapor deposition (Si-N CVD)
-# from Silicon tetrafluoride (SiF\ :sub:`4`\ `). The reaction mechanism consists of two
-# parts: the gas-phase mechanism, ``chem_CIN_cvd.inp``, describing the breakdown
+# from Silicon tetrafluoride (SiF\ :sub:`4`\ ). The reaction mechanism consists of two
+# parts: the gas-phase mechanism, ``chem_SIN_cvd.inp``, describing the breakdown
 # of the precursors in the gas phase; and the surface mechanism, ``surf_SIN_cvd.inp``,
 # describing the reactions taking place on the substrate surface, such as the
 # adsorption of the gas precursors, the reactions between the adsorbed surface species,

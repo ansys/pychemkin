@@ -31,9 +31,26 @@ to import the XML solution data from selected Chemkin reactor models into Python
 This example shows how use some of objects and utilities from the
 ``ChemkinSolutionImporter``, the ``SolutionData``, and the ``SolutionGroup`` modules
 to extract the solution variables from a 1-D steady-state flame simulation.
+
+The original Chemkin project utilized the *Particle Tracking Module (PTM)* with
+the moments method to simulate the evolution of the size distribution of the soot
+particles in the flame. The PTM employs a surface-chemistry based mechanism to
+model the homogeneous nucleation of the soot particles from the precusor,
+in this case pyrene (A4), and the subsequent mass growth of the soot particles.
+The predicted profiles of the soot particle volume fraction and the gas precursor
+species are of particular interest in the analysis, and the subsequent visualization
+of these profiles is important for understanding the soot formation and transport
+processes in the flame.
+
 In combination of other PyChemkin modules,
 such as ``Chemistry`` and ``Mixture``, you can further analyze and visualize
 the simulation results.
+
+.. note::
+
+   The *Particle Tracking Module (PTM)* is **not** available through the PyChemkin
+   APIs.
+
 """
 
 # sphinx_gallery_thumbnail_path = '_static/plot_post_process_flame.png'
