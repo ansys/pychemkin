@@ -49,6 +49,10 @@ updates:
         - "ansys/actions/*"
     labels:
       - "dependencies:ci"
+    groups:
+      ansys-actions:
+        patterns:
+          - "ansys/actions/*"
 
   # pre-commit hooks
   - package-ecosystem: "pre-commit"
