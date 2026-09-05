@@ -22,8 +22,6 @@
 
 """Aerosol size distribution models."""
 
-from typing import NoReturn
-
 import numpy as np
 import numpy.typing as npt
 from scipy.stats import gamma, lognorm
@@ -200,7 +198,7 @@ class PDF:
         x = self.volume_to_class(class_vol)
         return x
 
-    def set_moments(self, m0: float, m1: float, m2: float, x_min: float) -> NoReturn:
+    def set_moments(self, m0: float, m1: float, m2: float, x_min: float) -> None:
         """Calculate the key properties of the PDF from the moments values."""
         """
         Calculate the key properties of the PDF from the size class moments values.
