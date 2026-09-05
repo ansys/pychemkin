@@ -40,7 +40,10 @@ in this case pyrene (A4), and the subsequent mass growth of the soot particles.
 The predicted profiles of the soot particle volume fraction and the gas precursor
 species are of particular interest in the analysis, and the subsequent visualization
 of these profiles is important for understanding the soot formation and transport
-processes in the flame.
+processes in the flame. In this example, the particle size distributions are
+reconstructed from the moments values in the XML solution data, and
+the particle size distributions at three locations in the flame zone are visualized
+for comparisons.
 
 In combination of other PyChemkin modules,
 such as ``Chemistry`` and ``Mixture``, you can further analyze and visualize
@@ -58,9 +61,11 @@ the simulation results.
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 from ansys.chemkin.core.chemkin_solution_utility import ChemkinSolutionImporter
 from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.particles import PDF
 from ansys.chemkin.core.utilities import (
     copy_file,
     delete_files_by_extension,
@@ -200,7 +205,7 @@ soln_unit_2 = this_group_obj.get_variable_unit(soln_var_2)
 # ===================================
 # plot solution profile
 line_colors = ["b", "r"]
-fig, ax1 = plt.subplots()
+fig, (ax1, ax3) = plt.subplots(2, 1, figsize=(6, 8))
 # Plot the primary data on the left y-axis
 color1 = line_colors[0]
 ax1.plot(distance, soln_profile_1, color=color1, label=soln_var_1.replace("_", " "))
@@ -209,7 +214,7 @@ ax1.set_ylabel(
     f"{soln_var_1.replace('_', ' ')} {soln_unit_1.replace('_', ' ')}", color=color1
 )
 ax1.tick_params(axis="y", labelcolor=color1)
-
+ax1.set_title("Solution profiles between the nozzles")
 # Create the secondary axes sharing the x-axis
 ax2 = ax1.twinx()
 
@@ -220,6 +225,82 @@ ax2.set_ylabel(
     f"{soln_var_2.replace('_', ' ')} {soln_unit_2.replace('_', ' ')}", color=color2
 )
 ax2.tick_params(axis="y", labelcolor=color2)
-# plot results
+
+##################################################
+# Reconstruct the soot particle size distributions
+# ================================================
+# Extract the moments values of the soot particle size distributions
+# from the XML solution data. By assuming the particle size distribution
+# follows the lognormal distribution, we can reconstruct it with only
+# three size moments. Additional information about the properties of the
+# soot particles are required for the reconstruction. These properties are
+# the soot particle bulk density, the minimum particle inception size class,
+# and the molecular mass of the core unit that makes up the particle, i.e.,
+# the carbon atom in the case of soot particles.
+
+# reconstruct the particle size distributions from the moments values
+# in the solution data
+# get soot particle size distributions in the flame at specified locations
+loc = [1.2, 1.3, 1.4]  # distance from the fuel inlet in [cm]
+i_loc = []
+# get moments from the solution data
+m0_var = "0th_moment_of_particle_size_distribution"
+m1_var = "1st_moment_of_particle_size_distribution"
+m2_var = "2nd_moment_of_particle_size_distribution"
+soln_m0 = this_group_obj.get_variable_array(m0_var).to_numpy(dtype=float, copy=False)
+soln_m1 = this_group_obj.get_variable_array(m1_var).to_numpy(dtype=float, copy=False)
+soln_m2 = this_group_obj.get_variable_array(m2_var).to_numpy(dtype=float, copy=False)
+# set up size moments data for further analysis
+m0 = []
+m1 = []
+m2 = []
+for i, x in enumerate(loc):
+    idx = np.searchsorted(distance, x)
+    i_loc.append(idx)
+    print(f"location of x= {x} is {idx}")
+    m0.append(soln_m0[idx])
+    m1.append(soln_m1[idx])
+    m2.append(soln_m2[idx])
+    print(f"m0: {m0[-1]}, m1: {m1[-1]}, m2: {m2[-1]}")
+
+#####################################
+# Plot the selected solution variable
+# ===================================
+# plot the particle size distributions at three locations
+# in the flame zone.
+
+# plot the particle size distributions
+# minimum inception class (from the nucleation reactions)
+class_min = 32.0
+# bulk density of the particles [g/cm3]
+soot_bulk_den = 1.8
+# molecular mass of the core unit (atom or molecule)
+# that makes up the core of the particle [g/mole]
+soot_core_molar_mass = 12.0  # mass of one mole of carbon atom
+# instantiate the population density function object for the soot particles
+soot_pdf = PDF(core_wt=soot_core_molar_mass, bulk_density=soot_bulk_den)
+# loop over the selected locations in the flame
+for i, m0_val in enumerate(m0):
+    m1_val = m1[i]
+    m2_val = m2[i]
+    # set up the moments of the particle size distribution function
+    soot_pdf.set_moments(m0_val, m1_val, m2_val, class_min)
+    # assume the size distribution follows the lognormal distribution
+    d, lognorm_pdf = soot_pdf.get_lognormal_pdf(
+        samples=1000, limit=0.001, mode="volume"
+    )
+    ax3.plot(d, lognorm_pdf, label=f"x = {loc[i]} cm")
+
+# convert the size class (number of the core in the particle) to volume
+vol_min = soot_pdf.class_to_volume(class_min)
+ax3.axvline(
+    vol_min, color="red", linestyle="--", label=f"Minimum Value = {vol_min:.2e}"
+)
+ax3.set_title("Soot Particle Size Distributions in the flame zone")
+ax3.set_xlabel("Primary particle volume (micron3)")
+ax3.set_ylabel("Number density (1/cm3)")
+ax3.legend()
+# need to zoom in to see the differences
+plt.tight_layout()
 plt.show()
 # plt.savefig("plot_post_process_flame.png", bbox_inches="tight")
