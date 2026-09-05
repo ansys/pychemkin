@@ -1,0 +1,534 @@
+
+
+
+
+
+
+:class:`Material`
+=================
+
+
+.. py:class:: ansys.chemkin.core.surface_components.Material(mat_index: int, chem: ansys.chemkin.core.chemistry.Chemistry, label: str = '')
+
+   Surface Chemkin material object.
+
+
+
+.. py:currentmodule:: Material
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~information`
+            - List the size information of the material.
+          * - :py:attr:`~get_site_specindex`
+            - Get the local and the global indices of a site species.
+          * - :py:attr:`~get_bulk_specindex`
+            - Get the local and the global indices of a bulk species.
+          * - :py:attr:`~get_surf_specindex`
+            - Get the local and the global indices and type of a surface species.
+          * - :py:attr:`~get_site_density`
+            - Get the site phase densities.
+          * - :py:attr:`~get_bulk_density`
+            - Get bulk species densities.
+          * - :py:attr:`~get_site_molar_weights`
+            - Get the site species molecular weights.
+          * - :py:attr:`~get_bulk_molar_weights`
+            - Get the bulk species molecular weights.
+          * - :py:attr:`~get_site_occupancy`
+            - Get site species occupancy.
+          * - :py:attr:`~get_site_species_h`
+            - Get site species enthalpy.
+          * - :py:attr:`~get_bulk_species_h`
+            - Get bulk species enthalpy.
+          * - :py:attr:`~get_bulk_species_cp`
+            - Get bulk species specific heat capacity.
+          * - :py:attr:`~material_species_composition`
+            - Get elemental composition of a species.
+          * - :py:attr:`~get_surface_reaction_parameters`
+            - Get the Arrhenius reaction rate parameters.
+          * - :py:attr:`~set_surface_reaction_afactor`
+            - Set the Arrhenius A-Factor of the given surface reaction.
+          * - :py:attr:`~get_surface_reaction_afactor`
+            - Get the Arrhenius A-Factor of the given surface reaction.
+          * - :py:attr:`~set_surface_reaction_act_energy`
+            - Set the Arrhenius activation energy of the given surface reaction.
+          * - :py:attr:`~get_surface_reaction_act_energy`
+            - Get the Arrhenius activation energy.
+          * - :py:attr:`~get_surface_reaction_string`
+            - Get the reaction string of the surface reaction.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~material_index`
+            - Get the surface material index.
+          * - :py:attr:`~number_phases`
+            - Get the number of phases.
+          * - :py:attr:`~number_site_phases`
+            - Get the number of site phases.
+          * - :py:attr:`~number_bulk_phases`
+            - Get the number of bulk phases.
+          * - :py:attr:`~number_total_species`
+            - Get the number of species in all phases.
+          * - :py:attr:`~number_site_species`
+            - Get the total number of site species.
+          * - :py:attr:`~number_bulk_species`
+            - Get the total number of bulk species.
+          * - :py:attr:`~first_site_phase_index`
+            - Get phase index of the first site phase.
+          * - :py:attr:`~last_site_phase_index`
+            - Get phase index of the last site phase.
+          * - :py:attr:`~first_bulk_phase_index`
+            - Get phase index of the first bulk phase.
+          * - :py:attr:`~last_bulk_phase_index`
+            - Get phase index of the last bulk phase.
+          * - :py:attr:`~number_surface_reactions`
+            - Get the number of surface reactions.
+          * - :py:attr:`~number_total_reactions`
+            - Get the number of all reactions.
+          * - :py:attr:`~phase_names`
+            - Get list of phase names.
+          * - :py:attr:`~site_species_names`
+            - Set list of site species names.
+          * - :py:attr:`~bulk_species_names`
+            - Set list of bulk species names.
+          * - :py:attr:`~first_site_species_index`
+            - Get the global species index of the first site species.
+          * - :py:attr:`~first_bulk_species_index`
+            - Get the global species index of the first bulk species.
+          * - :py:attr:`~last_site_species_index`
+            - Get the global species index of the last site species.
+          * - :py:attr:`~last_bulk_species_index`
+            - Get the global species index of the last bulk species.
+          * - :py:attr:`~surface_temperature`
+            - Get surface material temperature.
+          * - :py:attr:`~surface_area`
+            - Get surface material area.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~num_element`
+            - 
+          * - :py:attr:`~num_gas_species`
+            - 
+          * - :py:attr:`~num_gas_reactions`
+            - 
+          * - :py:attr:`~site_species_map`
+            - 
+          * - :py:attr:`~bulk_species_map`
+            - 
+          * - :py:attr:`~ESymbols`
+            - 
+          * - :py:attr:`~num_site_phase`
+            - 
+          * - :py:attr:`~num_bulk_phase`
+            - 
+          * - :py:attr:`~first_site_phase`
+            - 
+          * - :py:attr:`~last_site_phase`
+            - 
+          * - :py:attr:`~first_bulk_phase`
+            - 
+          * - :py:attr:`~last_bulk_phase`
+            - 
+          * - :py:attr:`~nspecies_of_phase`
+            - 
+          * - :py:attr:`~first_species_id_of_phase`
+            - 
+          * - :py:attr:`~last_species_id_of_phase`
+            - 
+          * - :py:attr:`~PhaseSymbol`
+            - 
+          * - :py:attr:`~phase_map`
+            - 
+          * - :py:attr:`~phases`
+            - 
+          * - :py:attr:`~site_symbols`
+            - 
+          * - :py:attr:`~bulk_symbols`
+            - 
+          * - :py:attr:`~sitewt_done`
+            - 
+          * - :py:attr:`~bulkwt_done`
+            - 
+          * - :py:attr:`~site_wt`
+            - 
+          * - :py:attr:`~bulk_wt`
+            - 
+          * - :py:attr:`~surftemp`
+            - 
+          * - :py:attr:`~activearea`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.surface_components import Material
+
+Property detail
+---------------
+
+.. py:property:: material_index
+   :type: int
+
+
+   Get the surface material index.
+
+
+.. py:property:: number_phases
+   :type: int
+
+
+   Get the number of phases.
+
+
+.. py:property:: number_site_phases
+   :type: int
+
+
+   Get the number of site phases.
+
+
+.. py:property:: number_bulk_phases
+   :type: int
+
+
+   Get the number of bulk phases.
+
+
+.. py:property:: number_total_species
+   :type: int
+
+
+   Get the number of species in all phases.
+
+
+.. py:property:: number_site_species
+   :type: int
+
+
+   Get the total number of site species.
+
+
+.. py:property:: number_bulk_species
+   :type: int
+
+
+   Get the total number of bulk species.
+
+
+.. py:property:: first_site_phase_index
+   :type: int
+
+
+   Get phase index of the first site phase.
+
+
+.. py:property:: last_site_phase_index
+   :type: int
+
+
+   Get phase index of the last site phase.
+
+
+.. py:property:: first_bulk_phase_index
+   :type: int
+
+
+   Get phase index of the first bulk phase.
+
+
+.. py:property:: last_bulk_phase_index
+   :type: int
+
+
+   Get phase index of the last bulk phase.
+
+
+.. py:property:: number_surface_reactions
+   :type: int
+
+
+   Get the number of surface reactions.
+
+
+.. py:property:: number_total_reactions
+   :type: int
+
+
+   Get the number of all reactions.
+
+
+.. py:property:: phase_names
+
+   Get list of phase names.
+
+
+.. py:property:: site_species_names
+
+   Set list of site species names.
+
+
+.. py:property:: bulk_species_names
+
+   Set list of bulk species names.
+
+
+.. py:property:: first_site_species_index
+   :type: int
+
+
+   Get the global species index of the first site species.
+
+
+.. py:property:: first_bulk_species_index
+   :type: int
+
+
+   Get the global species index of the first bulk species.
+
+
+.. py:property:: last_site_species_index
+   :type: int
+
+
+   Get the global species index of the last site species.
+
+
+.. py:property:: last_bulk_species_index
+   :type: int
+
+
+   Get the global species index of the last bulk species.
+
+
+.. py:property:: surface_temperature
+   :type: float
+
+
+   Get surface material temperature.
+
+
+.. py:property:: surface_area
+   :type: float
+
+
+   Get surface material area.
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: num_element
+
+.. py:attribute:: num_gas_species
+
+.. py:attribute:: num_gas_reactions
+
+.. py:attribute:: site_species_map
+   :type:  dict[str, int]
+
+.. py:attribute:: bulk_species_map
+   :type:  dict[str, int]
+
+.. py:attribute:: ESymbols
+
+.. py:attribute:: num_site_phase
+
+.. py:attribute:: num_bulk_phase
+
+.. py:attribute:: first_site_phase
+   :value: 0
+
+
+.. py:attribute:: last_site_phase
+   :value: 0
+
+
+.. py:attribute:: first_bulk_phase
+   :value: 0
+
+
+.. py:attribute:: last_bulk_phase
+   :value: 0
+
+
+.. py:attribute:: nspecies_of_phase
+
+.. py:attribute:: first_species_id_of_phase
+
+.. py:attribute:: last_species_id_of_phase
+
+.. py:attribute:: PhaseSymbol
+   :type:  list[str]
+   :value: []
+
+
+.. py:attribute:: phase_map
+   :type:  dict[str, int]
+
+.. py:attribute:: phases
+   :type:  dict[str, SurfacePhase]
+
+.. py:attribute:: site_symbols
+   :type:  list[str]
+   :value: []
+
+
+.. py:attribute:: bulk_symbols
+   :type:  list[str]
+   :value: []
+
+
+.. py:attribute:: sitewt_done
+   :value: 0
+
+
+.. py:attribute:: bulkwt_done
+   :value: 0
+
+
+.. py:attribute:: site_wt
+
+.. py:attribute:: bulk_wt
+
+.. py:attribute:: surftemp
+   :value: 300.0
+
+
+.. py:attribute:: activearea
+   :value: 0.0
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: information()
+
+   List the size information of the material.
+
+
+.. py:method:: get_site_specindex(symbol: str = '') -> tuple[int, int]
+
+   Get the local and the global indices of a site species.
+
+
+.. py:method:: get_bulk_specindex(symbol: str = '') -> tuple[int, int]
+
+   Get the local and the global indices of a bulk species.
+
+
+.. py:method:: get_surf_specindex(symbol: str = '', mode: str = 'normal') -> tuple[int, int, str]
+
+   Get the local and the global indices and type of a surface species.
+
+
+.. py:method:: get_site_density() -> numpy.typing.NDArray[numpy.double]
+
+   Get the site phase densities.
+
+
+.. py:method:: get_bulk_density() -> numpy.typing.NDArray[numpy.double]
+
+   Get bulk species densities.
+
+
+.. py:method:: get_site_molar_weights() -> numpy.typing.NDArray[numpy.double]
+
+   Get the site species molecular weights.
+
+
+.. py:method:: get_bulk_molar_weights() -> numpy.typing.NDArray[numpy.double]
+
+   Get the bulk species molecular weights.
+
+
+.. py:method:: get_site_occupancy() -> numpy.typing.NDArray[numpy.int32]
+
+   Get site species occupancy.
+
+
+.. py:method:: get_site_species_h(temp: Union[float, None] = None) -> numpy.typing.NDArray[numpy.double]
+
+   Get site species enthalpy.
+
+
+.. py:method:: get_bulk_species_h(temp: Union[float, None] = None, pres: Union[float, None] = None) -> numpy.typing.NDArray[numpy.double]
+
+   Get bulk species enthalpy.
+
+
+.. py:method:: get_bulk_species_cp(temp: Union[float, None] = None, pres: Union[float, None] = None) -> numpy.typing.NDArray[numpy.double]
+
+   Get bulk species specific heat capacity.
+
+
+.. py:method:: material_species_composition(elemindex: int = -1, specindex: int = -1) -> int
+
+   Get elemental composition of a species.
+
+
+.. py:method:: get_surface_reaction_parameters() -> tuple[numpy.typing.NDArray[numpy.double], numpy.typing.NDArray[numpy.double], numpy.typing.NDArray[numpy.double]]
+
+   Get the Arrhenius reaction rate parameters.
+
+
+.. py:method:: set_surface_reaction_afactor(reaction_index: int, a_factor: float)
+
+   Set the Arrhenius A-Factor of the given surface reaction.
+
+
+.. py:method:: get_surface_reaction_afactor(reaction_index: int) -> float
+
+   Get the Arrhenius A-Factor of the given surface reaction.
+
+
+.. py:method:: set_surface_reaction_act_energy(reaction_index: int, act_energy: float)
+
+   Set the Arrhenius activation energy of the given surface reaction.
+
+
+.. py:method:: get_surface_reaction_act_energy(reaction_index: int) -> float
+
+   Get the Arrhenius activation energy.
+
+
+.. py:method:: get_surface_reaction_string(reaction_index: int) -> str
+
+   Get the reaction string of the surface reaction.
+
+
+
+
+

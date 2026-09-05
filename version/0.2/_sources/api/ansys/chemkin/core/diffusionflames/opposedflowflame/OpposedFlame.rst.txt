@@ -1,0 +1,199 @@
+
+
+
+
+
+
+:class:`OpposedFlame`
+=====================
+
+
+.. py:class:: ansys.chemkin.core.diffusionflames.opposedflowflame.OpposedFlame(fuel_stream: ansys.chemkin.core.inlet.Stream, label: Union[str, None] = None)
+
+   Bases: :py:obj:`ansys.chemkin.core.flame.Flame`
+
+
+   One-dimensional axisymmetric/Cylindrical opposed-flow flame model.
+
+
+
+.. py:currentmodule:: OpposedFlame
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_oxidizer_inlet`
+            - Set the properties of the oxidizer stream.
+          * - :py:attr:`~lump_diffusion_imbalance`
+            - Lump species mass balance uncertainty to the last species.
+          * - :py:attr:`~set_profilekeywords`
+            - Create profile keywords.
+          * - :py:attr:`~use_tpro_grids`
+            - Use temperature profile grid as initial grid.
+          * - :py:attr:`~set_gridkeywords`
+            - Create 1-D grid profile.
+          * - :py:attr:`~set_max_flame_temperature`
+            - Set the maximum temperature.
+          * - :py:attr:`~set_inlet_keywords`
+            - Set inlet stream properties.
+          * - :py:attr:`~run`
+            - Perform steps to run the simulation.
+          * - :py:attr:`~continuation`
+            - Perform a continuation run.
+          * - :py:attr:`~get_solution_size`
+            - Get the number of solution points.
+          * - :py:attr:`~process_solution`
+            - Post-process solution to extract the raw solution variable data.
+          * - :py:attr:`~get_solution_variable_profile`
+            - Get the solution profile.
+          * - :py:attr:`~create_solution_streams`
+            - Create a list of solution Stream/Mixture.
+          * - :py:attr:`~get_solution_stream`
+            - Get solution Stream at a location.
+          * - :py:attr:`~get_solution_stream_at_grid`
+            - Get solution Stream at a grid point.
+          * - :py:attr:`~skip_fix_t_solution`
+            - Skip finding the intermediate solution.
+          * - :py:attr:`~automatic_temperature_profile_estimate`
+            - Construct guess temperature profile automatically.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~fuelstream`
+            - 
+          * - :py:attr:`~oxidstream`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.diffusionflames.opposedflowflame import OpposedFlame
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: fuelstream
+   :type:  ansys.chemkin.core.inlet.Stream
+
+.. py:attribute:: oxidstream
+   :type:  ansys.chemkin.core.inlet.Stream
+   :value: None
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: set_oxidizer_inlet(oxid_stream: ansys.chemkin.core.inlet.Stream)
+
+   Set the properties of the oxidizer stream.
+
+
+.. py:method:: lump_diffusion_imbalance(mode: bool = True)
+
+   Lump species mass balance uncertainty to the last species.
+
+
+.. py:method:: set_profilekeywords() -> int
+
+   Create profile keywords.
+
+
+.. py:method:: use_tpro_grids(mode: bool = True)
+
+   Use temperature profile grid as initial grid.
+
+
+.. py:method:: set_gridkeywords() -> int
+
+   Create 1-D grid profile.
+
+
+.. py:method:: set_max_flame_temperature(max_temp: float)
+
+   Set the maximum temperature.
+
+
+.. py:method:: set_inlet_keywords(inlet: ansys.chemkin.core.inlet.Stream) -> int
+
+   Set inlet stream properties.
+
+
+.. py:method:: run() -> int
+
+   Perform steps to run the simulation.
+
+
+.. py:method:: continuation() -> int
+
+   Perform a continuation run.
+
+
+.. py:method:: get_solution_size() -> int
+
+   Get the number of solution points.
+
+
+.. py:method:: process_solution()
+
+   Post-process solution to extract the raw solution variable data.
+
+
+.. py:method:: get_solution_variable_profile(varname: str) -> numpy.typing.NDArray[numpy.double]
+
+   Get the solution profile.
+
+
+.. py:method:: create_solution_streams(specfrac: numpy.typing.NDArray[numpy.double]) -> int
+
+   Create a list of solution Stream/Mixture.
+
+
+.. py:method:: get_solution_stream(x: float) -> ansys.chemkin.core.inlet.Stream
+
+   Get solution Stream at a location.
+
+
+.. py:method:: get_solution_stream_at_grid(grid_index: int) -> ansys.chemkin.core.inlet.Stream
+
+   Get solution Stream at a grid point.
+
+
+.. py:method:: skip_fix_t_solution(mode: bool = True)
+
+   Skip finding the intermediate solution.
+
+
+.. py:method:: automatic_temperature_profile_estimate(mode: bool = True)
+
+   Construct guess temperature profile automatically.
+
+
+
+
+

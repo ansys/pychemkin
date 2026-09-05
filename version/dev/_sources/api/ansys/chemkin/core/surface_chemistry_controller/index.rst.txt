@@ -1,0 +1,89 @@
+
+
+
+
+
+
+The ``surface_chemistry_controller.py`` module
+==============================================
+
+.. py:module:: ansys.chemkin.core.surface_chemistry_controller
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: surface_chemistry_controller
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.surface_chemistry_controller.SurfaceChemistryHost`
+            - Protocol for reactor objects that can host surface chemistry behavior.
+
+
+          * - :py:obj:`~ansys.chemkin.core.surface_chemistry_controller.SurfaceChemistryController`
+            - Controller that encapsulates reactor surface-chemistry operations.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> SurfaceChemistryHost</api/ansys/chemkin/core/surface_chemistry_controller/SurfaceChemistryHost>
+    <span class="nf nf-cod-symbol_class"></span> SurfaceChemistryController</api/ansys/chemkin/core/surface_chemistry_controller/SurfaceChemistryController>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Surface chemistry controller for reactor models.
+
+This module isolates surface-chemistry related behavior from ``ReactorModel``.
+The controller is composition-based and operates on a host object that exposes
+reactor state and helper methods.
+
+
+
+
+
+
+
+

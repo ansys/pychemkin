@@ -1,0 +1,106 @@
+
+
+
+
+
+
+The ``PSR.py`` module
+=====================
+
+.. py:module:: ansys.chemkin.core.stirreactors.PSR
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: PSR
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.stirreactors.PSR.PerfectlyStirredReactor`
+            - Generic perfectly-stirred reactor model.
+
+
+          * - :py:obj:`~ansys.chemkin.core.stirreactors.PSR.PSRSetResTimeEnergyConservation`
+            - PSR model with given reactor residence time and solve energy equation.
+
+
+          * - :py:obj:`~ansys.chemkin.core.stirreactors.PSR.PSRSetVolumeEnergyConservation`
+            - PSR model with given reactor volume and solve energy equation.
+
+
+          * - :py:obj:`~ansys.chemkin.core.stirreactors.PSR.PSRSetResTimeFixedTemperature`
+            - PSR model with given reactor residence time and reactor temperature.
+
+
+          * - :py:obj:`~ansys.chemkin.core.stirreactors.PSR.PSRSetVolumeFixedTemperature`
+            - PSR model with given reactor volume and reactor temperature.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> PerfectlyStirredReactor</api/ansys/chemkin/core/stirreactors/PSR/PerfectlyStirredReactor>
+    <span class="nf nf-cod-symbol_class"></span> PSRSetResTimeEnergyConservation</api/ansys/chemkin/core/stirreactors/PSR/PSRSetResTimeEnergyConservation>
+    <span class="nf nf-cod-symbol_class"></span> PSRSetVolumeEnergyConservation</api/ansys/chemkin/core/stirreactors/PSR/PSRSetVolumeEnergyConservation>
+    <span class="nf nf-cod-symbol_class"></span> PSRSetResTimeFixedTemperature</api/ansys/chemkin/core/stirreactors/PSR/PSRSetResTimeFixedTemperature>
+    <span class="nf nf-cod-symbol_class"></span> PSRSetVolumeFixedTemperature</api/ansys/chemkin/core/stirreactors/PSR/PSRSetVolumeFixedTemperature>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Perfectly stirred reactor (PSR) model.
+
+
+
+
+
+
+
+

@@ -1,0 +1,124 @@
+
+
+.. _sphx_glr_examples_advanced:
+
+Advanced Applications
+=====================
+
+Examples in this section are to showcase the use of Pychemkin in more complicated applications. You can
+make improvements to a Pychemkin reactor model by adding new physical processes. Or, you can have Pychemkin
+interact with other Python applications to address complex problems.
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Finding the optimal solution is one of the prominent parts of the research and development activities. When it comes to PyChemkin, reaction mechanism (rate parameters) optimization, fuel surrogate blend optimization, and process/reactor parameters optimization are some of the common applications.">
+
+.. only:: html
+
+  .. image:: /examples/advanced/images/thumb/sphx_glr_SI_engine_optimization_thumb.png
+    :alt:
+
+  :doc:`/examples/advanced/SI_engine_optimization`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Find the optimal operating parameters for a given SI engine</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="For stratified-charge compression ignition (SCCI) engines, the multi-zone homogeneous charged compression ignition (HCCI) model can be applied to address the composition and temperature variations of the initial gas charge. The incylinder gas mixture at IVC is &quot;grouped&quot; to form several imaginary &#x27;fluid material zones&#x27; based on the local gas temperature and composition. Note that the &#x27;fluid material zone&#x27; does not have to form a single continuous volume of gas mass, rather it can be a collection of many small gas masses through out the cylinder.">
+
+.. only:: html
+
+  .. image:: /examples/advanced/images/thumb/sphx_glr_pseudo-chastic_HCCI_thumb.png
+    :alt:
+
+  :doc:`/examples/advanced/pseudo-chastic_HCCI`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A pseudo stochastic scheme to simulate a stratified-charged compression-ignition engine</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="PyChemkin does not support all chemkin functionalities and reactor models. However, it is still possible to run simulations of unsupported applications in Python.">
+
+.. only:: html
+
+  .. image:: /examples/advanced/images/thumb/sphx_glr_run_chemkin_applications_thumb.png
+    :alt:
+
+  :doc:`/examples/advanced/run_chemkin_applications`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Run chemkin applications in Python</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This GUI wraps the high-level workflow used to launch Chemkin applications from the command line, which consists of the following steps: 1) generate a platform-specific run script, 2) execute the script with subprocess.">
+
+.. only:: html
+
+  .. image:: /examples/advanced/images/thumb/sphx_glr_run_chemkin_java_gui_thumb.png
+    :alt:
+
+  :doc:`/examples/advanced/run_chemkin_java_gui`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Run chemkin Java GUI in Python</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This GUI wraps the high-level workflow used to launch Chemkin Workbench from the command line, which consists of the following steps: 1) generate a platform-specific run script, 2) execute the script with subprocess.">
+
+.. only:: html
+
+  .. image:: /examples/advanced/images/thumb/sphx_glr_run_chemkin_workbench_gui_thumb.png
+    :alt:
+
+  :doc:`/examples/advanced/run_chemkin_workbench_gui`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Run Chemkin Workbench GUI in Python</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/advanced/SI_engine_optimization
+   /examples/advanced/pseudo-chastic_HCCI
+   /examples/advanced/run_chemkin_applications
+   /examples/advanced/run_chemkin_java_gui
+   /examples/advanced/run_chemkin_workbench_gui
+

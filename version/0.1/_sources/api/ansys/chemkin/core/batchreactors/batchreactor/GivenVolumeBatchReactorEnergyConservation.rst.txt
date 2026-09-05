@@ -1,0 +1,127 @@
+
+
+
+
+
+
+:class:`GivenVolumeBatchReactorEnergyConservation`
+==================================================
+
+
+.. py:class:: ansys.chemkin.core.batchreactors.batchreactor.GivenVolumeBatchReactorEnergyConservation(reactor_condition: ansys.chemkin.core.inlet.Stream, label: str = 'CONV')
+
+   Bases: :py:obj:`BatchReactors`
+
+
+   Chemkin 0-D transient closed homogeneous reactor model.
+
+
+
+.. py:currentmodule:: GivenVolumeBatchReactorEnergyConservation
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_heat_transfer_area_profile`
+            - Specify reactor heat transfer area profile.
+          * - :py:attr:`~set_heat_loss_profile`
+            - Specify reactor heat loss rate profile.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~time`
+            - Get simulation end time.
+          * - :py:attr:`~heat_loss_rate`
+            - Get heat loss rate.
+          * - :py:attr:`~heat_transfer_coefficient`
+            - Get heat transfer coefficient.
+          * - :py:attr:`~ambient_temperature`
+            - Get ambient temperature.
+          * - :py:attr:`~heat_transfer_area`
+            - Get heat transfer area.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.batchreactors.batchreactor import GivenVolumeBatchReactorEnergyConservation
+
+Property detail
+---------------
+
+.. py:property:: time
+   :type: float
+
+
+   Get simulation end time.
+
+
+.. py:property:: heat_loss_rate
+   :type: float
+
+
+   Get heat loss rate.
+
+
+.. py:property:: heat_transfer_coefficient
+   :type: float
+
+
+   Get heat transfer coefficient.
+
+
+.. py:property:: ambient_temperature
+   :type: float
+
+
+   Get ambient temperature.
+
+
+.. py:property:: heat_transfer_area
+   :type: float
+
+
+   Get heat transfer area.
+
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: set_heat_transfer_area_profile(x: numpy.typing.NDArray[numpy.double], area: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify reactor heat transfer area profile.
+
+
+.. py:method:: set_heat_loss_profile(x: numpy.typing.NDArray[numpy.double], qloss: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify reactor heat loss rate profile.
+
+
+
+
+

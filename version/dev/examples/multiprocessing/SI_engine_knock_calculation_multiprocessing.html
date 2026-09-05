@@ -1,0 +1,1334 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>SI engine knocking analysis &#8212; PyChemkin</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/multiprocessing/SI_engine_knock_calculation_multiprocessing';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Setting up a multi-process laminar flame speed parameter study" href="flame_speed_calculation_multiprocessing.html" />
+    <link rel="prev" title="Multiprocessing parameter study" href="index.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/examples/multiprocessing/SI_engine_knock_calculation_multiprocessing.html" />
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyChemkin - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../artifacts.html">
+    Artifacts
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i><span class="visually-hidden">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i><span class="visually-hidden">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../artifacts.html">
+    Artifacts
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i><span class="visually-hidden">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i><span class="visually-hidden">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../chemistry/index.html">Chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mixture/index.html">Mixture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../batch/index.html">Batch reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../engine/index.html">0-D engine models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSR/index.html">Perfectly stirred reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PFR/index.html">Plug-flow reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../shock_tube/index.html">Shock tube reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reactor_network/index.html">PSR network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../premixed_flame/index.html">Premixed flame models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../opposed_flow_flame/index.html">Opposed-flow flame model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../surface_chemistry/index.html">Surface chemistry</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Multiprocessing parameter study</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">SI engine knocking analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flame_speed_calculation_multiprocessing.html">Setting up a multi-process laminar flame speed parameter study</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flame_speed_calculation_threading.html">Setting up a multi-thread laminar flame speed parameter study</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sensitivity_multiproc.html">Perform brute-force sensitivity analysis on multiple processors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/index.html">Advanced Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../post_process/index.html">Post-processing</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Multiprocessing parameter study</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">SI engine knocking analysis</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-examples-multiprocessing-si-engine-knock-calculation-multiprocessing-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="si-engine-knocking-analysis">
+<span id="ref-si-engine-knock"></span><span id="sphx-glr-examples-multiprocessing-si-engine-knock-calculation-multiprocessing-py"></span><h1>SI engine knocking analysis<a class="headerlink" href="#si-engine-knocking-analysis" title="Link to this heading">#</a></h1>
+<p>The 0-D SI engine model can be used to predict the occurrence of engine knock.
+There is no consensus on the determination of the onset of engine knock.
+In this example, the engine knock is defined as when the end gas (the gas mixture
+in the unburned zone) auto-ignites. And the knock intensity is associated to
+the peak value of the total thermicity of the end gas, that is, the higher
+the peak total thermicity the more intense the engine knock.</p>
+<p>There are many parameters that have impact on the occurrence of engine knock,
+for example, the fuel composition, the start of combustion timing, the engine speed,
+the wall heat loss and etc. This tutorial focuses on the effect of start of
+combustion timing (or spark timing) on the engine knock. It also shows the steps of
+setting up an SI engine parameter study for knock analysis. The predicted
+knocking occurrence (represented by the end gas autoignition timing) are
+presented as a function of the start of combustion (SOC) crank angle. Detailed
+description of the 0-D SI engine model can be found in the “0-D engine model” sections
+of the “Chemkin Theory” manual, respectively. You can use the
+<code class="docutils literal notranslate"><span class="pre">ansys.chemkin.manuals()</span></code> method to get to the latest version of the Chemkin
+online manuals.</p>
+<p>The parameter study is performed in the multi-process (or multi-core) mode by using
+<code class="docutils literal notranslate"><span class="pre">ProcessPoolExecutor</span></code> from the <code class="docutils literal notranslate"><span class="pre">concurrent.futures</span></code> package. If the computer has
+enough number of CPU cores, the parameter study can be run in parallel with each case
+running on a designated CPU core.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<section id="import-pychemkin-packages-and-start-the-logger">
+<h2>Import PyChemkin packages and start the logger<a class="headerlink" href="#import-pychemkin-packages-and-start-the-logger" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProcessPoolExecutor</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># plotting</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>  <span class="c1"># number crunching</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ansys.chemkin.core</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ck</span>  <span class="c1"># Chemkin</span>
+
+<span class="c1"># chemkin spark ignition (SI) engine model (transient)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.engines.SI</span><span class="w"> </span><span class="kn">import</span> <span class="n">SIengine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.inlet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stream</span>  <span class="c1"># external gaseous inlet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">WorkingFolders</span>
+
+<span class="c1"># check working directory</span>
+<span class="n">current_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">())</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"working directory: "</span> <span class="o">+</span> <span class="n">current_dir</span><span class="p">)</span>
+<span class="c1"># set verbose mode</span>
+<span class="n">ck</span><span class="o">.</span><span class="n">set_verbose</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># set interactive mode for plotting the results</span>
+<span class="c1"># interactive = True: display plot</span>
+<span class="c1"># interactive = False: save plot as a PNG file</span>
+<span class="k">global</span> <span class="n">interactive</span>
+<span class="n">interactive</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+<section id="create-an-si-engine-calculator-class">
+<h2>Create an SI engine calculator class<a class="headerlink" href="#create-an-si-engine-calculator-class" title="Link to this heading">#</a></h2>
+<p>Create a local class that wraps around the actual <code class="docutils literal notranslate"><span class="pre">SIengine</span></code> class
+to make the setup of the SI engine knock analysis parameter study
+more convenient.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The auto-ignition detection must be turned on to obtain the correct
+knock occurrence crank angle. Use the <code class="docutils literal notranslate"><span class="pre">set_ignition_delay()</span></code> method to
+specify the ignition definition criterion and to turn on the ignition delay time
+detection.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">SIengineCalculator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""SI engine calculator with fixed set up parameters."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fresh_mixture</span><span class="p">:</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">start_combustion</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Create an SI engine calculator."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Create an SI engine calculator that instantiates an SI engine object with</span>
+<span class="sd">        the given fresh (unburnt) mixture condition and predefined engine</span>
+<span class="sd">        parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            fresh_mixture: Mixture object</span>
+<span class="sd">                the initial/fresh/unburnt condition</span>
+<span class="sd">            index: integer</span>
+<span class="sd">                run index of this SI engine calculator</span>
+<span class="sd">            start_combustion: double</span>
+<span class="sd">                start of combustion crank angle [CA]</span>
+<span class="sd">        """</span>
+        <span class="c1"># instantiate an SI engine object</span>
+        <span class="c1"># set up the run and working directory name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"SI_engine_"</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="c1"># instantiate the SIengine object for this run</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span> <span class="o">=</span> <span class="n">SIengine</span><span class="p">(</span><span class="n">fresh_mixture</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="c1"># run status</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runstatus</span> <span class="o">=</span> <span class="o">-</span><span class="mi">100</span>
+        <span class="c1"># calculated engine knock occurrence crank angle [CA]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">knock_ca</span> <span class="o">=</span> <span class="o">-</span><span class="mf">720.0</span>
+        <span class="c1"># calculated maximum thermicity value in the unburned zone [1/sec]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_sigma</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="c1"># peak end gas temperature [K]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_temp</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="c1"># IMEP</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">imep</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="c1"># set the required premixed flame model parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_engine_parameters</span><span class="p">()</span>
+        <span class="c1"># set burn profile</span>
+        <span class="c1"># use fixed Wiebe function</span>
+        <span class="n">wiebe_b</span> <span class="o">=</span> <span class="mf">7.0</span>
+        <span class="n">wiebe_n</span> <span class="o">=</span> <span class="mf">4.0</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="mf">45.6</span>  <span class="c1"># degrees</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_burn_profile</span><span class="p">(</span><span class="n">start_combustion</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">wiebe_n</span><span class="p">,</span> <span class="n">wiebe_b</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Run the SI engine calculation in a separate working directory."""</span>
+        <span class="c1"># run the flame speed calculation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runstatus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="c1"># extract the laminar flame speed from the solution</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">runstatus</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># postprocess the unburned zone solution</span>
+            <span class="n">unburnedzone</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="c1"># burnedzone = 2</span>
+            <span class="n">ierr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">process_engine_solution</span><span class="p">(</span><span class="n">zone_id</span><span class="o">=</span><span class="n">unburnedzone</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ierr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># get the engine knock (end-gas auto-ignition)</span>
+                <span class="c1"># occurrence crank angle [CA]</span>
+                <span class="c1"># if no engine knock, the value = -720 CA</span>
+                <span class="c1"># because the memory is shared, it must be done as soon as</span>
+                <span class="c1"># the run is finished</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">knock_ca</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">check_engine_knock</span><span class="p">()</span>
+                <span class="n">temperature</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">get_solution_variable_profile</span><span class="p">(</span>
+                    <span class="s2">"temperature"</span>
+                <span class="p">)</span>
+                <span class="n">thermicity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">get_solution_variable_profile</span><span class="p">(</span>
+                    <span class="s2">"thermicity"</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">max_temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">max_sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">thermicity</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">imep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">get_engine_imep</span><span class="p">()</span>
+                <span class="k">del</span> <span class="n">thermicity</span><span class="p">,</span> <span class="n">temperature</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">runstatus</span> <span class="o">=</span> <span class="n">ierr</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_engine_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Set up the basic engine parameters."""</span>
+        <span class="c1"># Set up basic engine parameters</span>
+        <span class="c1"># These engine parameters are used to describe the cylinder volume during the</span>
+        <span class="c1"># simulation. The ``starting_ca`` argument should be the crank angle</span>
+        <span class="c1"># corresponding to the cylinder IVC. The ``ending_ca`` argument is typically</span>
+        <span class="c1"># the EVO crank angle.</span>
+        <span class="c1"># cylinder bore diameter [cm]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">bore</span> <span class="o">=</span> <span class="mf">8.5</span>
+        <span class="c1"># engine stroke [cm]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">stroke</span> <span class="o">=</span> <span class="mf">10.82</span>
+        <span class="c1"># connecting rod length [cm]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">connecting_rod_length</span> <span class="o">=</span> <span class="mf">17.853</span>
+        <span class="c1"># compression ratio [-]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">compression_ratio</span> <span class="o">=</span> <span class="mi">12</span>
+        <span class="c1"># engine speed [RPM]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">rpm</span> <span class="o">=</span> <span class="mi">1200</span>
+        <span class="c1"># simulation start CA [degree]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">starting_ca</span> <span class="o">=</span> <span class="o">-</span><span class="mf">120.2</span>
+        <span class="c1"># simulation end CA [degree]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">ending_ca</span> <span class="o">=</span> <span class="mf">139.8</span>
+        <span class="c1"># wall heat transfer parameters</span>
+        <span class="c1"># Set up engine wall heat transfer model</span>
+        <span class="n">heattransferparameters</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+        <span class="c1"># set cylinder wall temperature [K]</span>
+        <span class="n">t_wall</span> <span class="o">=</span> <span class="mf">434.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">set_wall_heat_transfer</span><span class="p">(</span>
+            <span class="s2">"dimensionless"</span><span class="p">,</span> <span class="n">heattransferparameters</span><span class="p">,</span> <span class="n">t_wall</span>
+        <span class="p">)</span>
+        <span class="c1"># in-cylinder gas velocity correlation parameter (Woschni)</span>
+        <span class="c1"># [&lt;C11&gt; &lt;C12&gt; &lt;C2&gt; &lt;swirl ratio&gt;]</span>
+        <span class="n">gv_parameters</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.28</span><span class="p">,</span> <span class="mf">0.318</span><span class="p">,</span> <span class="mf">0.324</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">set_gas_velocity_correlation</span><span class="p">(</span><span class="n">gv_parameters</span><span class="p">)</span>
+        <span class="c1"># set piston head top surface area [cm2]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">set_piston_head_area</span><span class="p">(</span><span class="n">area</span><span class="o">=</span><span class="mf">56.75</span><span class="p">)</span>
+        <span class="c1"># set cylinder clearance surface area [cm2]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">set_cylinder_head_area</span><span class="p">(</span><span class="n">area</span><span class="o">=</span><span class="mf">56.75</span><span class="p">)</span>
+        <span class="c1"># other engine model parameters</span>
+        <span class="c1"># set tolerances in tuple: (absolute tolerance, relative tolerance)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">tolerances</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0e-10</span><span class="p">,</span> <span class="mf">1.0e-6</span><span class="p">)</span>
+        <span class="c1"># turn on the force non-negative solutions option in the solver</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">force_nonnegative</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># set minimum zonal mass [g]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">set_minimum_zone_mass</span><span class="p">(</span><span class="n">minmass</span><span class="o">=</span><span class="mf">1.0e-5</span><span class="p">)</span>
+        <span class="c1"># set the maximum solver time step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">max_ca_step</span> <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="c1"># set the number of crank angles between saving solution</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">ca_step_for_saving_solution</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="c1"># set the number of crank angles between printing solution</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">ca_step_for_printing_solution</span> <span class="o">=</span> <span class="mf">10.0</span>
+        <span class="c1"># turn ON adaptive solution saving</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">adaptive_solution_saving</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+        <span class="c1"># set to detect auto-ignition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">set_ignition_delay</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">"Thermicity_peak"</span><span class="p">)</span>
+        <span class="c1"># suppress text output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">stop_output</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_burn_profile</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">start_combustion</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">burn_duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">wiebe_n</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">wiebe_b</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Set up the fuel burn rate profile."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Set up the fuel burn rate profile.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            start_combustion: double</span>
+<span class="sd">                start of combustion (SOC) crank angle [CA]</span>
+<span class="sd">            burn_duration: double</span>
+<span class="sd">                burn duration in crank angle [CA]</span>
+<span class="sd">            wiebe_n: double</span>
+<span class="sd">                Wiebe function n parameter value</span>
+<span class="sd">            wiebe_b: double</span>
+<span class="sd">                Wiebe function b parameter value</span>
+<span class="sd">        """</span>
+        <span class="c1"># start of combustion CA</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">set_burn_timing</span><span class="p">(</span><span class="n">soc</span><span class="o">=</span><span class="n">start_combustion</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">burn_duration</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">si_calculator</span><span class="o">.</span><span class="n">wiebe_parameters</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">wiebe_n</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">wiebe_b</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-the-si-engine-knocking-analysis-parameter-study-for-multi-processing">
+<h2>Set up the SI engine knocking analysis parameter study for multi-processing<a class="headerlink" href="#set-up-the-si-engine-knocking-analysis-parameter-study-for-multi-processing" title="Link to this heading">#</a></h2>
+<p>Create <code class="docutils literal notranslate"><span class="pre">si_engineCalculator</span></code> object with different start of combustion (SOC)
+crank angle.
+Each object represents one parameter study case and will be run on an designated
+cpu core when the parameter study is executed.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">si_engine_run</span><span class="p">(</span><span class="n">case</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Set up sSI engine parameter study."""</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Set up the parameter study runs for multi-processing.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        case: tuple (integer, double)</span>
+<span class="sd">            SI engine calculation case condition: case index and start of</span>
+<span class="sd">            combustion crank angle [CA]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        start_ca: double</span>
+<span class="sd">            the parameter: start of combustion crank angle [degree CA]</span>
+<span class="sd">        knock_ca: double</span>
+<span class="sd">            crank angle when engine knock occurs [degree CA]</span>
+<span class="sd">        max_sigma: double</span>
+<span class="sd">            the peak total thermicity of the end gas [1/sec]</span>
+<span class="sd">        max_temp: double</span>
+<span class="sd">            peak end gas temperature [K]</span>
+<span class="sd">        imep: double</span>
+<span class="sd">            indicated mean effective pressure [bar]</span>
+<span class="sd">    """</span>
+    <span class="c1">##########################################</span>
+    <span class="c1"># Create an instance of the Chemistry Set</span>
+    <span class="c1"># ========================================</span>
+    <span class="c1"># For PRF, the encrypted 14-component gasoline mechanism,</span>
+    <span class="c1"># ``gasoline_14comp_WBencrypted.inp``, is used. The chemistry set</span>
+    <span class="c1"># is named ``gasoline``.</span>
+    <span class="c1">#</span>
+    <span class="c1"># .. note::</span>
+    <span class="c1">#   Because this gasoline mechanism does not come with any transport data,</span>
+    <span class="c1">#   you do not need to provide a transport data file.</span>
+    <span class="c1">#</span>
+    <span class="c1"># case index</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">case</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># start of combustion crank angle</span>
+    <span class="n">start_ca</span> <span class="o">=</span> <span class="n">case</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># create and change to the working directory for this run</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">"SI_engine_"</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">work_folder</span> <span class="o">=</span> <span class="n">WorkingFolders</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">current_dir</span><span class="p">)</span>
+    <span class="c1"># set mechanism directory (the default Chemkin mechanism data directory)</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">ck</span><span class="o">.</span><span class="n">ansys_dir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"reaction"</span> <span class="o">/</span> <span class="s2">"data"</span>
+    <span class="n">mechanism_dir</span> <span class="o">=</span> <span class="n">data_dir</span>
+    <span class="c1"># create a chemistry set based on the gasoline 14 components mechanism</span>
+    <span class="n">MyGasMech</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Chemistry</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">"Gasoline"</span><span class="p">)</span>
+    <span class="c1"># set mechanism input files</span>
+    <span class="c1"># including the full file path is recommended</span>
+    <span class="n">MyGasMech</span><span class="o">.</span><span class="n">chemfile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mechanism_dir</span> <span class="o">/</span> <span class="s2">"gasoline_14comp_WBencrypt.inp"</span><span class="p">)</span>
+
+    <span class="c1">#######################################</span>
+    <span class="c1"># Preprocess the gasoline chemistry set</span>
+    <span class="c1"># =====================================</span>
+
+    <span class="c1"># preprocess the mechanism files</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">MyGasMech</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+
+    <span class="c1">################################################</span>
+    <span class="c1"># Set up the stoichiometric gasoline-air mixture</span>
+    <span class="c1"># ==============================================</span>
+    <span class="c1"># You must set up the stoichiometric gasoline-air mixture for the subsequent</span>
+    <span class="c1"># SI engine calculations. Here the ``x_by_equivalence_ratio()`` method is used.</span>
+    <span class="c1"># You create the ``fuel`` and the ``air`` mixtures first. You then define the</span>
+    <span class="c1"># *complete combustion product species* and provide the *additives* composition</span>
+    <span class="c1"># if applicable.</span>
+    <span class="c1"># Finally, you simply set ``equivalenceratio=1`` to create the stoichiometric</span>
+    <span class="c1"># gasoline-air mixture.</span>
+    <span class="c1">#</span>
+    <span class="c1"># For PRF 90 gasoline, the recipe is ``[("ic8h18", 0.9), ("nc7h16", 0.1)]``.</span>
+
+    <span class="c1"># create the fuel mixture</span>
+    <span class="n">fuelmixture</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">)</span>
+    <span class="c1"># set fuel composition</span>
+    <span class="n">fuelmixture</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">"ic8h18"</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">),</span> <span class="p">(</span><span class="s2">"nc7h16"</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="s2">"mch"</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="p">(</span><span class="s2">"c6h5c3h7"</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)]</span>
+    <span class="c1"># setting pressure and temperature is not required in this case</span>
+    <span class="n">fuelmixture</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="mf">2.5</span> <span class="o">*</span> <span class="n">ck</span><span class="o">.</span><span class="n">P_ATM</span>
+    <span class="n">fuelmixture</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">473.0</span>
+
+    <span class="c1"># create the oxidizer mixture: air</span>
+    <span class="n">air</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">)</span>
+    <span class="n">air</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">"o2"</span><span class="p">,</span> <span class="mf">0.21</span><span class="p">),</span> <span class="p">(</span><span class="s2">"n2"</span><span class="p">,</span> <span class="mf">0.79</span><span class="p">)]</span>
+    <span class="c1"># setting pressure and temperature is not required in this case</span>
+    <span class="n">air</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">fuelmixture</span><span class="o">.</span><span class="n">pressure</span>
+    <span class="n">air</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">fuelmixture</span><span class="o">.</span><span class="n">temperature</span>
+
+    <span class="c1"># products from the complete combustion of the fuel mixture and air</span>
+    <span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"co2"</span><span class="p">,</span> <span class="s2">"h2o"</span><span class="p">,</span> <span class="s2">"n2"</span><span class="p">]</span>
+    <span class="c1"># species mole fractions of added/inert mixture.</span>
+    <span class="c1"># You can also create an additives mixture here.</span>
+    <span class="n">add_frac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">MyGasMech</span><span class="o">.</span><span class="n">kk</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>  <span class="c1"># no additives: all zeros</span>
+
+    <span class="c1"># create the unburned fuel-air mixture</span>
+    <span class="n">fresh</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">)</span>
+
+    <span class="c1"># mean equivalence ratio</span>
+    <span class="n">equiv</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">fresh</span><span class="o">.</span><span class="n">x_by_equivalence_ratio</span><span class="p">(</span>
+        <span class="n">MyGasMech</span><span class="p">,</span> <span class="n">fuelmixture</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">air</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">add_frac</span><span class="p">,</span> <span class="n">products</span><span class="p">,</span> <span class="n">equivalenceratio</span><span class="o">=</span><span class="n">equiv</span>
+    <span class="p">)</span>
+
+    <span class="c1">##########################################################</span>
+    <span class="c1"># Specify pressure and temperature of the fuel-air mixture</span>
+    <span class="c1"># ========================================================</span>
+    <span class="c1"># Since you are going to use ``fresh`` fuel-air mixture to instantiate</span>
+    <span class="c1"># the engine object later, setting the mixture pressure and temperature</span>
+    <span class="c1"># is equivalent to setting the initial temperature and pressure of the</span>
+    <span class="c1"># engine cylinder.</span>
+    <span class="n">fresh</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">fuelmixture</span><span class="o">.</span><span class="n">temperature</span>
+    <span class="n">fresh</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">fuelmixture</span><span class="o">.</span><span class="n">pressure</span>
+
+    <span class="c1">###########################################</span>
+    <span class="c1"># Add EGR to the fresh fuel-air mixture</span>
+    <span class="c1"># =========================================</span>
+    <span class="c1"># Many engines have the configuration for exhaust gas recirculation (EGR). Chemkin</span>
+    <span class="c1"># engine models let you add the EGR mixture to the fresh fuel-air mixture entering</span>
+    <span class="c1"># the cylinder. If the engine you are modeling has EGR, you should have</span>
+    <span class="c1"># the EGR ratio, which is generally the volume ratio of the EGR mixture and</span>
+    <span class="c1"># the fresh fuel-air mixture. However, because you know nothing about the</span>
+    <span class="c1"># composition of the exhaust gas, you cannot simply combine these two mixtures.</span>
+    <span class="c1"># In this case, you use the ``get_egr_mole_fraction()`` method to estimate</span>
+    <span class="c1"># the major components of the exhaust gas from the combustion of the fresh</span>
+    <span class="c1"># fuel-air mixture. The ``threshold=1.0e-8`` parameter tells the method to ignore</span>
+    <span class="c1"># any species with a mole fraction below the threshold value. Once you have the</span>
+    <span class="c1"># EGR mixture composition, use the ``x_by_equivalence_ratio()`` method a second</span>
+    <span class="c1"># time to re-create the fuel-air mixture ``fresh`` with the original</span>
+    <span class="c1"># ``fuelmixture`` and ``air`` mixtures, along with the EGR composition that</span>
+    <span class="c1"># you just got as the *additives*.</span>
+    <span class="n">egr_ratio</span> <span class="o">=</span> <span class="mf">0.25</span>
+    <span class="c1"># compute the EGR stream composition in mole fractions</span>
+    <span class="n">add_frac</span> <span class="o">=</span> <span class="n">fresh</span><span class="o">.</span><span class="n">get_egr_mole_fraction</span><span class="p">(</span><span class="n">egr_ratio</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">)</span>
+    <span class="c1"># recreate the initial mixture with EGR</span>
+    <span class="n">ierror</span> <span class="o">=</span> <span class="n">fresh</span><span class="o">.</span><span class="n">x_by_equivalence_ratio</span><span class="p">(</span>
+        <span class="n">MyGasMech</span><span class="p">,</span>
+        <span class="n">fuelmixture</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+        <span class="n">air</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+        <span class="n">add_frac</span><span class="p">,</span>
+        <span class="n">products</span><span class="p">,</span>
+        <span class="n">equivalenceratio</span><span class="o">=</span><span class="n">equiv</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">ierror</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"error...creating the initial fuel-oxidizer mixture."</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">()</span>
+    <span class="c1">#################################</span>
+    <span class="c1"># Set up the SI engine knock case</span>
+    <span class="c1"># ===============================</span>
+    <span class="c1"># create an SI engine calculation instance</span>
+    <span class="n">this_run</span> <span class="o">=</span> <span class="n">SIengineCalculator</span><span class="p">(</span><span class="n">fresh</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">start_combustion</span><span class="o">=</span><span class="n">start_ca</span><span class="p">)</span>
+    <span class="c1"># run the case</span>
+    <span class="n">this_run</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="c1"># change back to the original top folder</span>
+    <span class="n">work_folder</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">start_ca</span><span class="p">,</span>
+        <span class="n">this_run</span><span class="o">.</span><span class="n">knock_ca</span><span class="p">,</span>
+        <span class="n">this_run</span><span class="o">.</span><span class="n">max_sigma</span><span class="p">,</span>
+        <span class="n">this_run</span><span class="o">.</span><span class="n">max_temp</span><span class="p">,</span>
+        <span class="n">this_run</span><span class="o">.</span><span class="n">imep</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-and-start-the-multi-process-runs">
+<h2>Set up and start the multi-process runs<a class="headerlink" href="#set-up-and-start-the-multi-process-runs" title="Link to this heading">#</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">ProcessPoolExecutor()</span></code> method to assign the SI engine runs.
+In this project, each SI engine run/case runs on an exclusive cpu core.
+The first parameter of <code class="docutils literal notranslate"><span class="pre">map()</span></code> method should be <code class="docutils literal notranslate"><span class="pre">si_engine_run()</span></code>.
+Make the <code class="docutils literal notranslate"><span class="pre">si_engine_run()</span></code> method return the required parameter and results
+to make post-processing the results from the parameter study easier.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">__name__</span> <span class="pre">==</span> <span class="pre">'__main__'</span></code> is required when <code class="docutils literal notranslate"><span class="pre">multiprocessing</span></code>
+package is used.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="c1"># number of available cpu cores</span>
+    <span class="n">numb_cores</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># set the number of worker cpu cores to be used by the parameter study</span>
+    <span class="n">numb_workers</span> <span class="o">=</span> <span class="n">numb_cores</span> <span class="o">-</span> <span class="mi">2</span>
+    <span class="n">numb_workers</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">numb_workers</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># start the multi-process</span>
+    <span class="c1"># starting value for the start of combustion crank angle</span>
+    <span class="n">start_combustion</span> <span class="o">=</span> <span class="o">-</span><span class="mf">10.5</span>
+    <span class="n">start_ca</span> <span class="o">=</span> <span class="n">start_combustion</span>
+    <span class="c1"># increment</span>
+    <span class="n">dca</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="c1"># number of cases to run in the parameter study</span>
+    <span class="n">numb_cases</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="c1"># create the cases</span>
+    <span class="n">si_cases</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numb_cases</span><span class="p">):</span>
+        <span class="n">si_cases</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">start_ca</span><span class="p">))</span>
+        <span class="n">start_ca</span> <span class="o">+=</span> <span class="n">dca</span>
+    <span class="c1"># set the start wall time</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="c1">#</span>
+    <span class="n">numb_workers</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">numb_workers</span><span class="p">,</span> <span class="n">numb_cases</span><span class="p">)</span>
+    <span class="n">knock_ca</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">knock_intensity</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">soc_ca</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">knock_ca_soc</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">engine_imep</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">peak_temp</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="n">ProcessPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">numb_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ret_value</span> <span class="ow">in</span> <span class="n">e</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">si_engine_run</span><span class="p">,</span> <span class="n">si_cases</span><span class="p">):</span>
+            <span class="c1"># results returned by the SI engine calculator</span>
+            <span class="c1"># start of combustion CA</span>
+            <span class="n">soc_ca</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret_value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="c1"># knock CA (end gas auto-ignition CA)</span>
+            <span class="k">if</span> <span class="n">ret_value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">720.0</span><span class="p">:</span>
+                <span class="n">knock_ca</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret_value</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">knock_ca_soc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret_value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="c1"># knock intensity as measured by the peak total thermicity</span>
+            <span class="c1"># of the end gas in the unburned zone [1/sec]</span>
+            <span class="n">knock_intensity</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret_value</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="c1"># peak end gas temperature [K]</span>
+            <span class="n">peak_temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret_value</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            <span class="c1"># IMEP [bar]</span>
+            <span class="n">engine_imep</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret_value</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+    <span class="c1"># compute the total runtime</span>
+    <span class="n">runtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"total simulation duration: </span><span class="si">{</span><span class="n">runtime</span><span class="si">}</span><span class="s2"> [sec]"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+
+    <span class="c1">###########################################</span>
+    <span class="c1"># Plot the premixed flame solution profiles</span>
+    <span class="c1"># =========================================</span>
+    <span class="c1"># Plot the predicted flame speeds against the experimental data.</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="s2">"col"</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">221</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">knock_ca_soc</span><span class="p">,</span> <span class="n">knock_ca</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"^"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"blue"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Knock Crank Angle [degree CA]"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">222</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">soc_ca</span><span class="p">,</span> <span class="n">knock_intensity</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"o"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Knock Intensity [1/sec]"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">223</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">soc_ca</span><span class="p">,</span> <span class="n">engine_imep</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"s"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"magenta"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"IMEP [bar]"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Start of Combustion [degree CA]"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">224</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">soc_ca</span><span class="p">,</span> <span class="n">peak_temp</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"v"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Peak End-Gas Temperature [K]"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Start of Combustion [degree CA]"</span><span class="p">)</span>
+
+    <span class="c1"># clean up</span>
+    <span class="n">ck</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+
+    <span class="c1"># plot results</span>
+    <span class="k">if</span> <span class="n">interactive</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">"plot_SI_engine_knock.png"</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">"tight"</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-multiprocessing-si-engine-knock-calculation-multiprocessing-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/ac5df5b4477be321137741fb41ac62dc/SI_engine_knock_calculation_multiprocessing.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">SI_engine_knock_calculation_multiprocessing.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/23a8c32a26b391cde3d93c63c0ef3ec4/SI_engine_knock_calculation_multiprocessing.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">SI_engine_knock_calculation_multiprocessing.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/6e5f97fe8278e91767933d6ab6db8ec5/SI_engine_knock_calculation_multiprocessing.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">SI_engine_knock_calculation_multiprocessing.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-pychemkin-packages-and-start-the-logger">Import PyChemkin packages and start the logger</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-an-si-engine-calculator-class">Create an SI engine calculator class</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-the-si-engine-knocking-analysis-parameter-study-for-multi-processing">Set up the SI engine knocking analysis parameter study for multi-processing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-and-start-the-multi-process-runs">Set up and start the multi-process runs</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+
+  
+  <nav class="tocsection editthispage" aria-label="Edit this page">
+    <a href="https://github.com/ansys/pychemkin/edit/main/doc/source/examples/multiprocessing/SI_engine_knock_calculation_multiprocessing.rst" rel="noopener noreferrer">
+      <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </nav>
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/multiprocessing/SI_engine_knock_calculation_multiprocessing.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.9.0.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,99 @@
+
+
+
+
+
+
+The ``premixedflame.py`` module
+===============================
+
+.. py:module:: ansys.chemkin.core.premixedflames.premixedflame
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: premixedflame
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.premixedflames.premixedflame.PremixedFlame`
+            - One-dimensional premixed flame model.
+
+
+          * - :py:obj:`~ansys.chemkin.core.premixedflames.premixedflame.BurnedStabilizedGivenTemperature`
+            - Burner-stabilized premixed flame with given temperature profile.
+
+
+          * - :py:obj:`~ansys.chemkin.core.premixedflames.premixedflame.BurnedStabilizedEnergyEquation`
+            - Burner-stabilized premixed flame.
+
+
+          * - :py:obj:`~ansys.chemkin.core.premixedflames.premixedflame.FreelyPropagating`
+            - Freely propagating premixed flame model.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> PremixedFlame</api/ansys/chemkin/core/premixedflames/premixedflame/PremixedFlame>
+    <span class="nf nf-cod-symbol_class"></span> BurnedStabilizedGivenTemperature</api/ansys/chemkin/core/premixedflames/premixedflame/BurnedStabilizedGivenTemperature>
+    <span class="nf nf-cod-symbol_class"></span> BurnedStabilizedEnergyEquation</api/ansys/chemkin/core/premixedflames/premixedflame/BurnedStabilizedEnergyEquation>
+    <span class="nf nf-cod-symbol_class"></span> FreelyPropagating</api/ansys/chemkin/core/premixedflames/premixedflame/FreelyPropagating>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Steady state, 1-D burner stabilized premixed flame models.
+
+
+
+
+
+
+
+

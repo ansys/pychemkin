@@ -1,0 +1,1225 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Simulating the chemical vapor deposition (CVD) process &#8212; PyChemkin</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/surface_chemistry/SiC_cvd';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Simulating CH4 catalytic Combustion process" href="catalytic_combustion.html" />
+    <link rel="prev" title="Surface chemistry" href="index.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/examples/surface_chemistry/SiC_cvd.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyChemkin - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../artifacts.html">
+    <no title>
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../artifacts.html">
+    <no title>
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../chemistry/index.html">Chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mixture/index.html">Mixture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../batch/index.html">Batch reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../engine/index.html">0-D engine models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSR/index.html">Perfectly stirred reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PFR/index.html">Plug-flow reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../shock_tube/index.html">Shock tube reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reactor_network/index.html">PSR network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../premixed_flame/index.html">Premixed flame models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../opposed_flow_flame/index.html">Opposed-flow flame model</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Surface chemistry</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Simulating the chemical vapor deposition (CVD) process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalytic_combustion.html">Simulating CH4 catalytic Combustion process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multiple_materials.html">Processing a surface mechanism with multiple materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trans_PSR_ALD.html">Modeling atomic layer deposition process in a transient PSR</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../multiprocessing/index.html">Multiprocessing parameter study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/index.html">Advanced Applications</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Surface chemistry</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Simulating the chemical vapor deposition (CVD) process</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-examples-surface-chemistry-sic-cvd-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="simulating-the-chemical-vapor-deposition-cvd-process">
+<span id="ref-psr-cvd"></span><span id="sphx-glr-examples-surface-chemistry-sic-cvd-py"></span><h1>Simulating the chemical vapor deposition (CVD) process<a class="headerlink" href="#simulating-the-chemical-vapor-deposition-cvd-process" title="Link to this heading">#</a></h1>
+<p>The chemical vapor deposition (CVD) process plays an important part in the
+semiconductor industries, especially for manufacturing and processing the wafers.</p>
+<p>This example project presents a model for the CVD of silicon nitride (Si-N) in a
+steady-state PSR. The utilization of the simple PSR model is justified because
+the CVD process is operated under the “kinetic limited” condition and is running
+steadily. The CVD PSR is characterized by the volume, the substrate surface area,
+and the inlet precursor gas volumetric flow rate; consequently the reactor
+residence time remains constant even when the precursor stream composition or
+the reactor temperature is changed.</p>
+<p>The current CVD process operates at a low pressure of 1.8 Torr, and a high temperature
+(for both gas phase and the substrate surface) of 1440 <a href="#id1"><span class="problematic" id="id2">|</span></a>deg|C. The precursor stream
+consists of SiF<sub>4</sub> and NH<sub>3</sub>.
+The chemistry set contains the gas phase mechanism input file, “chem_SIN_cvd.inp”,
+the surface mechanism input file “surf_SIN_cvd.inp”, and the thermodynamic data file,
+“therm.dat”. The two mechanism input files are in the “exampledataSIN_CVD” folder,
+and the generic thermodynamic data file is in the “data” folder of the Ansys Chemkin
+installation. The chemistry set is described in the Si-N CVD from Silicon Tetrafluoride
+and Ammonia section of the <em>Chemkin Tutorial</em> manual (p. 346).</p>
+<p>When a reactor model is instantiated with a <code class="docutils literal notranslate"><span class="pre">Mixture</span></code> or a <code class="docutils literal notranslate"><span class="pre">Stream</span></code> that is made of
+a <code class="docutils literal notranslate"><span class="pre">Chemistry</span> <span class="pre">Set</span></code> with a surface mechanism, the surface chemistry module of the
+reactor model will be automatically initialized with the surface mechanism data from
+the <code class="docutils literal notranslate"><span class="pre">Chemistry</span> <span class="pre">Set</span></code>. There is no additional step to “turn on” the surface mechanism
+for the reactor model.</p>
+<p>You will determine the effects of the inlet SiF<sub>4</sub> and NH<sub>3</sub> molar
+ratio on the linear growth rate (deposition rate) of the Si-N layers on
+the substrate while keeping the reactor temperature and pressure fixed. The inlet
+composition can be easily changed by resetting the inlet stream composition.</p>
+<p>In addition to the bulk species (Si and N) growth rates, you can get the reactor
+gas composition and the substrate surface coverage from the steady-state PSR solution
+for each case. You can also obtain the total surface rate-of-production
+(surface ROPs) from the solutions to analyze the important reaction pathways of the CVD
+process.</p>
+<p>The solution plots show the dependencies of the mole fraction of gas product HF, the
+substrate surface coverage, the Si linear growth rate, and the surface consumption
+rates of the precursors on the inlet SiF<sub>4</sub> molar ratios. The results shows that
+the deposition rate can be controlled by adjusting the precursor molar ratio. The growth
+rate could reach its max value When both precursors have the same molar concentration.
+Moreover, the negative surface ROPs indicate that surface reactions (rather than gas
+reactions) are the dominate decomposition pathways of the gas-phase precursors.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<section id="import-pychemkin-packages-and-start-the-logger">
+<h2>Import PyChemkin packages and start the logger<a class="headerlink" href="#import-pychemkin-packages-and-start-the-logger" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ansys.chemkin.core</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ck</span>  <span class="c1"># Chemkin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Color</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.inlet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stream</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+<span class="c1"># Chemkin PSR model (steady-state)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.stirreactors.PSR</span><span class="w"> </span><span class="kn">import</span> <span class="n">PSRSetVolumeFixedTemperature</span> <span class="k">as</span> <span class="n">Psr</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># plotting</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>  <span class="c1"># number crunching</span>
+
+<span class="c1"># check working directory</span>
+<span class="n">current_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">())</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;working directory: &quot;</span> <span class="o">+</span> <span class="n">current_dir</span><span class="p">)</span>
+<span class="c1"># set verbose mode</span>
+<span class="n">ck</span><span class="o">.</span><span class="n">set_verbose</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># set interactive mode for plotting the results</span>
+<span class="c1"># interactive = True: display plot</span>
+<span class="c1"># interactive = False: save plot as a PNG file</span>
+<span class="k">global</span> <span class="n">interactive</span>
+<span class="n">interactive</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+<section id="create-a-chemistry-set">
+<h2>Create a chemistry set<a class="headerlink" href="#create-a-chemistry-set" title="Link to this heading">#</a></h2>
+<p>This example uses the surface mechanism of Si-N chemical vapor deposition (Si-N CVD)
+from Silicon tetrafluoride (SiF<sub>4</sub><cite>). The reaction mechanism consists of two
+parts: the gas-phase mechanism, ``chem_CIN_cvd.inp`</cite>, describing the breakdown
+of the precursors in the gas phase; and the surface mechanism, <code class="docutils literal notranslate"><span class="pre">surf_SIN_cvd.inp</span></code>,
+describing the reactions taking place on the substrate surface, such as the
+adsorption of the gas precursors, the reactions between the adsorbed surface species,
+and desorption of gas products for the overall process of the deposition of the Si
+and the N atoms.</p>
+<p>This mechanism is provided in the <em>examplesdata</em> folder of the local
+<em>PyChemkin</em> installation. You must provide the mechanism file names,
+<code class="docutils literal notranslate"><span class="pre">chem_SIN_cvd.inp</span></code> and <code class="docutils literal notranslate"><span class="pre">surf_SIN_cvd.inp</span></code>, with the correct path
+<code class="docutils literal notranslate"><span class="pre">example_mech_data</span></code> to the Chemistry Set before pre-processing. The thermodynamic
+data file from the default Ansys Chemkin installation will be used.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">ck</span><span class="o">.</span><span class="n">ansys_dir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;reaction&quot;</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span>
+<span class="c1"># find the location of this example py file</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">script_dir_obj</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+    <span class="n">script_dir_obj</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">current_dir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;..&quot;</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span>
+<span class="n">script_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">script_dir_obj</span><span class="p">)</span>
+<span class="c1"># use the relative path to locate the example mechanism folder</span>
+<span class="n">example_mech_data</span> <span class="o">=</span> <span class="n">script_dir_obj</span> <span class="o">/</span> <span class="s2">&quot;..&quot;</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;example data = </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">example_mech_data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># create a chemistry set based on the Si-N CVD mechanism</span>
+<span class="n">MyCVDMech</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Chemistry</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Si-N_CVD&quot;</span><span class="p">)</span>
+<span class="c1"># set mechanism input files</span>
+<span class="c1"># including the full file path is recommended</span>
+<span class="n">local_data_dir</span> <span class="o">=</span> <span class="s2">&quot;SIN_CVD&quot;</span>
+<span class="n">MyCVDMech</span><span class="o">.</span><span class="n">chemfile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">example_mech_data</span> <span class="o">/</span> <span class="n">local_data_dir</span> <span class="o">/</span> <span class="s2">&quot;chem_SIN_cvd.inp&quot;</span><span class="p">)</span>
+<span class="n">MyCVDMech</span><span class="o">.</span><span class="n">surffile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">example_mech_data</span> <span class="o">/</span> <span class="n">local_data_dir</span> <span class="o">/</span> <span class="s2">&quot;surf_SIN_cvd.inp&quot;</span><span class="p">)</span>
+<span class="n">MyCVDMech</span><span class="o">.</span><span class="n">thermfile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data_dir</span> <span class="o">/</span> <span class="s2">&quot;therm.dat&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="preprocess-the-cvd-chemistry-set">
+<h2>Preprocess the CVD chemistry set<a class="headerlink" href="#preprocess-the-cvd-chemistry-set" title="Link to this heading">#</a></h2>
+<p>preprocess the mechanism files</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">MyCVDMech</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-the-precursors-stream">
+<h2>Set up the precursors stream<a class="headerlink" href="#set-up-the-precursors-stream" title="Link to this heading">#</a></h2>
+<p>Instantiate a stream feed for the inlet gas mixture.
+The stream is a mixture with the addition of the
+inlet flow rate. You specify inlet gas properties in the same way as you
+set up a mixture.</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">mass_flowrate</span></code> method to assign the inlet mass flow rate.
+In this example, the <code class="docutils literal notranslate"><span class="pre">sccm</span></code> method, [cm3/min] &#64; the standard condition,
+is used specify the inlet volumetric flow rate. And the different inlet
+precursors compositions are given by a list of mole fractions recipes
+<code class="docutils literal notranslate"><span class="pre">inlet_recipes</span></code>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># precursor stream compositions</span>
+<span class="n">inlet_recipes</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[(</span><span class="s2">&quot;SIF4&quot;</span><span class="p">,</span> <span class="mf">0.14286</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;NH3&quot;</span><span class="p">,</span> <span class="mf">0.85714</span><span class="p">)],</span>
+    <span class="p">[(</span><span class="s2">&quot;SIF4&quot;</span><span class="p">,</span> <span class="mf">0.16</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;NH3&quot;</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">)],</span>
+    <span class="p">[(</span><span class="s2">&quot;SIF4&quot;</span><span class="p">,</span> <span class="mf">0.18</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;NH3&quot;</span><span class="p">,</span> <span class="mf">0.82</span><span class="p">)],</span>
+    <span class="p">[(</span><span class="s2">&quot;SIF4&quot;</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;NH3&quot;</span><span class="p">,</span> <span class="mf">0.80</span><span class="p">)],</span>
+    <span class="p">[(</span><span class="s2">&quot;SIF4&quot;</span><span class="p">,</span> <span class="mf">0.22</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;NH3&quot;</span><span class="p">,</span> <span class="mf">0.78</span><span class="p">)],</span>
+<span class="p">]</span>
+<span class="c1"># create the gas precursors mixture</span>
+<span class="n">precursors</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span><span class="n">MyCVDMech</span><span class="p">)</span>
+<span class="c1"># set fuel composition: hydrogen diluted by nitrogen</span>
+<span class="c1"># use the first inlet composition to instantiate the inlet stream object</span>
+<span class="n">precursors</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">inlet_recipes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="c1"># setting the pressure and temperature is not required in this case</span>
+<span class="n">precursors</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="mf">1.8</span> <span class="o">*</span> <span class="n">ck</span><span class="o">.</span><span class="n">P_TORRS</span>
+<span class="n">precursors</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">1713.15</span>  <span class="c1"># inlet temperature</span>
+<span class="n">precursors</span><span class="o">.</span><span class="n">sccm</span> <span class="o">=</span> <span class="mf">1.13e4</span>  <span class="c1"># cm3/sec @ standard condition</span>
+</pre></div>
+</div>
+</section>
+<section id="create-the-psr-to-predict-the-gas-composition-of-the-outlet-stream">
+<h2>Create the PSR to predict the gas composition of the outlet stream<a class="headerlink" href="#create-the-psr-to-predict-the-gas-composition-of-the-outlet-stream" title="Link to this heading">#</a></h2>
+<p>Instantiate the PSR <code class="docutils literal notranslate"><span class="pre">cvd_reactor</span></code> as a <code class="docutils literal notranslate"><span class="pre">PSRSetVolumeFixedTemperature</span></code>
+object. Since the goal is to show how precursor stream
+composition affects the Si-N deposition rate, both the gas and the surface
+temperatures are fixed. The inlet precursor mixture <code class="docutils literal notranslate"><span class="pre">precursors</span></code>
+composition will be applied as the estimated reactor condition of the
+<code class="docutils literal notranslate"><span class="pre">cvd_reactor</span></code> by default. You can overwrite
+any estimated reactor conditions by using appropriate methods. For example,
+<code class="docutils literal notranslate"><span class="pre">cvd_reactor.temperature</span> <span class="pre">=</span> <span class="pre">2000.0</span></code> changes the estimated reactor temperature
+from 1713.15 to 2000 [K]. The residence time is calculated from the inlet steam
+velocity and the PSR volume.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">cvd_reactor</span> <span class="o">=</span> <span class="n">Psr</span><span class="p">(</span><span class="n">precursors</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;CVD_PSR&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-additional-reactor-model-parameters">
+<h2>Set up additional reactor model parameters<a class="headerlink" href="#set-up-additional-reactor-model-parameters" title="Link to this heading">#</a></h2>
+<p>Before you can run the simulation, you must provide reactor parameters,
+solver controls, and output instructions. For a steady-state PSR, you must provide
+either the residence time or the reactor volume. You can also make changes to
+any estimated reactor conditions, such as the reactor temperature, the gas
+composition, and the surface coverage, to improve the solver convergence performance
+in addition to the solver parameters.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set PSR volume (cm3): required for ``PSRSetVolumeFixedTemperature`` model</span>
+<span class="n">cvd_reactor</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="mf">2000.0</span>
+</pre></div>
+</div>
+</section>
+<section id="connect-the-inlet-to-the-reactor">
+<h2>Connect the inlet to the reactor<a class="headerlink" href="#connect-the-inlet-to-the-reactor" title="Link to this heading">#</a></h2>
+<p>You must connect at least one inlet to the open reactor. Use the <code class="docutils literal notranslate"><span class="pre">set_inlet()</span></code>
+method to add a stream to the PSR. Inversely, use the <code class="docutils literal notranslate"><span class="pre">remove_inlet()</span></code> to
+disconnect an inlet from the PSR.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There is no limit on the number of inlets that can be connected to a PSR.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># connect the inlet to the reactor</span>
+<span class="n">cvd_reactor</span><span class="o">.</span><span class="n">set_inlet</span><span class="p">(</span><span class="n">precursors</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-surface-chemistry-parameters">
+<h2>Set up surface chemistry parameters<a class="headerlink" href="#set-up-surface-chemistry-parameters" title="Link to this heading">#</a></h2>
+<p>When the <code class="docutils literal notranslate"><span class="pre">Mixture</span></code> or the <code class="docutils literal notranslate"><span class="pre">Stream</span></code> used to initiate the reactor model includes
+<em>surface chemistry</em>, the surface chemistry data and properties will automatically
+set up by the reactor model. However, you need to provide some essential surface
+chemistry related model parameters. For example, you need to specify the activate
+surface area as well as the temperature for each material defined in the surface
+mechanism if it is different from the gas temperature. By default,
+all site species have the same fraction and all bulk have activity of unity.
+You can explicitly provide the site fractions and bulk activities when the default
+surface coverage fail to get a converged solution.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set PSR total active internal surface area (cm2):</span>
+<span class="n">cvd_reactor</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="mf">950.0</span>
+<span class="c1"># get the number of surface material defined in the surface mechanism</span>
+<span class="n">n_material</span> <span class="o">=</span> <span class="n">cvd_reactor</span><span class="o">.</span><span class="n">get_numb_material</span>
+<span class="c1"># get all surface material names</span>
+<span class="n">cvd_material_names</span> <span class="o">=</span> <span class="n">cvd_reactor</span><span class="o">.</span><span class="n">get_material_names</span><span class="p">()</span>
+<span class="c1"># set surface area fraction (by default, materials have the same area)</span>
+<span class="n">area_frac</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">n_material</span>
+<span class="c1"># site species symbols: list[list[str]]</span>
+<span class="n">site_names</span> <span class="o">=</span> <span class="n">cvd_reactor</span><span class="o">.</span><span class="n">get_site_species_names</span><span class="p">()</span>
+<span class="c1"># bulk species symbols: list[list[str]]</span>
+<span class="n">bulk_names</span> <span class="o">=</span> <span class="n">cvd_reactor</span><span class="o">.</span><span class="n">get_bulk_species_names</span><span class="p">()</span>
+<span class="c1"># list the material names and the site species and the bulk species symbols</span>
+<span class="c1"># per material</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;number of surface materials = </span><span class="si">{</span><span class="n">n_material</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_material</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;material names: </span><span class="si">{</span><span class="n">cvd_material_names</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   list of site species:</span><span class="se">\n</span><span class="s2">     </span><span class="si">{</span><span class="n">site_names</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   list of bulk species:</span><span class="se">\n</span><span class="s2">     </span><span class="si">{</span><span class="n">bulk_names</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># set up surface coverage of all surface materials</span>
+<span class="n">site_recipe</span> <span class="o">=</span> <span class="p">[[(</span><span class="s2">&quot;HN_SIF(S)&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;HN_NH2(S)&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)]]</span>
+<span class="n">bulk_recipe</span> <span class="o">=</span> <span class="p">[[(</span><span class="s2">&quot;SI(D)&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;N(D)&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]]</span>
+<span class="c1"># set the surface condition of the surface material</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mname</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cvd_material_names</span><span class="p">):</span>
+    <span class="c1"># set area fraction [-] (optional: by default, materials have the same area)</span>
+    <span class="n">cvd_reactor</span><span class="o">.</span><span class="n">set_material_area_fraction</span><span class="p">(</span><span class="n">mname</span><span class="p">,</span> <span class="n">area_frac</span><span class="p">)</span>
+    <span class="c1"># set material temperature [K] if it is different from the gas temperature</span>
+    <span class="c1"># (optional: by default, it is the same as the mixture temperature)</span>
+    <span class="n">cvd_reactor</span><span class="o">.</span><span class="n">set_material_temperature</span><span class="p">(</span><span class="n">mname</span><span class="p">,</span> <span class="n">precursors</span><span class="o">.</span><span class="n">temperature</span><span class="p">)</span>
+    <span class="c1"># set reactor surface coverage of the material</span>
+    <span class="c1"># site fractions (optional: by default, all sites have the same fraction)</span>
+    <span class="n">cvd_reactor</span><span class="o">.</span><span class="n">set_site_fraction</span><span class="p">(</span><span class="n">mname</span><span class="p">,</span> <span class="n">site_recipe</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="c1"># bulk activities (optional: by default, all bulk species activities = 1.0)</span>
+    <span class="n">cvd_reactor</span><span class="o">.</span><span class="n">set_bulk_activity</span><span class="p">(</span><span class="n">mname</span><span class="p">,</span> <span class="n">bulk_recipe</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="c1"># scale surface reaction rates</span>
+<span class="n">cvd_reactor</span><span class="o">.</span><span class="n">surface_ratemultiplier</span> <span class="o">=</span> <span class="mf">1.0</span>
+</pre></div>
+</div>
+</section>
+<section id="set-steady-state-solver-controls">
+<h2>Set steady-state solver controls<a class="headerlink" href="#set-steady-state-solver-controls" title="Link to this heading">#</a></h2>
+<p>You can overwrite the default solver controls by using solver-related methods,
+such as those for tolerances. Here the tolerances that the steady-state solver
+is to use for the <em>steady-state search</em> and the <em>pseudo time stepping</em> stages
+are changed by using the <code class="docutils literal notranslate"><span class="pre">steady_state_tolerances</span></code> method. Sometimes, during
+the iterations, some species mass fractions might become negative, causing the
+solver to report an error and stop. To overcome this issue, you can use the
+<code class="docutils literal notranslate"><span class="pre">set_species_floor()</span></code> method to provide a small cushion, allowing species
+mass fractions to go slightly negative (during the iterations) by resetting
+the mass fraction floor value.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># reset the tolerances in the steady-state solver</span>
+<span class="n">cvd_reactor</span><span class="o">.</span><span class="n">steady_state_tolerances</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0e-12</span><span class="p">,</span> <span class="mf">1.0e-8</span><span class="p">)</span>
+<span class="n">cvd_reactor</span><span class="o">.</span><span class="n">timestepping_tolerances</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0e-9</span><span class="p">,</span> <span class="mf">1.0e-6</span><span class="p">)</span>
+<span class="c1"># reset the gas species floor value in the steady-state solver</span>
+<span class="n">cvd_reactor</span><span class="o">.</span><span class="n">set_species_floor</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0e-10</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="run-the-inlet-precursor-composition-parameter-study">
+<h2>Run the inlet precursor composition parameter study<a class="headerlink" href="#run-the-inlet-precursor-composition-parameter-study" title="Link to this heading">#</a></h2>
+<p>In the parameter study, the composition of the inlet SiF<sub>4</sub>molar ratio
+is done by resetting the molar composition of the inlet stream
+<code class="docutils literal notranslate"><span class="pre">precursors</span></code> with the recipes of the <code class="docutils literal notranslate"><span class="pre">inlet_recipes</span></code> list.</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">process_solution()</span></code> method to convert the result from each PSR run
+into a solution <code class="docutils literal notranslate"><span class="pre">Stream</span></code>. The surface site fractions and the bulk growth rates
+can be extract from the solution stream <code class="docutils literal notranslate"><span class="pre">solnmixture</span></code> with the
+<code class="docutils literal notranslate"><span class="pre">surface_chemistry</span></code> methods <code class="docutils literal notranslate"><span class="pre">get_all_site_frac()</span></code> and
+<code class="docutils literal notranslate"><span class="pre">get_all_bulk_growth_rates()</span></code>, respectively.
+You can use the <code class="docutils literal notranslate"><span class="pre">rop_surf()</span></code> method to get the surface ROP of the gas
+species, the site species, and the bulk species of a surface material.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In Pychemkin, the surface material is referred by its name. Instead of
+the surface material index, you loop over the surface material names.
+Use <code class="docutils literal notranslate"><span class="pre">get_material_names()</span></code> method to get a list of surface material
+names defined in the surface mechanism.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># solution arrays</span>
+<span class="n">numb_runs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inlet_recipes</span><span class="p">)</span>
+<span class="c1"># get gas-species index</span>
+<span class="n">i_sif4</span> <span class="o">=</span> <span class="n">precursors</span><span class="o">.</span><span class="n">get_specindex</span><span class="p">(</span><span class="s2">&quot;SIF4&quot;</span><span class="p">)</span>
+<span class="n">i_nh3</span> <span class="o">=</span> <span class="n">precursors</span><span class="o">.</span><span class="n">get_specindex</span><span class="p">(</span><span class="s2">&quot;NH3&quot;</span><span class="p">)</span>
+<span class="n">i_hf</span> <span class="o">=</span> <span class="n">precursors</span><span class="o">.</span><span class="n">get_specindex</span><span class="p">(</span><span class="s2">&quot;HF&quot;</span><span class="p">)</span>
+<span class="c1"># get surface species index</span>
+<span class="n">i_hn_sif_global</span><span class="p">,</span> <span class="n">i_hn_sif_local</span> <span class="o">=</span> <span class="n">precursors</span><span class="o">.</span><span class="n">get_surf_specindex</span><span class="p">(</span><span class="s2">&quot;HN_SIF(S)&quot;</span><span class="p">)</span>
+<span class="n">i_f2sinh_global</span><span class="p">,</span> <span class="n">i_f2sinh_local</span> <span class="o">=</span> <span class="n">precursors</span><span class="o">.</span><span class="n">get_surf_specindex</span><span class="p">(</span><span class="s2">&quot;F2SINH(S)&quot;</span><span class="p">)</span>
+<span class="n">i_hn_fsinh_2_global</span><span class="p">,</span> <span class="n">i_hn_fsinh_2_local</span> <span class="o">=</span> <span class="n">precursors</span><span class="o">.</span><span class="n">get_surf_specindex</span><span class="p">(</span><span class="s2">&quot;HN(FSINH)2(S)&quot;</span><span class="p">)</span>
+<span class="n">i_si_d_global</span><span class="p">,</span> <span class="n">i_si_d_local</span> <span class="o">=</span> <span class="n">precursors</span><span class="o">.</span><span class="n">get_surf_specindex</span><span class="p">(</span><span class="s2">&quot;SI(D)&quot;</span><span class="p">)</span>
+<span class="c1"># solution arrays</span>
+<span class="c1"># SiF4 inlet mole fraction</span>
+<span class="n">sif4_inlet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">numb_runs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="c1"># staedy-state gas mole fraction of HF</span>
+<span class="n">hf_ss_solution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">sif4_inlet</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="c1"># steady-state site fraction of HN_SiF(S)</span>
+<span class="n">hn_sif_s_ss_solution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">sif4_inlet</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="c1"># steady-state site fraction of F2SiNH(S)</span>
+<span class="n">f2sinh_s_ss_solution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">sif4_inlet</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="c1"># steady-state site fraction of HN(FSiNH)2(S)</span>
+<span class="n">hn_fsinh_2_s_ss_solution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">sif4_inlet</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="c1"># net surface rate of production [mole/cm2-sec] of NH3</span>
+<span class="n">nh3_rop_solution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">sif4_inlet</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">sif4_rop_solution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">sif4_inlet</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="c1"># linear deposition rate [micro/min] of Si(D)</span>
+<span class="n">si_d_growth_solution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">sif4_inlet</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="c1"># set the start wall time</span>
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="c1"># loop over all inlet precursor compositions</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inlet_recipes</span><span class="p">):</span>
+    <span class="c1"># update inlet stream composition and the estimated reactor gas composition</span>
+    <span class="n">precursors</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">r</span>
+    <span class="n">cvd_reactor</span><span class="o">.</span><span class="n">reset_inlet</span><span class="p">(</span><span class="n">precursors</span><span class="p">)</span>
+    <span class="n">cvd_reactor</span><span class="o">.</span><span class="n">reset_estimate_composition</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="c1"># reset estimated surface coverage</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">mname</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cvd_material_names</span><span class="p">):</span>
+        <span class="n">cvd_reactor</span><span class="o">.</span><span class="n">set_site_fraction</span><span class="p">(</span><span class="n">mname</span><span class="p">,</span> <span class="n">site_recipe</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+        <span class="n">cvd_reactor</span><span class="o">.</span><span class="n">set_bulk_activity</span><span class="p">(</span><span class="n">mname</span><span class="p">,</span> <span class="n">bulk_recipe</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+    <span class="c1"># run the PSR model</span>
+    <span class="n">runstatus</span> <span class="o">=</span> <span class="n">cvd_reactor</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="c1"># check run status</span>
+    <span class="k">if</span> <span class="n">runstatus</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Run failed.</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="s2">&quot;&gt;&gt;&gt; Run failed. &lt;&lt;&lt;&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">()</span>
+    <span class="c1"># Run succeeded.</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">GREEN</span> <span class="o">+</span> <span class="s2">&quot;&gt;&gt;&gt; Run completed. &lt;&lt;&lt;&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+    <span class="c1"># postprocess the solution profiles</span>
+    <span class="n">solnmixture</span> <span class="o">=</span> <span class="n">cvd_reactor</span><span class="o">.</span><span class="n">process_solution</span><span class="p">()</span>
+    <span class="c1"># print the steady-state solution values</span>
+    <span class="c1"># print(f&quot;Steady-state temperature = {solnmixture.temperature} [K].&quot;)</span>
+    <span class="c1"># solnmixture.list_composition(mode=&quot;mole&quot;)</span>
+    <span class="c1"># store solution values</span>
+    <span class="n">sif4_inlet</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">precursors</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i_sif4</span><span class="p">]</span>
+    <span class="c1"># gas species solution</span>
+    <span class="n">hf_ss_solution</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">solnmixture</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i_hf</span><span class="p">]</span>
+    <span class="c1"># get surface properties (use local index)</span>
+    <span class="n">s_frac</span> <span class="o">=</span> <span class="n">solnmixture</span><span class="o">.</span><span class="n">surface_chemistry</span><span class="o">.</span><span class="n">get_all_site_frac</span><span class="p">()</span>
+    <span class="n">b_rate</span> <span class="o">=</span> <span class="n">solnmixture</span><span class="o">.</span><span class="n">surface_chemistry</span><span class="o">.</span><span class="n">get_all_bulk_growth_rates</span><span class="p">()</span>
+    <span class="c1"># surface site species fraction</span>
+    <span class="n">hn_sif_s_ss_solution</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">s_frac</span><span class="p">[</span><span class="n">i_hn_sif_local</span><span class="p">]</span>
+    <span class="n">f2sinh_s_ss_solution</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">s_frac</span><span class="p">[</span><span class="n">i_f2sinh_local</span><span class="p">]</span>
+    <span class="n">hn_fsinh_2_s_ss_solution</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">s_frac</span><span class="p">[</span><span class="n">i_hn_fsinh_2_local</span><span class="p">]</span>
+    <span class="c1"># linear growth rate of bulk species [cm/sec] -&gt; [micron/min]</span>
+    <span class="n">si_d_growth_solution</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">b_rate</span><span class="p">[</span><span class="n">i_si_d_local</span><span class="p">]</span> <span class="o">*</span> <span class="mf">6.0e5</span>
+    <span class="c1"># get gas species surface chemistry ROP [mole/cm2-sec]</span>
+    <span class="n">nh3_rop_solution</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">sif4_rop_solution</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">cvd_material_names</span><span class="p">:</span>
+        <span class="n">surf_rop</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">solnmixture</span><span class="o">.</span><span class="n">rop_surf</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+        <span class="c1"># gas species net rate of production due to surface chemistry</span>
+        <span class="n">nh3_rop_solution</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">surf_rop</span><span class="p">[</span><span class="n">i_nh3</span><span class="p">]</span>
+        <span class="n">sif4_rop_solution</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">surf_rop</span><span class="p">[</span><span class="n">i_sif4</span><span class="p">]</span>
+
+<span class="c1"># compute the total runtime</span>
+<span class="n">runtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total simulation duration: </span><span class="si">{</span><span class="n">runtime</span><span class="si">}</span><span class="s2"> [sec] over </span><span class="si">{</span><span class="n">numb_runs</span><span class="si">}</span><span class="s2"> runs.&quot;</span><span class="p">)</span>
+
+<span class="c1"># clean up</span>
+<span class="n">ck</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="plot-the-parameter-study-results">
+<h2>Plot the parameter study results<a class="headerlink" href="#plot-the-parameter-study-results" title="Link to this heading">#</a></h2>
+<p>Plot the steady-state PSR solution against the inlet SiF<sub>4</sub> mole fraction.
+You should see that both the Si(D) growth rate and the NH<sub>3</sub> surface
+<em>consumption rate</em> increase with the increasing inlet SiF<sub>4</sub> mole fraction.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="s2">&quot;col&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;PSR CVD Reactor Solution&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">221</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sif4_inlet</span><span class="p">,</span> <span class="n">hf_ss_solution</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;HF Mole Fraction&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">222</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sif4_inlet</span><span class="p">,</span> <span class="n">hn_sif_s_ss_solution</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sif4_inlet</span><span class="p">,</span> <span class="n">f2sinh_s_ss_solution</span><span class="p">,</span> <span class="s2">&quot;r-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sif4_inlet</span><span class="p">,</span> <span class="n">hn_fsinh_2_s_ss_solution</span><span class="p">,</span> <span class="s2">&quot;g-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;HN_SiF(S)&quot;</span><span class="p">,</span> <span class="s2">&quot;F2SiNH(S)&quot;</span><span class="p">,</span> <span class="s2">&quot;HN(FSiNH)2(S)&quot;</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower right&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Site Fraction&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">223</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sif4_inlet</span><span class="p">,</span> <span class="n">nh3_rop_solution</span><span class="p">,</span> <span class="s2">&quot;g-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sif4_inlet</span><span class="p">,</span> <span class="n">sif4_rop_solution</span><span class="p">,</span> <span class="s2">&quot;r-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;NH3&quot;</span><span class="p">,</span> <span class="s2">&quot;SIF4&quot;</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower left&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Inlet SiF4 Mole Fraction&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Surface ROP [mole/cm2-sec]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">224</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sif4_inlet</span><span class="p">,</span> <span class="n">si_d_growth_solution</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Inlet SiF4 Mole Fraction&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Si(D) Linear Growth Rate [micron/min]&quot;</span><span class="p">)</span>
+<span class="c1"># plot results</span>
+<span class="k">if</span> <span class="n">interactive</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;plot_PSR_cvd.png&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-surface-chemistry-sic-cvd-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/d350f1825808e99f8b94979f004d2074/SiC_cvd.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">SiC_cvd.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/1e1ca30611ec69c2e0c5f13642bbc210/SiC_cvd.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">SiC_cvd.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/7d0dd0c3ec98aac6fcb8495ac83bbf15/SiC_cvd.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">SiC_cvd.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-pychemkin-packages-and-start-the-logger">Import PyChemkin packages and start the logger</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-chemistry-set">Create a chemistry set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preprocess-the-cvd-chemistry-set">Preprocess the CVD chemistry set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-the-precursors-stream">Set up the precursors stream</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-the-psr-to-predict-the-gas-composition-of-the-outlet-stream">Create the PSR to predict the gas composition of the outlet stream</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-additional-reactor-model-parameters">Set up additional reactor model parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#connect-the-inlet-to-the-reactor">Connect the inlet to the reactor</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-surface-chemistry-parameters">Set up surface chemistry parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-steady-state-solver-controls">Set steady-state solver controls</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-the-inlet-precursor-composition-parameter-study">Run the inlet precursor composition parameter study</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-the-parameter-study-results">Plot the parameter study results</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+
+  
+  <nav class="tocsection editthispage" aria-label="Edit this page">
+    <a href="https://github.com/ansys/pychemkin/edit/main/doc/source/examples/surface_chemistry/SiC_cvd.rst" rel="noopener noreferrer">
+      <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </nav>
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/surface_chemistry/SiC_cvd.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.7.2.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

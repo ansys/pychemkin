@@ -1,0 +1,1085 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Processing a surface mechanism with multiple materials &#8212; PyChemkin</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/surface_chemistry/multiple_materials';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Modeling atomic layer deposition process in a transient PSR" href="trans_PSR_ALD.html" />
+    <link rel="prev" title="Simulating CH4 catalytic Combustion process" href="catalytic_combustion.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/examples/surface_chemistry/multiple_materials.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyChemkin - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../artifacts.html">
+    <no title>
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../artifacts.html">
+    <no title>
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../chemistry/index.html">Chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mixture/index.html">Mixture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../batch/index.html">Batch reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../engine/index.html">0-D engine models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSR/index.html">Perfectly stirred reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PFR/index.html">Plug-flow reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../shock_tube/index.html">Shock tube reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reactor_network/index.html">PSR network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../premixed_flame/index.html">Premixed flame models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../opposed_flow_flame/index.html">Opposed-flow flame model</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Surface chemistry</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="SiC_cvd.html">Simulating the chemical vapor deposition (CVD) process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalytic_combustion.html">Simulating CH4 catalytic Combustion process</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Processing a surface mechanism with multiple materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trans_PSR_ALD.html">Modeling atomic layer deposition process in a transient PSR</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../multiprocessing/index.html">Multiprocessing parameter study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/index.html">Advanced Applications</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Surface chemistry</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Processing a surface mechanism with multiple materials</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-examples-surface-chemistry-multiple-materials-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="processing-a-surface-mechanism-with-multiple-materials">
+<span id="ref-multiple-surface-materials"></span><span id="sphx-glr-examples-surface-chemistry-multiple-materials-py"></span><h1>Processing a surface mechanism with multiple materials<a class="headerlink" href="#processing-a-surface-mechanism-with-multiple-materials" title="Link to this heading">#</a></h1>
+<p>When the surface mechanism input file is added to the <em>Chemistry Set</em> via the
+<code class="docutils literal notranslate"><span class="pre">surffile</span></code> parameter, the <code class="docutils literal notranslate"><span class="pre">preprocess()</span></code> method will process the
+surface mechanism in the file. Typically, a surface mechanism consists of
+one surface <em>material</em> block. The <em>material</em> block defines the surface phases,
+the site and the bulk surface species of the surface phases, the thermodynamic
+data of all surface (site and bulk) species, and the surface reactions describing
+the chemical interactions between the gas-phase species and the surface species
+and between the surface species of the surface material. The gas phase is always
+the first phase of any surface material followed by all the site phases and then all
+the bulk phases of the material. The species are sorted in two different ways:
+the <em>global order</em> and the <em>local order</em>. The <em>global species index/order</em> combines
+species from all phases and arranges them in the order of gas phase species,
+species from all site phases of the material, followed by species from all bulk phases
+of the material. The <em>local species index/order</em> lists the species from the same type
+of surface phase. For example, local index of all site species of the surface material.
+Here is a simple graph showing different species arrangements of a surface material:</p>
+<figure class="align-default">
+<a class="reference internal image-reference" href="examples/surface_chemistry/global_species_mapping.png"><img alt="species index" src="examples/surface_chemistry/global_species_mapping.png" />
+<aside class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/home/runner/work/pychemkin/pychemkin/doc/source/examples/surface_chemistry/multiple_materials.rst</span>, line 42)</p>
+<p>Cannot scale image!
+  Could not get size from &quot;examples/surface_chemistry/global_species_mapping.png&quot;:
+  [Errno 2] No such file or directory: 'examples/surface_chemistry/global_species_mapping.png'</p>
+</aside>
+</a>
+</figure>
+<p>When there are multiple surface materials defined in the surface mechanism input file,
+all surface materials share the same gas phase (gas species and gas-phase reactions).
+Each surface material consists of its own surface phases, surface species, and
+surface reactions, and has independent <em>global</em> and <em>local</em> species orders/indices.
+Subsequently, you can access species and reaction properties one surface material
+at a time, and direct surface species interactions across different surface materials
+are <em>not</em> supported.</p>
+<p>For detailed information about the <em>Surface Chemkin</em>, you can check out the
+<em>Chemkin theory</em> and the <em>Chemkin Input</em> manuals at the Ansys Product Help website.</p>
+<p>When a <code class="docutils literal notranslate"><span class="pre">Chemistry</span> <span class="pre">Set</span></code> with surface chemistry is used to initiate a <code class="docutils literal notranslate"><span class="pre">Mixture</span></code>
+or a <code class="docutils literal notranslate"><span class="pre">Stream</span></code> object, Pychemkin will automatically set up the surface chemistry
+sub-module of the <code class="docutils literal notranslate"><span class="pre">Mixture</span></code> or the <code class="docutils literal notranslate"><span class="pre">Stream</span></code> object. Similarly, the surface
+chemistry and the surface governing equations will be ready when a <code class="docutils literal notranslate"><span class="pre">ReactorModel</span></code>
+is initiated with a surface chemistry enabled <code class="docutils literal notranslate"><span class="pre">Mixture</span></code> or <code class="docutils literal notranslate"><span class="pre">Stream</span></code>. There is
+no additional steps required to manually “activate” the surface chemistry in
+Pychemkin objects other than the <code class="docutils literal notranslate"><span class="pre">Chemistry</span> <span class="pre">Set</span></code>. The figure below shows the
+initialization process of the “surface chemistry modules” in different Pychemkin
+objects:</p>
+<figure class="align-default">
+<a class="reference internal image-reference" href="examples/surface_chemistry/surface_chemistry_module.png"><img alt="surface chemistry module" src="examples/surface_chemistry/surface_chemistry_module.png" />
+<aside class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/home/runner/work/pychemkin/pychemkin/doc/source/examples/surface_chemistry/multiple_materials.rst</span>, line 67)</p>
+<p>Cannot scale image!
+  Could not get size from &quot;examples/surface_chemistry/surface_chemistry_module.png&quot;:
+  [Errno 2] No such file or directory: 'examples/surface_chemistry/surface_chemistry_module.png'</p>
+</aside>
+</a>
+</figure>
+<p>This example demonstrates the procedures of preprocessing a <code class="docutils literal notranslate"><span class="pre">Chemistry</span> <span class="pre">Set</span></code> that
+supports surface chemistry. It also shows how to access properties from two different
+surface materials. Typically, you would want to get information about the symbols,
+the index, the density, the molecular weights, and the elemental compositions of
+the species. For site species, you can get the “site occupancy”. For bulk species,
+you can get the “enthalpy” and the “specific heat capacity”.</p>
+<section id="import-pychemkin-packages-and-start-the-logger">
+<h2>Import PyChemkin packages and start the logger<a class="headerlink" href="#import-pychemkin-packages-and-start-the-logger" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ansys.chemkin.core</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ck</span>  <span class="c1"># Chemkin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+<span class="c1"># check working directory</span>
+<span class="n">current_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">())</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;working directory: &quot;</span> <span class="o">+</span> <span class="n">current_dir</span><span class="p">)</span>
+<span class="c1"># set verbose mode</span>
+<span class="n">ck</span><span class="o">.</span><span class="n">set_verbose</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># set interactive mode for plotting the results</span>
+<span class="c1"># interactive = True: display plot</span>
+<span class="c1"># interactive = False: save plot as a PNG file</span>
+<span class="k">global</span> <span class="n">interactive</span>
+<span class="n">interactive</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</section>
+<section id="create-a-chemistry-set-with-surface-chemistry">
+<h2>Create a chemistry set with surface chemistry<a class="headerlink" href="#create-a-chemistry-set-with-surface-chemistry" title="Link to this heading">#</a></h2>
+<p>This example uses mechanism files from the “examplesdata” folder, and
+assumes that this Python example file is located in the
+“examplessurface_chemistry” folder.
+Please verify the location and the availability of these files and modify
+the directories below to point to the correct files before running
+this example.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">ck</span><span class="o">.</span><span class="n">ansys_dir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;reaction&quot;</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span>
+<span class="c1"># find the floder where this py example file is located</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">script_dir_obj</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+    <span class="n">script_dir_obj</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">current_dir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;..&quot;</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span>
+<span class="n">script_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">script_dir_obj</span><span class="p">)</span>
+<span class="c1"># use the relative path to find the location of the example mechanism files</span>
+<span class="n">example_mech_data</span> <span class="o">=</span> <span class="n">script_dir_obj</span> <span class="o">/</span> <span class="s2">&quot;..&quot;</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;example data = </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">example_mech_data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># create a chemistry set based on the gasoline 14-components mechanism</span>
+<span class="n">MySurfMech</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Chemistry</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;multi_materials&quot;</span><span class="p">)</span>
+<span class="c1"># set mechanism input files</span>
+<span class="c1"># including the full file path is recommended</span>
+<span class="n">local_data_dir</span> <span class="o">=</span> <span class="s2">&quot;CH4_MB89&quot;</span>
+<span class="n">MySurfMech</span><span class="o">.</span><span class="n">chemfile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">example_mech_data</span> <span class="o">/</span> <span class="n">local_data_dir</span> <span class="o">/</span> <span class="s2">&quot;chem_ch4_MB89.inp&quot;</span><span class="p">)</span>
+<span class="n">MySurfMech</span><span class="o">.</span><span class="n">surffile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">example_mech_data</span> <span class="o">/</span> <span class="n">local_data_dir</span> <span class="o">/</span> <span class="s2">&quot;surf_ch4_MB89.inp&quot;</span><span class="p">)</span>
+<span class="n">MySurfMech</span><span class="o">.</span><span class="n">thermfile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data_dir</span> <span class="o">/</span> <span class="s2">&quot;therm.dat&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="preprocess-the-surface-chemistry-set">
+<h2>Preprocess the surface chemistry set<a class="headerlink" href="#preprocess-the-surface-chemistry-set" title="Link to this heading">#</a></h2>
+<p>preprocess the mechanism files</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">MySurfMech</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="access-surface-chemistry-information-in-the-chemistry-set">
+<h2>Access surface chemistry information in the Chemistry Set<a class="headerlink" href="#access-surface-chemistry-information-in-the-chemistry-set" title="Link to this heading">#</a></h2>
+<p>Access the <cite>Material</cite> and the <cite>SurfacePhase</cite> objects in the <cite>Chemistry Set</cite>
+containing surface mechanism by their names given in the surface mechanism
+input file. For example, <code class="docutils literal notranslate"><span class="pre">MySurfMech.materials['CLEANUP']</span></code> for the
+<code class="docutils literal notranslate"><span class="pre">Material</span></code> object associated with the surface material ‘CLEANUP’ defined
+in the surface mechanism input file, or
+<code class="docutils literal notranslate"><span class="pre">MySurfMech.materials['INITIATE'].phases['QUARTZ']</span></code> for the
+<code class="docutils literal notranslate"><span class="pre">SurfacePhase</span></code> object associated with the ‘QUARTZ’ phase of the surface
+material ‘INITIATE’.</p>
+<p>You can get the surface material names by using the
+<code class="docutils literal notranslate"><span class="pre">MySurfMech.material_names</span></code> method. The <code class="docutils literal notranslate"><span class="pre">Material</span></code> object provides
+information about the surface material such as the number of surface species
+and surface reactions, the surface phases, and the properties of the site
+species and the bulk species.
+Some of the available properties in the <code class="docutils literal notranslate"><span class="pre">Material</span></code> and the <code class="docutils literal notranslate"><span class="pre">SurfacePhase</span></code>
+are shown below.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># the number of surface materials in the Chemistry Set</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total number of surface materials = </span><span class="si">{</span><span class="n">MySurfMech</span><span class="o">.</span><span class="n">number_materials</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># get all surface material names in the Chemistry Set with surface chemistry</span>
+<span class="n">m_symbols</span> <span class="o">=</span> <span class="n">MySurfMech</span><span class="o">.</span><span class="n">material_names</span>
+<span class="c1"># use the material name to access the corresponding ``Material`` object</span>
+<span class="c1"># in the Chemistry Set</span>
+<span class="c1"># get the names of all phases (gas phase and surface (site and bulk) phases)</span>
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">m_symbols</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Material &#39;</span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;contains phases: </span><span class="si">{</span><span class="n">MySurfMech</span><span class="o">.</span><span class="n">materials</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">.</span><span class="n">phase_names</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="information-about-the-surface-material-phase-and-species">
+<h2>Information about the surface material, phase, and species<a class="headerlink" href="#information-about-the-surface-material-phase-and-species" title="Link to this heading">#</a></h2>
+<p>Display surface material phase and species information as well as
+the surface reactions of the material.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># list the commonly used properties of all surface materials of the Chemistry Set</span>
+<span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">m_symbols</span><span class="p">):</span>
+    <span class="c1"># get the surface Material object by its name</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">MySurfMech</span><span class="o">.</span><span class="n">materials</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Material index = </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># display the general size information of the material</span>
+    <span class="n">m</span><span class="o">.</span><span class="n">information</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
+    <span class="c1"># list the elemental compositions of all site species of the material</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;elemental compositions of surface species on the material:&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">num_site_species</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">site_species_names</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  site species </span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">site_species_map</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">e</span><span class="p">,</span> <span class="n">ele</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">MySurfMech</span><span class="o">.</span><span class="n">element_symbols</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    element </span><span class="si">{</span><span class="n">ele</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">material_species_composition</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">h_site</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">get_site_species_h</span><span class="p">(</span><span class="n">temp</span><span class="o">=</span><span class="mf">400.0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">h_site</span><span class="p">):</span>
+            <span class="c1"># local index among all site species of this material</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;  site species </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">site_species_names</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;H = </span><span class="si">{</span><span class="n">h</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">ck</span><span class="o">.</span><span class="n">ERGS_PER_JOULE</span><span class="si">}</span><span class="s2"> [J/mole]&quot;</span>
+            <span class="p">)</span>
+    <span class="c1"># list the elemental compositions of all bulk species of the material</span>
+    <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">num_bulk_species</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">bulk_species_names</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  bulk species </span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">bulk_species_map</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">e</span><span class="p">,</span> <span class="n">ele</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">MySurfMech</span><span class="o">.</span><span class="n">element_symbols</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    element </span><span class="si">{</span><span class="n">ele</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">material_species_composition</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># also the specific heat capacity of the bulk species</span>
+        <span class="n">cp_bulk</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">get_bulk_species_cp</span><span class="p">(</span><span class="n">temp</span><span class="o">=</span><span class="mf">450.0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cp_bulk</span><span class="p">):</span>
+            <span class="c1"># local index among all bulk species of this material</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;  bulk species </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">bulk_species_names</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Cp = </span><span class="si">{</span><span class="n">c</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">ck</span><span class="o">.</span><span class="n">ERGS_PER_JOULE</span><span class="si">}</span><span class="s2"> [J/mole-K]&quot;</span>
+            <span class="p">)</span>
+    <span class="c1"># get all phase names of the Chemistry Set, the &quot;Gas&quot; phase is always included</span>
+    <span class="c1"># as the first phase</span>
+    <span class="n">p_symbols</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">phase_names</span>
+    <span class="c1"># list the surface phase types and the index of the first species of the</span>
+    <span class="c1"># surface phase.</span>
+    <span class="c1"># There are three phase types: &quot;Gas&quot;, &quot;site&quot;, and &quot;bulk&quot;. The surface species</span>
+    <span class="c1"># (site and bulk) have two indices: global (of all species including the gas</span>
+    <span class="c1"># species) and local (of the same type of surface species).</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">p_symbols</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="s2">&quot;Gas&quot;</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">phase_type</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">phases</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">phase_type</span>
+        <span class="c1">#</span>
+        <span class="k">if</span> <span class="n">phase_type</span> <span class="o">==</span> <span class="s2">&quot;site&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot; surface site phase: </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;site density = </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">phases</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">site_density</span><span class="si">}</span><span class="s2"> [mole/cm2]</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="c1"># the global index is 1-based in Chemkin</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot; 1-base species index on phase </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2"> = &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">phases</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">first_species_index</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="c1"># the global index of the material, the phase, and the species</span>
+            <span class="c1"># is 0-base in PyChemkin</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot; 0-base species index on site phase </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;= </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">first_site_species_index</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># the global index is 1-based in Chemkin</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot; 1-base species index on phase </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2"> = &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">phases</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">first_species_index</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="c1"># the global index of the material, the phase, and the species</span>
+            <span class="c1"># is 0-base in PyChemkin</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot; 0-base species index on bulk phase </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;= </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">first_bulk_species_index</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+    <span class="c1"># list surface reaction information of the material, the reaction index</span>
+    <span class="c1"># is 1-base in both Chemkin and PyChemkin.</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
+    <span class="c1"># the first surface reaction of the material</span>
+    <span class="n">rxn_id</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="c1"># reaction string of the first surface reaction of the material</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; surface reaction # 1 = </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">get_surface_reaction_string</span><span class="p">(</span><span class="n">rxn_id</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># get the Arrhenius rate parameters of all surface reactions of the material</span>
+    <span class="n">a_factor</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">act_energy</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">get_surface_reaction_parameters</span><span class="p">()</span>
+    <span class="c1"># display the Arrhenius parameters of the first surface reaction of this material</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    original rate parameters:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    A = </span><span class="si">{</span><span class="n">a_factor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">   B = </span><span class="si">{</span><span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">  Ea = </span><span class="si">{</span><span class="n">act_energy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> [K]&quot;</span><span class="p">)</span>
+    <span class="c1"># save a copy of the original value</span>
+    <span class="n">act_energy_org</span> <span class="o">=</span> <span class="n">act_energy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># change the activation temperature of the first surface reaction to 3000 [K]</span>
+    <span class="n">m</span><span class="o">.</span><span class="n">set_surface_reaction_act_energy</span><span class="p">(</span><span class="n">rxn_id</span><span class="p">,</span> <span class="mf">3000.0</span><span class="p">)</span>
+    <span class="c1"># retrieve and display the modified Arrhenius parameters</span>
+    <span class="c1"># of the first surface reaction</span>
+    <span class="n">a_factor</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">act_energy</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">get_surface_reaction_parameters</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    modified rate parameters:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    A = </span><span class="si">{</span><span class="n">a_factor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">   B = </span><span class="si">{</span><span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">  Ea = </span><span class="si">{</span><span class="n">act_energy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> [K]&quot;</span><span class="p">)</span>
+    <span class="c1"># restore the activation temperature of the first surface reaction</span>
+    <span class="n">m</span><span class="o">.</span><span class="n">set_surface_reaction_act_energy</span><span class="p">(</span><span class="n">rxn_id</span><span class="p">,</span> <span class="n">act_energy_org</span><span class="p">)</span>
+    <span class="c1"># verify the change</span>
+    <span class="n">a_factor</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">act_energy</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">get_surface_reaction_parameters</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    restored rate parameters:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    A = </span><span class="si">{</span><span class="n">a_factor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">   B = </span><span class="si">{</span><span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">  Ea = </span><span class="si">{</span><span class="n">act_energy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> [K]&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-surface-chemistry-multiple-materials-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/b7485563a5df04ac6a39dc7a8646b89c/multiple_materials.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">multiple_materials.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/b7741db714343d23e82b6463ad787bec/multiple_materials.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">multiple_materials.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/fddeb2b0492aa8c7df3dfd731d010ad5/multiple_materials.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">multiple_materials.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-pychemkin-packages-and-start-the-logger">Import PyChemkin packages and start the logger</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-chemistry-set-with-surface-chemistry">Create a chemistry set with surface chemistry</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preprocess-the-surface-chemistry-set">Preprocess the surface chemistry set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#access-surface-chemistry-information-in-the-chemistry-set">Access surface chemistry information in the Chemistry Set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#information-about-the-surface-material-phase-and-species">Information about the surface material, phase, and species</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+
+  
+  <nav class="tocsection editthispage" aria-label="Edit this page">
+    <a href="https://github.com/ansys/pychemkin/edit/main/doc/source/examples/surface_chemistry/multiple_materials.rst" rel="noopener noreferrer">
+      <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </nav>
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/surface_chemistry/multiple_materials.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.7.2.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

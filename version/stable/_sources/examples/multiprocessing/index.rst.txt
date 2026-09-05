@@ -1,0 +1,84 @@
+
+
+.. _sphx_glr_examples_multiprocessing:
+
+Multiprocessing parameter study
+===============================
+
+Chemkin application by itself does not support parallel computing, however, in the context of parameter study, each case can run on
+its own CPU core to make better use of any available computing power. The examples in this section describe the process of applying Python
+multi-threading and multi-processing packages to **PyChemkin** parameter study to improve the overall simulation performance.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The 0-D SI engine model can be used to predict the occurrence of engine knock. There is no consensus on the determination of the onset of engine knock. In this example, the engine knock is defined as when the end gas (the gas mixture in the unburned zone) auto-ignites. And the knock intensity is associated to the peak value of the total thermicity of the end gas, that is, the higher the peak total thermicity the more intense the engine knock.">
+
+.. only:: html
+
+  .. image:: /examples/multiprocessing/images/thumb/sphx_glr_SI_engine_knock_calculation_multiprocessing_thumb.png
+    :alt:
+
+  :doc:`/examples/multiprocessing/SI_engine_knock_calculation_multiprocessing`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">SI engine knocking analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="One of the prevailing use case of the freely propagating premixed flame model is to build a flame speed table to be imported by another combustion simulation tools. PyChemkin provides the flexibility to customize the data structure of the flame speed table depending on the simulation goals and the tool. Furthermore, over the years, the chemkin flame speed calculator has derived a set of default solver settings that would greatly improve the convergence performance, especially for those widely adopted hydrocarbon fuel combustion mechanisms. The required input parameters the flame speed calculator are reduced to the composition of the fuel-oxidizer mixture, the initial/inlet pressure and temperature, and the calculation domain.">
+
+.. only:: html
+
+  .. image:: /examples/multiprocessing/images/thumb/sphx_glr_flame_speed_calculation_multiprocessing_thumb.png
+    :alt:
+
+  :doc:`/examples/multiprocessing/flame_speed_calculation_multiprocessing`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Setting up a multi-process laminar flame speed parameter study</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="One of the prevailing use case of the freely propagating premixed flame model is to build a flame speed table to be imported by another combustion simulation tools. PyChemkin provides the flexibility to customize the data structure of the flame speed table depending on the simulation goals and the tool. Furthermore, over the years, the chemkin flame speed calculator has derived a set of default solver settings that would greatly improve the convergence performance, especially for those widely adopted hydrocarbon fuel combustion mechanisms. The required input parameters the flame speed calculator are reduced to the composition of the fuel-oxidizer mixture, the initial/inlet pressure and temperature, and the calculation domain.">
+
+.. only:: html
+
+  .. image:: /examples/multiprocessing/images/thumb/sphx_glr_flame_speed_calculation_threading_thumb.png
+    :alt:
+
+  :doc:`/examples/multiprocessing/flame_speed_calculation_threading`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Setting up a multi-thread laminar flame speed parameter study</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/multiprocessing/SI_engine_knock_calculation_multiprocessing
+   /examples/multiprocessing/flame_speed_calculation_multiprocessing
+   /examples/multiprocessing/flame_speed_calculation_threading
+

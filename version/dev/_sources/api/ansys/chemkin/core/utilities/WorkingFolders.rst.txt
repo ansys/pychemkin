@@ -1,0 +1,109 @@
+
+
+
+
+
+
+:class:`WorkingFolders`
+=======================
+
+
+.. py:class:: ansys.chemkin.core.utilities.WorkingFolders(dir_name: str, root_dir: str)
+
+   folder/file utilities for multiple runs.
+
+
+
+.. py:currentmodule:: WorkingFolders
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~done`
+            - Change back to the root directory.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~root`
+            - Get the "root" directory of the current structure.
+          * - :py:attr:`~work`
+            - Get the "work" directory of the current structure.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~root_dir`
+            - 
+          * - :py:attr:`~work_dir`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.utilities import WorkingFolders
+
+Property detail
+---------------
+
+.. py:property:: root
+   :type: str
+
+
+   Get the "root" directory of the current structure.
+
+
+.. py:property:: work
+   :type: str
+
+
+   Get the "work" directory of the current structure.
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: root_dir
+
+.. py:attribute:: work_dir
+
+
+
+Method detail
+-------------
+
+.. py:method:: done()
+
+   Change back to the root directory.
+
+
+
+
+

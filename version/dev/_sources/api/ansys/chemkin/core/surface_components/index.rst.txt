@@ -1,0 +1,133 @@
+
+
+
+
+
+
+The ``surface_components.py`` module
+====================================
+
+.. py:module:: ansys.chemkin.core.surface_components
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: surface_components
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.surface_components.Material`
+            - Surface Chemkin material object.
+
+
+          * - :py:obj:`~ansys.chemkin.core.surface_components.SurfacePhase`
+            - Surface phase object.
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~set_temp_array`
+            - Set up the temperature array for Chemkin-CFD-API calls.
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~LP_c_char`
+            - 
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~MAX_SPECIES_LENGTH`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Material</api/ansys/chemkin/core/surface_components/Material>
+    <span class="nf nf-cod-symbol_class"></span> SurfacePhase</api/ansys/chemkin/core/surface_components/SurfacePhase>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Surface material and phase data models.
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: set_temp_array(temp: float, temp_ele: Union[float, None] = None, temp_ion: Union[float, None] = None) -> numpy.typing.NDArray[numpy.double]
+
+   Set up the temperature array for Chemkin-CFD-API calls.
+
+
+.. py:data:: MAX_SPECIES_LENGTH
+   :value: 17
+
+
+.. py:data:: LP_c_char
+
+
+

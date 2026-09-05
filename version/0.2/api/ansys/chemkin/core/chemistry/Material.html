@@ -1,0 +1,1528 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Material &#8212; PyChemkin</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/ansys/chemkin/core/chemistry/Material';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="SurfacePhase" href="SurfacePhase.html" />
+    <link rel="prev" title="Chemistry" href="Chemistry.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/api/ansys/chemkin/core/chemistry/Material.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <img src="../../../../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyChemkin - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../artifacts.html">
+    <no title>
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../artifacts.html">
+    <no title>
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html"><span class="nf nf-md-package"></span> ansys.chemkin.core</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html"> <span class="nf nf-fa-file"></span> chemistry</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="Chemistry.html"> <span class="nf nf-cod-symbol_class"></span> Chemistry</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#"> <span class="nf nf-cod-symbol_class"></span> Material</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SurfacePhase.html"> <span class="nf nf-cod-symbol_class"></span> SurfacePhase</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../chemkin_wrapper/index.html"> <span class="nf nf-fa-file"></span> chemkin_wrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/index.html"> <span class="nf nf-fa-file"></span> color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../constants/index.html"> <span class="nf nf-fa-file"></span> constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../flame/index.html"> <span class="nf nf-fa-file"></span> flame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../grid/index.html"> <span class="nf nf-fa-file"></span> grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hybridreactornetwork/index.html"> <span class="nf nf-fa-file"></span> hybridreactornetwork</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../info/index.html"> <span class="nf nf-fa-file"></span> info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../inlet/index.html"> <span class="nf nf-fa-file"></span> inlet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logger/index.html"> <span class="nf nf-fa-file"></span> logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../microprocess/index.html"> <span class="nf nf-fa-file"></span> microprocess</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mixture/index.html"> <span class="nf nf-fa-file"></span> mixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reactormodel/index.html"> <span class="nf nf-fa-file"></span> reactormodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../realgaseos/index.html"> <span class="nf nf-fa-file"></span> realgaseos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../steadystatesolver/index.html"> <span class="nf nf-fa-file"></span> steadystatesolver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../surface/index.html"> <span class="nf nf-fa-file"></span> surface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../utilities/index.html"> <span class="nf nf-fa-file"></span> utilities</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../../../index.html" class="nav-link">API reference</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">The <code class="docutils literal notranslate"><span class="pre">ansys.chemkin.core</span></code> library</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">The <code class="docutils literal notranslate"><span class="pre">chemistry.py</span></code> module</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis"><code class="xref py py-class docutils literal notranslate"><span class="pre">Material</span></code></span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="material">
+<h1><code class="xref py py-class docutils literal notranslate"><span class="pre">Material</span></code><a class="headerlink" href="#material" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.chemkin.core.chemistry.Material">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.chemkin.core.chemistry.</span></span><span class="sig-name descname"><span class="pre">Material</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="Chemistry.html#ansys.chemkin.core.chemistry.Chemistry" title="ansys.chemkin.core.chemistry.Chemistry"><span class="pre">Chemistry</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.chemkin.core.chemistry.Material" title="Link to this definition">#</a></dt>
+<dd><p>Surface Chemkin material object.</p>
+</dd></dl>
+
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+Methods</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.information" title="Material.information"><code class="xref py py-attr docutils literal notranslate"><span class="pre">information</span></code></a></p></td>
+<td><p>List the size information of the material.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.get_site_specindex" title="Material.get_site_specindex"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_site_specindex</span></code></a></p></td>
+<td><p>Get the local and the global indices of a site species.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.get_bulk_specindex" title="Material.get_bulk_specindex"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_bulk_specindex</span></code></a></p></td>
+<td><p>Get the local and the global indices of a bulk species.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.get_surf_specindex" title="Material.get_surf_specindex"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_surf_specindex</span></code></a></p></td>
+<td><p>Get the local and the global indices and type of a surface species.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.get_site_density" title="Material.get_site_density"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_site_density</span></code></a></p></td>
+<td><p>Get the site phase densities.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.get_bulk_density" title="Material.get_bulk_density"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_bulk_density</span></code></a></p></td>
+<td><p>Get bulk species densities.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.get_site_molar_weights" title="Material.get_site_molar_weights"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_site_molar_weights</span></code></a></p></td>
+<td><p>Get the site species molecular weights.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.get_bulk_molar_weights" title="Material.get_bulk_molar_weights"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_bulk_molar_weights</span></code></a></p></td>
+<td><p>Get the bulk species molecular weights.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.get_site_occupancy" title="Material.get_site_occupancy"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_site_occupancy</span></code></a></p></td>
+<td><p>Get site species occupancy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.get_site_species_h" title="Material.get_site_species_h"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_site_species_h</span></code></a></p></td>
+<td><p>Get site species enthalpy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.get_bulk_species_h" title="Material.get_bulk_species_h"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_bulk_species_h</span></code></a></p></td>
+<td><p>Get bulk species enthalpy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.get_bulk_species_cp" title="Material.get_bulk_species_cp"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_bulk_species_cp</span></code></a></p></td>
+<td><p>Get bulk species specific heat capacity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.material_species_composition" title="Material.material_species_composition"><code class="xref py py-attr docutils literal notranslate"><span class="pre">material_species_composition</span></code></a></p></td>
+<td><p>Get elemental composition of a species.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.get_surface_reaction_parameters" title="Material.get_surface_reaction_parameters"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_surface_reaction_parameters</span></code></a></p></td>
+<td><p>Get the Arrhenius reaction rate parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.set_surface_reaction_afactor" title="Material.set_surface_reaction_afactor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_surface_reaction_afactor</span></code></a></p></td>
+<td><p>Set the Arrhenius A-Factor of the given surface reaction.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.get_surface_reaction_afactor" title="Material.get_surface_reaction_afactor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_surface_reaction_afactor</span></code></a></p></td>
+<td><p>Get the Arrhenius A-Factor of the given surface reaction.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.set_surface_reaction_act_energy" title="Material.set_surface_reaction_act_energy"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_surface_reaction_act_energy</span></code></a></p></td>
+<td><p>Set the Arrhenius activation energy of the given surface reaction.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.get_surface_reaction_act_energy" title="Material.get_surface_reaction_act_energy"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_surface_reaction_act_energy</span></code></a></p></td>
+<td><p>Get the Arrhenius activation energy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.get_surface_reaction_string" title="Material.get_surface_reaction_string"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_surface_reaction_string</span></code></a></p></td>
+<td><p>Get the reaction string of the surface reaction.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Properties</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.material_index" title="Material.material_index"><code class="xref py py-attr docutils literal notranslate"><span class="pre">material_index</span></code></a></p></td>
+<td><p>Get the surface material index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.number_phases" title="Material.number_phases"><code class="xref py py-attr docutils literal notranslate"><span class="pre">number_phases</span></code></a></p></td>
+<td><p>Get the number of phases.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.number_site_phases" title="Material.number_site_phases"><code class="xref py py-attr docutils literal notranslate"><span class="pre">number_site_phases</span></code></a></p></td>
+<td><p>Get the number of site phases.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.number_bulk_phases" title="Material.number_bulk_phases"><code class="xref py py-attr docutils literal notranslate"><span class="pre">number_bulk_phases</span></code></a></p></td>
+<td><p>Get the number of bulk phases.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.number_total_species" title="Material.number_total_species"><code class="xref py py-attr docutils literal notranslate"><span class="pre">number_total_species</span></code></a></p></td>
+<td><p>Get the number of species in all phases.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.number_site_species" title="Material.number_site_species"><code class="xref py py-attr docutils literal notranslate"><span class="pre">number_site_species</span></code></a></p></td>
+<td><p>Get the total number of site species.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.number_bulk_species" title="Material.number_bulk_species"><code class="xref py py-attr docutils literal notranslate"><span class="pre">number_bulk_species</span></code></a></p></td>
+<td><p>Get the total number of bulk species.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.first_site_phase_index" title="Material.first_site_phase_index"><code class="xref py py-attr docutils literal notranslate"><span class="pre">first_site_phase_index</span></code></a></p></td>
+<td><p>Get phase index of the first site phase.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.last_site_phase_index" title="Material.last_site_phase_index"><code class="xref py py-attr docutils literal notranslate"><span class="pre">last_site_phase_index</span></code></a></p></td>
+<td><p>Get phase index of the last site phase.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.first_bulk_phase_index" title="Material.first_bulk_phase_index"><code class="xref py py-attr docutils literal notranslate"><span class="pre">first_bulk_phase_index</span></code></a></p></td>
+<td><p>Get phase index of the first bulk phase.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.last_bulk_phase_index" title="Material.last_bulk_phase_index"><code class="xref py py-attr docutils literal notranslate"><span class="pre">last_bulk_phase_index</span></code></a></p></td>
+<td><p>Get phase index of the last bulk phase.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.number_surface_reactions" title="Material.number_surface_reactions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">number_surface_reactions</span></code></a></p></td>
+<td><p>Get the number of surface reactions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.number_total_reactions" title="Material.number_total_reactions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">number_total_reactions</span></code></a></p></td>
+<td><p>Get the number of all reactions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.phase_names" title="Material.phase_names"><code class="xref py py-attr docutils literal notranslate"><span class="pre">phase_names</span></code></a></p></td>
+<td><p>Get list of phase names.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.site_species_names" title="Material.site_species_names"><code class="xref py py-attr docutils literal notranslate"><span class="pre">site_species_names</span></code></a></p></td>
+<td><p>Set list of site species names.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.bulk_species_names" title="Material.bulk_species_names"><code class="xref py py-attr docutils literal notranslate"><span class="pre">bulk_species_names</span></code></a></p></td>
+<td><p>Set list of bulk species names.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.first_site_species_index" title="Material.first_site_species_index"><code class="xref py py-attr docutils literal notranslate"><span class="pre">first_site_species_index</span></code></a></p></td>
+<td><p>Get the global species index of the first site species.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.first_bulk_species_index" title="Material.first_bulk_species_index"><code class="xref py py-attr docutils literal notranslate"><span class="pre">first_bulk_species_index</span></code></a></p></td>
+<td><p>Get the global species index of the first bulk species.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.last_site_species_index" title="Material.last_site_species_index"><code class="xref py py-attr docutils literal notranslate"><span class="pre">last_site_species_index</span></code></a></p></td>
+<td><p>Get the global species index of the last site species.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.last_bulk_species_index" title="Material.last_bulk_species_index"><code class="xref py py-attr docutils literal notranslate"><span class="pre">last_bulk_species_index</span></code></a></p></td>
+<td><p>Get the global species index of the last bulk species.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.surface_temperature" title="Material.surface_temperature"><code class="xref py py-attr docutils literal notranslate"><span class="pre">surface_temperature</span></code></a></p></td>
+<td><p>Get surface material temperature.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.surface_area" title="Material.surface_area"><code class="xref py py-attr docutils literal notranslate"><span class="pre">surface_area</span></code></a></p></td>
+<td><p>Get surface material area.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
+Attributes</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.num_element" title="Material.num_element"><code class="xref py py-attr docutils literal notranslate"><span class="pre">num_element</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.num_gas_species" title="Material.num_gas_species"><code class="xref py py-attr docutils literal notranslate"><span class="pre">num_gas_species</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.num_gas_reactions" title="Material.num_gas_reactions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">num_gas_reactions</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.site_species_map" title="Material.site_species_map"><code class="xref py py-attr docutils literal notranslate"><span class="pre">site_species_map</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.bulk_species_map" title="Material.bulk_species_map"><code class="xref py py-attr docutils literal notranslate"><span class="pre">bulk_species_map</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.ESymbols" title="Material.ESymbols"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ESymbols</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.num_site_phase" title="Material.num_site_phase"><code class="xref py py-attr docutils literal notranslate"><span class="pre">num_site_phase</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.num_bulk_phase" title="Material.num_bulk_phase"><code class="xref py py-attr docutils literal notranslate"><span class="pre">num_bulk_phase</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.first_site_phase" title="Material.first_site_phase"><code class="xref py py-attr docutils literal notranslate"><span class="pre">first_site_phase</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.last_site_phase" title="Material.last_site_phase"><code class="xref py py-attr docutils literal notranslate"><span class="pre">last_site_phase</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.first_bulk_phase" title="Material.first_bulk_phase"><code class="xref py py-attr docutils literal notranslate"><span class="pre">first_bulk_phase</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.last_bulk_phase" title="Material.last_bulk_phase"><code class="xref py py-attr docutils literal notranslate"><span class="pre">last_bulk_phase</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.nspecies_of_phase" title="Material.nspecies_of_phase"><code class="xref py py-attr docutils literal notranslate"><span class="pre">nspecies_of_phase</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.first_species_id_of_phase" title="Material.first_species_id_of_phase"><code class="xref py py-attr docutils literal notranslate"><span class="pre">first_species_id_of_phase</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.last_species_id_of_phase" title="Material.last_species_id_of_phase"><code class="xref py py-attr docutils literal notranslate"><span class="pre">last_species_id_of_phase</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.PhaseSymbol" title="Material.PhaseSymbol"><code class="xref py py-attr docutils literal notranslate"><span class="pre">PhaseSymbol</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.phase_map" title="Material.phase_map"><code class="xref py py-attr docutils literal notranslate"><span class="pre">phase_map</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.phases" title="Material.phases"><code class="xref py py-attr docutils literal notranslate"><span class="pre">phases</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.site_symbols" title="Material.site_symbols"><code class="xref py py-attr docutils literal notranslate"><span class="pre">site_symbols</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.bulk_symbols" title="Material.bulk_symbols"><code class="xref py py-attr docutils literal notranslate"><span class="pre">bulk_symbols</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.ncf_done" title="Material.ncf_done"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ncf_done</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.sitewt_done" title="Material.sitewt_done"><code class="xref py py-attr docutils literal notranslate"><span class="pre">sitewt_done</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.bulkwt_done" title="Material.bulkwt_done"><code class="xref py py-attr docutils literal notranslate"><span class="pre">bulkwt_done</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.site_wt" title="Material.site_wt"><code class="xref py py-attr docutils literal notranslate"><span class="pre">site_wt</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.bulk_wt" title="Material.bulk_wt"><code class="xref py py-attr docutils literal notranslate"><span class="pre">bulk_wt</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Material.surftemp" title="Material.surftemp"><code class="xref py py-attr docutils literal notranslate"><span class="pre">surftemp</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Material.activearea" title="Material.activearea"><code class="xref py py-attr docutils literal notranslate"><span class="pre">activearea</span></code></a></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="import-detail">
+<h2>Import detail<a class="headerlink" href="#import-detail" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.chemistry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Material</span>
+</pre></div>
+</div>
+</section>
+<section id="property-detail">
+<h2>Property detail<a class="headerlink" href="#property-detail" title="Link to this heading">#</a></h2>
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.material_index">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">material_index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Material.material_index" title="Link to this definition">#</a></dt>
+<dd><p>Get the surface material index.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.number_phases">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">number_phases</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Material.number_phases" title="Link to this definition">#</a></dt>
+<dd><p>Get the number of phases.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.number_site_phases">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">number_site_phases</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Material.number_site_phases" title="Link to this definition">#</a></dt>
+<dd><p>Get the number of site phases.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.number_bulk_phases">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">number_bulk_phases</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Material.number_bulk_phases" title="Link to this definition">#</a></dt>
+<dd><p>Get the number of bulk phases.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.number_total_species">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">number_total_species</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Material.number_total_species" title="Link to this definition">#</a></dt>
+<dd><p>Get the number of species in all phases.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.number_site_species">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">number_site_species</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Material.number_site_species" title="Link to this definition">#</a></dt>
+<dd><p>Get the total number of site species.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.number_bulk_species">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">number_bulk_species</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Material.number_bulk_species" title="Link to this definition">#</a></dt>
+<dd><p>Get the total number of bulk species.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.first_site_phase_index">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">first_site_phase_index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Material.first_site_phase_index" title="Link to this definition">#</a></dt>
+<dd><p>Get phase index of the first site phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.last_site_phase_index">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">last_site_phase_index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Material.last_site_phase_index" title="Link to this definition">#</a></dt>
+<dd><p>Get phase index of the last site phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.first_bulk_phase_index">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">first_bulk_phase_index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Material.first_bulk_phase_index" title="Link to this definition">#</a></dt>
+<dd><p>Get phase index of the first bulk phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.last_bulk_phase_index">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">last_bulk_phase_index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Material.last_bulk_phase_index" title="Link to this definition">#</a></dt>
+<dd><p>Get phase index of the last bulk phase.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.number_surface_reactions">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">number_surface_reactions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Material.number_surface_reactions" title="Link to this definition">#</a></dt>
+<dd><p>Get the number of surface reactions.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.number_total_reactions">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">number_total_reactions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Material.number_total_reactions" title="Link to this definition">#</a></dt>
+<dd><p>Get the number of all reactions.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.phase_names">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">phase_names</span></span><a class="headerlink" href="#Material.phase_names" title="Link to this definition">#</a></dt>
+<dd><p>Get list of phase names.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.site_species_names">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">site_species_names</span></span><a class="headerlink" href="#Material.site_species_names" title="Link to this definition">#</a></dt>
+<dd><p>Set list of site species names.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.bulk_species_names">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">bulk_species_names</span></span><a class="headerlink" href="#Material.bulk_species_names" title="Link to this definition">#</a></dt>
+<dd><p>Set list of bulk species names.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.first_site_species_index">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">first_site_species_index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Material.first_site_species_index" title="Link to this definition">#</a></dt>
+<dd><p>Get the global species index of the first site species.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.first_bulk_species_index">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">first_bulk_species_index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Material.first_bulk_species_index" title="Link to this definition">#</a></dt>
+<dd><p>Get the global species index of the first bulk species.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.last_site_species_index">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">last_site_species_index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Material.last_site_species_index" title="Link to this definition">#</a></dt>
+<dd><p>Get the global species index of the last site species.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.last_bulk_species_index">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">last_bulk_species_index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Material.last_bulk_species_index" title="Link to this definition">#</a></dt>
+<dd><p>Get the global species index of the last bulk species.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.surface_temperature">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">surface_temperature</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#Material.surface_temperature" title="Link to this definition">#</a></dt>
+<dd><p>Get surface material temperature.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Material.surface_area">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">surface_area</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#Material.surface_area" title="Link to this definition">#</a></dt>
+<dd><p>Get surface material area.</p>
+</dd></dl>
+
+</section>
+<section id="attribute-detail">
+<h2>Attribute detail<a class="headerlink" href="#attribute-detail" title="Link to this heading">#</a></h2>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.num_element">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">num_element</span></span><a class="headerlink" href="#Material.num_element" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.num_gas_species">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">num_gas_species</span></span><a class="headerlink" href="#Material.num_gas_species" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.num_gas_reactions">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">num_gas_reactions</span></span><a class="headerlink" href="#Material.num_gas_reactions" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.site_species_map">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">site_species_map</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#Material.site_species_map" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.bulk_species_map">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">bulk_species_map</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#Material.bulk_species_map" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.ESymbols">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">ESymbols</span></span><a class="headerlink" href="#Material.ESymbols" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.num_site_phase">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">num_site_phase</span></span><a class="headerlink" href="#Material.num_site_phase" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.num_bulk_phase">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">num_bulk_phase</span></span><a class="headerlink" href="#Material.num_bulk_phase" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.first_site_phase">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">first_site_phase</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#Material.first_site_phase" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.last_site_phase">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">last_site_phase</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#Material.last_site_phase" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.first_bulk_phase">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">first_bulk_phase</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#Material.first_bulk_phase" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.last_bulk_phase">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">last_bulk_phase</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#Material.last_bulk_phase" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.nspecies_of_phase">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">nspecies_of_phase</span></span><a class="headerlink" href="#Material.nspecies_of_phase" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.first_species_id_of_phase">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">first_species_id_of_phase</span></span><a class="headerlink" href="#Material.first_species_id_of_phase" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.last_species_id_of_phase">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">last_species_id_of_phase</span></span><a class="headerlink" href="#Material.last_species_id_of_phase" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.PhaseSymbol">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">PhaseSymbol</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#Material.PhaseSymbol" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.phase_map">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">phase_map</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#Material.phase_map" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.phases">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">phases</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="SurfacePhase.html#ansys.chemkin.core.chemistry.SurfacePhase" title="ansys.chemkin.core.chemistry.SurfacePhase"><span class="pre">SurfacePhase</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#Material.phases" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.site_symbols">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">site_symbols</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#Material.site_symbols" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.bulk_symbols">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">bulk_symbols</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#Material.bulk_symbols" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.ncf_done">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">ncf_done</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#Material.ncf_done" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.sitewt_done">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">sitewt_done</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#Material.sitewt_done" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.bulkwt_done">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">bulkwt_done</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#Material.bulkwt_done" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.site_wt">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">site_wt</span></span><a class="headerlink" href="#Material.site_wt" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.bulk_wt">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">bulk_wt</span></span><a class="headerlink" href="#Material.bulk_wt" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.surftemp">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">surftemp</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">300.0</span></em><a class="headerlink" href="#Material.surftemp" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Material.activearea">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">activearea</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#Material.activearea" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="method-detail">
+<h2>Method detail<a class="headerlink" href="#method-detail" title="Link to this heading">#</a></h2>
+<dl class="py method">
+<dt class="sig sig-object py" id="Material.information">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">information</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Material.information" title="Link to this definition">#</a></dt>
+<dd><p>List the size information of the material.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Material.get_site_specindex">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">get_site_specindex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Material.get_site_specindex" title="Link to this definition">#</a></dt>
+<dd><p>Get the local and the global indices of a site species.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Material.get_bulk_specindex">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">get_bulk_specindex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Material.get_bulk_specindex" title="Link to this definition">#</a></dt>
+<dd><p>Get the local and the global indices of a bulk species.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Material.get_surf_specindex">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">get_surf_specindex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'normal'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Material.get_surf_specindex" title="Link to this definition">#</a></dt>
+<dd><p>Get the local and the global indices and type of a surface species.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Material.get_site_density">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">get_site_density</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Material.get_site_density" title="Link to this definition">#</a></dt>
+<dd><p>Get the site phase densities.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Material.get_bulk_density">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">get_bulk_density</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Material.get_bulk_density" title="Link to this definition">#</a></dt>
+<dd><p>Get bulk species densities.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Material.get_site_molar_weights">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">get_site_molar_weights</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Material.get_site_molar_weights" title="Link to this definition">#</a></dt>
+<dd><p>Get the site species molecular weights.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Material.get_bulk_molar_weights">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">get_bulk_molar_weights</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Material.get_bulk_molar_weights" title="Link to this definition">#</a></dt>
+<dd><p>Get the bulk species molecular weights.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Material.get_site_occupancy">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">get_site_occupancy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.int32</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Material.get_site_occupancy" title="Link to this definition">#</a></dt>
+<dd><p>Get site species occupancy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Material.get_site_species_h">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">get_site_species_h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Material.get_site_species_h" title="Link to this definition">#</a></dt>
+<dd><p>Get site species enthalpy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Material.get_bulk_species_h">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">get_bulk_species_h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pres</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Material.get_bulk_species_h" title="Link to this definition">#</a></dt>
+<dd><p>Get bulk species enthalpy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Material.get_bulk_species_cp">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">get_bulk_species_cp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pres</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Material.get_bulk_species_cp" title="Link to this definition">#</a></dt>
+<dd><p>Get bulk species specific heat capacity.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Material.material_species_composition">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">material_species_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elemindex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specindex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Material.material_species_composition" title="Link to this definition">#</a></dt>
+<dd><p>Get elemental composition of a species.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Material.get_surface_reaction_parameters">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">get_surface_reaction_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Material.get_surface_reaction_parameters" title="Link to this definition">#</a></dt>
+<dd><p>Get the Arrhenius reaction rate parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Material.set_surface_reaction_afactor">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">set_surface_reaction_afactor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reaction_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Material.set_surface_reaction_afactor" title="Link to this definition">#</a></dt>
+<dd><p>Set the Arrhenius A-Factor of the given surface reaction.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Material.get_surface_reaction_afactor">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">get_surface_reaction_afactor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reaction_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Material.get_surface_reaction_afactor" title="Link to this definition">#</a></dt>
+<dd><p>Get the Arrhenius A-Factor of the given surface reaction.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Material.set_surface_reaction_act_energy">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">set_surface_reaction_act_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reaction_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">act_energy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Material.set_surface_reaction_act_energy" title="Link to this definition">#</a></dt>
+<dd><p>Set the Arrhenius activation energy of the given surface reaction.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Material.get_surface_reaction_act_energy">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">get_surface_reaction_act_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reaction_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Material.get_surface_reaction_act_energy" title="Link to this definition">#</a></dt>
+<dd><p>Get the Arrhenius activation energy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Material.get_surface_reaction_string">
+<span class="sig-prename descclassname"><span class="pre">Material.</span></span><span class="sig-name descname"><span class="pre">get_surface_reaction_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reaction_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Material.get_surface_reaction_string" title="Link to this definition">#</a></dt>
+<dd><p>Get the reaction string of the surface reaction.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.chemkin.core.chemistry.Material"><code class="docutils literal notranslate"><span class="pre">ansys.chemkin.core.chemistry.Material</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-detail">Import detail</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#property-detail">Property detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.material_index"><code class="docutils literal notranslate"><span class="pre">material_index</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.number_phases"><code class="docutils literal notranslate"><span class="pre">number_phases</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.number_site_phases"><code class="docutils literal notranslate"><span class="pre">number_site_phases</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.number_bulk_phases"><code class="docutils literal notranslate"><span class="pre">number_bulk_phases</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.number_total_species"><code class="docutils literal notranslate"><span class="pre">number_total_species</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.number_site_species"><code class="docutils literal notranslate"><span class="pre">number_site_species</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.number_bulk_species"><code class="docutils literal notranslate"><span class="pre">number_bulk_species</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.first_site_phase_index"><code class="docutils literal notranslate"><span class="pre">first_site_phase_index</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.last_site_phase_index"><code class="docutils literal notranslate"><span class="pre">last_site_phase_index</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.first_bulk_phase_index"><code class="docutils literal notranslate"><span class="pre">first_bulk_phase_index</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.last_bulk_phase_index"><code class="docutils literal notranslate"><span class="pre">last_bulk_phase_index</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.number_surface_reactions"><code class="docutils literal notranslate"><span class="pre">number_surface_reactions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.number_total_reactions"><code class="docutils literal notranslate"><span class="pre">number_total_reactions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.phase_names"><code class="docutils literal notranslate"><span class="pre">phase_names</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.site_species_names"><code class="docutils literal notranslate"><span class="pre">site_species_names</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.bulk_species_names"><code class="docutils literal notranslate"><span class="pre">bulk_species_names</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.first_site_species_index"><code class="docutils literal notranslate"><span class="pre">first_site_species_index</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.first_bulk_species_index"><code class="docutils literal notranslate"><span class="pre">first_bulk_species_index</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.last_site_species_index"><code class="docutils literal notranslate"><span class="pre">last_site_species_index</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.last_bulk_species_index"><code class="docutils literal notranslate"><span class="pre">last_bulk_species_index</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.surface_temperature"><code class="docutils literal notranslate"><span class="pre">surface_temperature</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.surface_area"><code class="docutils literal notranslate"><span class="pre">surface_area</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attribute-detail">Attribute detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.num_element"><code class="docutils literal notranslate"><span class="pre">num_element</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.num_gas_species"><code class="docutils literal notranslate"><span class="pre">num_gas_species</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.num_gas_reactions"><code class="docutils literal notranslate"><span class="pre">num_gas_reactions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.site_species_map"><code class="docutils literal notranslate"><span class="pre">site_species_map</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.bulk_species_map"><code class="docutils literal notranslate"><span class="pre">bulk_species_map</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.ESymbols"><code class="docutils literal notranslate"><span class="pre">ESymbols</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.num_site_phase"><code class="docutils literal notranslate"><span class="pre">num_site_phase</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.num_bulk_phase"><code class="docutils literal notranslate"><span class="pre">num_bulk_phase</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.first_site_phase"><code class="docutils literal notranslate"><span class="pre">first_site_phase</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.last_site_phase"><code class="docutils literal notranslate"><span class="pre">last_site_phase</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.first_bulk_phase"><code class="docutils literal notranslate"><span class="pre">first_bulk_phase</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.last_bulk_phase"><code class="docutils literal notranslate"><span class="pre">last_bulk_phase</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.nspecies_of_phase"><code class="docutils literal notranslate"><span class="pre">nspecies_of_phase</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.first_species_id_of_phase"><code class="docutils literal notranslate"><span class="pre">first_species_id_of_phase</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.last_species_id_of_phase"><code class="docutils literal notranslate"><span class="pre">last_species_id_of_phase</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.PhaseSymbol"><code class="docutils literal notranslate"><span class="pre">PhaseSymbol</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.phase_map"><code class="docutils literal notranslate"><span class="pre">phase_map</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.phases"><code class="docutils literal notranslate"><span class="pre">phases</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.site_symbols"><code class="docutils literal notranslate"><span class="pre">site_symbols</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.bulk_symbols"><code class="docutils literal notranslate"><span class="pre">bulk_symbols</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.ncf_done"><code class="docutils literal notranslate"><span class="pre">ncf_done</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.sitewt_done"><code class="docutils literal notranslate"><span class="pre">sitewt_done</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.bulkwt_done"><code class="docutils literal notranslate"><span class="pre">bulkwt_done</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.site_wt"><code class="docutils literal notranslate"><span class="pre">site_wt</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.bulk_wt"><code class="docutils literal notranslate"><span class="pre">bulk_wt</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.surftemp"><code class="docutils literal notranslate"><span class="pre">surftemp</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.activearea"><code class="docutils literal notranslate"><span class="pre">activearea</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-detail">Method detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.information"><code class="docutils literal notranslate"><span class="pre">information()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.get_site_specindex"><code class="docutils literal notranslate"><span class="pre">get_site_specindex()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.get_bulk_specindex"><code class="docutils literal notranslate"><span class="pre">get_bulk_specindex()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.get_surf_specindex"><code class="docutils literal notranslate"><span class="pre">get_surf_specindex()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.get_site_density"><code class="docutils literal notranslate"><span class="pre">get_site_density()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.get_bulk_density"><code class="docutils literal notranslate"><span class="pre">get_bulk_density()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.get_site_molar_weights"><code class="docutils literal notranslate"><span class="pre">get_site_molar_weights()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.get_bulk_molar_weights"><code class="docutils literal notranslate"><span class="pre">get_bulk_molar_weights()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.get_site_occupancy"><code class="docutils literal notranslate"><span class="pre">get_site_occupancy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.get_site_species_h"><code class="docutils literal notranslate"><span class="pre">get_site_species_h()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.get_bulk_species_h"><code class="docutils literal notranslate"><span class="pre">get_bulk_species_h()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.get_bulk_species_cp"><code class="docutils literal notranslate"><span class="pre">get_bulk_species_cp()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.material_species_composition"><code class="docutils literal notranslate"><span class="pre">material_species_composition()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.get_surface_reaction_parameters"><code class="docutils literal notranslate"><span class="pre">get_surface_reaction_parameters()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.set_surface_reaction_afactor"><code class="docutils literal notranslate"><span class="pre">set_surface_reaction_afactor()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.get_surface_reaction_afactor"><code class="docutils literal notranslate"><span class="pre">get_surface_reaction_afactor()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.set_surface_reaction_act_energy"><code class="docutils literal notranslate"><span class="pre">set_surface_reaction_act_energy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.get_surface_reaction_act_energy"><code class="docutils literal notranslate"><span class="pre">get_surface_reaction_act_energy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Material.get_surface_reaction_string"><code class="docutils literal notranslate"><span class="pre">get_surface_reaction_string()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+
+  
+  <nav class="tocsection editthispage" aria-label="Edit this page">
+    <a href="http://github.com/ansys/pychemkin/edit/main/ansys/chemkin/core/chemistry/Material.py" rel="noopener noreferrer">
+      <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </nav>
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../../../../_sources/api/ansys/chemkin/core/chemistry/Material.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../../../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../../../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../../../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.7.2.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

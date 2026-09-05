@@ -1,0 +1,1640 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ReactorModel &#8212; PyChemkin</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/ansys/chemkin/core/reactormodel/ReactorModel';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="The realgaseos.py module" href="../realgaseos/index.html" />
+    <link rel="prev" title="The reactormodel.py module" href="index.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    <script src="../../../../../searchindex.js"></script>
+  
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/api/ansys/chemkin/core/reactormodel/ReactorModel.html" />
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <img src="../../../../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyChemkin - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../artifacts.html">
+    Artifacts
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i><span class="visually-hidden">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i><span class="visually-hidden">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../artifacts.html">
+    Artifacts
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i><span class="visually-hidden">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i><span class="visually-hidden">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html"><span class="nf nf-md-package"></span> ansys.chemkin.core</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../chemistry/index.html"> <span class="nf nf-fa-file"></span> chemistry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chemkin_solution_utility/index.html"> <span class="nf nf-fa-file"></span> chemkin_solution_utility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chemkin_wrapper/index.html"> <span class="nf nf-fa-file"></span> chemkin_wrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/index.html"> <span class="nf nf-fa-file"></span> color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../constants/index.html"> <span class="nf nf-fa-file"></span> constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../flame/index.html"> <span class="nf nf-fa-file"></span> flame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../grid/index.html"> <span class="nf nf-fa-file"></span> grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hybridreactornetwork/index.html"> <span class="nf nf-fa-file"></span> hybridreactornetwork</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../info/index.html"> <span class="nf nf-fa-file"></span> info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../inlet/index.html"> <span class="nf nf-fa-file"></span> inlet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../keyword/index.html"> <span class="nf nf-fa-file"></span> keyword</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logger/index.html"> <span class="nf nf-fa-file"></span> logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../microprocess/index.html"> <span class="nf nf-fa-file"></span> microprocess</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mixture/index.html"> <span class="nf nf-fa-file"></span> mixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../particles/index.html"> <span class="nf nf-fa-file"></span> particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../profile/index.html"> <span class="nf nf-fa-file"></span> profile</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html"> <span class="nf nf-fa-file"></span> reactormodel</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#"> <span class="nf nf-cod-symbol_class"></span> ReactorModel</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../realgaseos/index.html"> <span class="nf nf-fa-file"></span> realgaseos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../steadystatesolver/index.html"> <span class="nf nf-fa-file"></span> steadystatesolver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../surface/index.html"> <span class="nf nf-fa-file"></span> surface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../surface_chemistry/index.html"> <span class="nf nf-fa-file"></span> surface_chemistry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../surface_chemistry_controller/index.html"> <span class="nf nf-fa-file"></span> surface_chemistry_controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../surface_components/index.html"> <span class="nf nf-fa-file"></span> surface_components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../utilities/index.html"> <span class="nf nf-fa-file"></span> utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../validation/index.html"> <span class="nf nf-fa-file"></span> validation</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../../../index.html" class="nav-link">API reference</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">The <code class="docutils literal notranslate"><span class="pre">ansys.chemkin.core</span></code> library</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">The <code class="docutils literal notranslate"><span class="pre">reactormodel.py</span></code> module</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReactorModel</span></code></span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="reactormodel">
+<h1><code class="xref py py-class docutils literal notranslate"><span class="pre">ReactorModel</span></code><a class="headerlink" href="#reactormodel" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.chemkin.core.reactormodel.ReactorModel">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.chemkin.core.reactormodel.</span></span><span class="sig-name descname"><span class="pre">ReactorModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reactor_condition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../inlet/Stream.html#ansys.chemkin.core.inlet.Stream" title="ansys.chemkin.core.inlet.Stream"><span class="pre">ansys.chemkin.core.inlet.Stream</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.chemkin.core.reactormodel.ReactorModel" title="Link to this definition">#</a></dt>
+<dd><p>Serve as a generic Chemkin reactor model framework.</p>
+</dd></dl>
+
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+Methods</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.usefullkeywords" title="ReactorModel.usefullkeywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">usefullkeywords</span></code></a></p></td>
+<td><p>Specify all necessary keywords explicitly.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.setkeyword" title="ReactorModel.setkeyword"><code class="xref py py-attr docutils literal notranslate"><span class="pre">setkeyword</span></code></a></p></td>
+<td><p>Set a Chemkin keyword and its parameter.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.removekeyword" title="ReactorModel.removekeyword"><code class="xref py py-attr docutils literal notranslate"><span class="pre">removekeyword</span></code></a></p></td>
+<td><p>Remove an existing Chemkin keyword and its parameter.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.showkeywordinputlines" title="ReactorModel.showkeywordinputlines"><code class="xref py py-attr docutils literal notranslate"><span class="pre">showkeywordinputlines</span></code></a></p></td>
+<td><p>List all currently-defined keywords and their parameters line by line.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.createkeywordinputlines" title="ReactorModel.createkeywordinputlines"><code class="xref py py-attr docutils literal notranslate"><span class="pre">createkeywordinputlines</span></code></a></p></td>
+<td><p>Create keyword input lines for Chemkin applications.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.showkeywordinputlines_with_tag" title="ReactorModel.showkeywordinputlines_with_tag"><code class="xref py py-attr docutils literal notranslate"><span class="pre">showkeywordinputlines_with_tag</span></code></a></p></td>
+<td><p>List all currently-defined keywords.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.createkeywordinputlines_with_tag" title="ReactorModel.createkeywordinputlines_with_tag"><code class="xref py py-attr docutils literal notranslate"><span class="pre">createkeywordinputlines_with_tag</span></code></a></p></td>
+<td><p>Create keyword input lines for Chemkin applications.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.setprofile" title="ReactorModel.setprofile"><code class="xref py py-attr docutils literal notranslate"><span class="pre">setprofile</span></code></a></p></td>
+<td><p>Set a Chemkin profile and its parameter.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.get_profile_value" title="ReactorModel.get_profile_value"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_profile_value</span></code></a></p></td>
+<td><p>Get the y value at given x from the profile data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.createprofileinputlines" title="ReactorModel.createprofileinputlines"><code class="xref py py-attr docutils literal notranslate"><span class="pre">createprofileinputlines</span></code></a></p></td>
+<td><p>Create profile keyword input lines for Chemkin applications.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.createspeciesinputlines" title="ReactorModel.createspeciesinputlines"><code class="xref py py-attr docutils literal notranslate"><span class="pre">createspeciesinputlines</span></code></a></p></td>
+<td><p>Create keyword input lines.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.createspeciesinputlineswithaddon" title="ReactorModel.createspeciesinputlineswithaddon"><code class="xref py py-attr docutils literal notranslate"><span class="pre">createspeciesinputlineswithaddon</span></code></a></p></td>
+<td><p>Create keyword input lines.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.create_inletspeciesinputlines" title="ReactorModel.create_inletspeciesinputlines"><code class="xref py py-attr docutils literal notranslate"><span class="pre">create_inletspeciesinputlines</span></code></a></p></td>
+<td><p>Create keyword input lines.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.clear_all_keywords" title="ReactorModel.clear_all_keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">clear_all_keywords</span></code></a></p></td>
+<td><p>Delete all existing keyword components.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.chemid" title="ReactorModel.chemid"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemid</span></code></a></p></td>
+<td><p>Get chemistry set index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.set_molefractions" title="ReactorModel.set_molefractions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_molefractions</span></code></a></p></td>
+<td><p>Set the reactor species mole fractions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.set_massfractions" title="ReactorModel.set_massfractions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_massfractions</span></code></a></p></td>
+<td><p>Set the reactor species mass fractions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.list_composition" title="ReactorModel.list_composition"><code class="xref py py-attr docutils literal notranslate"><span class="pre">list_composition</span></code></a></p></td>
+<td><p>List the gas mixture composition inside the reactor.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.setsensitivityanalysis" title="ReactorModel.setsensitivityanalysis"><code class="xref py py-attr docutils literal notranslate"><span class="pre">setsensitivityanalysis</span></code></a></p></td>
+<td><p>Switch ON/OFF A-factor sensitivity analysis.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.set_rop_analysis" title="ReactorModel.set_rop_analysis"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_rop_analysis</span></code></a></p></td>
+<td><p>Switch ON/OFF the ROP (Rate Of Production) analysis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.userealgas_eos" title="ReactorModel.userealgas_eos"><code class="xref py py-attr docutils literal notranslate"><span class="pre">userealgas_eos</span></code></a></p></td>
+<td><p>Set the option to turn ON/OFF the real gas model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.setrealgasmixingmodel" title="ReactorModel.setrealgasmixingmodel"><code class="xref py py-attr docutils literal notranslate"><span class="pre">setrealgasmixingmodel</span></code></a></p></td>
+<td><p>Set the real gas mixing rule/model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.use_rgp_table" title="ReactorModel.use_rgp_table"><code class="xref py py-attr docutils literal notranslate"><span class="pre">use_rgp_table</span></code></a></p></td>
+<td><p>Set the option to turn ON/OFF the use of the RGP table.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.disable_rgp_table" title="ReactorModel.disable_rgp_table"><code class="xref py py-attr docutils literal notranslate"><span class="pre">disable_rgp_table</span></code></a></p></td>
+<td><p>Turn OFF the use of the RGP table.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.setrunstatus" title="ReactorModel.setrunstatus"><code class="xref py py-attr docutils literal notranslate"><span class="pre">setrunstatus</span></code></a></p></td>
+<td><p>Set the simulation run status.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.getrunstatus" title="ReactorModel.getrunstatus"><code class="xref py py-attr docutils literal notranslate"><span class="pre">getrunstatus</span></code></a></p></td>
+<td><p>Get the reactor model simulation status.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.run" title="ReactorModel.run"><code class="xref py py-attr docutils literal notranslate"><span class="pre">run</span></code></a></p></td>
+<td><p>Serve as a generic Chemkin run reactor model method.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.setsolutionspeciesfracmode" title="ReactorModel.setsolutionspeciesfracmode"><code class="xref py py-attr docutils literal notranslate"><span class="pre">setsolutionspeciesfracmode</span></code></a></p></td>
+<td><p>Set the type of species fractions in the solution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.getrawsolutionstatus" title="ReactorModel.getrawsolutionstatus"><code class="xref py py-attr docutils literal notranslate"><span class="pre">getrawsolutionstatus</span></code></a></p></td>
+<td><p>Get the status of the post-process.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.getmixturesolutionstatus" title="ReactorModel.getmixturesolutionstatus"><code class="xref py py-attr docutils literal notranslate"><span class="pre">getmixturesolutionstatus</span></code></a></p></td>
+<td><p>Get the status of the post-process.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.get_solution_size" title="ReactorModel.get_solution_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_solution_size</span></code></a></p></td>
+<td><p>Get the number of reactors and the number of solution points.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.getnumbersolutionpoints" title="ReactorModel.getnumbersolutionpoints"><code class="xref py py-attr docutils literal notranslate"><span class="pre">getnumbersolutionpoints</span></code></a></p></td>
+<td><p>Get  the number of solution points per reactor.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.parsespeciessolutiondata" title="ReactorModel.parsespeciessolutiondata"><code class="xref py py-attr docutils literal notranslate"><span class="pre">parsespeciessolutiondata</span></code></a></p></td>
+<td><p>Parse the 2-D species fraction solution data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.process_solution" title="ReactorModel.process_solution"><code class="xref py py-attr docutils literal notranslate"><span class="pre">process_solution</span></code></a></p></td>
+<td><p>Post-process solution to extract the raw solution variable data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.activate_surface_chemistry" title="ReactorModel.activate_surface_chemistry"><code class="xref py py-attr docutils literal notranslate"><span class="pre">activate_surface_chemistry</span></code></a></p></td>
+<td><p>Activate the surface chemistry.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.verify_surface_chemistry" title="ReactorModel.verify_surface_chemistry"><code class="xref py py-attr docutils literal notranslate"><span class="pre">verify_surface_chemistry</span></code></a></p></td>
+<td><p>Verify whether the reactor model is surfac chemistry capable.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.no_surface_mechanism_declaration" title="ReactorModel.no_surface_mechanism_declaration"><code class="xref py py-attr docutils literal notranslate"><span class="pre">no_surface_mechanism_declaration</span></code></a></p></td>
+<td><p>Inform users surface chemistry is not available for this reactor.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.no_surface_material" title="ReactorModel.no_surface_material"><code class="xref py py-attr docutils literal notranslate"><span class="pre">no_surface_material</span></code></a></p></td>
+<td><p>Send surface material not found message.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.get_material_names" title="ReactorModel.get_material_names"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_material_names</span></code></a></p></td>
+<td><p>Get all surface material names.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.get_site_species_names" title="ReactorModel.get_site_species_names"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_site_species_names</span></code></a></p></td>
+<td><p>Get site species names on the surface materials.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.get_bulk_species_names" title="ReactorModel.get_bulk_species_names"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_bulk_species_names</span></code></a></p></td>
+<td><p>Get bulk species names on the surface materials.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.get_total_site_species" title="ReactorModel.get_total_site_species"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_total_site_species</span></code></a></p></td>
+<td><p>Get total number of site species from all materials.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.get_total_bulk_species" title="ReactorModel.get_total_bulk_species"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_total_bulk_species</span></code></a></p></td>
+<td><p>Get total number of bulk species from all materials.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.check_material_area_fraction" title="ReactorModel.check_material_area_fraction"><code class="xref py py-attr docutils literal notranslate"><span class="pre">check_material_area_fraction</span></code></a></p></td>
+<td><p>Verify the surface area fraction is given.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.get_material_area_fraction" title="ReactorModel.get_material_area_fraction"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_material_area_fraction</span></code></a></p></td>
+<td><p>Get the surface area fraction.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.set_material_area_fraction" title="ReactorModel.set_material_area_fraction"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_material_area_fraction</span></code></a></p></td>
+<td><p>Set the value of the surface area fraction.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.check_material_temperature" title="ReactorModel.check_material_temperature"><code class="xref py py-attr docutils literal notranslate"><span class="pre">check_material_temperature</span></code></a></p></td>
+<td><p>Verify the surface temperature is given.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.get_material_temperature" title="ReactorModel.get_material_temperature"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_material_temperature</span></code></a></p></td>
+<td><p>Get the surface temperature.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.set_material_temperature" title="ReactorModel.set_material_temperature"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_material_temperature</span></code></a></p></td>
+<td><p>Set the value of the surface temperature.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.get_all_surface_temperature" title="ReactorModel.get_all_surface_temperature"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_all_surface_temperature</span></code></a></p></td>
+<td><p>Get the temperatures of all materials in the mechanism.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.get_site_fraction" title="ReactorModel.get_site_fraction"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_site_fraction</span></code></a></p></td>
+<td><p>Get the surface site fractions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.set_site_fraction" title="ReactorModel.set_site_fraction"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_site_fraction</span></code></a></p></td>
+<td><p>Set the surface site fractions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.get_all_site_fractions" title="ReactorModel.get_all_site_fractions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_all_site_fractions</span></code></a></p></td>
+<td><p>Get site fractions of all materials in the mechanism.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.get_bulk_activity" title="ReactorModel.get_bulk_activity"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_bulk_activity</span></code></a></p></td>
+<td><p>Get the bulk species activities.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.set_bulk_activity" title="ReactorModel.set_bulk_activity"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_bulk_activity</span></code></a></p></td>
+<td><p>Set the bulk species activities.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.get_all_bulk_growth_rates" title="ReactorModel.get_all_bulk_growth_rates"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_all_bulk_growth_rates</span></code></a></p></td>
+<td><p>Get bulk growth rates of all materials in the mechanism.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.set_init_surface_coverage" title="ReactorModel.set_init_surface_coverage"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_init_surface_coverage</span></code></a></p></td>
+<td><p>Set up the initial surface coverage arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.set_surface_chemistry_keywords" title="ReactorModel.set_surface_chemistry_keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_surface_chemistry_keywords</span></code></a></p></td>
+<td><p>Set up surface chemistry related keywords.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Properties</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.temperature" title="ReactorModel.temperature"><code class="xref py py-attr docutils literal notranslate"><span class="pre">temperature</span></code></a></p></td>
+<td><p>Get reactor initial temperature.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.pressure" title="ReactorModel.pressure"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pressure</span></code></a></p></td>
+<td><p>Get reactor pressure.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.massfraction" title="ReactorModel.massfraction"><code class="xref py py-attr docutils literal notranslate"><span class="pre">massfraction</span></code></a></p></td>
+<td><p>Get the gas species mass fractions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.molefraction" title="ReactorModel.molefraction"><code class="xref py py-attr docutils literal notranslate"><span class="pre">molefraction</span></code></a></p></td>
+<td><p>Get the gas species mole fractions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.concentration" title="ReactorModel.concentration"><code class="xref py py-attr docutils literal notranslate"><span class="pre">concentration</span></code></a></p></td>
+<td><p>Get the gas species molar concentrations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.gasratemultiplier" title="ReactorModel.gasratemultiplier"><code class="xref py py-attr docutils literal notranslate"><span class="pre">gasratemultiplier</span></code></a></p></td>
+<td><p>Get the value of the gas-phase reaction rate multiplier.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.std_output" title="ReactorModel.std_output"><code class="xref py py-attr docutils literal notranslate"><span class="pre">std_output</span></code></a></p></td>
+<td><p>Get text output status.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.xml_output" title="ReactorModel.xml_output"><code class="xref py py-attr docutils literal notranslate"><span class="pre">xml_output</span></code></a></p></td>
+<td><p>Get XML solution output status.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.realgas" title="ReactorModel.realgas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">realgas</span></code></a></p></td>
+<td><p>Get the real gas EOS status.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.get_numb_material" title="ReactorModel.get_numb_material"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_numb_material</span></code></a></p></td>
+<td><p>Get the number of surface material.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.surface_ratemultiplier" title="ReactorModel.surface_ratemultiplier"><code class="xref py py-attr docutils literal notranslate"><span class="pre">surface_ratemultiplier</span></code></a></p></td>
+<td><p>Get the value of the surface reaction rate multiplier.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
+Attributes</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.label" title="ReactorModel.label"><code class="xref py py-attr docutils literal notranslate"><span class="pre">label</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.runstatus" title="ReactorModel.runstatus"><code class="xref py py-attr docutils literal notranslate"><span class="pre">runstatus</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.has_surface_chemistry" title="ReactorModel.has_surface_chemistry"><code class="xref py py-attr docutils literal notranslate"><span class="pre">has_surface_chemistry</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ReactorModel.numbmaterials" title="ReactorModel.numbmaterials"><code class="xref py py-attr docutils literal notranslate"><span class="pre">numbmaterials</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ReactorModel.surface_chemistry" title="ReactorModel.surface_chemistry"><code class="xref py py-attr docutils literal notranslate"><span class="pre">surface_chemistry</span></code></a></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="import-detail">
+<h2>Import detail<a class="headerlink" href="#import-detail" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.reactormodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReactorModel</span>
+</pre></div>
+</div>
+</section>
+<section id="property-detail">
+<h2>Property detail<a class="headerlink" href="#property-detail" title="Link to this heading">#</a></h2>
+<dl class="py property">
+<dt class="sig sig-object py" id="ReactorModel.temperature">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">temperature</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#ReactorModel.temperature" title="Link to this definition">#</a></dt>
+<dd><p>Get reactor initial temperature.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ReactorModel.pressure">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">pressure</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#ReactorModel.pressure" title="Link to this definition">#</a></dt>
+<dd><p>Get reactor pressure.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ReactorModel.massfraction">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">massfraction</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#ReactorModel.massfraction" title="Link to this definition">#</a></dt>
+<dd><p>Get the gas species mass fractions.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ReactorModel.molefraction">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">molefraction</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ReactorModel.molefraction" title="Link to this definition">#</a></dt>
+<dd><p>Get the gas species mole fractions.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ReactorModel.concentration">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">concentration</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ReactorModel.concentration" title="Link to this definition">#</a></dt>
+<dd><p>Get the gas species molar concentrations.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ReactorModel.gasratemultiplier">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">gasratemultiplier</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#ReactorModel.gasratemultiplier" title="Link to this definition">#</a></dt>
+<dd><p>Get the value of the gas-phase reaction rate multiplier.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ReactorModel.std_output">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">std_output</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#ReactorModel.std_output" title="Link to this definition">#</a></dt>
+<dd><p>Get text output status.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ReactorModel.xml_output">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">xml_output</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#ReactorModel.xml_output" title="Link to this definition">#</a></dt>
+<dd><p>Get XML solution output status.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ReactorModel.realgas">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">realgas</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#ReactorModel.realgas" title="Link to this definition">#</a></dt>
+<dd><p>Get the real gas EOS status.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ReactorModel.get_numb_material">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">get_numb_material</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#ReactorModel.get_numb_material" title="Link to this definition">#</a></dt>
+<dd><p>Get the number of surface material.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ReactorModel.surface_ratemultiplier">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">surface_ratemultiplier</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#ReactorModel.surface_ratemultiplier" title="Link to this definition">#</a></dt>
+<dd><p>Get the value of the surface reaction rate multiplier.</p>
+</dd></dl>
+
+</section>
+<section id="attribute-detail">
+<h2>Attribute detail<a class="headerlink" href="#attribute-detail" title="Link to this heading">#</a></h2>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ReactorModel.label">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#ReactorModel.label" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ReactorModel.runstatus">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">runstatus</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">-100</span></em><a class="headerlink" href="#ReactorModel.runstatus" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ReactorModel.has_surface_chemistry">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">has_surface_chemistry</span></span><a class="headerlink" href="#ReactorModel.has_surface_chemistry" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ReactorModel.numbmaterials">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">numbmaterials</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#ReactorModel.numbmaterials" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ReactorModel.surface_chemistry">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">surface_chemistry</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#ReactorModel.surface_chemistry" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="method-detail">
+<h2>Method detail<a class="headerlink" href="#method-detail" title="Link to this heading">#</a></h2>
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.usefullkeywords">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">usefullkeywords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.usefullkeywords" title="Link to this definition">#</a></dt>
+<dd><p>Specify all necessary keywords explicitly.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.setkeyword">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">setkeyword</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.setkeyword" title="Link to this definition">#</a></dt>
+<dd><p>Set a Chemkin keyword and its parameter.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.removekeyword">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">removekeyword</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.removekeyword" title="Link to this definition">#</a></dt>
+<dd><p>Remove an existing Chemkin keyword and its parameter.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.showkeywordinputlines">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">showkeywordinputlines</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.showkeywordinputlines" title="Link to this definition">#</a></dt>
+<dd><p>List all currently-defined keywords and their parameters line by line.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.createkeywordinputlines">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">createkeywordinputlines</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ReactorModel.createkeywordinputlines" title="Link to this definition">#</a></dt>
+<dd><p>Create keyword input lines for Chemkin applications.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.showkeywordinputlines_with_tag">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">showkeywordinputlines_with_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.showkeywordinputlines_with_tag" title="Link to this definition">#</a></dt>
+<dd><p>List all currently-defined keywords.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.createkeywordinputlines_with_tag">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">createkeywordinputlines_with_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ReactorModel.createkeywordinputlines_with_tag" title="Link to this definition">#</a></dt>
+<dd><p>Create keyword input lines for Chemkin applications.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.setprofile">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">setprofile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#ReactorModel.setprofile" title="Link to this definition">#</a></dt>
+<dd><p>Set a Chemkin profile and its parameter.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.get_profile_value">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">get_profile_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#ReactorModel.get_profile_value" title="Link to this definition">#</a></dt>
+<dd><p>Get the y value at given x from the profile data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.createprofileinputlines">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">createprofileinputlines</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ReactorModel.createprofileinputlines" title="Link to this definition">#</a></dt>
+<dd><p>Create profile keyword input lines for Chemkin applications.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.createspeciesinputlines">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">createspeciesinputlines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solvertype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">molefrac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ReactorModel.createspeciesinputlines" title="Link to this definition">#</a></dt>
+<dd><p>Create keyword input lines.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.createspeciesinputlineswithaddon">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">createspeciesinputlineswithaddon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'XEST'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">molefrac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">addon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ReactorModel.createspeciesinputlineswithaddon" title="Link to this definition">#</a></dt>
+<dd><p>Create keyword input lines.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.create_inletspeciesinputlines">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">create_inletspeciesinputlines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inlet_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">molefrac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ReactorModel.create_inletspeciesinputlines" title="Link to this definition">#</a></dt>
+<dd><p>Create keyword input lines.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.clear_all_keywords">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">clear_all_keywords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.clear_all_keywords" title="Link to this definition">#</a></dt>
+<dd><p>Delete all existing keyword components.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.chemid">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">chemid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#ReactorModel.chemid" title="Link to this definition">#</a></dt>
+<dd><p>Get chemistry set index.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.set_molefractions">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">set_molefractions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">molefrac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.set_molefractions" title="Link to this definition">#</a></dt>
+<dd><p>Set the reactor species mole fractions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.set_massfractions">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">set_massfractions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">massfrac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.set_massfractions" title="Link to this definition">#</a></dt>
+<dd><p>Set the reactor species mass fractions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.list_composition">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">list_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'</span> <span class="pre">'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bound</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.list_composition" title="Link to this definition">#</a></dt>
+<dd><p>List the gas mixture composition inside the reactor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.setsensitivityanalysis">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">setsensitivityanalysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">absolute_tolerance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative_tolerance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.setsensitivityanalysis" title="Link to this definition">#</a></dt>
+<dd><p>Switch ON/OFF A-factor sensitivity analysis.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.set_rop_analysis">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">set_rop_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.set_rop_analysis" title="Link to this definition">#</a></dt>
+<dd><p>Switch ON/OFF the ROP (Rate Of Production) analysis.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.userealgas_eos">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">userealgas_eos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.userealgas_eos" title="Link to this definition">#</a></dt>
+<dd><p>Set the option to turn ON/OFF the real gas model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.setrealgasmixingmodel">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">setrealgasmixingmodel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.setrealgasmixingmodel" title="Link to this definition">#</a></dt>
+<dd><p>Set the real gas mixing rule/model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.use_rgp_table">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">use_rgp_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.use_rgp_table" title="Link to this definition">#</a></dt>
+<dd><p>Set the option to turn ON/OFF the use of the RGP table.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.disable_rgp_table">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">disable_rgp_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.disable_rgp_table" title="Link to this definition">#</a></dt>
+<dd><p>Turn OFF the use of the RGP table.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.setrunstatus">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">setrunstatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.setrunstatus" title="Link to this definition">#</a></dt>
+<dd><p>Set the simulation run status.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.getrunstatus">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">getrunstatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'silent'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#ReactorModel.getrunstatus" title="Link to this definition">#</a></dt>
+<dd><p>Get the reactor model simulation status.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.run">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#ReactorModel.run" title="Link to this definition">#</a></dt>
+<dd><p>Serve as a generic Chemkin run reactor model method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.setsolutionspeciesfracmode">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">setsolutionspeciesfracmode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mass'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.setsolutionspeciesfracmode" title="Link to this definition">#</a></dt>
+<dd><p>Set the type of species fractions in the solution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.getrawsolutionstatus">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">getrawsolutionstatus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#ReactorModel.getrawsolutionstatus" title="Link to this definition">#</a></dt>
+<dd><p>Get the status of the post-process.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.getmixturesolutionstatus">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">getmixturesolutionstatus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#ReactorModel.getmixturesolutionstatus" title="Link to this definition">#</a></dt>
+<dd><p>Get the status of the post-process.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.get_solution_size">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">get_solution_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ReactorModel.get_solution_size" title="Link to this definition">#</a></dt>
+<dd><p>Get the number of reactors and the number of solution points.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.getnumbersolutionpoints">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">getnumbersolutionpoints</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#ReactorModel.getnumbersolutionpoints" title="Link to this definition">#</a></dt>
+<dd><p>Get  the number of solution points per reactor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.parsespeciessolutiondata">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">parsespeciessolutiondata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.parsespeciessolutiondata" title="Link to this definition">#</a></dt>
+<dd><p>Parse the 2-D species fraction solution data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.process_solution">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">process_solution</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.process_solution" title="Link to this definition">#</a></dt>
+<dd><p>Post-process solution to extract the raw solution variable data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.activate_surface_chemistry">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">activate_surface_chemistry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../chemistry/Chemistry.html#ansys.chemkin.core.chemistry.Chemistry" title="ansys.chemkin.core.chemistry.Chemistry"><span class="pre">ansys.chemkin.core.chemistry.Chemistry</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'normal'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.activate_surface_chemistry" title="Link to this definition">#</a></dt>
+<dd><p>Activate the surface chemistry.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.verify_surface_chemistry">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">verify_surface_chemistry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#ReactorModel.verify_surface_chemistry" title="Link to this definition">#</a></dt>
+<dd><p>Verify whether the reactor model is surfac chemistry capable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.no_surface_mechanism_declaration">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">no_surface_mechanism_declaration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.no_surface_mechanism_declaration" title="Link to this definition">#</a></dt>
+<dd><p>Inform users surface chemistry is not available for this reactor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.no_surface_material">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">no_surface_material</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.no_surface_material" title="Link to this definition">#</a></dt>
+<dd><p>Send surface material not found message.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.get_material_names">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">get_material_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ReactorModel.get_material_names" title="Link to this definition">#</a></dt>
+<dd><p>Get all surface material names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.get_site_species_names">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">get_site_species_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ReactorModel.get_site_species_names" title="Link to this definition">#</a></dt>
+<dd><p>Get site species names on the surface materials.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.get_bulk_species_names">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">get_bulk_species_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ReactorModel.get_bulk_species_names" title="Link to this definition">#</a></dt>
+<dd><p>Get bulk species names on the surface materials.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.get_total_site_species">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">get_total_site_species</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#ReactorModel.get_total_site_species" title="Link to this definition">#</a></dt>
+<dd><p>Get total number of site species from all materials.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.get_total_bulk_species">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">get_total_bulk_species</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#ReactorModel.get_total_bulk_species" title="Link to this definition">#</a></dt>
+<dd><p>Get total number of bulk species from all materials.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.check_material_area_fraction">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">check_material_area_fraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#ReactorModel.check_material_area_fraction" title="Link to this definition">#</a></dt>
+<dd><p>Verify the surface area fraction is given.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.get_material_area_fraction">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">get_material_area_fraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#ReactorModel.get_material_area_fraction" title="Link to this definition">#</a></dt>
+<dd><p>Get the surface area fraction.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.set_material_area_fraction">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">set_material_area_fraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fraction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.set_material_area_fraction" title="Link to this definition">#</a></dt>
+<dd><p>Set the value of the surface area fraction.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.check_material_temperature">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">check_material_temperature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#ReactorModel.check_material_temperature" title="Link to this definition">#</a></dt>
+<dd><p>Verify the surface temperature is given.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.get_material_temperature">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">get_material_temperature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#ReactorModel.get_material_temperature" title="Link to this definition">#</a></dt>
+<dd><p>Get the surface temperature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.set_material_temperature">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">set_material_temperature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.set_material_temperature" title="Link to this definition">#</a></dt>
+<dd><p>Set the value of the surface temperature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.get_all_surface_temperature">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">get_all_surface_temperature</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ReactorModel.get_all_surface_temperature" title="Link to this definition">#</a></dt>
+<dd><p>Get the temperatures of all materials in the mechanism.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.get_site_fraction">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">get_site_fraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ReactorModel.get_site_fraction" title="Link to this definition">#</a></dt>
+<dd><p>Get the surface site fractions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.set_site_fraction">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">set_site_fraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recipe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.set_site_fraction" title="Link to this definition">#</a></dt>
+<dd><p>Set the surface site fractions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.get_all_site_fractions">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">get_all_site_fractions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ReactorModel.get_all_site_fractions" title="Link to this definition">#</a></dt>
+<dd><p>Get site fractions of all materials in the mechanism.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.get_bulk_activity">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">get_bulk_activity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ReactorModel.get_bulk_activity" title="Link to this definition">#</a></dt>
+<dd><p>Get the bulk species activities.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.set_bulk_activity">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">set_bulk_activity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recipe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.set_bulk_activity" title="Link to this definition">#</a></dt>
+<dd><p>Set the bulk species activities.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.get_all_bulk_growth_rates">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">get_all_bulk_growth_rates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ReactorModel.get_all_bulk_growth_rates" title="Link to this definition">#</a></dt>
+<dd><p>Get bulk growth rates of all materials in the mechanism.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.set_init_surface_coverage">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">set_init_surface_coverage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ReactorModel.set_init_surface_coverage" title="Link to this definition">#</a></dt>
+<dd><p>Set up the initial surface coverage arrays.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ReactorModel.set_surface_chemistry_keywords">
+<span class="sig-prename descclassname"><span class="pre">ReactorModel.</span></span><span class="sig-name descname"><span class="pre">set_surface_chemistry_keywords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ReactorModel.set_surface_chemistry_keywords" title="Link to this definition">#</a></dt>
+<dd><p>Set up surface chemistry related keywords.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.chemkin.core.reactormodel.ReactorModel"><code class="docutils literal notranslate"><span class="pre">ansys.chemkin.core.reactormodel.ReactorModel</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-detail">Import detail</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#property-detail">Property detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.temperature"><code class="docutils literal notranslate"><span class="pre">temperature</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.pressure"><code class="docutils literal notranslate"><span class="pre">pressure</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.massfraction"><code class="docutils literal notranslate"><span class="pre">massfraction</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.molefraction"><code class="docutils literal notranslate"><span class="pre">molefraction</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.concentration"><code class="docutils literal notranslate"><span class="pre">concentration</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.gasratemultiplier"><code class="docutils literal notranslate"><span class="pre">gasratemultiplier</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.std_output"><code class="docutils literal notranslate"><span class="pre">std_output</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.xml_output"><code class="docutils literal notranslate"><span class="pre">xml_output</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.realgas"><code class="docutils literal notranslate"><span class="pre">realgas</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.get_numb_material"><code class="docutils literal notranslate"><span class="pre">get_numb_material</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.surface_ratemultiplier"><code class="docutils literal notranslate"><span class="pre">surface_ratemultiplier</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attribute-detail">Attribute detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.label"><code class="docutils literal notranslate"><span class="pre">label</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.runstatus"><code class="docutils literal notranslate"><span class="pre">runstatus</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.has_surface_chemistry"><code class="docutils literal notranslate"><span class="pre">has_surface_chemistry</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.numbmaterials"><code class="docutils literal notranslate"><span class="pre">numbmaterials</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.surface_chemistry"><code class="docutils literal notranslate"><span class="pre">surface_chemistry</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-detail">Method detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.usefullkeywords"><code class="docutils literal notranslate"><span class="pre">usefullkeywords()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.setkeyword"><code class="docutils literal notranslate"><span class="pre">setkeyword()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.removekeyword"><code class="docutils literal notranslate"><span class="pre">removekeyword()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.showkeywordinputlines"><code class="docutils literal notranslate"><span class="pre">showkeywordinputlines()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.createkeywordinputlines"><code class="docutils literal notranslate"><span class="pre">createkeywordinputlines()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.showkeywordinputlines_with_tag"><code class="docutils literal notranslate"><span class="pre">showkeywordinputlines_with_tag()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.createkeywordinputlines_with_tag"><code class="docutils literal notranslate"><span class="pre">createkeywordinputlines_with_tag()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.setprofile"><code class="docutils literal notranslate"><span class="pre">setprofile()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.get_profile_value"><code class="docutils literal notranslate"><span class="pre">get_profile_value()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.createprofileinputlines"><code class="docutils literal notranslate"><span class="pre">createprofileinputlines()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.createspeciesinputlines"><code class="docutils literal notranslate"><span class="pre">createspeciesinputlines()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.createspeciesinputlineswithaddon"><code class="docutils literal notranslate"><span class="pre">createspeciesinputlineswithaddon()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.create_inletspeciesinputlines"><code class="docutils literal notranslate"><span class="pre">create_inletspeciesinputlines()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.clear_all_keywords"><code class="docutils literal notranslate"><span class="pre">clear_all_keywords()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.chemid"><code class="docutils literal notranslate"><span class="pre">chemid()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.set_molefractions"><code class="docutils literal notranslate"><span class="pre">set_molefractions()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.set_massfractions"><code class="docutils literal notranslate"><span class="pre">set_massfractions()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.list_composition"><code class="docutils literal notranslate"><span class="pre">list_composition()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.setsensitivityanalysis"><code class="docutils literal notranslate"><span class="pre">setsensitivityanalysis()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.set_rop_analysis"><code class="docutils literal notranslate"><span class="pre">set_rop_analysis()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.userealgas_eos"><code class="docutils literal notranslate"><span class="pre">userealgas_eos()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.setrealgasmixingmodel"><code class="docutils literal notranslate"><span class="pre">setrealgasmixingmodel()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.use_rgp_table"><code class="docutils literal notranslate"><span class="pre">use_rgp_table()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.disable_rgp_table"><code class="docutils literal notranslate"><span class="pre">disable_rgp_table()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.setrunstatus"><code class="docutils literal notranslate"><span class="pre">setrunstatus()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.getrunstatus"><code class="docutils literal notranslate"><span class="pre">getrunstatus()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.run"><code class="docutils literal notranslate"><span class="pre">run()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.setsolutionspeciesfracmode"><code class="docutils literal notranslate"><span class="pre">setsolutionspeciesfracmode()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.getrawsolutionstatus"><code class="docutils literal notranslate"><span class="pre">getrawsolutionstatus()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.getmixturesolutionstatus"><code class="docutils literal notranslate"><span class="pre">getmixturesolutionstatus()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.get_solution_size"><code class="docutils literal notranslate"><span class="pre">get_solution_size()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.getnumbersolutionpoints"><code class="docutils literal notranslate"><span class="pre">getnumbersolutionpoints()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.parsespeciessolutiondata"><code class="docutils literal notranslate"><span class="pre">parsespeciessolutiondata()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.process_solution"><code class="docutils literal notranslate"><span class="pre">process_solution()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.activate_surface_chemistry"><code class="docutils literal notranslate"><span class="pre">activate_surface_chemistry()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.verify_surface_chemistry"><code class="docutils literal notranslate"><span class="pre">verify_surface_chemistry()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.no_surface_mechanism_declaration"><code class="docutils literal notranslate"><span class="pre">no_surface_mechanism_declaration()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.no_surface_material"><code class="docutils literal notranslate"><span class="pre">no_surface_material()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.get_material_names"><code class="docutils literal notranslate"><span class="pre">get_material_names()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.get_site_species_names"><code class="docutils literal notranslate"><span class="pre">get_site_species_names()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.get_bulk_species_names"><code class="docutils literal notranslate"><span class="pre">get_bulk_species_names()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.get_total_site_species"><code class="docutils literal notranslate"><span class="pre">get_total_site_species()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.get_total_bulk_species"><code class="docutils literal notranslate"><span class="pre">get_total_bulk_species()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.check_material_area_fraction"><code class="docutils literal notranslate"><span class="pre">check_material_area_fraction()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.get_material_area_fraction"><code class="docutils literal notranslate"><span class="pre">get_material_area_fraction()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.set_material_area_fraction"><code class="docutils literal notranslate"><span class="pre">set_material_area_fraction()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.check_material_temperature"><code class="docutils literal notranslate"><span class="pre">check_material_temperature()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.get_material_temperature"><code class="docutils literal notranslate"><span class="pre">get_material_temperature()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.set_material_temperature"><code class="docutils literal notranslate"><span class="pre">set_material_temperature()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.get_all_surface_temperature"><code class="docutils literal notranslate"><span class="pre">get_all_surface_temperature()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.get_site_fraction"><code class="docutils literal notranslate"><span class="pre">get_site_fraction()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.set_site_fraction"><code class="docutils literal notranslate"><span class="pre">set_site_fraction()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.get_all_site_fractions"><code class="docutils literal notranslate"><span class="pre">get_all_site_fractions()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.get_bulk_activity"><code class="docutils literal notranslate"><span class="pre">get_bulk_activity()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.set_bulk_activity"><code class="docutils literal notranslate"><span class="pre">set_bulk_activity()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.get_all_bulk_growth_rates"><code class="docutils literal notranslate"><span class="pre">get_all_bulk_growth_rates()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.set_init_surface_coverage"><code class="docutils literal notranslate"><span class="pre">set_init_surface_coverage()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ReactorModel.set_surface_chemistry_keywords"><code class="docutils literal notranslate"><span class="pre">set_surface_chemistry_keywords()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+
+  
+  <nav class="tocsection editthispage" aria-label="Edit this page">
+    <a href="http://github.com/ansys/pychemkin/edit/main/ansys/chemkin/core/reactormodel/ReactorModel.py" rel="noopener noreferrer">
+      <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </nav>
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../../../../_sources/api/ansys/chemkin/core/reactormodel/ReactorModel.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../../../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../../../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../../../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.9.0.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

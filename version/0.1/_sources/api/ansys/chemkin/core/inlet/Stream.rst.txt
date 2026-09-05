@@ -1,0 +1,152 @@
+
+
+
+
+
+
+:class:`Stream`
+===============
+
+
+.. py:class:: ansys.chemkin.core.inlet.Stream(chem, label: Union[str, None] = None)
+
+   Bases: :py:obj:`ansys.chemkin.core.mixture.Mixture`
+
+
+   Generic inlet stream object for Chemkin open reactor models.
+
+
+
+.. py:currentmodule:: Stream
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~convert_to_mass_flowrate`
+            - Convert different types of flow rate value to mass flow rate.
+          * - :py:attr:`~convert_to_vol_flowrate`
+            - Convert different types of flow rate value to volumetric flow rate.
+          * - :py:attr:`~convert_to_sccm`
+            - Convert different types of flow rate value to SCCM.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~flowarea`
+            - Get inlet flow area.
+          * - :py:attr:`~mass_flowrate`
+            - Get inlet mass flow rate.
+          * - :py:attr:`~vol_flowrate`
+            - Get inlet volumetric flow rate.
+          * - :py:attr:`~sccm`
+            - Get inlet SCCM volumetric flow rate.
+          * - :py:attr:`~velocity`
+            - Get inlet gas velocity.
+          * - :py:attr:`~velocity_gradient`
+            - Get inlet gas axial velocity gradient.
+          * - :py:attr:`~label`
+            - Get the label of the Stream.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.inlet import Stream
+
+Property detail
+---------------
+
+.. py:property:: flowarea
+   :type: float
+
+
+   Get inlet flow area.
+
+
+.. py:property:: mass_flowrate
+   :type: float
+
+
+   Get inlet mass flow rate.
+
+
+.. py:property:: vol_flowrate
+   :type: float
+
+
+   Get inlet volumetric flow rate.
+
+
+.. py:property:: sccm
+   :type: float
+
+
+   Get inlet SCCM volumetric flow rate.
+
+
+.. py:property:: velocity
+   :type: float
+
+
+   Get inlet gas velocity.
+
+
+.. py:property:: velocity_gradient
+   :type: float
+
+
+   Get inlet gas axial velocity gradient.
+
+
+.. py:property:: label
+   :type: str
+
+
+   Get the label of the Stream.
+
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: convert_to_mass_flowrate() -> float
+
+   Convert different types of flow rate value to mass flow rate.
+
+
+.. py:method:: convert_to_vol_flowrate() -> float
+
+   Convert different types of flow rate value to volumetric flow rate.
+
+
+.. py:method:: convert_to_sccm() -> float
+
+   Convert different types of flow rate value to SCCM.
+
+
+
+
+

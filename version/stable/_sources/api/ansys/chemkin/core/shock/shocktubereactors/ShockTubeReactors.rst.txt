@@ -1,0 +1,229 @@
+
+
+
+
+
+
+:class:`ShockTubeReactors`
+==========================
+
+
+.. py:class:: ansys.chemkin.core.shock.shocktubereactors.ShockTubeReactors(reactor_condition: ansys.chemkin.core.inlet.Stream, label: str)
+
+   Bases: :py:obj:`ansys.chemkin.core.reactormodel.ReactorModel`
+
+
+   Generic Chemkin 0-D transient shock tube reactor model.
+
+
+
+.. py:currentmodule:: ShockTubeReactors
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_inlet_viscosity`
+            - Set the initial gas viscocity.
+          * - :py:attr:`~set_solver_max_timestep_size`
+            - Set the maximum time step size.
+          * - :py:attr:`~set_solution_printing_timestep_size`
+            - Set the timestep size for solution printing.
+          * - :py:attr:`~get_solution_size`
+            - Get solution size.
+          * - :py:attr:`~process_solution`
+            - Post-process solution to extract the raw solution variable data.
+          * - :py:attr:`~get_solution_variable_profile`
+            - Get the solution profile.
+          * - :py:attr:`~create_solution_streams`
+            - Create a list of Streams at the solution time points.
+          * - :py:attr:`~get_solution_stream`
+            - Get the solution stream at the given time.
+          * - :py:attr:`~get_solution_stream_at_index`
+            - Get solution stream at given solution time index.
+          * - :py:attr:`~get_inductionlength_size`
+            - Get number of induction length.
+          * - :py:attr:`~get_induction_lengths`
+            - Get induction lengths and local maximum total thermicities.
+          * - :py:attr:`~get_single_point_solution`
+            - Get the value of single point solution variable.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~time`
+            - Get simulation end time.
+          * - :py:attr:`~starttime`
+            - Get simulation start time.
+          * - :py:attr:`~diameter`
+            - Get shock tube diameter.
+          * - :py:attr:`~tolerances`
+            - Get transient solver tolerances.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~bl_correction`
+            - 
+          * - :py:attr:`~reactor_diameter`
+            - 
+          * - :py:attr:`~init_visc`
+            - 
+          * - :py:attr:`~i_type`
+            - 
+          * - :py:attr:`~pfr_like`
+            - 
+          * - :py:attr:`~soln_parameters_list`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.shock.shocktubereactors import ShockTubeReactors
+
+Property detail
+---------------
+
+.. py:property:: time
+   :type: float
+
+
+   Get simulation end time.
+
+
+.. py:property:: starttime
+   :type: float
+
+
+   Get simulation start time.
+
+
+.. py:property:: diameter
+   :type: float
+
+
+   Get shock tube diameter.
+
+
+.. py:property:: tolerances
+   :type: tuple
+
+
+   Get transient solver tolerances.
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: bl_correction
+   :value: 0
+
+
+.. py:attribute:: reactor_diameter
+
+.. py:attribute:: init_visc
+
+.. py:attribute:: i_type
+
+.. py:attribute:: pfr_like
+   :value: False
+
+
+.. py:attribute:: soln_parameters_list
+   :value: ['P', 'T', 'RHO', 'V', 'A', 'MA', 'CDET']
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: set_inlet_viscosity(visc: float)
+
+   Set the initial gas viscocity.
+
+
+.. py:method:: set_solver_max_timestep_size(size: float)
+
+   Set the maximum time step size.
+
+
+.. py:method:: set_solution_printing_timestep_size(delta_time: float)
+
+   Set the timestep size for solution printing.
+
+
+.. py:method:: get_solution_size() -> int
+
+   Get solution size.
+
+
+.. py:method:: process_solution()
+
+   Post-process solution to extract the raw solution variable data.
+
+
+.. py:method:: get_solution_variable_profile(varname: str) -> numpy.typing.NDArray[numpy.double]
+
+   Get the solution profile.
+
+
+.. py:method:: create_solution_streams(specfrac: numpy.typing.NDArray[numpy.double]) -> int
+
+   Create a list of Streams at the solution time points.
+
+
+.. py:method:: get_solution_stream(time: float) -> ansys.chemkin.core.inlet.Stream
+
+   Get the solution stream at the given time.
+
+
+.. py:method:: get_solution_stream_at_index(solution_index: int) -> ansys.chemkin.core.inlet.Stream
+
+   Get solution stream at given solution time index.
+
+
+.. py:method:: get_inductionlength_size() -> int
+
+   Get number of induction length.
+
+
+.. py:method:: get_induction_lengths(npoints: int) -> tuple[numpy.typing.NDArray[numpy.double], numpy.typing.NDArray[numpy.double]]
+
+   Get induction lengths and local maximum total thermicities.
+
+
+.. py:method:: get_single_point_solution(varname: str) -> float
+
+   Get the value of single point solution variable.
+
+
+
+
+

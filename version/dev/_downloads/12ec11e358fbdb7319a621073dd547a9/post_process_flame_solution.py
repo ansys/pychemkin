@@ -1,0 +1,306 @@
+# Copyright (c) 2026 Synopsys, Inc. and ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+r""".. _ref_post_process_flame:
+
+===================================
+Post-process Chemkin flame solution
+===================================
+
+PyChemkin has a post-process module ``ChemkinSolutionImporter`` that can used
+to import the XML solution data from selected Chemkin reactor models into Python.
+This example shows how use some of objects and utilities from the
+``ChemkinSolutionImporter``, the ``SolutionData``, and the ``SolutionGroup`` modules
+to extract the solution variables from a 1-D steady-state flame simulation.
+
+The original Chemkin project utilized the *Particle Tracking Module (PTM)* with
+the moments method to simulate the evolution of the size distribution of the soot
+particles in the flame. The PTM employs a surface-chemistry based mechanism to
+model the homogeneous nucleation of the soot particles from the precusor,
+in this case pyrene (A4), and the subsequent mass growth of the soot particles.
+The predicted profiles of the soot particle volume fraction and the gas precursor
+species are of particular interest in the analysis, and the subsequent visualization
+of these profiles is important for understanding the soot formation and transport
+processes in the flame. In this example, the particle size distributions are
+reconstructed from the moments values in the XML solution data, and
+the particle size distributions at three locations in the flame zone are visualized
+for comparisons.
+
+In combination of other PyChemkin modules,
+such as ``Chemistry`` and ``Mixture``, you can further analyze and visualize
+the simulation results.
+
+.. note::
+
+   The *Particle Tracking Module (PTM)* is **not** available through the PyChemkin
+   APIs.
+
+"""
+
+# sphinx_gallery_thumbnail_path = '_static/plot_post_process_flame.png'
+
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+from ansys.chemkin.core.chemkin_solution_utility import ChemkinSolutionImporter
+from ansys.chemkin.core.logger import logger
+from ansys.chemkin.core.particles import PDF
+from ansys.chemkin.core.utilities import (
+    copy_file,
+    delete_files_by_extension,
+)
+
+# check working directory
+current_dir = str(Path.cwd())
+logger.debug("working directory: " + current_dir)
+
+#######################################
+# Provide the Chemkin XML solution file
+# =====================================
+# Find the data folder containing the XML solution file.
+
+try:
+    script_dir_obj = Path(__file__).parent.resolve()
+except NameError:
+    script_dir_obj = Path(current_dir)
+script_dir = str(script_dir_obj)
+# use the relative path to locate the XML solution data folder
+local_data_folder = script_dir_obj / ".." / "data" / "1_D_solution"
+print(f"solution data folder = {str(local_data_folder)}")
+# set the xml solution data file
+xml_solution_file = "XMLdata_opposed-flow_flame__gas_soot_radiation.zip"
+xml_solution_path = local_data_folder / xml_solution_file
+
+##########################################
+# Initialize the Chemkin solution importer
+# ========================================
+# Initialize the Chemkin solution importer which will store all the
+# raw solution data read from the XML solution file. Specify the working directory,
+# clean up any existing solution files there before importing new solution data.
+# Copy the XML solution file from the data directory to the working directory, and
+# provide the full path of the XML file to the importer.
+# The ``ChemkinSolutionImporter`` have a few options:
+#
+# 1. use ``get_help()`` method to get information about the Chemkin post-processor
+#    ``GetSolution``
+# 2. use ``generate_preference_file()`` method to create a preference file.
+#    You can make changes to the preference file ``CKSolnList.txt`` to customize
+#    the filters and the units before running the importer. Save a copy of
+#    the preference file to a different location to avoid it being deleted during
+#    the cleanup step.
+# 3. Once the customized preference file is ready, use the
+#    ``use_preference_file()`` method to apply it before reading the XML solution file.
+#
+# Then use the ``import_solution()`` and the ``process_solution_data()`` methods to
+# import the XML solution file and to process the solution data for further processing.
+#
+
+# Instantiate the Chemkin solution importer object
+ck_solution = ChemkinSolutionImporter()
+# set the working directory
+ck_solution.set_working_dir(current_dir)
+# clean up the working directory before copying the new solution file
+delete_files_by_extension(
+    targetpath=current_dir, extensions=[".ckcsv", ".txt", ".xml", ".zip"]
+)
+# copy the solution file to the current working directory
+copy_file(str(local_data_folder), current_dir, xml_solution_file)
+# set the XML solution data file for post-processing
+ck_solution.set_xml_data_file(str(Path(current_dir) / xml_solution_file))
+# - optional step: generate the preference file from the solution data
+# the preference file name is "CKSolnList.txt".
+# ck_solution.generate_preference_file(str(Path(current_dir) / xml_solution_file))
+#
+# - optional step: edit the preference file before generating the solution data
+# pause here if you want to edit the preference file before applying it
+# Remember to save the edited preference file to a different location,
+# so that it won't be deleted by the cleanup step.
+#
+# - optional step: apply the modified preference file
+# copy it to the current working directory if it is stored elsewhere
+# copy_file(str(local_data_folder), current_dir, "CKSolnList.txt")
+# apply the preference file
+# ck_solution.use_preference_file(str(Path(current_dir) / "CKSolnList.txt"))
+#
+# import solution data from the XML file
+ck_solution.import_solution()
+# convert the solution data into group objects for further analysis
+ck_solution.process_solution_data()
+
+#########################################
+# Post-process the imported solution data
+# =======================================
+# Now you can get basic information about the solution data such as
+# the number of solution groups, the number of solution points,
+# the number of solution variables, etc.
+# You use the methods provided by the ``ChemKinSolution`` object and/or the
+# ``SolutionGroup`` object to manipulate the solution data for furrther analysis
+# and plotting.
+
+# get the list of solution group names from the imported solution data
+solution_groups = ck_solution.get_solution_groups()
+# print basic information about each solution group
+for group in solution_groups:
+    print(f"Solution Group: {group}")
+    print(f"number of solution points: {ck_solution.get_number_of_points()}")
+    print(f"Number of gas species: {ck_solution.get_number_of_gas_species()}")
+    # print(f"variables: {ck_solution.get_variable_labels(group)}")
+
+# print(f"species symbols: {ck_solution.get_gas_species_symbols()}")
+
+# Instantiate a solution group data object from the first (and the only) solution group
+# in the solution data.
+grp_idx = 0
+# get the name of the first solution group
+this_group = solution_groups[grp_idx]
+# get the solution group object for the first solution group
+this_group_obj = ck_solution.get_group_object(this_group)
+# define the independent variable
+independent_var = "Distance"
+# get the array of the independent variable and its unit from the solution group object
+distance_series = this_group_obj.get_variable_array(independent_var)
+distance = distance_series.to_numpy(dtype=float, copy=False)
+distance_unit = this_group_obj.get_variable_unit(independent_var)
+# define the solution variable to be plotted
+soln_var_1 = "Particle_volume_fraction"
+soln_profile_1_series = this_group_obj.get_variable_array(soln_var_1)
+soln_profile_1 = soln_profile_1_series.to_numpy(dtype=float, copy=False)
+if len(soln_profile_1) <= 0:
+    print(f"Error...No data available for solution variable: {soln_var_1}")
+    exit()
+soln_unit_1 = this_group_obj.get_variable_unit(soln_var_1)
+# soln_var_2 = "Temperature"
+# soln_var_2 = "Axial_velocity"
+soln_var_2 = "A4"
+soln_profile_2_series = this_group_obj.get_variable_array(soln_var_2)
+soln_profile_2 = soln_profile_2_series.to_numpy(dtype=float, copy=False)
+if len(soln_profile_2) <= 0:
+    print(f"Error...No data available for solution variable: {soln_var_2}")
+    exit()
+soln_unit_2 = this_group_obj.get_variable_unit(soln_var_2)
+
+#####################################
+# Plot the selected solution variable
+# ===================================
+# plot solution profile
+line_colors = ["b", "r"]
+fig, (ax1, ax3) = plt.subplots(2, 1, figsize=(6, 8))
+# Plot the primary data on the left y-axis
+color1 = line_colors[0]
+ax1.plot(distance, soln_profile_1, color=color1, label=soln_var_1.replace("_", " "))
+ax1.set_xlabel(f"{independent_var} {distance_unit}")
+ax1.set_ylabel(
+    f"{soln_var_1.replace('_', ' ')} {soln_unit_1.replace('_', ' ')}", color=color1
+)
+ax1.tick_params(axis="y", labelcolor=color1)
+ax1.set_title("Solution profiles between the nozzles")
+# Create the secondary axes sharing the x-axis
+ax2 = ax1.twinx()
+
+color2 = line_colors[1]
+ax2.plot(distance, soln_profile_2, color=color2, label=soln_var_2.replace("_", " "))
+ax2.set_xlabel(f"{independent_var} {distance_unit}")
+ax2.set_ylabel(
+    f"{soln_var_2.replace('_', ' ')} {soln_unit_2.replace('_', ' ')}", color=color2
+)
+ax2.tick_params(axis="y", labelcolor=color2)
+
+##################################################
+# Reconstruct the soot particle size distributions
+# ================================================
+# Extract the moments values of the soot particle size distributions
+# from the XML solution data. By assuming the particle size distribution
+# follows the lognormal distribution, we can reconstruct it with only
+# three size moments. Additional information about the properties of the
+# soot particles are required for the reconstruction. These properties are
+# the soot particle bulk density, the minimum particle inception size class,
+# and the molecular mass of the core unit that makes up the particle, i.e.,
+# the carbon atom in the case of soot particles.
+
+# reconstruct the particle size distributions from the moments values
+# in the solution data
+# get soot particle size distributions in the flame at specified locations
+loc = [1.2, 1.3, 1.4]  # distance from the fuel inlet in [cm]
+i_loc = []
+# get moments from the solution data
+m0_var = "0th_moment_of_particle_size_distribution"
+m1_var = "1st_moment_of_particle_size_distribution"
+m2_var = "2nd_moment_of_particle_size_distribution"
+soln_m0 = this_group_obj.get_variable_array(m0_var).to_numpy(dtype=float, copy=False)
+soln_m1 = this_group_obj.get_variable_array(m1_var).to_numpy(dtype=float, copy=False)
+soln_m2 = this_group_obj.get_variable_array(m2_var).to_numpy(dtype=float, copy=False)
+# set up size moments data for further analysis
+m0 = []
+m1 = []
+m2 = []
+for i, x in enumerate(loc):
+    idx = np.searchsorted(distance, x)
+    i_loc.append(idx)
+    print(f"location of x= {x} is {idx}")
+    m0.append(soln_m0[idx])
+    m1.append(soln_m1[idx])
+    m2.append(soln_m2[idx])
+    print(f"m0: {m0[-1]}, m1: {m1[-1]}, m2: {m2[-1]}")
+
+#####################################
+# Plot the selected solution variable
+# ===================================
+# plot the particle size distributions at three locations
+# in the flame zone.
+
+# plot the particle size distributions
+# minimum inception class (from the nucleation reactions)
+class_min = 32.0
+# bulk density of the particles [g/cm3]
+soot_bulk_den = 1.8
+# molecular mass of the core unit (atom or molecule)
+# that makes up the core of the particle [g/mole]
+soot_core_molar_mass = 12.0  # mass of one mole of carbon atom
+# instantiate the population density function object for the soot particles
+soot_pdf = PDF(core_wt=soot_core_molar_mass, bulk_density=soot_bulk_den)
+# loop over the selected locations in the flame
+for i, m0_val in enumerate(m0):
+    m1_val = m1[i]
+    m2_val = m2[i]
+    # set up the moments of the particle size distribution function
+    soot_pdf.set_moments(m0_val, m1_val, m2_val, class_min)
+    # assume the size distribution follows the lognormal distribution
+    d, lognorm_pdf = soot_pdf.get_lognormal_pdf(
+        samples=1000, limit=0.001, mode="volume"
+    )
+    ax3.plot(d, lognorm_pdf, label=f"x = {loc[i]} cm")
+
+# convert the size class (number of the core in the particle) to volume
+vol_min = soot_pdf.class_to_volume(class_min)
+ax3.axvline(
+    vol_min, color="red", linestyle="--", label=f"Minimum Value = {vol_min:.2e}"
+)
+ax3.set_title("Soot Particle Size Distributions in the flame zone")
+ax3.set_xlabel("Primary particle volume (micron3)")
+ax3.set_ylabel("Number density (1/cm3)")
+ax3.legend()
+# need to zoom in to see the differences
+plt.tight_layout()
+plt.show()
+# plt.savefig("plot_post_process_flame.png", bbox_inches="tight")

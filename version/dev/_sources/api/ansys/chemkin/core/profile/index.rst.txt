@@ -1,0 +1,78 @@
+
+
+
+
+
+
+The ``profile.py`` module
+=========================
+
+.. py:module:: ansys.chemkin.core.profile
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: profile
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.profile.Profile`
+            - Chemkin profile keyword class.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Profile</api/ansys/chemkin/core/profile/Profile>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin profile keyword data model.
+
+
+
+
+
+
+
+

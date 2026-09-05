@@ -1,0 +1,164 @@
+
+
+
+
+
+
+:class:`Flame`
+==============
+
+
+.. py:class:: ansys.chemkin.core.flame.Flame(fuelstream: ansys.chemkin.core.inlet.Stream, label: str)
+
+   Bases: :py:obj:`ansys.chemkin.core.reactormodel.ReactorModel`, :py:obj:`ansys.chemkin.core.steadystatesolver.SteadyStateSolver`, :py:obj:`ansys.chemkin.core.grid.Grid`
+
+
+   Generic steady state, one dimensional flame model.
+
+
+
+.. py:currentmodule:: Flame
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_temperature_profile`
+            - Specify temperature profile.
+          * - :py:attr:`~use_temp_profiel_initial_mesh`
+            - Use the temperature profile grid as the initial grid.
+          * - :py:attr:`~set_convection_differencing_type`
+            - Specify the finite differencing scheme.
+          * - :py:attr:`~set_mesh_keywords`
+            - Set mesh related keywords.
+          * - :py:attr:`~set_ss_solver_keywords`
+            - Add steady-state solver parameter keywoprds to the keyword list.
+          * - :py:attr:`~use_mixture_averaged_transport`
+            - Use the mixture-averaged transport properties.
+          * - :py:attr:`~use_multicomponent_transport`
+            - Use the multi-component transport properties.
+          * - :py:attr:`~use_fixed_lewis_number_transport`
+            - Compute the species diffusion coefficient with fixed Lewis number.
+          * - :py:attr:`~use_thermal_diffusion`
+            - Include the thermal diffusion (Doret) effect.
+          * - :py:attr:`~set_species_boundary_types`
+            - Set the species boundary condition type (at inlet and outlet).
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~mass_flow_rate`
+            - 
+          * - :py:attr:`~temp_profile_set`
+            - 
+          * - :py:attr:`~grid_t_profile`
+            - 
+          * - :py:attr:`~energytypes`
+            - 
+          * - :py:attr:`~transport_mode`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.flame import Flame
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: mass_flow_rate
+
+.. py:attribute:: temp_profile_set
+   :value: False
+
+
+.. py:attribute:: grid_t_profile
+   :value: False
+
+
+.. py:attribute:: energytypes
+
+.. py:attribute:: transport_mode
+   :value: 0
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: set_temperature_profile(x: numpy.typing.NDArray[numpy.double], temp: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify temperature profile.
+
+
+.. py:method:: use_temp_profiel_initial_mesh(on: bool = False)
+
+   Use the temperature profile grid as the initial grid.
+
+
+.. py:method:: set_convection_differencing_type(mode: str)
+
+   Specify the finite differencing scheme.
+
+
+.. py:method:: set_mesh_keywords() -> int
+
+   Set mesh related keywords.
+
+
+.. py:method:: set_ss_solver_keywords()
+
+   Add steady-state solver parameter keywoprds to the keyword list.
+
+
+.. py:method:: use_mixture_averaged_transport()
+
+   Use the mixture-averaged transport properties.
+
+
+.. py:method:: use_multicomponent_transport()
+
+   Use the multi-component transport properties.
+
+
+.. py:method:: use_fixed_lewis_number_transport(lewis: float = 1.0)
+
+   Compute the species diffusion coefficient with fixed Lewis number.
+
+
+.. py:method:: use_thermal_diffusion(mode: bool = True)
+
+   Include the thermal diffusion (Doret) effect.
+
+
+.. py:method:: set_species_boundary_types(mode: str = 'comp')
+
+   Set the species boundary condition type (at inlet and outlet).
+
+
+
+
+

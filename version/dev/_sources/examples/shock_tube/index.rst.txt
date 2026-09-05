@@ -1,0 +1,96 @@
+
+
+.. _sphx_glr_examples_shock_tube:
+
+Shock tube reactor
+===================
+
+The *shock tube reactor* model is a 0-D transient reactor.
+This ideal reactor model is normally used to reproduce the shock tube experiments
+for chemical kinetics researches. The *incident shock* model predicts species profiles
+behind the incident shock front which can be used to compare against corresponding experimental
+data. Similarly, the *reflected shock* model complements the experiments for kinetics
+researches at the high temperature conditions behind a reflected shock front.
+
+The examples will show the procedures of setting up an incident shock (with boundary layer
+correction) simulation and a Zeldovich-von Neumann-Deoring (ZND) analysis of a combustible gas
+mixture.
+
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The ZND (Zeldovich-von Neumann-Deoring) model is commonly applied to study the evolution of the gas mixture behind a detonation wave.">
+
+.. only:: html
+
+  .. image:: /examples/shock_tube/images/thumb/sphx_glr_ZND_thumb.png
+    :alt:
+
+  :doc:`/examples/shock_tube/ZND`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Perform ZND analysis of a combustible hydrogen mixture</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Shock tube experiments are commonly used to study reaction paths and to measure reaction rates at elevated temperatures. You can apply the incident shock reactor model IncidentShock() to validate the reaction mechanism or kinetic parameters derived from such experiments.">
+
+.. only:: html
+
+  .. image:: /examples/shock_tube/images/thumb/sphx_glr_incidentshock_thumb.png
+    :alt:
+
+  :doc:`/examples/shock_tube/incidentshock`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Nitric oxide formation in air heated by an incident shock wave</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Shock tube experiments are commonly used to study reaction paths and to measure reaction rates at elevated temperatures. You can apply the incident shock reactor model IncidentShock() to validate the reaction mechanism or kinetic parameters derived from such experiments.">
+
+.. only:: html
+
+  .. image:: /examples/shock_tube/images/thumb/sphx_glr_reflectedshock_thumb.png
+    :alt:
+
+  :doc:`/examples/shock_tube/reflectedshock`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Dissociation of nitrous oxide behind a reflected shock wave</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/shock_tube/ZND
+   /examples/shock_tube/incidentshock
+   /examples/shock_tube/reflectedshock
+

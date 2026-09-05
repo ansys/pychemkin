@@ -1,0 +1,1158 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Examples &#8212; PyChemkin</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/ansys-sphinx-theme.css?v=5ffe81b6" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/index';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Chemistry" href="chemistry/index.html" />
+    <link rel="prev" title="The validation.py module" href="../api/ansys/chemkin/core/validation/index.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/examples/index.html" />
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <img src="../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyChemkin - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../artifacts.html">
+    Artifacts
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i><span class="visually-hidden">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i><span class="visually-hidden">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../artifacts.html">
+    Artifacts
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i><span class="visually-hidden">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i><span class="visually-hidden">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="chemistry/index.html">Chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mixture/index.html">Mixture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="batch/index.html">Batch reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="engine/index.html">0-D engine models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PSR/index.html">Perfectly stirred reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PFR/index.html">Plug-flow reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shock_tube/index.html">Shock tube reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reactor_network/index.html">PSR network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="premixed_flame/index.html">Premixed flame models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="opposed_flow_flame/index.html">Opposed-flow flame model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="surface_chemistry/index.html">Surface chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multiprocessing/index.html">Multiprocessing parameter study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced/index.html">Advanced Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="post_process/index.html">Post-processing</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Examples</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="examples">
+<span id="id1"></span><h1>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h1>
+<p>This section shows how to use PyChemkin utilities and reactor models to perform different types of simulations.
+Early examples demonstrate how to perform essential operations, such as loading and preprocessing the chemistry set.
+Later examples explain how to tackle more complex simulations, such as running an ignition delay parameter study.
+Thus, you should go through the examples in the order listed.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When you use the Jupyter Notebook version of the example projects (<code class="docutils literal notranslate"><span class="pre">*.ipynb</span></code>), please
+remember to <em>close the project after you finish viewing and/or running the project</em>. When the project
+is open, it might hold on to your Ansys license. If you have too many Jupyter Notebook projects
+active, you might run out of your Ansys licenses. Closing the Jupyter Notebook project will
+release the license. If the <em>Jupyter Notebook web interface</em> is used to load the PyChemkin
+example projects, you can navigate to the top menu bar and select <code class="docutils literal notranslate"><span class="pre">File</span> <span class="pre">&gt;</span> <span class="pre">Close</span> <span class="pre">and</span> <span class="pre">Shut</span> <span class="pre">Down</span> <span class="pre">Notebook</span></code>
+to close the project and release the license. If the <em>VS Code</em> is used, you can simply close the tab
+associated with the example.</p>
+</div>
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"></div></section>
+<section id="chemistry">
+<h1>Chemistry<a class="headerlink" href="#chemistry" title="Link to this heading">#</a></h1>
+<p>PyChemkin examples to demonstrate basic operations for
+instantiating <em>Chemistry Set</em> from the gas-phase mechanism
+and the thermodynamic/transport data files.</p>
+<p>The examples walk through the steps about how to pre-process the
+<em>Chemistry Set</em>, retrieve mechanism information and the species properties,
+as well as how to handle multiple <em>Chemistry Sets</em> in a <strong>Python Chemkin</strong>
+project.</p>
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Before you can run a Chemkin simulation, you must load and preprocess the reaction mechanism data. The mechanism data consists of a reaction mechanism input file, a thermodynamic data file, and an optional transport data file."><img alt="" src="../_images/sphx_glr_loadmechanism_thumb.png" />
+<p><a class="reference internal" href="chemistry/loadmechanism.html"><span class="doc">Preprocess a gas-phase mechanism</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Preprocess a gas-phase mechanism</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="PyChemkin can facilitate multiple mechanisms in one project. However, only one chemistry set can be active at a time. This example shows how to use the activate() method to switch between multiple chemistry sets (mechanisms) in the same Python project. You can use this method to compare results from two different mechanisms, such as the base and reduced mechanisms."><img alt="" src="../_images/sphx_glr_multiplemechanisms_thumb.png" />
+<p><a class="reference internal" href="chemistry/multiplemechanisms.html"><span class="doc">Work with multiple mechanisms</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Work with multiple mechanisms</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This example shows how to set up a PyChemkin project and start to use PyChemkin features. You begin by importing the PyChemkin package, which is named ansys.chemkin.core, and optionally the PyChemkin logger package, which is named ansys.chemkin.core.logger."><img alt="" src="../_images/sphx_glr_simple_thumb.png" />
+<p><a class="reference internal" href="chemistry/simple.html"><span class="doc">Set up a PyChemkin project</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Set up a PyChemkin project</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="PyChemkin inherits many Ansys Chemkin utilities for evaluating species properties in a mechanism. Most tools for calculating the species properties are part of the PyChemkin Chemistry() methods. This example shows how use some of these methods to evaluate species thermodynamic and transport properties."><img alt="" src="../_images/sphx_glr_speciesproperties_thumb.png" />
+<p><a class="reference internal" href="chemistry/speciesproperties.html"><span class="doc">Evaluate gas species properties</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Evaluate gas species properties</div>
+</div></div></section>
+<section id="mixture">
+<h1>Mixture<a class="headerlink" href="#mixture" title="Link to this heading">#</a></h1>
+<p><em>Mixture</em> is the “core” token in <strong>PyChemkin</strong>. It represents a gas-phase mixture by storing
+its pressure, temperature, and species composition. <em>Stream</em> is an extended “Class” of <em>Mixture</em>
+with the additional attribute of “mass/volumetric flow rate”. <em>Mixture</em> and <em>Stream</em> include utilities
+that can be used to evaluate the mixture properties (density, mixture enthalpy, mixture viscosity, …)
+and the reaction rates. There are also methods to manipulate the <em>Mixture</em>/<em>Stream</em> such as merging two mixtures
+adiabatically.</p>
+<p>The examples demonstrate how to instantiate the <em>Mixture</em>/<em>Stream</em> objects, how to extract information and properties
+of a <em>Mixture</em>/<em>Stream</em>, and how to manipulate <em>Mixture</em>/<em>Stream</em> objects.</p>
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This example shows how to find the equilibrium state of a mixture. It uses the equilibrium() method with the constant pressure and enthalpy option to estimate the adiabatic flame temperature of a methane-oxygen mixture. This example also explores the influence of the equivalence ratio on the predicted adiabatic flame temperature."><img alt="" src="../_images/sphx_glr_adiabaticflametemperature_thumb.png" />
+<p><a class="reference internal" href="mixture/adiabaticflametemperature.html"><span class="doc">Estimate the adiabatic flame temperature of a gas mixture</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Estimate the adiabatic flame temperature of a gas mixture</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="A mixture is a core component of the PyChemkin framework. In addition to getting mixture thermodynamic and transport properties, such as density, heat capacity, and viscosity, you can combine two mixtures, find the equilibrium state of a mixture, or use a mixture to define the initial state of a reactor. A PyChemkin reactor model is a black box that transforms a mixture from its initial state to a new one."><img alt="" src="../_images/sphx_glr_createmixture_thumb.png" />
+<p><a class="reference internal" href="mixture/createmixture.html"><span class="doc">Create a mixture</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Create a mixture</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Calculate the detonation wave speed of a real-gas mixture"><img alt="" src="../_images/sphx_glr_detonation_thumb.png" />
+<p><a class="reference internal" href="mixture/detonation.html"><span class="doc">Calculate the detonation wave speed of a real-gas mixture</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Calculate the detonation wave speed of a real-gas mixture</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This example shows how to quickly estimate the steady-state NO level that is formed by the combustion of a fuel-air mixture at a given temperature. Without needing any reaction, the NO concentration gets to its steady state (or the maximum level) when the product mixture from the fuel-air combustion reaches the equilibrium state at the given temperature. To find the equilibrium state of the fresh fuel-air mixture, the equilibrium() method is used with the fixed pressure and fixed temperature options."><img alt="" src="../_images/sphx_glr_equilibriumcomposition_thumb.png" />
+<p><a class="reference internal" href="mixture/equilibriumcomposition.html"><span class="doc">Estimate the steady-state NO emission level of a complete burned fuel-air mixture</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Estimate the steady-state NO emission level of a complete burned fuel-air mixture</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="One of the advantages of PyChemkin is flexibility. You can establish your own workflow with PyChemkin to meet your simulation goals. This tutorial is an example of building a specialized algorithm to calculate the heating values, the lower heating value (LHV) and the higher heating value (HHV), of fuel mixtures."><img alt="" src="../_images/sphx_glr_heatingvalues_thumb.png" />
+<p><a class="reference internal" href="mixture/heatingvalues.html"><span class="doc">Calculate the heating values of fuel mixtures</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Calculate the heating values of fuel mixtures</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="PyChemkin provides a set of basic mixture utilities enabling the creation of new mixtures from existing ones. The mixing methods let you combine two mixtures at constant pressure with specific constraints."><img alt="" src="../_images/sphx_glr_mixturemixing_thumb.png" />
+<p><a class="reference internal" href="mixture/mixturemixing.html"><span class="doc">Combine gas mixtures</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Combine gas mixtures</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="- Set up from scratch. - Obtained from certain mixture operations. - Based on a point (time or grid) solution of a reactor simulation."><img alt="" src="../_images/sphx_glr_reactionrates_thumb.png" />
+<p><a class="reference internal" href="mixture/reactionrates.html"><span class="doc">Rank reaction rates</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Rank reaction rates</div>
+</div></div></section>
+<section id="batch-reactor">
+<h1>Batch reactor<a class="headerlink" href="#batch-reactor" title="Link to this heading">#</a></h1>
+<p>The <em>batch reactor</em> is an idealized 0-D transient closed reactor model in which the gas inside
+the reactor is assumed to be homogeneous. When the pressure of the <em>batch reactor</em> is constrained,
+the reactor volume would vary to conserve the total gas mass. Likewise, the reactor pressure might
+change when the reactor volume is “given”. The gas temperature can be “given” by piecewise linear
+profile data or solved by the energy equation.</p>
+<p>The examples consist of projects that utilize the <em>batch reactor</em> model to perform simulations of
+various complexities, from tracking the evolution of the mixture properties to the A-factor sensitivity
+analysis.</p>
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized reactor models commonly used for studying chemical processes and for developing reaction mechanisms. The batch reactor is a transient 0-D numerical portrayal of the closed homogeneous/perfectly mixed gas-phase reactor. There are two basic types of batch reactor models:"><img alt="" src="../_images/sphx_glr_closed_homogeneous__transient_thumb.png" />
+<p><a class="reference internal" href="batch/closed_homogeneous__transient.html"><span class="doc">Simulate hydrogen combustion in a constant-pressure reactor</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Simulate hydrogen combustion in a constant-pressure reactor</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="One of the important properties of hydrocarbon fuels is the ignition delay time. For automobiles, the gasoline, a mixtures of many fuel species, is graded by the octane number which is closely related to the fuel mixture&#x27;s ignition characteristics. Higher octane number fuel tends to ignite more easily. However, this does not mean you should blindly put the highest octane number fuel into your car. Car engines are designed for specific operating conditions, and you should always use the gasoline grades recommended by the car/engine manufacturer to prevent damages to the engine."><img alt="" src="../_images/sphx_glr_ignitiondelay_thumb.png" />
+<p><a class="reference internal" href="batch/ignitiondelay.html"><span class="doc">Predict the ignition delay time of a combustible mixture</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Predict the ignition delay time of a combustible mixture</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized reactor models commonly used for studying chemical processes and for developing reaction mechanisms. The batch reactor is a transient 0-D numerical portrayal of the closed homogeneous/perfectly mixed gas-phase reactor. There are two basic types of batch reactor models:"><img alt="" src="../_images/sphx_glr_rcm_thumb.png" />
+<p><a class="reference internal" href="batch/rcm.html"><span class="doc">Simulate a rapid compression machine</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Simulate a rapid compression machine</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="One of the advantages of PyChemkin is customizability. You can easily build a specialized workflow to facilitate your simulation goals."><img alt="" src="../_images/sphx_glr_sensitivity_thumb.png" />
+<p><a class="reference internal" href="batch/sensitivity.html"><span class="doc">Perform brute-force sensitivity analysis</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Perform brute-force sensitivity analysis</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="How does the volume of water vapor evolves when it is cooled from a temperature above the boiling point to a temperature that is just above the freezing point at constant pressure? How fast does the vapor volume drop? This example uses the GivenPressureBatchReactorFixedTemperature model to explore the different behaviors between an ideal gas water vapor and its real gas counterpart."><img alt="" src="../_images/sphx_glr_vapor_thumb.png" />
+<p><a class="reference internal" href="batch/vapor.html"><span class="doc">Explore cooling water vapor</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Explore cooling water vapor</div>
+</div></div></section>
+<section id="d-engine-models">
+<h1>0-D engine models<a class="headerlink" href="#d-engine-models" title="Link to this heading">#</a></h1>
+<p><strong>PyChemkin</strong> offers two types of 0-D engine models: the <em>Homogeneous Charged Compression Ignition (HCCI)</em> engine model
+and the <em>Spark Ignition (SI)</em> engine model. These 0-D engine models simulate the combustion process (or the lack of, in case of a misfire)
+inside an engine cylinder between the <em>Intake Valve Close (IVC)</em> and the <em>Exhaust Valve Open (EVO)</em> when the
+cylinder is considered as a closed system. The Chemkin <em>Theory</em> manual has detailed descriptions of these 0-D engine models.</p>
+<p>The examples show the steps of setting up simulations with different <em>Chemkin</em> engine models.</p>
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized internal combustion (IC) engine models commonly used for fuel combustion and engine performance research. The Chemkin IC engine model is a specialized transient 0-D closed gas-phase reactor that mainly performs combustion simulation between the intake valve closing (IVC) and the exhaust valve opening (EVO), that is, when the engine cylinder resembles a closed chamber. The cylinder volume is derived from the piston motion as a function of the engine crank angle (CA) and engine parameters such as engine speed (RPM) and stroke. The energy equation is always solved, and there are several wall heat transfer models specifically designed for engine simulations."><img alt="" src="../_images/sphx_glr_hcciengine_thumb.png" />
+<p><a class="reference internal" href="engine/hcciengine.html"><span class="doc">Simulate a single-zone HCCI engine</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Simulate a single-zone HCCI engine</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized internal combustion (IC) engine models commonly used for fuel combustion and engine performance research. The Chemkin IC engine model is a specialized transient 0-D closed gas-phase reactor that mainly performs combustion simulation between the intake valve closing (IVC) and the exhaust valve opening (EVO), that is, when the engine cylinder resembles a closed chamber. The cylinder volume is derived from the piston motion as a function of the engine crank angle (CA) and engine parameters such as engine speed (RPM) and stroke. The energy equation is always solved and there are several wall heat transfer models specifically designed for engine simulations."><img alt="" src="../_images/sphx_glr_multizone_thumb.png" />
+<p><a class="reference internal" href="engine/multizone.html"><span class="doc">Simulate a multi-zone HCCI engine</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Simulate a multi-zone HCCI engine</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin provides a set of idealized internal combustion (IC) engine models that are widely used for fuel combustion analysis and engine performance research. The Chemkin IC engine model is a specialized, transient, zero-dimensional (0D) closed gas-phase reactor designed to simulate combustion processes occurring between intake valve closing (IVC) and exhaust valve opening (EVO). During this period, the engine cylinder is treated as a closed chamber."><img alt="" src="../_images/sphx_glr_sparkignitioengine_thumb.png" />
+<p><a class="reference internal" href="engine/sparkignitioengine.html"><span class="doc">Simulate a spark ignition engine</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Simulate a spark ignition engine</div>
+</div></div></section>
+<section id="perfectly-stirred-reactor">
+<h1>Perfectly stirred reactor<a class="headerlink" href="#perfectly-stirred-reactor" title="Link to this heading">#</a></h1>
+<p>The <em>perfectly Stirred reactor (PSR)</em> model is a 0-D steady-state reactor.
+This ideal reactor model assumes the gas mixture inside is uniform and
+the properties of the outlet stream are exactly the same as the gas properties
+inside the reactor. A PSR can have either its pressure or its volume “specified”,
+and the reactor temperature can either be solved from the energy equation or
+be “given” as an input parameter.</p>
+<p>The examples will show the procedures of setting up single PSR simulations with
+different constraints and with multiple inlet streams.</p>
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized reactor models commonly used for studying chemical processes and for developing reaction mechanisms. The PSR (perfectly stirred reactor) model is a steady-state 0-D model of the open perfectly mixed gas-phase reactor. There is no limit on the number of inlets to the PSR. As soon as the inlet gases enter the reactor, they are thoroughly mixed with the gas mixture inside. The PSR has only one outlet, and the outlet gas is assumed to be exactly the same as the gas mixture in the PSR."><img alt="" src="../_images/sphx_glr_PSRgas_thumb.png" />
+<p><a class="reference internal" href="PSR/PSRgas.html"><span class="doc">Set up a PSR parameter study for the inlet stream equivalence ratio</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Set up a PSR parameter study for the inlet stream equivalence ratio</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized reactor models commonly used for studying chemical processes and for developing reaction mechanisms. The PSR (perfectly stirred reactor) model is a steady-state 0-D model of the open perfectly mixed gas-phase reactor. There is no limit on the number of inlets to the PSR. As soon as the inlet gases enter the reactor, they are thoroughly mixed with the gas mixture inside. The PSR has only one outlet, and the outlet gas is assumed to be exactly the same as the gas mixture in the PSR."><img alt="" src="../_images/sphx_glr_jetstirredreactor_thumb.png" />
+<p><a class="reference internal" href="PSR/jetstirredreactor.html"><span class="doc">Run PSR calculations for mechanism validation</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Run PSR calculations for mechanism validation</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Ansys Chemkin offers some idealized reactor models commonly used for studying chemical processes and for developing reaction mechanisms. The PSR (perfectly stirred reactor) model is a steady-state 0-D model of the open perfectly mixed gas-phase reactor. There is no limit on the number of inlets to the PSR. As soon as the inlet gases enter the reactor, they are thoroughly mixed with the gas mixture inside. The PSR has only one outlet, and the outlet gas is assumed to be exactly the same as the gas mixture in the PSR. There are two basic types of PSR models:"><img alt="" src="../_images/sphx_glr_multi-inletPSR_thumb.png" />
+<p><a class="reference internal" href="PSR/multi-inletPSR.html"><span class="doc">Determine the impact of residence time on combustion in a PSR</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Determine the impact of residence time on combustion in a PSR</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Transient simulation of methane-air ignition in a PSR"><img alt="" src="../_images/sphx_glr_trans_PSR_ignition_thumb.png" />
+<p><a class="reference internal" href="PSR/trans_PSR_ignition.html"><span class="doc">Transient simulation of methane-air ignition in a PSR</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Transient simulation of methane-air ignition in a PSR</div>
+</div></div></section>
+<section id="plug-flow-reactor">
+<h1>Plug-flow reactor<a class="headerlink" href="#plug-flow-reactor" title="Link to this heading">#</a></h1>
+<p><em>Plug-Flow Reactor (PFR)</em> model is an idealized 1-D steady-state flow reactor model with single
+inlet stream. The reactor pressure is assumed to be given, and the mass (flow rate) conservation
+is maintained by the velocity change. The gas temperature along the reactor can be either specified
+or solved by the energy equation.</p>
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="The PFR (plug flow reactor) model is widely adopted in the chemical kinetic studies of emission abatement processes because of its simplicity in flow treatment as well as its resemblance of an exhaust duct or a tailpipe."><img alt="" src="../_images/sphx_glr_plugflow_thumb.png" />
+<p><a class="reference internal" href="PFR/plugflow.html"><span class="doc">Simulate NO reduction in combustion exhaust</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Simulate NO reduction in combustion exhaust</div>
+</div></div></section>
+<section id="shock-tube-reactor">
+<h1>Shock tube reactor<a class="headerlink" href="#shock-tube-reactor" title="Link to this heading">#</a></h1>
+<p>The <em>shock tube reactor</em> model is a 0-D transient reactor.
+This ideal reactor model is normally used to reproduce the shock tube experiments
+for chemical kinetics researches. The <em>incident shock</em> model predicts species profiles
+behind the incident shock front which can be used to compare against corresponding experimental
+data. Similarly, the <em>reflected shock</em> model complements the experiments for kinetics
+researches at the high temperature conditions behind a reflected shock front.</p>
+<p>The examples will show the procedures of setting up an incident shock (with boundary layer
+correction) simulation and a Zeldovich-von Neumann-Deoring (ZND) analysis of a combustible gas
+mixture.</p>
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="The ZND (Zeldovich-von Neumann-Deoring) model is commonly applied to study the evolution of the gas mixture behind a detonation wave."><img alt="" src="../_images/sphx_glr_ZND_thumb.png" />
+<p><a class="reference internal" href="shock_tube/ZND.html"><span class="doc">Perform ZND analysis of a combustible hydrogen mixture</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Perform ZND analysis of a combustible hydrogen mixture</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Shock tube experiments are commonly used to study reaction paths and to measure reaction rates at elevated temperatures. You can apply the incident shock reactor model IncidentShock() to validate the reaction mechanism or kinetic parameters derived from such experiments."><img alt="" src="../_images/sphx_glr_incidentshock_thumb.png" />
+<p><a class="reference internal" href="shock_tube/incidentshock.html"><span class="doc">Nitric oxide formation in air heated by an incident shock wave</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Nitric oxide formation in air heated by an incident shock wave</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Shock tube experiments are commonly used to study reaction paths and to measure reaction rates at elevated temperatures. You can apply the incident shock reactor model IncidentShock() to validate the reaction mechanism or kinetic parameters derived from such experiments."><img alt="" src="../_images/sphx_glr_reflectedshock_thumb.png" />
+<p><a class="reference internal" href="shock_tube/reflectedshock.html"><span class="doc">Dissociation of nitrous oxide behind a reflected shock wave</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Dissociation of nitrous oxide behind a reflected shock wave</div>
+</div></div></section>
+<section id="psr-network">
+<h1>PSR network<a class="headerlink" href="#psr-network" title="Link to this heading">#</a></h1>
+<p><strong>PyChemkin</strong> can be used to create an <em>Equivalence Reactor Network (ERN)</em> as a reduced-order
+(in geometry) model for complex combustion applications such as gas turbine combustor.
+Each reactor in the network represents a sub-region (zone) in the actual equipment. Normally these zones
+are created according to specific criteria such as temperature, equivalence ratio, or location; and the gas flow
+(mean, turbulent, and diffusive) between the zones becomes the internal streams between the reactors.</p>
+<p>There are several ways to build an <em>ERN</em> in <strong>PyChemkin</strong>. The first method is to create and solve the reactors one-by-one
+starting from the most upstream (first) reactor. Adjust/manipulate the external and outlet streams from connected reactors
+(that is, solutions from the reactors) using the <em>Mixture</em>/<em>Stream</em> utilities and apply the desired stream as the inlet for
+the downstream reactors. The second method takes advantage of the <em>hybridreactornetwork</em> “model” of <strong>PyChemkin</strong>.
+Simply defined the reactors with the associated external inlets and add the reactors to the <em>hybridreactornetwork</em>.
+If there are <em>recycling</em> streams from the downstream reactor to the upstream ones, the <em>hybridreactornetwork</em> will solve the
+entire <em>ERN</em> iteratively. In this case, a <em>tear point</em> must be explicitly specified. The last method, the coupled method,
+is to create the network and its connectivity first, and the entire <em>ERN</em> will be solved in a coupled manner. This method
+is the default method in Chemkin GUI and is available as the <em>PSRCluster</em> “model” in <strong>PyChemkin</strong>.</p>
+<dl class="simple">
+<dt>Chemkin <em>ERN</em> has a few limitations:</dt><dd><ul class="simple">
+<li><p>The first reactor of the reactor network must have at least one external inlet.</p></li>
+<li><p>when using the <em>coupled</em> model, the entire reactor network can have only one outlet to the surroundings, and the outlet must be attached to
+the last reactor in the network.</p></li>
+<li><p>PSR is the only reactor model allowed in the <em>PSRCluster</em> and the <em>hybridreactornetwork</em> reactor networks.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The <em>PSRChain_xxx</em> examples show the two methods to build and run a series of linked PSRs (no stream recycling) can be modeled in <strong>PyChemkin</strong>.
+The <em>PSRnetwork</em> example goes over the steps of creating and running an <em>ERN</em> with recycling streams by using the <em>hybridreactornetwork</em> method.
+The <em>PSRnetwork_coupled</em> example solves the same <em>ERN</em> as the <em>PSRnetwork</em> example but utilizes the <em>coupled</em> method. Because the sole outlet from
+the <em>coupled ERN</em> must be attached to the last reactor, the order of the downstream zones is different from the <em>PSRnetwork</em> example.</p>
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This example shows how to set up and solve a series of linked PSRs (perfectly-stirred reactors). This is the simplest reactor network as it does not contain any recycling streams or outflow splittings."><img alt="" src="../_images/sphx_glr_PSRChain_declustered_thumb.png" />
+<p><a class="reference internal" href="reactor_network/PSRChain_declustered.html"><span class="doc">Use a chain of individual reactors to model a gas combustor</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Use a chain of individual reactors to model a gas combustor</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This example shows how to set up and solve a series of linked PSRs (perfectly-stirred reactors). This is the simplest reactor network as it does not contain any recycling streams or outflow splittings."><img alt="" src="../_images/sphx_glr_PSRChain_network_thumb.png" />
+<p><a class="reference internal" href="reactor_network/PSRChain_network.html"><span class="doc">Use a chain reactor network to model a gas combustor</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Use a chain reactor network to model a gas combustor</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This example shows how to set up and solve a series of linked PSRs (perfectly-stirred reactors) with heat exchange."><img alt="" src="../_images/sphx_glr_PSRChain_network_heat_exchange_thumb.png" />
+<p><a class="reference internal" href="reactor_network/PSRChain_network_heat_exchange.html"><span class="doc">A simple reactor network with heat exchange</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A simple reactor network with heat exchange</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This example shows how to set up and solve a series of linked PSRs (perfectly-stirred reactors) with heat exchange."><img alt="" src="../_images/sphx_glr_PSRChain_network_heat_exchange_coupled_thumb.png" />
+<p><a class="reference internal" href="reactor_network/PSRChain_network_heat_exchange_coupled.html"><span class="doc">A PSR cluster with heat exchange</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A PSR cluster with heat exchange</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This example shows how to set up and solve an ERN (equivalent reactor network) in PyChemkin."><img alt="" src="../_images/sphx_glr_PSRnetwork_thumb.png" />
+<p><a class="reference internal" href="reactor_network/PSRnetwork.html"><span class="doc">Simulate a combustor using an equivalent reactor network with stream recycling</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Simulate a combustor using an equivalent reactor network with stream recycling</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This example shows how to set up and solve a &quot;coupled&quot; ERN (equivalent reactor network) in PyChemkin."><img alt="" src="../_images/sphx_glr_PSRnetwork_coupled_thumb.png" />
+<p><a class="reference internal" href="reactor_network/PSRnetwork_coupled.html"><span class="doc">Simulate a combustor using a coupled equivalent reactor network with stream recycling</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Simulate a combustor using a coupled equivalent reactor network with stream recycling</div>
+</div></div></section>
+<section id="premixed-flame-models">
+<h1>Premixed flame models<a class="headerlink" href="#premixed-flame-models" title="Link to this heading">#</a></h1>
+<p>The <em>Premixed Flame</em> model is a 1-D steady-state application, and it contains two sub-models:
+<em>“flame speed calculator”</em> (or the freely propagating flame model) and <em>“flat flame”</em> model.
+The <em>flame speed calculator</em> is commonly used to calculate the laminar flame speed of a premixed
+fuel-oxidizer mixture. The predicted/computed flame speeds can be used to validate a combustion
+mechanism or can serve as a prre-processor to construct a “flame speed table” or a
+“combustion progress table” for other applications. The <em>flat flame</em> burner-stablized model is
+primarily used to study the flame chemistry in conjunction with the flat flame experiments.</p>
+<p>The examples show different ways to perform the “premixed flame” calculations.</p>
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="The freely propagating premixed flame model can be utilized to obtain the laminar flame speed of a gas mixture at given initial temperature and pressure. The premixed flame model will calculate the temperature and species composition profiles across the flame, and the laminar flame speed will be derived from the mass flow rate of the gas mixture, a constant across the entire calculation domain because of the mass conservation."><img alt="" src="../_images/sphx_glr_flamespeed_thumb.png" />
+<p><a class="reference internal" href="premixed_flame/flamespeed.html"><span class="doc">Compute the laminar flame speed of diluted hydrogen at low pressure</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Compute the laminar flame speed of diluted hydrogen at low pressure</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="One of the prevailing use case of the freely propagating premixed flame model is to build a flame speed table to be imported by another combustion simulation tools. PyChemkin provides the flexibility to customize the data structure of the flame speed table depending on the simulation goals and the tool. Furthermore, over the years, the chemkin flame speed calculator has derived a set of default solver settings that would greatly improve the convergence performance, especially for those widely adopted hydrocarbon fuel combustion mechanisms. The required input parameters the flame speed calculator are reduced to the composition of the fuel-oxidizer mixture, the initial/inlet pressure and temperature, and the calculation domain."><img alt="" src="../_images/sphx_glr_methane_flamespeed_table_thumb.png" />
+<p><a class="reference internal" href="premixed_flame/methane_flamespeed_table.html"><span class="doc">Construct atmospheric methane-air flame speed versus equivalence ratio table</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Construct atmospheric methane-air flame speed versus equivalence ratio table</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The burner stabilized premixed flame model is frequently used as a numerical tool to develop and to validate combustion mechanisms in the context of a burner stabilized flat flame. The premixed burner stabilized flat flame experiments are important because, in addition to the reaction pathways and rate parameters, they provide opportunities to learn about the impact of the transport processes on the combustion chemistry and flame structure. The premixed burner stabilized flame model calculates the temperature and the species concentrations along the burner centerline, and the results will be compared against the measurements. The burner stabilized flame model assumes that the flow is laminar and the temperature at the burner rim is constant (in order to anchor the flame)."><img alt="" src="../_images/sphx_glr_premixedburnerflame_thumb.png" />
+<p><a class="reference internal" href="premixed_flame/premixedburnerflame.html"><span class="doc">Simulate a burner stabilized premixed flame</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Simulate a burner stabilized premixed flame</div>
+</div></div></section>
+<section id="opposed-flow-flame-model">
+<h1>Opposed-flow flame model<a class="headerlink" href="#opposed-flow-flame-model" title="Link to this heading">#</a></h1>
+<p>The <em>opposed-flow Flame</em> model is a 1-D steady-state application to study
+the structure of stretched flames in the opposed-flow configuration. It can also
+be used to generate a “flamelet table” for CFD simulations. See the Chemkin
+<em>Theory</em> manual for additional information about this feature.</p>
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="The opposed-flow flame model is frequently used as a numerical tool to study the flame structures under fluid dynamic stress without the interferences from the wall. The opposed-flow flame experiments provide insights on the impact of the transport processes (mainly diffusion) on the combustion chemistry and flame structure. They also reveal how the flame structure would response to the strain rate imposed by the mean flow field (or to some extent by the turbulence)."><img alt="" src="../_images/sphx_glr_dual_flame_thumb.png" />
+<p><a class="reference internal" href="opposed_flow_flame/dual_flame.html"><span class="doc">Study flame interactions in an opposed-flow flame configuration</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Study flame interactions in an opposed-flow flame configuration</div>
+</div></div></section>
+<section id="surface-chemistry">
+<h1>Surface chemistry<a class="headerlink" href="#surface-chemistry" title="Link to this heading">#</a></h1>
+<p>The examples in this section demonstrate how <em>surface chemistry</em> can be included in a <em>Chemistry Set</em> and
+applied to simulate chemical vapor deposition (CVD) and catalytic combustion processes in <strong>PyChemkin</strong>.</p>
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This example project presents a model for the CVD of silicon nitride (Si-N) in a steady-state PSR. The utilization of the simple PSR model is justified because the CVD process is operated under the &quot;kinetic limited&quot; condition and is running steadily. The CVD PSR is characterized by the volume, the substrate surface area, and the inlet precursor gas volumetric flow rate; consequently the reactor residence time remains constant even when the precursor stream composition or the reactor temperature is changed."><img alt="" src="../_images/sphx_glr_SiC_cvd_thumb.png" />
+<p><a class="reference internal" href="surface_chemistry/SiC_cvd.html"><span class="doc">Simulating the chemical vapor deposition (CVD) process</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Simulating the chemical vapor deposition (CVD) process</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Catalytic combustion applications might utilize a two PFRs in series configuration for large fuel species. The first PFR is for pure gas-phase reactions called the pre-oxidizer, its main purpose is to partially break down the large hydrocarbon fuel species for the downstream catalytic combustor. The second PFR allows both gas-phase and surface reactions where the broken down fuel species are oxidized on the catalyst surface to generate heat."><img alt="" src="../_images/sphx_glr_catalytic_combustion_thumb.png" />
+<p><a class="reference internal" href="surface_chemistry/catalytic_combustion.html"><span class="doc">Simulating CH4 catalytic Combustion process</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Simulating CH4 catalytic Combustion process</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="When there are multiple surface materials defined in the surface mechanism input file, all surface materials share the same gas phase (gas species and gas-phase reactions). Each surface material consists of its own surface phases, surface species, and surface reactions, and has independent global and local species orders/indices. Subsequently, you can access species and reaction properties one surface material at a time, and direct surface species interactions across different surface materials are not supported."><img alt="" src="../_images/sphx_glr_multiple_materials_thumb.png" />
+<p><a class="reference internal" href="surface_chemistry/multiple_materials.html"><span class="doc">Processing a surface mechanism with multiple materials</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Processing a surface mechanism with multiple materials</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Atomic layer deposition (ALD) is a technique used to deposit thin films of solid materials in a very controlled manner, and differs from CVD primarily in that it is a transient process with the deposition surface being exposed to pulses of alternating gases. Ideally, the deposition chemistry in ALD is self-limiting, with growth occurring in a layer-by-layer manner and the deposition thickness being controlled only by the number of cycles."><img alt="" src="../_images/sphx_glr_trans_PSR_ALD_thumb.png" />
+<p><a class="reference internal" href="surface_chemistry/trans_PSR_ALD.html"><span class="doc">Modeling atomic layer deposition process in a transient PSR</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Modeling atomic layer deposition process in a transient PSR</div>
+</div></div></section>
+<section id="multiprocessing-parameter-study">
+<h1>Multiprocessing parameter study<a class="headerlink" href="#multiprocessing-parameter-study" title="Link to this heading">#</a></h1>
+<p>Chemkin application by itself does not support parallel computing, however, in the context of parameter study, each case can run on
+its own CPU core to make better use of any available computing power. The examples in this section describe the process of applying Python
+multi-threading and multi-processing packages to <strong>PyChemkin</strong> parameter study to improve the overall simulation performance.</p>
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="The 0-D SI engine model can be used to predict the occurrence of engine knock. There is no consensus on the determination of the onset of engine knock. In this example, the engine knock is defined as when the end gas (the gas mixture in the unburned zone) auto-ignites. And the knock intensity is associated to the peak value of the total thermicity of the end gas, that is, the higher the peak total thermicity the more intense the engine knock."><img alt="" src="../_images/sphx_glr_SI_engine_knock_calculation_multiprocessing_thumb.png" />
+<p><a class="reference internal" href="multiprocessing/SI_engine_knock_calculation_multiprocessing.html"><span class="doc">SI engine knocking analysis</span></a></p>
+  <div class="sphx-glr-thumbnail-title">SI engine knocking analysis</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="One of the prevailing use case of the freely propagating premixed flame model is to build a flame speed table to be imported by another combustion simulation tools. PyChemkin provides the flexibility to customize the data structure of the flame speed table depending on the simulation goals and the tool. Furthermore, over the years, the chemkin flame speed calculator has derived a set of default solver settings that would greatly improve the convergence performance, especially for those widely adopted hydrocarbon fuel combustion mechanisms. The required input parameters the flame speed calculator are reduced to the composition of the fuel-oxidizer mixture, the initial/inlet pressure and temperature, and the calculation domain."><img alt="" src="../_images/sphx_glr_flame_speed_calculation_multiprocessing_thumb.png" />
+<p><a class="reference internal" href="multiprocessing/flame_speed_calculation_multiprocessing.html"><span class="doc">Setting up a multi-process laminar flame speed parameter study</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Setting up a multi-process laminar flame speed parameter study</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="One of the prevailing use case of the freely propagating premixed flame model is to build a flame speed table to be imported by another combustion simulation tools. PyChemkin provides the flexibility to customize the data structure of the flame speed table depending on the simulation goals and the tool. Furthermore, over the years, the chemkin flame speed calculator has derived a set of default solver settings that would greatly improve the convergence performance, especially for those widely adopted hydrocarbon fuel combustion mechanisms. The required input parameters the flame speed calculator are reduced to the composition of the fuel-oxidizer mixture, the initial/inlet pressure and temperature, and the calculation domain."><img alt="" src="../_images/sphx_glr_flame_speed_calculation_threading_thumb.png" />
+<p><a class="reference internal" href="multiprocessing/flame_speed_calculation_threading.html"><span class="doc">Setting up a multi-thread laminar flame speed parameter study</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Setting up a multi-thread laminar flame speed parameter study</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The brutal force sensitivity analysis for ignition delay time shown in this example is based on the equation below:"><img alt="" src="../_images/sphx_glr_sensitivity_multiproc_thumb.png" />
+<p><a class="reference internal" href="multiprocessing/sensitivity_multiproc.html"><span class="doc">Perform brute-force sensitivity analysis on multiple processors</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Perform brute-force sensitivity analysis on multiple processors</div>
+</div></div></section>
+<section id="advanced-applications">
+<h1>Advanced Applications<a class="headerlink" href="#advanced-applications" title="Link to this heading">#</a></h1>
+<p>Examples in this section are to showcase the use of Pychemkin in more complicated applications. You can
+make improvements to a Pychemkin reactor model by adding new physical processes. Or, you can have Pychemkin
+interact with other Python applications to address complex problems.</p>
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Finding the optimal solution is one of the prominent parts of the research and development activities. When it comes to PyChemkin, reaction mechanism (rate parameters) optimization, fuel surrogate blend optimization, and process/reactor parameters optimization are some of the common applications."><img alt="" src="../_images/sphx_glr_SI_engine_optimization_thumb.png" />
+<p><a class="reference internal" href="advanced/SI_engine_optimization.html"><span class="doc">Find the optimal operating parameters for a given SI engine</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Find the optimal operating parameters for a given SI engine</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="For stratified-charge compression ignition (SCCI) engines, the multi-zone homogeneous charged compression ignition (HCCI) model can be applied to address the composition and temperature variations of the initial gas charge. The incylinder gas mixture at IVC is &quot;grouped&quot; to form several imaginary &#x27;fluid material zones&#x27; based on the local gas temperature and composition. Note that the &#x27;fluid material zone&#x27; does not have to form a single continuous volume of gas mass, rather it can be a collection of many small gas masses through out the cylinder."><img alt="" src="../_images/sphx_glr_pseudo-chastic_HCCI_thumb.png" />
+<p><a class="reference internal" href="advanced/pseudo-chastic_HCCI.html"><span class="doc">A pseudo stochastic scheme to simulate a stratified-charged compression-ignition engine</span></a></p>
+  <div class="sphx-glr-thumbnail-title">A pseudo stochastic scheme to simulate a stratified-charged compression-ignition engine</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="PyChemkin does not support all chemkin functionalities and reactor models. However, it is still possible to run simulations of unsupported applications in Python."><img alt="" src="../_images/sphx_glr_run_chemkin_applications_thumb.png" />
+<p><a class="reference internal" href="advanced/run_chemkin_applications.html"><span class="doc">Run chemkin applications in Python</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Run chemkin applications in Python</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This GUI wraps the high-level workflow used to launch Chemkin applications from the command line, which consists of the following steps: 1) generate a platform-specific run script, 2) execute the script with subprocess."><img alt="" src="../_images/sphx_glr_run_chemkin_java_gui_thumb.png" />
+<p><a class="reference internal" href="advanced/run_chemkin_java_gui.html"><span class="doc">Run chemkin Java GUI in Python</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Run chemkin Java GUI in Python</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This GUI wraps the high-level workflow used to launch Chemkin Workbench from the command line, which consists of the following steps: 1) generate a platform-specific run script, 2) execute the script with subprocess."><img alt="" src="../_images/sphx_glr_run_chemkin_workbench_gui_thumb.png" />
+<p><a class="reference internal" href="advanced/run_chemkin_workbench_gui.html"><span class="doc">Run Chemkin Workbench GUI in Python</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Run Chemkin Workbench GUI in Python</div>
+</div></div></section>
+<section id="post-processing">
+<h1>Post-processing<a class="headerlink" href="#post-processing" title="Link to this heading">#</a></h1>
+<p>PyChemkin has <em>post-process</em> utilities that can import the XML solution data file
+generated by selected Chemkin 1-D and 1.5-D reactor models. The examples in this section
+demonstrate how to use these utilities to import, visualize, and analyze
+the solution data from the (1-D steady-state) flame model, the (transient 0-D)
+multi-zone SI engine model, and the (pseudo 2-D) shear-layer channel flow reactor models.</p>
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="PyChemkin has a post-process module ChemkinSolutionImporter that can used to import the XML solution data from selected Chemkin reactor models into Python. This example shows how use some of objects and utilities from the ChemkinSolutionImporter, the SolutionData, and the SolutionGroup modules to extract the solution variables from a transient multi-zone direct-injection (DI) engine simulation."><img alt="" src="../_images/sphx_glr_post_process_DI_engine_solution_thumb.png" />
+<p><a class="reference internal" href="post_process/post_process_DI_engine_solution.html"><span class="doc">Post-process Chemkin DI engine solution</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Post-process Chemkin DI engine solution</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="PyChemkin has a post-process module ChemkinSolutionImporter that can used to import the XML solution data from selected Chemkin reactor models into Python. This example shows how use some of objects and utilities from the ChemkinSolutionImporter, the SolutionData, and the SolutionGroup modules to extract the solution variables from a transient multi-zone spark-ignition (SI) engine simulation."><img alt="" src="../_images/sphx_glr_post_process_SI_engine_solution_thumb.png" />
+<p><a class="reference internal" href="post_process/post_process_SI_engine_solution.html"><span class="doc">Post-process Chemkin SI engine solution</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Post-process Chemkin SI engine solution</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="PyChemkin has a post-process module ChemkinSolutionImporter that can used to import the XML solution data from selected Chemkin reactor models into Python. This example shows how use some of objects and utilities from the ChemkinSolutionImporter, the SolutionData, and the SolutionGroup modules to extract the solution variables from a planar shear-layer flow simulation."><img alt="" src="../_images/sphx_glr_post_process_cvd_flow_solution_thumb.png" />
+<p><a class="reference internal" href="post_process/post_process_cvd_flow_solution.html"><span class="doc">Post-process Chemkin shear-layer flow solution</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Post-process Chemkin shear-layer flow solution</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="PyChemkin has a post-process module ChemkinSolutionImporter that can used to import the XML solution data from selected Chemkin reactor models into Python. This example shows how use some of objects and utilities from the ChemkinSolutionImporter, the SolutionData, and the SolutionGroup modules to extract the solution variables from a 1-D steady-state flame simulation."><img alt="" src="../_images/sphx_glr_post_process_flame_solution_thumb.png" />
+<p><a class="reference internal" href="post_process/post_process_flame_solution.html"><span class="doc">Post-process Chemkin flame solution</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Post-process Chemkin flame solution</div>
+</div></div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-footer sphx-glr-footer-gallery docutils container">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/bc82bea3a5dd7bdba60b65220891d9e5/examples_python.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">all</span> <span class="pre">examples</span> <span class="pre">in</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">examples_python.zip</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/fb625db3c50d423b1b7881136ffdeec8/examples_jupyter.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">all</span> <span class="pre">examples</span> <span class="pre">in</span> <span class="pre">Jupyter</span> <span class="pre">notebooks:</span> <span class="pre">examples_jupyter.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Examples</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#chemistry">Chemistry</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#mixture">Mixture</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#batch-reactor">Batch reactor</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#d-engine-models">0-D engine models</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#perfectly-stirred-reactor">Perfectly stirred reactor</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#plug-flow-reactor">Plug-flow reactor</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#shock-tube-reactor">Shock tube reactor</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#psr-network">PSR network</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#premixed-flame-models">Premixed flame models</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#opposed-flow-flame-model">Opposed-flow flame model</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#surface-chemistry">Surface chemistry</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#multiprocessing-parameter-study">Multiprocessing parameter study</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-applications">Advanced Applications</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#post-processing">Post-processing</a></li>
+</ul>
+
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+
+  
+  <nav class="tocsection editthispage" aria-label="Edit this page">
+    <a href="https://github.com/ansys/pychemkin/edit/main/doc/source/examples/index.rst" rel="noopener noreferrer">
+      <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </nav>
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../_sources/examples/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.9.0.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

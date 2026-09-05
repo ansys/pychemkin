@@ -1,0 +1,31 @@
+
+
+
+
+
+
+:class:`OpposedFlamePlanar`
+===========================
+
+
+.. py:class:: ansys.chemkin.core.diffusionflames.opposedflowflame.OpposedFlamePlanar(fuel_stream: ansys.chemkin.core.inlet.Stream, label: Union[str, None] = None)
+
+   Bases: :py:obj:`OpposedFlame`
+
+
+   One-dimensional planar opposed-flow flame model.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.diffusionflames.opposedflowflame import OpposedFlamePlanar
+
+
+
+
+

@@ -1,0 +1,119 @@
+
+
+
+
+
+
+:class:`Aerosol`
+================
+
+
+.. py:class:: ansys.chemkin.core.particles.Aerosol(chemset_index: int, material_index: int, label: str = '')
+
+   Bases: :py:obj:`ansys.chemkin.core.surface_components.Material`
+
+
+   Aerosol material object.
+
+
+
+.. py:currentmodule:: Aerosol
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~material_type`
+            - 
+          * - :py:attr:`~number_nucleation_reactions`
+            - 
+          * - :py:attr:`~nucleation_reaction_indices`
+            - 
+          * - :py:attr:`~inception_size`
+            - 
+          * - :py:attr:`~core_bulk_species_index`
+            - 
+          * - :py:attr:`~core_bulk_species_symbol`
+            - 
+          * - :py:attr:`~native_open_site_species_index`
+            - 
+          * - :py:attr:`~native_open_site_species_symbol`
+            - 
+          * - :py:attr:`~population_distribution_method`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.particles import Aerosol
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: material_type
+   :value: 'aerosol'
+
+
+.. py:attribute:: number_nucleation_reactions
+   :type:  int
+   :value: 0
+
+
+.. py:attribute:: nucleation_reaction_indices
+   :type:  list[int]
+   :value: []
+
+
+.. py:attribute:: inception_size
+   :type:  list[float]
+   :value: []
+
+
+.. py:attribute:: core_bulk_species_index
+   :type:  int
+   :value: 0
+
+
+.. py:attribute:: core_bulk_species_symbol
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: native_open_site_species_index
+   :type:  int
+   :value: 0
+
+
+.. py:attribute:: native_open_site_species_symbol
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: population_distribution_method
+   :type:  str
+   :value: ''
+
+
+
+
+
+

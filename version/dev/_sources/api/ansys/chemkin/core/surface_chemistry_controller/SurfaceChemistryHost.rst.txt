@@ -1,0 +1,115 @@
+
+
+
+
+
+
+:class:`SurfaceChemistryHost`
+=============================
+
+
+.. py:class:: ansys.chemkin.core.surface_chemistry_controller.SurfaceChemistryHost
+
+   Bases: :py:obj:`Protocol`
+
+
+   Protocol for reactor objects that can host surface chemistry behavior.
+
+
+
+.. py:currentmodule:: SurfaceChemistryHost
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~setkeyword`
+            - Set a Chemkin keyword on the host reactor.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~temperature`
+            - Return the current reactor temperature.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~has_surface_chemistry`
+            - 
+          * - :py:attr:`~numbspecies`
+            - 
+          * - :py:attr:`~numbmaterials`
+            - 
+          * - :py:attr:`~surface_chemistry`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.surface_chemistry_controller import SurfaceChemistryHost
+
+Property detail
+---------------
+
+.. py:property:: temperature
+   :type: float
+
+
+   Return the current reactor temperature.
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: has_surface_chemistry
+   :type:  bool
+
+.. py:attribute:: numbspecies
+   :type:  int
+
+.. py:attribute:: numbmaterials
+   :type:  int
+
+.. py:attribute:: surface_chemistry
+   :type:  Any
+
+
+
+Method detail
+-------------
+
+.. py:method:: setkeyword(key: str, value: Any)
+
+   Set a Chemkin keyword on the host reactor.
+
+
+
+
+

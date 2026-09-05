@@ -1,0 +1,671 @@
+
+
+
+
+
+
+:class:`Surface`
+================
+
+
+.. py:class:: ansys.chemkin.core.surface.Surface(chem: ansys.chemkin.core.chemistry.Chemistry)
+
+   Chemkin surface chemistry module.
+
+
+
+
+
+
+.. py:currentmodule:: Surface
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~check_surface_material`
+            - Verify the the given material name.
+          * - :py:attr:`~require_surface_material`
+            - Return the material index or terminate if not found.
+          * - :py:attr:`~material_not_found`
+            - Return the the material name not found error message.
+          * - :py:attr:`~get_material_names`
+            - Get all surface material symbols.
+          * - :py:attr:`~get_site_frac`
+            - Get surface site species fractions.
+          * - :py:attr:`~set_site_frac`
+            - Set the surface site fractions.
+          * - :py:attr:`~check_site_frac_set`
+            - Check if the surface site species fractions are provided.
+          * - :py:attr:`~get_all_site_frac`
+            - Get site fractions of all materials in the mechanism.
+          * - :py:attr:`~get_bulk_frac`
+            - Get surface bulk species activities/moles.
+          * - :py:attr:`~set_bulk_frac`
+            - Assign the bulk species activities.
+          * - :py:attr:`~check_bulk_act_set`
+            - Check if the bulk species activities are provided.
+          * - :py:attr:`~get_bulk_growth_rates`
+            - Get bulk species linear growth rates.
+          * - :py:attr:`~set_bulk_growth_rates`
+            - Assign bulk species growth rate.
+          * - :py:attr:`~check_bulk_growth_rate_set`
+            - Check if the bulk species growth rates are provided.
+          * - :py:attr:`~get_all_bulk_growth_rates`
+            - Get bulk growth rates of all materials in the mechanism.
+          * - :py:attr:`~get_activity_array`
+            - Get the species activity array.
+          * - :py:attr:`~list_surface_coverage`
+            - List the surface site fractions.
+          * - :py:attr:`~list_bulk_activity`
+            - List the bulk species activity.
+          * - :py:attr:`~get_surface_material`
+            - Get the Material object.
+          * - :py:attr:`~number_surface_reactions`
+            - Get the number of surface reactions.
+          * - :py:attr:`~number_surface_species`
+            - Get the total number of surface species.
+          * - :py:attr:`~total_number_species`
+            - Get the total number of species.
+          * - :py:attr:`~number_phase`
+            - Get the number of phases.
+          * - :py:attr:`~first_site_phase_index`
+            - Get the index of the first site phase.
+          * - :py:attr:`~last_site_phase_index`
+            - Get the index of the last site phase.
+          * - :py:attr:`~first_bulk_phase_index`
+            - Get the index of the first bulk phase.
+          * - :py:attr:`~last_bulk_phase_index`
+            - Get the index of the last bulk phase.
+          * - :py:attr:`~get_phase_names`
+            - Get all phase names.
+          * - :py:attr:`~number_site_species`
+            - Get the total number of site species.
+          * - :py:attr:`~number_bulk_species`
+            - Get the total number of bulk species.
+          * - :py:attr:`~first_site_spec_index`
+            - Get the global index of the first site species.
+          * - :py:attr:`~last_site_spec_index`
+            - Get the global index of the last site species.
+          * - :py:attr:`~first_bulk_spec_index`
+            - Get the global index of the first bulk species.
+          * - :py:attr:`~last_bulk_spec_index`
+            - Get the global index of the last bulk species.
+          * - :py:attr:`~get_site_symbols`
+            - Get all site species symbols.
+          * - :py:attr:`~get_bulk_symbols`
+            - Get all bulk species symbols.
+          * - :py:attr:`~surface_species_symbols`
+            - Get all surface species symbols of the material.
+          * - :py:attr:`~get_surf_specindex`
+            - Get the local and the global species indices.
+          * - :py:attr:`~site_phase_density`
+            - Get the site density of the site phases.
+          * - :py:attr:`~get_site_species_occupany`
+            - Get the occupancy.
+          * - :py:attr:`~get_site_wt`
+            - Get the molar masses of the site species.
+          * - :py:attr:`~get_bulk_wt`
+            - Get the molar masses of the bulk species.
+          * - :py:attr:`~get_surf_wt`
+            - Get the molar masses of all surface species.
+          * - :py:attr:`~get_site_species_h`
+            - Get the site species enthalpy.
+          * - :py:attr:`~get_bulk_species_h`
+            - Get the bulk species enthalpy.
+          * - :py:attr:`~get_surface_species_h`
+            - Get the enthalpy of all surface species.
+          * - :py:attr:`~get_bulk_species_cp`
+            - Get the bulk species specific heat capacity.
+          * - :py:attr:`~get_bulk_species_density`
+            - Get the bulk species density.
+          * - :py:attr:`~check_material_temperature`
+            - Verify the surface temperature is given.
+          * - :py:attr:`~get_material_temperature`
+            - Get the surface temperature.
+          * - :py:attr:`~set_material_temperature`
+            - Set the value of the surface temperature.
+          * - :py:attr:`~set_surface_coverage`
+            - Get the surface coverage.
+          * - :py:attr:`~rop_surf`
+            - Get species molar rate of production.
+          * - :py:attr:`~rxnrates_surf`
+            - Get molar rates of the surface reactions.
+          * - :py:attr:`~get_bulk_molar_growth_rates`
+            - Get the molar growth rates of the bulk species.
+          * - :py:attr:`~get_bulk_mass_growth_rates`
+            - Get the mass growth rates of the bulk species.
+          * - :py:attr:`~get_bulk_linear_growth_rates`
+            - Get the linear growth rates of the bulk species.
+          * - :py:attr:`~get_gas_production_rates`
+            - Get the molar production rates of the gas species.
+          * - :py:attr:`~stefan_mass_flux`
+            - Get the Stefan mass flux due to surface reactions.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~number_materials`
+            - Get the number of surface materials.
+          * - :py:attr:`~max_number_sites`
+            - Get the max number of site species.
+          * - :py:attr:`~max_number_bulks`
+            - Get the max number of bulk species.
+          * - :py:attr:`~max_number_total_species`
+            - Get the max total number of species.
+          * - :py:attr:`~max_number_surface_reactions`
+            - Get the max number of surface reactions.
+          * - :py:attr:`~max_number_total_reactions`
+            - Get the max number of total reactions.
+          * - :py:attr:`~total_site_species`
+            - Get total number of site species from all materials.
+          * - :py:attr:`~total_bulk_species`
+            - Get total number of bulk species from all materials.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~num_gas_species`
+            - 
+          * - :py:attr:`~num_gas_reactions`
+            - 
+          * - :py:attr:`~gas_wt`
+            - 
+          * - :py:attr:`~num_material`
+            - 
+          * - :py:attr:`~max_total_species`
+            - 
+          * - :py:attr:`~max_total_reactions`
+            - 
+          * - :py:attr:`~material_names`
+            - 
+          * - :py:attr:`~material_map`
+            - 
+          * - :py:attr:`~materials`
+            - 
+          * - :py:attr:`~sitefrac_set`
+            - 
+          * - :py:attr:`~bulkact_set`
+            - 
+          * - :py:attr:`~bulk_growth_rates`
+            - 
+          * - :py:attr:`~bulk_growth_rates_set`
+            - 
+          * - :py:attr:`~site_density`
+            - 
+          * - :py:attr:`~siteden_set`
+            - 
+          * - :py:attr:`~material_temperature`
+            - 
+
+
+   .. tab-item:: Static methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_activity_array`
+            - Set up the activity array.
+          * - :py:attr:`~surface_rate_of_production`
+            - Get species molar rate of production.
+          * - :py:attr:`~surface_reaction_rates`
+            - Get molar reaction rates of the reactive surface.
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.surface import Surface
+
+Property detail
+---------------
+
+.. py:property:: number_materials
+   :type: int
+
+
+   Get the number of surface materials.
+
+
+.. py:property:: max_number_sites
+   :type: int
+
+
+   Get the max number of site species.
+
+
+.. py:property:: max_number_bulks
+   :type: int
+
+
+   Get the max number of bulk species.
+
+
+.. py:property:: max_number_total_species
+   :type: int
+
+
+   Get the max total number of species.
+
+
+.. py:property:: max_number_surface_reactions
+   :type: int
+
+
+   Get the max number of surface reactions.
+
+
+.. py:property:: max_number_total_reactions
+   :type: int
+
+
+   Get the max number of total reactions.
+
+
+.. py:property:: total_site_species
+   :type: int
+
+
+   Get total number of site species from all materials.
+
+
+.. py:property:: total_bulk_species
+   :type: int
+
+
+   Get total number of bulk species from all materials.
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: num_gas_species
+
+.. py:attribute:: num_gas_reactions
+
+.. py:attribute:: gas_wt
+
+.. py:attribute:: num_material
+
+.. py:attribute:: max_total_species
+
+.. py:attribute:: max_total_reactions
+
+.. py:attribute:: material_names
+
+.. py:attribute:: material_map
+
+.. py:attribute:: materials
+
+.. py:attribute:: sitefrac_set
+   :type:  Dict[str, bool]
+
+.. py:attribute:: bulkact_set
+   :type:  Dict[str, bool]
+
+.. py:attribute:: bulk_growth_rates
+   :type:  Dict[str, numpy.typing.NDArray[numpy.double]]
+
+.. py:attribute:: bulk_growth_rates_set
+   :type:  Dict[str, bool]
+
+.. py:attribute:: site_density
+   :type:  Dict[str, numpy.typing.NDArray[numpy.double]]
+
+.. py:attribute:: siteden_set
+   :type:  Dict[str, bool]
+
+.. py:attribute:: material_temperature
+   :type:  list[float]
+   :value: []
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: check_surface_material(matname: str) -> int
+
+   Verify the the given material name.
+
+
+.. py:method:: require_surface_material(matname: str) -> int
+
+   Return the material index or terminate if not found.
+
+
+.. py:method:: material_not_found(matname: str)
+
+   Return the the material name not found error message.
+
+
+.. py:method:: get_material_names() -> List[str]
+
+   Get all surface material symbols.
+
+
+.. py:method:: get_site_frac(mat_name: str) -> numpy.typing.NDArray[numpy.double]
+
+   Get surface site species fractions.
+
+
+.. py:method:: set_site_frac(mat_name: str, recipe: Union[List[tuple[str, float]], numpy.typing.NDArray[numpy.double]])
+
+   Set the surface site fractions.
+
+
+.. py:method:: check_site_frac_set(mat_name: str) -> bool
+
+   Check if the surface site species fractions are provided.
+
+
+.. py:method:: get_all_site_frac() -> numpy.typing.NDArray[numpy.double]
+
+   Get site fractions of all materials in the mechanism.
+
+
+.. py:method:: get_bulk_frac(mat_name: str) -> numpy.typing.NDArray[numpy.double]
+
+   Get surface bulk species activities/moles.
+
+
+.. py:method:: set_bulk_frac(mat_name: str, recipe: Union[List[tuple[str, float]], numpy.typing.NDArray[numpy.double]])
+
+   Assign the bulk species activities.
+
+
+.. py:method:: check_bulk_act_set(mat_name: str) -> bool
+
+   Check if the bulk species activities are provided.
+
+
+.. py:method:: get_bulk_growth_rates(mat_name: str) -> numpy.typing.NDArray[numpy.double]
+
+   Get bulk species linear growth rates.
+
+
+.. py:method:: set_bulk_growth_rates(mat_name: str, rates: numpy.typing.NDArray[numpy.double])
+
+   Assign bulk species growth rate.
+
+
+.. py:method:: check_bulk_growth_rate_set(mat_name: str) -> bool
+
+   Check if the bulk species growth rates are provided.
+
+
+.. py:method:: get_all_bulk_growth_rates() -> numpy.typing.NDArray[numpy.double]
+
+   Get bulk growth rates of all materials in the mechanism.
+
+
+.. py:method:: get_activity_array(mat_name: str, molfrac: numpy.typing.NDArray[numpy.double]) -> numpy.typing.NDArray[numpy.double]
+
+   Get the species activity array.
+
+
+.. py:method:: list_surface_coverage(mat_name: str, option: str = ' ', bound: float = 0.0)
+
+   List the surface site fractions.
+
+
+.. py:method:: list_bulk_activity(mat_name: str, option: str = ' ', bound: float = 0.0)
+
+   List the bulk species activity.
+
+
+.. py:method:: get_surface_material(mat_name: str) -> ansys.chemkin.core.surface_components.Material
+
+   Get the Material object.
+
+
+.. py:method:: number_surface_reactions(mat_name: str) -> int
+
+   Get the number of surface reactions.
+
+
+.. py:method:: number_surface_species(mat_name: str) -> int
+
+   Get the total number of surface species.
+
+
+.. py:method:: total_number_species(mat_name: str) -> int
+
+   Get the total number of species.
+
+
+.. py:method:: number_phase(mat_name: str) -> int
+
+   Get the number of phases.
+
+
+.. py:method:: first_site_phase_index(mat_name: str) -> int
+
+   Get the index of the first site phase.
+
+
+.. py:method:: last_site_phase_index(mat_name: str) -> int
+
+   Get the index of the last site phase.
+
+
+.. py:method:: first_bulk_phase_index(mat_name: str) -> int
+
+   Get the index of the first bulk phase.
+
+
+.. py:method:: last_bulk_phase_index(mat_name: str) -> int
+
+   Get the index of the last bulk phase.
+
+
+.. py:method:: get_phase_names(mat_name: str) -> List[str]
+
+   Get all phase names.
+
+
+.. py:method:: number_site_species(mat_name: str) -> int
+
+   Get the total number of site species.
+
+
+.. py:method:: number_bulk_species(mat_name: str) -> int
+
+   Get the total number of bulk species.
+
+
+.. py:method:: first_site_spec_index(mat_name: str) -> int
+
+   Get the global index of the first site species.
+
+
+.. py:method:: last_site_spec_index(mat_name: str) -> int
+
+   Get the global index of the last site species.
+
+
+.. py:method:: first_bulk_spec_index(mat_name: str) -> int
+
+   Get the global index of the first bulk species.
+
+
+.. py:method:: last_bulk_spec_index(mat_name: str) -> int
+
+   Get the global index of the last bulk species.
+
+
+.. py:method:: get_site_symbols(mat_name: str) -> List[str]
+
+   Get all site species symbols.
+
+
+.. py:method:: get_bulk_symbols(mat_name: str) -> List[str]
+
+   Get all bulk species symbols.
+
+
+.. py:method:: surface_species_symbols(mat_name: str) -> List[str]
+
+   Get all surface species symbols of the material.
+
+
+.. py:method:: get_surf_specindex(specname: str) -> tuple[str, int, int]
+
+   Get the local and the global species indices.
+
+
+.. py:method:: site_phase_density(mat_name: str) -> numpy.typing.NDArray[numpy.double]
+
+   Get the site density of the site phases.
+
+
+.. py:method:: get_site_species_occupany(mat_name: str) -> numpy.typing.NDArray[numpy.double]
+
+   Get the occupancy.
+
+
+.. py:method:: get_site_wt(mat_name: str) -> numpy.typing.NDArray[numpy.double]
+
+   Get the molar masses of the site species.
+
+
+.. py:method:: get_bulk_wt(mat_name: str) -> numpy.typing.NDArray[numpy.double]
+
+   Get the molar masses of the bulk species.
+
+
+.. py:method:: get_surf_wt(mat_name: str) -> numpy.typing.NDArray[numpy.double]
+
+   Get the molar masses of all surface species.
+
+
+.. py:method:: get_site_species_h(mat_name: str) -> numpy.typing.NDArray[numpy.double]
+
+   Get the site species enthalpy.
+
+
+.. py:method:: get_bulk_species_h(mat_name: str) -> numpy.typing.NDArray[numpy.double]
+
+   Get the bulk species enthalpy.
+
+
+.. py:method:: get_surface_species_h(mat_name: str) -> numpy.typing.NDArray[numpy.double]
+
+   Get the enthalpy of all surface species.
+
+
+.. py:method:: get_bulk_species_cp(mat_name: str) -> numpy.typing.NDArray[numpy.double]
+
+   Get the bulk species specific heat capacity.
+
+
+.. py:method:: get_bulk_species_density(mat_name: str) -> numpy.typing.NDArray[numpy.double]
+
+   Get the bulk species density.
+
+
+.. py:method:: set_activity_array(ngas: int, nsites: int, nbulks: int, molfrac: numpy.typing.NDArray[numpy.double], site_frac: numpy.typing.NDArray[numpy.double], bulk_act: numpy.typing.NDArray[numpy.double], min_value: float = 0.0) -> numpy.typing.NDArray[numpy.double]
+   :staticmethod:
+
+
+   Set up the activity array.
+
+
+.. py:method:: check_material_temperature(mat_name: str) -> int
+
+   Verify the surface temperature is given.
+
+
+.. py:method:: get_material_temperature(mat_name: str) -> float
+
+   Get the surface temperature.
+
+
+.. py:method:: set_material_temperature(mat_name: str, temp: float)
+
+   Set the value of the surface temperature.
+
+
+.. py:method:: surface_rate_of_production(chem_id: int, mat_id: int, numb_gas: int, numb_phase: int, numb_sites: int, numb_bulks: int, p: float, t: float, molfrac: numpy.typing.NDArray[numpy.double], site_frac: numpy.typing.NDArray[numpy.double], bulk_act: numpy.typing.NDArray[numpy.double], site_den: numpy.typing.NDArray[numpy.double], mode: str) -> tuple[numpy.typing.NDArray[numpy.double], numpy.typing.NDArray[numpy.double]]
+   :staticmethod:
+
+
+   Get species molar rate of production.
+
+
+.. py:method:: surface_reaction_rates(chem_id: int, mat_id: int, numb_gas: int, numb_sites: int, numb_bulks: int, numb_reaction: int, p: float, t: float, molfrac: numpy.typing.NDArray[numpy.double], site_frac: numpy.typing.NDArray[numpy.double], bulk_act: numpy.typing.NDArray[numpy.double], site_den: numpy.typing.NDArray[numpy.double], mode: str) -> tuple[numpy.typing.NDArray[numpy.double], numpy.typing.NDArray[numpy.double]]
+   :staticmethod:
+
+
+   Get molar reaction rates of the reactive surface.
+
+
+.. py:method:: set_surface_coverage(mat_name: str) -> tuple[numpy.typing.NDArray[numpy.double], numpy.typing.NDArray[numpy.double], numpy.typing.NDArray[numpy.double]]
+
+   Get the surface coverage.
+
+
+.. py:method:: rop_surf(mat_name: str, pres: float, surf_temp: float, molfrac: numpy.typing.NDArray[numpy.double]) -> tuple[numpy.typing.NDArray[numpy.double], numpy.typing.NDArray[numpy.double]]
+
+   Get species molar rate of production.
+
+
+.. py:method:: rxnrates_surf(mat_name: str, pres: float, surf_temp: float, molfrac: numpy.typing.NDArray[numpy.double]) -> tuple[numpy.typing.NDArray[numpy.double], numpy.typing.NDArray[numpy.double]]
+
+   Get molar rates of the surface reactions.
+
+
+.. py:method:: get_bulk_molar_growth_rates(mat_name: str, surfrop: numpy.typing.NDArray[numpy.double]) -> numpy.typing.NDArray[numpy.double]
+
+   Get the molar growth rates of the bulk species.
+
+
+.. py:method:: get_bulk_mass_growth_rates(mat_name: str, surfrop: numpy.typing.NDArray[numpy.double]) -> numpy.typing.NDArray[numpy.double]
+
+   Get the mass growth rates of the bulk species.
+
+
+.. py:method:: get_bulk_linear_growth_rates(mat_name: str, surfrop: numpy.typing.NDArray[numpy.double]) -> numpy.typing.NDArray[numpy.double]
+
+   Get the linear growth rates of the bulk species.
+
+
+.. py:method:: get_gas_production_rates(mat_name: str, surfrop: numpy.typing.NDArray[numpy.double]) -> numpy.typing.NDArray[numpy.double]
+
+   Get the molar production rates of the gas species.
+
+
+.. py:method:: stefan_mass_flux(mat_name: str, surfrop: numpy.typing.NDArray[numpy.double]) -> float
+
+   Get the Stefan mass flux due to surface reactions.
+
+
+
+
+

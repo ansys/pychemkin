@@ -1,0 +1,304 @@
+
+
+
+
+
+
+The ``chemistry.py`` module
+===========================
+
+.. py:module:: ansys.chemkin.core.chemistry
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: chemistry
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.chemistry.Chemistry`
+            - Define and preprocess Chemkin chemistry set.
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~verbose`
+            - Get current Pychemkin verbose mode.
+
+
+          * - :py:obj:`~set_verbose`
+            - Set Pychemkin verbose mode.
+
+
+          * - :py:obj:`~chemkin_version`
+            - Return the Chemkin-CFD-API version number currently in use.
+
+
+          * - :py:obj:`~verify_version`
+            - Check the  Chemkin-CFD-API vwersion.
+
+
+          * - :py:obj:`~chemkin_bin_dir`
+            - Return the local Ansys Chemkin bin directory.
+
+
+          * - :py:obj:`~chemkin_data_dir`
+            - Return the local Ansys Chemkin data directory.
+
+
+          * - :py:obj:`~ansys_dir`
+            - Return the local Ansys installation.
+
+
+          * - :py:obj:`~get_configuration`
+            - Return the Chemkin-CFD-API configuration.
+
+
+          * - :py:obj:`~done`
+            - Release Chemkin license and reset the Chemistry sets.
+
+
+          * - :py:obj:`~check_chemistryset`
+            - Check whether the Chemistry Set is initialized in Chemkin-CFD-API.
+
+
+          * - :py:obj:`~activate_chemistryset`
+            - Switch to (re-activate) the Chemistry Set.
+
+
+          * - :py:obj:`~force_activate_chemistryset`
+            - Activate the Chemistry Set automatically and silently.
+
+
+          * - :py:obj:`~chemistryset_new`
+            - Create a new Chemistry Set.
+
+
+          * - :py:obj:`~chemistryset_initialized`
+            - Set the Chemistry Set Initialization flag to True.
+
+
+          * - :py:obj:`~check_active_chemistryset`
+            - Verify if the chemistry set is currently activated.
+
+
+          * - :py:obj:`~verify_chemset_surface`
+            - Check the chemistry set has surface chemistry data.
+
+
+          * - :py:obj:`~verify_chemset_sizes`
+            - Verify the gas chemistry sizes.
+
+
+          * - :py:obj:`~set_temp_array`
+            - Set up the temperature array for Chemkin-CFD-API calls.
+
+
+          * - :py:obj:`~get_symbol_length`
+            - Get the length of Chemkin symbols.
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~LP_c_char`
+            - 
+
+
+          * - :py:obj:`~chemkin_verbose`
+            - 
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~MAX_SPECIES_LENGTH`
+            - 
+
+
+          * - :py:obj:`~COMPLETE`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Chemistry</api/ansys/chemkin/core/chemistry/Chemistry>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin Chemistry utilities.
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: verbose() -> bool
+
+   Get current Pychemkin verbose mode.
+
+
+.. py:function:: set_verbose(onoff: bool)
+
+   Set Pychemkin verbose mode.
+
+
+.. py:function:: chemkin_version() -> int
+
+   Return the Chemkin-CFD-API version number currently in use.
+
+
+.. py:function:: verify_version(min_version: int) -> bool
+
+   Check the  Chemkin-CFD-API vwersion.
+
+
+.. py:function:: chemkin_bin_dir() -> str
+
+   Return the local Ansys Chemkin bin directory.
+
+
+.. py:function:: chemkin_data_dir() -> str
+
+   Return the local Ansys Chemkin data directory.
+
+
+.. py:function:: ansys_dir() -> str
+
+   Return the local Ansys installation.
+
+
+.. py:function:: get_configuration() -> tuple[int, str, str, str, list[str]]
+
+   Return the Chemkin-CFD-API configuration.
+
+
+.. py:function:: done()
+
+   Release Chemkin license and reset the Chemistry sets.
+
+
+.. py:function:: check_chemistryset(chem_index: int) -> bool
+
+   Check whether the Chemistry Set is initialized in Chemkin-CFD-API.
+
+
+.. py:function:: activate_chemistryset(chem_index: int) -> int
+
+   Switch to (re-activate) the Chemistry Set.
+
+
+.. py:function:: force_activate_chemistryset(chem_index: int)
+
+   Activate the Chemistry Set automatically and silently.
+
+
+.. py:function:: chemistryset_new(chem_index: int)
+
+   Create a new Chemistry Set.
+
+
+.. py:function:: chemistryset_initialized(chem_index: int)
+
+   Set the Chemistry Set Initialization flag to True.
+
+
+.. py:function:: check_active_chemistryset(chem_index: int) -> bool
+
+   Verify if the chemistry set is currently activated.
+
+
+.. py:function:: verify_chemset_surface(chem_set_index: int) -> bool
+
+   Check the chemistry set has surface chemistry data.
+
+
+.. py:function:: verify_chemset_sizes(chem_set_index: int, num_elements: int = -1, num_gas_species: int = -1, num_gas_reactions: int = -1) -> bool
+
+   Verify the gas chemistry sizes.
+
+
+.. py:function:: set_temp_array(temp: float, temp_ele: Union[float, None] = None, temp_ion: Union[float, None] = None) -> numpy.typing.NDArray[numpy.double]
+
+   Set up the temperature array for Chemkin-CFD-API calls.
+
+
+.. py:function:: get_symbol_length() -> int
+
+   Get the length of Chemkin symbols.
+
+
+.. py:data:: MAX_SPECIES_LENGTH
+   :value: 17
+
+
+.. py:data:: COMPLETE
+   :value: 0
+
+
+.. py:data:: LP_c_char
+
+.. py:data:: chemkin_verbose
+   :value: True
+
+
+
+

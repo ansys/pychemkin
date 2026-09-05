@@ -1,0 +1,78 @@
+
+
+
+
+
+
+The ``surface.py`` module
+=========================
+
+.. py:module:: ansys.chemkin.core.surface
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: surface
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.surface.Surface`
+            - Chemkin surface chemistry module.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Surface</api/ansys/chemkin/core/surface/Surface>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Surface Chemkin Chemistry utilities.
+
+
+
+
+
+
+
+

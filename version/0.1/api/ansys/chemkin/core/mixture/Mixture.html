@@ -1,0 +1,1403 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Mixture &#8212; PyChemkin</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/ansys/chemkin/core/mixture/Mixture';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="The reactormodel.py module" href="../reactormodel/index.html" />
+    <link rel="prev" title="The mixture.py module" href="index.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/api/ansys/chemkin/core/mixture/Mixture.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <img src="../../../../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyChemkin - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../artifacts.html">
+    <no title>
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/dev/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../artifacts.html">
+    <no title>
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/dev/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html"><span class="nf nf-md-package"></span> ansys.chemkin.core</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../chemistry/index.html"> <span class="nf nf-fa-file"></span> chemistry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chemkin_wrapper/index.html"> <span class="nf nf-fa-file"></span> chemkin_wrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/index.html"> <span class="nf nf-fa-file"></span> color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../constants/index.html"> <span class="nf nf-fa-file"></span> constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../flame/index.html"> <span class="nf nf-fa-file"></span> flame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../grid/index.html"> <span class="nf nf-fa-file"></span> grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hybridreactornetwork/index.html"> <span class="nf nf-fa-file"></span> hybridreactornetwork</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../info/index.html"> <span class="nf nf-fa-file"></span> info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../inlet/index.html"> <span class="nf nf-fa-file"></span> inlet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logger/index.html"> <span class="nf nf-fa-file"></span> logger</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html"> <span class="nf nf-fa-file"></span> mixture</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#"> <span class="nf nf-cod-symbol_class"></span> Mixture</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../reactormodel/index.html"> <span class="nf nf-fa-file"></span> reactormodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../realgaseos/index.html"> <span class="nf nf-fa-file"></span> realgaseos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../steadystatesolver/index.html"> <span class="nf nf-fa-file"></span> steadystatesolver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../utilities/index.html"> <span class="nf nf-fa-file"></span> utilities</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../../../index.html" class="nav-link">API reference</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">The <code class="docutils literal notranslate"><span class="pre">ansys.chemkin.core</span></code> library</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">The <code class="docutils literal notranslate"><span class="pre">mixture.py</span></code> module</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mixture</span></code></span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="mixture">
+<h1><code class="xref py py-class docutils literal notranslate"><span class="pre">Mixture</span></code><a class="headerlink" href="#mixture" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.chemkin.core.mixture.Mixture">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.chemkin.core.mixture.</span></span><span class="sig-name descname"><span class="pre">Mixture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../chemistry/Chemistry.html#ansys.chemkin.core.chemistry.Chemistry" title="ansys.chemkin.core.chemistry.Chemistry"><span class="pre">ansys.chemkin.core.chemistry.Chemistry</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.chemkin.core.mixture.Mixture" title="Link to this definition">#</a></dt>
+<dd><p>define a mixture based on the gas species in the given chemistry set.</p>
+</dd></dl>
+
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+Methods</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.list_composition" title="Mixture.list_composition"><code class="xref py py-attr docutils literal notranslate"><span class="pre">list_composition</span></code></a></p></td>
+<td><p>List the mixture composition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.find_equilibrium" title="Mixture.find_equilibrium"><code class="xref py py-attr docutils literal notranslate"><span class="pre">find_equilibrium</span></code></a></p></td>
+<td><p>Create the equilibrium state mixture corresponding to mixture itself.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.hml" title="Mixture.hml"><code class="xref py py-attr docutils literal notranslate"><span class="pre">hml</span></code></a></p></td>
+<td><p>Get enthalpy of the mixture.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.cpbl" title="Mixture.cpbl"><code class="xref py py-attr docutils literal notranslate"><span class="pre">cpbl</span></code></a></p></td>
+<td><p>Get specific heat capacity of the mixture.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.rop" title="Mixture.rop"><code class="xref py py-attr docutils literal notranslate"><span class="pre">rop</span></code></a></p></td>
+<td><p>Get species rate of productions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.rxn_rates" title="Mixture.rxn_rates"><code class="xref py py-attr docutils literal notranslate"><span class="pre">rxn_rates</span></code></a></p></td>
+<td><p>Get molar reaction rates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.species_cp" title="Mixture.species_cp"><code class="xref py py-attr docutils literal notranslate"><span class="pre">species_cp</span></code></a></p></td>
+<td><p>Get species specific heat capacity at constant pressure.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.species_h" title="Mixture.species_h"><code class="xref py py-attr docutils literal notranslate"><span class="pre">species_h</span></code></a></p></td>
+<td><p>Get species enthalpy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.species_visc" title="Mixture.species_visc"><code class="xref py py-attr docutils literal notranslate"><span class="pre">species_visc</span></code></a></p></td>
+<td><p>Get species viscosity.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.species_cond" title="Mixture.species_cond"><code class="xref py py-attr docutils literal notranslate"><span class="pre">species_cond</span></code></a></p></td>
+<td><p>Get species conductivity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.species_diffusion_coeffs" title="Mixture.species_diffusion_coeffs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">species_diffusion_coeffs</span></code></a></p></td>
+<td><p>Get species diffusion coefficients.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.mixture_viscosity" title="Mixture.mixture_viscosity"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mixture_viscosity</span></code></a></p></td>
+<td><p>Get viscosity of the gas mixture.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.mixture_conductivity" title="Mixture.mixture_conductivity"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mixture_conductivity</span></code></a></p></td>
+<td><p>Get conductivity of the gas mixture.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.mixture_diffusion_coeffs" title="Mixture.mixture_diffusion_coeffs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mixture_diffusion_coeffs</span></code></a></p></td>
+<td><p>Get mixture-averaged species diffusion coefficients of the gas mixture.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.mixture_binary_diffusion_coeffs" title="Mixture.mixture_binary_diffusion_coeffs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mixture_binary_diffusion_coeffs</span></code></a></p></td>
+<td><p>Get multi-component species binary diffusion coefficients.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.mixture_thermal_diffusion_coeffs" title="Mixture.mixture_thermal_diffusion_coeffs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mixture_thermal_diffusion_coeffs</span></code></a></p></td>
+<td><p>Get thermal diffusivity of the gas mixture.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.vol_hrr" title="Mixture.vol_hrr"><code class="xref py py-attr docutils literal notranslate"><span class="pre">vol_hrr</span></code></a></p></td>
+<td><p>Get volumetric heat release rate.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.rop_mass" title="Mixture.rop_mass"><code class="xref py py-attr docutils literal notranslate"><span class="pre">rop_mass</span></code></a></p></td>
+<td><p>Get species mass rates of production.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.list_rop" title="Mixture.list_rop"><code class="xref py py-attr docutils literal notranslate"><span class="pre">list_rop</span></code></a></p></td>
+<td><p>List species molar production rate.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.list_rop_mass" title="Mixture.list_rop_mass"><code class="xref py py-attr docutils literal notranslate"><span class="pre">list_rop_mass</span></code></a></p></td>
+<td><p>List species mass rate of production in descending order.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.list_reaction_rates" title="Mixture.list_reaction_rates"><code class="xref py py-attr docutils literal notranslate"><span class="pre">list_reaction_rates</span></code></a></p></td>
+<td><p>List information about reaction rate in descending order.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.x_by_equivalence_ratio" title="Mixture.x_by_equivalence_ratio"><code class="xref py py-attr docutils literal notranslate"><span class="pre">x_by_equivalence_ratio</span></code></a></p></td>
+<td><p>Set mole fractions using equivalence ratio.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.y_by_equivalence_ratio" title="Mixture.y_by_equivalence_ratio"><code class="xref py py-attr docutils literal notranslate"><span class="pre">y_by_equivalence_ratio</span></code></a></p></td>
+<td><p>Set mass fractions using equivalence ratio.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.get_egr_mole_fraction" title="Mixture.get_egr_mole_fraction"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_egr_mole_fraction</span></code></a></p></td>
+<td><p>Compute the EGR composition in mole fraction.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.validate" title="Mixture.validate"><code class="xref py py-attr docutils literal notranslate"><span class="pre">validate</span></code></a></p></td>
+<td><p>Check whether the mixture is fully defined.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.use_realgas_cubic_eos" title="Mixture.use_realgas_cubic_eos"><code class="xref py py-attr docutils literal notranslate"><span class="pre">use_realgas_cubic_eos</span></code></a></p></td>
+<td><p>Turn ON the real-gas cubic EOS.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.use_idealgas_law" title="Mixture.use_idealgas_law"><code class="xref py py-attr docutils literal notranslate"><span class="pre">use_idealgas_law</span></code></a></p></td>
+<td><p>Turn on the ideal gas law to compute mixture properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.set_realgas_mixing_rule" title="Mixture.set_realgas_mixing_rule"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_realgas_mixing_rule</span></code></a></p></td>
+<td><p>Set the mixing rule for calculating the real-gas mixture properties.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Properties</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.chemid" title="Mixture.chemid"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemid</span></code></a></p></td>
+<td><p>Get chemistry set index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.kk" title="Mixture.kk"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kk</span></code></a></p></td>
+<td><p>Get the number of gas species.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.pressure" title="Mixture.pressure"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pressure</span></code></a></p></td>
+<td><p>Get gas mixture pressure [dynes/cm2].</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.temperature" title="Mixture.temperature"><code class="xref py py-attr docutils literal notranslate"><span class="pre">temperature</span></code></a></p></td>
+<td><p>Get gas mixture temperature.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.volume" title="Mixture.volume"><code class="xref py py-attr docutils literal notranslate"><span class="pre">volume</span></code></a></p></td>
+<td><p>Get mixture volume.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.x" title="Mixture.x"><code class="xref py py-attr docutils literal notranslate"><span class="pre">x</span></code></a></p></td>
+<td><p>Get mixture mole fraction.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.y" title="Mixture.y"><code class="xref py py-attr docutils literal notranslate"><span class="pre">y</span></code></a></p></td>
+<td><p>Get mixture mass fraction.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.concentration" title="Mixture.concentration"><code class="xref py py-attr docutils literal notranslate"><span class="pre">concentration</span></code></a></p></td>
+<td><p>Get mixture molar concentrations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.eos" title="Mixture.eos"><code class="xref py py-attr docutils literal notranslate"><span class="pre">eos</span></code></a></p></td>
+<td><p>Get the available real-gas EOS model that is provided in the mechanism.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.wt" title="Mixture.wt"><code class="xref py py-attr docutils literal notranslate"><span class="pre">wt</span></code></a></p></td>
+<td><p>Get species molecular masses.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.wtm" title="Mixture.wtm"><code class="xref py py-attr docutils literal notranslate"><span class="pre">wtm</span></code></a></p></td>
+<td><p>Get mean molar mass of the gas mixture.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.rho" title="Mixture.rho"><code class="xref py py-attr docutils literal notranslate"><span class="pre">rho</span></code></a></p></td>
+<td><p>Get mixture mass density.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
+Attributes</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.transport_data" title="Mixture.transport_data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">transport_data</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.userealgas" title="Mixture.userealgas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">userealgas</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.mole_fractions" title="Mixture.mole_fractions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mole_fractions</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.mass_fractions" title="Mixture.mass_fractions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mass_fractions</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.species_molar_weight" title="Mixture.species_molar_weight"><code class="xref py py-attr docutils literal notranslate"><span class="pre">species_molar_weight</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.mean_molar_weight" title="Mixture.mean_molar_weight"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mean_molar_weight</span></code></a></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-3" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-3">
+Static methods</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.normalize" title="Mixture.normalize"><code class="xref py py-attr docutils literal notranslate"><span class="pre">normalize</span></code></a></p></td>
+<td><p>Normalize the mixture composition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.mean_molar_mass" title="Mixture.mean_molar_mass"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mean_molar_mass</span></code></a></p></td>
+<td><p>Get mean molar mass of the gas mixture.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.mole_fraction_to_mass_fraction" title="Mixture.mole_fraction_to_mass_fraction"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mole_fraction_to_mass_fraction</span></code></a></p></td>
+<td><p>Convert mole fraction to mass fraction.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.mass_fraction_to_mole_fraction" title="Mixture.mass_fraction_to_mole_fraction"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mass_fraction_to_mole_fraction</span></code></a></p></td>
+<td><p>Convert mass fraction to mole fraction.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.mass_fraction_to_concentration" title="Mixture.mass_fraction_to_concentration"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mass_fraction_to_concentration</span></code></a></p></td>
+<td><p>Convert mass fractions to molar concentrations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.mole_fraction_to_concentration" title="Mixture.mole_fraction_to_concentration"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mole_fraction_to_concentration</span></code></a></p></td>
+<td><p>Convert mole fractions to molar concentrations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.density" title="Mixture.density"><code class="xref py py-attr docutils literal notranslate"><span class="pre">density</span></code></a></p></td>
+<td><p>Get mass density from the given mixture condition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.mixture_specific_heat" title="Mixture.mixture_specific_heat"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mixture_specific_heat</span></code></a></p></td>
+<td><p>Get mixture specific heat capacity at constant pressure.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.mixture_enthalpy" title="Mixture.mixture_enthalpy"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mixture_enthalpy</span></code></a></p></td>
+<td><p>Get mixture enthalpy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Mixture.rate_of_production" title="Mixture.rate_of_production"><code class="xref py py-attr docutils literal notranslate"><span class="pre">rate_of_production</span></code></a></p></td>
+<td><p>Get species molar rate of production.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Mixture.reaction_rates" title="Mixture.reaction_rates"><code class="xref py py-attr docutils literal notranslate"><span class="pre">reaction_rates</span></code></a></p></td>
+<td><p>Get the molar rates of the gas reactions.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="import-detail">
+<h2>Import detail<a class="headerlink" href="#import-detail" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.mixture</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mixture</span>
+</pre></div>
+</div>
+</section>
+<section id="property-detail">
+<h2>Property detail<a class="headerlink" href="#property-detail" title="Link to this heading">#</a></h2>
+<dl class="py property">
+<dt class="sig sig-object py" id="Mixture.chemid">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">chemid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Mixture.chemid" title="Link to this definition">#</a></dt>
+<dd><p>Get chemistry set index.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Mixture.kk">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">kk</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Mixture.kk" title="Link to this definition">#</a></dt>
+<dd><p>Get the number of gas species.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Mixture.pressure">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">pressure</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#Mixture.pressure" title="Link to this definition">#</a></dt>
+<dd><p>Get gas mixture pressure [dynes/cm2].</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Mixture.temperature">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">temperature</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#Mixture.temperature" title="Link to this definition">#</a></dt>
+<dd><p>Get gas mixture temperature.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Mixture.volume">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">volume</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#Mixture.volume" title="Link to this definition">#</a></dt>
+<dd><p>Get mixture volume.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Mixture.x">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">x</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#Mixture.x" title="Link to this definition">#</a></dt>
+<dd><p>Get mixture mole fraction.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Mixture.y">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">y</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#Mixture.y" title="Link to this definition">#</a></dt>
+<dd><p>Get mixture mass fraction.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Mixture.concentration">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">concentration</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#Mixture.concentration" title="Link to this definition">#</a></dt>
+<dd><p>Get mixture molar concentrations.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Mixture.eos">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">eos</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Mixture.eos" title="Link to this definition">#</a></dt>
+<dd><p>Get the available real-gas EOS model that is provided in the mechanism.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Mixture.wt">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">wt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#Mixture.wt" title="Link to this definition">#</a></dt>
+<dd><p>Get species molecular masses.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Mixture.wtm">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">wtm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#Mixture.wtm" title="Link to this definition">#</a></dt>
+<dd><p>Get mean molar mass of the gas mixture.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Mixture.rho">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">rho</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#Mixture.rho" title="Link to this definition">#</a></dt>
+<dd><p>Get mixture mass density.</p>
+</dd></dl>
+
+</section>
+<section id="attribute-detail">
+<h2>Attribute detail<a class="headerlink" href="#attribute-detail" title="Link to this heading">#</a></h2>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Mixture.transport_data">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">transport_data</span></span><a class="headerlink" href="#Mixture.transport_data" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Mixture.userealgas">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">userealgas</span></span><a class="headerlink" href="#Mixture.userealgas" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Mixture.mole_fractions">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">mole_fractions</span></span><a class="headerlink" href="#Mixture.mole_fractions" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Mixture.mass_fractions">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">mass_fractions</span></span><a class="headerlink" href="#Mixture.mass_fractions" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Mixture.species_molar_weight">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">species_molar_weight</span></span><a class="headerlink" href="#Mixture.species_molar_weight" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Mixture.mean_molar_weight">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">mean_molar_weight</span></span><a class="headerlink" href="#Mixture.mean_molar_weight" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="method-detail">
+<h2>Method detail<a class="headerlink" href="#method-detail" title="Link to this heading">#</a></h2>
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.normalize">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.ArrayLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.normalize" title="Link to this definition">#</a></dt>
+<dd><p>Normalize the mixture composition.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.mean_molar_mass">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">mean_molar_mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Mixture.mean_molar_mass" title="Link to this definition">#</a></dt>
+<dd><p>Get mean molar mass of the gas mixture.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.mole_fraction_to_mass_fraction">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">mole_fraction_to_mass_fraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">molefrac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.mole_fraction_to_mass_fraction" title="Link to this definition">#</a></dt>
+<dd><p>Convert mole fraction to mass fraction.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.mass_fraction_to_mole_fraction">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">mass_fraction_to_mole_fraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">massfrac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.mass_fraction_to_mole_fraction" title="Link to this definition">#</a></dt>
+<dd><p>Convert mass fraction to mole fraction.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.mass_fraction_to_concentration">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">mass_fraction_to_concentration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chemid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">massfrac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.mass_fraction_to_concentration" title="Link to this definition">#</a></dt>
+<dd><p>Convert mass fractions to molar concentrations.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.mole_fraction_to_concentration">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">mole_fraction_to_concentration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chemid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">molefrac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.mole_fraction_to_concentration" title="Link to this definition">#</a></dt>
+<dd><p>Convert mole fractions to molar concentrations.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.list_composition">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">list_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'</span> <span class="pre">'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bound</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Mixture.list_composition" title="Link to this definition">#</a></dt>
+<dd><p>List the mixture composition.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.density">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chemid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Mixture.density" title="Link to this definition">#</a></dt>
+<dd><p>Get mass density from the given mixture condition.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.mixture_specific_heat">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">mixture_specific_heat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chemid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Mixture.mixture_specific_heat" title="Link to this definition">#</a></dt>
+<dd><p>Get mixture specific heat capacity at constant pressure.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.mixture_enthalpy">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">mixture_enthalpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chemid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Mixture.mixture_enthalpy" title="Link to this definition">#</a></dt>
+<dd><p>Get mixture enthalpy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.rate_of_production">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">rate_of_production</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chemid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.rate_of_production" title="Link to this definition">#</a></dt>
+<dd><p>Get species molar rate of production.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.reaction_rates">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">reaction_rates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chemid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numbreaction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.reaction_rates" title="Link to this definition">#</a></dt>
+<dd><p>Get the molar rates of the gas reactions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.find_equilibrium">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">find_equilibrium</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Mixture.find_equilibrium" title="Link to this definition">#</a></dt>
+<dd><p>Create the equilibrium state mixture corresponding to mixture itself.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.hml">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">hml</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Mixture.hml" title="Link to this definition">#</a></dt>
+<dd><p>Get enthalpy of the mixture.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.cpbl">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">cpbl</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Mixture.cpbl" title="Link to this definition">#</a></dt>
+<dd><p>Get specific heat capacity of the mixture.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.rop">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">rop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.rop" title="Link to this definition">#</a></dt>
+<dd><p>Get species rate of productions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.rxn_rates">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">rxn_rates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.rxn_rates" title="Link to this definition">#</a></dt>
+<dd><p>Get molar reaction rates.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.species_cp">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">species_cp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.species_cp" title="Link to this definition">#</a></dt>
+<dd><p>Get species specific heat capacity at constant pressure.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.species_h">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">species_h</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.species_h" title="Link to this definition">#</a></dt>
+<dd><p>Get species enthalpy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.species_visc">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">species_visc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.species_visc" title="Link to this definition">#</a></dt>
+<dd><p>Get species viscosity.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.species_cond">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">species_cond</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.species_cond" title="Link to this definition">#</a></dt>
+<dd><p>Get species conductivity.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.species_diffusion_coeffs">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">species_diffusion_coeffs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.species_diffusion_coeffs" title="Link to this definition">#</a></dt>
+<dd><p>Get species diffusion coefficients.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.mixture_viscosity">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">mixture_viscosity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Mixture.mixture_viscosity" title="Link to this definition">#</a></dt>
+<dd><p>Get viscosity of the gas mixture.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.mixture_conductivity">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">mixture_conductivity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Mixture.mixture_conductivity" title="Link to this definition">#</a></dt>
+<dd><p>Get conductivity of the gas mixture.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.mixture_diffusion_coeffs">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">mixture_diffusion_coeffs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.mixture_diffusion_coeffs" title="Link to this definition">#</a></dt>
+<dd><p>Get mixture-averaged species diffusion coefficients of the gas mixture.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.mixture_binary_diffusion_coeffs">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">mixture_binary_diffusion_coeffs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.mixture_binary_diffusion_coeffs" title="Link to this definition">#</a></dt>
+<dd><p>Get multi-component species binary diffusion coefficients.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.mixture_thermal_diffusion_coeffs">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">mixture_thermal_diffusion_coeffs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.mixture_thermal_diffusion_coeffs" title="Link to this definition">#</a></dt>
+<dd><p>Get thermal diffusivity of the gas mixture.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.vol_hrr">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">vol_hrr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Mixture.vol_hrr" title="Link to this definition">#</a></dt>
+<dd><p>Get volumetric heat release rate.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.rop_mass">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">rop_mass</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.rop_mass" title="Link to this definition">#</a></dt>
+<dd><p>Get species mass rates of production.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.list_rop">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">list_rop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.int32</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.list_rop" title="Link to this definition">#</a></dt>
+<dd><p>List species molar production rate.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.list_rop_mass">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">list_rop_mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.int32</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.list_rop_mass" title="Link to this definition">#</a></dt>
+<dd><p>List species mass rate of production in descending order.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.list_reaction_rates">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">list_reaction_rates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.int32</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.list_reaction_rates" title="Link to this definition">#</a></dt>
+<dd><p>List information about reaction rate in descending order.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.x_by_equivalence_ratio">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">x_by_equivalence_ratio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chemistryset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../chemistry/Chemistry.html#ansys.chemkin.core.chemistry.Chemistry" title="ansys.chemkin.core.chemistry.Chemistry"><span class="pre">ansys.chemkin.core.chemistry.Chemistry</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">fuel_molefrac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oxid_molefrac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_molefrac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">products</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equivalenceratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Mixture.x_by_equivalence_ratio" title="Link to this definition">#</a></dt>
+<dd><p>Set mole fractions using equivalence ratio.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.y_by_equivalence_ratio">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">y_by_equivalence_ratio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chemistryset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../chemistry/Chemistry.html#ansys.chemkin.core.chemistry.Chemistry" title="ansys.chemkin.core.chemistry.Chemistry"><span class="pre">ansys.chemkin.core.chemistry.Chemistry</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">fuel_massfrac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oxid_massfrac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_massfrac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">products</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equivalenceratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Mixture.y_by_equivalence_ratio" title="Link to this definition">#</a></dt>
+<dd><p>Set mass fractions using equivalence ratio.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.get_egr_mole_fraction">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">get_egr_mole_fraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">egr_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Mixture.get_egr_mole_fraction" title="Link to this definition">#</a></dt>
+<dd><p>Compute the EGR composition in mole fraction.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.validate">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Mixture.validate" title="Link to this definition">#</a></dt>
+<dd><p>Check whether the mixture is fully defined.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.use_realgas_cubic_eos">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">use_realgas_cubic_eos</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Mixture.use_realgas_cubic_eos" title="Link to this definition">#</a></dt>
+<dd><p>Turn ON the real-gas cubic EOS.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.use_idealgas_law">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">use_idealgas_law</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Mixture.use_idealgas_law" title="Link to this definition">#</a></dt>
+<dd><p>Turn on the ideal gas law to compute mixture properties.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Mixture.set_realgas_mixing_rule">
+<span class="sig-prename descclassname"><span class="pre">Mixture.</span></span><span class="sig-name descname"><span class="pre">set_realgas_mixing_rule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rule</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Mixture.set_realgas_mixing_rule" title="Link to this definition">#</a></dt>
+<dd><p>Set the mixing rule for calculating the real-gas mixture properties.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.chemkin.core.mixture.Mixture"><code class="docutils literal notranslate"><span class="pre">ansys.chemkin.core.mixture.Mixture</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-detail">Import detail</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#property-detail">Property detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.chemid"><code class="docutils literal notranslate"><span class="pre">chemid</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.kk"><code class="docutils literal notranslate"><span class="pre">kk</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.pressure"><code class="docutils literal notranslate"><span class="pre">pressure</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.temperature"><code class="docutils literal notranslate"><span class="pre">temperature</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.volume"><code class="docutils literal notranslate"><span class="pre">volume</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.x"><code class="docutils literal notranslate"><span class="pre">x</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.y"><code class="docutils literal notranslate"><span class="pre">y</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.concentration"><code class="docutils literal notranslate"><span class="pre">concentration</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.eos"><code class="docutils literal notranslate"><span class="pre">eos</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.wt"><code class="docutils literal notranslate"><span class="pre">wt</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.wtm"><code class="docutils literal notranslate"><span class="pre">wtm</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.rho"><code class="docutils literal notranslate"><span class="pre">rho</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attribute-detail">Attribute detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.transport_data"><code class="docutils literal notranslate"><span class="pre">transport_data</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.userealgas"><code class="docutils literal notranslate"><span class="pre">userealgas</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.mole_fractions"><code class="docutils literal notranslate"><span class="pre">mole_fractions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.mass_fractions"><code class="docutils literal notranslate"><span class="pre">mass_fractions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.species_molar_weight"><code class="docutils literal notranslate"><span class="pre">species_molar_weight</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.mean_molar_weight"><code class="docutils literal notranslate"><span class="pre">mean_molar_weight</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-detail">Method detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.normalize"><code class="docutils literal notranslate"><span class="pre">normalize()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.mean_molar_mass"><code class="docutils literal notranslate"><span class="pre">mean_molar_mass()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.mole_fraction_to_mass_fraction"><code class="docutils literal notranslate"><span class="pre">mole_fraction_to_mass_fraction()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.mass_fraction_to_mole_fraction"><code class="docutils literal notranslate"><span class="pre">mass_fraction_to_mole_fraction()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.mass_fraction_to_concentration"><code class="docutils literal notranslate"><span class="pre">mass_fraction_to_concentration()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.mole_fraction_to_concentration"><code class="docutils literal notranslate"><span class="pre">mole_fraction_to_concentration()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.list_composition"><code class="docutils literal notranslate"><span class="pre">list_composition()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.density"><code class="docutils literal notranslate"><span class="pre">density()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.mixture_specific_heat"><code class="docutils literal notranslate"><span class="pre">mixture_specific_heat()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.mixture_enthalpy"><code class="docutils literal notranslate"><span class="pre">mixture_enthalpy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.rate_of_production"><code class="docutils literal notranslate"><span class="pre">rate_of_production()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.reaction_rates"><code class="docutils literal notranslate"><span class="pre">reaction_rates()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.find_equilibrium"><code class="docutils literal notranslate"><span class="pre">find_equilibrium()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.hml"><code class="docutils literal notranslate"><span class="pre">hml()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.cpbl"><code class="docutils literal notranslate"><span class="pre">cpbl()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.rop"><code class="docutils literal notranslate"><span class="pre">rop()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.rxn_rates"><code class="docutils literal notranslate"><span class="pre">rxn_rates()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.species_cp"><code class="docutils literal notranslate"><span class="pre">species_cp()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.species_h"><code class="docutils literal notranslate"><span class="pre">species_h()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.species_visc"><code class="docutils literal notranslate"><span class="pre">species_visc()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.species_cond"><code class="docutils literal notranslate"><span class="pre">species_cond()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.species_diffusion_coeffs"><code class="docutils literal notranslate"><span class="pre">species_diffusion_coeffs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.mixture_viscosity"><code class="docutils literal notranslate"><span class="pre">mixture_viscosity()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.mixture_conductivity"><code class="docutils literal notranslate"><span class="pre">mixture_conductivity()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.mixture_diffusion_coeffs"><code class="docutils literal notranslate"><span class="pre">mixture_diffusion_coeffs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.mixture_binary_diffusion_coeffs"><code class="docutils literal notranslate"><span class="pre">mixture_binary_diffusion_coeffs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.mixture_thermal_diffusion_coeffs"><code class="docutils literal notranslate"><span class="pre">mixture_thermal_diffusion_coeffs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.vol_hrr"><code class="docutils literal notranslate"><span class="pre">vol_hrr()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.rop_mass"><code class="docutils literal notranslate"><span class="pre">rop_mass()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.list_rop"><code class="docutils literal notranslate"><span class="pre">list_rop()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.list_rop_mass"><code class="docutils literal notranslate"><span class="pre">list_rop_mass()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.list_reaction_rates"><code class="docutils literal notranslate"><span class="pre">list_reaction_rates()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.x_by_equivalence_ratio"><code class="docutils literal notranslate"><span class="pre">x_by_equivalence_ratio()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.y_by_equivalence_ratio"><code class="docutils literal notranslate"><span class="pre">y_by_equivalence_ratio()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.get_egr_mole_fraction"><code class="docutils literal notranslate"><span class="pre">get_egr_mole_fraction()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.validate"><code class="docutils literal notranslate"><span class="pre">validate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.use_realgas_cubic_eos"><code class="docutils literal notranslate"><span class="pre">use_realgas_cubic_eos()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.use_idealgas_law"><code class="docutils literal notranslate"><span class="pre">use_idealgas_law()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Mixture.set_realgas_mixing_rule"><code class="docutils literal notranslate"><span class="pre">set_realgas_mixing_rule()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item"> 
+<div class="tocsection editthispage">
+  <a href="http://github.com/ansys/pychemkin/edit/main/ansys/chemkin/core/mixture/Mixture.py">
+    <i class="fa-solid fa-pencil"></i>
+       Edit
+    on GitHub  
+  </a>
+</div>
+
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../../../../_sources/api/ansys/chemkin/core/mixture/Mixture.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../../../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../../../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../../../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.6.4. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
