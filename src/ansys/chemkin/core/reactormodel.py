@@ -731,7 +731,7 @@ class ReactorModel:
         ----------
             key: string
                 Chemkin reactor keyword for species value
-            threshold: douoble
+            threshold: double
                 minimum species mole fraction value to be included in
                 the species keyword
             molefrac: 1-D double array
@@ -789,7 +789,7 @@ class ReactorModel:
         ----------
             inlet_name: string
                 external inlet name
-            threshold: douoble
+            threshold: double
                 minimum species mole fraction value to be included in
                 the species keyword
             molefrac: 1-D double array

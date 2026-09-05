@@ -45,7 +45,7 @@ class Aerosol(Material):
         # and aggregation are modeled by the usual aerosol models.
         # The size class of the particles is represented by the number of moles of the
         # bulk species that makes up the core of the particles. The core bulk species
-        # is defined in the surface mechanism by the auxilary tag "core" to a bulk
+        # is defined in the surface mechanism by the auxiliary tag "core" to a bulk
         # species. Alternatively, it can also be defined as the only bulk species
         # product of the nucleation reactions. The native open site species on the
         # particle surface is used to balance the nucleation reactions and is defined
@@ -74,15 +74,15 @@ class PDF:
     """Object representing the population density function (PDF) of aerosols."""
 
     def __init__(self, core_wt: float, bulk_density: float):
-        """Initialize the aerosol pupolation density function object."""
+        """Initialize the aerosol population density function object."""
         """
-        Instantiate a population density function (PDF) object with the phisical
-        peoperties of the aerosol particles. The sizes of the particles are represented
-        by the number of the core element (an atom or a molecule) consistitutes the
+        Instantiate a population density function (PDF) object with the physical
+        properties of the aerosol particles. The sizes of the particles are represented
+        by the number of the core element (an atom or a molecule) that constitutes the
         particles. The core_wt is the atomic/molar mass of the core element in g/cm3.
         The bulk density [g/cm3] indicates how the elements in the particles are packed
-        on average. The particle size class is roughly porportional to the volume of
-        the aerosol particle (primary partile).
+        on average. The particle size class is roughly proportional to the volume of
+        the aerosol particle (primary particle).
         
         Parameters
         ----------
@@ -106,7 +106,7 @@ class PDF:
         self.variance = 0.0
         # standard deviation
         self.std_dev = 0.0
-        # minimum/ lower bond
+        # minimum/lower bound
         self.mean_shifted = 0.0
         self.x_min = 0.0
 
@@ -218,7 +218,7 @@ class PDF:
             x_min: float, >= 0.
                 the minimum size class in the distribution. Normally this is the
                 smallest particle size that is formed by the nucleation reactions.
-                That is, the minumum inception size class.
+                That is, the minimum inception size class.
         """
         # check the moments values
         if m0 > 0.0:

@@ -138,7 +138,7 @@ class PerfectlyStirredReactor(OpenReactor):
         """
         Returns
         -------
-            volume: douoble
+            volume: double
                 reactor volume [cm3]
 
         """
