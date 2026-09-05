@@ -83,7 +83,7 @@ class PDF:
         The bulk density [g/cm3] indicates how the elements in the particles are packed
         on average. The particle size class is roughly proportional to the volume of
         the aerosol particle (primary particle).
-        
+
         Parameters
         ----------
             core_wt: float, > 0.
@@ -129,12 +129,12 @@ class PDF:
         """Convert size class to particle volume."""
         """
         Convert the given particle size class to volume in micron^3.
-        
+
         Parameters
         ----------
             x: float, > 0.
             particle size class
-        
+
         Returns
         -------
             vol: float, >= 0.
@@ -147,7 +147,7 @@ class PDF:
         """Convert particle volume to size class."""
         """
         Convert the given particle volume in micron^3 to size class.
-        
+
         Parameters
         ----------
             v: float, > 0.
@@ -165,12 +165,12 @@ class PDF:
         """Convert particle class to particle diameter."""
         """
         Convert the given particle class to particle diameter in micron.
-        
+
         Parameters
         ----------
             x: float, > 0.
             particle size class
-        
+
         Returns
         -------
             diameter: float, >= 0.
@@ -184,12 +184,12 @@ class PDF:
         """Convert particle diameter to particle class."""
         """
         Convert the given particle diameter in micron to size class.
-        
+
         Parameters
         ----------
             diameter: float, > 0.
             particle diameter [micron]
-        
+
         Returns
         -------
             x: float, >= 0.
@@ -204,7 +204,7 @@ class PDF:
         """Calculate the key properties of the PDF from the moments values."""
         """
         Calculate the key properties of the PDF from the size class moments values.
-        
+
         Parameters
         ----------
             m0: float, > 0.
@@ -308,7 +308,7 @@ class PDF:
         """
         Applied the given PDF properties of the particle population to
         the lognormal distribution form.
-        
+
         Parameters
         ----------
             samples: integer.
@@ -318,7 +318,7 @@ class PDF:
                 the upper bound of the PDF.
             mode: string, {"class", "volume"}.
                 option to provide PDF either in particle size class or particle volume.
-        
+
         Returns
         -------
             x: float, array of size ``samples``.
