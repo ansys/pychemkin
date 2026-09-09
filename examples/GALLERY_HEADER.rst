@@ -9,6 +9,14 @@ Later examples explain how to tackle more complex simulations, such as running a
 Thus, you should go through the examples in the order listed.
 
 .. note::
+    Some examples require mechanism and data files that are not included through the
+    download links provided with their descriptions. These supplementary files
+    are available in the ``examples/data`` folder of the *PyChemkin* repository.
+    The corresponding Python source files are available in the ``examples`` folder.
+    Make sure the full file paths to the mechanism and the data files are correct
+    in the example scripts before running them.
+
+.. note::
     When you use the Jupyter Notebook version of the example projects (``*.ipynb``), please
     remember to *close the project after you finish viewing and/or running the project*. When the project
     is open, it might hold on to your Ansys license. If you have too many Jupyter Notebook projects
