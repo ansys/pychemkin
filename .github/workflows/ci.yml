@@ -71,7 +71,7 @@ jobs:
           paths=$(python -c "import site; print(':'.join(site.getsitepackages()))")
           echo "paths=$paths" >> $GITHUB_OUTPUT
 
-      - uses: ansys/actions/check-vulnerabilities@3ad3b285bd9b67045477dafc7f9865a3aa39f692 # v11.0.6
+      - uses: ansys/actions/check-vulnerabilities@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         env:
           # Prevent Python from searching the repository working directory for imports.
           PYTHONSAFEPATH: ${{ steps.get_site.outputs.paths }}
@@ -92,7 +92,7 @@ jobs:
     permissions:
       contents: read # Read the workflow files in the project
     steps:
-      - uses: ansys/actions/check-actions-security@3ad3b285bd9b67045477dafc7f9865a3aa39f692 # v11.0.6
+      - uses: ansys/actions/check-actions-security@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           generate-summary: true
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -109,7 +109,7 @@ jobs:
     permissions:
       contents: read # Read the source code of the project
     steps:
-      - uses: ansys/actions/code-style@3ad3b285bd9b67045477dafc7f9865a3aa39f692 # v11.0.6
+      - uses: ansys/actions/code-style@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -139,7 +139,7 @@ jobs:
         should-release:
           - ${{ github.event_name == 'push' && contains(github.ref, 'refs/tags') }}
     steps:
-      - uses: ansys/actions/build-wheelhouse@3ad3b285bd9b67045477dafc7f9865a3aa39f692 # v11.0.6
+      - uses: ansys/actions/build-wheelhouse@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
@@ -163,7 +163,7 @@ jobs:
       packages: read # Read the packages in the organization
     steps:
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@3ad3b285bd9b67045477dafc7f9865a3aa39f692 # v11.0.6
+        uses: ansys/actions/tests-pytest@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         env:
           ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER) }}
           POETRY_VIRTUALENVS_CREATE: 'false'
@@ -183,7 +183,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: doc-style
     steps:
-      - uses: ansys/actions/doc-build@3ad3b285bd9b67045477dafc7f9865a3aa39f692 # v11.0.6
+      - uses: ansys/actions/doc-build@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         env:
           ANSYSLMD_LICENSE_FILE: "1055@{{ secrets.LICENSE_SERVER }}"
         with:
@@ -201,7 +201,7 @@ jobs:
       contents: read # Read the source code of the project
       id-token: write # Write access to a temporary token for signing attestations
     steps:
-      - uses: ansys/actions/build-library@3ad3b285bd9b67045477dafc7f9865a3aa39f692 # v11.0.6
+      - uses: ansys/actions/build-library@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -215,7 +215,7 @@ jobs:
     permissions:
       contents: write # Write to the gh-pages branch of the repository
     steps:
-      - uses: ansys/actions/doc-deploy-dev@3ad3b285bd9b67045477dafc7f9865a3aa39f692 # v11.0.6
+      - uses: ansys/actions/doc-deploy-dev@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
             cname: ${{ env.DOCUMENTATION_CNAME }}
             token: ${{ secrets.GITHUB_TOKEN }}
@@ -249,7 +249,7 @@ jobs:
           skip-existing: false
 
       - name: "Release to GitHub"
-        uses: ansys/actions/release-github@3ad3b285bd9b67045477dafc7f9865a3aa39f692 # v11.0.6
+        uses: ansys/actions/release-github@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -268,7 +268,7 @@ jobs:
       contents: write # Write to the gh-pages branch of the repository
     steps:
       - name: "Deploy the stable documentation"
-        uses: ansys/actions/doc-deploy-stable@3ad3b285bd9b67045477dafc7f9865a3aa39f692 # v11.0.6
+        uses: ansys/actions/doc-deploy-stable@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
             cname: ${{ env.DOCUMENTATION_CNAME }}
             token: ${{ secrets.GITHUB_TOKEN }}
