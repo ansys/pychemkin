@@ -162,6 +162,16 @@ jobs:
       contents: read # Read the source code of the project
       packages: read # Read the packages in the organization
     steps:
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest-cov
+
       - name: Run pytest
         uses: ansys/actions/tests-pytest@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         env:
@@ -173,10 +183,17 @@ jobs:
           use-python-cache: false
           group-dependencies-name: tests
 
+      - name: 'Check generated coverage file'
+        run: |
+          ls -l coverage.xml
+
       - name: 'Upload coverage to CodeCov'
         uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          disable_search: true
+          fail_ci_if_error: false
 
   doc-build:
     name: "Doc build"
@@ -256,7 +273,7 @@ jobs:
           changelog-release-notes: true
           only-code: true
           add-artifact-attestation-notes: true
-          generate_release_notes: false
+          generate-release-notes: false
 
   doc-deploy-stable:
     name: "Deploy stable documentation"

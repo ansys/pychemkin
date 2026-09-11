@@ -102,11 +102,6 @@ ignore-words="./doc/styles/config/vocabularies/CHEMKIN/accept.txt"
 quiet-level = 3
 skip = "*.toml,*.pyc,*.xml,*.gif,*.png,*.jpg,*.js,*.html,*.svg,*.asc,*.out,*.inp,*.dtd,*.dat"
 
-[tool.pytest.ini_options]
-# Automatically run coverage when typing 'pytest'
-addopts = "-ra --maxfail=3 --cov=ansys.chemkin.core --cov-report=xml --cov-report=term"
-testpaths = ["tests"]
-
 [tool.coverage.run]
 # Specify files or directories to measure
 source = ["ansys.chemkin.core"]
