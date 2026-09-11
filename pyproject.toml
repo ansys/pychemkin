@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "ansys-chemkin-core"
-version = "0.2.dev0"
+version = "0.2.0"
 description = "PyChemkin provides Pythonic interface to Ansys Chemkin utilities and reactor models"
 requires-python = ">=3.10,<4"
 license = { file = "LICENSE" }
@@ -12,7 +12,7 @@ authors = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
 maintainers = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
 readme = "README.rst"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -103,7 +103,41 @@ quiet-level = 3
 skip = "*.toml,*.pyc,*.xml,*.gif,*.png,*.jpg,*.js,*.html,*.svg,*.asc,*.out,*.inp,*.dtd,*.dat"
 
 [tool.pytest.ini_options]
-addopts = "-ra --maxfail=3"
+# Automatically run coverage when typing 'pytest'
+addopts = "-ra --maxfail=3 --cov=ansys.chemkin.core --cov-report=xml --cov-report=term"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+# Specify files or directories to measure
+source = ["ansys.chemkin.core"]
+include = [
+    "src/ansys/chemkin/core/*",
+]
+omit = [
+    "tests/*",
+    "examples/*",
+    "doc/*",
+    "src/ansys/chemkin/core/chemkin_solution_utility.py",
+    "src/ansys/chemkin/core/constants.py",
+    "src/ansys/chemkin/core/flame.py",
+    "src/ansys/chemkin/core/grid.py",
+    "src/ansys/chemkin/core/hybridreactornetwork.py",
+    "src/ansys/chemkin/core/inlet.py",
+    "src/ansys/chemkin/core/keyword.py",
+    "src/ansys/chemkin/core/logger.py",
+    "src/ansys/chemkin/core/microprocess.py",
+    "src/ansys/chemkin/core/particles.py",
+    "src/ansys/chemkin/core/profile.py",
+    "src/ansys/chemkin/core/reactormodel.py",
+    "src/ansys/chemkin/core/steadystatesolver.py",
+    "src/ansys/chemkin/core/surface_chemistry_controller.py",
+]
+
+[tool.coverage.report]
+# Fail the build if the total coverage drops below a specific percentage
+# fail_under = 10
+show_missing = true
+
 
 [tool.towncrier]
 package = "ansys.chemkin.core"
