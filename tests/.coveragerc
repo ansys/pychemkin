@@ -1,0 +1,17 @@
+[run]
+
+omit =
+    tests/**
+    examples/**
+    src/ansys/chemkin/core/chemkin_solution_utility.py
+    src/ansys/chemkin/core/constants.py
+    src/ansys/chemkin/core/grid.py
+    src/ansys/chemkin/core/flame.py
+    src/ansys/chemkin/core/hybridreactornetwork.py
+    src/ansys/chemkin/core/info.py
+    src/ansys/chemkin/core/keyword.py
+    src/ansys/chemkin/core/microprocess.py
+    src/ansys/chemkin/core/particles.py
+    src/ansys/chemkin/core/profile.py
+    src/ansys/chemkin/core/steadystatesolver.py
+    src/ansys/chemkin/core/surface_chemistry_controller.py
