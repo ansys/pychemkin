@@ -102,38 +102,6 @@ ignore-words="./doc/styles/config/vocabularies/CHEMKIN/accept.txt"
 quiet-level = 3
 skip = "*.toml,*.pyc,*.xml,*.gif,*.png,*.jpg,*.js,*.html,*.svg,*.asc,*.out,*.inp,*.dtd,*.dat"
 
-[tool.coverage.run]
-# Specify files or directories to measure
-source = ["ansys.chemkin.core"]
-include = [
-    "src/ansys/chemkin/core/*",
-]
-omit = [
-    "tests/*",
-    "examples/*",
-    "doc/*",
-    "src/ansys/chemkin/core/chemkin_solution_utility.py",
-    "src/ansys/chemkin/core/constants.py",
-    "src/ansys/chemkin/core/flame.py",
-    "src/ansys/chemkin/core/grid.py",
-    "src/ansys/chemkin/core/hybridreactornetwork.py",
-    "src/ansys/chemkin/core/inlet.py",
-    "src/ansys/chemkin/core/keyword.py",
-    "src/ansys/chemkin/core/logger.py",
-    "src/ansys/chemkin/core/microprocess.py",
-    "src/ansys/chemkin/core/particles.py",
-    "src/ansys/chemkin/core/profile.py",
-    "src/ansys/chemkin/core/reactormodel.py",
-    "src/ansys/chemkin/core/steadystatesolver.py",
-    "src/ansys/chemkin/core/surface_chemistry_controller.py",
-]
-
-[tool.coverage.report]
-# Fail the build if the total coverage drops below a specific percentage
-# fail_under = 10
-show_missing = true
-
-
 [tool.towncrier]
 package = "ansys.chemkin.core"
 directory = "doc/source/changelog.d"
