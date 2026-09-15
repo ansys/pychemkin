@@ -1,0 +1,31 @@
+
+
+
+
+
+
+:class:`TransientPSRSetVolumeFixedTemperature`
+==============================================
+
+
+.. py:class:: ansys.chemkin.core.stirreactors.transient_PSR.TransientPSRSetVolumeFixedTemperature(reactor_condition: ansys.chemkin.core.inlet.Stream, label: str = '')
+
+   Bases: :py:obj:`TransientPSR`
+
+
+   Transient PSR model with reactor volume and fixed reactor temperature.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.stirreactors.transient_PSR import TransientPSRSetVolumeFixedTemperature
+
+
+
+
+

@@ -1,0 +1,156 @@
+
+
+
+
+
+
+:class:`OpenReactor`
+====================
+
+
+.. py:class:: ansys.chemkin.core.stirreactors.openreactor.OpenReactor(guessedmixture: ansys.chemkin.core.inlet.Stream, label: Union[str, None] = None)
+
+   Bases: :py:obj:`ansys.chemkin.core.reactormodel.ReactorModel`, :py:obj:`ansys.chemkin.core.steadystatesolver.SteadyStateSolver`
+
+
+   Generic open reactor model.
+
+
+
+.. py:currentmodule:: OpenReactor
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_inlet`
+            - Add an external inlet to the reactor.
+          * - :py:attr:`~reset_inlet`
+            - Reset the properties of an existing external inlet.
+          * - :py:attr:`~remove_inlet`
+            - Delete an existing external inlet from the reactor by the inlet name.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~net_mass_flowrate`
+            - Get the net external inlet mass flow rate.
+          * - :py:attr:`~net_vol_flowrate`
+            - Get the net external volumetric flow rate.
+          * - :py:attr:`~number_external_inlets`
+            - Get the number of external inlets to the reactor.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~numbexternalinlets`
+            - 
+          * - :py:attr:`~externalinlets`
+            - 
+          * - :py:attr:`~totalmassflowrate`
+            - 
+          * - :py:attr:`~solver_types`
+            - 
+          * - :py:attr:`~energy_types`
+            - 
+          * - :py:attr:`~problem_types`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.stirreactors.openreactor import OpenReactor
+
+Property detail
+---------------
+
+.. py:property:: net_mass_flowrate
+   :type: float
+
+
+   Get the net external inlet mass flow rate.
+
+
+.. py:property:: net_vol_flowrate
+   :type: float
+
+
+   Get the net external volumetric flow rate.
+
+
+.. py:property:: number_external_inlets
+   :type: int
+
+
+   Get the number of external inlets to the reactor.
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: numbexternalinlets
+   :value: 0
+
+
+.. py:attribute:: externalinlets
+   :type:  dict[str, ansys.chemkin.core.inlet.Stream]
+
+.. py:attribute:: totalmassflowrate
+   :value: 0.0
+
+
+.. py:attribute:: solver_types
+
+.. py:attribute:: energy_types
+
+.. py:attribute:: problem_types
+
+
+
+Method detail
+-------------
+
+.. py:method:: set_inlet(extinlet: ansys.chemkin.core.inlet.Stream)
+
+   Add an external inlet to the reactor.
+
+
+.. py:method:: reset_inlet(new_stream: ansys.chemkin.core.inlet.Stream)
+
+   Reset the properties of an existing external inlet.
+
+
+.. py:method:: remove_inlet(name: str)
+
+   Delete an existing external inlet from the reactor by the inlet name.
+
+
+
+
+

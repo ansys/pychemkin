@@ -1,0 +1,156 @@
+
+
+
+
+
+
+The ``utilities.py`` module
+===========================
+
+.. py:module:: ansys.chemkin.core.utilities
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: utilities
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~where_element_in_array_1d`
+            - Find number of occurrence and indices of the target value in an array.
+
+
+          * - :py:obj:`~bisect`
+            - Use bisectional method to find the largest index in the array.
+
+
+          * - :py:obj:`~find_interpolate_parameters`
+            - Find the indices branket the given value.
+
+
+          * - :py:obj:`~interpolate_array`
+            - Find the y-value corresponding to the x-value in data pairs.
+
+
+          * - :py:obj:`~create_mixture_recipe_from_fractions`
+            - Build a PyChemkin mixture recipe/formula from a species fraction array.
+
+
+          * - :py:obj:`~calculate_stoichiometrics`
+            - Calculate the stoichiometric coefficients.
+
+
+          * - :py:obj:`~random`
+            - Generate a (reproducible) random floating number.
+
+
+          * - :py:obj:`~find_file`
+            - Find the correct version of the given partial file name.
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ck_rng`
+            - 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+pychemkin utilities.
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: where_element_in_array_1d(arr: Union[numpy.typing.NDArray[numpy.double], numpy.typing.NDArray[numpy.int32]], target: float) -> tuple[int, numpy.typing.NDArray[numpy.int32]]
+
+   Find number of occurrence and indices of the target value in an array.
+
+
+.. py:function:: bisect(ileft: int, iright: int, x: float, xarray) -> int
+
+   Use bisectional method to find the largest index in the array.
+
+
+.. py:function:: find_interpolate_parameters(x: float, xarray: numpy.typing.NDArray[numpy.double]) -> tuple[int, float]
+
+   Find the indices branket the given value.
+
+
+.. py:function:: interpolate_array(x: float, x_array: numpy.typing.NDArray[numpy.double], y_array: numpy.typing.NDArray[numpy.double]) -> float
+
+   Find the y-value corresponding to the x-value in data pairs.
+
+
+.. py:function:: create_mixture_recipe_from_fractions(chemistry_set: ansys.chemkin.core.chemistry.Chemistry, frac: numpy.typing.NDArray[numpy.double]) -> tuple[int, list[tuple[str, float]]]
+
+   Build a PyChemkin mixture recipe/formula from a species fraction array.
+
+
+.. py:function:: calculate_stoichiometrics(chemistryset: ansys.chemkin.core.chemistry.Chemistry, fuel_molefrac: numpy.typing.NDArray[numpy.double], oxid_molefrac: numpy.typing.NDArray[numpy.double], prod_index: numpy.typing.NDArray[numpy.int32]) -> tuple[float, numpy.typing.NDArray[numpy.double]]
+
+   Calculate the stoichiometric coefficients.
+
+
+.. py:function:: random(range: Union[None, tuple[float, float]] = None) -> float
+
+   Generate a (reproducible) random floating number.
+
+
+.. py:function:: find_file(filepath: str, partialfilename: str, fileext: str) -> str
+
+   Find the correct version of the given partial file name.
+
+
+.. py:data:: ck_rng
+   :value: None
+
+
+
+

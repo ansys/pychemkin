@@ -1,0 +1,117 @@
+
+
+
+
+
+
+:class:`SurfacePhase`
+=====================
+
+
+.. py:class:: ansys.chemkin.core.chemistry.SurfacePhase(phase_index: int, phase_type: str, label: str = '')
+
+   Surface phase object.
+
+
+
+.. py:currentmodule:: SurfacePhase
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~number_species`
+            - Get the number of species.
+          * - :py:attr:`~site_density`
+            - Get surface site density.
+          * - :py:attr:`~first_species_index`
+            - Get the global index of the first species.
+          * - :py:attr:`~last_species_index`
+            - Get the global index of the last species.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~phase_index`
+            - 
+          * - :py:attr:`~first_spec_index`
+            - 
+          * - :py:attr:`~last_spec_index`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.chemistry import SurfacePhase
+
+Property detail
+---------------
+
+.. py:property:: number_species
+   :type: int
+
+
+   Get the number of species.
+
+
+.. py:property:: site_density
+   :type: float
+
+
+   Get surface site density.
+
+
+.. py:property:: first_species_index
+   :type: int
+
+
+   Get the global index of the first species.
+
+
+.. py:property:: last_species_index
+   :type: int
+
+
+   Get the global index of the last species.
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: phase_index
+
+.. py:attribute:: first_spec_index
+   :value: 0
+
+
+.. py:attribute:: last_spec_index
+   :value: 0
+
+
+
+
+
+

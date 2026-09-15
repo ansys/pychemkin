@@ -1,0 +1,370 @@
+
+
+
+
+
+
+:class:`ReactorModel`
+=====================
+
+
+.. py:class:: ansys.chemkin.core.reactormodel.ReactorModel(reactor_condition: ansys.chemkin.core.inlet.Stream, label: str)
+
+   Serve as a generic Chemkin reactor model framework.
+
+
+
+.. py:currentmodule:: ReactorModel
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~usefullkeywords`
+            - Specify all necessary keywords explicitly.
+          * - :py:attr:`~setkeyword`
+            - Set a Chemkin keyword and its parameter.
+          * - :py:attr:`~removekeyword`
+            - Remove an existing Chemkin keyword and its parameter.
+          * - :py:attr:`~showkeywordinputlines`
+            - List all currently-defined keywords and their parameters line by line.
+          * - :py:attr:`~createkeywordinputlines`
+            - Create keyword input lines for Chemkin applications.
+          * - :py:attr:`~showkeywordinputlines_with_tag`
+            - List all currently-defined keywords.
+          * - :py:attr:`~createkeywordinputlines_with_tag`
+            - Create keyword input lines for Chemkin applications.
+          * - :py:attr:`~setprofile`
+            - Set a Chemkin profile and its parameter.
+          * - :py:attr:`~createprofileinputlines`
+            - Create profile keyword input lines for Chemkin applications.
+          * - :py:attr:`~createspeciesinputlines`
+            - Create keyword input lines.
+          * - :py:attr:`~createspeciesinputlineswithaddon`
+            - Create keyword input lines.
+          * - :py:attr:`~chemid`
+            - Get chemistry set index.
+          * - :py:attr:`~set_molefractions`
+            - Reset the reactor species mole fractions.
+          * - :py:attr:`~set_massfractions`
+            - Reset the reactor species mass fractions.
+          * - :py:attr:`~list_composition`
+            - List the gas mixture composition inside the reactor.
+          * - :py:attr:`~setsensitivityanalysis`
+            - Switch ON/OFF A-factor sensitivity analysis.
+          * - :py:attr:`~set_rop_analysis`
+            - Switch ON/OFF the ROP (Rate Of Production) analysis.
+          * - :py:attr:`~userealgas_eos`
+            - Set the option to turn ON/OFF the real gas model.
+          * - :py:attr:`~setrealgasmixingmodel`
+            - Set the real gas mixing rule/model.
+          * - :py:attr:`~setrunstatus`
+            - Set the simulation run status.
+          * - :py:attr:`~getrunstatus`
+            - Get the reactor model simulation status.
+          * - :py:attr:`~run`
+            - Serve as a generic Chemkin run reactor model method.
+          * - :py:attr:`~setsolutionspeciesfracmode`
+            - Set the type of species fractions in the solution.
+          * - :py:attr:`~getrawsolutionstatus`
+            - Get the status of the post-process.
+          * - :py:attr:`~getmixturesolutionstatus`
+            - Get the status of the post-process.
+          * - :py:attr:`~get_solution_size`
+            - Get the number of reactors and the number of solution points.
+          * - :py:attr:`~getnumbersolutionpoints`
+            - Get  the number of solution points per reactor.
+          * - :py:attr:`~parsespeciessolutiondata`
+            - Parse the 2-D species fraction solution data.
+          * - :py:attr:`~process_solution`
+            - Post-process solution.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~temperature`
+            - Get reactor initial temperature.
+          * - :py:attr:`~pressure`
+            - Get reactor pressure.
+          * - :py:attr:`~massfraction`
+            - Get the gas species mass fractions.
+          * - :py:attr:`~molefraction`
+            - Get the gas species mole fractions.
+          * - :py:attr:`~concentration`
+            - Get the gas species molar concentrations.
+          * - :py:attr:`~gasratemultiplier`
+            - Get the value of the gas-phase reaction rate multiplier.
+          * - :py:attr:`~std_output`
+            - Get text output status.
+          * - :py:attr:`~xml_output`
+            - Get XML solution output status.
+          * - :py:attr:`~realgas`
+            - Get the real gas EOS status.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~label`
+            - 
+          * - :py:attr:`~runstatus`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.reactormodel import ReactorModel
+
+Property detail
+---------------
+
+.. py:property:: temperature
+   :type: float
+
+
+   Get reactor initial temperature.
+
+
+.. py:property:: pressure
+   :type: float
+
+
+   Get reactor pressure.
+
+
+.. py:property:: massfraction
+   :type: float
+
+
+   Get the gas species mass fractions.
+
+
+.. py:property:: molefraction
+   :type: numpy.typing.NDArray[numpy.double]
+
+
+   Get the gas species mole fractions.
+
+
+.. py:property:: concentration
+   :type: numpy.typing.NDArray[numpy.double]
+
+
+   Get the gas species molar concentrations.
+
+
+.. py:property:: gasratemultiplier
+   :type: float
+
+
+   Get the value of the gas-phase reaction rate multiplier.
+
+
+.. py:property:: std_output
+   :type: bool
+
+
+   Get text output status.
+
+
+.. py:property:: xml_output
+   :type: bool
+
+
+   Get XML solution output status.
+
+
+.. py:property:: realgas
+   :type: bool
+
+
+   Get the real gas EOS status.
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: label
+
+.. py:attribute:: runstatus
+   :value: -100
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: usefullkeywords(mode: bool)
+
+   Specify all necessary keywords explicitly.
+
+
+.. py:method:: setkeyword(key: str, value: Union[bool, float, str])
+
+   Set a Chemkin keyword and its parameter.
+
+
+.. py:method:: removekeyword(key: str)
+
+   Remove an existing Chemkin keyword and its parameter.
+
+
+.. py:method:: showkeywordinputlines()
+
+   List all currently-defined keywords and their parameters line by line.
+
+
+.. py:method:: createkeywordinputlines() -> tuple[int, int]
+
+   Create keyword input lines for Chemkin applications.
+
+
+.. py:method:: showkeywordinputlines_with_tag(tag: str = '')
+
+   List all currently-defined keywords.
+
+
+.. py:method:: createkeywordinputlines_with_tag(tag: str = '') -> tuple[int, int]
+
+   Create keyword input lines for Chemkin applications.
+
+
+.. py:method:: setprofile(key: str, x: numpy.typing.NDArray[numpy.double], y: numpy.typing.NDArray[numpy.double]) -> int
+
+   Set a Chemkin profile and its parameter.
+
+
+.. py:method:: createprofileinputlines() -> tuple[int, int, list[str]]
+
+   Create profile keyword input lines for Chemkin applications.
+
+
+.. py:method:: createspeciesinputlines(solvertype: int, threshold: float = 1e-12, molefrac: numpy.typing.NDArray[numpy.double] = None) -> tuple[int, list[str]]
+
+   Create keyword input lines.
+
+
+.. py:method:: createspeciesinputlineswithaddon(key: str = 'XEST', threshold: float = 1e-12, molefrac: numpy.typing.NDArray[numpy.double] = None, addon: str = '') -> tuple[int, list[str]]
+
+   Create keyword input lines.
+
+
+.. py:method:: chemid() -> int
+
+   Get chemistry set index.
+
+
+.. py:method:: set_molefractions(molefrac: numpy.typing.NDArray[numpy.double])
+
+   Reset the reactor species mole fractions.
+
+
+.. py:method:: set_massfractions(massfrac: numpy.typing.NDArray[numpy.double])
+
+   Reset the reactor species mass fractions.
+
+
+.. py:method:: list_composition(mode: str, option: str = ' ', bound: float = 0.0)
+
+   List the gas mixture composition inside the reactor.
+
+
+.. py:method:: setsensitivityanalysis(mode: bool = True, absolute_tolerance: Union[float, None] = None, relative_tolerance: Union[float, None] = None, temperature_threshold: Union[float, None] = None, species_threshold: Union[float, None] = None)
+
+   Switch ON/OFF A-factor sensitivity analysis.
+
+
+.. py:method:: set_rop_analysis(mode=True, threshold=None)
+
+   Switch ON/OFF the ROP (Rate Of Production) analysis.
+
+
+.. py:method:: userealgas_eos(mode: bool)
+
+   Set the option to turn ON/OFF the real gas model.
+
+
+.. py:method:: setrealgasmixingmodel(model: int)
+
+   Set the real gas mixing rule/model.
+
+
+.. py:method:: setrunstatus(code: int)
+
+   Set the simulation run status.
+
+
+.. py:method:: getrunstatus(mode: str = 'silent') -> int
+
+   Get the reactor model simulation status.
+
+
+.. py:method:: run() -> int
+
+   Serve as a generic Chemkin run reactor model method.
+
+
+.. py:method:: setsolutionspeciesfracmode(mode: str = 'mass')
+
+   Set the type of species fractions in the solution.
+
+
+.. py:method:: getrawsolutionstatus() -> bool
+
+   Get the status of the post-process.
+
+
+.. py:method:: getmixturesolutionstatus() -> bool
+
+   Get the status of the post-process.
+
+
+.. py:method:: get_solution_size() -> tuple[int, int]
+
+   Get the number of reactors and the number of solution points.
+
+
+.. py:method:: getnumbersolutionpoints() -> int
+
+   Get  the number of solution points per reactor.
+
+
+.. py:method:: parsespeciessolutiondata(frac: numpy.typing.NDArray[numpy.double])
+
+   Parse the 2-D species fraction solution data.
+
+
+.. py:method:: process_solution()
+
+   Post-process solution.
+
+
+
+
+

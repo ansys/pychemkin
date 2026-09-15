@@ -1,0 +1,125 @@
+
+
+
+
+
+
+The ``inlet.py`` module
+=======================
+
+.. py:module:: ansys.chemkin.core.inlet
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: inlet
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.inlet.Stream`
+            - Generic inlet stream object for Chemkin open reactor models.
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~clone_stream`
+            - Copy the properties of the source Stream to the target Stream.
+
+
+          * - :py:obj:`~compare_streams`
+            - Compare properties of stream B against those of stream A.
+
+
+          * - :py:obj:`~adiabatic_mixing_streams`
+            - Create a new Stream object by mixing two streams adiabatically.
+
+
+          * - :py:obj:`~create_stream_from_mixture`
+            - Create a new Stream object from the given Mixture object.
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Stream</api/ansys/chemkin/core/inlet/Stream>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin reactor inlet/stream utilities.
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: clone_stream(source: Stream, target: Stream)
+
+   Copy the properties of the source Stream to the target Stream.
+
+
+.. py:function:: compare_streams(stream_a: Stream, stream_b: Stream, atol: float = 1e-10, rtol: float = 0.001, mode: str = 'mass') -> tuple[bool, float, float]
+
+   Compare properties of stream B against those of stream A.
+
+
+.. py:function:: adiabatic_mixing_streams(stream_a: Stream, stream_b: Stream) -> Stream
+
+   Create a new Stream object by mixing two streams adiabatically.
+
+
+.. py:function:: create_stream_from_mixture(chem: ansys.chemkin.core.chemistry.Chemistry, mixture: ansys.chemkin.core.mixture.Mixture, flow_rate: float = 0.0, mode: str = 'mass') -> Stream
+
+   Create a new Stream object from the given Mixture object.
+
+
+
+

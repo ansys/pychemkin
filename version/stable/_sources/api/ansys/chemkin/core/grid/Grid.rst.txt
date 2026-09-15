@@ -1,0 +1,209 @@
+
+
+
+
+
+
+:class:`Grid`
+=============
+
+
+.. py:class:: ansys.chemkin.core.grid.Grid
+
+   Grid quality control parameters for Chemkin 1-D steady-state reactor models.
+
+
+
+.. py:currentmodule:: Grid
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_numb_grid_points`
+            - Set the number of uniform grid points at the start of simulation.
+          * - :py:attr:`~set_max_grid_points`
+            - Set the max number of grid points allowed during the solution refinement.
+          * - :py:attr:`~set_reaction_zone_center`
+            - Set the coordinate value of the reaction/mixing zone center.
+          * - :py:attr:`~set_reaction_zone_width`
+            - Set the width of the reaction/mixing.
+          * - :py:attr:`~set_max_adaptive_points`
+            - Set the max number of adaptive grid points allowed.
+          * - :py:attr:`~set_solution_quality`
+            - Set the maximum gradient and curvature ratios.
+          * - :py:attr:`~set_grid_profile`
+            - Specify the grid point coordinates of the initial grid points.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~start_position`
+            - Get the coordinate value of the first grid point.
+          * - :py:attr:`~end_position`
+            - Get the coordinate value of the last grid point.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~max_numb_grid_points`
+            - 
+          * - :py:attr:`~max_numb_adapt_points`
+            - 
+          * - :py:attr:`~gradient`
+            - 
+          * - :py:attr:`~curvature`
+            - 
+          * - :py:attr:`~numb_grid_points`
+            - 
+          * - :py:attr:`~starting_x`
+            - 
+          * - :py:attr:`~ending_x`
+            - 
+          * - :py:attr:`~reaction_zone_center_x`
+            - 
+          * - :py:attr:`~reaction_zone_width`
+            - 
+          * - :py:attr:`~grid_profile`
+            - 
+          * - :py:attr:`~numb_grid_profile`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.grid import Grid
+
+Property detail
+---------------
+
+.. py:property:: start_position
+   :type: float
+
+
+   Get the coordinate value of the first grid point.
+
+
+.. py:property:: end_position
+   :type: float
+
+
+   Get the coordinate value of the last grid point.
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: max_numb_grid_points
+   :value: 250
+
+
+.. py:attribute:: max_numb_adapt_points
+   :value: 10
+
+
+.. py:attribute:: gradient
+   :value: 0.1
+
+
+.. py:attribute:: curvature
+   :value: 0.5
+
+
+.. py:attribute:: numb_grid_points
+   :value: 6
+
+
+.. py:attribute:: starting_x
+   :value: 0.0
+
+
+.. py:attribute:: ending_x
+   :value: 0.0
+
+
+.. py:attribute:: reaction_zone_center_x
+   :value: 0.0
+
+
+.. py:attribute:: reaction_zone_width
+   :value: 0.0
+
+
+.. py:attribute:: grid_profile
+   :value: []
+
+
+.. py:attribute:: numb_grid_profile
+   :value: 0
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: set_numb_grid_points(numb_points: int)
+
+   Set the number of uniform grid points at the start of simulation.
+
+
+.. py:method:: set_max_grid_points(numb_points: int)
+
+   Set the max number of grid points allowed during the solution refinement.
+
+
+.. py:method:: set_reaction_zone_center(position: float)
+
+   Set the coordinate value of the reaction/mixing zone center.
+
+
+.. py:method:: set_reaction_zone_width(size: float)
+
+   Set the width of the reaction/mixing.
+
+
+.. py:method:: set_max_adaptive_points(numb_points: int)
+
+   Set the max number of adaptive grid points allowed.
+
+
+.. py:method:: set_solution_quality(gradient: float = 0.1, curvature: float = 0.5)
+
+   Set the maximum gradient and curvature ratios.
+
+
+.. py:method:: set_grid_profile(mesh: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify the grid point coordinates of the initial grid points.
+
+
+
+
+

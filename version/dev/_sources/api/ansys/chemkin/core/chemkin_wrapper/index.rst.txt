@@ -1,0 +1,117 @@
+
+
+
+
+
+
+The ``chemkin_wrapper.py`` module
+=================================
+
+.. py:module:: ansys.chemkin.core.chemkin_wrapper
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: chemkin_wrapper
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~get_chemkin_bin_dir`
+            - Return the local Ansys Chemkin bin directory.
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~pyck_config`
+            - 
+
+
+          * - :py:obj:`~msg`
+            - 
+
+
+          * - :py:obj:`~this_msg`
+            - 
+
+
+          * - :py:obj:`~msg`
+            - 
+
+
+          * - :py:obj:`~msg`
+            - 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin-CFD-API python interfaces.
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: get_chemkin_bin_dir() -> str
+
+   Return the local Ansys Chemkin bin directory.
+
+
+.. py:data:: pyck_config
+
+.. py:data:: msg
+
+.. py:data:: this_msg
+   :value: ''
+
+
+.. py:data:: msg
+
+.. py:data:: msg
+
+
+
