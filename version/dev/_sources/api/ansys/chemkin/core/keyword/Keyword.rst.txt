@@ -1,0 +1,178 @@
+
+
+
+
+
+
+:class:`Keyword`
+================
+
+
+.. py:class:: ansys.chemkin.core.keyword.Keyword(phrase: str, value: Union[float, bool, str], data_type: str)
+
+   A Chemkin style keyword.
+
+
+
+
+.. py:currentmodule:: Keyword
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~show`
+            - Display the Chemkin keyword and its parameter value.
+          * - :py:attr:`~resetvalue`
+            - Reset the parameter value of an existing keyword.
+          * - :py:attr:`~parametertype`
+            - Get parameter type of the keyword.
+          * - :py:attr:`~getvalue_as_string`
+            - Create the keyword input line for Chemkin applications.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~value`
+            - Get parameter value of the keyword.
+          * - :py:attr:`~keyphrase`
+            - Get the phrase of the keyword.
+          * - :py:attr:`~keyprefix`
+            - Get the status of the keyword.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~gasspecieskeywords`
+            - 
+          * - :py:attr:`~flowratekeywords`
+            - 
+          * - :py:attr:`~profilekeywords`
+            - 
+          * - :py:attr:`~fourspaces`
+            - 
+          * - :py:attr:`~no_fullkeyword`
+            - 
+
+
+   .. tab-item:: Static methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~setfullkeywords`
+            - Require all keywords and their parameters must be specified.
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.keyword import Keyword
+
+Property detail
+---------------
+
+.. py:property:: value
+   :type: Union[int, float, bool, str]
+
+
+   Get parameter value of the keyword.
+
+
+.. py:property:: keyphrase
+   :type: str
+
+
+   Get the phrase of the keyword.
+
+
+.. py:property:: keyprefix
+   :type: bool
+
+
+   Get the status of the keyword.
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: gasspecieskeywords
+   :value: ['REAC', 'XEST', 'FUEL', 'OXID']
+
+
+.. py:attribute:: flowratekeywords
+   :value: ['FLRT', 'VDOT', 'VEL', 'SCCM']
+
+
+.. py:attribute:: profilekeywords
+   :value: ['TPRO', 'PPRO', 'VPRO', 'QPRO', 'AINT', 'AEXT', 'DPRO', 'FPRO', 'SCCMPRO', 'VDOTPRO', 'VELPRO',...
+
+
+.. py:attribute:: fourspaces
+   :value: '    '
+
+
+.. py:attribute:: no_fullkeyword
+   :value: True
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: setfullkeywords(mode: bool)
+   :staticmethod:
+
+
+   Require all keywords and their parameters must be specified.
+
+
+.. py:method:: show()
+
+   Display the Chemkin keyword and its parameter value.
+
+
+.. py:method:: resetvalue(value: Union[float, bool, str])
+
+   Reset the parameter value of an existing keyword.
+
+
+.. py:method:: parametertype() -> type
+
+   Get parameter type of the keyword.
+
+
+.. py:method:: getvalue_as_string() -> tuple[int, str]
+
+   Create the keyword input line for Chemkin applications.
+
+
+
+
+

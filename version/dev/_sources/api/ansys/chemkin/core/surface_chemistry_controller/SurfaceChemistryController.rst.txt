@@ -1,0 +1,258 @@
+
+
+
+
+
+
+:class:`SurfaceChemistryController`
+===================================
+
+
+.. py:class:: ansys.chemkin.core.surface_chemistry_controller.SurfaceChemistryController(reactor: SurfaceChemistryHost)
+
+   Controller that encapsulates reactor surface-chemistry operations.
+
+
+
+.. py:currentmodule:: SurfaceChemistryController
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~activate_surface_chemistry`
+            - Activate surface chemistry on reactor wall materials.
+          * - :py:attr:`~verify_surface_chemistry`
+            - Verify that the host reactor supports surface chemistry.
+          * - :py:attr:`~no_surface_mechanism_declaration`
+            - Inform users that surface chemistry is not available.
+          * - :py:attr:`~require_surface_chemistry`
+            - Return availability and log guidance when surface chemistry is absent.
+          * - :py:attr:`~no_surface_material`
+            - Log an error for an unknown surface material.
+          * - :py:attr:`~get_material_names`
+            - Return all surface material names.
+          * - :py:attr:`~get_site_species_names`
+            - Return site-species names for all surface materials.
+          * - :py:attr:`~get_bulk_species_names`
+            - Return bulk-species names for all surface materials.
+          * - :py:attr:`~get_total_site_species`
+            - Return total number of site species across all materials.
+          * - :py:attr:`~get_total_bulk_species`
+            - Return total number of bulk species across all materials.
+          * - :py:attr:`~check_material_area_fraction`
+            - Return whether a material-specific area fraction is set.
+          * - :py:attr:`~get_material_area_fraction`
+            - Return the area fraction for a given surface material.
+          * - :py:attr:`~set_material_area_fraction`
+            - Set the area fraction for a given surface material.
+          * - :py:attr:`~check_material_temperature`
+            - Return whether a material-specific temperature is set.
+          * - :py:attr:`~get_material_temperature`
+            - Return temperature for a given surface material.
+          * - :py:attr:`~set_material_temperature`
+            - Set temperature for a given surface material.
+          * - :py:attr:`~get_all_surface_temperature`
+            - Return temperatures of all materials in a flat array.
+          * - :py:attr:`~get_site_fraction`
+            - Return site fractions for a surface material.
+          * - :py:attr:`~set_site_fraction`
+            - Set site fractions for a surface material.
+          * - :py:attr:`~get_all_site_fractions`
+            - Return site fractions for all materials as one array.
+          * - :py:attr:`~get_bulk_activity`
+            - Return bulk activities for a surface material.
+          * - :py:attr:`~set_bulk_activity`
+            - Set bulk activities for a surface material.
+          * - :py:attr:`~get_all_bulk_growth_rates`
+            - Return bulk growth rates for all materials as one array.
+          * - :py:attr:`~set_init_surface_coverage`
+            - Build default/initial site-fraction and bulk-activity arrays.
+          * - :py:attr:`~set_surface_chemistry_keywords`
+            - Emit surface-chemistry related keyword lines via host.setkeyword.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_numb_material`
+            - Return number of materials in the active surface mechanism.
+          * - :py:attr:`~surface_ratemultiplier`
+            - Return the global surface reaction-rate multiplier.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.surface_chemistry_controller import SurfaceChemistryController
+
+Property detail
+---------------
+
+.. py:property:: get_numb_material
+   :type: int
+
+
+   Return number of materials in the active surface mechanism.
+
+
+.. py:property:: surface_ratemultiplier
+   :type: float
+
+
+   Return the global surface reaction-rate multiplier.
+
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: activate_surface_chemistry(chem: ansys.chemkin.core.chemistry.Chemistry, mode: str = 'normal')
+
+   Activate surface chemistry on reactor wall materials.
+
+
+.. py:method:: verify_surface_chemistry() -> bool
+
+   Verify that the host reactor supports surface chemistry.
+
+
+.. py:method:: no_surface_mechanism_declaration()
+
+   Inform users that surface chemistry is not available.
+
+
+.. py:method:: require_surface_chemistry() -> bool
+
+   Return availability and log guidance when surface chemistry is absent.
+
+
+.. py:method:: no_surface_material(mat_name: str)
+
+   Log an error for an unknown surface material.
+
+
+.. py:method:: get_material_names() -> list[str]
+
+   Return all surface material names.
+
+
+.. py:method:: get_site_species_names() -> list[list[str]]
+
+   Return site-species names for all surface materials.
+
+
+.. py:method:: get_bulk_species_names() -> list[list[str]]
+
+   Return bulk-species names for all surface materials.
+
+
+.. py:method:: get_total_site_species() -> int
+
+   Return total number of site species across all materials.
+
+
+.. py:method:: get_total_bulk_species() -> int
+
+   Return total number of bulk species across all materials.
+
+
+.. py:method:: check_material_area_fraction(mat_name: str) -> int
+
+   Return whether a material-specific area fraction is set.
+
+
+.. py:method:: get_material_area_fraction(mat_name: str) -> float
+
+   Return the area fraction for a given surface material.
+
+
+.. py:method:: set_material_area_fraction(mat_name: str, fraction: float)
+
+   Set the area fraction for a given surface material.
+
+
+.. py:method:: check_material_temperature(mat_name: str) -> int
+
+   Return whether a material-specific temperature is set.
+
+
+.. py:method:: get_material_temperature(mat_name: str) -> float
+
+   Return temperature for a given surface material.
+
+
+.. py:method:: set_material_temperature(mat_name: str, temp: float)
+
+   Set temperature for a given surface material.
+
+
+.. py:method:: get_all_surface_temperature() -> numpy.typing.NDArray[numpy.double]
+
+   Return temperatures of all materials in a flat array.
+
+
+.. py:method:: get_site_fraction(mat_name: str) -> numpy.typing.NDArray[numpy.double]
+
+   Return site fractions for a surface material.
+
+
+.. py:method:: set_site_fraction(mat_name: str, recipe: list[tuple[str, float]])
+
+   Set site fractions for a surface material.
+
+
+.. py:method:: get_all_site_fractions() -> numpy.typing.NDArray[numpy.double]
+
+   Return site fractions for all materials as one array.
+
+
+.. py:method:: get_bulk_activity(mat_name: str) -> numpy.typing.NDArray[numpy.double]
+
+   Return bulk activities for a surface material.
+
+
+.. py:method:: set_bulk_activity(mat_name: str, recipe: list[tuple[str, float]])
+
+   Set bulk activities for a surface material.
+
+
+.. py:method:: get_all_bulk_growth_rates() -> numpy.typing.NDArray[numpy.double]
+
+   Return bulk growth rates for all materials as one array.
+
+
+.. py:method:: set_init_surface_coverage() -> tuple[numpy.typing.NDArray[numpy.double], numpy.typing.NDArray[numpy.double]]
+
+   Build default/initial site-fraction and bulk-activity arrays.
+
+
+.. py:method:: set_surface_chemistry_keywords()
+
+   Emit surface-chemistry related keyword lines via host.setkeyword.
+
+
+
+
+

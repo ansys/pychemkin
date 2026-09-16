@@ -1,0 +1,74 @@
+
+
+
+
+
+
+:class:`Air`
+============
+
+
+.. py:class:: ansys.chemkin.core.constants.Air
+
+   define the "air" composition in PyChemkin with a fixed mixture "recipe".
+
+
+
+
+
+.. py:currentmodule:: Air
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+
+   .. tab-item:: Static methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~x`
+            - Return the 'air' composition in mole fractions.
+          * - :py:attr:`~y`
+            - Return the 'air' composition in mass fractions.
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.constants import Air
+
+
+
+Method detail
+-------------
+
+.. py:method:: x(cap: str = 'U') -> list[tuple[str, float]]
+   :staticmethod:
+
+
+   Return the 'air' composition in mole fractions.
+
+
+.. py:method:: y(cap: str = 'U') -> list[tuple[str, float]]
+   :staticmethod:
+
+
+   Return the 'air' composition in mass fractions.
+
+
+
+
+
