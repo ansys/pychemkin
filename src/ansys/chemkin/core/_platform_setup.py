@@ -342,7 +342,9 @@ def __setup_linux(
                     if v >= min_ver:
                         this_version = "v" + str(v)
                         if this_version in local_versions:
-                            ansys_dir = _ansys_home + this_version
+                            ansyshome = Path(_user_home) / "ansys_inc" / this_version
+                            _ansys_home = str(ansyshome)
+                            ansys_dir = str(ansyshome)
                             found_home = True
                             break
                     else:
@@ -421,6 +423,10 @@ def __setup_linux(
         lib_paths.append(str(lib_addition))
         lib_addition = ansyshome / "tp" / "zlib" / plat / "lib"
         lib_paths.append(str(lib_addition))
+        lib_addition = ansyshome / "tp" / "openssl" / "3.0" / plat / "lib"
+        lib_paths.append(str(lib_addition))
+        lib_addition = ansyshome / "tp" / "stdc++"
+        lib_paths.append(str(lib_addition))
     else:
         # >= 27R1
         # configuration file for the 3rd-party dlls
@@ -429,6 +435,14 @@ def __setup_linux(
             str(ansyshome), str(third_party_config), plat, lib_folder="lib"
         )
         lib_paths.extend(third_party_paths)
+        lib_addition = (
+            ansyshome / "tp" / "IntelMKL" / "2024.2.0" / plat / "lib" / "intel64"
+        )
+        lib_paths.append(str(lib_addition))
+        lib_addition = ansyshome / "tp" / "openssl" / "3.5" / plat / "lib"
+        lib_paths.append(str(lib_addition))
+        lib_addition = ansyshome / "tp" / "stdc++"
+        lib_paths.append(str(lib_addition))
 
     # set load shared object paths
     combined_path = ":".join(lib_paths)

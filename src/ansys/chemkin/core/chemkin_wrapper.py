@@ -229,7 +229,7 @@ else:
         ]
         if platform.system() == "Linux":
             msg = [
-                Color.YELLOW,
+                Color.RED,
                 "For Linux,",
                 "try to run the chemkin set up script",
                 "'source chemkin_setup.ksh' in the 'bin' directory.\n",
@@ -238,7 +238,7 @@ else:
                 Color.END,
             ]
             this_msg = Color.SPACE.join(msg)
-            logger.info(this_msg)
+            logger.critical(this_msg)
         exit()
 
 
