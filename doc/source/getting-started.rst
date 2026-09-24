@@ -74,7 +74,12 @@ Install PyChemkin
 .. note::
    1. You must have a valid Ansys license to run PyChemkin after installation.
 
-   2. PyChemkin will search for the latest version of the local Ansys Chemkin installation
+   2. Before running PyChemkin on Linux platforms, "source" the setup shell script
+      ``chemkin_setup.ksh`` located in the ``bin`` folder of the ANSYS Chemkin
+      installation directory (corresponding to the release version to be used) to ensure
+      that all CHEMKIN environment variables are set correctly.
+
+   3. PyChemkin will search for the latest version of the local Ansys Chemkin installation
       and use it automatically. Use the ``PYCK_CHEMKIN_VER`` environment variable to specify
       the desired local Ansys Chemkin installation. For example, set ``PYCK_CHEMKIN_VER="261"``
       to force PyChemkin to use Ansys Chemkin 2026 R1.
