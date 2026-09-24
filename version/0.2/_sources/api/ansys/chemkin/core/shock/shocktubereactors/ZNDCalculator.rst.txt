@@ -1,0 +1,85 @@
+
+
+
+
+
+
+:class:`ZNDCalculator`
+======================
+
+
+.. py:class:: ansys.chemkin.core.shock.shocktubereactors.ZNDCalculator(mixture_condition: ansys.chemkin.core.inlet.Stream, label: str)
+
+   Bases: :py:obj:`ShockTubeReactors`
+
+
+   Chemkin ZND model for the detonation wave behind the incident shock.
+
+
+
+.. py:currentmodule:: ZNDCalculator
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~run`
+            - Run the ZND model.
+          * - :py:attr:`~calculate_chi_ng`
+            - Calculate the Chi parameter by Ng.
+          * - :py:attr:`~calculate_cell_width_ng`
+            - Calculate the detonation cell width.
+          * - :py:attr:`~calculate_cell_width_gavrikov`
+            - Calculate the detonation cell width by Gavrikov.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.shock.shocktubereactors import ZNDCalculator
+
+
+
+Method detail
+-------------
+
+.. py:method:: run() -> int
+
+   Run the ZND model.
+
+
+.. py:method:: calculate_chi_ng(duration: float = 0.001) -> float
+
+   Calculate the Chi parameter by Ng.
+
+
+.. py:method:: calculate_cell_width_ng(duration: float = 0.001) -> tuple[float, float]
+
+   Calculate the detonation cell width.
+
+
+.. py:method:: calculate_cell_width_gavrikov(limiting_species: str) -> float
+
+   Calculate the detonation cell width by Gavrikov.
+
+
+
+
+

@@ -1,0 +1,106 @@
+
+
+
+
+
+
+The ``keyword.py`` module
+=========================
+
+.. py:module:: ansys.chemkin.core.keyword
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: keyword
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.keyword.Keyword`
+            - A Chemkin style keyword.
+
+
+          * - :py:obj:`~ansys.chemkin.core.keyword.BooleanKeyword`
+            - Chemkin boolean keyword.
+
+
+          * - :py:obj:`~ansys.chemkin.core.keyword.IntegerKeyword`
+            - A Chemkin integer keyword.
+
+
+          * - :py:obj:`~ansys.chemkin.core.keyword.RealKeyword`
+            - A Chemkin real keyword.
+
+
+          * - :py:obj:`~ansys.chemkin.core.keyword.StringKeyword`
+            - A Chemkin string keyword.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Keyword</api/ansys/chemkin/core/keyword/Keyword>
+    <span class="nf nf-cod-symbol_class"></span> BooleanKeyword</api/ansys/chemkin/core/keyword/BooleanKeyword>
+    <span class="nf nf-cod-symbol_class"></span> IntegerKeyword</api/ansys/chemkin/core/keyword/IntegerKeyword>
+    <span class="nf nf-cod-symbol_class"></span> RealKeyword</api/ansys/chemkin/core/keyword/RealKeyword>
+    <span class="nf nf-cod-symbol_class"></span> StringKeyword</api/ansys/chemkin/core/keyword/StringKeyword>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin keyword models and helpers.
+
+
+
+
+
+
+
+

@@ -1,0 +1,594 @@
+
+
+
+
+
+
+:class:`ReactorModel`
+=====================
+
+
+.. py:class:: ansys.chemkin.core.reactormodel.ReactorModel(reactor_condition: ansys.chemkin.core.inlet.Stream, label: str)
+
+   Serve as a generic Chemkin reactor model framework.
+
+
+
+.. py:currentmodule:: ReactorModel
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~usefullkeywords`
+            - Specify all necessary keywords explicitly.
+          * - :py:attr:`~setkeyword`
+            - Set a Chemkin keyword and its parameter.
+          * - :py:attr:`~removekeyword`
+            - Remove an existing Chemkin keyword and its parameter.
+          * - :py:attr:`~showkeywordinputlines`
+            - List all currently-defined keywords and their parameters line by line.
+          * - :py:attr:`~createkeywordinputlines`
+            - Create keyword input lines for Chemkin applications.
+          * - :py:attr:`~showkeywordinputlines_with_tag`
+            - List all currently-defined keywords.
+          * - :py:attr:`~createkeywordinputlines_with_tag`
+            - Create keyword input lines for Chemkin applications.
+          * - :py:attr:`~setprofile`
+            - Set a Chemkin profile and its parameter.
+          * - :py:attr:`~get_profile_value`
+            - Get the y value at given x from the profile data.
+          * - :py:attr:`~createprofileinputlines`
+            - Create profile keyword input lines for Chemkin applications.
+          * - :py:attr:`~createspeciesinputlines`
+            - Create keyword input lines.
+          * - :py:attr:`~createspeciesinputlineswithaddon`
+            - Create keyword input lines.
+          * - :py:attr:`~create_inletspeciesinputlines`
+            - Create keyword input lines.
+          * - :py:attr:`~clear_all_keywords`
+            - Delete all existing keyword components.
+          * - :py:attr:`~chemid`
+            - Get chemistry set index.
+          * - :py:attr:`~set_molefractions`
+            - Set the reactor species mole fractions.
+          * - :py:attr:`~set_massfractions`
+            - Set the reactor species mass fractions.
+          * - :py:attr:`~list_composition`
+            - List the gas mixture composition inside the reactor.
+          * - :py:attr:`~setsensitivityanalysis`
+            - Switch ON/OFF A-factor sensitivity analysis.
+          * - :py:attr:`~set_rop_analysis`
+            - Switch ON/OFF the ROP (Rate Of Production) analysis.
+          * - :py:attr:`~userealgas_eos`
+            - Set the option to turn ON/OFF the real gas model.
+          * - :py:attr:`~setrealgasmixingmodel`
+            - Set the real gas mixing rule/model.
+          * - :py:attr:`~setrunstatus`
+            - Set the simulation run status.
+          * - :py:attr:`~getrunstatus`
+            - Get the reactor model simulation status.
+          * - :py:attr:`~run`
+            - Serve as a generic Chemkin run reactor model method.
+          * - :py:attr:`~setsolutionspeciesfracmode`
+            - Set the type of species fractions in the solution.
+          * - :py:attr:`~getrawsolutionstatus`
+            - Get the status of the post-process.
+          * - :py:attr:`~getmixturesolutionstatus`
+            - Get the status of the post-process.
+          * - :py:attr:`~get_solution_size`
+            - Get the number of reactors and the number of solution points.
+          * - :py:attr:`~getnumbersolutionpoints`
+            - Get  the number of solution points per reactor.
+          * - :py:attr:`~parsespeciessolutiondata`
+            - Parse the 2-D species fraction solution data.
+          * - :py:attr:`~process_solution`
+            - Post-process solution.
+          * - :py:attr:`~activate_surface_chemistry`
+            - Activate the surface chemistry.
+          * - :py:attr:`~verify_surface_chemistry`
+            - Verify whether the reactor model is surfac chemistry capable.
+          * - :py:attr:`~no_surface_mechanism_declaration`
+            - Inform users surface chemistry is not available for this reactor.
+          * - :py:attr:`~no_surface_material`
+            - Send surface material not found message.
+          * - :py:attr:`~get_material_names`
+            - Get all surface material names.
+          * - :py:attr:`~get_site_species_names`
+            - Get site species names on the surface materials.
+          * - :py:attr:`~get_bulk_species_names`
+            - Get bulk species names on the surface materials.
+          * - :py:attr:`~get_total_site_species`
+            - Get total number of site species from all materials.
+          * - :py:attr:`~get_total_bulk_species`
+            - Get total number of bulk species from all materials.
+          * - :py:attr:`~check_material_area_fraction`
+            - Verify the surface area fraction is given.
+          * - :py:attr:`~get_material_area_fraction`
+            - Get the surface area fraction.
+          * - :py:attr:`~set_material_area_fraction`
+            - Set the value of the surface area fraction.
+          * - :py:attr:`~check_material_temperature`
+            - Verify the surface temperature is given.
+          * - :py:attr:`~get_material_temperature`
+            - Get the surface temperature.
+          * - :py:attr:`~set_material_temperature`
+            - Set the value of the surface temperature.
+          * - :py:attr:`~get_all_surface_temperature`
+            - Get the temperatures of all materials in the mechanism.
+          * - :py:attr:`~get_site_fraction`
+            - Get the surface site fractions.
+          * - :py:attr:`~set_site_fraction`
+            - Set the surface site fractions.
+          * - :py:attr:`~get_all_site_fractions`
+            - Get site fractions of all materials in the mechanism.
+          * - :py:attr:`~get_bulk_activity`
+            - Get the bulk species activities.
+          * - :py:attr:`~set_bulk_activity`
+            - Set the bulk species activities.
+          * - :py:attr:`~get_all_bulk_growth_rates`
+            - Get bulk growth rates of all materials in the mechanism.
+          * - :py:attr:`~set_init_surface_coverage`
+            - Set up the initial surface coverage arrays.
+          * - :py:attr:`~set_surface_chemistry_keywords`
+            - Set up surface chemistry related keywords.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~temperature`
+            - Get reactor initial temperature.
+          * - :py:attr:`~pressure`
+            - Get reactor pressure.
+          * - :py:attr:`~massfraction`
+            - Get the gas species mass fractions.
+          * - :py:attr:`~molefraction`
+            - Get the gas species mole fractions.
+          * - :py:attr:`~concentration`
+            - Get the gas species molar concentrations.
+          * - :py:attr:`~gasratemultiplier`
+            - Get the value of the gas-phase reaction rate multiplier.
+          * - :py:attr:`~std_output`
+            - Get text output status.
+          * - :py:attr:`~xml_output`
+            - Get XML solution output status.
+          * - :py:attr:`~realgas`
+            - Get the real gas EOS status.
+          * - :py:attr:`~get_numb_material`
+            - Get the number of surface material.
+          * - :py:attr:`~surface_ratemultiplier`
+            - Get the value of the surface reaction rate multiplier.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~label`
+            - 
+          * - :py:attr:`~runstatus`
+            - 
+          * - :py:attr:`~has_surface_chemistry`
+            - 
+          * - :py:attr:`~numbmaterials`
+            - 
+          * - :py:attr:`~surface_chemistry`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.reactormodel import ReactorModel
+
+Property detail
+---------------
+
+.. py:property:: temperature
+   :type: float
+
+
+   Get reactor initial temperature.
+
+
+.. py:property:: pressure
+   :type: float
+
+
+   Get reactor pressure.
+
+
+.. py:property:: massfraction
+   :type: float
+
+
+   Get the gas species mass fractions.
+
+
+.. py:property:: molefraction
+   :type: numpy.typing.NDArray[numpy.double]
+
+
+   Get the gas species mole fractions.
+
+
+.. py:property:: concentration
+   :type: numpy.typing.NDArray[numpy.double]
+
+
+   Get the gas species molar concentrations.
+
+
+.. py:property:: gasratemultiplier
+   :type: float
+
+
+   Get the value of the gas-phase reaction rate multiplier.
+
+
+.. py:property:: std_output
+   :type: bool
+
+
+   Get text output status.
+
+
+.. py:property:: xml_output
+   :type: bool
+
+
+   Get XML solution output status.
+
+
+.. py:property:: realgas
+   :type: bool
+
+
+   Get the real gas EOS status.
+
+
+.. py:property:: get_numb_material
+   :type: int
+
+
+   Get the number of surface material.
+
+
+.. py:property:: surface_ratemultiplier
+   :type: float
+
+
+   Get the value of the surface reaction rate multiplier.
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: label
+
+.. py:attribute:: runstatus
+   :value: -100
+
+
+.. py:attribute:: has_surface_chemistry
+
+.. py:attribute:: numbmaterials
+   :value: 0
+
+
+.. py:attribute:: surface_chemistry
+   :type:  Any
+   :value: None
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: usefullkeywords(mode: bool)
+
+   Specify all necessary keywords explicitly.
+
+
+.. py:method:: setkeyword(key: str, value: Union[bool, float, str])
+
+   Set a Chemkin keyword and its parameter.
+
+
+.. py:method:: removekeyword(key: str)
+
+   Remove an existing Chemkin keyword and its parameter.
+
+
+.. py:method:: showkeywordinputlines()
+
+   List all currently-defined keywords and their parameters line by line.
+
+
+.. py:method:: createkeywordinputlines() -> tuple[int, int]
+
+   Create keyword input lines for Chemkin applications.
+
+
+.. py:method:: showkeywordinputlines_with_tag(tag: str = '')
+
+   List all currently-defined keywords.
+
+
+.. py:method:: createkeywordinputlines_with_tag(tag: str = '') -> tuple[int, int]
+
+   Create keyword input lines for Chemkin applications.
+
+
+.. py:method:: setprofile(key: str, x: numpy.typing.NDArray[numpy.double], y: numpy.typing.NDArray[numpy.double], label: bool = False) -> int
+
+   Set a Chemkin profile and its parameter.
+
+
+.. py:method:: get_profile_value(key: str, x: float) -> float
+
+   Get the y value at given x from the profile data.
+
+
+.. py:method:: createprofileinputlines() -> tuple[int, int, list[str]]
+
+   Create profile keyword input lines for Chemkin applications.
+
+
+.. py:method:: createspeciesinputlines(solvertype: int, threshold: float = 1e-12, molefrac: numpy.typing.NDArray[numpy.double] = None) -> tuple[int, list[str]]
+
+   Create keyword input lines.
+
+
+.. py:method:: createspeciesinputlineswithaddon(key: str = 'XEST', threshold: float = 1e-12, molefrac: numpy.typing.NDArray[numpy.double] = None, addon: str = '') -> tuple[int, list[str]]
+
+   Create keyword input lines.
+
+
+.. py:method:: create_inletspeciesinputlines(inlet_name: str, threshold: float = 1e-12, molefrac: numpy.typing.NDArray[numpy.double] = None) -> tuple[int, list[str]]
+
+   Create keyword input lines.
+
+
+.. py:method:: clear_all_keywords()
+
+   Delete all existing keyword components.
+
+
+.. py:method:: chemid() -> int
+
+   Get chemistry set index.
+
+
+.. py:method:: set_molefractions(molefrac: numpy.typing.NDArray[numpy.double])
+
+   Set the reactor species mole fractions.
+
+
+.. py:method:: set_massfractions(massfrac: numpy.typing.NDArray[numpy.double])
+
+   Set the reactor species mass fractions.
+
+
+.. py:method:: list_composition(mode: str, option: str = ' ', bound: float = 0.0)
+
+   List the gas mixture composition inside the reactor.
+
+
+.. py:method:: setsensitivityanalysis(mode: bool = True, absolute_tolerance: Union[float, None] = None, relative_tolerance: Union[float, None] = None, temperature_threshold: Union[float, None] = None, species_threshold: Union[float, None] = None)
+
+   Switch ON/OFF A-factor sensitivity analysis.
+
+
+.. py:method:: set_rop_analysis(mode=True, threshold=None)
+
+   Switch ON/OFF the ROP (Rate Of Production) analysis.
+
+
+.. py:method:: userealgas_eos(mode: bool)
+
+   Set the option to turn ON/OFF the real gas model.
+
+
+.. py:method:: setrealgasmixingmodel(model: int)
+
+   Set the real gas mixing rule/model.
+
+
+.. py:method:: setrunstatus(code: int)
+
+   Set the simulation run status.
+
+
+.. py:method:: getrunstatus(mode: str = 'silent') -> int
+
+   Get the reactor model simulation status.
+
+
+.. py:method:: run() -> int
+
+   Serve as a generic Chemkin run reactor model method.
+
+
+.. py:method:: setsolutionspeciesfracmode(mode: str = 'mass')
+
+   Set the type of species fractions in the solution.
+
+
+.. py:method:: getrawsolutionstatus() -> bool
+
+   Get the status of the post-process.
+
+
+.. py:method:: getmixturesolutionstatus() -> bool
+
+   Get the status of the post-process.
+
+
+.. py:method:: get_solution_size() -> tuple[int, int]
+
+   Get the number of reactors and the number of solution points.
+
+
+.. py:method:: getnumbersolutionpoints() -> int
+
+   Get  the number of solution points per reactor.
+
+
+.. py:method:: parsespeciessolutiondata(frac: numpy.typing.NDArray[numpy.double])
+
+   Parse the 2-D species fraction solution data.
+
+
+.. py:method:: process_solution()
+
+   Post-process solution.
+
+
+.. py:method:: activate_surface_chemistry(chem: ansys.chemkin.core.chemistry.Chemistry, mode: str = 'normal')
+
+   Activate the surface chemistry.
+
+
+.. py:method:: verify_surface_chemistry() -> bool
+
+   Verify whether the reactor model is surfac chemistry capable.
+
+
+.. py:method:: no_surface_mechanism_declaration()
+
+   Inform users surface chemistry is not available for this reactor.
+
+
+.. py:method:: no_surface_material(mat_name: str)
+
+   Send surface material not found message.
+
+
+.. py:method:: get_material_names() -> list[str]
+
+   Get all surface material names.
+
+
+.. py:method:: get_site_species_names() -> list[list[str]]
+
+   Get site species names on the surface materials.
+
+
+.. py:method:: get_bulk_species_names() -> list[list[str]]
+
+   Get bulk species names on the surface materials.
+
+
+.. py:method:: get_total_site_species() -> int
+
+   Get total number of site species from all materials.
+
+
+.. py:method:: get_total_bulk_species() -> int
+
+   Get total number of bulk species from all materials.
+
+
+.. py:method:: check_material_area_fraction(mat_name: str) -> int
+
+   Verify the surface area fraction is given.
+
+
+.. py:method:: get_material_area_fraction(mat_name: str) -> float
+
+   Get the surface area fraction.
+
+
+.. py:method:: set_material_area_fraction(mat_name: str, fraction: float)
+
+   Set the value of the surface area fraction.
+
+
+.. py:method:: check_material_temperature(mat_name: str) -> int
+
+   Verify the surface temperature is given.
+
+
+.. py:method:: get_material_temperature(mat_name: str) -> float
+
+   Get the surface temperature.
+
+
+.. py:method:: set_material_temperature(mat_name: str, temp: float)
+
+   Set the value of the surface temperature.
+
+
+.. py:method:: get_all_surface_temperature() -> numpy.typing.NDArray[numpy.double]
+
+   Get the temperatures of all materials in the mechanism.
+
+
+.. py:method:: get_site_fraction(mat_name: str) -> numpy.typing.NDArray[numpy.double]
+
+   Get the surface site fractions.
+
+
+.. py:method:: set_site_fraction(mat_name: str, recipe: list[tuple[str, float]])
+
+   Set the surface site fractions.
+
+
+.. py:method:: get_all_site_fractions() -> numpy.typing.NDArray[numpy.double]
+
+   Get site fractions of all materials in the mechanism.
+
+
+.. py:method:: get_bulk_activity(mat_name: str) -> numpy.typing.NDArray[numpy.double]
+
+   Get the bulk species activities.
+
+
+.. py:method:: set_bulk_activity(mat_name: str, recipe: list[tuple[str, float]])
+
+   Set the bulk species activities.
+
+
+.. py:method:: get_all_bulk_growth_rates() -> numpy.typing.NDArray[numpy.double]
+
+   Get bulk growth rates of all materials in the mechanism.
+
+
+.. py:method:: set_init_surface_coverage() -> tuple[numpy.typing.NDArray[numpy.double], numpy.typing.NDArray[numpy.double]]
+
+   Set up the initial surface coverage arrays.
+
+
+.. py:method:: set_surface_chemistry_keywords()
+
+   Set up surface chemistry related keywords.
+
+
+
+
+

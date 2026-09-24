@@ -1,0 +1,99 @@
+
+
+
+
+
+
+The ``shocktubereactors.py`` module
+===================================
+
+.. py:module:: ansys.chemkin.core.shock.shocktubereactors
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: shocktubereactors
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.shock.shocktubereactors.ShockTubeReactors`
+            - Generic Chemkin 0-D transient shock tube reactor model.
+
+
+          * - :py:obj:`~ansys.chemkin.core.shock.shocktubereactors.IncidentShock`
+            - Chemkin incident shock reactor model.
+
+
+          * - :py:obj:`~ansys.chemkin.core.shock.shocktubereactors.ReflectedShock`
+            - Chemkin reflected shock reactor model.
+
+
+          * - :py:obj:`~ansys.chemkin.core.shock.shocktubereactors.ZNDCalculator`
+            - Chemkin ZND model for the detonation wave behind the incident shock.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> ShockTubeReactors</api/ansys/chemkin/core/shock/shocktubereactors/ShockTubeReactors>
+    <span class="nf nf-cod-symbol_class"></span> IncidentShock</api/ansys/chemkin/core/shock/shocktubereactors/IncidentShock>
+    <span class="nf nf-cod-symbol_class"></span> ReflectedShock</api/ansys/chemkin/core/shock/shocktubereactors/ReflectedShock>
+    <span class="nf nf-cod-symbol_class"></span> ZNDCalculator</api/ansys/chemkin/core/shock/shocktubereactors/ZNDCalculator>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin shock tube reactor model.
+
+
+
+
+
+
+
+
