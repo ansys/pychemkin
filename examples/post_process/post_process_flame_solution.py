@@ -294,7 +294,10 @@ for i, m0_val in enumerate(m0):
 # convert the size class (number of the core in the particle) to volume
 vol_min = soot_pdf.class_to_volume(class_min)
 ax3.axvline(
-    vol_min, color="red", linestyle="--", label=f"Minimum Value = {vol_min:.2e}"
+    vol_min,
+    color="red",
+    linestyle="--",
+    label=f"Minimum Volume = {vol_min * 1.0e4:.2e}",
 )
 ax3.set_title("Soot Particle Size Distributions in the flame zone")
 ax3.set_xlabel("Primary particle volume (micron3)")
