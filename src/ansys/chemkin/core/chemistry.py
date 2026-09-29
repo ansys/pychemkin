@@ -97,6 +97,20 @@ def set_verbose(onoff: bool):
     chemkin_verbose = onoff
 
 
+def deep_debug():
+    """Enable Python deep debugging mode."""
+    """
+    Call this function at the start of the script to enable deep debugging.
+    Python faulthandler:
+    faulthandler.enable(file=sys.stderr, all_threads=True, c_stack=True)
+    If c_stack is True, then the C stack trace is printed after
+    the Python traceback, unless the system does not support it.
+    """
+    import faulthandler
+
+    faulthandler.enable()
+
+
 def chemkin_version() -> int:
     """Return the Chemkin-CFD-API version number currently in use."""
     """
