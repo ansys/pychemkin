@@ -1,85 +1,88 @@
 Getting started
 ===============
 
-Install prerequisites
----------------------
+Prerequisites
+-------------
 
-- `Ansys Chemkin`_ 2025 R2 or later with a valid license
-- `Python`_ 3.9 or later
-- `NumPy`_ 1.14.0 or later
-- `PyYAML`_ 6.0 or later
-- `Matplotlib`_ to run examples
+Before installing PyChemkin, install the following:
 
-.. note:: Using the latest Ansys Chemkin version is highly recommended.
+* `Ansys Chemkin`_ 2025 R2 or later, with a valid license.
+* `Python`_ 3.10 or later, and earlier than 4.0.
 
-.. _Python: https://www.python.org/downloads/windows/
-.. _NumPy: https://numpy.org/install
-.. _PyYAML: https://pypi.org/project/PyYAML/
-.. _Matplotlib: https://matplotlib.org/stable/install/index.html
-.. _Flit: https://flit.pypa.io/en/stable/
-.. _pip: https://pip.pypa.io/en/stable/index.html
+PyChemkin declares its Python dependencies in ``pyproject.toml``. They are
+installed automatically when PyChemkin is installed with ``pip``.
+
+.. note:: Using the latest Ansys Chemkin version is recommended.
+
+.. _Ansys Chemkin: https://www.ansys.com/products/fluids/ansys-chemkin
+.. _Python: https://www.python.org/downloads/
+
+Configure Ansys Chemkin
+-----------------------
+
+PyChemkin selects the newest supported local Chemkin installation. To select a
+specific installation, define its ``ANSYSxxx_DIR`` environment variable, where
+``xxx`` is the Chemkin release number. The value must be the installation's
+``ANSYS`` directory. For example, on Windows:
+
+.. code-block:: powershell
+
+   $env:ANSYS261_DIR = "C:\Program Files\ANSYS Inc\v261\ANSYS"
+
+When there are multiple ``ANSYSxxx_DIR`` environment variables defined, PyChemkin selects
+the newest one by default. Use the ``PYCK_CHEMKIN_VER`` environment variable to specify
+the desired local Ansys Chemkin installation. For example, set ``PYCK_CHEMKIN_VER="261"``
+to force PyChemkin to use Ansys Chemkin 2026 R1.
+
+On Linux, define the environment variable in the shell before starting Python.
+You also need to source the ``chemkin_setup.ksh`` or ``chemkin_setup.csh`` script
+provided in the Chemkin ``bin`` directory when using Linux.
 
 Install PyChemkin
 -----------------
 
-1. Install PyChemkin.
+Install the published package from PyPI with:
 
-   Download the ``ansys-chemkin-core`` package from the PyAnsys GitHub repository. Build the wheelhouse locally using `Flit`_:
+.. code-block:: console
 
-   ::
+   python -m pip install ansys-chemkin-core
 
-      python -m build
+To install the current source tree for development, run these commands from
+the repository root:
 
-   Install the package using `pip`_:
+.. code-block:: console
 
-   ::
+   python -m pip install --upgrade pip
+   python -m pip install -e .
 
-      pip install dist\ansys_chemkin-*.whl
+Build and install a wheel
+--------------------------
 
-   Alternatively, you can install the package directly from the PyPI repository:
+To build a wheel from the source tree, install the build frontend and run it
+from the repository root:
 
-   ::
+.. code-block:: console
 
-      pip install ansys-chemkin-core
+   python -m pip install build
+   python -m build
 
-2. Verify the installation.
+The wheel and source distribution are written to ``dist``. Install the wheel
+with:
 
-   Open the Python interpreter from the Windows command prompt and import the
-   ``ansys-chemkin-core`` package:
+.. code-block:: console
 
-   ::
+   python -m pip install dist\ansys_chemkin_core-*.whl
 
-      >>> import ansys.chemkin.core
+Verify the installation
+-----------------------
 
-   If PyChemkin is installed correctly, Python displays a statement like this:
+Start Python and import the package:
 
-   ::
+.. code-block:: pycon
 
-      Chemkin version number = xxx
-      PyChemkin version number = x.x.x
+   >>> import ansys.chemkin.core
 
-   PyChemkin is probably not installed locally if Python displays nothing:
-
-   ::
-
-      >>>
-
-   If Python displays the following statement, update the local Ansys Chemkin installation
-   to 2025 R2 or later:
-
-   ::
-
-      PyChemkin does not support Chemkin versions older than 2025 R2
-
-.. note::
-   1. You must have a valid Ansys license to run PyChemkin after installation.
-
-   2. Before running PyChemkin on Linux platforms, "source" the setup shell script
-      ``chemkin_setup.ksh`` located in the ``bin`` folder of the ANSYS Chemkin
-      installation directory (corresponding to the release version to be used) to ensure
-      that all CHEMKIN environment variables are set correctly.
-
-   3. PyChemkin will search for the latest version of the local Ansys Chemkin installation
-      and use it automatically. Use the ``PYCK_CHEMKIN_VER`` environment variable to specify
-      the desired local Ansys Chemkin installation. For example, set ``PYCK_CHEMKIN_VER="261"``
-      to force PyChemkin to use Ansys Chemkin 2026 R1.
+The import initializes the native Chemkin library and reports the Chemkin and
+PyChemkin versions. If initialization fails, verify that the selected Chemkin
+installation exists, the ``ANSYSxxx_DIR`` variable is correct, and a valid
+license is available.
