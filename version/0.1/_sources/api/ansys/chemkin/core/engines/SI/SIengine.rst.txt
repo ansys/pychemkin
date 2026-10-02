@@ -1,0 +1,206 @@
+
+
+
+
+
+
+:class:`SIengine`
+=================
+
+
+.. py:class:: ansys.chemkin.core.engines.SI.SIengine(reactor_condition: ansys.chemkin.core.inlet.Stream, label: Union[str, None] = None)
+
+   Bases: :py:obj:`ansys.chemkin.core.engines.engine.Engine`
+
+
+   Spark Ignition (SI) engine model.
+
+
+
+.. py:currentmodule:: SIengine
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~wiebe_parameters`
+            - Set Wiebe function parameters.
+          * - :py:attr:`~set_burn_timing`
+            - Set SI engine SOC timing.
+          * - :py:attr:`~set_burn_anchor_points`
+            - Set the SI mass burned profile using the anchor points.
+          * - :py:attr:`~set_mass_burned_profile`
+            - Specify SI engine mass burned fraction profile.
+          * - :py:attr:`~set_combustion_efficiency`
+            - Set the overall combustion efficiency.
+          * - :py:attr:`~set_burned_products_minimum_mole_fraction`
+            - Set the minimum gas species mole fraction value.
+          * - :py:attr:`~set_wiebe_keywords`
+            - Set the Wiebe function parameters.
+          * - :py:attr:`~set_burn_anchor_points_keywords`
+            - Set the mass burned profile anchor points.
+          * - :py:attr:`~set_burn_profile_keywords`
+            - Set the mass burned fraction profile.
+          * - :py:attr:`~run`
+            - Run Chemkin SI engine model method.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~sparktiming`
+            - 
+          * - :py:attr:`~burnduration`
+            - 
+          * - :py:attr:`~wieben`
+            - 
+          * - :py:attr:`~Wiebeb`
+            - 
+          * - :py:attr:`~massburnedCA10`
+            - 
+          * - :py:attr:`~massburnedCA50`
+            - 
+          * - :py:attr:`~massburnedCA90`
+            - 
+          * - :py:attr:`~burnefficiency`
+            - 
+          * - :py:attr:`~MBpoints`
+            - 
+          * - :py:attr:`~MBangles`
+            - 
+          * - :py:attr:`~MBfractions`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.engines.SI import SIengine
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: sparktiming
+   :value: -180.0
+
+
+.. py:attribute:: burnduration
+   :value: 0.0
+
+
+.. py:attribute:: wieben
+   :value: 2.0
+
+
+.. py:attribute:: Wiebeb
+   :value: 5.0
+
+
+.. py:attribute:: massburnedCA10
+   :value: -180.0
+
+
+.. py:attribute:: massburnedCA50
+   :value: -180.0
+
+
+.. py:attribute:: massburnedCA90
+   :value: -180.0
+
+
+.. py:attribute:: burnefficiency
+   :value: 1.0
+
+
+.. py:attribute:: MBpoints
+   :value: 0
+
+
+.. py:attribute:: MBangles
+   :type:  list[float]
+   :value: []
+
+
+.. py:attribute:: MBfractions
+   :type:  list[float]
+   :value: []
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: wiebe_parameters(n: float, b: float)
+
+   Set Wiebe function parameters.
+
+
+.. py:method:: set_burn_timing(soc: float, duration: float = 0.0)
+
+   Set SI engine SOC timing.
+
+
+.. py:method:: set_burn_anchor_points(ca10: float, ca50: float, ca90: float)
+
+   Set the SI mass burned profile using the anchor points.
+
+
+.. py:method:: set_mass_burned_profile(crankangles: numpy.typing.NDArray[numpy.double], fractions: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify SI engine mass burned fraction profile.
+
+
+.. py:method:: set_combustion_efficiency(efficiency: float)
+
+   Set the overall combustion efficiency.
+
+
+.. py:method:: set_burned_products_minimum_mole_fraction(bound: float)
+
+   Set the minimum gas species mole fraction value.
+
+
+.. py:method:: set_wiebe_keywords() -> int
+
+   Set the Wiebe function parameters.
+
+
+.. py:method:: set_burn_anchor_points_keywords() -> int
+
+   Set the mass burned profile anchor points.
+
+
+.. py:method:: set_burn_profile_keywords() -> int
+
+   Set the mass burned fraction profile.
+
+
+.. py:method:: run() -> int
+
+   Run Chemkin SI engine model method.
+
+
+
+
+

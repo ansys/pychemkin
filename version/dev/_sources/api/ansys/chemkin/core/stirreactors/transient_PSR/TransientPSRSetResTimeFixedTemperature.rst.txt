@@ -1,0 +1,31 @@
+
+
+
+
+
+
+:class:`TransientPSRSetResTimeFixedTemperature`
+===============================================
+
+
+.. py:class:: ansys.chemkin.core.stirreactors.transient_PSR.TransientPSRSetResTimeFixedTemperature(guessedmixture: ansys.chemkin.core.inlet.Stream, label: Union[str, None] = None)
+
+   Bases: :py:obj:`TransientPSR`
+
+
+   Transient PSR model with given reactor residence time and reactor temperature.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.stirreactors.transient_PSR import TransientPSRSetResTimeFixedTemperature
+
+
+
+
+

@@ -1,0 +1,161 @@
+
+
+
+
+
+
+The ``mixture.py`` module
+=========================
+
+.. py:module:: ansys.chemkin.core.mixture
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: mixture
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.mixture.Mixture`
+            - define a mixture based on the gas species in the given chemistry set.
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~isothermal_mixing`
+            - Mixing multiple gas mixtures at gioven temperature.
+
+
+          * - :py:obj:`~adiabatic_mixing`
+            - Mixing multiple gas mixtures adiabatically.
+
+
+          * - :py:obj:`~cal_mixture_temperature_from_enthalpy`
+            - Compute the mixture temperature from the given mixture enthalpy.
+
+
+          * - :py:obj:`~interpolate_mixtures`
+            - Get Mixture by interpolation.
+
+
+          * - :py:obj:`~compare_mixtures`
+            - Compare properties of mixture B against those of mixture A.
+
+
+          * - :py:obj:`~calculate_equilibrium`
+            - Get the equilibrium mixture composition.
+
+
+          * - :py:obj:`~equilibrium`
+            - Find the equilibrium state mixture corresponding to the given mixture.
+
+
+          * - :py:obj:`~detonation`
+            - Find the Chapman-Jouguet state mixture and detonation wave speed.
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Mixture</api/ansys/chemkin/core/mixture/Mixture>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin Mixture utilities.
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: isothermal_mixing(recipe: list[tuple[Mixture, float]], mode: str, finaltemperature: float) -> Mixture
+
+   Mixing multiple gas mixtures at gioven temperature.
+
+
+.. py:function:: adiabatic_mixing(recipe: list[tuple[Mixture, float]], mode: str) -> Mixture
+
+   Mixing multiple gas mixtures adiabatically.
+
+
+.. py:function:: cal_mixture_temperature_from_enthalpy(mixture: Mixture, h_mixture: float, guesstemperature: float = 0.0) -> int
+
+   Compute the mixture temperature from the given mixture enthalpy.
+
+
+.. py:function:: interpolate_mixtures(mixtureleft: Mixture, mixtureright: Mixture, ratio: float) -> Mixture
+
+   Get Mixture by interpolation.
+
+
+.. py:function:: compare_mixtures(mixture_a: Mixture, mixture_b: Mixture, atol: float = 1e-10, rtol: float = 0.001, mode: str = 'mass') -> tuple[bool, float, float]
+
+   Compare properties of mixture B against those of mixture A.
+
+
+.. py:function:: calculate_equilibrium(chemid: int, p: float, t: float, frac: numpy.typing.NDArray[numpy.double], wt: numpy.typing.NDArray[numpy.double], mode_in: str, mode_out: str, eq_option: int = 1, use_realgas: int = 0) -> tuple[list[float], numpy.typing.NDArray[numpy.double]]
+
+   Get the equilibrium mixture composition.
+
+
+.. py:function:: equilibrium(mixture: Mixture, opt: int = 1) -> Mixture
+
+   Find the equilibrium state mixture corresponding to the given mixture.
+
+
+.. py:function:: detonation(mixture: Mixture) -> tuple[list[float], Mixture]
+
+   Find the Chapman-Jouguet state mixture and detonation wave speed.
+
+
+
+

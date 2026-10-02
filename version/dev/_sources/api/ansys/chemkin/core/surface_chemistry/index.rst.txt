@@ -1,0 +1,110 @@
+
+
+
+
+
+
+The ``surface_chemistry.py`` module
+===================================
+
+.. py:module:: ansys.chemkin.core.surface_chemistry
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: surface_chemistry
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.surface_chemistry.SurfaceChemistryMixin`
+            - Surface chemistry related methods for the Chemistry class.
+
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~LP_c_char`
+            - 
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~MAX_SPECIES_LENGTH`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> SurfaceChemistryMixin</api/ansys/chemkin/core/surface_chemistry/SurfaceChemistryMixin>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Surface chemistry behavior mixed into the Chemistry class.
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: MAX_SPECIES_LENGTH
+   :value: 17
+
+
+.. py:data:: LP_c_char
+
+
+

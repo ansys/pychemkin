@@ -1,0 +1,373 @@
+
+
+
+
+
+
+:class:`SteadyStateSolver`
+==========================
+
+
+.. py:class:: ansys.chemkin.core.steadystatesolver.SteadyStateSolver
+
+   Common steady-state solver controlling parameters.
+
+
+
+.. py:currentmodule:: SteadyStateSolver
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_max_pseudo_transient_call`
+            - Set max number of the pseudo transient operation.
+          * - :py:attr:`~set_max_timestep_iteration`
+            - Set max number of iterations per time step.
+          * - :py:attr:`~set_max_search_iteration`
+            - Set the maximum number of iterations.
+          * - :py:attr:`~set_initial_timesteps`
+            - Set the number of pseudo time steps to be performed.
+          * - :py:attr:`~set_species_floor`
+            - Set the minimum species fraction value allowed.
+          * - :py:attr:`~set_temperature_ceiling`
+            - Set the maximum temperature value allowed.
+          * - :py:attr:`~set_species_reset_value`
+            - Set the positive reset value for any negative species fraction.
+          * - :py:attr:`~set_max_pseudo_timestep_size`
+            - Set max time step sizes allowed by the pseudo time stepping.
+          * - :py:attr:`~set_min_pseudo_timestep_size`
+            - Set min time step size of the pseudo time stepping operation.
+          * - :py:attr:`~set_pseudo_timestep_age`
+            - Set min number of time steps before time step size increase.
+          * - :py:attr:`~set_jacobian_age`
+            - Set the number of searches before Jacobian matrix evaluation.
+          * - :py:attr:`~set_pseudo_jacobian_age`
+            - Set the number of time steps before Jacobian matrix evaluation.
+          * - :py:attr:`~set_damping_option`
+            - Turn ON or OFF the damping option of the steady-state solver.
+          * - :py:attr:`~set_legacy_option`
+            - Turn ON or OFF the legacy steady-state solver.
+          * - :py:attr:`~set_print_level`
+            - Set the text output level of the steady-state solver.
+          * - :py:attr:`~set_pseudo_timestepping_parameters`
+            - Set pseudo time stepping  parameters.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~steady_state_tolerances`
+            - Get tolerance for the steady-state search algorithm.
+          * - :py:attr:`~time_stepping_tolerances`
+            - Get tolerance for the pseudo time stepping solution algorithm.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~ss_absolute_tolerance`
+            - 
+          * - :py:attr:`~ss_relative_tolerance`
+            - 
+          * - :py:attr:`~ss_maxiteration`
+            - 
+          * - :py:attr:`~ss_jacobianage`
+            - 
+          * - :py:attr:`~maxpseudotransient`
+            - 
+          * - :py:attr:`~numbinitialpseudosteps`
+            - 
+          * - :py:attr:`~maxTbound`
+            - 
+          * - :py:attr:`~speciesfloor`
+            - 
+          * - :py:attr:`~species_positive`
+            - 
+          * - :py:attr:`~use_legacy_technique`
+            - 
+          * - :py:attr:`~ss_damping`
+            - 
+          * - :py:attr:`~absolute_perturbation`
+            - 
+          * - :py:attr:`~relative_perturbation`
+            - 
+          * - :py:attr:`~tr_absolute_tolerance`
+            - 
+          * - :py:attr:`~tr_relative_tolerance`
+            - 
+          * - :py:attr:`~tr_maxiteration`
+            - 
+          * - :py:attr:`~timestepsizeage`
+            - 
+          * - :py:attr:`~tr_minstepsize`
+            - 
+          * - :py:attr:`~tr_maxstepsize`
+            - 
+          * - :py:attr:`~tr_upfactor`
+            - 
+          * - :py:attr:`~tr_downfactor`
+            - 
+          * - :py:attr:`~tr_jacobianage`
+            - 
+          * - :py:attr:`~tr_stride_fixT`
+            - 
+          * - :py:attr:`~tr_numbsteps_fixT`
+            - 
+          * - :py:attr:`~tr_stride_ENRG`
+            - 
+          * - :py:attr:`~tr_numbsteps_ENRG`
+            - 
+          * - :py:attr:`~print_level`
+            - 
+          * - :py:attr:`~ss_solverkeywords`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.steadystatesolver import SteadyStateSolver
+
+Property detail
+---------------
+
+.. py:property:: steady_state_tolerances
+   :type: tuple[float, float]
+
+
+   Get tolerance for the steady-state search algorithm.
+
+
+.. py:property:: time_stepping_tolerances
+   :type: tuple[float, float]
+
+
+   Get tolerance for the pseudo time stepping solution algorithm.
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: ss_absolute_tolerance
+   :value: 1e-09
+
+
+.. py:attribute:: ss_relative_tolerance
+   :value: 0.0001
+
+
+.. py:attribute:: ss_maxiteration
+   :value: 100
+
+
+.. py:attribute:: ss_jacobianage
+   :value: 20
+
+
+.. py:attribute:: maxpseudotransient
+   :value: 100
+
+
+.. py:attribute:: numbinitialpseudosteps
+   :value: 0
+
+
+.. py:attribute:: maxTbound
+   :value: 5000.0
+
+
+.. py:attribute:: speciesfloor
+   :value: -1e-14
+
+
+.. py:attribute:: species_positive
+   :value: 0.0
+
+
+.. py:attribute:: use_legacy_technique
+   :value: False
+
+
+.. py:attribute:: ss_damping
+   :value: 1
+
+
+.. py:attribute:: absolute_perturbation
+   :value: 0.0
+
+
+.. py:attribute:: relative_perturbation
+   :value: 0.0
+
+
+.. py:attribute:: tr_absolute_tolerance
+   :value: 1e-09
+
+
+.. py:attribute:: tr_relative_tolerance
+   :value: 0.0001
+
+
+.. py:attribute:: tr_maxiteration
+   :value: 25
+
+
+.. py:attribute:: timestepsizeage
+   :value: 25
+
+
+.. py:attribute:: tr_minstepsize
+   :value: 1e-10
+
+
+.. py:attribute:: tr_maxstepsize
+   :value: 0.01
+
+
+.. py:attribute:: tr_upfactor
+   :value: 2.0
+
+
+.. py:attribute:: tr_downfactor
+   :value: 2.2
+
+
+.. py:attribute:: tr_jacobianage
+   :value: 20
+
+
+.. py:attribute:: tr_stride_fixT
+   :value: 1e-06
+
+
+.. py:attribute:: tr_numbsteps_fixT
+   :value: 100
+
+
+.. py:attribute:: tr_stride_ENRG
+   :value: 1e-06
+
+
+.. py:attribute:: tr_numbsteps_ENRG
+   :value: 100
+
+
+.. py:attribute:: print_level
+   :value: 1
+
+
+.. py:attribute:: ss_solverkeywords
+   :type:  dict[str, Union[int, float, str, bool]]
+
+
+
+Method detail
+-------------
+
+.. py:method:: set_max_pseudo_transient_call(maxtime: int)
+
+   Set max number of the pseudo transient operation.
+
+
+.. py:method:: set_max_timestep_iteration(maxiteration: int)
+
+   Set max number of iterations per time step.
+
+
+.. py:method:: set_max_search_iteration(maxiteration: int)
+
+   Set the maximum number of iterations.
+
+
+.. py:method:: set_initial_timesteps(initsteps: int)
+
+   Set the number of pseudo time steps to be performed.
+
+
+.. py:method:: set_species_floor(floor_value: float)
+
+   Set the minimum species fraction value allowed.
+
+
+.. py:method:: set_temperature_ceiling(ceilingvalue: float)
+
+   Set the maximum temperature value allowed.
+
+
+.. py:method:: set_species_reset_value(resetvalue: float)
+
+   Set the positive reset value for any negative species fraction.
+
+
+.. py:method:: set_max_pseudo_timestep_size(dtmax: float)
+
+   Set max time step sizes allowed by the pseudo time stepping.
+
+
+.. py:method:: set_min_pseudo_timestep_size(dtmin: float)
+
+   Set min time step size of the pseudo time stepping operation.
+
+
+.. py:method:: set_pseudo_timestep_age(age: int)
+
+   Set min number of time steps before time step size increase.
+
+
+.. py:method:: set_jacobian_age(age: int)
+
+   Set the number of searches before Jacobian matrix evaluation.
+
+
+.. py:method:: set_pseudo_jacobian_age(age: int)
+
+   Set the number of time steps before Jacobian matrix evaluation.
+
+
+.. py:method:: set_damping_option(status: bool)
+
+   Turn ON or OFF the damping option of the steady-state solver.
+
+
+.. py:method:: set_legacy_option(option: bool)
+
+   Turn ON or OFF the legacy steady-state solver.
+
+
+.. py:method:: set_print_level(level: int)
+
+   Set the text output level of the steady-state solver.
+
+
+.. py:method:: set_pseudo_timestepping_parameters(numb_steps: int = 100, step_size: float = 1e-06, stage: int = 1)
+
+   Set pseudo time stepping  parameters.
+
+
+
+
+

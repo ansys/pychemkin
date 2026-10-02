@@ -1,0 +1,53 @@
+
+
+.. _sphx_glr_examples_opposed_flow_flame:
+
+Opposed-flow flame model
+========================
+
+The *opposed-flow Flame* model is a 1-D steady-state application to study
+the structure of stretched flames in the opposed-flow configuration. It can also
+be used to generate a "flamelet table" for CFD simulations. See the Chemkin
+*Theory* manual for additional information about this feature.
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The opposed-flow flame model is frequently used as a numerical tool to study the flame structures under fluid dynamic stress without the interferences from the wall. The opposed-flow flame experiments provide insights on the impact of the transport processes (mainly diffusion) on the combustion chemistry and flame structure. They also reveal how the flame structure would response to the strain rate imposed by the mean flow field (or to some extent by the turbulence).">
+
+.. only:: html
+
+  .. image:: /examples/opposed_flow_flame/images/thumb/sphx_glr_dual_flame_thumb.png
+    :alt:
+
+  :doc:`/examples/opposed_flow_flame/dual_flame`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Study flame interactions in an opposed-flow flame configuration</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/opposed_flow_flame/dual_flame
+

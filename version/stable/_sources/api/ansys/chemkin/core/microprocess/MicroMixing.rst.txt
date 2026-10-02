@@ -1,0 +1,200 @@
+
+
+
+
+
+
+:class:`MicroMixing`
+====================
+
+
+.. py:class:: ansys.chemkin.core.microprocess.MicroMixing
+
+   Micro mixing process module.
+
+
+
+.. py:currentmodule:: MicroMixing
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_numb_particles`
+            - Set the total number of events/particles.
+          * - :py:attr:`~set_mixing_time_step`
+            - Set the time duration of the micro mixing process.
+          * - :py:attr:`~set_mixing_time_scale`
+            - Set the characteristic scalar mixing time scale.
+          * - :py:attr:`~set_mixing_model_parameter`
+            - Set the micro mixing model parameter.
+          * - :py:attr:`~set_particle_mixtures`
+            - Set up the particle mixtures.
+          * - :py:attr:`~calculate_particles_per_mixture`
+            - Determine the particle count distribution.
+          * - :py:attr:`~map_mixture_particles`
+            - Map particle index to the mixture index.
+          * - :py:attr:`~get_source_integer`
+            - Create an integer list for the random pick process.
+          * - :py:attr:`~update_mixtures`
+            - Update particle mixtures.
+          * - :py:attr:`~modified_curls`
+            - Perform particle mixing with the Modified Curl's mixing model.
+          * - :py:attr:`~particle_mixing_curls`
+            - Select random integers from an integer list.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~numb_particles`
+            - 
+          * - :py:attr:`~delta_time`
+            - 
+          * - :py:attr:`~mixing_time_scale`
+            - 
+          * - :py:attr:`~mixing_model_parameter`
+            - 
+          * - :py:attr:`~mixing_fraction_limit`
+            - 
+          * - :py:attr:`~particles_map`
+            - 
+          * - :py:attr:`~mixture_map`
+            - 
+          * - :py:attr:`~mixture_particles`
+            - 
+          * - :py:attr:`~changed_mixtures`
+            - 
+          * - :py:attr:`~particle_unit_mass`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.microprocess import MicroMixing
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: numb_particles
+   :value: 0
+
+
+.. py:attribute:: delta_time
+   :value: 0.0
+
+
+.. py:attribute:: mixing_time_scale
+   :value: 0.0
+
+
+.. py:attribute:: mixing_model_parameter
+   :value: 1.0
+
+
+.. py:attribute:: mixing_fraction_limit
+   :value: 0.3
+
+
+.. py:attribute:: particles_map
+   :type:  dict[int, int]
+
+.. py:attribute:: mixture_map
+   :type:  dict[int, ansys.chemkin.core.inlet.Stream]
+
+.. py:attribute:: mixture_particles
+   :type:  list[int]
+   :value: []
+
+
+.. py:attribute:: changed_mixtures
+   :type:  dict[int, list[ansys.chemkin.core.inlet.Stream]]
+
+.. py:attribute:: particle_unit_mass
+   :value: 0.0
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: set_numb_particles(nparticles: int)
+
+   Set the total number of events/particles.
+
+
+.. py:method:: set_mixing_time_step(dtime: float)
+
+   Set the time duration of the micro mixing process.
+
+
+.. py:method:: set_mixing_time_scale(tau: float)
+
+   Set the characteristic scalar mixing time scale.
+
+
+.. py:method:: set_mixing_model_parameter(cmix: float)
+
+   Set the micro mixing model parameter.
+
+
+.. py:method:: set_particle_mixtures(particle_mixtures: list[ansys.chemkin.core.inlet.Stream])
+
+   Set up the particle mixtures.
+
+
+.. py:method:: calculate_particles_per_mixture()
+
+   Determine the particle count distribution.
+
+
+.. py:method:: map_mixture_particles()
+
+   Map particle index to the mixture index.
+
+
+.. py:method:: get_source_integer(min_integer: int, max_integer: int) -> list[int]
+
+   Create an integer list for the random pick process.
+
+
+.. py:method:: update_mixtures()
+
+   Update particle mixtures.
+
+
+.. py:method:: modified_curls(delta_time: float, tau: float, cmix: float = 1.0) -> list[ansys.chemkin.core.inlet.Stream]
+
+   Perform particle mixing with the Modified Curl's mixing model.
+
+
+.. py:method:: particle_mixing_curls(numb_picks: int, source_list: list[int])
+
+   Select random integers from an integer list.
+
+
+
+
+

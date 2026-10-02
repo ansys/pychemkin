@@ -1,0 +1,273 @@
+
+
+
+
+
+
+:class:`PSRCluster`
+===================
+
+
+.. py:class:: ansys.chemkin.core.stirreactors.PSRcluster.PSRCluster(config: list[ansys.chemkin.core.stirreactors.PSR.PerfectlyStirredReactor], label: Union[str, None] = None)
+
+   Bases: :py:obj:`ansys.chemkin.core.stirreactors.openreactor.OpenReactor`
+
+
+   A cluster of perfectly-stirred reactors.
+
+
+
+.. py:currentmodule:: PSRCluster
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~numb_external_inlet`
+            - Get the number of external inlet to a reactor.
+          * - :py:attr:`~get_reactor_label`
+            - Get the PSR name/label.
+          * - :py:attr:`~set_recycling_stream`
+            - Set outflowing stream connectivity of a reactor.
+          * - :py:attr:`~set_recycling_keywords`
+            - Add outflow recycling connectivity keywords.
+          * - :py:attr:`~add_heat_exchange`
+            - Add heat exchange connection between two reactors.
+          * - :py:attr:`~set_heat_exchange_keywords`
+            - Add heat exchange connectivity keywords.
+          * - :py:attr:`~run`
+            - Run the reactor network simulation.
+          * - :py:attr:`~get_cluster_run_status`
+            - Get cluster run status.
+          * - :py:attr:`~get_reactor_stream`
+            - Get the solution Stream object.
+          * - :py:attr:`~get_cluster_solutionstatus`
+            - Get post-process status.
+          * - :py:attr:`~process_cluster_solution`
+            - Post-process cluster solution.
+          * - :py:attr:`~get_cluster_outlet_flowrate`
+            - Get the net/total outlet mass flow rate.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~numb_psrs`
+            - Get the number of PSR.
+          * - :py:attr:`~total_numb_external_inlets`
+            - Get the total number of external inlet to the network.
+          * - :py:attr:`~total_inlet_mass_flow_rate`
+            - Get the total external inlet mass flow rate to the network.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~total_external_inlets`
+            - 
+          * - :py:attr:`~total_mass_flow_rate`
+            - 
+          * - :py:attr:`~npsrs`
+            - 
+          * - :py:attr:`~psr_map`
+            - 
+          * - :py:attr:`~psr_objects`
+            - 
+          * - :py:attr:`~psr_solutions`
+            - 
+          * - :py:attr:`~numb_recycling_streams`
+            - 
+          * - :py:attr:`~recycling_connections`
+            - 
+          * - :py:attr:`~cluster_run_status`
+            - 
+          * - :py:attr:`~outlet_mass_flow_rate`
+            - 
+          * - :py:attr:`~numb_heat_exchange_pairs`
+            - 
+          * - :py:attr:`~heat_exchange_pair`
+            - 
+          * - :py:attr:`~heat_exchange_coeffcients`
+            - 
+          * - :py:attr:`~heat_exchange_areas`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.stirreactors.PSRcluster import PSRCluster
+
+Property detail
+---------------
+
+.. py:property:: numb_psrs
+   :type: int
+
+
+   Get the number of PSR.
+
+
+.. py:property:: total_numb_external_inlets
+   :type: int
+
+
+   Get the total number of external inlet to the network.
+
+
+.. py:property:: total_inlet_mass_flow_rate
+   :type: float
+
+
+   Get the total external inlet mass flow rate to the network.
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: total_external_inlets
+   :value: 0
+
+
+.. py:attribute:: total_mass_flow_rate
+   :value: 0.0
+
+
+.. py:attribute:: npsrs
+   :value: 0
+
+
+.. py:attribute:: psr_map
+   :type:  dict[str, int]
+
+.. py:attribute:: psr_objects
+   :type:  dict[int, ansys.chemkin.core.stirreactors.PSR.PerfectlyStirredReactor]
+
+.. py:attribute:: psr_solutions
+   :type:  dict[int, ansys.chemkin.core.inlet.Stream]
+
+.. py:attribute:: numb_recycling_streams
+   :value: 0
+
+
+.. py:attribute:: recycling_connections
+   :type:  dict[int, list[tuple[str, float]]]
+
+.. py:attribute:: cluster_run_status
+   :value: -100
+
+
+.. py:attribute:: outlet_mass_flow_rate
+   :value: 0.0
+
+
+.. py:attribute:: numb_heat_exchange_pairs
+   :value: 0
+
+
+.. py:attribute:: heat_exchange_pair
+   :type:  list[tuple[int, int]]
+   :value: []
+
+
+.. py:attribute:: heat_exchange_coeffcients
+   :type:  list[float]
+   :value: []
+
+
+.. py:attribute:: heat_exchange_areas
+   :type:  list[float]
+   :value: []
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: numb_external_inlet(name: str) -> int
+
+   Get the number of external inlet to a reactor.
+
+
+.. py:method:: get_reactor_label(reactor_index: int) -> str
+
+   Get the PSR name/label.
+
+
+.. py:method:: set_recycling_stream(source_psr: str, connections: list[tuple[str, float]])
+
+   Set outflowing stream connectivity of a reactor.
+
+
+.. py:method:: set_recycling_keywords()
+
+   Add outflow recycling connectivity keywords.
+
+
+.. py:method:: add_heat_exchange(reactor1: str, reactor2: str, heat_transfer_coeff: float, heat_transfer_area: float)
+
+   Add heat exchange connection between two reactors.
+
+
+.. py:method:: set_heat_exchange_keywords()
+
+   Add heat exchange connectivity keywords.
+
+
+.. py:method:: run() -> int
+
+   Run the reactor network simulation.
+
+
+.. py:method:: get_cluster_run_status() -> int
+
+   Get cluster run status.
+
+
+.. py:method:: get_reactor_stream(reactor_name: str) -> ansys.chemkin.core.inlet.Stream
+
+   Get the solution Stream object.
+
+
+.. py:method:: get_cluster_solutionstatus() -> bool
+
+   Get post-process status.
+
+
+.. py:method:: process_cluster_solution() -> int
+
+   Post-process cluster solution.
+
+
+.. py:method:: get_cluster_outlet_flowrate() -> float
+
+   Get the net/total outlet mass flow rate.
+
+
+
+
+

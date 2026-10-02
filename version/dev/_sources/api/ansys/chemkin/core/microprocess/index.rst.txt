@@ -1,0 +1,78 @@
+
+
+
+
+
+
+The ``microprocess.py`` module
+==============================
+
+.. py:module:: ansys.chemkin.core.microprocess
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: microprocess
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.microprocess.MicroMixing`
+            - Micro mixing process module.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> MicroMixing</api/ansys/chemkin/core/microprocess/MicroMixing>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Micro mixing model for the multi-zone engine models.
+
+
+
+
+
+
+
+

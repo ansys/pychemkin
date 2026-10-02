@@ -1,0 +1,93 @@
+
+
+
+
+
+
+:class:`PSRSetResTimeEnergyConservation`
+========================================
+
+
+.. py:class:: ansys.chemkin.core.stirreactors.PSR.PSRSetResTimeEnergyConservation(guessedmixture: ansys.chemkin.core.inlet.Stream, label: Union[str, None] = None)
+
+   Bases: :py:obj:`PerfectlyStirredReactor`
+
+
+   PSR model with given reactor reasidence time and solve energy equation.
+
+
+
+.. py:currentmodule:: PSRSetResTimeEnergyConservation
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~heat_loss_rate`
+            - Get heat loss rate from the reactor to the surroundings.
+          * - :py:attr:`~heat_transfer_coefficient`
+            - Get heat transfer coefficient between the reactor and the surroundings.
+          * - :py:attr:`~ambient_temperature`
+            - Get ambient temperature.
+          * - :py:attr:`~heat_transfer_area`
+            - Get heat transfer area between the reactor and the surroundings.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.stirreactors.PSR import PSRSetResTimeEnergyConservation
+
+Property detail
+---------------
+
+.. py:property:: heat_loss_rate
+   :type: float
+
+
+   Get heat loss rate from the reactor to the surroundings.
+
+
+.. py:property:: heat_transfer_coefficient
+   :type: float
+
+
+   Get heat transfer coefficient between the reactor and the surroundings.
+
+
+.. py:property:: ambient_temperature
+   :type: float
+
+
+   Get ambient temperature.
+
+
+.. py:property:: heat_transfer_area
+   :type: float
+
+
+   Get heat transfer area between the reactor and the surroundings.
+
+
+
+
+
+
+
