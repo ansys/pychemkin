@@ -1,0 +1,120 @@
+
+
+
+
+
+
+The ``reactormodel.py`` module
+==============================
+
+.. py:module:: ansys.chemkin.core.reactormodel
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: reactormodel
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.reactormodel.Keyword`
+            - A Chemkin style keyword.
+
+
+          * - :py:obj:`~ansys.chemkin.core.reactormodel.BooleanKeyword`
+            - Chemkin boolean keyword.
+
+
+          * - :py:obj:`~ansys.chemkin.core.reactormodel.IntegerKeyword`
+            - A Chemkin integer keyword.
+
+
+          * - :py:obj:`~ansys.chemkin.core.reactormodel.RealKeyword`
+            - A Chemkin real keyword.
+
+
+          * - :py:obj:`~ansys.chemkin.core.reactormodel.StringKeyword`
+            - A Chemkin string keyword.
+
+
+          * - :py:obj:`~ansys.chemkin.core.reactormodel.Profile`
+            - Chemkin profile keyword class.
+
+
+          * - :py:obj:`~ansys.chemkin.core.reactormodel.ReactorModel`
+            - Serve as a generic Chemkin reactor model framework.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Keyword</api/ansys/chemkin/core/reactormodel/Keyword>
+    <span class="nf nf-cod-symbol_class"></span> BooleanKeyword</api/ansys/chemkin/core/reactormodel/BooleanKeyword>
+    <span class="nf nf-cod-symbol_class"></span> IntegerKeyword</api/ansys/chemkin/core/reactormodel/IntegerKeyword>
+    <span class="nf nf-cod-symbol_class"></span> RealKeyword</api/ansys/chemkin/core/reactormodel/RealKeyword>
+    <span class="nf nf-cod-symbol_class"></span> StringKeyword</api/ansys/chemkin/core/reactormodel/StringKeyword>
+    <span class="nf nf-cod-symbol_class"></span> Profile</api/ansys/chemkin/core/reactormodel/Profile>
+    <span class="nf nf-cod-symbol_class"></span> ReactorModel</api/ansys/chemkin/core/reactormodel/ReactorModel>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin general reactor model utilities.
+
+
+
+
+
+
+
+

@@ -1,0 +1,85 @@
+
+
+
+
+
+
+The ``opposedflowflame.py`` module
+==================================
+
+.. py:module:: ansys.chemkin.core.diffusionflames.opposedflowflame
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: opposedflowflame
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.diffusionflames.opposedflowflame.OpposedFlame`
+            - One-dimensional axisymmetric/Cylindrical opposed-flow flame model.
+
+
+          * - :py:obj:`~ansys.chemkin.core.diffusionflames.opposedflowflame.OpposedFlamePlanar`
+            - One-dimensional planar opposed-flow flame model.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> OpposedFlame</api/ansys/chemkin/core/diffusionflames/opposedflowflame/OpposedFlame>
+    <span class="nf nf-cod-symbol_class"></span> OpposedFlamePlanar</api/ansys/chemkin/core/diffusionflames/opposedflowflame/OpposedFlamePlanar>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Steady state, 1-D opposed-flow flame model.
+
+
+
+
+
+
+
+

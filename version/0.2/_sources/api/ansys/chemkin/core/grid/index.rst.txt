@@ -1,0 +1,78 @@
+
+
+
+
+
+
+The ``grid.py`` module
+======================
+
+.. py:module:: ansys.chemkin.core.grid
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: grid
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.grid.Grid`
+            - Grid quality control parameters for Chemkin 1-D steady-state reactor models.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Grid</api/ansys/chemkin/core/grid/Grid>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin grid quality control parameters.
+
+
+
+
+
+
+
+

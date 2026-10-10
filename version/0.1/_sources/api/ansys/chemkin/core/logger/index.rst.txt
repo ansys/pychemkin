@@ -1,0 +1,102 @@
+
+
+
+
+
+
+The ``logger.py`` module
+========================
+
+.. py:module:: ansys.chemkin.core.logger
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: logger
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.logger.SingletonType`
+            - :no-index: Provides the singleton helper class for the logger.
+
+
+          * - :py:obj:`~ansys.chemkin.core.logger.ChemkinLogger`
+            - Provides the singleton logger for the PyChemkin.
+
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~logger`
+            - 
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> SingletonType</api/ansys/chemkin/core/logger/SingletonType>
+    <span class="nf nf-cod-symbol_class"></span> ChemkinLogger</api/ansys/chemkin/core/logger/ChemkinLogger>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides the singleton helper class for the logger.
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: logger
+
+
+

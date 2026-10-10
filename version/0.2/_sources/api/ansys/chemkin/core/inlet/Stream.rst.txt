@@ -1,0 +1,236 @@
+
+
+
+
+
+
+:class:`Stream`
+===============
+
+
+.. py:class:: ansys.chemkin.core.inlet.Stream(chem, label: Union[str, None] = None)
+
+   Bases: :py:obj:`ansys.chemkin.core.mixture.Mixture`
+
+
+   Generic inlet stream object for Chemkin open reactor models.
+
+
+
+.. py:currentmodule:: Stream
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~convert_to_mass_flowrate`
+            - Convert different types of flow rate value to mass flow rate.
+          * - :py:attr:`~convert_to_vol_flowrate`
+            - Convert different types of flow rate value to volumetric flow rate.
+          * - :py:attr:`~convert_to_sccm`
+            - Convert different types of flow rate value to SCCM.
+          * - :py:attr:`~check_flow_rate_mode`
+            - Get the type of flow rate is provided to this inlet.
+          * - :py:attr:`~notify_inlet_profile`
+            - Display warning that flow rate profile is specified.
+          * - :py:attr:`~profile_out_of_range`
+            - Report value out of the profile data range.
+          * - :py:attr:`~set_mass_flowrate_profile`
+            - Specify inlet mass flow rate profile.
+          * - :py:attr:`~get_mass_flowrate_profile_data`
+            - Get the mass flow rate at the given time from the profile data.
+          * - :py:attr:`~set_vol_flowrate_profile`
+            - Specify inlet volumetric flow rate profile.
+          * - :py:attr:`~get_vol_flowrate_profile_data`
+            - Get the volumetric flow rate at the given time from the profile data.
+          * - :py:attr:`~set_sccm_flowrate_profile`
+            - Specify inlet sccm flow rate profile.
+          * - :py:attr:`~get_sccm_flowrate_profile_data`
+            - Get the sccm flow rate at the given time from the profile data.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~flowarea`
+            - Get inlet flow area.
+          * - :py:attr:`~mass_flowrate`
+            - Get inlet mass flow rate.
+          * - :py:attr:`~vol_flowrate`
+            - Get inlet volumetric flow rate.
+          * - :py:attr:`~sccm`
+            - Get inlet SCCM volumetric flow rate.
+          * - :py:attr:`~velocity`
+            - Get inlet gas velocity.
+          * - :py:attr:`~velocity_gradient`
+            - Get inlet gas axial velocity gradient.
+          * - :py:attr:`~label`
+            - Get the label of the Stream.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~flow_rate_profile_keys`
+            - 
+          * - :py:attr:`~flowrate_profile`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.inlet import Stream
+
+Property detail
+---------------
+
+.. py:property:: flowarea
+   :type: float
+
+
+   Get inlet flow area.
+
+
+.. py:property:: mass_flowrate
+   :type: float
+
+
+   Get inlet mass flow rate.
+
+
+.. py:property:: vol_flowrate
+   :type: float
+
+
+   Get inlet volumetric flow rate.
+
+
+.. py:property:: sccm
+   :type: float
+
+
+   Get inlet SCCM volumetric flow rate.
+
+
+.. py:property:: velocity
+   :type: float
+
+
+   Get inlet gas velocity.
+
+
+.. py:property:: velocity_gradient
+   :type: float
+
+
+   Get inlet gas axial velocity gradient.
+
+
+.. py:property:: label
+   :type: str
+
+
+   Get the label of the Stream.
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: flow_rate_profile_keys
+   :type:  dict[int, str]
+
+.. py:attribute:: flowrate_profile
+   :type:  dict[str, tuple[numpy.typing.NDArray[numpy.double], numpy.typing.NDArray[numpy.double]]]
+
+
+
+Method detail
+-------------
+
+.. py:method:: convert_to_mass_flowrate() -> float
+
+   Convert different types of flow rate value to mass flow rate.
+
+
+.. py:method:: convert_to_vol_flowrate() -> float
+
+   Convert different types of flow rate value to volumetric flow rate.
+
+
+.. py:method:: convert_to_sccm() -> float
+
+   Convert different types of flow rate value to SCCM.
+
+
+.. py:method:: check_flow_rate_mode() -> int
+
+   Get the type of flow rate is provided to this inlet.
+
+
+.. py:method:: notify_inlet_profile(mode: str)
+
+   Display warning that flow rate profile is specified.
+
+
+.. py:method:: profile_out_of_range(time: float, max: float, min: float)
+
+   Report value out of the profile data range.
+
+
+.. py:method:: set_mass_flowrate_profile(x: numpy.typing.NDArray[numpy.double], flow_rate: numpy.typing.NDArray[numpy.double])
+
+   Specify inlet mass flow rate profile.
+
+
+.. py:method:: get_mass_flowrate_profile_data(time: float = 0.0) -> float
+
+   Get the mass flow rate at the given time from the profile data.
+
+
+.. py:method:: set_vol_flowrate_profile(x: numpy.typing.NDArray[numpy.double], flow_rate: numpy.typing.NDArray[numpy.double])
+
+   Specify inlet volumetric flow rate profile.
+
+
+.. py:method:: get_vol_flowrate_profile_data(time: float = 0.0) -> float
+
+   Get the volumetric flow rate at the given time from the profile data.
+
+
+.. py:method:: set_sccm_flowrate_profile(x: numpy.typing.NDArray[numpy.double], flow_rate: numpy.typing.NDArray[numpy.double])
+
+   Specify inlet sccm flow rate profile.
+
+
+.. py:method:: get_sccm_flowrate_profile_data(time: float = 0.0) -> float
+
+   Get the sccm flow rate at the given time from the profile data.
+
+
+
+
+

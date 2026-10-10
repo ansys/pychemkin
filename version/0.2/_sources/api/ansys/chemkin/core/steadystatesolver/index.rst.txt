@@ -1,0 +1,78 @@
+
+
+
+
+
+
+The ``steadystatesolver.py`` module
+===================================
+
+.. py:module:: ansys.chemkin.core.steadystatesolver
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: steadystatesolver
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.steadystatesolver.SteadyStateSolver`
+            - Common steady-state solver controlling parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> SteadyStateSolver</api/ansys/chemkin/core/steadystatesolver/SteadyStateSolver>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin steady-state solver controlling parameters.
+
+
+
+
+
+
+
+

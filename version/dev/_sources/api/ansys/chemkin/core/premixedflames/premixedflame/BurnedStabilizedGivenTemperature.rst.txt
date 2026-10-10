@@ -1,0 +1,31 @@
+
+
+
+
+
+
+:class:`BurnedStabilizedGivenTemperature`
+=========================================
+
+
+.. py:class:: ansys.chemkin.core.premixedflames.premixedflame.BurnedStabilizedGivenTemperature(inlet: ansys.chemkin.core.inlet.Stream, label: Union[str, None] = None)
+
+   Bases: :py:obj:`PremixedFlame`
+
+
+   Burner-stabilized premixed flame with given temperature profile.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.premixedflames.premixedflame import BurnedStabilizedGivenTemperature
+
+
+
+
+
