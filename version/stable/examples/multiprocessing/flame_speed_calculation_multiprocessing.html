@@ -1,0 +1,1170 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Setting up a multi-process laminar flame speed parameter study &#8212; PyChemkin</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/multiprocessing/flame_speed_calculation_multiprocessing';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Setting up a multi-thread laminar flame speed parameter study" href="flame_speed_calculation_threading.html" />
+    <link rel="prev" title="SI engine knocking analysis" href="SI_engine_knock_calculation_multiprocessing.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/examples/multiprocessing/flame_speed_calculation_multiprocessing.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyChemkin - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../artifacts.html">
+    <no title>
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../artifacts.html">
+    <no title>
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../chemistry/index.html">Chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mixture/index.html">Mixture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../batch/index.html">Batch reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../engine/index.html">0-D engine models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSR/index.html">Perfectly stirred reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PFR/index.html">Plug-flow reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../shock_tube/index.html">Shock tube reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reactor_network/index.html">PSR network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../premixed_flame/index.html">Premixed flame models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../opposed_flow_flame/index.html">Opposed-flow flame model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../surface_chemistry/index.html">Surface chemistry</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Multiprocessing parameter study</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="SI_engine_knock_calculation_multiprocessing.html">SI engine knocking analysis</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Setting up a multi-process laminar flame speed parameter study</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flame_speed_calculation_threading.html">Setting up a multi-thread laminar flame speed parameter study</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/index.html">Advanced Applications</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Multiprocessing parameter study</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Setting up a multi-process laminar flame speed parameter study</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-examples-multiprocessing-flame-speed-calculation-multiprocessing-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="setting-up-a-multi-process-laminar-flame-speed-parameter-study">
+<span id="ref-flame-speed-pooling"></span><span id="sphx-glr-examples-multiprocessing-flame-speed-calculation-multiprocessing-py"></span><h1>Setting up a multi-process laminar flame speed parameter study<a class="headerlink" href="#setting-up-a-multi-process-laminar-flame-speed-parameter-study" title="Link to this heading">#</a></h1>
+<p>One of the prevailing use case of the <em>freely propagating premixed flame</em> model is
+to build a <em>flame speed</em> table to be imported by another combustion simulation tools.
+PyChemkin provides the flexibility to customize the data structure of the
+flame speed table depending on the simulation goals and the tool. Furthermore,
+over the years, the chemkin flame speed calculator has derived a set of default solver
+settings that would greatly improve the convergence performance, especially for those
+widely adopted hydrocarbon fuel combustion mechanisms. The required input parameters
+the flame speed calculator are reduced to the composition of the fuel-oxidizer mixture,
+the initial/inlet pressure and temperature, and the calculation domain.</p>
+<p>This tutorial shows the steps of setting up a flame speed parameter study for
+CH<sub>4</sub>-air mixtures at the 5 atmosphere pressure. The predicted flame speed
+values are compared against the experimental data as a function of the mixture
+equivalence ratio. The parameter study is performed in the multi-process
+(or multi-core) mode by using <code class="docutils literal notranslate"><span class="pre">ProcessPoolExecutor</span></code> from the <code class="docutils literal notranslate"><span class="pre">concurrent.futures</span></code>
+package. If the computer has enough number of CPU cores, the parameter study can be
+run in parallel with each case running on a designated CPU core.</p>
+<p>Since the transport processes are critical for flame calculations, the transport data
+must be included in the mechanism data and preprocessed.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<section id="import-pychemkin-packages-and-start-the-logger">
+<h2>Import PyChemkin packages and start the logger<a class="headerlink" href="#import-pychemkin-packages-and-start-the-logger" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProcessPoolExecutor</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ansys.chemkin.core</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ck</span>  <span class="c1"># Chemkin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.inlet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stream</span>  <span class="c1"># external gaseous inlet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+<span class="c1"># Chemkin 1-D premixed freely propagating flame model (steady-state)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.premixedflames.premixedflame</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">FreelyPropagating</span> <span class="k">as</span> <span class="n">FlameSpeed</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">WorkingFolders</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># plotting</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>  <span class="c1"># number crunching</span>
+
+<span class="c1"># check working directory</span>
+<span class="n">current_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">())</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;working directory: &quot;</span> <span class="o">+</span> <span class="n">current_dir</span><span class="p">)</span>
+<span class="c1"># set verbose mode</span>
+<span class="n">ck</span><span class="o">.</span><span class="n">set_verbose</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># set interactive mode for plotting the results</span>
+<span class="c1"># interactive = True: display plot</span>
+<span class="c1"># interactive = False: save plot as a PNG file</span>
+<span class="k">global</span> <span class="n">interactive</span>
+<span class="n">interactive</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+<section id="create-a-flame-speed-calculator-class">
+<h2>Create a flame speed calculator class<a class="headerlink" href="#create-a-flame-speed-calculator-class" title="Link to this heading">#</a></h2>
+<p>Create a local class that wraps around the actual <code class="docutils literal notranslate"><span class="pre">FlameSpeed</span></code> class
+to make the setup of the multi-process flame speed calculation parameter study
+more convenient.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">FlameSpeedCalculator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Laminar flame speed calculator with fixed set up parameters.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fresh_mixture</span><span class="p">:</span> <span class="n">Stream</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a Laminar flame speed calculator.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a Laminar flame speed calculator that instantiates a FlameSpeed object</span>
+<span class="sd">        with the given fresh (unburnt) mixture condition.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            fresh_mixture: Mixture object</span>
+<span class="sd">                the initial/fresh/unburnt condition</span>
+<span class="sd">            index: integer</span>
+<span class="sd">                run index of this flame speed calculator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># instantiate a flame speed object</span>
+        <span class="c1"># set up the run and working directory name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Flame_Speed_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="c1"># instantiate the FlameSpeed object for this run</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fs_calculator</span> <span class="o">=</span> <span class="n">FlameSpeed</span><span class="p">(</span><span class="n">fresh_mixture</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="c1"># set the required premixed flame model parameters</span>
+        <span class="c1">#</span>
+        <span class="c1"># set the maximum total number of grid points allowed</span>
+        <span class="c1"># in the calculation (optional)</span>
+        <span class="c1"># self.fs_calculator.set_max_grid_points(150)</span>
+        <span class="c1"># define the calculation domain [cm]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fs_calculator</span><span class="o">.</span><span class="n">end_position</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="c1"># set the root directory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">())</span>
+        <span class="c1"># set the working directory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_dir</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="c1"># run status</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runstatus</span> <span class="o">=</span> <span class="o">-</span><span class="mi">100</span>
+        <span class="c1"># calculated laminar flame speed [cm/sec]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flame_speed</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run the flame speed calculation in a separate working directory.&quot;&quot;&quot;</span>
+        <span class="c1"># run the flame speed calculation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runstatus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fs_calculator</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="c1"># extract the laminar flame speed from the solution</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">runstatus</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># postprocess the solutions</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fs_calculator</span><span class="o">.</span><span class="n">process_solution</span><span class="p">()</span>
+            <span class="c1"># get the flame speed value [cm/sec]</span>
+            <span class="c1"># because the memory is shared, it must be done as soon as</span>
+            <span class="c1"># the run is finished</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">flame_speed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fs_calculator</span><span class="o">.</span><span class="n">get_flame_speed</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_flame_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the predicted laminar flame speed.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the predicted laminar flame speed.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            flame_speed: double</span>
+<span class="sd">                predicted laminar flame speed [cm/sec]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">flame_speed</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-the-flame-speed-parameter-study-for-multi-processing">
+<h2>Set up the flame speed parameter study for multi-processing<a class="headerlink" href="#set-up-the-flame-speed-parameter-study-for-multi-processing" title="Link to this heading">#</a></h2>
+<p>Create a list of <code class="docutils literal notranslate"><span class="pre">FlameSpeedCalculator</span></code> objects with different
+initial methane-air equivalence ratios. Each object
+represents one parameter study case and will be run on an designated
+cpu core when the parameter study is executed.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">flame_speed_run</span><span class="p">(</span><span class="n">case</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set up the flame speed parameter study.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set up the parameter study runs for multi-processing.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        case: tuple (integer, double)</span>
+<span class="sd">            flame speed calculation case condition: case index and</span>
+<span class="sd">            the equivalence ratio</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        phi: double</span>
+<span class="sd">            the parameter: fresh mixture equivalence ratio</span>
+<span class="sd">        flame_speed: double</span>
+<span class="sd">            predicted laminar flame speed of the fresh mixture [cm/sec]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">##########################################</span>
+    <span class="c1"># Create an instance of the Chemistry Set</span>
+    <span class="c1"># ========================================</span>
+    <span class="c1"># The mechanism loaded is the GRI 3.0 mechanism for methane combustion.</span>
+    <span class="c1"># The mechanism and its associated data files come with the standard Ansys Chemkin</span>
+    <span class="c1"># installation under the subdirectory *&quot;/reaction/data&quot;*.</span>
+    <span class="c1">#</span>
+    <span class="c1"># case index</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">case</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># fresh mixture equivalence ratio</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">case</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># create and change to the working directory for this run</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Flame_Speed_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">work_folder</span> <span class="o">=</span> <span class="n">WorkingFolders</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">current_dir</span><span class="p">)</span>
+    <span class="c1"># set mechanism directory (the default Chemkin mechanism data directory)</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">ck</span><span class="o">.</span><span class="n">ansys_dir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;reaction&quot;</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span>
+    <span class="n">mechanism_dir</span> <span class="o">=</span> <span class="n">data_dir</span>
+    <span class="c1"># including the full file path is recommended</span>
+    <span class="n">chemfile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mechanism_dir</span> <span class="o">/</span> <span class="s2">&quot;grimech30_chem.inp&quot;</span><span class="p">)</span>
+    <span class="n">thermfile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mechanism_dir</span> <span class="o">/</span> <span class="s2">&quot;grimech30_thermo.dat&quot;</span><span class="p">)</span>
+    <span class="n">tranfile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mechanism_dir</span> <span class="o">/</span> <span class="s2">&quot;grimech30_transport.dat&quot;</span><span class="p">)</span>
+    <span class="c1"># create a chemistry set based on GRI 3.0</span>
+    <span class="n">MyGasMech</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Chemistry</span><span class="p">(</span>
+        <span class="n">chem</span><span class="o">=</span><span class="n">chemfile</span><span class="p">,</span> <span class="n">therm</span><span class="o">=</span><span class="n">thermfile</span><span class="p">,</span> <span class="n">tran</span><span class="o">=</span><span class="n">tranfile</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;GRI 3.0&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1">##############################</span>
+    <span class="c1"># Preprocess the Chemistry Set</span>
+    <span class="c1"># ============================</span>
+
+    <span class="c1"># preprocess the mechanism files</span>
+    <span class="n">ierror</span> <span class="o">=</span> <span class="n">MyGasMech</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">ierror</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: failed to preprocess the mechanism!&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;       error code = </span><span class="si">{</span><span class="n">ierror</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">()</span>
+
+    <span class="c1">########################################################################</span>
+    <span class="c1"># Set up the CH\ :sub:`4`\ -air mixture for the flame speed calculation</span>
+    <span class="c1"># ======================================================================</span>
+    <span class="c1"># Instantiate a stream named ``premixed`` for the inlet gas mixture.</span>
+    <span class="c1"># This stream  is a mixture with the addition of the</span>
+    <span class="c1"># inlet flow rate. You can specify the inlet gas properties the same way you</span>
+    <span class="c1"># set up a ``Mixture``. Here the ``x_by_equivalence_ratio`` method is used.</span>
+    <span class="c1"># You create the ``fuel`` and the ``air`` mixtures first. Then define the</span>
+    <span class="c1"># *complete combustion product species* and provide the *additives* composition</span>
+    <span class="c1"># if applicable. And finally, during the parameter iteration runs, you can</span>
+    <span class="c1"># simply set different values to ``equivalenceratio`` to create different</span>
+    <span class="c1"># methane-air mixtures.</span>
+    <span class="c1">#</span>
+
+    <span class="c1"># create the fuel mixture</span>
+    <span class="n">fuel</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">)</span>
+    <span class="c1"># set fuel composition: methane</span>
+    <span class="n">fuel</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;CH4&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]</span>
+    <span class="c1"># setting pressure and temperature condition for the flame speed calculations</span>
+    <span class="n">fuel</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">ck</span><span class="o">.</span><span class="n">P_ATM</span>
+    <span class="n">fuel</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">300.0</span>  <span class="c1"># inlet temperature</span>
+
+    <span class="c1"># create the oxidizer mixture: air</span>
+    <span class="n">air</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">)</span>
+    <span class="n">air</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Air</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+    <span class="c1"># setting pressure and temperature is not required in this case</span>
+    <span class="n">air</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">fuel</span><span class="o">.</span><span class="n">pressure</span>
+    <span class="n">air</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">fuel</span><span class="o">.</span><span class="n">temperature</span>
+
+    <span class="c1"># create the fuel-air Stream for the premixed flame speed calculation</span>
+    <span class="n">premixed</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;premixed&quot;</span><span class="p">)</span>
+    <span class="c1"># products from the complete combustion of the fuel mixture and air</span>
+    <span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CO2&quot;</span><span class="p">,</span> <span class="s2">&quot;H2O&quot;</span><span class="p">,</span> <span class="s2">&quot;N2&quot;</span><span class="p">]</span>
+    <span class="c1"># species mole fractions of added/inert mixture.</span>
+    <span class="c1"># can also create an additives mixture here</span>
+    <span class="n">add_frac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">MyGasMech</span><span class="o">.</span><span class="n">kk</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>  <span class="c1"># no additives: all zeros</span>
+
+    <span class="c1"># setting pressure and temperature is not required in this case</span>
+    <span class="n">premixed</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">fuel</span><span class="o">.</span><span class="n">pressure</span>
+    <span class="n">premixed</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">fuel</span><span class="o">.</span><span class="n">temperature</span>
+
+    <span class="c1"># set estimated value of the flame mass flux [g/cm2-sec]</span>
+    <span class="n">premixed</span><span class="o">.</span><span class="n">mass_flowrate</span> <span class="o">=</span> <span class="mf">0.4</span>
+    <span class="c1"># create mixture by using the equivalence ratio</span>
+    <span class="n">ierror</span> <span class="o">=</span> <span class="n">premixed</span><span class="o">.</span><span class="n">x_by_equivalence_ratio</span><span class="p">(</span>
+        <span class="n">MyGasMech</span><span class="p">,</span> <span class="n">fuel</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">air</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">add_frac</span><span class="p">,</span> <span class="n">products</span><span class="p">,</span> <span class="n">equivalenceratio</span><span class="o">=</span><span class="n">phi</span>
+    <span class="p">)</span>
+    <span class="c1"># check fuel-oxidizer mixture creation status</span>
+    <span class="k">if</span> <span class="n">ierror</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;Error: failed to create the methane-air mixture &quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;for equivalence ratio = &quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">exit</span><span class="p">()</span>
+    <span class="c1"># create a flame speed calculation instance</span>
+    <span class="n">this_run</span> <span class="o">=</span> <span class="n">FlameSpeedCalculator</span><span class="p">(</span><span class="n">premixed</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+    <span class="c1"># run the case</span>
+    <span class="n">this_run</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="c1"># change back to the original top folder</span>
+    <span class="n">work_folder</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+    <span class="c1">#</span>
+    <span class="k">return</span> <span class="n">phi</span><span class="p">,</span> <span class="n">this_run</span><span class="o">.</span><span class="n">flame_speed</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-and-start-the-multi-process-runs">
+<h2>Set up and start the multi-process runs<a class="headerlink" href="#set-up-and-start-the-multi-process-runs" title="Link to this heading">#</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">ProcessPoolExecutor()</span></code> method to assign the flame speed runs.
+In this project, each flame speed run/case runs on an exclusive cpu core.
+The first parameter of <code class="docutils literal notranslate"><span class="pre">map()</span></code> method should be <code class="docutils literal notranslate"><span class="pre">flame_speed_run()</span></code>.
+Make the <code class="docutils literal notranslate"><span class="pre">flame_speed_run()</span></code> method return the required parameter and results
+to make post-processing the results from the parameter study easier.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">__name__</span> <span class="pre">==</span> <span class="pre">'__main__'</span></code> is required when <code class="docutils literal notranslate"><span class="pre">multiprocessing</span></code>
+package is used.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># number of available cpu cores</span>
+    <span class="n">numb_cores</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># set the number of worker cpu cores to be used by the parameter study</span>
+    <span class="n">numb_workers</span> <span class="o">=</span> <span class="mi">14</span>
+    <span class="n">numb_workers</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">numb_workers</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">numb_workers</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">numb_workers</span><span class="p">,</span> <span class="n">numb_cores</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># Set up the flame speed parameter study for multi-processing</span>
+    <span class="c1"># equivalence ratio for the first case</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="mf">0.6</span>
+    <span class="c1"># total number of parameter cases</span>
+    <span class="n">numb_cases</span> <span class="o">=</span> <span class="mi">21</span>
+    <span class="c1"># equivalence ratio increment</span>
+    <span class="n">delta_phi</span> <span class="o">=</span> <span class="mf">0.05</span>
+    <span class="c1"># set up flame speed calculation runs with different equivalence ratios</span>
+    <span class="n">flamespeed_cases</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numb_cases</span><span class="p">):</span>
+        <span class="c1"># create mixture by using the equivalence ratio</span>
+        <span class="n">flamespeed_cases</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">phi</span><span class="p">))</span>
+        <span class="c1"># update parameter</span>
+        <span class="n">phi</span> <span class="o">+=</span> <span class="n">delta_phi</span>
+    <span class="c1"># start the multi-process</span>
+    <span class="n">case_id</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># set the start wall time</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="c1">#</span>
+    <span class="n">numb_workers</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">numb_workers</span><span class="p">,</span> <span class="n">numb_cases</span><span class="p">)</span>
+    <span class="n">equiv</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">flame_speed</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="n">ProcessPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">numb_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ret_value</span> <span class="ow">in</span> <span class="n">e</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">flame_speed_run</span><span class="p">,</span> <span class="n">flamespeed_cases</span><span class="p">):</span>
+            <span class="c1"># results returned by the flame speed calculator</span>
+            <span class="c1"># equivalence ratio</span>
+            <span class="n">equiv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret_value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="c1"># predicted laminar flame speed [cm/sec]</span>
+            <span class="n">flame_speed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret_value</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># compute the total runtime</span>
+    <span class="n">runtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;total simulation duration: </span><span class="si">{</span><span class="n">runtime</span><span class="si">}</span><span class="s2"> [sec]&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+
+    <span class="c1"># experimental data by Kochar</span>
+    <span class="c1"># equivalence ratios</span>
+    <span class="n">data_equiv</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="mf">0.7005</span><span class="p">,</span>
+        <span class="mf">0.8007</span><span class="p">,</span>
+        <span class="mf">0.9009</span><span class="p">,</span>
+        <span class="mf">1.001</span><span class="p">,</span>
+        <span class="mf">1.1032</span><span class="p">,</span>
+        <span class="mf">1.2014</span><span class="p">,</span>
+        <span class="mf">1.3014</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="c1"># methane flame speeds at 5 atm</span>
+    <span class="n">data_speed</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="mf">6.906</span><span class="p">,</span>
+        <span class="mf">12.0094</span><span class="p">,</span>
+        <span class="mf">15.9072</span><span class="p">,</span>
+        <span class="mf">19.2376</span><span class="p">,</span>
+        <span class="mf">19.6601</span><span class="p">,</span>
+        <span class="mf">15.8274</span><span class="p">,</span>
+        <span class="mf">10.2925</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="c1">###########################################</span>
+    <span class="c1"># Plot the premixed flame solution profiles</span>
+    <span class="c1"># =========================================</span>
+    <span class="c1"># Plot the predicted flame speeds against the experimental data.</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">data_equiv</span><span class="p">,</span> <span class="n">data_speed</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;^&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span>
+    <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">equiv</span><span class="p">,</span> <span class="n">flame_speed</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;GRI 3.0&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Flame Speed [cm/sec]&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Equivalence Ratio&quot;</span><span class="p">)</span>
+
+    <span class="c1"># clean up</span>
+    <span class="n">ck</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+
+    <span class="c1"># plot results</span>
+    <span class="k">if</span> <span class="n">interactive</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;plot_flame_speed_pooling.png&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-multiprocessing-flame-speed-calculation-multiprocessing-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/09338e9bfca35547481c802d90af99ba/flame_speed_calculation_multiprocessing.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">flame_speed_calculation_multiprocessing.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/0096228ff9bd3e9b5bceebc25b4f37b7/flame_speed_calculation_multiprocessing.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">flame_speed_calculation_multiprocessing.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/9ea3976d17e7e58de4ff53bfbf4c0016/flame_speed_calculation_multiprocessing.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">flame_speed_calculation_multiprocessing.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-pychemkin-packages-and-start-the-logger">Import PyChemkin packages and start the logger</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-flame-speed-calculator-class">Create a flame speed calculator class</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-the-flame-speed-parameter-study-for-multi-processing">Set up the flame speed parameter study for multi-processing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-and-start-the-multi-process-runs">Set up and start the multi-process runs</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+
+  
+  <nav class="tocsection editthispage" aria-label="Edit this page">
+    <a href="https://github.com/ansys/pychemkin/edit/main/doc/source/examples/multiprocessing/flame_speed_calculation_multiprocessing.rst" rel="noopener noreferrer">
+      <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </nav>
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/multiprocessing/flame_speed_calculation_multiprocessing.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.7.2.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

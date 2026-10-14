@@ -1,0 +1,31 @@
+
+
+
+
+
+
+:class:`PSRSetVolumeFixedTemperature`
+=====================================
+
+
+.. py:class:: ansys.chemkin.core.stirreactors.PSR.PSRSetVolumeFixedTemperature(guessedmixture: ansys.chemkin.core.inlet.Stream, label: Union[str, None] = None)
+
+   Bases: :py:obj:`PerfectlyStirredReactor`
+
+
+   PSR model with given reactor volume and reactor temperature.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.stirreactors.PSR import PSRSetVolumeFixedTemperature
+
+
+
+
+

@@ -1,0 +1,71 @@
+
+
+
+
+
+
+:class:`BurnedStabilizedEnergyEquation`
+=======================================
+
+
+.. py:class:: ansys.chemkin.core.premixedflames.premixedflame.BurnedStabilizedEnergyEquation(inlet: ansys.chemkin.core.inlet.Stream, label: Union[str, None] = None)
+
+   Bases: :py:obj:`PremixedFlame`
+
+
+   Burner-stabilized premixed flame.
+
+
+
+.. py:currentmodule:: BurnedStabilizedEnergyEquation
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~skip_fix_t_solution`
+            - Skip finding the intermediate solution with fixed temperature.
+          * - :py:attr:`~automatic_temperature_profile_estimate`
+            - Construct an estimated temperature profile from the equilibrium state.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.premixedflames.premixedflame import BurnedStabilizedEnergyEquation
+
+
+
+Method detail
+-------------
+
+.. py:method:: skip_fix_t_solution(mode: bool = True)
+
+   Skip finding the intermediate solution with fixed temperature.
+
+
+.. py:method:: automatic_temperature_profile_estimate(mode: bool = True)
+
+   Construct an estimated temperature profile from the equilibrium state.
+
+
+
+
+

@@ -1,0 +1,204 @@
+
+
+
+
+
+
+:class:`PDF`
+============
+
+
+.. py:class:: ansys.chemkin.core.particles.PDF(core_wt: float, bulk_density: float)
+
+   Object representing the population density function (PDF) of aerosols.
+
+
+
+.. py:currentmodule:: PDF
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~class_to_volume`
+            - Convert size class to particle volume.
+          * - :py:attr:`~volume_to_class`
+            - Convert particle volume to size class.
+          * - :py:attr:`~class_to_diameter`
+            - Convert particle class to particle diameter.
+          * - :py:attr:`~diameter_to_class`
+            - Convert particle diameter to particle class.
+          * - :py:attr:`~set_moments`
+            - Calculate the key properties of the PDF from the moments values.
+          * - :py:attr:`~get_gamma_pdf`
+            - Reconstruct the PDF by assuming the gamma function distribution.
+          * - :py:attr:`~get_lognormal_pdf`
+            - Reconstruct the PDF by assuming the lognormal distribution.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~vol0`
+            - Get volume of the core class unit.
+          * - :py:attr:`~mean_class`
+            - Get the mean size class of the distribution.
+          * - :py:attr:`~mean_volume`
+            - Get the volume corresponding to the mean size class.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~core_molar_mass`
+            - 
+          * - :py:attr:`~bulk_density`
+            - 
+          * - :py:attr:`~mass_per_class`
+            - 
+          * - :py:attr:`~vol_per_class`
+            - 
+          * - :py:attr:`~m0`
+            - 
+          * - :py:attr:`~mean`
+            - 
+          * - :py:attr:`~variance`
+            - 
+          * - :py:attr:`~std_dev`
+            - 
+          * - :py:attr:`~mean_shifted`
+            - 
+          * - :py:attr:`~x_min`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.particles import PDF
+
+Property detail
+---------------
+
+.. py:property:: vol0
+   :type: float
+
+
+   Get volume of the core class unit.
+
+
+.. py:property:: mean_class
+   :type: float
+
+
+   Get the mean size class of the distribution.
+
+
+.. py:property:: mean_volume
+   :type: float
+
+
+   Get the volume corresponding to the mean size class.
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: core_molar_mass
+
+.. py:attribute:: bulk_density
+
+.. py:attribute:: mass_per_class
+
+.. py:attribute:: vol_per_class
+
+.. py:attribute:: m0
+   :value: 0.0
+
+
+.. py:attribute:: mean
+   :value: 0.0
+
+
+.. py:attribute:: variance
+   :value: 0.0
+
+
+.. py:attribute:: std_dev
+   :value: 0.0
+
+
+.. py:attribute:: mean_shifted
+   :value: 0.0
+
+
+.. py:attribute:: x_min
+   :value: 0.0
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: class_to_volume(x: float) -> float
+
+   Convert size class to particle volume.
+
+
+.. py:method:: volume_to_class(v: float) -> float
+
+   Convert particle volume to size class.
+
+
+.. py:method:: class_to_diameter(x: float) -> float
+
+   Convert particle class to particle diameter.
+
+
+.. py:method:: diameter_to_class(diameter: float) -> float
+
+   Convert particle diameter to particle class.
+
+
+.. py:method:: set_moments(m0: float, m1: float, m2: float, x_min: float) -> None
+
+   Calculate the key properties of the PDF from the moments values.
+
+
+.. py:method:: get_gamma_pdf(samples: int = 1000, limit: float = 5.0, mode: str = 'class') -> tuple[numpy.typing.NDArray[numpy.double], numpy.typing.NDArray[numpy.double]]
+
+   Reconstruct the PDF by assuming the gamma function distribution.
+
+
+.. py:method:: get_lognormal_pdf(samples: int = 1000, limit: float = 5.0, mode: str = 'class') -> tuple[numpy.typing.NDArray[numpy.double], numpy.typing.NDArray[numpy.double]]
+
+   Reconstruct the PDF by assuming the lognormal distribution.
+
+
+
+
+

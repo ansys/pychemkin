@@ -1,0 +1,162 @@
+
+
+
+
+
+
+:class:`PremixedFlame`
+======================
+
+
+.. py:class:: ansys.chemkin.core.premixedflames.premixedflame.PremixedFlame(inlet: ansys.chemkin.core.inlet.Stream, label: Union[str, None] = None)
+
+   Bases: :py:obj:`ansys.chemkin.core.flame.Flame`
+
+
+   One-dimensional premixed flame model.
+
+
+
+.. py:currentmodule:: PremixedFlame
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_inlet`
+            - Add an external inlet to the reactor.
+          * - :py:attr:`~unburnt_temperature`
+            - Set the unburnt fuel-oxidizer gas temperature.
+          * - :py:attr:`~lump_diffusion_imbalance`
+            - Lump error to the last species.
+          * - :py:attr:`~set_profilekeywords`
+            - Create profile keywords for Chemkin flame applications.
+          * - :py:attr:`~use_tpro_grids`
+            - Use the position data of the temperature profile as initial grid.
+          * - :py:attr:`~set_gridkeywords`
+            - Create 1-D grid profile keywords for Chemkin flame applications.
+          * - :py:attr:`~set_auto_ignition_check`
+            - Set the auto-ignition check mode.
+          * - :py:attr:`~run`
+            - Chemkin run premixed flame model method.
+          * - :py:attr:`~continuation`
+            - Perform a continuation run.
+          * - :py:attr:`~get_solution_size`
+            - Get the number of solution points.
+          * - :py:attr:`~process_solution`
+            - Post-process solution to extract the raw solution variable data.
+          * - :py:attr:`~get_solution_variable_profile`
+            - Get the profile of the solution variable specified.
+          * - :py:attr:`~create_solution_streams`
+            - Create a list of Streams at every solution points.
+          * - :py:attr:`~get_solution_stream`
+            - Get the Stream representing the solution state at the given location.
+          * - :py:attr:`~get_solution_stream_at_grid`
+            - Get the Stream representing the solution given point index.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.premixedflames.premixedflame import PremixedFlame
+
+
+
+Method detail
+-------------
+
+.. py:method:: set_inlet(extinlet: Union[ansys.chemkin.core.inlet.Stream, None] = None)
+
+   Add an external inlet to the reactor.
+
+
+.. py:method:: unburnt_temperature(temperature: float)
+
+   Set the unburnt fuel-oxidizer gas temperature.
+
+
+.. py:method:: lump_diffusion_imbalance(mode: bool = True)
+
+   Lump error to the last species.
+
+
+.. py:method:: set_profilekeywords() -> int
+
+   Create profile keywords for Chemkin flame applications.
+
+
+.. py:method:: use_tpro_grids(mode: bool = True)
+
+   Use the position data of the temperature profile as initial grid.
+
+
+.. py:method:: set_gridkeywords() -> int
+
+   Create 1-D grid profile keywords for Chemkin flame applications.
+
+
+.. py:method:: set_auto_ignition_check(check: bool = False)
+
+   Set the auto-ignition check mode.
+
+
+.. py:method:: run() -> int
+
+   Chemkin run premixed flame model method.
+
+
+.. py:method:: continuation() -> int
+
+   Perform a continuation run.
+
+
+.. py:method:: get_solution_size() -> int
+
+   Get the number of solution points.
+
+
+.. py:method:: process_solution()
+
+   Post-process solution to extract the raw solution variable data.
+
+
+.. py:method:: get_solution_variable_profile(varname: str) -> numpy.typing.NDArray[numpy.double]
+
+   Get the profile of the solution variable specified.
+
+
+.. py:method:: create_solution_streams(specfrac: numpy.typing.NDArray[numpy.double]) -> int
+
+   Create a list of Streams at every solution points.
+
+
+.. py:method:: get_solution_stream(x: float) -> ansys.chemkin.core.inlet.Stream
+
+   Get the Stream representing the solution state at the given location.
+
+
+.. py:method:: get_solution_stream_at_grid(grid_index: int) -> ansys.chemkin.core.inlet.Stream
+
+   Get the Stream representing the solution given point index.
+
+
+
+
+
