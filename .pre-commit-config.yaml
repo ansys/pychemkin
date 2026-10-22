@@ -11,7 +11,7 @@ ci:
 repos:
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.16.10 # v0.16.10
+    rev: v0.17.1 # v0.17.1
     hooks:
       - id: ruff-check
         args: [--fix]
