@@ -1,0 +1,1500 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Chemistry &#8212; PyChemkin</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/ansys/chemkin/core/chemistry/Chemistry';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="Material" href="Material.html" />
+    <link rel="prev" title="The chemistry.py module" href="index.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/api/ansys/chemkin/core/chemistry/Chemistry.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <img src="../../../../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyChemkin - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../artifacts.html">
+    <no title>
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../artifacts.html">
+    <no title>
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html"><span class="nf nf-md-package"></span> ansys.chemkin.core</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html"> <span class="nf nf-fa-file"></span> chemistry</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#"> <span class="nf nf-cod-symbol_class"></span> Chemistry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Material.html"> <span class="nf nf-cod-symbol_class"></span> Material</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SurfacePhase.html"> <span class="nf nf-cod-symbol_class"></span> SurfacePhase</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../chemkin_wrapper/index.html"> <span class="nf nf-fa-file"></span> chemkin_wrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/index.html"> <span class="nf nf-fa-file"></span> color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../constants/index.html"> <span class="nf nf-fa-file"></span> constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../flame/index.html"> <span class="nf nf-fa-file"></span> flame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../grid/index.html"> <span class="nf nf-fa-file"></span> grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hybridreactornetwork/index.html"> <span class="nf nf-fa-file"></span> hybridreactornetwork</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../info/index.html"> <span class="nf nf-fa-file"></span> info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../inlet/index.html"> <span class="nf nf-fa-file"></span> inlet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logger/index.html"> <span class="nf nf-fa-file"></span> logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../microprocess/index.html"> <span class="nf nf-fa-file"></span> microprocess</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mixture/index.html"> <span class="nf nf-fa-file"></span> mixture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reactormodel/index.html"> <span class="nf nf-fa-file"></span> reactormodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../realgaseos/index.html"> <span class="nf nf-fa-file"></span> realgaseos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../steadystatesolver/index.html"> <span class="nf nf-fa-file"></span> steadystatesolver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../surface/index.html"> <span class="nf nf-fa-file"></span> surface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../utilities/index.html"> <span class="nf nf-fa-file"></span> utilities</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../../../index.html" class="nav-link">API reference</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">The <code class="docutils literal notranslate"><span class="pre">ansys.chemkin.core</span></code> library</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">The <code class="docutils literal notranslate"><span class="pre">chemistry.py</span></code> module</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis"><code class="xref py py-class docutils literal notranslate"><span class="pre">Chemistry</span></code></span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="chemistry">
+<h1><code class="xref py py-class docutils literal notranslate"><span class="pre">Chemistry</span></code><a class="headerlink" href="#chemistry" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.chemkin.core.chemistry.Chemistry">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.chemkin.core.chemistry.</span></span><span class="sig-name descname"><span class="pre">Chemistry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">therm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tran</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.chemkin.core.chemistry.Chemistry" title="Link to this definition">#</a></dt>
+<dd><p>Define and preprocess Chemkin chemistry set.</p>
+</dd></dl>
+
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+Methods</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.preprocess_transportdata" title="Chemistry.preprocess_transportdata"><code class="xref py py-attr docutils literal notranslate"><span class="pre">preprocess_transportdata</span></code></a></p></td>
+<td><p>Instruct the preprocessor to include the transport data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.set_file_names" title="Chemistry.set_file_names"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_file_names</span></code></a></p></td>
+<td><p>Assign all input files of the chemistry set.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.preprocess" title="Chemistry.preprocess"><code class="xref py py-attr docutils literal notranslate"><span class="pre">preprocess</span></code></a></p></td>
+<td><p>Run Chemkin preprocessor.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.verify_realgas_model" title="Chemistry.verify_realgas_model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">verify_realgas_model</span></code></a></p></td>
+<td><p>Verify the availability of real-gas data in the mechanism.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.verify_transport_data" title="Chemistry.verify_transport_data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">verify_transport_data</span></code></a></p></td>
+<td><p>Verify the availability of transport property data in the mechanism.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.verify_surface_mechanism" title="Chemistry.verify_surface_mechanism"><code class="xref py py-attr docutils literal notranslate"><span class="pre">verify_surface_mechanism</span></code></a></p></td>
+<td><p>Verify the availability of surface chemistry data in the mechanism.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.get_specindex" title="Chemistry.get_specindex"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_specindex</span></code></a></p></td>
+<td><p>Get global index of the gas species.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.species_cp" title="Chemistry.species_cp"><code class="xref py py-attr docutils literal notranslate"><span class="pre">species_cp</span></code></a></p></td>
+<td><p>Get species specific heat capacity at constant pressure.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.species_cv" title="Chemistry.species_cv"><code class="xref py py-attr docutils literal notranslate"><span class="pre">species_cv</span></code></a></p></td>
+<td><p>Get species specific heat capacity at constant volume.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.species_h" title="Chemistry.species_h"><code class="xref py py-attr docutils literal notranslate"><span class="pre">species_h</span></code></a></p></td>
+<td><p>Get species enthalpy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.species_u" title="Chemistry.species_u"><code class="xref py py-attr docutils literal notranslate"><span class="pre">species_u</span></code></a></p></td>
+<td><p>Get species internal energy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.species_visc" title="Chemistry.species_visc"><code class="xref py py-attr docutils literal notranslate"><span class="pre">species_visc</span></code></a></p></td>
+<td><p>Get species viscosity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.species_cond" title="Chemistry.species_cond"><code class="xref py py-attr docutils literal notranslate"><span class="pre">species_cond</span></code></a></p></td>
+<td><p>Get species conductivity.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.species_diffusioncoeffs" title="Chemistry.species_diffusioncoeffs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">species_diffusioncoeffs</span></code></a></p></td>
+<td><p>Get species diffusion coefficients.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.species_composition" title="Chemistry.species_composition"><code class="xref py py-attr docutils literal notranslate"><span class="pre">species_composition</span></code></a></p></td>
+<td><p>Get elemental composition of a species.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.use_realgas_cubic_eos" title="Chemistry.use_realgas_cubic_eos"><code class="xref py py-attr docutils literal notranslate"><span class="pre">use_realgas_cubic_eos</span></code></a></p></td>
+<td><p>Turn ON the real-gas cubic EOS.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.use_idealgas_law" title="Chemistry.use_idealgas_law"><code class="xref py py-attr docutils literal notranslate"><span class="pre">use_idealgas_law</span></code></a></p></td>
+<td><p>Turn on the ideal gas law to compute mixture properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.get_reaction_parameters" title="Chemistry.get_reaction_parameters"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_reaction_parameters</span></code></a></p></td>
+<td><p>Get the Arrhenius reaction rate parameters of all gas-phase reactions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.set_reaction_afactor" title="Chemistry.set_reaction_afactor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_reaction_afactor</span></code></a></p></td>
+<td><p>Set the Arrhenius A-Factor of the given reaction.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.get_reaction_afactor" title="Chemistry.get_reaction_afactor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_reaction_afactor</span></code></a></p></td>
+<td><p>Get the Arrhenius A-Factor of the given reaction.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.get_gas_reaction_string" title="Chemistry.get_gas_reaction_string"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_gas_reaction_string</span></code></a></p></td>
+<td><p>Get the reaction string of the given reaction index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.save" title="Chemistry.save"><code class="xref py py-attr docutils literal notranslate"><span class="pre">save</span></code></a></p></td>
+<td><p>Store the work spaces of the current Chemistry Set.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.activate" title="Chemistry.activate"><code class="xref py py-attr docutils literal notranslate"><span class="pre">activate</span></code></a></p></td>
+<td><p>Activate the work spaces of the Chemistry Set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.set_surface_chemistry" title="Chemistry.set_surface_chemistry"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_surface_chemistry</span></code></a></p></td>
+<td><p>Set up the surface chemistry data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.no_surface_mechanism_declaration" title="Chemistry.no_surface_mechanism_declaration"><code class="xref py py-attr docutils literal notranslate"><span class="pre">no_surface_mechanism_declaration</span></code></a></p></td>
+<td><p>Inform users the Chemistry Set does not have surface chemistry.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.get_material_index" title="Chemistry.get_material_index"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_material_index</span></code></a></p></td>
+<td><p>Get the surface material index.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Properties</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.chemfile" title="Chemistry.chemfile"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemfile</span></code></a></p></td>
+<td><p>Get gas-phase mechanism file name of this chemistry set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.thermfile" title="Chemistry.thermfile"><code class="xref py py-attr docutils literal notranslate"><span class="pre">thermfile</span></code></a></p></td>
+<td><p>Get thermodynamic data filename of this chemistry set.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.tranfile" title="Chemistry.tranfile"><code class="xref py py-attr docutils literal notranslate"><span class="pre">tranfile</span></code></a></p></td>
+<td><p>Get transport data filename of this chemistry set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.summaryfile" title="Chemistry.summaryfile"><code class="xref py py-attr docutils literal notranslate"><span class="pre">summaryfile</span></code></a></p></td>
+<td><p>Get the name of the summary file from the preprocessor.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.surffile" title="Chemistry.surffile"><code class="xref py py-attr docutils literal notranslate"><span class="pre">surffile</span></code></a></p></td>
+<td><p>Get surface mechanism filename of this chemistry set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.species_symbols" title="Chemistry.species_symbols"><code class="xref py py-attr docutils literal notranslate"><span class="pre">species_symbols</span></code></a></p></td>
+<td><p>Get list of gas species symbols.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.element_symbols" title="Chemistry.element_symbols"><code class="xref py py-attr docutils literal notranslate"><span class="pre">element_symbols</span></code></a></p></td>
+<td><p>Get the list of element symbols.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.chemid" title="Chemistry.chemid"><code class="xref py py-attr docutils literal notranslate"><span class="pre">chemid</span></code></a></p></td>
+<td><p>Get chemistry set index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.surfchem" title="Chemistry.surfchem"><code class="xref py py-attr docutils literal notranslate"><span class="pre">surfchem</span></code></a></p></td>
+<td><p>Get surface chemistry status.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.kk" title="Chemistry.kk"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kk</span></code></a></p></td>
+<td><p>Get number of gas species.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.mm" title="Chemistry.mm"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mm</span></code></a></p></td>
+<td><p>Get number of elements in the chemistry set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.ii_gas" title="Chemistry.ii_gas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ii_gas</span></code></a></p></td>
+<td><p>Get number of gas-phase reactions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.awt" title="Chemistry.awt"><code class="xref py py-attr docutils literal notranslate"><span class="pre">awt</span></code></a></p></td>
+<td><p>Compute atomic masses.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.wt" title="Chemistry.wt"><code class="xref py py-attr docutils literal notranslate"><span class="pre">wt</span></code></a></p></td>
+<td><p>Compute gas species molecular masses.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.eos" title="Chemistry.eos"><code class="xref py py-attr docutils literal notranslate"><span class="pre">eos</span></code></a></p></td>
+<td><p>Get the available real-gas EOS model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.number_materials" title="Chemistry.number_materials"><code class="xref py py-attr docutils literal notranslate"><span class="pre">number_materials</span></code></a></p></td>
+<td><p>Get the number of surface materials.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.max_number_phases" title="Chemistry.max_number_phases"><code class="xref py py-attr docutils literal notranslate"><span class="pre">max_number_phases</span></code></a></p></td>
+<td><p>Get the maximum number of phases.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.max_number_sites" title="Chemistry.max_number_sites"><code class="xref py py-attr docutils literal notranslate"><span class="pre">max_number_sites</span></code></a></p></td>
+<td><p>Get the maximum number of surface site species.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.max_number_bulks" title="Chemistry.max_number_bulks"><code class="xref py py-attr docutils literal notranslate"><span class="pre">max_number_bulks</span></code></a></p></td>
+<td><p>Get the maximum number of surface bulk species.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.max_total_number_species" title="Chemistry.max_total_number_species"><code class="xref py py-attr docutils literal notranslate"><span class="pre">max_total_number_species</span></code></a></p></td>
+<td><p>Get the maximum number of all species.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.max_number_surface_reactions" title="Chemistry.max_number_surface_reactions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">max_number_surface_reactions</span></code></a></p></td>
+<td><p>Get the maximum number of surface reactions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.max_total_number_reactions" title="Chemistry.max_total_number_reactions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">max_total_number_reactions</span></code></a></p></td>
+<td><p>Get the maximum number of gas and surface reactions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.material_names" title="Chemistry.material_names"><code class="xref py py-attr docutils literal notranslate"><span class="pre">material_names</span></code></a></p></td>
+<td><p>Get list of surface material names.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
+Attributes</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.realgas_cueos" title="Chemistry.realgas_cueos"><code class="xref py py-attr docutils literal notranslate"><span class="pre">realgas_cueos</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.realgas_mixing_rules" title="Chemistry.realgas_mixing_rules"><code class="xref py py-attr docutils literal notranslate"><span class="pre">realgas_mixing_rules</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.userealgas" title="Chemistry.userealgas"><code class="xref py py-attr docutils literal notranslate"><span class="pre">userealgas</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.ncf_done" title="Chemistry.ncf_done"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ncf_done</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.esymbol" title="Chemistry.esymbol"><code class="xref py py-attr docutils literal notranslate"><span class="pre">esymbol</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.ksymbol" title="Chemistry.ksymbol"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ksymbol</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.label" title="Chemistry.label"><code class="xref py py-attr docutils literal notranslate"><span class="pre">label</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.material_map" title="Chemistry.material_map"><code class="xref py py-attr docutils literal notranslate"><span class="pre">material_map</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.materials" title="Chemistry.materials"><code class="xref py py-attr docutils literal notranslate"><span class="pre">materials</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.matsymbol" title="Chemistry.matsymbol"><code class="xref py py-attr docutils literal notranslate"><span class="pre">matsymbol</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.number_species" title="Chemistry.number_species"><code class="xref py py-attr docutils literal notranslate"><span class="pre">number_species</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.number_elements" title="Chemistry.number_elements"><code class="xref py py-attr docutils literal notranslate"><span class="pre">number_elements</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.number_gas_reactions" title="Chemistry.number_gas_reactions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">number_gas_reactions</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Chemistry.atomic_weight" title="Chemistry.atomic_weight"><code class="xref py py-attr docutils literal notranslate"><span class="pre">atomic_weight</span></code></a></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Chemistry.species_molar_weight" title="Chemistry.species_molar_weight"><code class="xref py py-attr docutils literal notranslate"><span class="pre">species_molar_weight</span></code></a></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="import-detail">
+<h2>Import detail<a class="headerlink" href="#import-detail" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.chemistry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chemistry</span>
+</pre></div>
+</div>
+</section>
+<section id="property-detail">
+<h2>Property detail<a class="headerlink" href="#property-detail" title="Link to this heading">#</a></h2>
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.chemfile">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">chemfile</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#Chemistry.chemfile" title="Link to this definition">#</a></dt>
+<dd><p>Get gas-phase mechanism file name of this chemistry set.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.thermfile">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">thermfile</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#Chemistry.thermfile" title="Link to this definition">#</a></dt>
+<dd><p>Get thermodynamic data filename of this chemistry set.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.tranfile">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">tranfile</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#Chemistry.tranfile" title="Link to this definition">#</a></dt>
+<dd><p>Get transport data filename of this chemistry set.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.summaryfile">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">summaryfile</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#Chemistry.summaryfile" title="Link to this definition">#</a></dt>
+<dd><p>Get the name of the summary file from the preprocessor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.surffile">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">surffile</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#Chemistry.surffile" title="Link to this definition">#</a></dt>
+<dd><p>Get surface mechanism filename of this chemistry set.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.species_symbols">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">species_symbols</span></span><a class="headerlink" href="#Chemistry.species_symbols" title="Link to this definition">#</a></dt>
+<dd><p>Get list of gas species symbols.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.element_symbols">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">element_symbols</span></span><a class="headerlink" href="#Chemistry.element_symbols" title="Link to this definition">#</a></dt>
+<dd><p>Get the list of element symbols.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.chemid">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">chemid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Chemistry.chemid" title="Link to this definition">#</a></dt>
+<dd><p>Get chemistry set index.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.surfchem">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">surfchem</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Chemistry.surfchem" title="Link to this definition">#</a></dt>
+<dd><p>Get surface chemistry status.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.kk">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">kk</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Chemistry.kk" title="Link to this definition">#</a></dt>
+<dd><p>Get number of gas species.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.mm">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">mm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Chemistry.mm" title="Link to this definition">#</a></dt>
+<dd><p>Get number of elements in the chemistry set.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.ii_gas">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">ii_gas</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Chemistry.ii_gas" title="Link to this definition">#</a></dt>
+<dd><p>Get number of gas-phase reactions.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.awt">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">awt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#Chemistry.awt" title="Link to this definition">#</a></dt>
+<dd><p>Compute atomic masses.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.wt">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">wt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#Chemistry.wt" title="Link to this definition">#</a></dt>
+<dd><p>Compute gas species molecular masses.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.eos">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">eos</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Chemistry.eos" title="Link to this definition">#</a></dt>
+<dd><p>Get the available real-gas EOS model.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.number_materials">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">number_materials</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Chemistry.number_materials" title="Link to this definition">#</a></dt>
+<dd><p>Get the number of surface materials.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.max_number_phases">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">max_number_phases</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Chemistry.max_number_phases" title="Link to this definition">#</a></dt>
+<dd><p>Get the maximum number of phases.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.max_number_sites">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">max_number_sites</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Chemistry.max_number_sites" title="Link to this definition">#</a></dt>
+<dd><p>Get the maximum number of surface site species.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.max_number_bulks">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">max_number_bulks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Chemistry.max_number_bulks" title="Link to this definition">#</a></dt>
+<dd><p>Get the maximum number of surface bulk species.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.max_total_number_species">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">max_total_number_species</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Chemistry.max_total_number_species" title="Link to this definition">#</a></dt>
+<dd><p>Get the maximum number of all species.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.max_number_surface_reactions">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">max_number_surface_reactions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Chemistry.max_number_surface_reactions" title="Link to this definition">#</a></dt>
+<dd><p>Get the maximum number of surface reactions.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.max_total_number_reactions">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">max_total_number_reactions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#Chemistry.max_total_number_reactions" title="Link to this definition">#</a></dt>
+<dd><p>Get the maximum number of gas and surface reactions.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Chemistry.material_names">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">material_names</span></span><a class="headerlink" href="#Chemistry.material_names" title="Link to this definition">#</a></dt>
+<dd><p>Get list of surface material names.</p>
+</dd></dl>
+
+</section>
+<section id="attribute-detail">
+<h2>Attribute detail<a class="headerlink" href="#attribute-detail" title="Link to this heading">#</a></h2>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Chemistry.realgas_cueos">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">realgas_cueos</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['ideal</span> <span class="pre">gas',</span> <span class="pre">'Van</span> <span class="pre">der</span> <span class="pre">Waals',</span> <span class="pre">'Redlich-Kwong',</span> <span class="pre">'Soave',</span> <span class="pre">'Aungier',</span> <span class="pre">'Peng-Robinson']</span></em><a class="headerlink" href="#Chemistry.realgas_cueos" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Chemistry.realgas_mixing_rules">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">realgas_mixing_rules</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Van</span> <span class="pre">der</span> <span class="pre">Waals',</span> <span class="pre">'pseudocritical']</span></em><a class="headerlink" href="#Chemistry.realgas_mixing_rules" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Chemistry.userealgas">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">userealgas</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#Chemistry.userealgas" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Chemistry.ncf_done">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">ncf_done</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#Chemistry.ncf_done" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Chemistry.esymbol">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">esymbol</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#Chemistry.esymbol" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Chemistry.ksymbol">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">ksymbol</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#Chemistry.ksymbol" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Chemistry.label">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">label</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'</span> <span class="pre">'</span></em><a class="headerlink" href="#Chemistry.label" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Chemistry.material_map">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">material_map</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#Chemistry.material_map" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Chemistry.materials">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">materials</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="Material.html#ansys.chemkin.core.chemistry.Material" title="ansys.chemkin.core.chemistry.Material"><span class="pre">Material</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#Chemistry.materials" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Chemistry.matsymbol">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">matsymbol</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#Chemistry.matsymbol" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Chemistry.number_species">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">number_species</span></span><a class="headerlink" href="#Chemistry.number_species" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Chemistry.number_elements">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">number_elements</span></span><a class="headerlink" href="#Chemistry.number_elements" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Chemistry.number_gas_reactions">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">number_gas_reactions</span></span><a class="headerlink" href="#Chemistry.number_gas_reactions" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Chemistry.atomic_weight">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">atomic_weight</span></span><a class="headerlink" href="#Chemistry.atomic_weight" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="Chemistry.species_molar_weight">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">species_molar_weight</span></span><a class="headerlink" href="#Chemistry.species_molar_weight" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="method-detail">
+<h2>Method detail<a class="headerlink" href="#method-detail" title="Link to this heading">#</a></h2>
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.preprocess_transportdata">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">preprocess_transportdata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Chemistry.preprocess_transportdata" title="Link to this definition">#</a></dt>
+<dd><p>Instruct the preprocessor to include the transport data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.set_file_names">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">set_file_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">therm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tran</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Chemistry.set_file_names" title="Link to this definition">#</a></dt>
+<dd><p>Assign all input files of the chemistry set.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.preprocess">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">preprocess</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Chemistry.preprocess" title="Link to this definition">#</a></dt>
+<dd><p>Run Chemkin preprocessor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.verify_realgas_model">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">verify_realgas_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Chemistry.verify_realgas_model" title="Link to this definition">#</a></dt>
+<dd><p>Verify the availability of real-gas data in the mechanism.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.verify_transport_data">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">verify_transport_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Chemistry.verify_transport_data" title="Link to this definition">#</a></dt>
+<dd><p>Verify the availability of transport property data in the mechanism.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.verify_surface_mechanism">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">verify_surface_mechanism</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#Chemistry.verify_surface_mechanism" title="Link to this definition">#</a></dt>
+<dd><p>Verify the availability of surface chemistry data in the mechanism.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.get_specindex">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">get_specindex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Chemistry.get_specindex" title="Link to this definition">#</a></dt>
+<dd><p>Get global index of the gas species.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.species_cp">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">species_cp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pres</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Chemistry.species_cp" title="Link to this definition">#</a></dt>
+<dd><p>Get species specific heat capacity at constant pressure.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.species_cv">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">species_cv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pres</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Chemistry.species_cv" title="Link to this definition">#</a></dt>
+<dd><p>Get species specific heat capacity at constant volume.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.species_h">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">species_h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pres</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Chemistry.species_h" title="Link to this definition">#</a></dt>
+<dd><p>Get species enthalpy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.species_u">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">species_u</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pres</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Chemistry.species_u" title="Link to this definition">#</a></dt>
+<dd><p>Get species internal energy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.species_visc">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">species_visc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Chemistry.species_visc" title="Link to this definition">#</a></dt>
+<dd><p>Get species viscosity.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.species_cond">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">species_cond</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Chemistry.species_cond" title="Link to this definition">#</a></dt>
+<dd><p>Get species conductivity.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.species_diffusioncoeffs">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">species_diffusioncoeffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">press</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Chemistry.species_diffusioncoeffs" title="Link to this definition">#</a></dt>
+<dd><p>Get species diffusion coefficients.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.species_composition">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">species_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elemindex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specindex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Chemistry.species_composition" title="Link to this definition">#</a></dt>
+<dd><p>Get elemental composition of a species.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.use_realgas_cubic_eos">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">use_realgas_cubic_eos</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Chemistry.use_realgas_cubic_eos" title="Link to this definition">#</a></dt>
+<dd><p>Turn ON the real-gas cubic EOS.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.use_idealgas_law">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">use_idealgas_law</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Chemistry.use_idealgas_law" title="Link to this definition">#</a></dt>
+<dd><p>Turn on the ideal gas law to compute mixture properties.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.get_reaction_parameters">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">get_reaction_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.double</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Chemistry.get_reaction_parameters" title="Link to this definition">#</a></dt>
+<dd><p>Get the Arrhenius reaction rate parameters of all gas-phase reactions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.set_reaction_afactor">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">set_reaction_afactor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reaction_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Chemistry.set_reaction_afactor" title="Link to this definition">#</a></dt>
+<dd><p>Set the Arrhenius A-Factor of the given reaction.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.get_reaction_afactor">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">get_reaction_afactor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reaction_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#Chemistry.get_reaction_afactor" title="Link to this definition">#</a></dt>
+<dd><p>Get the Arrhenius A-Factor of the given reaction.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.get_gas_reaction_string">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">get_gas_reaction_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reaction_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#Chemistry.get_gas_reaction_string" title="Link to this definition">#</a></dt>
+<dd><p>Get the reaction string of the given reaction index.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.save">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Chemistry.save" title="Link to this definition">#</a></dt>
+<dd><p>Store the work spaces of the current Chemistry Set.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.activate">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">activate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Chemistry.activate" title="Link to this definition">#</a></dt>
+<dd><p>Activate the work spaces of the Chemistry Set.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.set_surface_chemistry">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">set_surface_chemistry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Chemistry.set_surface_chemistry" title="Link to this definition">#</a></dt>
+<dd><p>Set up the surface chemistry data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.no_surface_mechanism_declaration">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">no_surface_mechanism_declaration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Chemistry.no_surface_mechanism_declaration" title="Link to this definition">#</a></dt>
+<dd><p>Inform users the Chemistry Set does not have surface chemistry.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Chemistry.get_material_index">
+<span class="sig-prename descclassname"><span class="pre">Chemistry.</span></span><span class="sig-name descname"><span class="pre">get_material_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#Chemistry.get_material_index" title="Link to this definition">#</a></dt>
+<dd><p>Get the surface material index.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.chemkin.core.chemistry.Chemistry"><code class="docutils literal notranslate"><span class="pre">ansys.chemkin.core.chemistry.Chemistry</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-detail">Import detail</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#property-detail">Property detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.chemfile"><code class="docutils literal notranslate"><span class="pre">chemfile</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.thermfile"><code class="docutils literal notranslate"><span class="pre">thermfile</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.tranfile"><code class="docutils literal notranslate"><span class="pre">tranfile</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.summaryfile"><code class="docutils literal notranslate"><span class="pre">summaryfile</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.surffile"><code class="docutils literal notranslate"><span class="pre">surffile</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.species_symbols"><code class="docutils literal notranslate"><span class="pre">species_symbols</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.element_symbols"><code class="docutils literal notranslate"><span class="pre">element_symbols</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.chemid"><code class="docutils literal notranslate"><span class="pre">chemid</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.surfchem"><code class="docutils literal notranslate"><span class="pre">surfchem</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.kk"><code class="docutils literal notranslate"><span class="pre">kk</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.mm"><code class="docutils literal notranslate"><span class="pre">mm</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.ii_gas"><code class="docutils literal notranslate"><span class="pre">ii_gas</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.awt"><code class="docutils literal notranslate"><span class="pre">awt</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.wt"><code class="docutils literal notranslate"><span class="pre">wt</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.eos"><code class="docutils literal notranslate"><span class="pre">eos</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.number_materials"><code class="docutils literal notranslate"><span class="pre">number_materials</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.max_number_phases"><code class="docutils literal notranslate"><span class="pre">max_number_phases</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.max_number_sites"><code class="docutils literal notranslate"><span class="pre">max_number_sites</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.max_number_bulks"><code class="docutils literal notranslate"><span class="pre">max_number_bulks</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.max_total_number_species"><code class="docutils literal notranslate"><span class="pre">max_total_number_species</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.max_number_surface_reactions"><code class="docutils literal notranslate"><span class="pre">max_number_surface_reactions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.max_total_number_reactions"><code class="docutils literal notranslate"><span class="pre">max_total_number_reactions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.material_names"><code class="docutils literal notranslate"><span class="pre">material_names</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attribute-detail">Attribute detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.realgas_cueos"><code class="docutils literal notranslate"><span class="pre">realgas_cueos</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.realgas_mixing_rules"><code class="docutils literal notranslate"><span class="pre">realgas_mixing_rules</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.userealgas"><code class="docutils literal notranslate"><span class="pre">userealgas</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.ncf_done"><code class="docutils literal notranslate"><span class="pre">ncf_done</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.esymbol"><code class="docutils literal notranslate"><span class="pre">esymbol</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.ksymbol"><code class="docutils literal notranslate"><span class="pre">ksymbol</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.label"><code class="docutils literal notranslate"><span class="pre">label</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.material_map"><code class="docutils literal notranslate"><span class="pre">material_map</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.materials"><code class="docutils literal notranslate"><span class="pre">materials</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.matsymbol"><code class="docutils literal notranslate"><span class="pre">matsymbol</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.number_species"><code class="docutils literal notranslate"><span class="pre">number_species</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.number_elements"><code class="docutils literal notranslate"><span class="pre">number_elements</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.number_gas_reactions"><code class="docutils literal notranslate"><span class="pre">number_gas_reactions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.atomic_weight"><code class="docutils literal notranslate"><span class="pre">atomic_weight</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.species_molar_weight"><code class="docutils literal notranslate"><span class="pre">species_molar_weight</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-detail">Method detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.preprocess_transportdata"><code class="docutils literal notranslate"><span class="pre">preprocess_transportdata()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.set_file_names"><code class="docutils literal notranslate"><span class="pre">set_file_names()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.preprocess"><code class="docutils literal notranslate"><span class="pre">preprocess()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.verify_realgas_model"><code class="docutils literal notranslate"><span class="pre">verify_realgas_model()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.verify_transport_data"><code class="docutils literal notranslate"><span class="pre">verify_transport_data()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.verify_surface_mechanism"><code class="docutils literal notranslate"><span class="pre">verify_surface_mechanism()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.get_specindex"><code class="docutils literal notranslate"><span class="pre">get_specindex()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.species_cp"><code class="docutils literal notranslate"><span class="pre">species_cp()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.species_cv"><code class="docutils literal notranslate"><span class="pre">species_cv()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.species_h"><code class="docutils literal notranslate"><span class="pre">species_h()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.species_u"><code class="docutils literal notranslate"><span class="pre">species_u()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.species_visc"><code class="docutils literal notranslate"><span class="pre">species_visc()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.species_cond"><code class="docutils literal notranslate"><span class="pre">species_cond()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.species_diffusioncoeffs"><code class="docutils literal notranslate"><span class="pre">species_diffusioncoeffs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.species_composition"><code class="docutils literal notranslate"><span class="pre">species_composition()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.use_realgas_cubic_eos"><code class="docutils literal notranslate"><span class="pre">use_realgas_cubic_eos()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.use_idealgas_law"><code class="docutils literal notranslate"><span class="pre">use_idealgas_law()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.get_reaction_parameters"><code class="docutils literal notranslate"><span class="pre">get_reaction_parameters()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.set_reaction_afactor"><code class="docutils literal notranslate"><span class="pre">set_reaction_afactor()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.get_reaction_afactor"><code class="docutils literal notranslate"><span class="pre">get_reaction_afactor()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.get_gas_reaction_string"><code class="docutils literal notranslate"><span class="pre">get_gas_reaction_string()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.save"><code class="docutils literal notranslate"><span class="pre">save()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.activate"><code class="docutils literal notranslate"><span class="pre">activate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.set_surface_chemistry"><code class="docutils literal notranslate"><span class="pre">set_surface_chemistry()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.no_surface_mechanism_declaration"><code class="docutils literal notranslate"><span class="pre">no_surface_mechanism_declaration()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Chemistry.get_material_index"><code class="docutils literal notranslate"><span class="pre">get_material_index()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+
+  
+  <nav class="tocsection editthispage" aria-label="Edit this page">
+    <a href="http://github.com/ansys/pychemkin/edit/main/ansys/chemkin/core/chemistry/Chemistry.py" rel="noopener noreferrer">
+      <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </nav>
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../../../../_sources/api/ansys/chemkin/core/chemistry/Chemistry.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../../../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../../../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../../../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.7.2.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

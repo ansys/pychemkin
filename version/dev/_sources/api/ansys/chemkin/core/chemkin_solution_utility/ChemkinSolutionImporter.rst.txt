@@ -1,0 +1,304 @@
+
+
+
+
+
+
+:class:`ChemkinSolutionImporter`
+================================
+
+
+.. py:class:: ansys.chemkin.core.chemkin_solution_utility.ChemkinSolutionImporter
+
+   Post-process the regular Chemkin simulation solution.
+
+
+
+.. py:currentmodule:: ChemkinSolutionImporter
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~import_solution`
+            - Get the solution data using the Chemkin post-processor.
+          * - :py:attr:`~process_solution_data`
+            - Import the solution data from the CSV file for further analysis.
+          * - :py:attr:`~process_ckcsv`
+            - Process the CSV file containing the solution data.
+          * - :py:attr:`~get_help`
+            - Get help information from the Chemkin solution utility.
+          * - :py:attr:`~set_working_dir`
+            - Set the working directory for the Chemkin solution utility.
+          * - :py:attr:`~generate_preference_file`
+            - Generate the preference file to customize solution extraction.
+          * - :py:attr:`~set_xml_data_file`
+            - Set the XML data file for the Chemkin solution utility.
+          * - :py:attr:`~use_preference_file`
+            - Enable the use of the preference file for the Chemkin solution utility.
+          * - :py:attr:`~disable_preference_file`
+            - Disable the use of the preference file for the Chemkin solution utility.
+          * - :py:attr:`~enable_mass_fraction`
+            - Enable the use of mass fraction for the Chemkin solution utility.
+          * - :py:attr:`~disable_mass_fraction`
+            - Disable the use of mass fraction for the Chemkin solution utility.
+          * - :py:attr:`~enable_get_everything`
+            - Enable the 'get everything' option for the Chemkin solution utility.
+          * - :py:attr:`~disable_get_everything`
+            - Disable the 'get everything' option for the Chemkin solution utility.
+          * - :py:attr:`~enable_sensitivity`
+            - Enable the sensitivity option for the Chemkin solution utility.
+          * - :py:attr:`~disable_sensitivity`
+            - Disable the sensitivity option for the Chemkin solution utility.
+          * - :py:attr:`~enable_rop`
+            - Select the rate of progress option for the Chemkin solution utility.
+          * - :py:attr:`~disable_rop`
+            - Deselect the rate of progress option for the Chemkin solution utility.
+          * - :py:attr:`~validate_solution_data`
+            - Validate the imported solution data.
+          * - :py:attr:`~get_solution_groups`
+            - Get the list of available solution groups.
+          * - :py:attr:`~get_variable_labels`
+            - Get the list of variable labels for a specific solution group.
+          * - :py:attr:`~get_group_data`
+            - Get the data for a specific solution group.
+          * - :py:attr:`~get_group_object`
+            - Get the solution group object for a specific solution group.
+          * - :py:attr:`~get_solution_variable_array`
+            - Get the array of data for a specific variable within a solution group.
+          * - :py:attr:`~get_number_of_points`
+            - Get the number of solution points in the solution data.
+          * - :py:attr:`~get_number_of_gas_species`
+            - Get the number of gas species in the solution data.
+          * - :py:attr:`~get_gas_species_symbols`
+            - Get the list of gas species symbols in the solution data.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~ckbin`
+            - 
+          * - :py:attr:`~get_soln`
+            - 
+          * - :py:attr:`~soln_transpose`
+            - 
+          * - :py:attr:`~env_file`
+            - 
+          * - :py:attr:`~get_soln_path`
+            - 
+          * - :py:attr:`~soln_transpose_path`
+            - 
+          * - :py:attr:`~get_soln_args`
+            - 
+          * - :py:attr:`~work_dir_path`
+            - 
+          * - :py:attr:`~xml_data_file`
+            - 
+          * - :py:attr:`~use_mass_fraction`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.chemkin_solution_utility import ChemkinSolutionImporter
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: ckbin
+
+.. py:attribute:: get_soln
+   :value: ''
+
+
+.. py:attribute:: soln_transpose
+   :value: ''
+
+
+.. py:attribute:: env_file
+   :value: ''
+
+
+.. py:attribute:: get_soln_path
+   :value: ''
+
+
+.. py:attribute:: soln_transpose_path
+   :value: ''
+
+
+.. py:attribute:: get_soln_args
+   :type:  list[str]
+   :value: []
+
+
+.. py:attribute:: work_dir_path
+
+.. py:attribute:: xml_data_file
+   :value: 'XMLdata.zip'
+
+
+.. py:attribute:: use_mass_fraction
+   :value: False
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: import_solution(soln_file: Union[str, None] = None)
+
+   Get the solution data using the Chemkin post-processor.
+
+
+.. py:method:: process_solution_data()
+
+   Import the solution data from the CSV file for further analysis.
+
+
+.. py:method:: process_ckcsv(ckcsv_file: Union[str, None] = None)
+
+   Process the CSV file containing the solution data.
+
+
+.. py:method:: get_help()
+
+   Get help information from the Chemkin solution utility.
+
+
+.. py:method:: set_working_dir(work_dir: str)
+
+   Set the working directory for the Chemkin solution utility.
+
+
+.. py:method:: generate_preference_file(soln_file: Union[str, None] = None)
+
+   Generate the preference file to customize solution extraction.
+
+
+.. py:method:: set_xml_data_file(xml_file: str)
+
+   Set the XML data file for the Chemkin solution utility.
+
+
+.. py:method:: use_preference_file(pref_file: str)
+
+   Enable the use of the preference file for the Chemkin solution utility.
+
+
+.. py:method:: disable_preference_file()
+
+   Disable the use of the preference file for the Chemkin solution utility.
+
+
+.. py:method:: enable_mass_fraction()
+
+   Enable the use of mass fraction for the Chemkin solution utility.
+
+
+.. py:method:: disable_mass_fraction()
+
+   Disable the use of mass fraction for the Chemkin solution utility.
+
+
+.. py:method:: enable_get_everything()
+
+   Enable the 'get everything' option for the Chemkin solution utility.
+
+
+.. py:method:: disable_get_everything()
+
+   Disable the 'get everything' option for the Chemkin solution utility.
+
+
+.. py:method:: enable_sensitivity()
+
+   Enable the sensitivity option for the Chemkin solution utility.
+
+
+.. py:method:: disable_sensitivity()
+
+   Disable the sensitivity option for the Chemkin solution utility.
+
+
+.. py:method:: enable_rop()
+
+   Select the rate of progress option for the Chemkin solution utility.
+
+
+.. py:method:: disable_rop()
+
+   Deselect the rate of progress option for the Chemkin solution utility.
+
+
+.. py:method:: validate_solution_data() -> bool
+
+   Validate the imported solution data.
+
+
+.. py:method:: get_solution_groups() -> list[str]
+
+   Get the list of available solution groups.
+
+
+.. py:method:: get_variable_labels(solution_group: str) -> list[str]
+
+   Get the list of variable labels for a specific solution group.
+
+
+.. py:method:: get_group_data(solution_group: str) -> pandas.DataFrame | None
+
+   Get the data for a specific solution group.
+
+
+.. py:method:: get_group_object(solution_group: str) -> SolutionGroup | None
+
+   Get the solution group object for a specific solution group.
+
+
+.. py:method:: get_solution_variable_array(solution_group: str, variable_label: str) -> pandas.Series[float] | None
+
+   Get the array of data for a specific variable within a solution group.
+
+
+.. py:method:: get_number_of_points() -> int
+
+   Get the number of solution points in the solution data.
+
+
+.. py:method:: get_number_of_gas_species() -> int
+
+   Get the number of gas species in the solution data.
+
+
+.. py:method:: get_gas_species_symbols() -> list[str]
+
+   Get the list of gas species symbols in the solution data.
+
+
+
+
+

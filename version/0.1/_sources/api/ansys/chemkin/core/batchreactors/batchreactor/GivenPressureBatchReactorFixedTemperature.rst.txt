@@ -1,0 +1,84 @@
+
+
+
+
+
+
+:class:`GivenPressureBatchReactorFixedTemperature`
+==================================================
+
+
+.. py:class:: ansys.chemkin.core.batchreactors.batchreactor.GivenPressureBatchReactorFixedTemperature(reactor_condition: ansys.chemkin.core.inlet.Stream, label: str = 'CONPT')
+
+   Bases: :py:obj:`BatchReactors`
+
+
+   Chemkin 0-D transient closed homogeneous reactor model.
+
+
+
+.. py:currentmodule:: GivenPressureBatchReactorFixedTemperature
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_temperature_profile`
+            - Specify reactor temperature profile.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~time`
+            - Get simulation end time.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.batchreactors.batchreactor import GivenPressureBatchReactorFixedTemperature
+
+Property detail
+---------------
+
+.. py:property:: time
+   :type: float
+
+
+   Get simulation end time.
+
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: set_temperature_profile(x: numpy.typing.NDArray[numpy.double], temp: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify reactor temperature profile.
+
+
+
+
+

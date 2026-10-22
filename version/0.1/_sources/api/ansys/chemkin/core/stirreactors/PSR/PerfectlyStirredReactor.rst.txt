@@ -1,0 +1,192 @@
+
+
+
+
+
+
+:class:`PerfectlyStirredReactor`
+================================
+
+
+.. py:class:: ansys.chemkin.core.stirreactors.PSR.PerfectlyStirredReactor(guessedmixture: ansys.chemkin.core.inlet.Stream, label: Union[str, None] = None)
+
+   Bases: :py:obj:`ansys.chemkin.core.stirreactors.openreactor.OpenReactor`
+
+
+   Generic perfectly-stirred reactor model.
+
+
+
+.. py:currentmodule:: PerfectlyStirredReactor
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_inlet_keywords`
+            - Set up inlet keywords.
+          * - :py:attr:`~set_reactor_index`
+            - Assign the reactor index/number.
+          * - :py:attr:`~set_estimate_conditions`
+            - Reset the initial/guessed reactor gas mixture.
+          * - :py:attr:`~reset_estimate_temperature`
+            - Reset the estimated reactor gas temperature.
+          * - :py:attr:`~reset_estimate_composition`
+            - Reset the estimated reactor gas composition.
+          * - :py:attr:`~validate_inputs`
+            - Validate the keywords.
+          * - :py:attr:`~set_ss_solver_keywords`
+            - Add steady-state solver parameter keywoprds to the keyword list.
+          * - :py:attr:`~cluster_process_keywords`
+            - Process input keywords for the reactor model in cluster network mode.
+          * - :py:attr:`~run`
+            - Perform common steps to run a Chemkin reactor model.
+          * - :py:attr:`~process_solution`
+            - Post-process solution.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~area`
+            - Get reactive surface area.
+          * - :py:attr:`~volume`
+            - Get reactor volume.
+          * - :py:attr:`~residence_time`
+            - Get reactor residence time.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~HTarea`
+            - 
+          * - :py:attr:`~standalone`
+            - 
+          * - :py:attr:`~ireac`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.stirreactors.PSR import PerfectlyStirredReactor
+
+Property detail
+---------------
+
+.. py:property:: area
+   :type: float
+
+
+   Get reactive surface area.
+
+
+.. py:property:: volume
+   :type: float
+
+
+   Get reactor volume.
+
+
+.. py:property:: residence_time
+   :type: float
+
+
+   Get reactor residence time.
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: HTarea
+   :value: 0.0
+
+
+.. py:attribute:: standalone
+   :value: True
+
+
+.. py:attribute:: ireac
+
+
+
+Method detail
+-------------
+
+.. py:method:: set_inlet_keywords() -> int
+
+   Set up inlet keywords.
+
+
+.. py:method:: set_reactor_index(reactorindex: int)
+
+   Assign the reactor index/number.
+
+
+.. py:method:: set_estimate_conditions(option: str, guess_temp: Union[float, None] = None)
+
+   Reset the initial/guessed reactor gas mixture.
+
+
+.. py:method:: reset_estimate_temperature(temp: float)
+
+   Reset the estimated reactor gas temperature.
+
+
+.. py:method:: reset_estimate_composition(fraction: Union[numpy.typing.NDArray[numpy.double], list[tuple[str, float]]], mode: str = 'mole')
+
+   Reset the estimated reactor gas composition.
+
+
+.. py:method:: validate_inputs() -> int
+
+   Validate the keywords.
+
+
+.. py:method:: set_ss_solver_keywords()
+
+   Add steady-state solver parameter keywoprds to the keyword list.
+
+
+.. py:method:: cluster_process_keywords() -> int
+
+   Process input keywords for the reactor model in cluster network mode.
+
+
+.. py:method:: run() -> int
+
+   Perform common steps to run a Chemkin reactor model.
+
+
+.. py:method:: process_solution() -> ansys.chemkin.core.inlet.Stream
+
+   Post-process solution.
+
+
+
+
+

@@ -1,0 +1,495 @@
+
+
+
+
+
+
+:class:`Engine`
+===============
+
+
+.. py:class:: ansys.chemkin.core.engines.engine.Engine(reactor_condition: ansys.chemkin.core.inlet.Stream, label: str)
+
+   Bases: :py:obj:`ansys.chemkin.core.batchreactors.batchreactor.BatchReactors`
+
+
+   Generic engine cylinder model.
+
+
+
+
+
+.. py:currentmodule:: Engine
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_time`
+            - Convert the current crank angle value to simulation time.
+          * - :py:attr:`~get_ca`
+            - Convert the current time to crank angle.
+          * - :py:attr:`~convert_time_array_to_ca`
+            - Convert time array to crank angle array.
+          * - :py:attr:`~set_cylinder_head_area`
+            - Set the cylinder head clearance surface area.
+          * - :py:attr:`~set_piston_head_area`
+            - Set the piston head top surface area.
+          * - :py:attr:`~set_piston_pin_offset`
+            - Set the piston pin off-set distance.
+          * - :py:attr:`~get_clearance_volume`
+            - Get the clearance volume.
+          * - :py:attr:`~get_displacement_volume`
+            - Get the displacement volume.
+          * - :py:attr:`~list_engine_parameters`
+            - List engine parameters for verification.
+          * - :py:attr:`~set_minimum_zone_mass`
+            - Set the minimum mass in a zone.
+          * - :py:attr:`~set_zonal_gas_rate_multiplier`
+            - Set the value of the gas-phase reaction rate multiplier.
+          * - :py:attr:`~set_wall_heat_transfer`
+            - Set cylinder wall heat transfer model and parameters.
+          * - :py:attr:`~set_gas_velocity_correlation`
+            - Set the cylinder gas velocity correlation parameters.
+          * - :py:attr:`~set_heat_transfer_keywords`
+            - Set the engine wall heat transfer related keywords.
+          * - :py:attr:`~set_engine_keywords`
+            - Set engine parameter keywords under the Full-Keywords mode.
+          * - :py:attr:`~set_enginecondition_keywords`
+            - Set engine gas condition keywords.
+          * - :py:attr:`~get_engine_heat_release_cas`
+            - Get heat release crank angles from the engine solution.
+          * - :py:attr:`~get_engine_solution_size`
+            - Get the number of zones and the number of solution points.
+          * - :py:attr:`~process_engine_solution`
+            - Post-process solution.
+          * - :py:attr:`~process_average_engine_solution`
+            - Post-process the cylinder averaged solution.
+          * - :py:attr:`~get_last_zone_mixtures`
+            - Get all zonal solutions at the last time point.
+          * - :py:attr:`~get_engine_imep`
+            - Get predicted engine indicated mean effective pressure.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~starting_ca`
+            - Get the simulation starting crank angle.
+          * - :py:attr:`~ending_ca`
+            - Get the simulation ending crank angle.
+          * - :py:attr:`~duration_ca`
+            - Get the simulation duration in number of crank angles.
+          * - :py:attr:`~bore`
+            - Get the engine cylinder bore diameter.
+          * - :py:attr:`~stroke`
+            - Get the engine stroke.
+          * - :py:attr:`~connecting_rod_length`
+            - Get the connecting rod length.
+          * - :py:attr:`~compression_ratio`
+            - Get the engine compression ratio.
+          * - :py:attr:`~rpm`
+            - Get the engine speed in RPM.
+          * - :py:attr:`~max_ca_step`
+            - Get the max solver step size in crank angles.
+          * - :py:attr:`~ca_step_for_saving_solution`
+            - Get the number of crank angles between saving the solution data.
+          * - :py:attr:`~ca_step_for_printing_solution`
+            - Get the number of crank angles between printing.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~borediam`
+            - 
+          * - :py:attr:`~borearea`
+            - 
+          * - :py:attr:`~enginestroke`
+            - 
+          * - :py:attr:`~crankradius`
+            - 
+          * - :py:attr:`~connectrodlength`
+            - 
+          * - :py:attr:`~pistonoffset`
+            - 
+          * - :py:attr:`~cylinderheadarea`
+            - 
+          * - :py:attr:`~pistonheadarea`
+            - 
+          * - :py:attr:`~headareas`
+            - 
+          * - :py:attr:`~compressratio`
+            - 
+          * - :py:attr:`~enginespeed`
+            - 
+          * - :py:attr:`~degpersec`
+            - 
+          * - :py:attr:`~radpersec`
+            - 
+          * - :py:attr:`~ivc_ca`
+            - 
+          * - :py:attr:`~evo_ca`
+            - 
+          * - :py:attr:`~runduration_ca`
+            - 
+          * - :py:attr:`~numbHTmodelparameters`
+            - 
+          * - :py:attr:`~heattransfermodel`
+            - 
+          * - :py:attr:`~heattransferparameters`
+            - 
+          * - :py:attr:`~cylinderwalltemperature`
+            - 
+          * - :py:attr:`~gasvelocity`
+            - 
+          * - :py:attr:`~huber_imep`
+            - 
+
+
+   .. tab-item:: Static methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~convert_ca_to_time`
+            - Convert the current crank angle value to simulation time.
+          * - :py:attr:`~convert_time_to_ca`
+            - Convert the current time to crank angle.
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.engines.engine import Engine
+
+Property detail
+---------------
+
+.. py:property:: starting_ca
+   :type: float
+
+
+   Get the simulation starting crank angle.
+
+
+.. py:property:: ending_ca
+   :type: float
+
+
+   Get the simulation ending crank angle.
+
+
+.. py:property:: duration_ca
+   :type: float
+
+
+   Get the simulation duration in number of crank angles.
+
+
+.. py:property:: bore
+   :type: float
+
+
+   Get the engine cylinder bore diameter.
+
+
+.. py:property:: stroke
+   :type: float
+
+
+   Get the engine stroke.
+
+
+.. py:property:: connecting_rod_length
+   :type: float
+
+
+   Get the connecting rod length.
+
+
+.. py:property:: compression_ratio
+   :type: float
+
+
+   Get the engine compression ratio.
+
+
+.. py:property:: rpm
+   :type: float
+
+
+   Get the engine speed in RPM.
+
+
+.. py:property:: max_ca_step
+   :type: float
+
+
+   Get the max solver step size in crank angles.
+
+
+.. py:property:: ca_step_for_saving_solution
+   :type: float
+
+
+   Get the number of crank angles between saving the solution data.
+
+
+.. py:property:: ca_step_for_printing_solution
+   :type: float
+
+
+   Get the number of crank angles between printing.
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: borediam
+   :value: 0.0
+
+
+.. py:attribute:: borearea
+   :value: 0.0
+
+
+.. py:attribute:: enginestroke
+   :value: 0.0
+
+
+.. py:attribute:: crankradius
+   :value: 0.0
+
+
+.. py:attribute:: connectrodlength
+   :value: 0.0
+
+
+.. py:attribute:: pistonoffset
+   :value: 0.0
+
+
+.. py:attribute:: cylinderheadarea
+   :value: 0.0
+
+
+.. py:attribute:: pistonheadarea
+   :value: 0.0
+
+
+.. py:attribute:: headareas
+   :value: 0.0
+
+
+.. py:attribute:: compressratio
+   :value: 1.0
+
+
+.. py:attribute:: enginespeed
+   :value: 1.0
+
+
+.. py:attribute:: degpersec
+   :value: 0.0
+
+
+.. py:attribute:: radpersec
+   :value: 0.0
+
+
+.. py:attribute:: ivc_ca
+   :value: -180.0
+
+
+.. py:attribute:: evo_ca
+   :value: 180.0
+
+
+.. py:attribute:: runduration_ca
+   :value: 360.0
+
+
+.. py:attribute:: numbHTmodelparameters
+   :value: [3, 3, 5]
+
+
+.. py:attribute:: heattransfermodel
+   :type:  int
+   :value: -1
+
+
+.. py:attribute:: heattransferparameters
+   :type:  list[float]
+   :value: []
+
+
+.. py:attribute:: cylinderwalltemperature
+   :value: 298.15
+
+
+.. py:attribute:: gasvelocity
+   :type:  list[float]
+   :value: []
+
+
+.. py:attribute:: huber_imep
+   :type:  Union[float, None]
+   :value: None
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: convert_ca_to_time(ca: float, start_ca: float, rpm: float) -> float
+   :staticmethod:
+
+
+   Convert the current crank angle value to simulation time.
+
+
+.. py:method:: convert_time_to_ca(time: float, start_ca: float, rpm: float) -> float
+   :staticmethod:
+
+
+   Convert the current time to crank angle.
+
+
+.. py:method:: get_time(ca: float) -> float
+
+   Convert the current crank angle value to simulation time.
+
+
+.. py:method:: get_ca(time: float) -> float
+
+   Convert the current time to crank angle.
+
+
+.. py:method:: convert_time_array_to_ca(time_array: numpy.typing.NDArray[numpy.double]) -> numpy.typing.NDArray[numpy.double]
+
+   Convert time array to crank angle array.
+
+
+.. py:method:: set_cylinder_head_area(area: float)
+
+   Set the cylinder head clearance surface area.
+
+
+.. py:method:: set_piston_head_area(area: float)
+
+   Set the piston head top surface area.
+
+
+.. py:method:: set_piston_pin_offset(offset: float)
+
+   Set the piston pin off-set distance.
+
+
+.. py:method:: get_clearance_volume() -> float
+
+   Get the clearance volume.
+
+
+.. py:method:: get_displacement_volume() -> float
+
+   Get the displacement volume.
+
+
+.. py:method:: list_engine_parameters()
+
+   List engine parameters for verification.
+
+
+.. py:method:: set_minimum_zone_mass(minmass: float)
+
+   Set the minimum mass in a zone.
+
+
+.. py:method:: set_zonal_gas_rate_multiplier(value: float = 1.0, zone_id: Union[int, None] = None)
+
+   Set the value of the gas-phase reaction rate multiplier.
+
+
+.. py:method:: set_wall_heat_transfer(model: str, ht_parameters: list[float], walltemperature: float)
+
+   Set cylinder wall heat transfer model and parameters.
+
+
+.. py:method:: set_gas_velocity_correlation(gasvelparameters: list[float], imep: Union[float, None] = None)
+
+   Set the cylinder gas velocity correlation parameters.
+
+
+.. py:method:: set_heat_transfer_keywords()
+
+   Set the engine wall heat transfer related keywords.
+
+
+.. py:method:: set_engine_keywords()
+
+   Set engine parameter keywords under the Full-Keywords mode.
+
+
+.. py:method:: set_enginecondition_keywords()
+
+   Set engine gas condition keywords.
+
+
+.. py:method:: get_engine_heat_release_cas() -> tuple[float, float, float]
+
+   Get heat release crank angles from the engine solution.
+
+
+.. py:method:: get_engine_solution_size(expected: int) -> tuple[int, int]
+
+   Get the number of zones and the number of solution points.
+
+
+.. py:method:: process_engine_solution(zone_id: Union[int, None] = None) -> int
+
+   Post-process solution.
+
+
+.. py:method:: process_average_engine_solution() -> int
+
+   Post-process the cylinder averaged solution.
+
+
+.. py:method:: get_last_zone_mixtures() -> list[ansys.chemkin.core.inlet.Stream]
+
+   Get all zonal solutions at the last time point.
+
+
+.. py:method:: get_engine_imep() -> float
+
+   Get predicted engine indicated mean effective pressure.
+
+
+
+
+

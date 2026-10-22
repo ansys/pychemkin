@@ -1,0 +1,202 @@
+
+
+
+
+
+
+:class:`SolutionGroup`
+======================
+
+
+.. py:class:: ansys.chemkin.core.chemkin_solution_utility.SolutionGroup(group_name: str, raw_group_data: pandas.DataFrame)
+
+   Class representing a single solution group within the Chemkin solution data.
+
+
+
+.. py:currentmodule:: SolutionGroup
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_variable_index`
+            - Get the index of a variable in the solution group by its name.
+          * - :py:attr:`~get_species_index`
+            - Get the index of a gas species by its symbol.
+          * - :py:attr:`~get_gas_species_variable_name`
+            - Get the variable name of a gas species by its symbol.
+          * - :py:attr:`~get_gas_species_variable_index`
+            - Get the variable index of a gas species by its symbol.
+          * - :py:attr:`~get_variable_array`
+            - Get the array of values for a variable by its name.
+          * - :py:attr:`~get_variable_array_with_tag`
+            - Get the array of values for a variable by its name and a tag.
+          * - :py:attr:`~get_variable_unit`
+            - Get the unit of a variable by its name.
+          * - :py:attr:`~get_variable_unit_with_tag`
+            - Get the unit of a variable by its name.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~number_of_variables`
+            - Return the number of variables in the solution group.
+          * - :py:attr:`~group_name`
+            - Return the name of the solution group.
+          * - :py:attr:`~group_data`
+            - Return the raw data of the solution group.
+          * - :py:attr:`~variable_names`
+            - Return the list of variable names in the solution group.
+          * - :py:attr:`~species_unit`
+            - Return the species units of the solution group.
+          * - :py:attr:`~number_of_points`
+            - Return the number of solution points in the solution group.
+          * - :py:attr:`~has_gas_species`
+            - Return True if the solution group has any gas species, False otherwise.
+          * - :py:attr:`~number_of_gas_species`
+            - Return the number of gas species in the solution group.
+          * - :py:attr:`~gas_species_symbols`
+            - Return the list of gas species symbols in the solution group.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.chemkin_solution_utility import SolutionGroup
+
+Property detail
+---------------
+
+.. py:property:: number_of_variables
+   :type: int
+
+
+   Return the number of variables in the solution group.
+
+
+.. py:property:: group_name
+   :type: str
+
+
+   Return the name of the solution group.
+
+
+.. py:property:: group_data
+   :type: pandas.DataFrame
+
+
+   Return the raw data of the solution group.
+
+
+.. py:property:: variable_names
+   :type: list[str]
+
+
+   Return the list of variable names in the solution group.
+
+
+.. py:property:: species_unit
+   :type: str
+
+
+   Return the species units of the solution group.
+
+
+.. py:property:: number_of_points
+   :type: int
+
+
+   Return the number of solution points in the solution group.
+
+
+.. py:property:: has_gas_species
+   :type: bool
+
+
+   Return True if the solution group has any gas species, False otherwise.
+
+
+.. py:property:: number_of_gas_species
+   :type: int
+
+
+   Return the number of gas species in the solution group.
+
+
+.. py:property:: gas_species_symbols
+   :type: list[str]
+
+
+   Return the list of gas species symbols in the solution group.
+
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_variable_index(variable_name: str) -> int
+
+   Get the index of a variable in the solution group by its name.
+
+
+.. py:method:: get_species_index(species_symbol: str) -> int
+
+   Get the index of a gas species by its symbol.
+
+
+.. py:method:: get_gas_species_variable_name(species_symbol: str) -> str
+
+   Get the variable name of a gas species by its symbol.
+
+
+.. py:method:: get_gas_species_variable_index(species_symbol: str) -> int
+
+   Get the variable index of a gas species by its symbol.
+
+
+.. py:method:: get_variable_array(variable_name: str) -> pandas.Series[float]
+
+   Get the array of values for a variable by its name.
+
+
+.. py:method:: get_variable_array_with_tag(variable_name: str, tag: str) -> pandas.Series[float]
+
+   Get the array of values for a variable by its name and a tag.
+
+
+.. py:method:: get_variable_unit(variable_name: str) -> str
+
+   Get the unit of a variable by its name.
+
+
+.. py:method:: get_variable_unit_with_tag(variable_name: str, tag: str) -> str
+
+   Get the unit of a variable by its name.
+
+
+
+
+

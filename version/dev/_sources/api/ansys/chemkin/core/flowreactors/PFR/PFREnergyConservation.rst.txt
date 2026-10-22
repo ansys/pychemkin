@@ -1,0 +1,125 @@
+
+
+
+
+
+
+:class:`PFREnergyConservation`
+==============================
+
+
+.. py:class:: ansys.chemkin.core.flowreactors.PFR.PFREnergyConservation(inlet, label: str = 'PFR')
+
+   Bases: :py:obj:`PlugFlowReactor`
+
+
+   Plug Flow Reactor (PFR) model with energy equation.
+
+
+
+.. py:currentmodule:: PFREnergyConservation
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_heat_transfer_area_profile`
+            - Specify reactor heat transfer area per reactor length profile.
+          * - :py:attr:`~set_heat_loss_profile`
+            - Specify reactor heat loss rate per length profile.
+          * - :py:attr:`~set_velocity_profile`
+            - Specify axial velocity profile along the plug-flow reactor.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~heat_loss_rate`
+            - Get heat loss rate from the reactor to the surroundings.
+          * - :py:attr:`~heat_transfer_coefficient`
+            - Get heat transfer coefficient between the reactor and the surroundings.
+          * - :py:attr:`~ambient_temperature`
+            - Get ambient temperature.
+          * - :py:attr:`~heat_transfer_area`
+            - Get heat transfer area.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.flowreactors.PFR import PFREnergyConservation
+
+Property detail
+---------------
+
+.. py:property:: heat_loss_rate
+   :type: float
+
+
+   Get heat loss rate from the reactor to the surroundings.
+
+
+.. py:property:: heat_transfer_coefficient
+   :type: float
+
+
+   Get heat transfer coefficient between the reactor and the surroundings.
+
+
+.. py:property:: ambient_temperature
+   :type: float
+
+
+   Get ambient temperature.
+
+
+.. py:property:: heat_transfer_area
+   :type: float
+
+
+   Get heat transfer area.
+
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: set_heat_transfer_area_profile(x: numpy.typing.NDArray[numpy.double], area: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify reactor heat transfer area per reactor length profile.
+
+
+.. py:method:: set_heat_loss_profile(x: numpy.typing.NDArray[numpy.double], qloss: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify reactor heat loss rate per length profile.
+
+
+.. py:method:: set_velocity_profile(x: numpy.typing.NDArray[numpy.double], vel: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify axial velocity profile along the plug-flow reactor.
+
+
+
+
+
