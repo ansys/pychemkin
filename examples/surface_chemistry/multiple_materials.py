@@ -42,7 +42,7 @@ of the material. The *local species index/order* lists the species from the same
 of surface phase. For example, local index of all site species of the surface material.
 Here is a simple graph showing different species arrangements of a surface material:
 
-.. figure:: global_species_mapping.png
+.. figure:: /_static/global_species_mapping.png
   :scale: 60 %
   :alt: species index
 
@@ -67,7 +67,7 @@ Pychemkin objects other than the ``Chemistry Set``. The figure below shows the
 initialization process of the "surface chemistry modules" in different Pychemkin
 objects:
 
-.. figure:: surface_chemistry_module.png
+.. figure:: /_static/surface_chemistry_module.png
     :scale: 60 %
     :alt: surface chemistry module
 

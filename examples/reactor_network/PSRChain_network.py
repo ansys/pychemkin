@@ -32,7 +32,7 @@ it does not contain any recycling streams or outflow splittings.
 
 Here is a PSR chain model of a fictional gas combustor:
 
- .. figure:: chain_reactor_network.png
+ .. figure:: /_static/chain_reactor_network.png
    :scale: 80 %
    :alt: Chain reactor network
 

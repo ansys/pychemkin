@@ -45,7 +45,7 @@ the fuel compositions.
 
 This figure shows a proposed ERN model of a fictional gas turbine combustor.
 
- .. figure:: combustor_ERN.png
+ .. figure:: /_static/combustor_ERN.png
    :scale: 80 %
    :alt: Combustor reactor network
 

@@ -31,7 +31,7 @@ This example shows how to set up and solve a series of linked PSRs
 
 Here is a PSR chain model of a fictional gas combustor with heat exchange:
 
- .. figure:: reactor_network_heat_exchange.png
+ .. figure:: /_static/reactor_network_heat_exchange.png
    :scale: 80 %
    :alt: Chain PSR cluster with heat exchange
 
