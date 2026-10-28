@@ -34,7 +34,7 @@ the transport processes (mainly diffusion) on the combustion chemistry and
 flame structure. They also reveal how the flame structure would response to
 the strain rate imposed by the mean flow field (or to some extent by the turbulence).
 
- .. figure:: opposed_flow_flame.png
+ .. figure:: /_static/opposed_flow_flame.png
    :scale: 80 %
    :alt: opposed-flow flame configuration
 

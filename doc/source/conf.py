@@ -94,6 +94,25 @@ suppress_warnings = [
     "autoapi.python_import_resolution",
 ]
 
+# Module-level logging variables that are reassigned and should not be documented
+_undocumented_data = {
+    "ansys.chemkin.core.msg",
+    "ansys.chemkin.core.this_msg",
+    "ansys.chemkin.core.chemkin_wrapper.msg",
+    "ansys.chemkin.core.chemkin_wrapper.this_msg",
+}
+
+
+def skip_undocumented_data(app, what, name, obj, skip, options):
+    """Skip module-level logging variables in the API reference."""
+    return skip or (what == "data" and name in _undocumented_data)
+
+
+def setup(app):
+    """Connect the autoapi member filter."""
+    app.connect("autoapi-skip-member", skip_undocumented_data)
+
+
 # Excluded files
 exclude_patterns = ["links.rst", "sg_execution_times.rst"]
 

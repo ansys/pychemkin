@@ -37,7 +37,7 @@ residence time remains constant even when the precursor stream composition or
 the reactor temperature is changed.
 
 The current CVD process operates at a low pressure of 1.8 Torr, and a high temperature
-(for both gas phase and the substrate surface) of 1440 |deg|C. The precursor stream
+(for both gas phase and the substrate surface) of 1440 °C. The precursor stream
 consists of SiF\ :sub:`4` and NH\ :sub:`3`\ .
 The chemistry set contains the gas phase mechanism input file, "chem_SIN_cvd.inp",
 the surface mechanism input file "surf_SIN_cvd.inp", and the thermodynamic data file,
