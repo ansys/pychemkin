@@ -39,7 +39,8 @@ html_context = {
     # for the gallery index), so point to those sources instead of the generated .rst.
     "edit_page_url_template": (
         "{{ base_url }}/"
-        "{% if file_name.startswith('examples/') and file_name.endswith('/index.rst') %}"
+        "{% if file_name.startswith('examples/') "
+        "and file_name.endswith('/index.rst') %}"
         "{{ file_name[:-9] }}GALLERY_HEADER.rst"
         "{% elif file_name.startswith('examples/') %}{{ file_name[:-4] }}.py"
         "{% else %}doc/source/{{ file_name }}{% endif %}"
