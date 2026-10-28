@@ -37,7 +37,7 @@ The following schematic shows the basic operations available for a mixture
 in PyChemkin: **create**, **combine/mix**, and **transform**
 (by a reactor model).
 
-.. figure:: mixture_concept.png
+.. figure:: /_static/mixture_concept.png
   :scale: 45 %
   :alt: the mixture concept
 
