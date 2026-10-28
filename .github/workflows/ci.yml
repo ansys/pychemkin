@@ -207,7 +207,7 @@ jobs:
           add-pdf-html-docs-as-assets: true
           dependencies: 'libjpeg-dev pandoc'
           group-dependencies-name: 'doc'
-          sphinxopts: '-j auto'
+          check-links: true
 
   build-library:
     name: "Build library"
