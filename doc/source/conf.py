@@ -33,6 +33,17 @@ html_context = {
     "github_repo": "pychemkin",
     "github_version": "main",
     "doc_path": "doc/source",
+    "base_url": "https://github.com/ansys/pychemkin/blob/main",
+    "edit_page_provider_name": "GitHub",
+    # Gallery pages are generated from examples/*.py (and examples/GALLERY_HEADER.rst
+    # for the gallery index), so point to those sources instead of the generated .rst.
+    "edit_page_url_template": (
+        "{{ base_url }}/"
+        "{% if file_name.startswith('examples/') and file_name.endswith('/index.rst') %}"
+        "{{ file_name[:-9] }}GALLERY_HEADER.rst"
+        "{% elif file_name.startswith('examples/') %}{{ file_name[:-4] }}.py"
+        "{% else %}doc/source/{{ file_name }}{% endif %}"
+    ),
 }
 html_theme = "ansys_sphinx_theme"
 html_short_title = html_title = "PyChemkin"
