@@ -1,0 +1,105 @@
+
+
+.. _sphx_glr_examples_surface_chemistry:
+
+Surface chemistry
+=================
+
+The examples in this section demonstrate how *surface chemistry* can be included in a *Chemistry Set* and
+applied to simulate chemical vapor deposition (CVD) and catalytic combustion processes in **PyChemkin**.
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example project presents a model for the CVD of silicon nitride (Si-N) in a steady-state PSR. The utilization of the simple PSR model is justified because the CVD process is operated under the &quot;kinetic limited&quot; condition and is running steadily. The CVD PSR is characterized by the volume, the substrate surface area, and the inlet precursor gas volumetric flow rate; consequently the reactor residence time remains constant even when the precursor stream composition or the reactor temperature is changed.">
+
+.. only:: html
+
+  .. image:: /examples/surface_chemistry/images/thumb/sphx_glr_SiC_cvd_thumb.png
+    :alt:
+
+  :doc:`/examples/surface_chemistry/SiC_cvd`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Simulating the chemical vapor deposition (CVD) process</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Catalytic combustion applications might utilize a two PFRs in series configuration for large fuel species. The first PFR is for pure gas-phase reactions called the pre-oxidizer, its main purpose is to partially break down the large hydrocarbon fuel species for the downstream catalytic combustor. The second PFR allows both gas-phase and surface reactions where the broken down fuel species are oxidized on the catalyst surface to generate heat.">
+
+.. only:: html
+
+  .. image:: /examples/surface_chemistry/images/thumb/sphx_glr_catalytic_combustion_thumb.png
+    :alt:
+
+  :doc:`/examples/surface_chemistry/catalytic_combustion`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Simulating CH4 catalytic Combustion process</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="When there are multiple surface materials defined in the surface mechanism input file, all surface materials share the same gas phase (gas species and gas-phase reactions). Each surface material consists of its own surface phases, surface species, and surface reactions, and has independent global and local species orders/indices. Subsequently, you can access species and reaction properties one surface material at a time, and direct surface species interactions across different surface materials are not supported.">
+
+.. only:: html
+
+  .. image:: /examples/surface_chemistry/images/thumb/sphx_glr_multiple_materials_thumb.png
+    :alt:
+
+  :doc:`/examples/surface_chemistry/multiple_materials`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Processing a surface mechanism with multiple materials</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Atomic layer deposition (ALD) is a technique used to deposit thin films of solid materials in a very controlled manner, and differs from CVD primarily in that it is a transient process with the deposition surface being exposed to pulses of alternating gases. Ideally, the deposition chemistry in ALD is self-limiting, with growth occurring in a layer-by-layer manner and the deposition thickness being controlled only by the number of cycles.">
+
+.. only:: html
+
+  .. image:: /examples/surface_chemistry/images/thumb/sphx_glr_trans_PSR_ALD_thumb.png
+    :alt:
+
+  :doc:`/examples/surface_chemistry/trans_PSR_ALD`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Modeling atomic layer deposition process in a transient PSR</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/surface_chemistry/SiC_cvd
+   /examples/surface_chemistry/catalytic_combustion
+   /examples/surface_chemistry/multiple_materials
+   /examples/surface_chemistry/trans_PSR_ALD
+

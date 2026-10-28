@@ -1,0 +1,74 @@
+
+
+
+
+
+
+The ``shock`` package
+=========================
+
+.. py:module:: ansys.chemkin.core.shock
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: shock
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.shock.shocktubereactors`
+            - Chemkin shock tube reactor model.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> shocktubereactors</api/ansys/chemkin/core/shock/shocktubereactors/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Shock tube reactor models.
+
+
+
+
+
+

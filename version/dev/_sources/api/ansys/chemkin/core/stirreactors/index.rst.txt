@@ -1,0 +1,89 @@
+
+
+
+
+
+
+The ``stirreactors`` package
+================================
+
+.. py:module:: ansys.chemkin.core.stirreactors
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: stirreactors
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.stirreactors.PSR`
+            - Perfectly stirred reactor (PSR) model.
+
+
+          * - :py:obj:`~ansys.chemkin.core.stirreactors.PSRcluster`
+            - Perfectly stirred reactor cluster of which the PSRs are solved simultaneously.
+
+
+          * - :py:obj:`~ansys.chemkin.core.stirreactors.openreactor`
+            - Chemkin open reactor utilities.
+
+
+          * - :py:obj:`~ansys.chemkin.core.stirreactors.transient_PSR`
+            - Chemkin transient perfectly stirred reactor model.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> PSR</api/ansys/chemkin/core/stirreactors/PSR/index>
+    <span class="nf nf-fa-file"></span> PSRcluster</api/ansys/chemkin/core/stirreactors/PSRcluster/index>
+    <span class="nf nf-fa-file"></span> openreactor</api/ansys/chemkin/core/stirreactors/openreactor/index>
+    <span class="nf nf-fa-file"></span> transient_PSR</api/ansys/chemkin/core/stirreactors/transient_PSR/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Stirred reactor models.
+
+
+
+
+
+

@@ -1,0 +1,1377 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Modeling atomic layer deposition process in a transient PSR &#8212; PyChemkin</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/surface_chemistry/trans_PSR_ALD';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Multiprocessing parameter study" href="../multiprocessing/index.html" />
+    <link rel="prev" title="Processing a surface mechanism with multiple materials" href="multiple_materials.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/examples/surface_chemistry/trans_PSR_ALD.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyChemkin - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../artifacts.html">
+    <no title>
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../artifacts.html">
+    <no title>
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../chemistry/index.html">Chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mixture/index.html">Mixture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../batch/index.html">Batch reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../engine/index.html">0-D engine models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSR/index.html">Perfectly stirred reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PFR/index.html">Plug-flow reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../shock_tube/index.html">Shock tube reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reactor_network/index.html">PSR network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../premixed_flame/index.html">Premixed flame models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../opposed_flow_flame/index.html">Opposed-flow flame model</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Surface chemistry</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="SiC_cvd.html">Simulating the chemical vapor deposition (CVD) process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="catalytic_combustion.html">Simulating CH4 catalytic Combustion process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multiple_materials.html">Processing a surface mechanism with multiple materials</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Modeling atomic layer deposition process in a transient PSR</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../multiprocessing/index.html">Multiprocessing parameter study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/index.html">Advanced Applications</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Surface chemistry</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Modeling atomic layer deposition process in a transient PSR</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-examples-surface-chemistry-trans-psr-ald-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="modeling-atomic-layer-deposition-process-in-a-transient-psr">
+<span id="ref-trans-psr-ignition"></span><span id="sphx-glr-examples-surface-chemistry-trans-psr-ald-py"></span><h1>Modeling atomic layer deposition process in a transient PSR<a class="headerlink" href="#modeling-atomic-layer-deposition-process-in-a-transient-psr" title="Link to this heading">#</a></h1>
+<p>Atomic layer deposition (ALD) is a technique used to deposit thin films
+of solid materials in a very controlled manner, and differs from CVD primarily
+in that it is a transient process with the deposition surface being exposed to
+pulses of alternating gases. Ideally, the deposition chemistry in ALD is
+self-limiting, with growth occurring in a layer-by-layer manner and the deposition
+thickness being controlled only by the number of cycles.</p>
+<p>The major advantage of ALD over CVD is the improved control over the deposition
+process and more conformal deposition. The inherently lower deposition rates,
+however, lead to longer process times and higher costs. During a pulse, it is
+important that enough molecules react with all parts of the substrate to be coated.
+But many of the precursor materials are expensive. Thus one of the process
+optimization goals is to reduce the amount of precursor that flows through the
+reactor without reacting at the surface.</p>
+<p>Normally the perfectly stirred reactor (PSR) model is a 0-D steady-state model with
+constant reactor pressure. When the dynamic responses of a chemistry dominated process
+are of interest, performing transient simulations of the system becomes necessary.
+The transient PSR (transPSR) model of the Ansys Chemkin is a useful tool for the ALD
+process development. It can be applied for optimizing the pulse sequences
+and the cycle times of the ALD process to obtain the desired pattern and thickness of
+the deposit layers. It can also be used to develop and to validate the chemical
+reaction mechanism for the ALD process.</p>
+<p>This project demonstrates the process of setting up and running the transPSR model
+with multiple inlets of different flow rate profiles. The alumina ALD chemistry used
+in this example is described in section 5.4.4 (Alumina ALD) of the Chemkin Tutorial
+manual.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<section id="import-pychemkin-packages-and-start-the-logger">
+<h2>Import PyChemkin packages and start the logger<a class="headerlink" href="#import-pychemkin-packages-and-start-the-logger" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ansys.chemkin.core</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ck</span>  <span class="c1"># Chemkin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Color</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.inlet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stream</span>  <span class="c1"># external gaseous inlet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+<span class="c1"># Chemkin 0-D transient PSR model with given reactor volume</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.stirreactors.transient_PSR</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TransientPSRSetVolumeFixedTemperature</span> <span class="k">as</span> <span class="n">TransPsr</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># plotting</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>  <span class="c1"># number crunching</span>
+
+<span class="c1"># check working directory</span>
+<span class="n">current_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">())</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;working directory: &quot;</span> <span class="o">+</span> <span class="n">current_dir</span><span class="p">)</span>
+<span class="c1"># set verbose mode</span>
+<span class="n">ck</span><span class="o">.</span><span class="n">set_verbose</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># set interactive mode for plotting the results</span>
+<span class="c1"># interactive = True: display plot</span>
+<span class="c1"># interactive = False: save plot as a PNG file</span>
+<span class="k">global</span> <span class="n">interactive</span>
+<span class="n">interactive</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+<section id="create-an-instance-of-the-chemistry-set">
+<h2>Create an instance of the Chemistry Set<a class="headerlink" href="#create-an-instance-of-the-chemistry-set" title="Link to this heading">#</a></h2>
+<p>The chemistry set describes the atomic layer deposition (ALD) of
+alumina from trimethylaluminum (TMA) and ozone. This mechanism is
+deliberately simplistic for illustration purposes only. It demonstrates
+one way of describing the ALD of alumina, but it should generally be
+considered as illustrative only and not used as a source of kinetic data
+for this process. This mechanism is designed to deposit stoichiometric alumina,
+with three oxygen atoms being deposited for each two aluminum atoms.</p>
+<p>The ALD mechanism is provided in the <em>examplesdata</em> folder of the local
+<em>PyChemkin</em> installation. You must provide the mechanism file names,
+<code class="docutils literal notranslate"><span class="pre">chem_AL2O3_ald.inp</span></code> and <code class="docutils literal notranslate"><span class="pre">surf_AL2O3_ald.inp</span></code>, with the correct path
+<code class="docutils literal notranslate"><span class="pre">example_mech_data</span></code> to the Chemistry Set before pre-processing. The thermodynamic
+data file from the default Ansys Chemkin installation will be used.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set mechanism directory (the default Chemkin mechanism data directory)</span>
+<span class="n">data_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">ck</span><span class="o">.</span><span class="n">ansys_dir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;reaction&quot;</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span>
+<span class="c1"># find the location of this example py file</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">script_dir_obj</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+    <span class="n">script_dir_obj</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">current_dir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;..&quot;</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span>
+<span class="n">script_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">script_dir_obj</span><span class="p">)</span>
+<span class="c1"># use the relative path to locate the example mechanism folder</span>
+<span class="n">example_mech_data</span> <span class="o">=</span> <span class="n">script_dir_obj</span> <span class="o">/</span> <span class="s2">&quot;..&quot;</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;example data = </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">example_mech_data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># create a chemistry set based on the Si-N CVD mechanism</span>
+<span class="n">MyALDMech</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Chemistry</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Al2O3_ALD&quot;</span><span class="p">)</span>
+<span class="c1"># set mechanism input files</span>
+<span class="c1"># including the full file path is recommended</span>
+<span class="n">local_data_dir</span> <span class="o">=</span> <span class="s2">&quot;AL2O3_ALD&quot;</span>
+<span class="n">MyALDMech</span><span class="o">.</span><span class="n">chemfile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">example_mech_data</span> <span class="o">/</span> <span class="n">local_data_dir</span> <span class="o">/</span> <span class="s2">&quot;chem_AL2O3_ald.inp&quot;</span><span class="p">)</span>
+<span class="n">MyALDMech</span><span class="o">.</span><span class="n">surffile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">example_mech_data</span> <span class="o">/</span> <span class="n">local_data_dir</span> <span class="o">/</span> <span class="s2">&quot;surf_AL2O3_ald.inp&quot;</span><span class="p">)</span>
+<span class="n">MyALDMech</span><span class="o">.</span><span class="n">thermfile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data_dir</span> <span class="o">/</span> <span class="s2">&quot;therm.dat&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="preprocess-the-chemistry-set">
+<h2>Preprocess the Chemistry Set<a class="headerlink" href="#preprocess-the-chemistry-set" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># preprocess the mechanism files</span>
+<span class="n">ierror</span> <span class="o">=</span> <span class="n">MyALDMech</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">ierror</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: failed to preprocess the mechanism!&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;       error code = </span><span class="si">{</span><span class="n">ierror</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">exit</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-the-inlet-streams">
+<h2>Set up the inlet streams<a class="headerlink" href="#set-up-the-inlet-streams" title="Link to this heading">#</a></h2>
+<p>Instantiate a stream feed for the inlet gas mixture.
+The stream is a mixture with the addition of the
+inlet flow rate. You specify inlet gas properties in the same way as you
+set up a mixture.</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">x</span></code> method of the <code class="docutils literal notranslate"><span class="pre">Stream</span></code> object to specify the inlet gas
+composition with a <code class="docutils literal notranslate"><span class="pre">recipe</span></code>. In this project, the <code class="docutils literal notranslate"><span class="pre">mass_flowrate</span></code> method,
+[g/sec] is used set the volumetric flow rates of the two inlet streams.
+The <code class="docutils literal notranslate"><span class="pre">air</span></code> composition is copied from the pre-defined <code class="docutils literal notranslate"><span class="pre">Air</span></code> object in Pychemkin.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set the TMA stream composition and conditions</span>
+<span class="n">met_organic</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span><span class="n">MyALDMech</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;TMA&quot;</span><span class="p">)</span>
+<span class="n">met_organic</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">ck</span><span class="o">.</span><span class="n">P_TORRS</span>  <span class="c1"># 1 [torr]</span>
+<span class="n">met_organic</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">620.2</span>  <span class="c1"># [K]</span>
+<span class="n">met_organic</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;ALMe3&quot;</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;AR&quot;</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">)]</span>
+<span class="c1"># TMA stream sccm flow rate profile in pulses</span>
+<span class="c1"># TMA stream sccm data points</span>
+<span class="n">tma_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.19</span><span class="p">,</span>
+        <span class="mf">0.2</span><span class="p">,</span>
+        <span class="mf">5.19</span><span class="p">,</span>
+        <span class="mf">5.2</span><span class="p">,</span>
+        <span class="mf">5.39</span><span class="p">,</span>
+        <span class="mf">5.4</span><span class="p">,</span>
+        <span class="mf">10.39</span><span class="p">,</span>
+        <span class="mf">10.4</span><span class="p">,</span>
+        <span class="mf">10.59</span><span class="p">,</span>
+        <span class="mf">10.6</span><span class="p">,</span>
+        <span class="mf">15.59</span><span class="p">,</span>
+        <span class="mf">15.6</span><span class="p">,</span>
+        <span class="mf">15.79</span><span class="p">,</span>
+        <span class="mf">15.8</span><span class="p">,</span>
+        <span class="mf">20.8</span><span class="p">,</span>
+    <span class="p">]</span>
+<span class="p">)</span>  <span class="c1"># [sec]</span>
+<span class="n">tma_profile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">]</span>
+<span class="p">)</span>  <span class="c1"># [sccm]</span>
+<span class="c1"># set the TMA stream sccm profile</span>
+<span class="n">met_organic</span><span class="o">.</span><span class="n">set_sccm_flowrate_profile</span><span class="p">(</span><span class="n">tma_time</span><span class="p">,</span> <span class="n">tma_profile</span><span class="p">)</span>
+
+<span class="c1"># set the air composition and conditions</span>
+<span class="n">oxidizers</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span><span class="n">MyALDMech</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;O3&quot;</span><span class="p">)</span>
+<span class="n">oxidizers</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">met_organic</span><span class="o">.</span><span class="n">pressure</span>
+<span class="n">oxidizers</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">620.2</span>
+<span class="n">oxidizers</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;O2&quot;</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;O3&quot;</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;AR&quot;</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">)]</span>
+<span class="c1"># oxidizers stream sccm flow rate profile in pulses</span>
+<span class="c1"># oxidizers stream sccm data points</span>
+<span class="n">oxid_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">1.19</span><span class="p">,</span>
+        <span class="mf">1.2</span><span class="p">,</span>
+        <span class="mf">3.19</span><span class="p">,</span>
+        <span class="mf">3.2</span><span class="p">,</span>
+        <span class="mf">6.39</span><span class="p">,</span>
+        <span class="mf">6.4</span><span class="p">,</span>
+        <span class="mf">8.39</span><span class="p">,</span>
+        <span class="mf">8.4</span><span class="p">,</span>
+        <span class="mf">11.59</span><span class="p">,</span>
+        <span class="mf">11.6</span><span class="p">,</span>
+        <span class="mf">13.59</span><span class="p">,</span>
+        <span class="mf">13.6</span><span class="p">,</span>
+        <span class="mf">16.79</span><span class="p">,</span>
+        <span class="mf">16.8</span><span class="p">,</span>
+        <span class="mf">18.79</span><span class="p">,</span>
+        <span class="mf">18.8</span><span class="p">,</span>
+        <span class="mf">20.8</span><span class="p">,</span>
+    <span class="p">]</span>
+<span class="p">)</span>  <span class="c1"># [sec]</span>
+<span class="n">oxid_profile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">]</span>
+<span class="p">)</span>  <span class="c1"># [sccm]</span>
+<span class="c1"># set the oxidizers stream sccm profile</span>
+<span class="n">oxidizers</span><span class="o">.</span><span class="n">set_sccm_flowrate_profile</span><span class="p">(</span><span class="n">oxid_time</span><span class="p">,</span> <span class="n">oxid_profile</span><span class="p">)</span>
+
+<span class="c1"># set the air composition and conditions</span>
+<span class="n">purge</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span><span class="n">MyALDMech</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;AR&quot;</span><span class="p">)</span>
+<span class="n">purge</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">met_organic</span><span class="o">.</span><span class="n">pressure</span>
+<span class="n">purge</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">620.2</span>
+<span class="n">purge</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;AR&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]</span>
+<span class="c1"># purge stream sccm flow rate profile in pulses</span>
+<span class="c1"># purge stream sccm data points</span>
+<span class="n">purge_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.19</span><span class="p">,</span>
+        <span class="mf">0.2</span><span class="p">,</span>
+        <span class="mf">1.19</span><span class="p">,</span>
+        <span class="mf">1.2</span><span class="p">,</span>
+        <span class="mf">3.19</span><span class="p">,</span>
+        <span class="mf">3.2</span><span class="p">,</span>
+        <span class="mf">5.19</span><span class="p">,</span>
+        <span class="mf">5.2</span><span class="p">,</span>
+        <span class="mf">5.39</span><span class="p">,</span>
+        <span class="mf">5.4</span><span class="p">,</span>
+        <span class="mf">6.39</span><span class="p">,</span>
+        <span class="mf">6.4</span><span class="p">,</span>
+        <span class="mf">8.39</span><span class="p">,</span>
+        <span class="mf">8.4</span><span class="p">,</span>
+        <span class="mf">10.39</span><span class="p">,</span>
+        <span class="mf">10.4</span><span class="p">,</span>
+        <span class="mf">10.59</span><span class="p">,</span>
+        <span class="mf">10.6</span><span class="p">,</span>
+        <span class="mf">11.59</span><span class="p">,</span>
+        <span class="mf">11.6</span><span class="p">,</span>
+        <span class="mf">13.59</span><span class="p">,</span>
+        <span class="mf">13.6</span><span class="p">,</span>
+        <span class="mf">15.59</span><span class="p">,</span>
+        <span class="mf">15.6</span><span class="p">,</span>
+        <span class="mf">15.79</span><span class="p">,</span>
+        <span class="mf">15.8</span><span class="p">,</span>
+        <span class="mf">16.79</span><span class="p">,</span>
+        <span class="mf">16.8</span><span class="p">,</span>
+        <span class="mf">18.79</span><span class="p">,</span>
+        <span class="mf">18.8</span><span class="p">,</span>
+        <span class="mf">20.8</span><span class="p">,</span>
+    <span class="p">]</span>
+<span class="p">)</span>  <span class="c1"># [sec]</span>
+<span class="n">purge_profile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+        <span class="mf">800.0</span><span class="p">,</span>
+    <span class="p">]</span>
+<span class="p">)</span>  <span class="c1"># [sccm]</span>
+<span class="c1"># set the purge stream sccm profile</span>
+<span class="n">purge</span><span class="o">.</span><span class="n">set_sccm_flowrate_profile</span><span class="p">(</span><span class="n">purge_time</span><span class="p">,</span> <span class="n">purge_profile</span><span class="p">)</span>
+<span class="c1"># check the initial flow rates of the streams</span>
+<span class="n">t</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;Initial &#39;TMA&#39; stream flow rate = &quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">met_organic</span><span class="o">.</span><span class="n">get_sccm_flowrate_profile_data</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">)</span><span class="si">}</span><span class="s2"> [SCCM]&quot;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;Initial &#39;O3&#39; stream flow rate = &quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">oxidizers</span><span class="o">.</span><span class="n">get_sccm_flowrate_profile_data</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">)</span><span class="si">}</span><span class="s2"> [SCCM]&quot;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;Initial &#39;AR purge&#39; stream flow rate = &quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">purge</span><span class="o">.</span><span class="n">get_sccm_flowrate_profile_data</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">)</span><span class="si">}</span><span class="s2"> [SCCM]&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-the-transient-psr-bomb-reactor">
+<h2>Set up the transient PSR bomb reactor<a class="headerlink" href="#set-up-the-transient-psr-bomb-reactor" title="Link to this heading">#</a></h2>
+<p>Instantiate the transient PSR <code class="docutils literal notranslate"><span class="pre">ald_reactor</span></code> as a
+<code class="docutils literal notranslate"><span class="pre">TransientPSRSetVolumeFixedTemperature</span></code> object.
+Since this is a transient simulation, a initial reactor condition is required.
+In this example, the <code class="docutils literal notranslate"><span class="pre">ald_reactor</span></code> is initially filled with pure argon.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">ald_reactor</span> <span class="o">=</span> <span class="n">TransPsr</span><span class="p">(</span><span class="n">purge</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;ALD_reactor&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-additional-reactor-model-parameters">
+<h2>Set up additional reactor model parameters<a class="headerlink" href="#set-up-additional-reactor-model-parameters" title="Link to this heading">#</a></h2>
+<p>Before you can run the simulation, you must provide reactor parameters,
+solver controls, and output instructions. For a PSR, you must provide
+either the residence time or the reactor volume. You can also make changes to
+any reactor initial conditions such as the reactor temperature and the gas
+composition. For example, the <code class="docutils literal notranslate"><span class="pre">reset_initial_temperature()`</span></code> method and
+the <code class="docutils literal notranslate"><span class="pre">reset_initial_composition()</span></code> method.
+You can use the solver parameters to improve the convergence performance.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set PSR volume (cm3): required for the</span>
+<span class="c1"># ``TransientPSRSetVolumeFixedTemperature`` model</span>
+<span class="n">ald_reactor</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="mf">600.0</span>
+<span class="c1"># reactor active surface area [cm2]</span>
+<span class="n">ald_reactor</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="mf">300.0</span>
+<span class="c1"># transient simulation end time [sec]</span>
+<span class="n">ald_reactor</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="mf">20.8</span>
+<span class="c1"># initial surface conditions</span>
+<span class="c1"># get the number of surface material defined in the surface mechanism</span>
+<span class="n">n_material</span> <span class="o">=</span> <span class="n">ald_reactor</span><span class="o">.</span><span class="n">get_numb_material</span>
+<span class="c1"># get all surface material names</span>
+<span class="n">ald_material_names</span> <span class="o">=</span> <span class="n">ald_reactor</span><span class="o">.</span><span class="n">get_material_names</span><span class="p">()</span>
+<span class="c1"># set up surface coverage of all surface materials</span>
+<span class="c1"># initial surface coverage (site fractions)</span>
+<span class="n">site_recipe</span> <span class="o">=</span> <span class="p">[[(</span><span class="s2">&quot;O(S)&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]]</span>
+<span class="c1"># bulk activities</span>
+<span class="n">bulk_recipe</span> <span class="o">=</span> <span class="p">[[(</span><span class="s2">&quot;AL2O3(B)&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]]</span>
+<span class="c1"># set the surface condition of the surface material</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mname</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ald_material_names</span><span class="p">):</span>
+    <span class="c1"># set area fraction [-] (optional: by default, materials have the same area)</span>
+    <span class="n">ald_reactor</span><span class="o">.</span><span class="n">set_material_area_fraction</span><span class="p">(</span><span class="n">mname</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="c1"># set material temperature [K] if it is different from the gas temperature</span>
+    <span class="c1"># (optional: by default, it is the same as the mixture temperature)</span>
+    <span class="n">ald_reactor</span><span class="o">.</span><span class="n">set_material_temperature</span><span class="p">(</span><span class="n">mname</span><span class="p">,</span> <span class="mf">723.0</span><span class="p">)</span>
+    <span class="c1"># set reactor surface coverage of the material</span>
+    <span class="c1"># site fractions (optional: by default, all sites have the same fraction)</span>
+    <span class="n">ald_reactor</span><span class="o">.</span><span class="n">set_site_fraction</span><span class="p">(</span><span class="n">mname</span><span class="p">,</span> <span class="n">site_recipe</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="c1"># bulk activities (optional: by default, all bulk species activities = 1.0)</span>
+    <span class="n">ald_reactor</span><span class="o">.</span><span class="n">set_bulk_activity</span><span class="p">(</span><span class="n">mname</span><span class="p">,</span> <span class="n">bulk_recipe</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="connect-the-inlet-to-the-reactor">
+<h2>Connect the inlet to the reactor<a class="headerlink" href="#connect-the-inlet-to-the-reactor" title="Link to this heading">#</a></h2>
+<p>You must connect at least one inlet to the open reactor. Use the <code class="docutils literal notranslate"><span class="pre">set_inlet()</span></code>
+method to add a stream to the PSR. Inversely, use the <code class="docutils literal notranslate"><span class="pre">remove_inlet()</span></code> to
+disconnect an inlet from the PSR.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There is no limit on the number of inlets that can be connected to a PSR.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># connect the metal organic stream to the reactor</span>
+<span class="n">ald_reactor</span><span class="o">.</span><span class="n">set_inlet</span><span class="p">(</span><span class="n">met_organic</span><span class="p">)</span>
+
+<span class="c1"># connect the oxidizer stream to the reactor</span>
+<span class="n">ald_reactor</span><span class="o">.</span><span class="n">set_inlet</span><span class="p">(</span><span class="n">oxidizers</span><span class="p">)</span>
+
+<span class="c1"># connect the purge stream to the reactor</span>
+<span class="n">ald_reactor</span><span class="o">.</span><span class="n">set_inlet</span><span class="p">(</span><span class="n">purge</span><span class="p">)</span>
+
+<span class="c1"># check the net inlet flow rate to the ALD reactor at time = 0.0 [sec]</span>
+<span class="c1"># the net mass flow rate to the PSR must not be zero at any given time</span>
+<span class="c1"># during the simulation</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;initial net mass flow rate to the reactor = &quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ald_reactor</span><span class="o">.</span><span class="n">net_mass_flowrate</span><span class="si">}</span><span class="s2"> [g/sec]&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-solver-controls">
+<h2>Set solver controls<a class="headerlink" href="#set-solver-controls" title="Link to this heading">#</a></h2>
+<p>You can overwrite the default solver controls by using solver-related methods,
+such as those for tolerances.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set solver the tolerances</span>
+<span class="n">ald_reactor</span><span class="o">.</span><span class="n">tolerances</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0e-20</span><span class="p">,</span> <span class="mf">1.0e-8</span><span class="p">)</span>
+<span class="c1"># solver non-negative mode</span>
+<span class="n">ald_reactor</span><span class="o">.</span><span class="n">force_nonnegative</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="c1"># transient solver max time step size [sec]</span>
+<span class="c1"># ald_reactor.set_solver_max_timestep_size(2.0e-3)</span>
+<span class="c1"># set adaptive solution saving distance</span>
+<span class="n">ald_reactor</span><span class="o">.</span><span class="n">adaptive_solution_saving</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="c1"># use the legacy solver to get better coonvergence performance for</span>
+<span class="c1"># small mechanism</span>
+<span class="c1"># ald_reactor.set_legacy_option(option=True)</span>
+</pre></div>
+</div>
+</section>
+<section id="run-the-transient-psr-model">
+<h2>Run the transient PSR model<a class="headerlink" href="#run-the-transient-psr-model" title="Link to this heading">#</a></h2>
+<p>Once all the necessary input parameters are provided, use the <code class="docutils literal notranslate"><span class="pre">run()</span></code> method
+to start the transient PSR simulation. After the simulation
+is completed successfully, Use the <code class="docutils literal notranslate"><span class="pre">process_solution()</span></code> method to retrieve the raw
+solution profiles. If you are interested in the exit solution, use the
+<code class="docutils literal notranslate"><span class="pre">get_last_solution_mixture()</span></code> method to get the solution at the exit as a
+<code class="docutils literal notranslate"><span class="pre">Stream</span></code> object <code class="docutils literal notranslate"><span class="pre">combustor_exhaust</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In Pychemkin, the surface material is referred by its name. Instead of
+the surface material index, you loop over the surface material names.
+Use <code class="docutils literal notranslate"><span class="pre">get_material_names()</span></code> method to get a list of surface material
+names defined in the surface mechanism.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For a site or a bulk species, use any <code class="docutils literal notranslate"><span class="pre">Mixture</span></code> or <code class="docutils literal notranslate"><span class="pre">Stream</span></code> created
+with the <code class="docutils literal notranslate"><span class="pre">Chemistry</span> <span class="pre">Set</span></code> containing the surface mechanism to get its
+species index. There are two type of index for surface species, the
+global index includes all species (the gas plus the site and the bulk of
+all materials); the local index includes the same type of surface species
+(site or bulk) of all materials.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set the start wall time</span>
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="c1"># run the reactor model</span>
+<span class="n">runstatus</span> <span class="o">=</span> <span class="n">ald_reactor</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="c1">#</span>
+<span class="k">if</span> <span class="n">runstatus</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="c1"># run failed</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="s2">&quot;&gt;&gt;&gt; Run failed. &lt;&lt;&lt;&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+
+<span class="n">runtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total simulation duration: </span><span class="si">{</span><span class="n">runtime</span><span class="si">}</span><span class="s2"> [sec].&quot;</span><span class="p">)</span>
+
+<span class="c1"># postprocess the solution profiles</span>
+<span class="n">ald_reactor</span><span class="o">.</span><span class="n">process_solution</span><span class="p">()</span>
+
+<span class="c1"># get the number of data points in the solution profiles</span>
+<span class="n">solutionpoints</span> <span class="o">=</span> <span class="n">ald_reactor</span><span class="o">.</span><span class="n">getnumbersolutionpoints</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;number of solution time points = </span><span class="si">{</span><span class="n">solutionpoints</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># store solution profiles</span>
+<span class="c1"># simulation time [sec]</span>
+<span class="n">sim_time</span> <span class="o">=</span> <span class="n">ald_reactor</span><span class="o">.</span><span class="n">get_solution_variable_profile</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span>
+<span class="c1"># solution arrays</span>
+<span class="c1"># get all surface material names</span>
+<span class="n">aldt_material_names</span> <span class="o">=</span> <span class="n">ald_reactor</span><span class="o">.</span><span class="n">get_material_names</span><span class="p">()</span>
+<span class="c1"># AL2O3(B) linear growth rate [micron/min]</span>
+<span class="n">al2o3_b_growth_solution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">solutionpoints</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">al2o3_b_thickness</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">al2o3_b_growth_solution</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="c1"># get gas-species index</span>
+<span class="n">i_o</span> <span class="o">=</span> <span class="n">met_organic</span><span class="o">.</span><span class="n">get_specindex</span><span class="p">(</span><span class="s2">&quot;O&quot;</span><span class="p">)</span>
+<span class="n">i_tma</span> <span class="o">=</span> <span class="n">met_organic</span><span class="o">.</span><span class="n">get_specindex</span><span class="p">(</span><span class="s2">&quot;ALMe3&quot;</span><span class="p">)</span>
+<span class="n">o_solution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">al2o3_b_growth_solution</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">tma_solution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">al2o3_b_growth_solution</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="c1"># get surface site fraction solution profiles</span>
+<span class="c1"># get surface species index</span>
+<span class="c1"># global index includes all species: the gas, the site of all materials, and the bulk</span>
+<span class="c1"># of all materials</span>
+<span class="c1"># local index includes the same type of species (site or bulk) of all materials</span>
+<span class="n">i_o_s_global</span><span class="p">,</span> <span class="n">i_o_s_local</span> <span class="o">=</span> <span class="n">met_organic</span><span class="o">.</span><span class="n">get_surf_specindex</span><span class="p">(</span><span class="s2">&quot;O(S)&quot;</span><span class="p">)</span>
+<span class="n">i_al2o3_b_global</span><span class="p">,</span> <span class="n">i_al2o3_b_local</span> <span class="o">=</span> <span class="n">met_organic</span><span class="o">.</span><span class="n">get_surf_specindex</span><span class="p">(</span><span class="s2">&quot;AL2O3(B)&quot;</span><span class="p">)</span>
+<span class="c1"># surface O(S) site fraction</span>
+<span class="n">o_s_solution</span> <span class="o">=</span> <span class="n">ald_reactor</span><span class="o">.</span><span class="n">get_solution_variable_profile</span><span class="p">(</span><span class="s2">&quot;O(S)&quot;</span><span class="p">)</span>
+<span class="c1"># surface ALMe2(S) site fraction</span>
+<span class="n">alme2_s_solution</span> <span class="o">=</span> <span class="n">ald_reactor</span><span class="o">.</span><span class="n">get_solution_variable_profile</span><span class="p">(</span><span class="s2">&quot;ALMe2(S)&quot;</span><span class="p">)</span>
+<span class="c1"># surface ALMeOALMe(S) site fraction</span>
+<span class="n">almeoalme_s_solution</span> <span class="o">=</span> <span class="n">ald_reactor</span><span class="o">.</span><span class="n">get_solution_variable_profile</span><span class="p">(</span><span class="s2">&quot;ALMeOALMe(S)&quot;</span><span class="p">)</span>
+<span class="c1"># loop over all solution time points</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">solutionpoints</span><span class="p">):</span>
+    <span class="c1"># get the mixture at the time point</span>
+    <span class="n">solutionmixture</span> <span class="o">=</span> <span class="n">ald_reactor</span><span class="o">.</span><span class="n">get_solution_mixture_at_index</span><span class="p">(</span><span class="n">solution_index</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+    <span class="c1"># calculate species production rate due to surface reactions [mole/cm2-sec]</span>
+    <span class="n">brate</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">ald_material_names</span><span class="p">:</span>
+        <span class="c1"># calculate species ROPs due to surface reactions [mole/cm2-sec]</span>
+        <span class="n">surf_rop</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">solutionmixture</span><span class="o">.</span><span class="n">rop_surf</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+        <span class="c1"># get AL2O3(B) linear growth rate [cm/sec] due to surface reactions</span>
+        <span class="n">brates</span> <span class="o">=</span> <span class="n">solutionmixture</span><span class="o">.</span><span class="n">surface_chemistry</span><span class="o">.</span><span class="n">get_bulk_linear_growth_rates</span><span class="p">(</span>
+            <span class="n">m</span><span class="p">,</span> <span class="n">surf_rop</span>
+        <span class="p">)</span>
+        <span class="n">brate</span> <span class="o">+=</span> <span class="n">brates</span><span class="p">[</span><span class="n">i_al2o3_b_local</span><span class="p">]</span>
+    <span class="c1"># linear growth rate of AL2O3(B) bulk species [cm/sec] -&gt; [micron/sec]</span>
+    <span class="n">al2o3_b_growth_solution</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">brate</span> <span class="o">*</span> <span class="mf">1.0e4</span>
+    <span class="c1"># compute deposit thickness [micron]</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">im</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">delta_time</span> <span class="o">=</span> <span class="n">sim_time</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">sim_time</span><span class="p">[</span><span class="n">im</span><span class="p">]</span>
+        <span class="n">delta_grate</span> <span class="o">=</span> <span class="n">al2o3_b_growth_solution</span><span class="p">[</span><span class="n">im</span><span class="p">]</span> <span class="o">+</span> <span class="n">al2o3_b_growth_solution</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="c1"># integration</span>
+        <span class="n">al2o3_b_thickness</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">al2o3_b_thickness</span><span class="p">[</span><span class="n">im</span><span class="p">]</span> <span class="o">+</span> <span class="n">delta_grate</span> <span class="o">*</span> <span class="n">delta_time</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="c1"># gas phase O solution profile [mole fraction]</span>
+    <span class="n">o_solution</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">solutionmixture</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i_o</span><span class="p">]</span>
+    <span class="c1"># gas phase ALMe3 solution profile [mole fraction]</span>
+    <span class="n">tma_solution</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">solutionmixture</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i_tma</span><span class="p">]</span>
+
+<span class="c1"># clean up</span>
+<span class="n">ck</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="plot-the-transient-psr-solution-profiles">
+<h2>Plot the transient PSR solution profiles<a class="headerlink" href="#plot-the-transient-psr-solution-profiles" title="Link to this heading">#</a></h2>
+<p>Plot the solution profiles over the entire simulation time span.
+You could observe how the growth of the AL2O3(B) thickness is controlled
+by turning on and off the inlet streams.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="s2">&quot;col&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Transient PSR ALD Solution&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">221</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tma_time</span><span class="p">,</span> <span class="n">tma_profile</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">oxid_time</span><span class="p">,</span> <span class="n">oxid_profile</span><span class="p">,</span> <span class="s2">&quot;r-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;met_organic&quot;</span><span class="p">,</span> <span class="s2">&quot;oxidizers&quot;</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Inlet volumetric flow rate [SCCM]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">222</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sim_time</span><span class="p">,</span> <span class="n">o_solution</span><span class="p">,</span> <span class="s2">&quot;r-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;O Mole fraction&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">223</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sim_time</span><span class="p">,</span> <span class="n">o_s_solution</span><span class="p">,</span> <span class="s2">&quot;r-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sim_time</span><span class="p">,</span> <span class="n">almeoalme_s_solution</span><span class="p">,</span> <span class="s2">&quot;b--&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sim_time</span><span class="p">,</span> <span class="n">alme2_s_solution</span><span class="p">,</span> <span class="s2">&quot;g:&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;O(S)&quot;</span><span class="p">,</span> <span class="s2">&quot;ALMeOALMe(S)&quot;</span><span class="p">,</span> <span class="s2">&quot;ALMe2(S)&quot;</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [sec]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Site Fraction&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">224</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sim_time</span><span class="p">,</span> <span class="n">al2o3_b_thickness</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time [sec]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Deposit thickness AL2O3(B) [micron]&quot;</span><span class="p">)</span>
+<span class="c1"># plot results</span>
+<span class="k">if</span> <span class="n">interactive</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;plot_trans_PSR_ALD.png&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-surface-chemistry-trans-psr-ald-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/2b972425a51b4a987ffca536484b1b88/trans_PSR_ALD.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">trans_PSR_ALD.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/11f0578563f2e9c1619cd82681a5d6ad/trans_PSR_ALD.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">trans_PSR_ALD.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/9dbe33a28e460635c571e1c5d1522b33/trans_PSR_ALD.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">trans_PSR_ALD.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-pychemkin-packages-and-start-the-logger">Import PyChemkin packages and start the logger</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-an-instance-of-the-chemistry-set">Create an instance of the Chemistry Set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preprocess-the-chemistry-set">Preprocess the Chemistry Set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-the-inlet-streams">Set up the inlet streams</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-the-transient-psr-bomb-reactor">Set up the transient PSR bomb reactor</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-additional-reactor-model-parameters">Set up additional reactor model parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#connect-the-inlet-to-the-reactor">Connect the inlet to the reactor</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-solver-controls">Set solver controls</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-the-transient-psr-model">Run the transient PSR model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-the-transient-psr-solution-profiles">Plot the transient PSR solution profiles</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+
+  
+  <nav class="tocsection editthispage" aria-label="Edit this page">
+    <a href="https://github.com/ansys/pychemkin/edit/main/doc/source/examples/surface_chemistry/trans_PSR_ALD.rst" rel="noopener noreferrer">
+      <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </nav>
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/surface_chemistry/trans_PSR_ALD.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.7.2.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

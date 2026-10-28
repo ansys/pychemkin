@@ -1,0 +1,152 @@
+
+
+
+
+
+
+:class:`SolutionData`
+=====================
+
+
+.. py:class:: ansys.chemkin.core.chemkin_solution_utility.SolutionData(ckcsv: str | pathlib.Path)
+
+   Manage the imported solution data for the Chemkin solution utility.
+
+
+
+.. py:currentmodule:: SolutionData
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~call_reader`
+            - Read the solution data from the CSV file.
+          * - :py:attr:`~save_current_soln_group`
+            - Convert the collected rows into a wide-format DataFrame.
+          * - :py:attr:`~list_solution_groups`
+            - List all solution groups for the Chemkin solution utility.
+          * - :py:attr:`~list_solution_variables`
+            - List all solution variables for the specified solution group.
+          * - :py:attr:`~get_solution_groups`
+            - Return a list of all solution group names.
+          * - :py:attr:`~get_solution_variables`
+            - Return a list of all solution variables for the specified group.
+          * - :py:attr:`~get_solution_group_data`
+            - Return the raw data for the specified solution group.
+          * - :py:attr:`~get_solution_group_object`
+            - Return the SolutionGroup object for the specified solution group.
+          * - :py:attr:`~get_solution_array`
+            - Return the array for the specified variable in the given solution group.
+          * - :py:attr:`~get_number_of_points`
+            - Return the number of data points in solution data.
+          * - :py:attr:`~get_gas_species_info`
+            - Return the number of gas species and their symbols in solution data.
+          * - :py:attr:`~get_number_of_gas_species`
+            - Return the number of gas species in the solution data.
+          * - :py:attr:`~get_gas_species_symbols`
+            - Return the list of gas species symbols in the solution data.
+          * - :py:attr:`~validate_group`
+            - Validate if the specified solution group exists and has data.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.chemkin_solution_utility import SolutionData
+
+
+
+Method detail
+-------------
+
+.. py:method:: call_reader(csv_file: str | pathlib.Path)
+
+   Read the solution data from the CSV file.
+
+
+.. py:method:: save_current_soln_group()
+
+   Convert the collected rows into a wide-format DataFrame.
+
+
+.. py:method:: list_solution_groups()
+
+   List all solution groups for the Chemkin solution utility.
+
+
+.. py:method:: list_solution_variables(group_name: str)
+
+   List all solution variables for the specified solution group.
+
+
+.. py:method:: get_solution_groups() -> list[str]
+
+   Return a list of all solution group names.
+
+
+.. py:method:: get_solution_variables(group_name: str) -> list[str]
+
+   Return a list of all solution variables for the specified group.
+
+
+.. py:method:: get_solution_group_data(group_name: str) -> pandas.DataFrame | None
+
+   Return the raw data for the specified solution group.
+
+
+.. py:method:: get_solution_group_object(group_name: str) -> SolutionGroup | None
+
+   Return the SolutionGroup object for the specified solution group.
+
+
+.. py:method:: get_solution_array(group_name: str, var_name: str) -> pandas.Series[float] | None
+
+   Return the array for the specified variable in the given solution group.
+
+
+.. py:method:: get_number_of_points() -> int
+
+   Return the number of data points in solution data.
+
+
+.. py:method:: get_gas_species_info() -> tuple[int, list[str]]
+
+   Return the number of gas species and their symbols in solution data.
+
+
+.. py:method:: get_number_of_gas_species() -> int
+
+   Return the number of gas species in the solution data.
+
+
+.. py:method:: get_gas_species_symbols() -> list[str]
+
+   Return the list of gas species symbols in the solution data.
+
+
+.. py:method:: validate_group(group_name: str) -> bool
+
+   Validate if the specified solution group exists and has data.
+
+
+
+
+
