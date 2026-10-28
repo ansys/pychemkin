@@ -104,6 +104,8 @@ master_doc = "index"
 # Configuration for Sphinx autoapi
 suppress_warnings = [
     "autoapi.python_import_resolution",
+    # Font Awesome icons are only rendered in HTML, not in the PDF build
+    "design.fa-build",
 ]
 
 # Module-level logging variables that are reassigned and should not be documented
