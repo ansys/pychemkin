@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-r""".. _ref_trans_PSR_ignition:
+r""".. _ref_trans_PSR_ALD:
 
 ===========================================================
 Modeling atomic layer deposition process in a transient PSR

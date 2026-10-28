@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-r""".. _ref_run_chemkin_java_gui:
+r""".. _ref_run_chemkin_workbench_gui:
 
 ===================================
 Run Chemkin Workbench GUI in Python
