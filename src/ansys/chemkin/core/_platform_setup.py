@@ -249,7 +249,13 @@ def __setup_windows(
             else:
                 # >= 27R1
                 # configuration file for the 3rd-party dlls
-                third_party_config = ansyshome / "reaction" / ckbin / "bin"
+                third_party_config = (
+                    ansyshome
+                    / "reaction"
+                    / ckbin
+                    / "bin"
+                    / "third-party_path_config.txt"
+                )
                 third_party_paths: list[str] = set_3rd_party_dll_paths(
                     str(ansyshome), str(third_party_config), plat
                 )
@@ -413,36 +419,46 @@ def __setup_linux(
         lib_paths.append(str(lib_addition))
     elif ansys_ver == 261:
         # == 26R1
-        lib_addition = (
-            ansyshome / "tp" / "IntelCompiler" / "2023.1.0" / plat / "lib" / "intel64"
+        # Linux has different folder structure and version numbering
+        # for third-party libraries
+        third_party_config = {
+            "IntelCompiler": ["2023.1.0", plat, "lib", "intel64"],
+            "IntelMKL": ["2024.2.0", plat, "lib", "intel64"],
+            "zlib": [plat, "lib"],
+            "openssl": ["3.0", plat, "lib"],
+            "stdc++": [],
+        }
+        third_party_paths = set_linux_3rd_party_paths(
+            str(ansyshome), "tp", third_party_config
         )
-        lib_paths.append(str(lib_addition))
-        lib_addition = (
-            ansyshome / "tp" / "IntelMKL" / "2023.1.0" / plat / "lib" / "intel64"
+        if len(third_party_paths) > 0:
+            lib_paths.extend(third_party_paths)
+    elif ansys_ver == 271:
+        # == 27R1
+        # Linux has different folder structure and version numbering
+        # for third-party libraries
+        third_party_config = {
+            "IntelCompiler": ["2025.3.2", plat, "lib"],
+            "IntelMKL": ["2024.2.0", plat, "lib", "intel64"],
+            "zlib": [plat, "lib"],
+            "openssl": ["3.5", plat, "lib"],
+            "stdc++": [],
+        }
+        third_party_paths = set_linux_3rd_party_paths(
+            str(ansyshome), "tp", third_party_config
         )
-        lib_paths.append(str(lib_addition))
-        lib_addition = ansyshome / "tp" / "zlib" / plat / "lib"
-        lib_paths.append(str(lib_addition))
-        lib_addition = ansyshome / "tp" / "openssl" / "3.0" / plat / "lib"
-        lib_paths.append(str(lib_addition))
-        lib_addition = ansyshome / "tp" / "stdc++"
-        lib_paths.append(str(lib_addition))
+        if len(third_party_paths) > 0:
+            lib_paths.extend(third_party_paths)
     else:
-        # >= 27R1
+        # >= 27R2
         # configuration file for the 3rd-party dlls
-        third_party_config = ansyshome / "reaction" / ckbin / "bin"
-        third_party_paths: list[str] = set_3rd_party_dll_paths(
-            str(ansyshome), str(third_party_config), plat, lib_folder="lib"
+        third_party_config_file = (
+            ansyshome / "reaction" / ckbin / "bin" / "third-party_path_config_linux.txt"
+        )
+        third_party_paths = set_3rd_party_dll_paths(
+            str(ansyshome), str(third_party_config_file), plat
         )
         lib_paths.extend(third_party_paths)
-        lib_addition = (
-            ansyshome / "tp" / "IntelMKL" / "2024.2.0" / plat / "lib" / "intel64"
-        )
-        lib_paths.append(str(lib_addition))
-        lib_addition = ansyshome / "tp" / "openssl" / "3.5" / plat / "lib"
-        lib_paths.append(str(lib_addition))
-        lib_addition = ansyshome / "tp" / "stdc++"
-        lib_paths.append(str(lib_addition))
 
     # set load shared object paths
     combined_path = ":".join(lib_paths)
@@ -499,7 +515,7 @@ def find_valid_ansys_versions(min_ver: int = 251) -> list[int]:
 
 
 def set_3rd_party_dll_paths(
-    ansys_folder: str, data_folder: str, lib_platform: str, lib_folder: str = ""
+    ansys_folder: str, config_file: str, lib_platform: str, lib_folder: str = ""
 ) -> list[str]:
     """Set up the shared third-party dll paths.
 
@@ -507,8 +523,8 @@ def set_3rd_party_dll_paths(
     ----------
     ansys_folder: str, required
         location of the ANSYS installation folder.
-    data_folder: str, required
-        location of the text file containing the shared third-party dll paths.
+    config_file: str, required
+        the text file containing the shared third-party dll paths.
     lib_platform: str, required
         platform label for the shared third-party dlls (e.g., "winx64").
     lib_folder: str, default: ""
@@ -521,7 +537,7 @@ def set_3rd_party_dll_paths(
 
     """
     third_party_paths: list[str] = []
-    third_party_file = Path(data_folder) / "third-party_path_config.txt"
+    third_party_file = Path(config_file)
     if not Path(third_party_file).is_file():
         msg = [
             Color.RED,
@@ -536,31 +552,17 @@ def set_3rd_party_dll_paths(
         line_error = False
         with Path(third_party_file).open("r") as f:
             for line in f:
+                line = line.strip()
                 if line.startswith("tp/"):
-                    parts = line.strip().split("/")
-                    if len(parts) == 4:
-                        lib_dir, lib_name, lib_version = (
-                            parts[0],
-                            parts[1],
-                            parts[2],
+                    parts = line.split("/")
+                    if len(parts) >= 3 and all(parts[:2]):
+                        lib_addition = Path(ansys_folder).joinpath(
+                            *(part for part in parts if part)
                         )
-                        if len(lib_folder) > 1:
-                            lib_addition = (
-                                Path(ansys_folder)
-                                / lib_dir
-                                / lib_name
-                                / lib_version
-                                / lib_platform
-                                / lib_folder
-                            )
-                        else:
-                            lib_addition = (
-                                Path(ansys_folder)
-                                / lib_dir
-                                / lib_name
-                                / lib_version
-                                / lib_platform
-                            )
+                        if parts[-1] != lib_platform:
+                            lib_addition /= lib_platform
+                        if lib_folder:
+                            lib_addition /= lib_folder
 
                         print(f"Adding third-party library path: {str(lib_addition)}")
                         third_party_paths.append(str(lib_addition))
@@ -568,7 +570,7 @@ def set_3rd_party_dll_paths(
                         msg = [
                             Color.RED,
                             "Invalid line in third-party dll information file:\n",
-                            line.strip(),
+                            line,
                             Color.END,
                         ]
                         this_msg = Color.SPACE.join(msg)
@@ -576,4 +578,58 @@ def set_3rd_party_dll_paths(
                         line_error = True
         if line_error:
             exit()
+    return third_party_paths
+
+
+def set_linux_3rd_party_paths(
+    ansys_home: str, third_party: str, path_config: dict[str, list[str]]
+) -> list[str]:
+    """Set the third-party library paths for Linux systems.
+
+    Parameters
+    ----------
+    ansys_home : str
+        The root directory of the Ansys installation.
+    third_party : str
+        The Ansys installation subfolder where third-party libraries are located.
+    path_config : dict[str, list[str]]
+        A dictionary mapping library names to their respective path configurations.
+
+    Returns
+    -------
+    list[str]
+        A list of third-party library paths.
+
+    """
+    third_party_paths: list[str] = []
+    ansyshome = Path(ansys_home)
+    # Get the split strings and convert them into Path objects
+    if "LD_LIBRARY_PATH" in os.environ:
+        path_objects = [
+            Path(p)
+            for p in os.environ.get("LD_LIBRARY_PATH", "").split(os.pathsep)
+            if p
+        ]
+        # Example: Filter for directories that actually exist on your machine
+        existing_paths = [p for p in path_objects if p.is_dir()]
+        for libname, configs in path_config.items():
+            found = False
+            for p in existing_paths:
+                if libname in str(p):
+                    # print(f"{libname} path found: {str(p)}")
+                    found = True
+                    break
+            if not found:
+                this_path = ansyshome / third_party / libname
+                for config in configs:
+                    this_path = this_path / config
+                # print(f"adding {libname} to library path")
+                third_party_paths.append(str(this_path))
+    else:
+        for libname, configs in path_config.items():
+            this_path = ansyshome / third_party / libname
+            for config in configs:
+                this_path = this_path / config
+            # print(f"adding {libname} to library path")
+            third_party_paths.append(str(this_path))
     return third_party_paths
