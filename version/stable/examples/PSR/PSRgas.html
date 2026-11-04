@@ -1,0 +1,1113 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Set up a PSR parameter study for the inlet stream equivalence ratio &#8212; PyChemkin</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/PSR/PSRgas';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Run PSR calculations for mechanism validation" href="jetstirredreactor.html" />
+    <link rel="prev" title="Perfectly stirred reactor" href="index.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/examples/PSR/PSRgas.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyChemkin - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../artifacts.html">
+    <no title>
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../artifacts.html">
+    <no title>
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../chemistry/index.html">Chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mixture/index.html">Mixture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../batch/index.html">Batch reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../engine/index.html">0-D engine models</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Perfectly stirred reactor</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Set up a PSR parameter study for the inlet stream equivalence ratio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jetstirredreactor.html">Run PSR calculations for mechanism validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi-inletPSR.html">Determine the impact of residence time on combustion in a PSR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trans_PSR_ignition.html">Transient simulation of methane-air ignition in a PSR</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../PFR/index.html">Plug-flow reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../shock_tube/index.html">Shock tube reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reactor_network/index.html">PSR network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../premixed_flame/index.html">Premixed flame models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../opposed_flow_flame/index.html">Opposed-flow flame model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../surface_chemistry/index.html">Surface chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multiprocessing/index.html">Multiprocessing parameter study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/index.html">Advanced Applications</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Perfectly stirred reactor</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Set up a PSR parameter study for the inlet stream equivalence ratio</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-examples-psr-psrgas-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="set-up-a-psr-parameter-study-for-the-inlet-stream-equivalence-ratio">
+<span id="ref-gas-psr"></span><span id="sphx-glr-examples-psr-psrgas-py"></span><h1>Set up a PSR parameter study for the inlet stream equivalence ratio<a class="headerlink" href="#set-up-a-psr-parameter-study-for-the-inlet-stream-equivalence-ratio" title="Link to this heading">#</a></h1>
+<p>Ansys Chemkin offers some idealized reactor models commonly used for studying chemical
+processes and for developing reaction mechanisms. The PSR (perfectly stirred reactor)
+model is a steady-state 0-D model of the open perfectly mixed gas-phase reactor.
+There is no limit on the number of inlets to the PSR. As soon as the inlet gases
+enter the reactor, they are thoroughly mixed with the gas mixture inside. The PSR has
+only one outlet, and the outlet gas is assumed to be exactly the same as
+the gas mixture in the PSR.</p>
+<p>There are two basic types of PSR models:</p>
+<ul class="simple">
+<li><p><strong>constrained-pressure</strong> (or set residence time)</p></li>
+<li><p><strong>constrained-volume</strong></p></li>
+</ul>
+<p>By default, the PSR model is running under constant pressure. PyChemkin PSR models
+always require the connected inlets to be defined, that is, the total inlet flow rate
+to the PSR is always known. Therefore, either the residence time or
+the reactor volume is needed to satisfy the basic setup of the PSR model.
+In this case, you specify the residence time of the PSR, and the PSR model
+automatically calculates the reactor volume from the given residence time and
+the total inlet volumetric flow rate.</p>
+<p>For each type of the PSR, you can choose either to specify the reactor temperature
+(as a fixed value or by a piecewise-linear profile) or to solve the energy conservation
+equation. In total, you get four variations of the PSR model.</p>
+<p>The PSR model is mostly employed in chemical kinetics studies. By controlling
+the reactor temperature, pressure, and/or residence time, you can gain knowledge
+about the major intermediates of a complex chemical process and postulate possible
+reaction pathways. The parameter study in this example shows how the inlet
+equivalence ratio impacts the hydrogen combustion process in a
+fixed residence time PSR.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<section id="import-pychemkin-packages-and-start-the-logger">
+<h2>Import PyChemkin packages and start the logger<a class="headerlink" href="#import-pychemkin-packages-and-start-the-logger" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># plotting</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>  <span class="c1"># number crunching</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ansys.chemkin.core</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ck</span>  <span class="c1"># Chemkin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Color</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.inlet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stream</span>  <span class="c1"># external gaseous inlet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+<span class="c1"># Chemkin PSR model (steady-state)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.stirreactors.PSR</span><span class="w"> </span><span class="kn">import</span> <span class="n">PSRSetResTimeEnergyConservation</span> <span class="k">as</span> <span class="n">Psr</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_file</span>
+
+<span class="c1"># check working directory</span>
+<span class="n">current_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">())</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;working directory: &quot;</span> <span class="o">+</span> <span class="n">current_dir</span><span class="p">)</span>
+<span class="c1"># set verbose mode</span>
+<span class="n">ck</span><span class="o">.</span><span class="n">set_verbose</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># set interactive mode for plotting the results</span>
+<span class="c1"># interactive = True: display plot</span>
+<span class="c1"># interactive = False: save plot as a PNG file</span>
+<span class="k">global</span> <span class="n">interactive</span>
+<span class="n">interactive</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+<section id="create-a-chemistry-set">
+<h2>Create a chemistry set<a class="headerlink" href="#create-a-chemistry-set" title="Link to this heading">#</a></h2>
+<p>This example uses the encrypted hydrogen-ammonia mechanism,
+<code class="docutils literal notranslate"><span class="pre">Hydrogen-Ammonia-NOx_chem_MFL2021.inp</span></code>. This mechanism is developed
+under Chemkin’s <em>Model Fuel Library</em> (MFL) project.
+Like the rest of the MFL mechanisms, it is in the <em>ModelFuelLibrary</em> in the
+<code class="docutils literal notranslate"><span class="pre">/reaction/data</span></code> directory of the standard Ansys Chemkin installation.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set mechanism directory (the default Chemkin mechanism data directory)</span>
+<span class="n">data_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">ck</span><span class="o">.</span><span class="n">ansys_dir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;reaction&quot;</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span> <span class="o">/</span> <span class="s2">&quot;ModelFuelLibrary&quot;</span> <span class="o">/</span> <span class="s2">&quot;Skeletal&quot;</span>
+<span class="n">mechanism_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data_dir</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
+<span class="c1"># create a chemistry set based on the gasoline 14-components mechanism</span>
+<span class="n">MyGasMech</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Chemistry</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;hydrogen&quot;</span><span class="p">)</span>
+<span class="c1"># set mechanism input files</span>
+<span class="c1"># including the full file path is recommended</span>
+<span class="n">MyGasMech</span><span class="o">.</span><span class="n">chemfile</span> <span class="o">=</span> <span class="n">find_file</span><span class="p">(</span>
+    <span class="n">mechanism_dir</span><span class="p">,</span>
+    <span class="s2">&quot;Hydrogen-Ammonia-NOx_chem_MFL&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;inp&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="preprocess-the-gasoline-chemistry-set">
+<h2>Preprocess the gasoline chemistry set<a class="headerlink" href="#preprocess-the-gasoline-chemistry-set" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># preprocess the mechanism files</span>
+<span class="n">ierror</span> <span class="o">=</span> <span class="n">MyGasMech</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-the-h2-air-stream">
+<h2>Set up the H<sub>2</sub>-air stream<a class="headerlink" href="#set-up-the-h2-air-stream" title="Link to this heading">#</a></h2>
+<p>Instantiate a stream feed for the inlet gas mixture.
+The stream is a mixture with the addition of the
+inlet flow rate. You specify inlet gas properties in the same way as you
+set up a mixture. Here, the <code class="docutils literal notranslate"><span class="pre">x_by_equivalence_ratio()</span></code> method is used.</p>
+<p>First create the fuel and air mixtures. Then, define the
+complete combustion product species and provide the additives composition
+if applicable. Finally, set the equivalence ratio to 1 to create
+the stoichiometric hydrogen-air mixture. Use the <code class="docutils literal notranslate"><span class="pre">mass_flowrate()</span></code> method
+to assign the inlet mass flow rate. Use a fixed inlet mass flow rate
+of 432 [g/sec] since you are to change the PSR residence time
+in the parameter study.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># create the fuel mixture</span>
+<span class="n">fuel</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">)</span>
+<span class="c1"># set fuel composition: hydrogen diluted by nitrogen</span>
+<span class="n">fuel</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;h2&quot;</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;n2&quot;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)]</span>
+<span class="c1"># setting the pressure and temperature is not required in this case</span>
+<span class="n">fuel</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">P_ATM</span>
+<span class="n">fuel</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">298.0</span>  <span class="c1"># inlet temperature</span>
+
+<span class="c1"># create the oxidizer mixture: air</span>
+<span class="n">air</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Mixture</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">)</span>
+<span class="n">air</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;o2&quot;</span><span class="p">,</span> <span class="mf">0.21</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;n2&quot;</span><span class="p">,</span> <span class="mf">0.79</span><span class="p">)]</span>
+<span class="c1"># setting the pressure and temperature is not required in this case</span>
+<span class="n">air</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">fuel</span><span class="o">.</span><span class="n">pressure</span>
+<span class="n">air</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">fuel</span><span class="o">.</span><span class="n">temperature</span>
+
+<span class="c1"># create the fuel-oxidizer inlet to the PSR</span>
+<span class="n">feed</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;feed_1&quot;</span><span class="p">)</span>
+<span class="c1"># products from the complete combustion of the fuel mixture and air</span>
+<span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;h2o&quot;</span><span class="p">,</span> <span class="s2">&quot;n2&quot;</span><span class="p">]</span>
+<span class="c1"># species mole fractions of added/inert mixture.</span>
+<span class="c1"># You can also create an additives mixture here.</span>
+<span class="n">add_frac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">MyGasMech</span><span class="o">.</span><span class="n">kk</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>  <span class="c1"># no additives: all zeros</span>
+<span class="c1"># mean equivalence ratio</span>
+<span class="n">equiv</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">ierror</span> <span class="o">=</span> <span class="n">feed</span><span class="o">.</span><span class="n">x_by_equivalence_ratio</span><span class="p">(</span>
+    <span class="n">MyGasMech</span><span class="p">,</span> <span class="n">fuel</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">air</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">add_frac</span><span class="p">,</span> <span class="n">products</span><span class="p">,</span> <span class="n">equivalenceratio</span><span class="o">=</span><span class="n">equiv</span>
+<span class="p">)</span>
+<span class="c1"># check fuel-oxidizer mixture creation status</span>
+<span class="k">if</span> <span class="n">ierror</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: Failed to create the fuel-oxidizer mixture.&quot;</span><span class="p">)</span>
+    <span class="n">exit</span><span class="p">()</span>
+
+<span class="c1"># set reactor pressure [dynes/cm2]</span>
+<span class="n">feed</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">fuel</span><span class="o">.</span><span class="n">pressure</span>
+<span class="c1"># set inlet gas temperature [K]</span>
+<span class="n">feed</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">fuel</span><span class="o">.</span><span class="n">temperature</span>
+<span class="c1"># set inlet mass flow rate [g/sec]</span>
+<span class="n">feed</span><span class="o">.</span><span class="n">mass_flowrate</span> <span class="o">=</span> <span class="mf">432.0</span>
+</pre></div>
+</div>
+</section>
+<section id="create-the-psr-to-predict-the-gas-composition-of-the-outlet-stream">
+<h2>Create the PSR to predict the gas composition of the outlet stream<a class="headerlink" href="#create-the-psr-to-predict-the-gas-composition-of-the-outlet-stream" title="Link to this heading">#</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">PSRSetResTimeEnergyConservation()</span></code> method to instantiate
+the PSR <code class="docutils literal notranslate"><span class="pre">sphere</span></code> object because the goal is to see how
+the residence time affects the hydrogen combustion process.
+The gas property of the inlet feed is applied as the estimated
+reactor condition of the <code class="docutils literal notranslate"><span class="pre">sphere</span></code> object by default.
+You can overwrite any estimated reactor conditions by
+using appropriate methods. For example, <code class="docutils literal notranslate"><span class="pre">sphere.temperature</span> <span class="pre">=</span> <span class="pre">1700.0</span></code>
+changes the estimated reactor temperature from 298 to 1700 [K].
+The residence time of the nominal case is set by
+the <code class="docutils literal notranslate"><span class="pre">residence_time()</span></code> method.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">sphere</span> <span class="o">=</span> <span class="n">Psr</span><span class="p">(</span><span class="n">feed</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;PSR_1&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-additional-reactor-model-parameters">
+<h2>Set up additional reactor model parameters<a class="headerlink" href="#set-up-additional-reactor-model-parameters" title="Link to this heading">#</a></h2>
+<p>Before you can run the simulation, you must provide reactor parameters,
+solver controls, and output instructions. For a steady-state PSR,
+you must provide either the residence time or reactor volume. You can
+also make changes to any estimated reactor conditions if desired.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># reset the estimated reactor temperature [K]</span>
+<span class="n">sphere</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">1700.0</span>
+<span class="c1"># set PSR residence time (sec): required for PSRSetResTimeEnergyConservation model</span>
+<span class="n">sphere</span><span class="o">.</span><span class="n">residence_time</span> <span class="o">=</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="mf">1.0e-5</span>
+</pre></div>
+</div>
+</section>
+<section id="connect-the-inlet-to-the-reactor">
+<h2>Connect the inlet to the reactor<a class="headerlink" href="#connect-the-inlet-to-the-reactor" title="Link to this heading">#</a></h2>
+<p>You must connect at least one inlet to the open reactor. Use the <code class="docutils literal notranslate"><span class="pre">set_inlet()</span></code>
+method to add a stream to the PSR. Inversely, use the <code class="docutils literal notranslate"><span class="pre">remove_inlet()</span></code> to
+disconnect an inlet from the PSR.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There is no limit on the number of inlets that can be connected to a PSR.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># connect the inlet to the reactor</span>
+<span class="n">sphere</span><span class="o">.</span><span class="n">set_inlet</span><span class="p">(</span><span class="n">feed</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-solver-controls">
+<h2>Set solver controls<a class="headerlink" href="#set-solver-controls" title="Link to this heading">#</a></h2>
+<p>You can overwrite the default solver controls by using solver-related methods,
+such as those for tolerances. Here the tolerances that the steady-state solver
+is to use for the <em>steady-state search</em> and the <em>pseudo time stepping</em> stages
+are changed. Sometimes, during the iterations, some species mass fractions might
+become negative, causing the solver to report an error and stop. To overcome
+this issue, you can use the <code class="docutils literal notranslate"><span class="pre">set_species_floor()</span></code> method to provide a
+small cushion, allowing species mass fractions to go slightly negative by resetting
+the mass fraction floor value.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># reset the tolerances in the steady-state solver</span>
+<span class="n">sphere</span><span class="o">.</span><span class="n">steady_state_tolerances</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0e-9</span><span class="p">,</span> <span class="mf">1.0e-6</span><span class="p">)</span>
+<span class="n">sphere</span><span class="o">.</span><span class="n">timestepping_tolerances</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0e-9</span><span class="p">,</span> <span class="mf">1.0e-6</span><span class="p">)</span>
+<span class="c1"># reset the gas species floor value in the steady-state solver</span>
+<span class="n">sphere</span><span class="o">.</span><span class="n">set_species_floor</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0e-10</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="run-the-inlet-equivalence-ratio-parameter-study">
+<h2>Run the inlet equivalence ratio parameter study<a class="headerlink" href="#run-the-inlet-equivalence-ratio-parameter-study" title="Link to this heading">#</a></h2>
+<p>In the parameter study, the equivalence ratio <span class="math notranslate nohighlight">\(\phi\)</span> of the inlet gas mixture
+is increased from 1.0 to 1.4. This is done by applying the
+<code class="docutils literal notranslate"><span class="pre">x_by_equivalence_ratio()</span></code> method on the feed inlet. Changing the equivalence ratio
+of the inlet gas mixture inevitably has impact on the inlet stream density and
+hence the inlet volumetric flow rate. By using the
+<code class="docutils literal notranslate"><span class="pre">PSRSetResTimeEnergyConservation</span></code> model, the PSR residence time remains
+constant for all runs. The effects from any variations of the inlet are
+reflected on the PSR volume.</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">process_solution()</span></code> method to convert the result from each PSR to
+a mixture. You can either overwrite the solution mixture or use a new one for
+each simulation result.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># inlet gas equivalence ratio increment</span>
+<span class="n">deltaequiv</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="n">numbruns</span> <span class="o">=</span> <span class="mi">9</span>
+<span class="c1"># solution arrays</span>
+<span class="n">inletequiv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">numbruns</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="n">temp_ss_solution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">inletequiv</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">double</span><span class="p">)</span>
+<span class="c1"># set the start wall time</span>
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="c1"># loop over all inlet temperature values</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numbruns</span><span class="p">):</span>
+    <span class="c1"># run the PSR model</span>
+    <span class="n">runstatus</span> <span class="o">=</span> <span class="n">sphere</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="c1"># check run status</span>
+    <span class="k">if</span> <span class="n">runstatus</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Run failed.</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">RED</span> <span class="o">+</span> <span class="s2">&quot;&gt;&gt;&gt; Run failed. &lt;&lt;&lt;&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">()</span>
+    <span class="c1"># Run succeeded.</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">Color</span><span class="o">.</span><span class="n">GREEN</span> <span class="o">+</span> <span class="s2">&quot;&gt;&gt;&gt; Run completed. &lt;&lt;&lt;&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">Color</span><span class="o">.</span><span class="n">END</span><span class="p">)</span>
+    <span class="c1"># postprocess the solution profiles</span>
+    <span class="n">solnmixture</span> <span class="o">=</span> <span class="n">sphere</span><span class="o">.</span><span class="n">process_solution</span><span class="p">()</span>
+    <span class="c1"># print the steady-state solution values</span>
+    <span class="c1"># print(f&quot;Steady-state temperature = {solnmixture.temperature} [K].&quot;)</span>
+    <span class="c1"># solnmixture.list_composition(mode=&quot;mole&quot;)</span>
+    <span class="c1"># store solution values</span>
+    <span class="n">inletequiv</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">equiv</span>
+    <span class="n">temp_ss_solution</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">solnmixture</span><span class="o">.</span><span class="n">temperature</span>
+    <span class="c1"># update inlet gas equivalence ratio (composition)</span>
+    <span class="n">equiv</span> <span class="o">+=</span> <span class="n">deltaequiv</span>
+    <span class="n">ierror</span> <span class="o">=</span> <span class="n">feed</span><span class="o">.</span><span class="n">x_by_equivalence_ratio</span><span class="p">(</span>
+        <span class="n">MyGasMech</span><span class="p">,</span> <span class="n">fuel</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">air</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">add_frac</span><span class="p">,</span> <span class="n">products</span><span class="p">,</span> <span class="n">equivalenceratio</span><span class="o">=</span><span class="n">equiv</span>
+    <span class="p">)</span>
+    <span class="c1"># check fuel-oxidizer mixture creation status</span>
+    <span class="k">if</span> <span class="n">ierror</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error encountered with inlet equivalence ratio = </span><span class="si">{</span><span class="n">equiv</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">()</span>
+
+<span class="c1"># compute the total runtime</span>
+<span class="n">runtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total simulation duration: </span><span class="si">{</span><span class="n">runtime</span><span class="si">}</span><span class="s2"> [sec] over </span><span class="si">{</span><span class="n">numbruns</span><span class="si">}</span><span class="s2"> runs.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="plot-the-parameter-study-results">
+<h2>Plot the parameter study results<a class="headerlink" href="#plot-the-parameter-study-results" title="Link to this heading">#</a></h2>
+<p>Plot the steady-state PSR temperature against the equivalence ratio of the
+inlet H<sub>2</sub>-air mixture. You should see that the maximum combustion
+temperature does not correspond to the <span class="math notranslate nohighlight">\(\phi = 1\)</span> mixture. Instead,
+the temperature peak occurs when the mixture is slightly fuel rich. You can
+run the same parameter study on a different fuel species such as CH<sub>4</sub>
+to see if you observe the same behavior.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">inletequiv</span><span class="p">,</span> <span class="n">temp_ss_solution</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Inlet Gas Equivalence Ratio&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Reactor Temperature [K]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;PSR Solution&quot;</span><span class="p">)</span>
+
+<span class="c1"># clean up</span>
+<span class="n">ck</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+
+<span class="c1"># plot results</span>
+<span class="k">if</span> <span class="n">interactive</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;plot_PSR_gas.png&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-psr-psrgas-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/68415e195dca34f3cc6565e9d0d90318/PSRgas.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">PSRgas.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/913c4a94c9685cf8181e47562347f62e/PSRgas.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">PSRgas.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/d6256d21d12e6f52e82d5f32b0678ed8/PSRgas.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">PSRgas.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-pychemkin-packages-and-start-the-logger">Import PyChemkin packages and start the logger</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-chemistry-set">Create a chemistry set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preprocess-the-gasoline-chemistry-set">Preprocess the gasoline chemistry set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-the-h2-air-stream">Set up the H<sub>2</sub>-air stream</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-the-psr-to-predict-the-gas-composition-of-the-outlet-stream">Create the PSR to predict the gas composition of the outlet stream</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-additional-reactor-model-parameters">Set up additional reactor model parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#connect-the-inlet-to-the-reactor">Connect the inlet to the reactor</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-solver-controls">Set solver controls</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-the-inlet-equivalence-ratio-parameter-study">Run the inlet equivalence ratio parameter study</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-the-parameter-study-results">Plot the parameter study results</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+
+  
+  <nav class="tocsection editthispage" aria-label="Edit this page">
+    <a href="https://github.com/ansys/pychemkin/edit/main/doc/source/examples/PSR/PSRgas.rst" rel="noopener noreferrer">
+      <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </nav>
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/PSR/PSRgas.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.7.2.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

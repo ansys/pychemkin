@@ -1,0 +1,1230 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Study flame interactions in an opposed-flow flame configuration &#8212; PyChemkin</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/opposed_flow_flame/dual_flame';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://chemkin.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Surface chemistry" href="../surface_chemistry/index.html" />
+    <link rel="prev" title="Opposed-flow flame model" href="index.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  <link rel="canonical" href="https://chemkin.docs.pyansys.com/version/stable/examples/opposed_flow_flame/dual_flame.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyChemkin - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyChemkin - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../artifacts.html">
+    <no title>
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyChemkin home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting-started.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user-guide.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../artifacts.html">
+    <no title>
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pychemkin/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://chemkin.docs.pyansys.com/version/0.2/_static/assets/download/pychemkin.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../chemistry/index.html">Chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mixture/index.html">Mixture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../batch/index.html">Batch reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../engine/index.html">0-D engine models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PSR/index.html">Perfectly stirred reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PFR/index.html">Plug-flow reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../shock_tube/index.html">Shock tube reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reactor_network/index.html">PSR network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../premixed_flame/index.html">Premixed flame models</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Opposed-flow flame model</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Study flame interactions in an opposed-flow flame configuration</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../surface_chemistry/index.html">Surface chemistry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multiprocessing/index.html">Multiprocessing parameter study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced/index.html">Advanced Applications</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Opposed-flow flame model</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Study flame interactions in an opposed-flow flame configuration</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-examples-opposed-flow-flame-dual-flame-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="study-flame-interactions-in-an-opposed-flow-flame-configuration">
+<span id="ref-opposed-flow-flame"></span><span id="sphx-glr-examples-opposed-flow-flame-dual-flame-py"></span><h1>Study flame interactions in an opposed-flow flame configuration<a class="headerlink" href="#study-flame-interactions-in-an-opposed-flow-flame-configuration" title="Link to this heading">#</a></h1>
+<p>The <em>opposed-flow flame</em> model is frequently used as a numerical tool
+to study the flame structures under fluid dynamic stress without the interferences
+from the wall.
+The opposed-flow flame experiments provide insights on the impact of
+the transport processes (mainly diffusion) on the combustion chemistry and
+flame structure. They also reveal how the flame structure would response to
+the strain rate imposed by the mean flow field (or to some extent by the turbulence).</p>
+<blockquote>
+<div><figure class="align-default">
+<a class="reference internal image-reference" href="examples/opposed_flow_flame/opposed_flow_flame.png"><img alt="opposed-flow flame configuration" src="examples/opposed_flow_flame/opposed_flow_flame.png" />
+<aside class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<span class="docutils literal">/home/runner/work/pychemkin/pychemkin/doc/source/examples/opposed_flow_flame/dual_flame.rst</span>, line 34)</p>
+<p>Cannot scale image!
+  Could not get size from &quot;examples/opposed_flow_flame/opposed_flow_flame.png&quot;:
+  [Errno 2] No such file or directory: 'examples/opposed_flow_flame/opposed_flow_flame.png'</p>
+</aside>
+</a>
+</figure>
+</div></blockquote>
+<p>Typically, the “fuel” and the “oxidizer” are introduced separately
+from the two opposing inlets, and a non-premixed (diffusion) flame would settle
+around the stagnating plan in the middle of the separation gap. Since the axial
+velocity near the stagnating plan is small, the flame is sustained mainly by the
+balance of combustion chemistry and the species/heat diffusion. The flame is stretched
+(strained) due to the radial velocity so changing the flow rates at the inlets will
+vary the stretching/strain rate applied to the flame. It is possible to establish
+more than one flame in the separation gap. For example, this project forms two flames
+by introducing a fuel-rich mixture from the “fuel” inlet. Alternatively, replacing
+the “oxidizer” with a fuel-lean mixture or replacing both inlet streams with
+premixed mixtures will also yields two flames. Having a fuel-rich mixture for
+the “fuel” and a fuel-lean mixture for the “oxidizer” might create three flames:
+one rich premixed flame, one lean premixed flame and one diffusion flame between them.</p>
+<p>The flame model calculates the temperature, velocities, and the species concentrations
+along the centerline between the two opposing nozzles, and the results can be
+presented graphically.
+The mixture fraction profile is also available. The opposed-flow flame model evaluates
+the mixture fraction by using Bilger’s elemental fraction formulation, therefore,
+the mixture fraction could be negative or have values greater than 1. Since there is
+no commonly recognized strain rate definition, you can derive your own strain rate
+from the velocity solution.</p>
+<p>This tutorial demonstrates the application of the axisymmetric opposed-flow flame model
+to study the interactions (species and heat) between two strained flames,
+a fuel-rich premixed flame and a diffusion flame, situated in the space between
+the two inlets. The computed temperature profile does not appear to show two distinct
+flame zones. However, by plotting profile of radicals such as NO<sub>2</sub>,
+the locations of the two flame fronts are clearly marked. The species and temperature
+gradients between the two flames indicate the two flames support each other by exchanging
+reactants and heat. If you plot the hydrogen cyanide (HCN) profile, you would see that
+the rich premixed flame can produce NOx through the Fenimore route (prompt NOx);
+while the oxygen atom (O) profile would further reveal that, while both flames form
+thermal NOx (Zeldovich route) , most of the thermal NOx is likely emitted from
+the diffusion flame. The nitrogen dioxide (NO<sub>2</sub>) formed in the flames will
+convert to nitric oxide (NO) in the hot zone sandwiched by the two flames.</p>
+<p>Since the transport processes are critical for flame calculations,
+the <em>transport data</em> must be included in the mechanism
+data and pre-processed.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<section id="import-pychemkin-packages-and-start-the-logger">
+<h2>Import PyChemkin packages and start the logger<a class="headerlink" href="#import-pychemkin-packages-and-start-the-logger" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ansys.chemkin.core</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ck</span>  <span class="c1"># Chemkin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Color</span>
+
+<span class="c1"># Chemkin 1-D opposed-flow flame model (steady-state)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.diffusionflames.opposedflowflame</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpposedFlame</span> <span class="k">as</span> <span class="n">Flame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.inlet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stream</span>  <span class="c1"># external gaseous inlet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.chemkin.core.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># plotting</span>
+
+<span class="c1"># check working directory</span>
+<span class="n">current_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">())</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;working directory: &quot;</span> <span class="o">+</span> <span class="n">current_dir</span><span class="p">)</span>
+<span class="c1"># set verbose mode</span>
+<span class="n">ck</span><span class="o">.</span><span class="n">set_verbose</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># set interactive mode for plotting the results</span>
+<span class="c1"># interactive = True: display plot</span>
+<span class="c1"># interactive = False: save plot as a PNG file</span>
+<span class="k">global</span> <span class="n">interactive</span>
+<span class="n">interactive</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+<section id="create-an-instance-of-the-chemistry-set">
+<h2>Create an instance of the Chemistry Set<a class="headerlink" href="#create-an-instance-of-the-chemistry-set" title="Link to this heading">#</a></h2>
+<p>The mechanism loaded is the GRI 3.0 mechanism for methane combustion.
+The mechanism and its associated data files come with the standard Ansys Chemkin
+installation under the subdirectory <em>“/reaction/data”</em>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The transport data <em>must</em> be included and preprocessed because
+the transport processes, <em>convection and diffusion</em>, are important to
+sustain the flame structure.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set mechanism directory (the default Chemkin mechanism data directory)</span>
+<span class="n">data_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">ck</span><span class="o">.</span><span class="n">ansys_dir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;reaction&quot;</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span>
+<span class="n">mechanism_dir</span> <span class="o">=</span> <span class="n">data_dir</span>
+<span class="c1"># including the full file path is recommended</span>
+<span class="n">chemfile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mechanism_dir</span> <span class="o">/</span> <span class="s2">&quot;grimech30_chem.inp&quot;</span><span class="p">)</span>
+<span class="n">thermfile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mechanism_dir</span> <span class="o">/</span> <span class="s2">&quot;grimech30_thermo.dat&quot;</span><span class="p">)</span>
+<span class="n">tranfile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mechanism_dir</span> <span class="o">/</span> <span class="s2">&quot;grimech30_transport.dat&quot;</span><span class="p">)</span>
+<span class="c1"># create a chemistry set based on GRI 3.0</span>
+<span class="n">MyGasMech</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Chemistry</span><span class="p">(</span><span class="n">chem</span><span class="o">=</span><span class="n">chemfile</span><span class="p">,</span> <span class="n">therm</span><span class="o">=</span><span class="n">thermfile</span><span class="p">,</span> <span class="n">tran</span><span class="o">=</span><span class="n">tranfile</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;GRI 3.0&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="preprocess-the-chemistry-set">
+<h2>Preprocess the Chemistry Set<a class="headerlink" href="#preprocess-the-chemistry-set" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># preprocess the mechanism files</span>
+<span class="n">ierror</span> <span class="o">=</span> <span class="n">MyGasMech</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">ierror</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: Failed to preprocess the mechanism!&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;       Error code = </span><span class="si">{</span><span class="n">ierror</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">exit</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-the-opposed-flow-inlet-streams-for-the-dual-flame-simulation">
+<h2>Set up the opposed-flow inlet streams for the dual flame simulation<a class="headerlink" href="#set-up-the-opposed-flow-inlet-streams-for-the-dual-flame-simulation" title="Link to this heading">#</a></h2>
+<p>The opposed-flow flame has two opposing inlet streams separated by a small gap.
+Conventionally the “fuel” inlet is located at x = 0, and the “oxidizer” inlet
+is at the opposite end of the separation (in reality the nozzles are
+arranged vertically).
+A strained non-premixed flame (or diffusion flame) can be established in
+the gap between the inlets by tuning the velocities and the mixture properties
+of the two inlet streams.</p>
+<p>This stream is a mixture with the addition of the
+<em>inlet flow rate</em>. You can specify the inlet gas properties the same way you
+set up a mixture. Here the recipe is used to set up the species
+mole fractions of the fuel mixture. For convenience, the pre-defined <code class="docutils literal notranslate"><span class="pre">Air()</span></code>
+in PyChemkin is used to set the composition of the <code class="docutils literal notranslate"><span class="pre">air</span></code> mixture.
+The inlet velocity is assigned by the <code class="docutils literal notranslate"><span class="pre">velocity</span></code> method.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># create the &quot;fuel&quot; stream</span>
+<span class="n">fuel</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;FUEL&quot;</span><span class="p">)</span>
+<span class="c1"># set fuel composition: fuel-rich methane-air mixture (equivalence ratio ~ 1.55)</span>
+<span class="n">fuel</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;CH4&quot;</span><span class="p">,</span> <span class="mf">0.14001807</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;O2&quot;</span><span class="p">,</span> <span class="mf">0.18066847</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;N2&quot;</span><span class="p">,</span> <span class="mf">0.67931346</span><span class="p">)]</span>
+<span class="c1"># system pressure [dynes/cm2]</span>
+<span class="n">fuel</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">P_ATM</span>
+<span class="c1"># fuel temperature [K]</span>
+<span class="n">fuel</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="mf">300.0</span>
+<span class="c1"># fuel inlet velocity [cm/sec]</span>
+<span class="n">fuel</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="mf">16.0</span>
+
+<span class="c1"># create the oxidizer mixture: air</span>
+<span class="n">air</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span><span class="n">MyGasMech</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;OXID&quot;</span><span class="p">)</span>
+<span class="n">air</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">ck</span><span class="o">.</span><span class="n">Air</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+<span class="c1"># oxidizer pressure (same as the fuel stream)</span>
+<span class="n">air</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">fuel</span><span class="o">.</span><span class="n">pressure</span>
+<span class="c1"># oxidizer temperature (same as the fuel temperature)</span>
+<span class="n">air</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">fuel</span><span class="o">.</span><span class="n">temperature</span>
+<span class="c1"># oxidizer inlet velocity [cm/sec]</span>
+<span class="n">air</span><span class="o">.</span><span class="n">velocity</span> <span class="o">=</span> <span class="mf">16.0</span>
+</pre></div>
+</div>
+</section>
+<section id="instantiate-the-opposed-flow-flame-model">
+<h2>Instantiate the opposed-flow flame model<a class="headerlink" href="#instantiate-the-opposed-flow-flame-model" title="Link to this heading">#</a></h2>
+<p>Set up the <em>opposed-flow flame</em> model by using the stream
+representing the “fuel” mixture at the origin. The “oxidizer” inlet
+is added to the <code class="docutils literal notranslate"><span class="pre">OpposedFlame</span></code> object later by using the
+<code class="docutils literal notranslate"><span class="pre">set_oxidizer_inlet</span></code> method.
+There are many options and parameters related to the treatment of
+the species boundary condition, the transport properties. All the
+available options and parameters are described in the <em>Chemkin Input</em> manual.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The parameter used to instantiate the <code class="docutils literal notranslate"><span class="pre">OpposedFlame</span></code> is
+the stream representing the “fuel” inlet at x = 0.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">dual_flame</span> <span class="o">=</span> <span class="n">Flame</span><span class="p">(</span><span class="n">fuel</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;opposed_flame&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="configure-the-opposed-flame">
+<h2>Configure the opposed flame<a class="headerlink" href="#configure-the-opposed-flame" title="Link to this heading">#</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">set_oxidizer_inlet</span></code> method to specify the “oxidizer”
+stream at the opposite end of the separation gap. The distance
+between the two opposing inlets is defined by the <code class="docutils literal notranslate"><span class="pre">end_position</span></code> method.
+The <code class="docutils literal notranslate"><span class="pre">end_poistion</span></code> is a required input as it defines the length of
+the calculation domain.
+Typically, the length of the calculation domain is less than 10 [cm].</p>
+<p>The opposed-flow flame model will set up a <em>flame zone</em> to improve the convergence
+performance. The center location of this “estimated” <em>flame zone</em> can be given by the
+<code class="docutils literal notranslate"><span class="pre">set_reaction_zone_center</span></code>, and the width of the <em>flame zone</em> is defined by the
+<code class="docutils literal notranslate"><span class="pre">set_reaction_zone_width</span></code>. The temperature and the gas species profiles are
+assumed to vary linearly from the inlets and plateaued inside the <em>flame zone</em>.
+The gas temperature value in the <em>flame zone</em> is specified by the
+<code class="docutils literal notranslate"><span class="pre">set_max_flame_temperature()</span></code> method (or 2200.0 [K] by default).
+The gas composition in the <em>flame zone</em> is set by the equilibrium composition
+of the mixture of the “fuel” and the “oxidizer” streams at the
+given “maximum flame temperature”.</p>
+<p>Alternatively, a different temperature profile can be set up by using
+the <code class="docutils literal notranslate"><span class="pre">setprofile()</span></code> method to replace the default “plateau” profile.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># add the &quot;oxidizer&quot; inlet</span>
+<span class="n">dual_flame</span><span class="o">.</span><span class="n">set_oxidizer_inlet</span><span class="p">(</span><span class="n">air</span><span class="p">)</span>
+
+<span class="c1"># define the gap between the two opposing inlets (calculation domain) [cm]</span>
+<span class="n">dual_flame</span><span class="o">.</span><span class="n">end_position</span> <span class="o">=</span> <span class="mf">1.5</span>
+<span class="c1"># set up of the &quot;flame zone&quot; to establish the guessed species profiles</span>
+<span class="c1"># flame zone center location [cm]</span>
+<span class="n">dual_flame</span><span class="o">.</span><span class="n">set_reaction_zone_center</span><span class="p">(</span><span class="mf">0.75</span><span class="p">)</span>
+<span class="c1"># flame zone width [cm]</span>
+<span class="n">dual_flame</span><span class="o">.</span><span class="n">set_reaction_zone_width</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="c1"># set the estimated maximum gas temperature [K]</span>
+<span class="n">dual_flame</span><span class="o">.</span><span class="n">set_max_flame_temperature</span><span class="p">(</span><span class="mf">2200.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-up-initial-mesh-and-grid-adaption-options">
+<h2>Set up initial mesh and grid adaption options<a class="headerlink" href="#set-up-initial-mesh-and-grid-adaption-options" title="Link to this heading">#</a></h2>
+<p>The opposed-flow flame models provides several methods to set up the initial
+mesh.  Here a uniform mesh of 26 grid points is used at the start of the simulation.
+The flame models would add more grid points to where they are needed as
+determined by the solution quality parameters specified by
+the <code class="docutils literal notranslate"><span class="pre">set_solution_quality()</span></code> method.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There are two ways to set up the initial mesh for the opposed-flow flame
+calculations:</p>
+<ol class="arabic simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">set_numb_grid_points</span></code> method to create a uniform mesh of the given number</dt><dd><p>of grid points.</p>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set_grid_profile</span></code> method to specify the initial grid point profile.</p></li>
+</ol>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set the initial mesh to 26 uniformly distributed grid points</span>
+<span class="n">dual_flame</span><span class="o">.</span><span class="n">set_numb_grid_points</span><span class="p">(</span><span class="mi">26</span><span class="p">)</span>
+<span class="c1"># set the maximum total number of grid points allowed in the calculation (optional)</span>
+<span class="n">dual_flame</span><span class="o">.</span><span class="n">set_max_grid_points</span><span class="p">(</span><span class="mi">250</span><span class="p">)</span>
+<span class="c1"># maximum number of grid points can be added during each grid adaption event (optional)</span>
+<span class="n">dual_flame</span><span class="o">.</span><span class="n">set_max_adaptive_points</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="c1"># set the maximum values of the grdient and the curvature</span>
+<span class="c1"># of the solution profiles (optional)</span>
+<span class="n">dual_flame</span><span class="o">.</span><span class="n">set_solution_quality</span><span class="p">(</span><span class="n">gradient</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">curvature</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-transport-property-options">
+<h2>Set transport property options<a class="headerlink" href="#set-transport-property-options" title="Link to this heading">#</a></h2>
+<p>Ansys Chemkin offers three methods for computing mixture properties:</p>
+<ul class="simple">
+<li><p><strong>Mixture averaged</strong></p></li>
+<li><p><strong>Multi-component</strong></p></li>
+<li><p><strong>Constant Lewis number</strong></p></li>
+</ul>
+<p>When the system pressure is not too low, the mixture averaged method should
+be adequate.
+The multi-component method, although it is slightly more accurate, makes
+the simulation time longer and is harder to converge. Using the constant Lewis number
+method implies that all the species would have the same transport properties.
+Include the thermal diffusion effect, when there are large
+amount of light species (molecular weight &lt; 5.0).</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># use the mixture averaged formulism to evaluate the mixture transport properties</span>
+<span class="n">dual_flame</span><span class="o">.</span><span class="n">use_mixture_averaged_transport</span><span class="p">()</span>
+<span class="c1"># do NOT include the thermal diffusion effect</span>
+<span class="n">dual_flame</span><span class="o">.</span><span class="n">use_thermal_diffusion</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-species-composition-boundary-option">
+<h2>Set species composition boundary option<a class="headerlink" href="#set-species-composition-boundary-option" title="Link to this heading">#</a></h2>
+<p>There two types of boundary condition treatments for the species composition
+available from the premixed flame models: <code class="docutils literal notranslate"><span class="pre">comp</span></code> and <code class="docutils literal notranslate"><span class="pre">flux</span></code>. You can find
+the descriptions of these two treatments in the <em>Chemkin Input</em> manual.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># specific the species composition boundary treatment (&#39;comp&#39; or &#39;flux&#39;)</span>
+<span class="c1"># use &#39;flux&#39; to keep the net species mass fluxes the same as given by</span>
+<span class="c1"># the &quot;inlet streams&quot;.</span>
+<span class="n">dual_flame</span><span class="o">.</span><span class="n">set_species_boundary_types</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;flux&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="set-solver-parameters">
+<h2>Set solver parameters<a class="headerlink" href="#set-solver-parameters" title="Link to this heading">#</a></h2>
+<p>The steady state solver parameters for the opposed-flow flame model are
+optional because all the solver parameters have their own default values.
+Change the solver parameters when the flame simulation does not converge
+with the default settings.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># reset the tolerances in the steady-state solver (optional)</span>
+<span class="n">dual_flame</span><span class="o">.</span><span class="n">steady_state_tolerances</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0e-9</span><span class="p">,</span> <span class="mf">1.0e-5</span><span class="p">)</span>
+<span class="n">dual_flame</span><span class="o">.</span><span class="n">time_stepping_tolerances</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0e-6</span><span class="p">,</span> <span class="mf">1.0e-4</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="run-the-opposed-flow-flame-simulation">
+<h2>Run the opposed-flow flame simulation<a class="headerlink" href="#run-the-opposed-flow-flame-simulation" title="Link to this heading">#</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">run()</span></code> method to run the opposed-flow flame model.
+After the calculation concludes successfully, use the <code class="docutils literal notranslate"><span class="pre">process_solution()</span></code> method
+to postprocess the solutions. You can create other property profiles by
+looping through the solution streams by using proper <code class="docutils literal notranslate"><span class="pre">Mixture</span></code> methods.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set the start wall time</span>
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+<span class="n">status</span> <span class="o">=</span> <span class="n">dual_flame</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">status</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="n">Color</span><span class="o">.</span><span class="n">RED</span>
+        <span class="o">+</span> <span class="s2">&quot;Failed to get a converged solution of the opposed flow flame!&quot;</span>
+        <span class="o">+</span> <span class="n">Color</span><span class="o">.</span><span class="n">END</span>
+    <span class="p">)</span>
+    <span class="n">exit</span><span class="p">()</span>
+
+<span class="c1"># compute the total runtime</span>
+<span class="n">runtime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total simulation duration: </span><span class="si">{</span><span class="n">runtime</span><span class="si">}</span><span class="s2"> [sec].&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="postprocess-the-opposed-flow-flame-results">
+<h2>Postprocess the opposed-flow flame results<a class="headerlink" href="#postprocess-the-opposed-flow-flame-results" title="Link to this heading">#</a></h2>
+<p>The post-processing step will parse the solution and package the solution values
+at each time point into a streams. There are two ways to access
+the solution profiles:</p>
+<blockquote>
+<div><p>1. the raw solution profiles (value as a function of time) are available for
+“distance”, “temperature”, and species “mass fractions”;</p>
+<p>2. the streams that permit the use of all property and rate utilities to extract
+information such as viscosity, density, and mole fractions.</p>
+</div></blockquote>
+<p>You can use the <code class="docutils literal notranslate"><span class="pre">get_solution_variable_profile()</span></code> method to get the raw solution
+profiles. Solution streams are accessed using either
+the <code class="docutils literal notranslate"><span class="pre">get_solution_stream_at_grid()</span></code> method for the solution stream at the given
+grid point or the <code class="docutils literal notranslate"><span class="pre">get_solution_stream()</span></code> method for the solution stream at
+the given location. (In this case, the stream is constructed by interpolation.)</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Use the <code class="docutils literal notranslate"><span class="pre">get_solution_size()</span></code> to get the number of grid pints in the solution
+profiles before creating the arrays.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">mass_flowrate</span></code> from the solution streams is actually the <em>mass flux</em>
+[g/cm<sup>2</sup>-sec].
+It can used to derive the velocity at the corresponding location by dividing it
+by the local gas mixture density [g/cm<sup>3</sup>].</p></li>
+<li><p>In addition to the usual raw solution profiles such as “distance”, “temperature”
+and species mass fractions, the opposed-flow flame model provides solution
+profiles for the velocities (“axial_velocity” and “radial_velocity_gradient”)
+and the mixture fraction (“mixture_fraction”).</p></li>
+<li><p>The existence of two separated flames can be by shown by plotting
+the heat release rate or the concentrations of radical species found typically
+in hydrocarbon flames.</p></li>
+</ul>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># postprocess the solutions</span>
+<span class="n">dual_flame</span><span class="o">.</span><span class="n">process_solution</span><span class="p">()</span>
+
+<span class="c1"># get the number of solution grid points</span>
+<span class="n">solutionpoints</span> <span class="o">=</span> <span class="n">dual_flame</span><span class="o">.</span><span class="n">get_solution_size</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of solution points = </span><span class="si">{</span><span class="n">solutionpoints</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<span class="c1"># get the grid profile</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">dual_flame</span><span class="o">.</span><span class="n">get_solution_variable_profile</span><span class="p">(</span><span class="s2">&quot;distance&quot;</span><span class="p">)</span>
+<span class="c1"># get the temperature profile</span>
+<span class="n">tempprofile</span> <span class="o">=</span> <span class="n">dual_flame</span><span class="o">.</span><span class="n">get_solution_variable_profile</span><span class="p">(</span><span class="s2">&quot;temperature&quot;</span><span class="p">)</span>
+<span class="c1"># get the axial velocity profile</span>
+<span class="n">velprofile</span> <span class="o">=</span> <span class="n">dual_flame</span><span class="o">.</span><span class="n">get_solution_variable_profile</span><span class="p">(</span><span class="s2">&quot;axial_velocity&quot;</span><span class="p">)</span>
+<span class="c1"># get the mixture fraction profile</span>
+<span class="n">mfprofile</span> <span class="o">=</span> <span class="n">dual_flame</span><span class="o">.</span><span class="n">get_solution_variable_profile</span><span class="p">(</span><span class="s2">&quot;mixture_fraction&quot;</span><span class="p">)</span>
+<span class="c1"># get NO2 mass fraction profile</span>
+<span class="n">no2_profile</span> <span class="o">=</span> <span class="n">dual_flame</span><span class="o">.</span><span class="n">get_solution_variable_profile</span><span class="p">(</span><span class="s2">&quot;NO2&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="plot-the-opposed-flow-flame-solution-profiles">
+<h2>Plot the opposed-flow flame solution profiles<a class="headerlink" href="#plot-the-opposed-flow-flame-solution-profiles" title="Link to this heading">#</a></h2>
+<p>Plot the solution profiles of the opposed-flow flame.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can get profiles of the thermodynamic and the transport properties
+by applying <code class="docutils literal notranslate"><span class="pre">Mixture</span></code> utility methods to the solution streams.</p>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="s2">&quot;col&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">221</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">tempprofile</span><span class="p">,</span> <span class="s2">&quot;r-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Temperature [K]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">222</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">velprofile</span><span class="p">,</span> <span class="s2">&quot;b-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Axial Velocity [cm/sec]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">223</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">no2_profile</span><span class="p">,</span> <span class="s2">&quot;g-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Distance [cm]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;NO2 Mass Fraction&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">224</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">mfprofile</span><span class="p">,</span> <span class="s2">&quot;m-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Distance [cm]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Mixture Fraction [-]&quot;</span><span class="p">)</span>
+
+<span class="c1"># clean up</span>
+<span class="n">ck</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+
+<span class="c1"># plot results</span>
+<span class="k">if</span> <span class="n">interactive</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;plot_opposed_flow_flame.png&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-opposed-flow-flame-dual-flame-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/6cb5c910438f699f73edbfd642283a85/dual_flame.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">dual_flame.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/b83071fabf85177be0f01070bae200af/dual_flame.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">dual_flame.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/f4189764b7c1f37d4d69d68ea5ca0f24/dual_flame.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">dual_flame.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-pychemkin-packages-and-start-the-logger">Import PyChemkin packages and start the logger</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-an-instance-of-the-chemistry-set">Create an instance of the Chemistry Set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preprocess-the-chemistry-set">Preprocess the Chemistry Set</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-the-opposed-flow-inlet-streams-for-the-dual-flame-simulation">Set up the opposed-flow inlet streams for the dual flame simulation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instantiate-the-opposed-flow-flame-model">Instantiate the opposed-flow flame model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configure-the-opposed-flame">Configure the opposed flame</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-initial-mesh-and-grid-adaption-options">Set up initial mesh and grid adaption options</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-transport-property-options">Set transport property options</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-species-composition-boundary-option">Set species composition boundary option</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-solver-parameters">Set solver parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-the-opposed-flow-flame-simulation">Run the opposed-flow flame simulation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#postprocess-the-opposed-flow-flame-results">Postprocess the opposed-flow flame results</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-the-opposed-flow-flame-solution-profiles">Plot the opposed-flow flame solution profiles</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+
+  
+  <nav class="tocsection editthispage" aria-label="Edit this page">
+    <a href="https://github.com/ansys/pychemkin/edit/main/doc/source/examples/opposed_flow_flame/dual_flame.rst" rel="noopener noreferrer">
+      <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </nav>
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/opposed_flow_flame/dual_flame.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.7.2.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

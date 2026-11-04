@@ -1,0 +1,106 @@
+
+
+
+
+
+
+The ``transient_PSR.py`` module
+===============================
+
+.. py:module:: ansys.chemkin.core.stirreactors.transient_PSR
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: transient_PSR
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.stirreactors.transient_PSR.TransientPSR`
+            - Generic transient perfectly-stirred reactor model.
+
+
+          * - :py:obj:`~ansys.chemkin.core.stirreactors.transient_PSR.TransientPSRSetVolumeFixedTemperature`
+            - Transient PSR model with reactor volume and fixed reactor temperature.
+
+
+          * - :py:obj:`~ansys.chemkin.core.stirreactors.transient_PSR.TransientPSRSetVolumeEnergyConservation`
+            - Transient PSR model with reactor volume and solve energy equation.
+
+
+          * - :py:obj:`~ansys.chemkin.core.stirreactors.transient_PSR.TransientPSRSetResTimeFixedTemperature`
+            - Transient PSR model with given reactor residence time and reactor temperature.
+
+
+          * - :py:obj:`~ansys.chemkin.core.stirreactors.transient_PSR.TransientPSRSetResTimeEnergyConservation`
+            - Transient PSR with given reactor residence time and solve energy equation.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> TransientPSR</api/ansys/chemkin/core/stirreactors/transient_PSR/TransientPSR>
+    <span class="nf nf-cod-symbol_class"></span> TransientPSRSetVolumeFixedTemperature</api/ansys/chemkin/core/stirreactors/transient_PSR/TransientPSRSetVolumeFixedTemperature>
+    <span class="nf nf-cod-symbol_class"></span> TransientPSRSetVolumeEnergyConservation</api/ansys/chemkin/core/stirreactors/transient_PSR/TransientPSRSetVolumeEnergyConservation>
+    <span class="nf nf-cod-symbol_class"></span> TransientPSRSetResTimeFixedTemperature</api/ansys/chemkin/core/stirreactors/transient_PSR/TransientPSRSetResTimeFixedTemperature>
+    <span class="nf nf-cod-symbol_class"></span> TransientPSRSetResTimeEnergyConservation</api/ansys/chemkin/core/stirreactors/transient_PSR/TransientPSRSetResTimeEnergyConservation>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Chemkin transient perfectly stirred reactor model.
+
+
+
+
+
+
+
+

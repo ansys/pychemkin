@@ -1,0 +1,92 @@
+
+
+
+
+
+
+The ``chemkin_solution_utility.py`` module
+==========================================
+
+.. py:module:: ansys.chemkin.core.chemkin_solution_utility
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: chemkin_solution_utility
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.chemkin_solution_utility.ChemkinSolutionImporter`
+            - Post-process the regular Chemkin simulation solution.
+
+
+          * - :py:obj:`~ansys.chemkin.core.chemkin_solution_utility.SolutionData`
+            - Manage the imported solution data for the Chemkin solution utility.
+
+
+          * - :py:obj:`~ansys.chemkin.core.chemkin_solution_utility.SolutionGroup`
+            - Class representing a single solution group within the Chemkin solution data.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> ChemkinSolutionImporter</api/ansys/chemkin/core/chemkin_solution_utility/ChemkinSolutionImporter>
+    <span class="nf nf-cod-symbol_class"></span> SolutionData</api/ansys/chemkin/core/chemkin_solution_utility/SolutionData>
+    <span class="nf nf-cod-symbol_class"></span> SolutionGroup</api/ansys/chemkin/core/chemkin_solution_utility/SolutionGroup>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Python utilities to post-process Chemkin simulation solutions.
+
+
+
+
+
+
+
+

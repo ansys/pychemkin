@@ -1,0 +1,74 @@
+
+
+
+
+
+
+The ``premixedflames`` package
+==================================
+
+.. py:module:: ansys.chemkin.core.premixedflames
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: premixedflames
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.premixedflames.premixedflame`
+            - Steady state, 1-D burner stabilized premixed flame models.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> premixedflame</api/ansys/chemkin/core/premixedflames/premixedflame/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Premixed flame models.
+
+
+
+
+
+

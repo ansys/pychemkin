@@ -1,0 +1,31 @@
+
+
+
+
+
+
+:class:`IntegerKeyword`
+=======================
+
+
+.. py:class:: ansys.chemkin.core.keyword.IntegerKeyword(phrase: str, value: int = 0)
+
+   Bases: :py:obj:`Keyword`
+
+
+   A Chemkin integer keyword.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.keyword import IntegerKeyword
+
+
+
+
+

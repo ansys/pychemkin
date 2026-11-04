@@ -1,0 +1,31 @@
+
+
+
+
+
+
+:class:`StringKeyword`
+======================
+
+
+.. py:class:: ansys.chemkin.core.keyword.StringKeyword(phrase: str, value: str = '')
+
+   Bases: :py:obj:`Keyword`
+
+
+   A Chemkin string keyword.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.keyword import StringKeyword
+
+
+
+
+

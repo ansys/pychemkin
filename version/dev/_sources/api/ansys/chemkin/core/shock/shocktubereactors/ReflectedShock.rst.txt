@@ -1,0 +1,79 @@
+
+
+
+
+
+
+:class:`ReflectedShock`
+=======================
+
+
+.. py:class:: ansys.chemkin.core.shock.shocktubereactors.ReflectedShock(mixture_condition: ansys.chemkin.core.inlet.Stream, location: int, label: str)
+
+   Bases: :py:obj:`ShockTubeReactors`
+
+
+   Chemkin reflected shock reactor model.
+
+
+
+.. py:currentmodule:: ReflectedShock
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~run`
+            - Run Chemkin shock tube reactor model.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~incidentshock_velocity`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.shock.shocktubereactors import ReflectedShock
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: incidentshock_velocity
+
+
+
+Method detail
+-------------
+
+.. py:method:: run() -> int
+
+   Run Chemkin shock tube reactor model.
+
+
+
+
+

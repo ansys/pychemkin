@@ -1,0 +1,84 @@
+
+
+
+
+
+
+The ``engines`` package
+===========================
+
+.. py:module:: ansys.chemkin.core.engines
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: engines
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.engines.HCCI`
+            - Single or multi- zone homogeneous charge compression ignition (HCCI) engine model.
+
+
+          * - :py:obj:`~ansys.chemkin.core.engines.SI`
+            - Spark Ignition (SI) engine model.
+
+
+          * - :py:obj:`~ansys.chemkin.core.engines.engine`
+            - Chemkin Engine Utilities.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> HCCI</api/ansys/chemkin/core/engines/HCCI/index>
+    <span class="nf nf-fa-file"></span> SI</api/ansys/chemkin/core/engines/SI/index>
+    <span class="nf nf-fa-file"></span> engine</api/ansys/chemkin/core/engines/engine/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Internal combustion engine models.
+
+
+
+
+
+

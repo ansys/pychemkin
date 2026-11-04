@@ -1,0 +1,64 @@
+
+
+
+
+
+
+:class:`IncidentShock`
+======================
+
+
+.. py:class:: ansys.chemkin.core.shock.shocktubereactors.IncidentShock(mixture_condition: ansys.chemkin.core.inlet.Stream, location: int, label: str)
+
+   Bases: :py:obj:`ShockTubeReactors`
+
+
+   Chemkin incident shock reactor model.
+
+
+
+.. py:currentmodule:: IncidentShock
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~run`
+            - Run incident shock simulation.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.shock.shocktubereactors import IncidentShock
+
+
+
+Method detail
+-------------
+
+.. py:method:: run() -> int
+
+   Run incident shock simulation.
+
+
+
+
+
