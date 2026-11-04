@@ -54,7 +54,7 @@ tests = [
     "pygltflib==1.16.5",
     "pytest-cov==7.1.0",
     "pytest-mock==3.17.0",
-    "pytest==9.1.1",
+    "pytest==9.2.0",
     "requests==2.34.2",
     "urllib3==2.8.0",
     "usd-core==26.8",
