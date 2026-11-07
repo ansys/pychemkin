@@ -39,7 +39,7 @@ This document contains the release notes for the **PyChemkin** project.
 - Added new ``surface_chemistry`` example: **trans_PSR_ALD**. `(#126) <https://github.com/ansys/pychemkin/pull/126>`_
 - Added new ``multiprocessing`` example: **sensitivity_multiproc** by *Kuiwen Zhang*. `(#210) <https://github.com/ansys/pychemkin/pull/210>`_
 - Added post-processing Chemkin XML solution file examples. `(#265) <https://github.com/ansys/pychemkin/pull/265>`_
-- Created `PyChemkin Wiki page <https://github.com/ansys/pychemkin/wiki>`_. 
+- Created `PyChemkin Wiki page <https://github.com/ansys/pychemkin/wiki>`_.
 
 
 ### Maintenance
