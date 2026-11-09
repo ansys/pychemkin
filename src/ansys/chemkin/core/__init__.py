@@ -79,7 +79,7 @@ from ansys.chemkin.core.realgaseos import (
 )
 
 # set PyChemkin version number
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 # show ansys (chemkin) version number
 msg = [
     Color.YELLOW,

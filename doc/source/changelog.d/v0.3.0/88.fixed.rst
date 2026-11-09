@@ -1,0 +1,1 @@
+Fixed the Chemkin license check-in issue after running examples in **Jupyter Notebook**. (*Requires Chemkin 2027R1*)

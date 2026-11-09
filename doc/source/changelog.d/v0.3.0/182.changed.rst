@@ -1,0 +1,3 @@
+Allowed to specify the Chemkin version by the value of the environment variable ``PYCK_CHEMKIN_VER``.
+For example, set ``PYCK_CHEMKIN_VER=271`` to use Chemkin *2027R1* in PyChemkin.
+Remove the environment variable or set its value to ``0`` to restore the default behavior: use the latest Chemkin version locally.

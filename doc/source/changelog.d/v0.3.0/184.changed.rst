@@ -1,0 +1,1 @@
+Suppressed ignition delay time related messages when the ``set_ignition_delay`` method is *not* called in a ``BatchReactor`` model simulation.

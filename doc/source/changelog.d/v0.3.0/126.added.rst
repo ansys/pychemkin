@@ -1,0 +1,2 @@
+Added the ``TransientPSR`` models to simulate the dynamic response of a PSR to the transient inlet conditions.
+The *atomic layer deposition* (ALD) and the *catalytic engine after-treatment* processes are two typical applications of this reactor model.
