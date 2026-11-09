@@ -1,1 +1,0 @@
-Refactored ``Chemistry`` module to improve readability.

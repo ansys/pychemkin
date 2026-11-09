@@ -1,1 +1,0 @@
-Added new ``multiprocessing`` example: **sensitivity_multiproc** by *Kuiwen Zhang*.

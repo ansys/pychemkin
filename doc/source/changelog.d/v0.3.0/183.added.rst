@@ -1,1 +1,0 @@
-Added new method ``set_auto_ignition_check`` to the ``PremixedFlame`` model to enable/disable the autoignition check of the unburnt mixture. (*Requires Chemkin 2027R1*)
