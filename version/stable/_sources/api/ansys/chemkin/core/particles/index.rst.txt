@@ -1,0 +1,85 @@
+
+
+
+
+
+
+The ``particles.py`` module
+===========================
+
+.. py:module:: ansys.chemkin.core.particles
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: particles
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.particles.Aerosol`
+            - Aerosol material object.
+
+
+          * - :py:obj:`~ansys.chemkin.core.particles.PDF`
+            - Object representing the population density function (PDF) of aerosols.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Aerosol</api/ansys/chemkin/core/particles/Aerosol>
+    <span class="nf nf-cod-symbol_class"></span> PDF</api/ansys/chemkin/core/particles/PDF>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Aerosol size distribution models.
+
+
+
+
+
+
+
+

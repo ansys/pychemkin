@@ -1,0 +1,158 @@
+
+
+
+
+
+
+:class:`SurfaceChemistryMixin`
+==============================
+
+
+.. py:class:: ansys.chemkin.core.surface_chemistry.SurfaceChemistryMixin
+
+   Surface chemistry related methods for the Chemistry class.
+
+
+
+.. py:currentmodule:: SurfaceChemistryMixin
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_surface_chemistry`
+            - Set up the surface chemistry data.
+          * - :py:attr:`~no_surface_mechanism_declaration`
+            - Inform users the Chemistry Set does not have surface chemistry.
+          * - :py:attr:`~get_material_index`
+            - Get the surface material index.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~number_materials`
+            - Get the number of surface materials.
+          * - :py:attr:`~max_number_phases`
+            - Get the maximum number of phases.
+          * - :py:attr:`~max_number_sites`
+            - Get the maximum number of surface site species.
+          * - :py:attr:`~max_number_bulks`
+            - Get the maximum number of surface bulk species.
+          * - :py:attr:`~max_total_number_species`
+            - Get the maximum number of all species.
+          * - :py:attr:`~max_number_surface_reactions`
+            - Get the maximum number of surface reactions.
+          * - :py:attr:`~max_total_number_reactions`
+            - Get the maximum number of gas and surface reactions.
+          * - :py:attr:`~material_names`
+            - Get list of surface material names.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.surface_chemistry import SurfaceChemistryMixin
+
+Property detail
+---------------
+
+.. py:property:: number_materials
+   :type: int
+
+
+   Get the number of surface materials.
+
+
+.. py:property:: max_number_phases
+   :type: int
+
+
+   Get the maximum number of phases.
+
+
+.. py:property:: max_number_sites
+   :type: int
+
+
+   Get the maximum number of surface site species.
+
+
+.. py:property:: max_number_bulks
+   :type: int
+
+
+   Get the maximum number of surface bulk species.
+
+
+.. py:property:: max_total_number_species
+   :type: int
+
+
+   Get the maximum number of all species.
+
+
+.. py:property:: max_number_surface_reactions
+   :type: int
+
+
+   Get the maximum number of surface reactions.
+
+
+.. py:property:: max_total_number_reactions
+   :type: int
+
+
+   Get the maximum number of gas and surface reactions.
+
+
+.. py:property:: material_names
+   :type: list[str]
+
+
+   Get list of surface material names.
+
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: set_surface_chemistry()
+
+   Set up the surface chemistry data.
+
+
+.. py:method:: no_surface_mechanism_declaration()
+
+   Inform users the Chemistry Set does not have surface chemistry.
+
+
+.. py:method:: get_material_index(mat_name: str) -> int
+
+   Get the surface material index.
+
+
+
+
+

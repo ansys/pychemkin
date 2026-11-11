@@ -1,0 +1,74 @@
+
+
+
+
+
+
+The ``diffusionflames`` package
+===================================
+
+.. py:module:: ansys.chemkin.core.diffusionflames
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: diffusionflames
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.diffusionflames.opposedflowflame`
+            - Steady state, 1-D opposed-flow flame model.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> opposedflowflame</api/ansys/chemkin/core/diffusionflames/opposedflowflame/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Diffusion flame models.
+
+
+
+
+
+

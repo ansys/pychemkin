@@ -1,0 +1,74 @@
+
+
+
+
+
+
+The ``flowreactors`` package
+================================
+
+.. py:module:: ansys.chemkin.core.flowreactors
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: flowreactors
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.flowreactors.PFR`
+            - Plug Flow Reactor (PFR) model.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> PFR</api/ansys/chemkin/core/flowreactors/PFR/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Flow reactor models.
+
+
+
+
+
+

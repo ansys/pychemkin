@@ -1,0 +1,74 @@
+
+
+
+
+
+
+The ``batchreactors`` package
+=================================
+
+.. py:module:: ansys.chemkin.core.batchreactors
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: batchreactors
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.batchreactors.batchreactor`
+            - Chemkin closed homogeneous reactor model.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> batchreactor</api/ansys/chemkin/core/batchreactors/batchreactor/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Batch reactor models.
+
+
+
+
+
+

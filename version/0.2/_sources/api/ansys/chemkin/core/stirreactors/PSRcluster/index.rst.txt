@@ -1,0 +1,78 @@
+
+
+
+
+
+
+The ``PSRcluster.py`` module
+============================
+
+.. py:module:: ansys.chemkin.core.stirreactors.PSRcluster
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: PSRcluster
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.chemkin.core.stirreactors.PSRcluster.PSRCluster`
+            - A cluster of perfectly-stirred reactors.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> PSRCluster</api/ansys/chemkin/core/stirreactors/PSRcluster/PSRCluster>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Perfectly stirred reactor cluster of which the PSRs are solved simultaneously.
+
+
+
+
+
+
+
+

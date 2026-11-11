@@ -1,0 +1,209 @@
+
+
+
+
+
+
+:class:`PlugFlowReactor`
+========================
+
+
+.. py:class:: ansys.chemkin.core.flowreactors.PFR.PlugFlowReactor(inlet: ansys.chemkin.core.inlet.Stream, label: str = 'PFR')
+
+   Bases: :py:obj:`ansys.chemkin.core.batchreactors.batchreactor.BatchReactors`
+
+
+   Plug Flow Reactor (PFR) model with energy equation.
+
+
+
+.. py:currentmodule:: PlugFlowReactor
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_start_position`
+            - Set the PFR simulation starting position.
+          * - :py:attr:`~set_diameter_profile`
+            - Specify plug-flow reactor diameter profile.
+          * - :py:attr:`~set_flowarea_profile`
+            - Specify plug-flow reactor cross-sectional flow area profile.
+          * - :py:attr:`~set_inlet_viscosity`
+            - Set the gas mixture viscocity at the PFR inlet.
+          * - :py:attr:`~set_solver_max_timestep_size`
+            - Set the maximum time step size allowed.
+          * - :py:attr:`~set_pseudo_surface_velocity`
+            - Set the pseudo surface velocity at the active surface.
+          * - :py:attr:`~run`
+            - Perform the common steps to run a Chemkin reactor model.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~length`
+            - Get reactor length.
+          * - :py:attr:`~diameter`
+            - Get reactor diameter.
+          * - :py:attr:`~flowarea`
+            - Cross-sectional flow area of the PFR.
+          * - :py:attr:`~mass_flowrate`
+            - Get plug flow reactor inlet mass flow rate.
+          * - :py:attr:`~velocity`
+            - Get plug flow reactor inlet velocity [cm/sec].
+          * - :py:attr:`~vol_flowrate`
+            - Get plug flow reactor inlet volumetric flow rate.
+          * - :py:attr:`~sccm`
+            - Get inlet volumetric flow rate in SCCM.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~startposition`
+            - 
+          * - :py:attr:`~reactorlength`
+            - 
+          * - :py:attr:`~reactordiameter`
+            - 
+          * - :py:attr:`~reactorflowarea`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.chemkin.core.flowreactors.PFR import PlugFlowReactor
+
+Property detail
+---------------
+
+.. py:property:: length
+   :type: float
+
+
+   Get reactor length.
+
+
+.. py:property:: diameter
+   :type: float
+
+
+   Get reactor diameter.
+
+
+.. py:property:: flowarea
+   :type: float
+
+
+   Cross-sectional flow area of the PFR.
+
+
+.. py:property:: mass_flowrate
+   :type: float
+
+
+   Get plug flow reactor inlet mass flow rate.
+
+
+.. py:property:: velocity
+   :type: float
+
+
+   Get plug flow reactor inlet velocity [cm/sec].
+
+
+.. py:property:: vol_flowrate
+   :type: float
+
+
+   Get plug flow reactor inlet volumetric flow rate.
+
+
+.. py:property:: sccm
+   :type: float
+
+
+   Get inlet volumetric flow rate in SCCM.
+
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: startposition
+
+.. py:attribute:: reactorlength
+
+.. py:attribute:: reactordiameter
+
+.. py:attribute:: reactorflowarea
+   :value: 0.0
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: set_start_position(x0: float)
+
+   Set the PFR simulation starting position.
+
+
+.. py:method:: set_diameter_profile(x: numpy.typing.NDArray[numpy.double], diam: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify plug-flow reactor diameter profile.
+
+
+.. py:method:: set_flowarea_profile(x: numpy.typing.NDArray[numpy.double], area: numpy.typing.NDArray[numpy.double]) -> int
+
+   Specify plug-flow reactor cross-sectional flow area profile.
+
+
+.. py:method:: set_inlet_viscosity(visc: float)
+
+   Set the gas mixture viscocity at the PFR inlet.
+
+
+.. py:method:: set_solver_max_timestep_size(size: float)
+
+   Set the maximum time step size allowed.
+
+
+.. py:method:: set_pseudo_surface_velocity(vel: float)
+
+   Set the pseudo surface velocity at the active surface.
+
+
+.. py:method:: run() -> int
+
+   Perform the common steps to run a Chemkin reactor model.
+
+
+
+
+

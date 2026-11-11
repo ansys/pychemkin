@@ -1,0 +1,159 @@
+
+
+
+
+
+
+The ``validation.py`` module
+============================
+
+.. py:module:: ansys.chemkin.core.validation
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: validation
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~validate_chemid`
+            - Validate Chemistry set index.
+
+
+          * - :py:obj:`~validate_temperature`
+            - Validate gas temperature.
+
+
+          * - :py:obj:`~validate_pressure_temperature`
+            - Validate pressure and temperature pair.
+
+
+          * - :py:obj:`~validate_density`
+            - Validate density value.
+
+
+          * - :py:obj:`~validate_fraction_arrays`
+            - Validate fraction and molecular-weight arrays are same size.
+
+
+          * - :py:obj:`~validate_species_array_size`
+            - Validate a species-array size against expected species count.
+
+
+          * - :py:obj:`~validate_minimum_value`
+            - Validate that a scalar value is greater than or equal to a minimum.
+
+
+          * - :py:obj:`~validate_equal_list_lengths`
+            - Validate that two list lengths are equal.
+
+
+          * - :py:obj:`~validate_fraction_array_size`
+            - Validate fractions-array size against chemistry species count.
+
+
+          * - :py:obj:`~validate_file_exists`
+            - Validate that a filesystem path points to an existing file.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Reusable validation helpers for core modules.
+
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: validate_chemid(chemid: int) -> None
+
+   Validate Chemistry set index.
+
+
+.. py:function:: validate_temperature(temp: float) -> None
+
+   Validate gas temperature.
+
+
+.. py:function:: validate_pressure_temperature(pressure: float, temp: float) -> None
+
+   Validate pressure and temperature pair.
+
+
+.. py:function:: validate_density(density: float) -> None
+
+   Validate density value.
+
+
+.. py:function:: validate_fraction_arrays(frac, wt, mode: str) -> int
+
+   Validate fraction and molecular-weight arrays are same size.
+
+
+.. py:function:: validate_species_array_size(expected: int, actual: int, context: str) -> None
+
+   Validate a species-array size against expected species count.
+
+
+.. py:function:: validate_minimum_value(value: float, minimum: float, message: str) -> None
+
+   Validate that a scalar value is greater than or equal to a minimum.
+
+
+.. py:function:: validate_equal_list_lengths(first_label: str, first_len: int, second_label: str, second_len: int) -> None
+
+   Validate that two list lengths are equal.
+
+
+.. py:function:: validate_fraction_array_size(actual: int, expected: int) -> None
+
+   Validate fractions-array size against chemistry species count.
+
+
+.. py:function:: validate_file_exists(file_path: str, context_label: str = 'file') -> None
+
+   Validate that a filesystem path points to an existing file.
+
+
+
+
