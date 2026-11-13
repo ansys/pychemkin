@@ -1750,16 +1750,16 @@ class Mixture:
         # initialization
         k_forward = np.zeros(numbreaction, dtype=np.double)
         k_reverse = np.zeros_like(k_forward)
-        y = Mixture._mass_fractions_from_mode(frac, wt, mode)
+        x = Mixture._mole_fractions_from_mode(frac, wt, mode)
 
         # convert parameters to c pointers
         chemset_index = ctypes.c_int(chemid)
         pp = c_double(p)  # pressure scalar
         tt = c_double(t)  # temperature scalar
-        yy = np.ctypeslib.as_array(y)  # mass fraction array
+        xx = np.ctypeslib.as_array(x)  # mole fraction array
         # compute mass density from mass fraction
         ierr = ck_wrapper.chemkin.KINGetGasReactionRates(
-            chemset_index, tt, pp, yy, k_forward, k_reverse
+            chemset_index, tt, pp, xx, k_forward, k_reverse
         )
         if ierr == 0:
             return k_forward, k_reverse
